@@ -1,0 +1,409 @@
+#include <string.h>
+
+#include "hook.h"
+#include "igi.h"
+#include "orig.h"
+#include "core/mem.h"
+#include "script/script.h"
+#include "script/symbol.h"
+
+ORIG(0x48F1D0, int, Config_GetCompileScripts, (void));
+ORIG(0x48F340, int, Config_GetQvmOnly, (void));
+ORIG(0x4B1E90, char *, File_GetExtension, (char *buf, int size, char *path));
+ORIG(0x4B5B60, int, File_Exists, (const char *path));
+ORIG(0x4B6440, int, File_GetTime, (void *time, const char *path));
+ORIG(0x4B6490, int, File_CompareTime, (void *a, void *b));
+ORIG(0x4B1AC0, void, File_Delete, (const char *path));
+ORIG(0x4B5F00, void *, Resource_Load, (const char *path, int *size));
+ORIG(0x4B6380, void, Resource_Unload, (const char *path));
+ORIG(0x4B7E10, void, Script_Error, (const char *fmt, ...));
+ORIG(0x4BBCB0, int, Qvm_Parse, (const char *qasPath, Script *s));
+ORIG(0x4BB270, int, Qvm_Assemble, (const char *qvmPath, const char *qasPath));
+ORIG(0x4BD220, void *, Qvm_Load, (const char *path, int unk1, int unk2));
+ORIG(0x4BD380, void, Qvm_Free, (void *qvm));
+ORIG(0x4BD080, int, Qvm_Run, (void *qvm));
+ORIG(0x4BCAB0, int, Qvm_GetArgInt, (ScriptArgs *args, int i));
+ORIG(0x4BD010, long double, Qvm_GetArgReal, (ScriptArgs *args, int i));
+ORIG(0x4BD040, char *, Qvm_GetArgString, (ScriptArgs *args, int i, char *buf, int size));
+ORIG(0x4BD070, int, Qvm_GetArgLine, (ScriptArgs *args, int i));
+ORIG(0x4C0200, void, Lexer_Init, (ScriptLexer *lex, ScriptReader *reader, char *buf, int size));
+ORIG(0x4BF1C0, void, Reader_Open, (ScriptReader *reader, const void *text, int size));
+ORIG(0x4BEFC0, void, Reader_Close, (ScriptReader *reader));
+ORIG(0x4BFC70, int, Lexer_Next, (ScriptLexer *lex, void *token));
+ORIG(0x4BF1F0, int, Stmt_Parse, (ScriptLexer *lex, void **out));
+ORIG(0x4BFA80, void, Stmt_Exec, (void *stmt));
+ORIG(0x4BF8F0, void, Stmt_Free, (void *stmt));
+ORIG(0x4BD430, void, Qvm_Init, (void));
+ORIG(0x4BC920, void, sub_4BC920, (void));
+ORIG(0x4BBC80, void, sub_4BBC80, (void));
+ORIG(0x4C0250, void, sub_4C0250, (void));
+ORIG(0x4C1780, void, sub_4C1780, (void));
+
+#define gScriptWarningSp VAR(int, 0xA9659C)
+#define gScriptWarningStack ((int *)0xA965C0)
+#define gScriptLineSize VAR(int, 0xA969C4)
+#define gScriptUnkA43E60 VAR(int, 0xA43E60)
+#define gScriptUnkA43E64 VAR(int, 0xA43E64)
+#define gScriptErrorContext VAR(void *, 0xA43E68)
+#define gScriptUnkA43E6C VAR(int, 0xA43E6C)
+#define gScriptErrorHandler VAR(void *, 0xA43E70)
+#define gScriptUnkA43E74 VAR(int, 0xA43E74)
+
+static void Path_SetExtension(char *path, const char *ext)
+{
+    memcpy(File_GetExtension(NULL, 0, path), ext, 5);
+}
+
+static Script *Script_New(void)
+{
+    Script *s = Mem_Alloc(sizeof(Script), 4);
+
+    memset(s, 0, sizeof(*s));
+    return s;
+}
+
+Script *Script_Load(const char *path)
+{
+    char qvmPath[128], qasPath[128];
+    char qvmTime[8], srcTime[8];
+    void *qvm = NULL;
+    void *source = NULL;
+    int size;
+    Script *s;
+
+    if (Config_GetCompileScripts()) {
+        strcpy(qvmPath, path);
+        Path_SetExtension(qvmPath, ".qvm");
+        if (Config_GetQvmOnly()) {
+            if (!File_Exists(qvmPath))
+                return NULL;
+            qvm = Qvm_Load(qvmPath, 0, 0);
+            if (!qvm)
+                return NULL;
+            goto have;
+        }
+        if (File_Exists(qvmPath)) {
+            File_GetTime(qvmTime, qvmPath);
+            File_GetTime(srcTime, path);
+            if (File_CompareTime(qvmTime, srcTime) >= 0 && (qvm = Qvm_Load(qvmPath, 0, 0)) != NULL)
+                goto have;
+        }
+    }
+    if (!File_Exists(path))
+        return NULL;
+    source = Resource_Load(path, &size);
+    if (!source)
+        return NULL;
+have:
+    s = Script_New();
+    Script_SetBreakEnabled(0);
+    if (!qvm) {
+        s->source = source;
+        s->size = size;
+        s->unk88 = 0;
+        strcpy(s->name, path);
+        if (!Config_GetCompileScripts())
+            return s;
+        strcpy(qasPath, path);
+        Path_SetExtension(qasPath, ".qas");
+        File_Delete(qvmPath);
+        File_Delete(qasPath);
+        if (Qvm_Parse(qasPath, s)) {
+            Script_Free(s);
+            Script_Error("An error occured when compiling file: %s", path);
+            return NULL;
+        }
+        if (Qvm_Assemble(qvmPath, qasPath)) {
+            Script_Error("An error occured when compiling file: %s", path);
+            return s;
+        }
+        File_Delete(qasPath);
+        Script_Free(s);
+        s = Script_New();
+        qvm = Qvm_Load(qvmPath, 0, 0);
+        if (!qvm) {
+            Script_Error("Failed to load QVM file: %s", qvmPath);
+            Mem_Free(s);
+            return NULL;
+        }
+    }
+    s->isQvm = 1;
+    s->qvm = qvm;
+    strcpy(s->name, qvmPath);
+    return s;
+}
+HOOK(0x4B80B0, Script_Load);
+
+void Script_Free(Script *s)
+{
+    if (s->qvm) {
+        Qvm_Free(s->qvm);
+        Mem_Free(s);
+        return;
+    }
+    Resource_Unload(s->name);
+    Mem_Free(s);
+}
+HOOK(0x4B83D0, Script_Free);
+
+/* compiles a .qsc file to .qvm without running it */
+void Script_Compile(const char *path)
+{
+    char qvmPath[128], qasPath[128];
+    int size;
+    void *source;
+    Script *s;
+
+    if (!File_Exists(path))
+        return;
+    source = Resource_Load(path, &size);
+    s = Script_New();
+    s->source = source;
+    s->size = size;
+    s->unk88 = 0;
+    strcpy(s->name, path);
+    strcpy(qvmPath, path);
+    Path_SetExtension(qvmPath, ".qvm");
+    strcpy(qasPath, path);
+    Path_SetExtension(qasPath, ".qas");
+    File_Delete(qvmPath);
+    File_Delete(qasPath);
+    if (Qvm_Parse(qasPath, s)) {
+        Script_Free(s);
+        Script_Error("An error occured when compiling file: %s", path);
+        return;
+    }
+    if (Qvm_Assemble(qvmPath, qasPath)) {
+        Script_Error("An error occured when compiling file: %s", path);
+        return;
+    }
+    File_Delete(qasPath);
+    Script_Free(s);
+}
+HOOK(0x4B8410, Script_Compile);
+
+void Script_Run(Script *s)
+{
+    char buf[0x800];
+    ScriptLexer lex;
+    ScriptReader reader;
+    void *stmt;
+
+    gScriptBreak = 0;
+    gScriptError = 0;
+    if (s->qvm) {
+        if (Qvm_Run(s->qvm)) {
+            Script_Error("Error in QVM program: %s\r\n%s", s->name, (char *)s->qvm + 0x268);
+            gScriptBreak = 0;
+            return;
+        }
+    } else {
+        Lexer_Init(&lex, &reader, buf, sizeof(buf));
+        Reader_Open(&reader, s->source, s->size);
+        for (;;) {
+            if (gScriptBreakEnabled && gScriptBreak)
+                goto close;
+            stmt = NULL;
+            if (!Lexer_Next(&lex, &lex.pending))
+                goto close;
+            if (!Stmt_Parse(&lex, &stmt))
+                break;
+            Stmt_Exec(stmt);
+            Stmt_Free(stmt);
+            if (gScriptError)
+                break;
+        }
+        if (gScriptWarningLevel)
+            Script_Error("An error occured in script file: %s", s->name);
+        gScriptError = 0;
+close:
+        Reader_Close(&reader);
+    }
+    gScriptBreak = 0;
+}
+HOOK(0x4B85B0, Script_Run);
+
+Expr *Script_ParseExpr(const char *text)
+{
+    char buf[0x800];
+    ScriptLexer lex;
+    ScriptReader reader;
+    Expr *e;
+
+    Lexer_Init(&lex, &reader, buf, sizeof(buf));
+    Reader_Open(&reader, text, strlen(text));
+    if (Expr_Parse(&lex, &e)) {
+        Reader_Close(&reader);
+        return e;
+    }
+    Reader_Close(&reader);
+    return NULL;
+}
+HOOK(0x4B86E0, Script_ParseExpr);
+
+int Script_EvalExpr(const char *text)
+{
+    char buf[0x800];
+    ScriptLexer lex;
+    ScriptReader reader;
+    Expr *e;
+    int v;
+
+    Lexer_Init(&lex, &reader, buf, sizeof(buf));
+    Reader_Open(&reader, text, strlen(text));
+    if (Expr_Parse(&lex, &e)) {
+        v = Expr_EvalInt(e);
+        Expr_Free(e);
+        Reader_Close(&reader);
+        return v;
+    }
+    Reader_Close(&reader);
+    return 0;
+}
+HOOK(0x4B8770, Script_EvalExpr);
+
+void Script_SetWarningLevel(int level)
+{
+    gScriptWarningLevel = level;
+}
+HOOK(0x4B8970, Script_SetWarningLevel);
+
+void Script_PushWarningLevel(int level)
+{
+    if (gScriptWarningSp == 0) {
+        Error_Show("Script: Stack underflow.");
+        for (;;)
+            ;
+    }
+    gScriptWarningSp--;
+    gScriptWarningStack[gScriptWarningSp] = gScriptWarningLevel;
+    Script_SetWarningLevel(level);
+}
+HOOK(0x4B8980, Script_PushWarningLevel);
+
+void Script_PopWarningLevel(void)
+{
+    if (gScriptWarningSp >= 0x100) {
+        Error_Show("Script: Stack overflow.");
+        for (;;)
+            ;
+    }
+    gScriptWarningLevel = gScriptWarningStack[gScriptWarningSp];
+    gScriptWarningSp++;
+}
+HOOK(0x4B89C0, Script_PopWarningLevel);
+
+void Script_SetMaxArgs(int count)
+{
+    gScriptMaxArgs = count;
+}
+HOOK(0x4B89F0, Script_SetMaxArgs);
+
+void Script_SetLineSize(int size)
+{
+    gScriptLineSize = size;
+}
+HOOK(0x4B8A00, Script_SetLineSize);
+
+void Script_SetBreakEnabled(int on)
+{
+    gScriptBreakEnabled = on;
+}
+HOOK(0x4B8A10, Script_SetBreakEnabled);
+
+int Script_GetArgInt(ScriptArgs *args, int i)
+{
+    if (args->vm)
+        return Qvm_GetArgInt(args, i);
+    return Expr_EvalInt(args->argv[i]);
+}
+HOOK(0x4B8A20, Script_GetArgInt);
+
+long double Script_GetArgReal(ScriptArgs *args, int i)
+{
+    if (args->vm)
+        return Qvm_GetArgReal(args, i);
+    return Expr_EvalReal(args->argv[i]);
+}
+HOOK(0x4B8A50, Script_GetArgReal);
+
+char *Script_GetArgString(ScriptArgs *args, int i, char *buf, int size)
+{
+    if (args->vm)
+        return Qvm_GetArgString(args, i, buf, size);
+    return Expr_EvalString(args->argv[i], buf, size);
+}
+HOOK(0x4B8A80, Script_GetArgString);
+
+int Script_GetArgLine(ScriptArgs *args, int i)
+{
+    if (args->vm)
+        return Qvm_GetArgLine(args, i);
+    return args->argv[i]->line;
+}
+HOOK(0x4B8AD0, Script_GetArgLine);
+
+int Script_HasArg(ScriptArgs *args, int i)
+{
+    return i < args->count;
+}
+HOOK(0x4B8B00, Script_HasArg);
+
+void Script_Init(void)
+{
+    gScriptErrorHandler = NULL;
+    gScriptUnkA43E74 = 0;
+    gScriptUnkA43E64 = 0;
+    gScriptErrorContext = NULL;
+    gScriptUnkA43E6C = 0;
+    gScriptUnkA43E60 = 0;
+    Script_InitSymbols();
+    Script_SetWarningLevel(1);
+    Script_RegisterConstant("TRUE", 1);
+    Script_RegisterConstant("ON", 1);
+    Script_RegisterConstant("FALSE", 0);
+    Script_RegisterConstant("OFF", 0);
+    Script_RegisterConstant("SCRIPT_WARNINGLEVEL_NO_WARNINGS", 0);
+    Script_RegisterConstant("SCRIPT_WARNINGLEVEL_NORMAL", 1);
+    Script_RegisterConstant("SCRIPT_WARNINGLEVEL_HIGH", 2);
+    Script_RegisterFunction("_Script_SetWarningLevel", (void *)0x4B8C60, NULL, 1);
+    Script_RegisterFunction("BreakScript", (void *)0x4B8C10, NULL, 0);
+    Script_SetLineSize(0x800);
+    Script_SetMaxArgs(0x2000);
+    gScriptWarningSp = 0x100;
+    Qvm_Init();
+    sub_4BC920();
+    sub_4BBC80();
+    sub_4C0250();
+}
+HOOK(0x4B8B20, Script_Init);
+
+ScriptValue *BreakScript(ScriptValue *out)
+{
+    gScriptBreak = 1;
+    out->i = 0;
+    out->d = 0;
+    out->s = gScriptEmptyString;
+    return out;
+}
+HOOK(0x4B8C10, BreakScript);
+
+ScriptValue *Script_SetWarningLevelCmd(ScriptValue *out, void *data, ScriptArgs *args)
+{
+    Script_SetWarningLevel(Script_GetArgInt(args, 0));
+    out->i = 0;
+    out->d = 0;
+    out->s = gScriptEmptyString;
+    return out;
+}
+HOOK(0x4B8C60, Script_SetWarningLevelCmd);
+
+void Script_Shutdown(void)
+{
+    sub_4C1780();
+    sub_4C1780();
+    sub_4C1780();
+    sub_4C1780();
+    Script_FreeSymbols();
+}
+HOOK(0x4B8CC0, Script_Shutdown);
