@@ -44,6 +44,12 @@ DEFAULT_STUBS = {
 }
 
 
+def _built(root):
+    dirs = [d for d in os.environ.get("IGI_DIRS", "").split(";") if d]
+    rel = os.path.relpath(root, os.path.join(os.path.dirname(__file__), "..", "src"))
+    return not dirs or rel == "." or rel.split(os.sep)[0] in dirs
+
+
 def source_hooks():
     """(address, function name) for every HOOK() line in src."""
     out = []
@@ -51,6 +57,8 @@ def source_hooks():
         for f in files:
             if f.endswith(".c"):
                 text = open(os.path.join(root, f)).read()
+                if f"src{os.sep}" in root and not _built(root):
+                    continue
                 out += [(int(a, 16), n) for a, n in re.findall(r"^HOOK\((0x[0-9A-Fa-f]+), (\w+)\);", text, re.M)]
     return out
 
