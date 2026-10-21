@@ -1,0 +1,16 @@
+build/
+__pycache__/
+*.pyc
+.venv/
+
+# game files are never part of this repo
+*.exe
+*.res
+*.qvm
+*.mef
+*.tex
+*.spr
+*.dat
+*.mtp
+*.wav
+*.avi
