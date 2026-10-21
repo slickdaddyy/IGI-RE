@@ -67,6 +67,13 @@ class ImportCalled(Exception):
     pass
 
 
+class ErrorShown(Exception):
+    """The game called Error_Show, which never returns."""
+
+
+ERROR_SHOW = 0x4AF7B0
+
+
 def align(n, a=0x1000):
     return (n + a - 1) & ~(a - 1)
 
@@ -91,6 +98,7 @@ class Emu:
             self.symbols = self._dll_symbols(dll)
         self.uc.hook_add(UC_HOOK_CODE, self._trap, begin=TRAP_BASE, end=TRAP_BASE + TRAP_SIZE - 1)
         self.uc.hook_add(UC_HOOK_MEM_UNMAPPED, self._unmapped)
+        self.uc.hook_add(UC_HOOK_CODE, self._error_show, begin=ERROR_SHOW, end=ERROR_SHOW)
         self.baseline = self.snapshot()
 
     def _load(self, path):
@@ -152,6 +160,10 @@ class Emu:
         else:
             uc.emu_stop()
             self.import_error = ImportCalled("%s!%s" % (dll, name))
+
+    def _error_show(self, uc, addr, size, user):
+        self.import_error = ErrorShown(self.read_cstr(self.arg(0)).decode("latin1"))
+        uc.emu_stop()
 
     def stub(self, name, fn):
         """Emulate an imported function. fn(emu) reads args with emu.arg(i) and returns with emu.ret()."""
