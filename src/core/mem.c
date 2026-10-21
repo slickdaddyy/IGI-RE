@@ -1,0 +1,80 @@
+#include "igi.h"
+#include "orig.h"
+#include "core/mem.h"
+
+#define gMemCount VAR(int, 0x942300)
+#define gMemReady VAR(char, 0x9422FC)
+#define gMemMode VAR(char, 0x9422FD)
+#define gMemModeStack ((char *)0x9422E8)
+#define gMemModeTop VAR(int, 0xA960E0)
+#define gMemList VAR(List, 0xA960F0)
+
+void Mem_SetDefaultMode(void)
+{
+    gMemMode = 1;
+}
+
+void Mem_Init(void)
+{
+    gMemList.head = (Node *)&gMemList.tail;
+    gMemList.tail = NULL;
+    gMemList.tailpred = (Node *)&gMemList;
+    gMemReady = 1;
+    Mem_SetDefaultMode();
+    gMemModeTop = 16;
+}
+
+void Mem_PushMode(char mode)
+{
+    gMemModeStack[--gMemModeTop] = gMemMode;
+    gMemMode = mode;
+}
+
+void Mem_PopMode(void)
+{
+    gMemMode = gMemModeStack[gMemModeTop++];
+}
+
+void *Mem_Alloc(size_t size, size_t align)
+{
+    size_t total = size + sizeof(MemBlock) + align;
+    MemBlock *b;
+    uintptr_t user;
+
+    gMemCount++;
+    b = crt_malloc(total);
+    if (!b) {
+        size_t sum_size = 0, sum_total = 0;
+        Node *n;
+
+        for (n = gMemList.head; n->next; n = n->next) {
+            sum_total += ((MemBlock *)n)->total;
+            sum_size += ((MemBlock *)n)->size;
+        }
+        Error_Show("Mem_Alloc() failed to allocate %d bytes.\r\nTotal allocated by user: %d.\r\nTotal by Mem_Alloc():%d.",
+                   total, sum_size, sum_total);
+        for (;;)
+            ;
+    }
+    user = ((uintptr_t)b + sizeof(MemBlock) - 1 + align) & ~(uintptr_t)(align - 1);
+    *(MemBlock **)((user - 4) & ~(uintptr_t)3) = b;
+    b->node.prev = NULL;
+    b->node.next = NULL;
+    if (!gMemReady)
+        Mem_Init();
+    List_AddTail(&gMemList, &b->node);
+    b->user = (void *)user;
+    b->total = total;
+    b->size = size;
+    return (void *)user;
+}
+
+void Mem_Free(void *p)
+{
+    MemBlock *b;
+
+    gMemCount--;
+    b = *(MemBlock **)(((uintptr_t)p - 4) & ~(uintptr_t)3);
+    List_Remove(&b->node);
+    crt_free(b);
+}
