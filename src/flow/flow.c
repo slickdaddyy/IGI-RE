@@ -1,0 +1,380 @@
+#include <math.h>
+#include <stdio.h>
+#include <windows.h>
+
+#include "igi.h"
+#include "hook.h"
+#include "flow/flow.h"
+
+ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
+ORIG(0x4A5350, FILE *, crt_fopen, (const char *path, const char *mode));
+ORIG(0x4A52A4, int, crt_fseek, (FILE *f, long offset, int origin));
+ORIG(0x4A528A, int, crt_fgetc, (FILE *f));
+ORIG(0x4A5234, int, crt_fclose, (FILE *f));
+ORIG(0x4010A0, void, Game_Quit, (void));
+ORIG(0x405850, void, ConfigRead, (const char *path));
+ORIG(0x405BD0, void, ConfigWrite, (const char *path));
+ORIG(0x406220, char *, IsPlayerProfileActive, (void));
+ORIG(0x406DF0, void, sub_406DF0, (Flow *flow));
+ORIG(0x4061C0, int, sub_4061C0, (int mode, float a0, float a1, float a2, float b0, float b1, float b2,
+                                 float c0, float c1, float c2, float d0, float d1, float d2));
+ORIG(0x4061E0, int, sub_4061E0, (int value));
+ORIG(0x4071E0, void, WeaponConfigRead, (Flow *flow, const char *path));
+ORIG(0x408350, void, GameMaterialLoad, (void));
+ORIG(0x4137A0, void, HumanplayerLoad, (void));
+ORIG(0x413B70, void, WeaponTypeOpen, (void));
+ORIG(0x415020, int, sub_415020, (int key));
+ORIG(0x4154B0, void, sub_4154B0, (void *unk20, int a, int b));
+ORIG(0x416900, void, sub_416900, (Flow *flow));
+ORIG(0x416D40, Task *, sub_416D40, (void));
+ORIG(0x416FE0, void, LevelRestart, (void));
+ORIG(0x418B00, void, MenuManager_New, (void *unk20, const char *path, int a, int b, int c));
+ORIG(0x48F180, void, sub_48F180, (void (*fn)(int active), int unk));
+ORIG(0x490370, int, Timer_GetMs, (void));
+ORIG(0x491220, char, sub_491220, (void));
+ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
+ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
+ORIG(0x4B8A20, int, Script_GetIntArg, (void *args, int index));
+ORIG(0x4C4930, void, MagicObjLoad, (const char *path));
+ORIG(0x4E6030, void, sub_4E6030, (int fps));
+ORIG(0x4E6530, void, sub_4E6530, (Flow *flow));
+ORIG(0x4E7340, void, sub_4E7340, (int first_frames));
+ORIG(0x4E7530, int, sub_4E7530, (void));
+ORIG(0x4E7580, void *, sub_4E7580, (Flow *flow));
+ORIG(0x4E7B80, void, sub_4E7B80, (int a, int b));
+ORIG(0x4E7BB0, void, sub_4E7BB0, (void));
+ORIG(0x4EC0C0, void, AnimTriggerLoad, (const char *path));
+ORIG(0x4ED5C0, void *, sub_4ED5C0, (Flow *flow));
+ORIG(0x4ED5E0, void, sub_4ED5E0, (int a, int b));
+ORIG(0x4EDCB0, uint16_t, sub_4EDCB0, (int unk));
+ORIG(0x4EE030, void, PhysicsObjLoad, (const char *path));
+ORIG(0x4EE3B0, void, sub_4EE3B0, (void));
+ORIG(0x4EE940, char, sub_4EE940, (void));
+
+#define gFlow VAR(Flow *, 0x567C8C)
+#define gFlowType VAR(uint16_t, 0x567C7C)
+#define gFlowPauseStart VAR(int, 0x567C78)
+#define gFlowPauseDepth VAR(int, 0x567C80)
+#define gTaskHandlers ((void (*(*)[TASK_MAX_TYPES])(Task *))0xA96AE0)
+#define gTaskStack ((Task **)0xAFA6E0)
+#define gTaskStackTop VAR(int, 0xAFA7E0)
+#define gUnk5C8E00 VAR(char, 0x5C8E00)
+#define gUnkA4438C ((int *)0xA4438C)
+#define gUnkBC20A0 VAR(int, 0xBC20A0)
+#define gUnkC28C5C VAR(int, 0xC28C5C)
+#define gUnkC28C61 VAR(char, 0xC28C61)
+#define gUnkC28F80 VAR(char, 0xC28F80)
+#define gScriptNumberType ((void *)0x567C74)
+
+void Flow_Open(void)
+{
+    gFlowType = TaskType_New("Flow", sizeof(Flow), Task_GetRootType(), 0);
+    TaskType_SetHandler(gFlowType, TASK_SLOT_CREATE, (TaskHandler)Flow_CreateHandler);
+    TaskType_SetHandler2(gFlowType, TASK_SLOT_RUN, (TaskHandler)Flow_RunHandler);
+    TaskType_SetHandler2(gFlowType, TASK_SLOT_DELETE, (TaskHandler)Flow_DeleteHandler);
+    Script_RegisterConstant("FLOW_EVENT_QUIT", FLOW_EVENT_QUIT);
+    Script_RegisterConstant("FLOW_EVENT_INTRO", FLOW_EVENT_INTRO);
+    Script_RegisterConstant("FLOW_EVENT_MAINMENU", FLOW_EVENT_MAINMENU);
+    Script_RegisterConstant("FLOW_EVENT_GAME", FLOW_EVENT_GAME);
+    Script_RegisterConstant("FLOW_EVENT_RESTART_GAME", FLOW_EVENT_RESTART_GAME);
+    Script_RegisterFunction("Flow_RequestEvent", Flow_RequestEvent, NULL, 1);
+}
+HOOK(0x401FC0, Flow_Open);
+
+void Flow_CreateHandler(Flow *flow)
+{
+    FILE *f;
+    int ok;
+
+    gFlow = flow;
+    gFlow->root = Task_New(NULL, Task_GetRootType(), NULL);
+    Task_SetUnk567C60((int)gFlow->root);
+    FramesSet(30);
+    gFlow->ticks_since_render = 0;
+    gFlow->time_adjust = 0;
+    gFlow->paused_time = 0;
+    ConfigRead("LOCAL:config.qsc");
+    WeaponTypeOpen();
+    HumanplayerLoad();
+    GameMaterialLoad();
+    MagicObjLoad("LOCAL:magicobj");
+    AnimTriggerLoad("LOCAL:animtrigger");
+    PhysicsObjLoad("LOCAL:physicsobj");
+    WeaponConfigRead(flow, "LOCAL:weapons/weaponconfig.qsc");
+    Task_New(&flow->task, sub_4EDCB0(0), NULL);
+    sub_406DF0(flow);
+    gFlow->event = 0;
+    gFlow->request = 0;
+    gFlow->unk20 = sub_4E7580(gFlow);
+    gFlow->unk24 = sub_4ED5C0(gFlow);
+    sub_4E6530(gFlow);
+    if (gUnkC28C61) {
+        int v = sub_4061C0(gUnkC28F80 ? 3 : 0, 0.03f, 0.001f, 0.001f, 0.03f, 0.001f, 0.001f,
+                           0.03f, 0.001f, 0.001f, 0.03f, 0.001f, 0.001f);
+        sub_4ED5E0(0, sub_4061E0(v));
+        gUnkBC20A0 = 1;
+    }
+    sub_48F180(Flow_FocusChanged, 0);
+    /* disc check: first byte of anys.afp must be ':' */
+    f = crt_fopen(".\\anys.afp", "rb");
+    if (f) {
+        crt_fseek(f, 0, SEEK_SET);
+        ok = crt_fgetc(f) == 0x3A;
+        crt_fclose(f);
+        if (ok)
+            return;
+    }
+    Error_Show("EXCEPTION FAULT: 0x000002");
+    for (;;)
+        ;
+}
+HOOK(0x402070, Flow_CreateHandler);
+
+void Flow_FocusChanged(int active)
+{
+    if (active)
+        Flow_PauseEnd();
+    else
+        Flow_PauseBegin();
+}
+HOOK(0x402240, Flow_FocusChanged);
+
+/* run one handler slot on each direct child of task */
+static void run_children(Task *task, int render)
+{
+    Node *n = task->children.head;
+    Task *t;
+    int slot;
+
+    if (!n->next)
+        return;
+    while (n) {
+        t = (Task *)n;
+        gTaskStack[gTaskStackTop++] = n->next && n->next->next ? (Task *)n->next : NULL;
+        slot = render ? sub_4E7530() : TASK_SLOT_RUN;
+        if (gTaskHandlers[slot][t->type])
+            gTaskHandlers[slot][t->type](t);
+        n = (Node *)gTaskStack[--gTaskStackTop];
+    }
+}
+
+void Flow_RunHandler(Flow *flow)
+{
+    int now = Timer_GetMs();
+    int frames, due;
+
+    if (!gUnk5C8E00 && !sub_4EE940() && !sub_491220()) {
+        frames = gFlow->frames;
+        due = (int)llrint((double)(gFlow->paused_time + gFlow->start_time) + 1000.0 / gFlow->fps * frames);
+        if (due < now && gFlow->ticks_since_render < 11 && (gFlow->need_render || frames > 2)) {
+            gUnkA4438C[0] = 0;
+            gUnkA4438C[1] = 0;
+            gUnkA4438C[2] = 0;
+            sub_4E7BB0();
+            sub_4E7B80(0, 0);
+            if (frames < 2)
+                Flow_PauseBegin();
+            sub_4E7340(frames < 2);
+            run_children(&flow->task, 0);
+            run_children(gFlow->root, 0);
+            if (frames < 2)
+                Flow_PauseEnd();
+            gFlow->frames++;
+            gFlow->need_render = 0;
+            gFlow->ticks_since_render++;
+        } else if (!gFlow->need_render) {
+            if (gFlow->renders < 2)
+                Flow_PauseBegin();
+            run_children(&flow->task, 1);
+            if (gFlow->renders < 2)
+                Flow_PauseEnd();
+            gFlow->renders++;
+            gFlow->need_render = 1;
+            gFlow->ticks_since_render = 0;
+        }
+    } else {
+        run_children(&flow->task, 0);
+        run_children(gFlow->root, 0);
+        gFlow->frames++;
+        if (!sub_491220())
+            run_children(&flow->task, 1);
+        gFlow->renders++;
+        sub_4E7BB0();
+        sub_4E7B80(0, 0);
+    }
+
+    if (gFlow->request) {
+        int event = gFlow->request;
+
+        gFlow->event = event;
+        gFlow->request = 0;
+        switch (event) {
+        case FLOW_EVENT_QUIT:
+            Game_Quit();
+            return;
+        case FLOW_EVENT_INTRO:
+            sub_4154B0(Flow_GetUnk20(), 0, 0);
+            break;
+        case FLOW_EVENT_LEAVE_GAME:
+            Task_Delete(sub_416D40());
+            gFlow->event = FLOW_EVENT_MAINMENU;
+            /* fall through */
+        case FLOW_EVENT_MAINMENU:
+            MenuManager_New(Flow_GetUnk20(), "LOCAL:menusystem\\mainmenu.qsc", 1, 1, 1);
+            break;
+        case FLOW_EVENT_GAME:
+            sub_416900(flow);
+            FramesSet(30);
+            break;
+        case FLOW_EVENT_RESTART_GAME:
+            LevelRestart();
+            FramesSet(30);
+            gFlow->event = FLOW_EVENT_GAME;
+            break;
+        case FLOW_EVENT_MOVIE_A:
+            sub_4154B0(Flow_GetUnk20(), 1, 0);
+            break;
+        case FLOW_EVENT_MOVIE_B:
+            sub_4154B0(Flow_GetUnk20(), 0, 1);
+            break;
+        }
+    }
+    gUnkC28C5C = gFlow->frames;
+    gFlow->start_time += gFlow->time_adjust;
+    if (sub_415020(0x43))
+        *(int *)(IsPlayerProfileActive() + 0x560) = 14;
+}
+HOOK(0x402260, Flow_RunHandler);
+
+void Flow_DeleteHandler(Flow *flow)
+{
+    (void)flow;
+    sub_48F180(NULL, 0);
+    ConfigWrite("LOCAL:config.qsc");
+    sub_4EE3B0();
+    Task_Delete(gFlow->root);
+    gFlow = NULL;
+}
+HOOK(0x402740, Flow_DeleteHandler);
+
+void Flow_RequestEvent(ScriptValue *ret, void *unused, void *args)
+{
+    (void)unused;
+    Flow_SetRequest(Script_GetIntArg(args, 0));
+    ret->i = 1;
+    ret->d = 1.0;
+    ret->type = gScriptNumberType;
+}
+HOOK(0x402780, Flow_RequestEvent);
+
+void Flow_Close(void)
+{
+    TaskType_Free(gFlowType);
+}
+HOOK(0x4027E0, Flow_Close);
+
+uint16_t Flow_GetType(void)
+{
+    return gFlowType;
+}
+HOOK(0x4027F0, Flow_GetType);
+
+void Flow_New(Task *parent)
+{
+    Task_New(parent, gFlowType, NULL);
+}
+HOOK(0x402800, Flow_New);
+
+void FramesSet(int fps)
+{
+    gFlow->start_time = Timer_GetMs();
+    gFlow->paused_time = 0;
+    gFlow->frames = 0;
+    gFlow->renders = 0;
+    gFlow->fps = fps;
+    gFlow->need_render = 1;
+    sub_4E6030(fps);
+}
+HOOK(0x402820, FramesSet);
+
+int Flow_GetFps(void)
+{
+    return gFlow->fps;
+}
+HOOK(0x402870, Flow_GetFps);
+
+Flow *Flow_Get(void)
+{
+    return gFlow;
+}
+HOOK(0x402880, Flow_Get);
+
+void *Flow_GetUnk20(void)
+{
+    return gFlow->unk20;
+}
+HOOK(0x402890, Flow_GetUnk20);
+
+void Flow_SetRequest(int event)
+{
+    gFlow->request = event;
+}
+HOOK(0x4028A0, Flow_SetRequest);
+
+int Flow_GetFrames(void)
+{
+    return gFlow->frames;
+}
+HOOK(0x4028B0, Flow_GetFrames);
+
+int Flow_GetRenders(void)
+{
+    return gFlow->renders;
+}
+HOOK(0x4028C0, Flow_GetRenders);
+
+void Flow_PauseBegin(void)
+{
+    if (!gFlowPauseDepth)
+        gFlowPauseStart = Timer_GetMs();
+    gFlowPauseDepth++;
+}
+HOOK(0x4028D0, Flow_PauseBegin);
+
+void Flow_PauseEnd(void)
+{
+    gFlowPauseDepth--;
+    if (!gFlowPauseDepth) {
+        gFlow->paused_time += Timer_GetMs() - gFlowPauseStart;
+        gFlowPauseStart = 0;
+    }
+}
+HOOK(0x4028F0, Flow_PauseEnd);
+
+/* The supported exe carries a no-CD patch here: the drive letter, the
+   CD-ROM type test and the path setup are NOPed out, so every pass checks
+   the game folder. */
+void Flow_CheckCD(void)
+{
+    char root[4];
+    FILE *f;
+    int ok;
+    char drive;
+
+    *(uint32_t *)root = VAR(uint32_t, 0x536408);
+    for (drive = 'A'; drive <= 'Z'; drive++) {
+        GetDriveTypeA(root);
+        f = crt_fopen(".\\ymbe.afp", "rb");
+        if (f) {
+            crt_fseek(f, 0, SEEK_SET);
+            ok = crt_fgetc(f) == 0x40;
+            crt_fclose(f);
+            if (ok)
+                return;
+        }
+    }
+    Error_Show("IGI CD not found. Please insert CD in drive.");
+    for (;;)
+        ;
+}
+HOOK(0x402F50, Flow_CheckCD);

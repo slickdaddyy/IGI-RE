@@ -254,7 +254,6 @@ class Emu:
             if only is None or addr in only:
                 self.write(addr, b"\xe9" + struct.pack("<i", fn - addr - 5))
                 self.uc.ctl_remove_cache(addr, addr + 5)
-        self.baseline = self.snapshot()
 
     def fake(self, addr, ret=0, nargs=0):
         """Replace the original function at addr with a stub that logs (addr, args) and returns ret.
@@ -271,12 +270,10 @@ class Emu:
         self.fake_ret_at[addr] = stub + len(code) - 5
         self.write(addr, b"\xe9" + struct.pack("<i", stub - addr - 5))
         self.uc.ctl_remove_cache(addr, addr + 5)
-        self.baseline = self.snapshot()
 
     def set_fake_ret(self, addr, value):
         self.write(self.fake_ret_at[addr], struct.pack("<I", value & 0xFFFFFFFF))
         self.uc.ctl_remove_cache(self.fake_ret_at[addr], self.fake_ret_at[addr] + 4)
-        self.baseline = self.snapshot()
 
     def call_log(self):
         n = self.u32(CALL_LOG)
