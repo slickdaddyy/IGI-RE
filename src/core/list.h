@@ -18,5 +18,8 @@ typedef struct List {
 void List_AddTail(List *list, Node *node);
 void List_AddHead(List *list, Node *node);
 void List_Remove(Node *node);
+Node *List_RemHead(List *list);
+void List_InsertBefore(Node *pos, Node *node);
+int List_Count(List *list);
 
 #endif

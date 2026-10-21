@@ -14,7 +14,10 @@ typedef struct MemBlock {
 } MemBlock;
 
 void Mem_Init(void);
+void Mem_Shutdown(void);
 void Mem_SetDefaultMode(void);
+void Mem_ClearMode(void);
+char Mem_GetMode(void);
 void *Mem_Alloc(size_t size, size_t align);
 void Mem_Free(void *p);
 void Mem_PushMode(char mode);

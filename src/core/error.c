@@ -1,0 +1,95 @@
+#include <stdarg.h>
+#include <string.h>
+
+#include "hook.h"
+#include "igi.h"
+#include "core/error.h"
+
+ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
+ORIG(0x4A5702, int, crt_vsprintf, (char *buf, const char *fmt, va_list ap));
+
+#define gErrorHandler VAR(ErrorHandler, 0x936268)
+#define gErrorExitHandler VAR(ErrorHandler, 0x93626C)
+#define gWarningHandler VAR(ErrorHandler, 0x936274)
+#define gUnk93625C VAR(void *, 0x93625C)
+#define gUnk936270 VAR(void *, 0x936270)
+#define gUnk93627C VAR(int, 0x93627C)
+#define gErrorText ((char *)0xA84640)
+
+void Error_Show(const char *fmt, ...)
+{
+    if (gErrorHandler) {
+        va_list ap;
+
+        va_start(ap, fmt);
+        crt_sprintf(gErrorText, "Fatal error:\n\n");
+        crt_vsprintf(gErrorText + strlen(gErrorText), fmt, ap);
+        gErrorHandler(gErrorText);
+        va_end(ap);
+    }
+    /* the original jumps here with the caller's arguments still on the stack */
+    if (gErrorExitHandler)
+        gErrorExitHandler(fmt);
+}
+HOOK(0x4AF7B0, Error_Show);
+
+void Warning_Show(const char *fmt, ...)
+{
+    if (gWarningHandler) {
+        va_list ap;
+
+        va_start(ap, fmt);
+        crt_sprintf(gErrorText, "Warning:\n\n");
+        crt_vsprintf(gErrorText + strlen(gErrorText), fmt, ap);
+        gWarningHandler(gErrorText);
+        va_end(ap);
+    }
+}
+HOOK(0x4AF810, Warning_Show);
+
+void Error_SetHandler(ErrorHandler fn)
+{
+    gErrorHandler = fn;
+}
+HOOK(0x4AF860, Error_SetHandler);
+
+void sub_4AF870(void *p)
+{
+    gUnk936270 = p;
+}
+HOOK(0x4AF870, sub_4AF870);
+
+void Warning_SetHandler(ErrorHandler fn)
+{
+    gWarningHandler = fn;
+}
+HOOK(0x4AF880, Warning_SetHandler);
+
+void sub_4AF890(void *p)
+{
+    gUnk93625C = p;
+}
+HOOK(0x4AF890, sub_4AF890);
+
+void Error_SetExitHandler(ErrorHandler fn)
+{
+    gErrorExitHandler = fn;
+}
+HOOK(0x4AF8A0, Error_SetExitHandler);
+
+void sub_4AF8B0(int v)
+{
+    gUnk93627C = v;
+}
+HOOK(0x4AF8B0, sub_4AF8B0);
+
+void Error_ResetHandlers(void)
+{
+    Error_SetHandler(NULL);
+    Error_SetExitHandler(NULL);
+    sub_4AF870(NULL);
+    Warning_SetHandler(NULL);
+    sub_4AF890(NULL);
+    sub_4AF8B0(0);
+}
+HOOK(0x4AF8C0, Error_ResetHandlers);
