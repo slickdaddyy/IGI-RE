@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "hook.h"
 #include "orig.h"
 #include "core/mem.h"
 #include "script/symtab.h"
@@ -12,6 +13,7 @@ unsigned int SymbolTable_Hash(const char *name, unsigned int count)
         h = h * 32 + (unsigned char)*name++;
     return h % count;
 }
+HOOK(0x4C0530, SymbolTable_Hash);
 
 char SymbolTable_Find(SymbolTable *table, Symbol **out, const char *name)
 {
@@ -26,6 +28,7 @@ char SymbolTable_Find(SymbolTable *table, Symbol **out, const char *name)
     *out = NULL;
     return 0;
 }
+HOOK(0x4C04B0, SymbolTable_Find);
 
 char *SymbolTable_Add(SymbolTable *table, const char *name, void *value)
 {
@@ -46,6 +49,7 @@ char *SymbolTable_Add(SymbolTable *table, const char *name, void *value)
     List_AddHead(&table->buckets[SymbolTable_Hash(name, table->count)], &s->node);
     return s->name;
 }
+HOOK(0x4C0560, SymbolTable_Add);
 
 char *SymbolTable_Lookup(SymbolTable *table, void **value, const char *name)
 {
@@ -60,3 +64,4 @@ char *SymbolTable_Lookup(SymbolTable *table, void **value, const char *name)
         *value = NULL;
     return NULL;
 }
+HOOK(0x4C0620, SymbolTable_Lookup);

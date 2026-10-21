@@ -1,5 +1,6 @@
 """Run original IGI.exe code and our rewritten code side by side in an x86 emulator."""
 import os
+import re
 import struct
 import subprocess
 
@@ -14,6 +15,17 @@ RETURN_MAGIC = TRAP_BASE + TRAP_SIZE - 0x10
 
 GAME_EXE = os.environ.get("IGI_EXE", "")
 OUR_DLL = os.environ.get("IGI_DLL", os.path.join(os.path.dirname(__file__), "..", "build", "dinput.dll"))
+
+
+def source_hooks():
+    """(address, function name) for every HOOK() line in src."""
+    out = []
+    for root, _, files in os.walk(os.path.join(os.path.dirname(__file__), "..", "src")):
+        for f in files:
+            if f.endswith(".c"):
+                text = open(os.path.join(root, f)).read()
+                out += [(int(a, 16), n) for a, n in re.findall(r"^HOOK\((0x[0-9A-Fa-f]+), (\w+)\);", text, re.M)]
+    return out
 
 
 class ImportCalled(Exception):
@@ -196,13 +208,7 @@ class Emu:
         return self.uc.reg_read(UC_X86_REG_EAX), self.uc.reg_read(UC_X86_REG_EDX), st0
 
     def hook_table(self):
-        out, p = [], self.symbols["hooks"]
-        while True:
-            addr, fn = struct.unpack("<II", self.read(p, 8))
-            if not addr:
-                return out
-            out.append((addr, fn))
-            p += 8
+        return [(addr, self.symbols[fn]) for addr, fn in source_hooks()]
 
     def install_hooks(self, only=None):
         """Patch jumps to our code into the emulated exe, like the real DLL does."""

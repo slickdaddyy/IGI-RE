@@ -20,15 +20,29 @@ static void patch_jump(uint32_t at, void *to)
     VirtualProtect(p, 5, old, &old);
 }
 
+typedef struct Hook {
+    uint32_t addr;
+    void *fn;
+} Hook;
+
+static Hook hooks[8192];
+static int hook_count;
+
+void Hook_Add(uint32_t addr, void *fn)
+{
+    if (hook_count < (int)(sizeof(hooks) / sizeof(hooks[0])))
+        hooks[hook_count++] = (Hook){addr, fn};
+}
+
 void Hook_InstallAll(void)
 {
-    const Hook *h;
+    int i;
 
     if (!Hook_IsSupportedExe()) {
         MessageBoxA(NULL, "Unsupported IGI.exe version. The EU version is required.", "IGI", MB_OK | MB_ICONERROR);
         return;
     }
-    for (h = hooks; h->addr; h++)
-        patch_jump(h->addr, h->fn);
+    for (i = 0; i < hook_count; i++)
+        patch_jump(hooks[i].addr, hooks[i].fn);
     FlushInstructionCache(GetCurrentProcess(), NULL, 0);
 }

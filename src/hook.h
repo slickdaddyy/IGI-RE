@@ -3,13 +3,11 @@
 
 #include <stdint.h>
 
-typedef struct Hook {
-    uint32_t addr;
-    void *fn;
-} Hook;
+/* Replace the original function at addr with fn when the DLL loads. */
+#define HOOK(addr, fn) \
+    static void __attribute__((constructor)) hook_##fn(void) { Hook_Add(addr, (void *)fn); }
 
-extern const Hook hooks[];
-
+void Hook_Add(uint32_t addr, void *fn);
 int Hook_IsSupportedExe(void);
 void Hook_InstallAll(void);
 

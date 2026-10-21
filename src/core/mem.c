@@ -1,3 +1,4 @@
+#include "hook.h"
 #include "igi.h"
 #include "orig.h"
 #include "core/mem.h"
@@ -13,6 +14,7 @@ void Mem_SetDefaultMode(void)
 {
     gMemMode = 1;
 }
+HOOK(0x4B0D40, Mem_SetDefaultMode);
 
 void Mem_Init(void)
 {
@@ -23,17 +25,20 @@ void Mem_Init(void)
     Mem_SetDefaultMode();
     gMemModeTop = 16;
 }
+HOOK(0x4B0BA0, Mem_Init);
 
 void Mem_PushMode(char mode)
 {
     gMemModeStack[--gMemModeTop] = gMemMode;
     gMemMode = mode;
 }
+HOOK(0x4B0D60, Mem_PushMode);
 
 void Mem_PopMode(void)
 {
     gMemMode = gMemModeStack[gMemModeTop++];
 }
+HOOK(0x4B0D90, Mem_PopMode);
 
 void *Mem_Alloc(size_t size, size_t align)
 {
@@ -68,6 +73,7 @@ void *Mem_Alloc(size_t size, size_t align)
     b->size = size;
     return (void *)user;
 }
+HOOK(0x4B0C60, Mem_Alloc);
 
 void Mem_Free(void *p)
 {
@@ -78,3 +84,4 @@ void Mem_Free(void *p)
     List_Remove(&b->node);
     crt_free(b);
 }
+HOOK(0x4B0D10, Mem_Free);
