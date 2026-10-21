@@ -17,6 +17,33 @@ GAME_EXE = os.environ.get("IGI_EXE", "")
 OUR_DLL = os.environ.get("IGI_DLL", os.path.join(os.path.dirname(__file__), "..", "build", "dinput.dll"))
 
 
+def _memcpy(e):
+    e.write(e.arg(0), e.read(e.arg(1), e.arg(2)))
+    e.ret(e.arg(0))
+
+
+def _strcmp(e):
+    x, y = e.read_cstr(e.arg(0)), e.read_cstr(e.arg(1))
+    e.ret((x > y) - (x < y))
+
+
+DEFAULT_STUBS = {
+    "HeapAlloc": lambda e: e.ret(e.alloc(e.arg(2)), 12),
+    "HeapFree": lambda e: e.ret(1, 12),
+    "GetProcessHeap": lambda e: e.ret(1),
+    "VirtualAlloc": lambda e: e.ret(e.alloc(e.arg(1)), 16),
+    "malloc": lambda e: e.ret(e.alloc(e.arg(0))),
+    "calloc": lambda e: e.ret(e.alloc(e.arg(0) * e.arg(1))),
+    "free": lambda e: e.ret(0),
+    "memcpy": _memcpy,
+    "memmove": _memcpy,
+    "memset": lambda e: (e.write(e.arg(0), bytes([e.arg(1) & 0xFF]) * e.arg(2)), e.ret(e.arg(0))),
+    "strlen": lambda e: e.ret(len(e.read_cstr(e.arg(0)))),
+    "strcpy": lambda e: (e.write(e.arg(0), e.read_cstr(e.arg(1)) + b"\0"), e.ret(e.arg(0))),
+    "strcmp": _strcmp,
+}
+
+
 def source_hooks():
     """(address, function name) for every HOOK() line in src."""
     out = []
@@ -44,6 +71,7 @@ class Emu:
         self.imports = []
         self.heap_top = HEAP_BASE
         self.writable = []
+        self.stubs = dict(DEFAULT_STUBS)
         self.uc.mem_map(STACK_BASE, STACK_SIZE, UC_PROT_ALL)
         self.uc.mem_map(HEAP_BASE, HEAP_SIZE, UC_PROT_ALL)
         self.uc.mem_map(TRAP_BASE, TRAP_SIZE, UC_PROT_ALL)
@@ -88,11 +116,11 @@ class Emu:
 
     # --- imports -----------------------------------------------------------
 
-    def _arg(self, i):
+    def arg(self, i):
         esp = self.uc.reg_read(UC_X86_REG_ESP)
         return struct.unpack("<I", self.uc.mem_read(esp + 4 + 4 * i, 4))[0]
 
-    def _ret(self, value, pop=0):
+    def ret(self, value, pop=0):
         esp = self.uc.reg_read(UC_X86_REG_ESP)
         ret = struct.unpack("<I", self.uc.mem_read(esp, 4))[0]
         self.uc.reg_write(UC_X86_REG_EAX, value & 0xFFFFFFFF)
@@ -110,38 +138,16 @@ class Emu:
             uc.emu_stop()
             return
         dll, name = self.imports[(addr - TRAP_BASE) // 4]
-        a = self._arg
-        if name == "HeapAlloc":
-            self._ret(self.alloc(a(2)), 12)
-        elif name == "HeapFree":
-            self._ret(1, 12)
-        elif name == "GetProcessHeap":
-            self._ret(1)
-        elif name == "VirtualAlloc":
-            self._ret(self.alloc(a(1)), 16)
-        elif name == "malloc":
-            self._ret(self.alloc(a(0)))
-        elif name == "free":
-            self._ret(0)
-        elif name in ("memcpy", "memmove"):
-            n = a(2)
-            uc.mem_write(a(0), bytes(uc.mem_read(a(1), n)))
-            self._ret(a(0))
-        elif name == "memset":
-            uc.mem_write(a(0), bytes([a(1) & 0xFF]) * a(2))
-            self._ret(a(0))
-        elif name == "strlen":
-            self._ret(len(self.read_cstr(a(0))))
-        elif name == "strcpy":
-            s = self.read_cstr(a(1))
-            uc.mem_write(a(0), s + b"\0")
-            self._ret(a(0))
-        elif name == "strcmp":
-            x, y = self.read_cstr(a(0)), self.read_cstr(a(1))
-            self._ret((x > y) - (x < y))
+        stub = self.stubs.get(name)
+        if stub:
+            stub(self)
         else:
             uc.emu_stop()
             self.import_error = ImportCalled("%s!%s" % (dll, name))
+
+    def stub(self, name, fn):
+        """Emulate an imported function. fn(emu) reads args with emu.arg(i) and returns with emu.ret()."""
+        self.stubs[name] = fn
 
     def _unmapped(self, uc, access, addr, size, value, user):
         self.mem_error = "unmapped access at 0x%x (eip 0x%x)" % (addr, uc.reg_read(UC_X86_REG_EIP))
