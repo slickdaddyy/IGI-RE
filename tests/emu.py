@@ -11,6 +11,8 @@ from unicorn.x86_const import *
 STACK_BASE, STACK_SIZE = 0x00100000, 0x00100000
 HEAP_BASE, HEAP_SIZE = 0x20000000, 0x04000000
 TRAP_BASE, TRAP_SIZE = 0x70000000, 0x00010000
+FAKE_BASE, FAKE_SIZE = 0x30000000, 0x00100000
+CALL_LOG = FAKE_BASE + 0x80000
 RETURN_MAGIC = TRAP_BASE + TRAP_SIZE - 0x10
 
 GAME_EXE = os.environ.get("IGI_EXE", "")
@@ -90,7 +92,11 @@ class Emu:
         self.uc.mem_map(STACK_BASE, STACK_SIZE, UC_PROT_ALL)
         self.uc.mem_map(HEAP_BASE, HEAP_SIZE, UC_PROT_ALL)
         self.uc.mem_map(TRAP_BASE, TRAP_SIZE, UC_PROT_ALL)
-        self.writable += [(HEAP_BASE, HEAP_SIZE)]
+        self.uc.mem_map(FAKE_BASE, FAKE_SIZE, UC_PROT_ALL)
+        self.fake_top = FAKE_BASE + 0x10
+        self.fake_ret_at = {}
+        self.images = []
+        self.writable += [(HEAP_BASE, HEAP_SIZE), (CALL_LOG, FAKE_BASE + FAKE_SIZE - CALL_LOG)]
         self._load(exe)
         self.symbols = {}
         if dll and os.path.exists(dll):
@@ -105,6 +111,7 @@ class Emu:
         pe = pefile.PE(path)
         base = pe.OPTIONAL_HEADER.ImageBase
         size = align(pe.OPTIONAL_HEADER.SizeOfImage)
+        self.images.append((base, base + size))
         self.uc.mem_map(base, size, UC_PROT_ALL)
         self.uc.mem_write(base, pe.header[: pe.OPTIONAL_HEADER.SizeOfHeaders])
         for s in pe.sections:
@@ -221,8 +228,11 @@ class Emu:
         self.uc.mem_write(RETURN_MAGIC, b"\xc3")
         for reg, v in ((UC_X86_REG_ESP, esp), (UC_X86_REG_EBP, 0), (UC_X86_REG_ECX, ecx), (UC_X86_REG_EDX, edx), (UC_X86_REG_EAX, 0)):
             self.uc.reg_write(reg, v)
+        # start every call with an empty x87 stack: fninit; jmp addr
+        self.uc.mem_write(FAKE_BASE, b"\xdb\xe3\xe9" + struct.pack("<i", addr - (FAKE_BASE + 7)))
+        self.uc.ctl_remove_cache(FAKE_BASE, FAKE_BASE + 7)
         try:
-            self.uc.emu_start(addr, RETURN_MAGIC, count=limit)
+            self.uc.emu_start(FAKE_BASE, RETURN_MAGIC, count=limit)
         except UcError as e:
             raise RuntimeError(self.mem_error or "emulation error %s at eip 0x%x" % (e, self.uc.reg_read(UC_X86_REG_EIP)))
         if self.import_error:
@@ -230,18 +240,67 @@ class Emu:
         if self.uc.reg_read(UC_X86_REG_EIP) != RETURN_MAGIC:
             raise RuntimeError("did not return (eip 0x%x)" % self.uc.reg_read(UC_X86_REG_EIP))
         self.popped = self.uc.reg_read(UC_X86_REG_ESP) - esp - 4
-        st0 = self.uc.reg_read(UC_X86_REG_FP0)
+        top = (self.uc.reg_read(UC_X86_REG_FPSW) >> 11) & 7
+        st0 = self.uc.reg_read(UC_X86_REG_FP0 + top)
         return self.uc.reg_read(UC_X86_REG_EAX), self.uc.reg_read(UC_X86_REG_EDX), st0
 
     def hook_table(self):
-        return [(addr, self.symbols[fn]) for addr, fn in source_hooks()]
+        # skip hooks whose source is newer than the DLL being tested
+        return [(addr, self.symbols[fn]) for addr, fn in source_hooks() if fn in self.symbols]
 
     def install_hooks(self, only=None):
         """Patch jumps to our code into the emulated exe, like the real DLL does."""
         for addr, fn in self.hook_table():
             if only is None or addr in only:
                 self.write(addr, b"\xe9" + struct.pack("<i", fn - addr - 5))
+                self.uc.ctl_remove_cache(addr, addr + 5)
         self.baseline = self.snapshot()
+
+    def fake(self, addr, ret=0, nargs=0):
+        """Replace the original function at addr with a stub that logs (addr, args) and returns ret.
+        Lasts for the life of this Emu, so use a separate Emu for tests that fake callees."""
+        count, log = CALL_LOG, CALL_LOG + 4
+        code = b"\x8b\x0d" + struct.pack("<I", count)
+        code += b"\xc7\x04\x8d" + struct.pack("<II", log, addr) + b"\x41"
+        for i in range(nargs):
+            code += b"\x8b\x44\x24" + bytes([4 + 4 * i]) + b"\x89\x04\x8d" + struct.pack("<I", log) + b"\x41"
+        code += b"\x89\x0d" + struct.pack("<I", count) + b"\xb8" + struct.pack("<I", ret & 0xFFFFFFFF) + b"\xc3"
+        stub = self.fake_top
+        self.fake_top += (len(code) + 15) & ~15
+        self.write(stub, code)
+        self.fake_ret_at[addr] = stub + len(code) - 5
+        self.write(addr, b"\xe9" + struct.pack("<i", stub - addr - 5))
+        self.uc.ctl_remove_cache(addr, addr + 5)
+        self.baseline = self.snapshot()
+
+    def set_fake_ret(self, addr, value):
+        self.write(self.fake_ret_at[addr], struct.pack("<I", value & 0xFFFFFFFF))
+        self.uc.ctl_remove_cache(self.fake_ret_at[addr], self.fake_ret_at[addr] + 4)
+        self.baseline = self.snapshot()
+
+    def call_log(self):
+        n = self.u32(CALL_LOG)
+        return list(struct.unpack("<%dI" % n, self.read(CALL_LOG + 4, 4 * n)))
+
+    def normalize(self, v):
+        """Make a word comparable between original and rewritten code: our hooked functions
+        map to the original address, pointers to C strings become the string."""
+        if not hasattr(self, "_orig_of"):
+            self._orig_of = {fn: addr for addr, fn in self.hook_table()}
+        if v in self._orig_of:
+            return self._orig_of[v]
+        if any(lo <= v < hi for lo, hi in self.images):
+            try:
+                text = self.read_cstr(v, 256)
+            except Exception:
+                return v
+            if len(text) >= 2 and all(32 <= c < 127 or c in (9, 10, 13) for c in text):
+                return text
+        return v
+
+    def words(self, changed):
+        """Changed bytes -> {aligned address: normalized word value now in memory}."""
+        return {a: self.normalize(self.u32(a)) for a in sorted({k & ~3 for k in changed})}
 
     def changes(self, before, ignore=()):
         """Bytes in writable memory (not stack) that differ from snapshot `before`."""
@@ -259,8 +318,10 @@ class Emu:
         return out
 
 
-def compare(emu, orig_addr, ours, args=(), setup=None, ignore=(), check_eax=True, check_st0=False, eax_mask=0xFFFFFFFF, **kw):
-    """Run original then ours from the same state. setup(emu) may return the call args."""
+def compare(emu, orig_addr, ours, args=(), setup=None, ignore=(), check_eax=True, check_st0=False, eax_mask=0xFFFFFFFF,
+            normalized=False, **kw):
+    """Run original then ours from the same state. setup(emu) may return the call args.
+    normalized=True compares memory and the fake call log word by word through emu.normalize."""
     results = []
     for target in (orig_addr, ours):
         emu.reset()
@@ -269,7 +330,11 @@ def compare(emu, orig_addr, ours, args=(), setup=None, ignore=(), check_eax=True
             call_args = setup(emu) or args
         before = emu.snapshot()
         r = emu.call(target, *call_args, **kw)
-        results.append((r, emu.changes(before, ignore), emu.popped))
+        mem = emu.changes(before, ignore)
+        if normalized:
+            mem = emu.words(mem)
+            mem["calls"] = [emu.normalize(v) for v in emu.call_log()]
+        results.append((r, mem, emu.popped))
     (ro, mo, po), (rn, mn, pn) = results
     assert po == pn, "stack cleanup differs: orig pops %d, ours %d" % (po, pn)
     assert mo == mn, "memory differs: %s" % diff_text(mo, mn)
@@ -281,9 +346,11 @@ def compare(emu, orig_addr, ours, args=(), setup=None, ignore=(), check_eax=True
 
 
 def diff_text(a, b, limit=16):
-    keys = sorted(set(a) | set(b))
+    if "calls" in a and a.get("calls") != b.get("calls"):
+        return "calls differ:\n orig %s\n ours %s" % (a["calls"], b["calls"])
+    keys = sorted(set(a) | set(b), key=str)
     bad = [k for k in keys if a.get(k) != b.get(k)][:limit]
-    return ", ".join("0x%x: %s/%s" % (k, a.get(k), b.get(k)) for k in bad)
+    return ", ".join("%s: %s/%s" % (hex(k) if isinstance(k, int) else k, a.get(k), b.get(k)) for k in bad)
 
 
 def compare_hooked(plain, hooked, addr, args=(), setup=None, ignore=()):
