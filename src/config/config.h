@@ -1,0 +1,153 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#include "igi.h"
+
+/* Same layout as the script engine's value. Bytes 4 and 20 are never set. */
+typedef struct ScriptValue {
+    int i;
+    int unk4;
+    double d;
+    const char *s;
+    int unk14;
+} ScriptValue;
+
+typedef struct ConfigDisplayMode {
+    int width;
+    int height;
+    int depth;
+} ConfigDisplayMode;
+
+/* A screen mode as the display driver lists it. */
+typedef struct DisplayMode {
+    int unk0;
+    int width;
+    int height;
+    int unkC;
+    int depth;
+    int unk14;
+    int unk18;
+    char device[0x100];
+} DisplayMode;
+
+/* One render device found at startup and the screen modes it offers. */
+typedef struct ConfigDevice {
+    char name[0x80];
+    char desc[0x80];
+    ConfigDisplayMode modes[64];
+    int mode_count;
+} ConfigDevice;
+
+typedef struct GraphicOptions {
+    int width;
+    int height;
+    int depth;
+    int perf_flags;
+    char transparency;
+    char unk11;
+    char unk12;
+    char device[0x100];
+    char device_desc[0x100];
+    char pad213;
+    float gamma;
+} GraphicOptions;
+
+typedef struct SoundOptions {
+    float fx_volume;
+    float music_volume;
+    float speech_volume;
+    char fx;
+    char music;
+    char speech;
+    char reverse_stereo;
+} SoundOptions;
+
+typedef struct InputRemap {
+    int action;
+    int device;
+    int key;
+} InputRemap;
+
+typedef struct PlayerProfile {
+    int difficulty;
+    int language;
+    char blood;
+    char pad9[3];
+    GraphicOptions gfx;
+    SoundOptions sound;
+    InputRemap remaps[64];
+    int remap_count;
+    int invert_mouse;
+    float mouse_sensitivity;
+    char name[32];
+    int active_mission;
+} PlayerProfile;
+
+/* name/value pairs registered as script constants */
+typedef struct ConfigConstant {
+    char name[0x20];
+    int value;
+} ConfigConstant;
+
+#define CONFIG_MAX_PROFILES 16
+#define CONFIG_MAX_DEVICES 5
+#define CONFIG_LANG_USA 5
+
+#define gProfileCount VAR(int, 0xBC2380)
+#define gActiveProfile VAR(int, 0xBC2384)
+#define gProfiles ((PlayerProfile *)0xBC2388)
+#define gContentControlPassword ((char *)0xBC79C8)
+#define gDeviceCount VAR(int, 0x567C90)
+#define gDevices ((ConfigDevice *)0x567C98)
+
+typedef ScriptValue *ScriptFn(ScriptValue *out, void *data, void *args);
+
+void Config_RegisterScriptSymbols(void);
+ScriptFn GOStart, GOPlayer, GOActiveMission, GOInRemap, GOInMouInv, GOInMouSens, GOGfxDisp, GOGameLang,
+    GOGameDiff, GOContentControlPW, GOIsBlood, GOSoundSpeech, GOSoundMusic, GOSoundFX, GOGfxDevice,
+    GOGfxGamma, GOGfxPerformance;
+ScriptValue *Config_IsGermany(ScriptValue *out);
+ScriptValue *Config_ResetGraphicOptions(ScriptValue *out);
+ScriptValue *Config_GetContentControlPassword(ScriptValue *out);
+ScriptFn Config_VerifyContentControlPassword;
+ScriptValue *Config_IsContentControlPasswordEnabled(ScriptValue *out);
+ScriptFn Config_GameOptionsInputSetInvertMouse, Config_GameOptionsInputSetMouseSensitivity,
+    Config_GameOptionsInputSetBloodEnabled;
+ScriptValue *Config_GameOptionsInputGetInvertMouse(ScriptValue *out);
+ScriptValue *Config_GameOptionsInputGetMouseSensitivity(ScriptValue *out);
+ScriptValue *Config_GameOptionsInputGetBloodEnabled(ScriptValue *out);
+void Config_AddDisplayMode(DisplayMode *mode);
+ScriptFn Config_FillScreenResolutionListBox, Config_GraphicOptionsSetResolution,
+    Config_GraphicOptionsGetResolution, Config_GraphicOptionsSetDevice, Config_GraphicOptionsSetGamma,
+    Config_GraphicOptionsSetTransparency, Config_GraphicOptionsSetPerformanceFlags;
+GraphicOptions *Config_GetGraphicOptions(void);
+ScriptValue *Config_FillRenderDeviceListBox(ScriptValue *out);
+ScriptValue *Config_GraphicOptionsGetDevice(ScriptValue *out);
+ScriptValue *Config_GraphicOptionsGetGamma(ScriptValue *out);
+ScriptValue *Config_GraphicOptionsGetTransparency(ScriptValue *out);
+ScriptValue *Config_GraphicOptionsGetPerformanceFlags(ScriptValue *out);
+SoundOptions *Config_GetSoundOptions(void);
+ScriptFn Config_SoundOptionsSetSoundsEffects, Config_SoundOptionsSetSoundsEffectsVolume,
+    Config_SoundOptionsSetMusic, Config_SoundOptionsSetMusicVolume, Config_SoundOptionsSetSpeech,
+    Config_SoundOptionsSetSpeechVolume, Config_SoundOptionsSetReverseStereo;
+ScriptValue *Config_SoundOptionsGetSoundsEffects(ScriptValue *out);
+ScriptValue *Config_SoundOptionsGetSoundsEffectsVolume(ScriptValue *out);
+ScriptValue *Config_SoundOptionsGetMusic(ScriptValue *out);
+ScriptValue *Config_SoundOptionsGetMusicVolume(ScriptValue *out);
+ScriptValue *Config_SoundOptionsGetSpeech(ScriptValue *out);
+ScriptValue *Config_SoundOptionsGetSpeechVolume(ScriptValue *out);
+ScriptValue *Config_SoundOptionsGetReverseStereo(ScriptValue *out);
+ScriptValue *Config_FillPlayerProfileListBox(ScriptValue *out);
+ScriptValue *Config_GetActivePlayerProfileIndex(ScriptValue *out);
+ScriptFn Config_SetActivePlayerProfileIndex, Config_CreateNewPlayerProfile, Config_DeletePlayerProfile,
+    Config_GraphicOptionsGetPerfLevelFromFlags, Config_GraphicOptionsGetPerfFlagsFromLevel,
+    Config_PlayerGetActiveMission;
+void Config_ResetProfiles(void);
+ScriptValue *Config_GetNumberOfPlayerProfiles(ScriptValue *out);
+ScriptValue *Config_GraphicOptionsNumPerfLevels(ScriptValue *out);
+ScriptValue *Config_FillMissionSelectionBox(ScriptValue *out);
+ScriptValue *Config_FillMissionPictureBox(ScriptValue *out);
+ScriptValue *Config_FillMissionTextBox(ScriptValue *out);
+void Config_RemoveLanguageAlias(void);
+
+#endif
