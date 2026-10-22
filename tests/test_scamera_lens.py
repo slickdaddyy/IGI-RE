@@ -587,7 +587,7 @@ def test_lens_world_add(kids, cw):
     check(e, fk, 0x4432F0, "SCameraLens_WorldAdd", setup, cw=cw)
 
 
-SCALES = [(1, 2, 3), (3, 2, 1), (2, 3, 1), (1, 1, 1), (2, 1, 2), (1.5, 2.5, 2.5)]
+SCALES = [(1, 2, 3), (3, 2, 1), (2, 3, 1), (1, 1, 1), (2, 1, 2), (1.5, 2.5, 2.5), (1, 2, float("nan")), (float("nan"), 1, 2)]
 
 
 @pytest.mark.parametrize("cw", [0x37F, 0x7F])

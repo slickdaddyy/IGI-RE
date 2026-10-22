@@ -269,7 +269,7 @@ static inline int round_int(long double f)
 /* the largest scale factor, compared like the original */
 static inline float sobj_scale(const SObj *o)
 {
-    float m = o->scale[2] < o->scale[1] ? o->scale[1] : o->scale[2];
+    float m = o->scale[2] >= o->scale[1] ? o->scale[2] : o->scale[1];
 
     return o->scale[0] > m ? o->scale[0] : m;
 }
