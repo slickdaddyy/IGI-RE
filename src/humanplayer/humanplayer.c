@@ -61,7 +61,7 @@ ORIG(0x408460, void, sub_408460, (HumanPlayer *h));
 ORIG(0x408720, int, Weapon_HasAmmo, (Task *weapon));
 ORIG(0x40C140, void, HumanPlayer_LockWeapon, (HumanPlayer *h));
 ORIG(0x40C2D0, void, HumanPlayer_UnlockWeapon, (HumanPlayer *h));
-ORIG(0x40CD30, void, sub_40CD30, (HumanPlayer *h, int arg));
+ORIG(0x40CD30, void, HumanPlayer_StartAction, (HumanPlayer *h, int arg));
 ORIG(0x411000, void, sub_411000, (HumanPlayer *h));
 ORIG(0x411240, void, sub_411240, (HumanPlayer *h));
 ORIG(0x411300, void, sub_411300, (HumanPlayer *h));
@@ -678,7 +678,7 @@ no_action:
         att = Human_GetAttached(h);
         fn(att, &arg);
         HumanTaskViewReset(h->view);
-        sub_40CD30(h, arg);
+        HumanPlayer_StartAction(h, arg);
         return;
     }
     if (pressed(h, INPUT_MAP) && (h->body.input & 4)) {

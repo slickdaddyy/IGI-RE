@@ -431,3 +431,426 @@ def test_weapon_idle_run(c):
         return p.weapon, p.h
     out["b1"] = logger(1)
     check(0x40E9C0, "HumanPlayer_WeaponIdleRun", setup)
+
+
+@pytest.fixture(autouse=True)
+def _clear_returns():
+    R.clear()
+
+
+@pytest.mark.parametrize("lock,fire,reload,clip,reserve,in_,d3", [
+    (1, 0, 0, 5, 10, 0, 0), (0, 1, 0, 0, 10, 1, 0), (0, 1, 0, 0, 10, 0, 1), (0, 1, 0, 3, 10, 1, 0),
+    (0, 1, 0, 3, 10, 0x201, 1), (0, 0, 1, 3, 10, 0, 0), (0, 0, 1, 30, 10, 0, 0), (0, 0, 1, 3, 0, 1, 0),
+    (0, 0, 0, 0, 10, 0, 0), (0, 0, 0, 0, 0, 1, 1), (0, 0, 0, 3, 10, 1, 0), (0, 0, 0, 3, 10, 0x200, 0)])
+def test_weapon_fire_run(lock, fire, reload, clip, reserve, in_, d3):
+    check(0x40EF70, "HumanPlayer_WeaponFireRun",
+          wsetup(weapon_state=2, weapon_in=in_, inputs={6: fire, 8: reload}, clip=clip, reserve=reserve,
+                 xD44=("<B", lock), x4D3=("<B", d3)))
+
+
+@pytest.mark.parametrize("lock,fire", [(1, 1), (0, 1), (0, 0)])
+def test_weapon_dry_fire_run(lock, fire):
+    check(0x40F100, "HumanPlayer_WeaponDryFireRun",
+          wsetup(weapon_state=12, inputs={6: fire}, xD44=("<B", lock)))
+
+
+RELOAD_DONE = {}
+RELOAD_HANDLER = logger(2, (1, 9), lambda e, a: u8(e, a[1] + 0x20, RELOAD_DONE["v"]))
+
+
+@pytest.mark.parametrize("done", [0, 1])
+def test_weapon_reload_run(done):
+    RELOAD_DONE["v"] = done
+
+    def setup(e):
+        p = player(e, weapon_state=3)
+        e.write(p.v + 0x208, struct.pack("<7i", *range(11, 18)))
+        u8(e, 0x56E214, 1)
+        set_handler(e, 6, 5, RELOAD_HANDLER)
+
+        return p.weapon, p.h
+    check(0x40F180, "HumanPlayer_WeaponReloadRun", setup)
+
+
+@pytest.mark.parametrize("at,found", [(0, 1), (1, 1), (1, 0)])
+def test_weapon_lower_run(at, found):
+    def setup(e):
+        p = player(e, weapon_state=4, xD4C=("<i", 41))
+        R[0x4647D0] = at
+        FIND.clear()
+        FIND[41] = 0x5150 if found else 0
+        return p.weapon, p.h
+    check(0x40F280, "HumanPlayer_WeaponLowerRun", setup)
+
+
+@pytest.mark.parametrize("at,next_", [(0, 41), (0, -1), (1, -1)])
+def test_weapon_raise_run(at, next_):
+    def setup(e):
+        p = player(e, weapon_state=4, xD4C=("<i", next_))
+        R[0x4647D0] = at
+        return p.weapon, p.h
+    check(0x40F300, "HumanPlayer_WeaponRaiseRun", setup)
+
+
+@pytest.mark.parametrize("lean,in_", [(1, 0), (1, 0x20000), (0, 0)])
+def test_weapon_lean_run(lean, in_):
+    def setup(e):
+        p = player(e, weapon_state=5, weapon_in=in_, inputs={12: lean}, body_state=0x2C)
+        e.write(p.v + 0x19C, struct.pack("<3f", 1, 2, 3))
+        return p.weapon, p.h
+    check(0x40F3F0, "HumanPlayer_WeaponLeanRun", setup)
+
+
+def test_weapon_throw_enter():
+    def setup(e):
+        p = player(e, weapon_state=7, x4D8=("<B", 1), x4E0=("<i", 9), x4E4=("<i", 9))
+        obj, fuse = e.alloc(0x300), e.alloc(4)
+        f32(e, fuse, 2.55)
+        i32(e, obj + 0x2D4, fuse)
+        R[0x4EE140] = obj
+        return p.weapon, p.h
+    check(0x40F4F0, "HumanPlayer_WeaponThrowEnter", setup)
+
+
+@pytest.mark.parametrize("ev,ticking,in_,fire", [(4, 0, 0, 0), (0, 0, 1, 0), (0, 1, 1, 1), (2, 1, 1, 0)])
+def test_weapon_throw_run(ev, ticking, in_, fire):
+    def setup(e):
+        p = player(e, weapon_state=7, weapon_in=in_, inputs={6: fire}, x4D8=("<B", ticking), x4E0=("<i", 5))
+        i32(e, p.v + 0x20C, ev)
+        return p.weapon, p.h
+    check(0x40F590, "HumanPlayer_WeaponThrowRun", setup)
+
+
+@pytest.mark.parametrize("ev,sound,in_,reserve,unlimited", [
+    (3, 0x77, 0, 1, 0), (3, 0, 1, 1, 0), (0, 0x77, 1, 0, 0), (0, 0, 1, 0, 1), (3, 0x77, 1, 2, 1)])
+def test_weapon_release_run(ev, sound, in_, reserve, unlimited):
+    def setup(e):
+        p = player(e, weapon_state=7, weapon_in=in_, reserve=reserve, x4E0=("<i", 5), x4E4=("<i", sound),
+                   xD48=("<i", 0))
+        i32(e, p.v + 0x20C, ev)
+        u8(e, 0x56E214, unlimited)
+        e.write(0x56DF18, struct.pack("<i", 0))
+        return p.weapon, p.h
+    check(0x40F640, "HumanPlayer_WeaponReleaseRun", setup)
+
+
+CYCLE_CASES = []
+_rng = random.Random(11)
+for _ in range(120):
+    CYCLE_CASES.append(dict(
+        force=_rng.choice([0, 0, 1]), index=_rng.choice([-1, 0, 2, 4]), next=_rng.choice([(0, 0), (1, 0), (1, 1)]),
+        prev=_rng.choice([(0, 0), (1, 0), (1, 1)]), saved=_rng.choice([None, None, 42, -1]),
+        count=_rng.choice([0, 1, 3, 5]), have=[_rng.random() < 0.5 for _ in range(5)],
+        ammo=[_rng.random() < 0.7 for _ in range(5)], cur=_rng.choice([None, 40, 41, 43]),
+        key=_rng.choice([0.0, 41.0, 42.4, 43.6, 44.0])))
+
+
+@pytest.mark.parametrize("c", CYCLE_CASES)
+def test_cycle_weapon(c):
+    def setup(e):
+        p = player(e, weapon=c["cur"] is not None, wid=c["cur"] or 0, xD48=("<i", c["index"]),
+                   inputs={21: c["next"][0], 22: c["prev"][0], 13: c["key"]},
+                   prev={21: c["next"][1], 22: c["prev"][1]})
+        ids = [40, 41, 42, 43, 44]
+        e.write(0x56DF18, struct.pack("<i5i", c["count"], *ids))
+        FIND.clear()
+        HASAMMO.clear()
+        for i, wid in enumerate(ids):
+            if c["have"][i]:
+                t = e.alloc(0x20)
+                FIND[wid] = t
+                HASAMMO[t] = int(c["ammo"][i])
+        if c["saved"] is not None:
+            s = e.alloc(0x20)
+            info = e.alloc(0x700)
+            i32(e, info, c["saved"])
+            INFO[s] = info
+            i32(e, p.h + 0xDE4, s)
+        return p.h, c["force"]
+    check(0x40F760, "HumanPlayer_CycleWeapon", setup)
+
+
+@pytest.mark.parametrize("d3,reserve,unlimited", [(0, 1, 0), (1, 1, 0), (1, 0, 0), (1, 0, 1)])
+def test_weapon_place_run(d3, reserve, unlimited):
+    def setup(e):
+        p = player(e, weapon_state=8, reserve=reserve, x4D3=("<B", d3), xD48=("<i", 0))
+        u8(e, 0x56E214, unlimited)
+        e.write(0x56DF18, struct.pack("<i", 0))
+        return p.weapon, p.h
+    check(0x40F950, "HumanPlayer_WeaponPlaceRun", setup)
+
+
+@pytest.mark.parametrize("at", [0, 1])
+def test_weapon_recover_run(at):
+    def setup(e):
+        p = player(e, weapon_state=8)
+        R[0x4647D0] = at
+        return p.weapon, p.h
+    check(0x40FA20, "HumanPlayer_WeaponRecoverRun", setup)
+
+
+@pytest.mark.parametrize("fire,count,d3,in_", [(1, 0, 0, 0), (1, 3, 1, 0), (0, 0, 1, 1), (1, 2, 1, 1)])
+def test_weapon_melee_run(fire, count, d3, in_):
+    check(0x40FA80, "HumanPlayer_WeaponMeleeRun",
+          wsetup(weapon_state=9, weapon_in=in_, inputs={6: fire}, x4E8=("<i", count), x4D3=("<B", d3)))
+
+
+@pytest.mark.parametrize("in_", [0, 1])
+def test_weapon_medipack_start_run(in_):
+    check(0x40FB90, "HumanPlayer_WeaponMedipackStartRun", wsetup(weapon_state=10, weapon_in=in_))
+
+
+MEDI_CASES = [(1, 0, 5, 0.5, 1.0, 0.25, 4), (0, 0, 5, 0.5, 1.0, 0.25, 4), (1, 3, 5, 0.5, 1.0, 0.25, 4),
+              (1, 0, None, 0.5, 1.0, 0.25, 4), (1, 0, 0, 0.5, 1.0, 0.25, 4), (1, 0, 5, 0.0, 1.0, 0.25, 4),
+              (1, 0, 5, 0.1, 1.0, 0.25, 7), (1, 0, 5, 0.9, 0.3, -2.0, 3), (1, 0, 5, 0.3, 0.3, 0.0, 9),
+              (0, 0, 0, 0.3, 0.3, 0.0, 9)]
+
+
+@pytest.mark.parametrize("fire,delay,count,damage,maxd,heal,rate", MEDI_CASES)
+def test_weapon_medipack_run(fire, delay, count, damage, maxd, heal, rate):
+    def setup(e):
+        p = player(e, weapon_state=10, inputs={6: fire}, xD6C=("<i", delay), x254=("<f", damage),
+                   x258=("<f", maxd))
+        f32(e, e.u32(p.info + 0x6E4), heal)
+        i32(e, p.info + 0x644, rate)
+        AMMOLIST.clear()
+        if count is not None:
+            a = e.alloc(8)
+            e.write(a, struct.pack("<ii", 901, count))
+            AMMOLIST[901] = a
+        return p.weapon, p.h
+    check(0x40FBE0, "HumanPlayer_WeaponMedipackRun", setup)
+
+
+@pytest.mark.parametrize("in_", [0, 1])
+def test_weapon_wait_run(in_):
+    check(0x40FD70, "HumanPlayer_WeaponWaitRun", wsetup(weapon_state=6, weapon_in=in_))
+
+
+@pytest.mark.parametrize("body", [0x2D, 0])
+def test_weapon_computer_run(body):
+    check(0x40FDF0, "HumanPlayer_WeaponComputerRun", wsetup(weapon_state=11, body_state=body))
+
+
+# --- setup and per-frame code -----------------------------------------------------
+
+def test_open():
+    check(0x40FE30, "HumanPlayer_Open", lambda e: ())
+
+
+SCRIPT_IGNORE = []
+
+
+def script_ret(e):
+    """A script return value; the original fills bytes 4 and 20 from uninitialised stack."""
+    ret = e.alloc(24)
+    e.write(ret, b"\xAA" * 24)
+    SCRIPT_IGNORE[:] = [(ret + 4, ret + 8), (ret + 20, ret + 24)]
+    return ret
+
+
+def test_define_general():
+    def setup(e):
+        e.write(REALS, struct.pack("<43d", *[1.5 + i * 0.37 for i in range(43)]))
+        return script_ret(e), 0, e.alloc(16)
+    check(0x410070, "DefineHumanPlayerGeneral", setup, ignore=SCRIPT_IGNORE)
+
+
+@pytest.mark.parametrize("n", [0, 1, 5])
+def test_define_weapon_cycle(n):
+    R_ints = [100 + i for i in range(n)]
+
+    def setup(e):
+        R["ints"] = R_ints
+        args = e.alloc(16)
+        i32(e, args, n)
+        e.write(0x56DF18, struct.pack("<i", 9))
+        return script_ret(e), 0, args
+    check(0x4101C0, "DefineHumanPlayerWeaponCycle", setup, ignore=SCRIPT_IGNORE)
+
+
+def test_define_weapon_category():
+    counts = [0, 1, 8, 2, 3, 0, 5, 1, 4]
+    ints = []
+    for c in counts:
+        ints += [c] + [len(ints) * 10 + k for k in range(c)]
+
+    def setup(e):
+        R["ints"] = ints
+        return script_ret(e), 0, e.alloc(16)
+    check(0x410240, "DefineHumanPlayerWeaponCategory", setup, ignore=SCRIPT_IGNORE)
+
+
+@pytest.mark.parametrize("n", [0, 2, 6])
+def test_define_ammo_limit(n):
+    def setup(e):
+        R["ints"] = [7 + 3 * i for i in range(n)]
+        args = e.alloc(16)
+        i32(e, args, n)
+        e.write(0x56DF98, struct.pack("<i", 5))
+        return script_ret(e), 0, args
+    check(0x4102D0, "DefineHumanPlayerAmmoLimit", setup, ignore=SCRIPT_IGNORE)
+
+
+def test_set_unlimited_ammo():
+    check(0x410360, "HumanPlayer_SetUnlimitedAmmo", lambda e: ())
+
+
+CREATE_HANDLER = logger(2)
+
+
+@pytest.mark.parametrize("limits", [0, 3])
+def test_create_handler(limits):
+    def setup(e):
+        p = player(e)
+        e.write(e.u32(p.h + 0x70) + 0x4C, struct.pack("<5i", 1, 2, 3, 4, 5))
+        e.write(0x56DF98, struct.pack("<i6i", limits, 11, 12, 21, 22, 31, 32))
+        i32(e, 0x56E210, 0x4C18)
+        set_handler(e, 0, HUMAN_TYPE, CREATE_HANDLER)
+        e.write(p.h + 0xD44, b"\x77" * 0xAC)
+        return p.h, 0x1234
+    check(0x410370, "HumanPlayer_CreateHandler", setup)
+
+
+INPUT_CASES = []
+_rng = random.Random(5)
+for _ in range(40):
+    INPUT_CASES.append(dict(flags=_rng.choice([0, 0x100, 0x10000, 0x10100, 0xFFFFFFFF]),
+                            old=_rng.getrandbits(32), d45=_rng.choice([0, 1]),
+                            inputs={i: _rng.choice([0, 0, 1.0]) for i in range(2, 23)}))
+
+
+@pytest.mark.parametrize("c", INPUT_CASES)
+def test_update_input(c):
+    def setup(body):
+        def run(e):
+            p = player(e, inputs=c["inputs"], body_in=c["old"], weapon_in=c["old"], xD45=("<B", c["d45"]))
+            e.write(e.u32(p.h + 0x70) + 4, struct.pack("<I", c["flags"]))
+            e.write(e.u32(p.v + 0x70) + 4, struct.pack("<I", c["flags"] ^ 0x10100))
+            return (p.body if body else p.weapon), p.h
+        return run
+    check(0x4105C0, "HumanPlayer_UpdateBodyInput", setup(True))
+    check(0x410700, "HumanPlayer_UpdateWeaponInput", setup(False))
+
+
+DELETE_HANDLER = logger(1)
+
+
+@pytest.mark.parametrize("de8,dbc", [(0, 0), (0x1111, 0x2222)])
+def test_delete_handler(de8, dbc):
+    def setup(e):
+        p = player(e, xDE8=("<i", de8), xDBC=("<i", dbc))
+        set_handler(e, 2, HUMAN_TYPE, DELETE_HANDLER)
+        return (p.h,)
+    check(0x410840, "HumanPlayer_DeleteHandler", setup)
+
+
+SLOT_HANDLER = logger(2)
+
+
+def test_small_handlers():
+    def setup(e):
+        out = e.alloc(4)
+        i32(e, 0x56E09C, 0x9C9C)
+        return 0x1000, out
+    check(0x4108B0, "sub_4108B0", setup)
+
+    def setup2(e):
+        set_handler(e, 0x0B, HUMAN_TYPE, SLOT_HANDLER)
+        return 0x1000, 0x2000
+    check(0x4108C0, "sub_4108C0", setup2)
+
+
+@pytest.mark.parametrize("computer,cf6", [(0, 0), (0x46C0, 1), (0, 1)])
+def test_sub_410900(computer, cf6):
+    def setup(e):
+        p = player(e, xCF6=("<B", cf6))
+        R[0x46C060] = computer
+        set_handler(e, 0x09, 0x11, SLOT_HANDLER)
+        return p.h, 0x2000
+    check(0x410900, "sub_410900", setup)
+
+
+POSITION_HANDLER = logger(2, (1, 8))
+
+
+@pytest.mark.parametrize("busy,n", [(1, 2), (0x100, 0), (0, 3)])
+def test_send_position(busy, n):
+    def setup(e):
+        p = player(e)
+        e.write(p.h + 0x20, struct.pack("<3d", 1.5, -2.25, 1e6))
+        lst = e.alloc(8 + 4 * n)
+        e.write(lst, struct.pack("<ii", n, 8))
+        for i in range(n):
+            t = e.alloc(0x20)
+            e.write(t + 0x1C, struct.pack("<H", 0x20 + i))
+            i32(e, lst + 8 + 4 * i, t)
+            set_handler(e, 0x03, 0x20 + i, POSITION_HANDLER)
+        R[0x4168C0] = lst
+        R[0x463170] = busy
+        return (p.h,)
+    check(0x410F70, "HumanPlayer_SendPosition", setup)
+
+
+UPDATE_CASES = []
+_rng = random.Random(9)
+for _ in range(60):
+    UPDATE_CASES.append(dict(
+        computer=_rng.choice([0, 0x46C0]), d45=_rng.choice([(0, 0), (1, 0), (1, 1)]),
+        fly=_rng.choice([(0, 0), (1, 0), (1, 1)]), state=_rng.choice([0, 0x30, 5]),
+        flags=[_rng.choice([0, 0, 1]) for _ in range(8)], scaled=_rng.choice([0, 1]),
+        attach=_rng.choice([0, 0x7777]), ground=_rng.choice([0, 4]), key=_rng.choice([0, 1]),
+        show=_rng.choice([0, 1]), camera=_rng.choice([False, True]), yaw=_rng.choice([0.5, -1.0, -20.0]),
+        seed=_rng.getrandbits(16), locked=_rng.choice([0, 1])))
+
+
+def update_setup(c):
+    def setup(e):
+        rnd = random.Random(c["seed"])
+        p = player(e, body_state=c["state"], body_in=c["ground"] | 0x10000,
+                   inputs={20: c["d45"][0], 33: c["fly"][0]}, prev={20: c["d45"][1], 33: c["fly"][1]},
+                   x52C=("<B", c["scaled"]), x76C=("<i", c["attach"]))
+        for off, v in zip((0xD78, 0xD79, 0xD90, 0xD91, 0xD93, 0xD94, 0xDA0, 0xDA1), c["flags"]):
+            u8(e, p.h + off, v)
+        e.write(p.h + 0x78, struct.pack("<9f", *[rnd.uniform(-1, 1) for _ in range(9)]))
+        e.write(p.h + 0x520, struct.pack("<3f", *[rnd.uniform(-50, 50) for _ in range(3)]))
+        e.write(p.h + 0x20, struct.pack("<3d", *[rnd.uniform(-1e5, 1e5) for _ in range(3)]))
+        e.write(p.h + 0x664, struct.pack("<3f", *[rnd.uniform(-9, 9) for _ in range(3)]))
+        e.write(p.h + 0x710, struct.pack("<df", rnd.uniform(0, 900), rnd.uniform(-1, 1)))
+        e.write(p.h + 0x728, struct.pack("<3f", *[rnd.uniform(-9, 9) for _ in range(3)]))
+        e.write(p.h + 0x75C, struct.pack("<3f", *[rnd.uniform(-9, 9) for _ in range(3)]))
+        u8(e, p.h + 0x250, c["locked"])
+        f32(e, 0x56E1E8, 0.75)
+        u8(e, 0x56DF94, c["show"])
+        R[0x46C060] = c["computer"]
+        R[0x415020] = c["key"]
+        R["yaw"] = c["yaw"]
+        game = e.alloc(0x60)
+        if c["camera"]:
+            cam = e.alloc(0x60)
+            e.write(cam + 0x38, struct.pack("<10f", *[rnd.uniform(-1, 1) for _ in range(10)]))
+            i32(e, game + 0x5C, cam)
+        R[0x416D40] = game
+        R[0x4168C0] = e.alloc(8)
+        return p
+    return setup
+
+
+@pytest.mark.parametrize("c", UPDATE_CASES)
+def test_update(c):
+    s = update_setup(c)
+    check(0x4109A0, "HumanPlayer_Update", lambda e: (s(e).h,))
+
+
+@pytest.mark.parametrize("c", UPDATE_CASES[:6])
+def test_input_handler(c):
+    s = update_setup(c)
+
+    def setup(e):
+        p = s(e)
+        vals = e.alloc(4 * 40)
+        e.write(vals, struct.pack("<40f", *[float(i % 3) for i in range(40)]))
+        msg = e.alloc(8)
+        i32(e, msg + 4, vals)
+        return p.h, msg
+    check(0x410960, "HumanPlayer_InputHandler", setup)
