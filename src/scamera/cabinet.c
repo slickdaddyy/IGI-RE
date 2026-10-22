@@ -1,0 +1,187 @@
+#pragma GCC optimize("excess-precision=standard")
+
+#include "hook.h"
+#include "scamera/scamera.h"
+
+ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
+ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
+ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
+ORIG(0x4167F0, uint8_t, Game_GetEvent2, (void));
+ORIG(0x416800, uint8_t, Game_GetEvent4, (void));
+ORIG(0x416810, uint8_t, Game_GetEvent3, (void));
+ORIG(0x416820, uint8_t, Game_GetEvent6, (void));
+ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
+ORIG(0x4168A0, void *, Game_GetTaskList0, (void));
+ORIG(0x416920, void *, Game_GetWorld, (void));
+ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
+ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
+ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
+ORIG(0x4C1790, void, QTaskList_Add, (void *list, void *item));
+ORIG(0x4C3440, Vec3d *, DynCubeObj_GetPosition, (void *obj));
+ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model));
+ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, float radius));
+ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int category));
+ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
+ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
+ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
+ORIG(0x4DCCB0, void, sub_4DCCB0, (void *world, void *obj, Vec3d *pos));
+ORIG(0x4E0830, uint16_t, SectorInteriorObject_GetType, (void));
+ORIG(0x4F0F20, void *, Param_Angle, (void));
+ORIG(0x4F0F50, void *, Param_Real32, (void));
+ORIG(0x4F0FD0, void *, Param_String16, (void));
+ORIG(0x4F1010, void *, Param_ObjectPos, (void));
+ORIG(0x4F1210, uint8_t, Level_GetEventDA8, (void));
+ORIG(0x4F1220, uint8_t, Level_GetEventDAC, (void));
+ORIG(0x4F1950, void *, ParamTable_New, (int count));
+ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
+ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
+ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
+
+#define gWorld VAR(void *, 0xA44344)
+#define gDrawerType VAR(uint16_t, 0x57C1A4)
+#define gCabinetParams VAR(void *, 0x57C1A8)
+#define gCabinetType VAR(uint16_t, 0x57C1AC)
+
+/* handlers that live outside this folder */
+#define Cabinet_Run ((void *)0x444590)
+#define Cabinet_Delete ((void *)0x444660)
+#define Cabinet_GetParams ((void *)0x4446D0)
+#define Cabinet_ParamsChanged ((void *)0x4446E0)
+#define Cabinet_CheckUse ((void *)0x444860)
+#define RocketPod_GetArgSize ((void *)0x427D70) /* writes 4 */
+#define Cabinet_Use ((void *)0x444940)
+#define sub_4449A0 ((void *)0x4449A0)
+#define Task_Nothing ((void *)0x4D3710)
+#define Cabinet_AddSymbols ((void *)0x4449C0)
+#define Cabinet_RemoveSymbols ((void *)0x444A70)
+#define VehiclePart_Delete ((void *)0x426860)
+
+#define kDrawerOpenStep VAR(float, 0x5338A0) /* 153.6 */
+#define kDrawerOpen VAR(float, 0x53389C) /* 1843.2 */
+#define kDrawerCloseStep VAR(float, 0x533898) /* 102.4 */
+#define kZero VAR(float, 0x5333EC)
+
+void Cabinet_Create(Cabinet *c);
+void Drawer_Create(Drawer *d, DrawerArg *arg);
+void Drawer_Run(Drawer *d);
+
+#define FIELD(name) ((void *)offsetof(Cabinet, name))
+
+void Cabinet_Open(void)
+{
+    gCabinetType = TaskType_New("Cabinet", sizeof(Cabinet), SectorInteriorObject_GetType(), 0);
+    TaskType_SetHandler(gCabinetType, 0, Cabinet_Create);
+    TaskType_SetHandler2(gCabinetType, 1, Cabinet_Run);
+    TaskType_SetHandler2(gCabinetType, 2, Cabinet_Delete);
+    TaskType_SetHandler(gCabinetType, Param_GetTableEvent(), Cabinet_GetParams);
+    TaskType_SetHandler(gCabinetType, Param_GetChangedEvent(), Cabinet_ParamsChanged);
+    TaskType_SetHandler(gCabinetType, Game_GetEvent2(), Cabinet_CheckUse);
+    TaskType_SetHandler(gCabinetType, Game_GetEvent3(), RocketPod_GetArgSize);
+    TaskType_SetHandler(gCabinetType, Game_GetEvent4(), Cabinet_Use);
+    TaskType_SetHandler(gCabinetType, Game_GetEvent6(), sub_4449A0);
+    TaskType_SetHandler(gCabinetType, Game_GetEvent9(), Task_Nothing);
+    TaskType_SetHandler2(gCabinetType, Level_GetEventDA8(), Cabinet_AddSymbols);
+    TaskType_SetHandler2(gCabinetType, Level_GetEventDAC(), Cabinet_RemoveSymbols);
+    TaskType_SetHandler(gCabinetType, ComputerObject_GetEvent0(), Terminal_MapHandler);
+    gCabinetParams = ParamTable_New(4);
+    ParamTable_Add(gCabinetParams, NULL, FIELD(place), Param_ObjectPos(), 7, NULL);
+    ParamTable_Add(gCabinetParams, NULL, FIELD(yaw), Param_Angle(), 7, NULL);
+    ParamTable_Add(gCabinetParams, NULL, FIELD(model), Param_String16(), 7, NULL);
+    ParamTable_Add(gCabinetParams, NULL, FIELD(search_time), Param_Real32(), 7, NULL);
+    gDrawerType = TaskType_New("Drawer", sizeof(Drawer), MagicObj_GetType(), 0);
+    TaskType_SetHandler(gDrawerType, 0, Drawer_Create);
+    TaskType_SetHandler2(gDrawerType, 1, Drawer_Run);
+    TaskType_SetHandler2(gDrawerType, 2, VehiclePart_Delete);
+    Script_RegisterConstant("TASKTYPE_DRAWER", gDrawerType);
+}
+HOOK(0x443ED0, Cabinet_Open);
+
+void Drawer_Create(Drawer *d, DrawerArg *arg)
+{
+    void **model = VirModel_Find(arg->model);
+    float scale;
+
+    if (!model) {
+        Error_Show("VirModel \"%s\" not available", arg->model);
+        for (;;)
+            ;
+    }
+    RigidDynCubeObj_Init(arg->world, d, model);
+    scale = sobj_scale(&d->o);
+    DynCube_Add(arg->world, d, &arg->pos, VirModel_GetRadius(d->o.model) * scale, 1);
+    d->o.matrix = arg->matrix;
+    d->cabinet = arg->cabinet;
+    d->base = arg->pos;
+    d->offset.x = 0;
+    d->offset.y = 0;
+    d->offset.z = 0;
+}
+HOOK(0x444150, Drawer_Create);
+
+/* slides along its y axis while the cabinet opens or closes */
+void Drawer_Run(Drawer *d)
+{
+    Cabinet *c = d->cabinet;
+    float *m = d->o.matrix.m;
+    long double t, x;
+    float y, z, scale;
+    Vec3d p;
+
+    if (c->opening) {
+        t = d->offset.y + kDrawerOpenStep;
+        d->offset.y = t;
+        if (t > kDrawerOpen) {
+            d->offset.y = kDrawerOpen;
+            c->moving = 0;
+        }
+    }
+    if (c->closing) {
+        t = d->offset.y - kDrawerCloseStep;
+        d->offset.y = t;
+        if (t < kZero) {
+            d->offset.y = 0;
+            c->moving = 0;
+        }
+    }
+    if (c->reset) {
+        d->offset.y = 0;
+        c->reset = 0;
+        c->moving = 0;
+    }
+    x = m[2] * d->offset.z + m[1] * d->offset.y + m[0] * d->offset.x;
+    y = m[5] * d->offset.z + m[4] * d->offset.y + m[3] * d->offset.x;
+    z = m[8] * d->offset.z + m[7] * d->offset.y + m[6] * d->offset.x;
+    p.x = x + d->base.x;
+    p.y = y + d->base.y;
+    p.z = z + d->base.z;
+    scale = sobj_scale(&d->o);
+    DynCube_Move(Game_GetWorld(), d, &p, VirModel_GetRadius(d->o.model) * scale);
+}
+HOOK(0x444260, Drawer_Run);
+
+void Cabinet_Create(Cabinet *c)
+{
+    Vec3d zero = {0, 0, 0};
+    float scale;
+
+    QTaskList_Add(Game_GetTaskList0(), c);
+    RigidDynCubeObj_Init(gWorld, c, NULL);
+    scale = sobj_scale(&c->o);
+    DynCube_Add(gWorld, c, &zero, VirModel_GetRadius(c->o.model) * scale, 1);
+    sub_4DCCB0(c->o.world, c, DynCubeObj_GetPosition(c));
+    c->place.x = 0;
+    c->place.y = 0;
+    c->place.z = 0;
+    c->yaw = 0;
+    c->model[0] = 0;
+    c->opening = 0;
+    c->closing = 0;
+    c->in_use = 0;
+    c->last_in_use = 0;
+    c->use_tick = 0;
+    c->searched = 0;
+    c->registered = 0;
+    c->search_time = 4.0f;
+    c->moving = 0;
+}
+HOOK(0x444420, Cabinet_Create);
