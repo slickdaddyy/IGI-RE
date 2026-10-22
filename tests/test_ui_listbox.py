@@ -4,7 +4,7 @@ from test_ui_util import (RET, BOX, CHILD, WINDOW, add_child, cstr, logfake, mak
                           text_new, u32, window)
 
 emu = make_emu()
-logfake(emu, 0x4201E0, 2, effect=lambda e, a: task(e, 0x250, CHILD))  # ScrollBar_New
+logfake(emu, 0x4201E0, 2, effect=lambda e, a: task(e, 0x250, CHILD))  # SlideBar_NewVertical
 logfake(emu, 0x424B60, 2, effect=lambda e, a: task(e, 0x54, WINDOW))  # MenuWindow_New
 logfake(emu, 0x418D70, 1)  # MenuManager_Free
 logfake(emu, 0x420240, 6)  # ScrollBar_SetRange

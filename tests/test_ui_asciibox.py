@@ -18,7 +18,7 @@ def read_file(e, a):
 
 logfake(emu, 0x4B6E90, 2, strings=(1,), effect=set_string)  # Text_SetString
 logfake(emu, 0x4B7DF0, 1, effect=lambda e, a: 7 * len(SHOWN.get(a[0], b"")))  # Text_GetWidth
-logfake(emu, 0x4201E0, 2, effect=lambda e, a: task(e, 0x250, CHILD))  # ScrollBar_New
+logfake(emu, 0x4201E0, 2, effect=lambda e, a: task(e, 0x250, CHILD))  # SlideBar_NewVertical
 logfake(emu, 0x418D70, 1)  # MenuManager_Free
 logfake(emu, 0x420240, 6)  # ScrollBar_SetRange
 logfake(emu, 0x420290, 1)  # ScrollBar_GetPos

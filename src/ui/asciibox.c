@@ -81,7 +81,7 @@ void AsciiBox_Create(AsciiBox *ab, void *arg)
     ab->buf = NULL;
     ab->font[0] = 0;
     ab->file[0] = 0;
-    ab->scrollBar = ScrollBar_New(NULL, ab->w.menu);
+    ab->scrollBar = SlideBar_NewVertical(NULL, ab->w.menu);
 }
 HOOK(0x41C8D0, AsciiBox_Create);
 

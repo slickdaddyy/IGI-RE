@@ -103,7 +103,7 @@ void ScrollListBox_Create(ScrollListBox *lb, void *arg)
     lb->w.w = 100;
     lb->w.h = 100;
     lb->text = NULL;
-    lb->scrollBar = ScrollBar_New(NULL, lb->w.menu);
+    lb->scrollBar = SlideBar_NewVertical(NULL, lb->w.menu);
     lb->frame = MenuWindow_New(NULL, lb->w.menu);
     lb->keyboard = 0;
 }

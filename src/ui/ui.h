@@ -138,7 +138,7 @@ ORIG(0x418FD0, void, MenuManager_Resume, (void *mm));
 ORIG(0x419030, int, MenuManager_GetFade, (void *mm));
 ORIG(0x4190B0, void, MenuManager_DisableInput, (void *mm));
 ORIG(0x4190C0, void, MenuManager_EnableInput, (void *mm));
-ORIG(0x4201E0, MenuWindow *, ScrollBar_New, (void *parent, void *menu));
+ORIG(0x4201E0, MenuWindow *, SlideBar_NewVertical, (void *parent, void *menu));
 ORIG(0x420240, void, ScrollBar_SetRange, (void *bar, int x, int y, int unk, int h, int count));
 ORIG(0x420290, int, ScrollBar_GetPos, (void *bar));
 ORIG(0x4202D0, void, ScrollBar_SetPos, (void *bar, int pos));
