@@ -134,7 +134,10 @@ class Emu:
         for line in out.splitlines():
             parts = line.split()
             if len(parts) == 3:
-                syms.setdefault(parts[2].lstrip("_").split("@")[0], int(parts[0], 16))
+                name = parts[2].lstrip("_").split("@")[0]
+                # code wins over same-named ORIG pointers from other files
+                if parts[1] in "Tt" or name not in syms:
+                    syms[name] = int(parts[0], 16)
         return syms
 
     # --- imports -----------------------------------------------------------
