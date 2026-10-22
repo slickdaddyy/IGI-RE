@@ -16,9 +16,9 @@ ORIG(0x4C8130, void, sub_4C8130, (Terrain *t, int slot, void *query, const Vec3d
                                   int count, unsigned int flags, int tree));
 ORIG(0x4C9020, int, sub_4C9020, (const short *leaf, Vec3d *base, const Vec3d *p, int depth, int *side,
                                  int orient));
-ORIG(0x4CC810, int, sub_4CC810, (CollHit *out, CollCursor *c, int depth, const Vec3d *start, const Vec3d *end));
-ORIG(0x4CDB20, void, sub_4CDB20, (Terrain *t, CollHit *results, const Vec3d *starts, Vec3d *ends, int count,
-                                  int unk, int unk2, unsigned int flags, int unk3));
+ORIG(0x4CC810, int, Coll_LineHit, (CollHit *out, CollCursor *c, int depth, const Vec3d *start, const Vec3d *end));
+ORIG(0x4CDB20, void, Coll_LinesEx, (Terrain *t, CollHit *results, const Vec3d *starts, Vec3d *ends, int count,
+                                    int unk, int unk2, unsigned int flags, int unk3));
 ORIG(0x4CE090, void, Coll_SendEvent, (Terrain *t, int slot, void *query, const Vec3d *p, unsigned int mask,
                                       int tree));
 ORIG(0x4CE390, void, Coll_SendEventAll, (Terrain *t, int slot, void *query, const Vec3d *p, unsigned int mask));
@@ -62,7 +62,8 @@ typedef struct CollHole {
 #define gCollLineCount VAR(int, 0xA44390)
 #define gCollLeafTests VAR(int, 0xA44398)
 #define gCollTriangleTests VAR(int, 0xA4439C)
-#define gMaterialIds ((const uint8_t *)0xC28FE0)
+/* 900 byte TerrainMaterial records; only the low byte of the first field is read */
+#define gTerrainMaterials ((const uint8_t *)0xC28FE0)
 
 #define SAR(v, n) ((int)(v) >> ((n) & 31))
 
@@ -592,7 +593,7 @@ static void Coll_Drop(Terrain *t, CollHit *results, const Vec3d *points, int cou
         gCollSavedHoleCount = gCollHoleCount;
     if (flags & 0x7FFFFFFF) {
         if (variant == 2)
-            sub_4CDB20(t, results, points, ends, count, unk, unk2, flags & 0x7FFFFFFF, unk3);
+            Coll_LinesEx(t, results, points, ends, count, unk, unk2, flags & 0x7FFFFFFF, unk3);
         else
             Coll_Lines(t, results, points, ends, count, unk, unk2, flags & 0x7FFFFFFF);
     }
@@ -824,7 +825,7 @@ unsigned int Coll_GetHitMaterial(Terrain *t, const Vec3d *p)
     }
     if (!gCollWalkTasks)
         Coll_ResetMods();
-    return gMaterialIds[idx * 3600];
+    return gTerrainMaterials[idx * 900];
 }
 HOOK(0x4CB810, Coll_GetHitMaterial);
 
@@ -935,7 +936,7 @@ void Coll_Lines(Terrain *t, CollHit *results, const Vec3d *starts, const Vec3d *
         CollQuery q2;
         CollHit *r = &results[i];
 
-        if (!sub_4CC810(&h, &c, top, &starts[i], &ends[i]))
+        if (!Coll_LineHit(&h, &c, top, &starts[i], &ends[i]))
             continue;
         if (r->found) {
             double dn = (double)Vec3d_DistanceSq(&starts[i], &h.pos);
