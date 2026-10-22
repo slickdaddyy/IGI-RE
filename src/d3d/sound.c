@@ -1,0 +1,658 @@
+#include <string.h>
+
+#include <windows.h>
+#include <mmsystem.h>
+#include <dsound.h>
+
+#include "hook.h"
+#include "igi.h"
+
+ORIG(0x48F0A0, HWND, AppContext_GethWnd, (void));
+ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
+ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
+ORIG(0x4B0D10, void, Mem_Free, (void *p));
+ORIG(0x4B1690, void, File_Close, (void *f));
+ORIG(0x4B16D0, int, File_Read, (void *f, void *buf, int size));
+ORIG(0x4B1730, int, File_Seek, (void *f, int pos, int whence));
+ORIG(0x4B5F00, void *, Resource_Load, (const char *name, int *size));
+ORIG(0x4B6380, void, Resource_Unload, (const char *name));
+ORIG(0x496250, void, sub_496250, (void *lists, int key1, int key2, void *sound));
+ORIG(0x496280, void, sub_496280, (void *src, void *dst, int samples, void *state));
+ORIG(0x496420, void, sub_496420, (void *state, int channels));
+ORIG(0x496450, int, sub_496450, (int key1, int key2));
+ORIG(0x4964A0, char, sub_4964A0, (int unk, void *sound, int unk2));
+ORIG(0x497390, void, sub_497390, (void *key, const char *name));
+ORIG(0x497410, int, sub_497410, (void *key));
+ORIG(0x497450, int, sub_497450, (void *key));
+/* the exe's import thunk and table entries; DSOUND and WINMM are not linked into our DLL */
+ORIG_STD(0x4AF746, HRESULT, DirectSoundCreate_, (GUID *guid, IDirectSound **out, IUnknown *outer));
+#define mixerGetLineControlsA_ (*(MMRESULT(WINAPI **)(HMIXEROBJ, MIXERLINECONTROLSA *, DWORD))0x5331F0)
+#define mixerSetControlDetails_ (*(MMRESULT(WINAPI **)(HMIXEROBJ, MIXERCONTROLDETAILS *, DWORD))0x5331F4)
+#define mixerClose_ (*(MMRESULT(WINAPI **)(HMIXER))0x5331F8)
+#define mixerGetNumDevs_ (*(UINT(WINAPI **)(void))0x5331FC)
+#define mixerOpen_ (*(MMRESULT(WINAPI **)(HMIXER *, UINT, DWORD_PTR, DWORD_PTR, DWORD))0x533200)
+#define mixerGetDevCapsA_ (*(MMRESULT(WINAPI **)(UINT_PTR, MIXERCAPSA *, UINT))0x533204)
+#define mixerGetLineInfoA_ (*(MMRESULT(WINAPI **)(HMIXEROBJ, MIXERLINEA *, DWORD))0x533208)
+#define mixerGetControlDetailsA_ (*(MMRESULT(WINAPI **)(HMIXEROBJ, MIXERCONTROLDETAILS *, DWORD))0x53320C)
+#define mciSendCommandA_ (*(MCIERROR(WINAPI **)(MCIDEVICEID, UINT, DWORD_PTR, DWORD_PTR))0x533210)
+
+typedef struct SoundNode {
+    struct SoundNode *next;
+    struct SoundNode *prev;
+} SoundNode;
+
+typedef struct SoundList {
+    SoundNode *head;
+    SoundNode *tail;
+    SoundNode *tailpred;
+} SoundList;
+
+/* Volume controls of one mixer, saved at startup and put back at shutdown. */
+typedef struct Mixer {
+    HMIXER hmx;
+    MIXERCAPSA caps;
+    MIXERLINEA dest;
+    MIXERLINEA waveLine;
+    MIXERLINEA cdLine;
+    MIXERCONTROLA waveCtrl;
+    MIXERCONTROLA cdCtrl;
+    DWORD waveLeft;
+    DWORD waveRight;
+    DWORD cdLeft;
+    DWORD cdRight;
+} Mixer;
+
+_Static_assert(sizeof(Mixer) == 0x364, "Mixer");
+_Static_assert(sizeof(DSBUFFERDESC) == 0x24 && sizeof(DSCAPS) == 0x60, "DirectSound 7 structs");
+
+/* A loaded sample, 0x30 bytes. The header is copied from the 'ILSF' resource. */
+typedef struct Sound {
+    int unk0;
+    int unk4;
+    int unk8;
+    int unkC;
+    int magic;
+    short format;
+    short bits;
+    short channels;
+    short unk1A;
+    int rate;
+    int samples;
+    IDirectSoundBuffer *buffer;
+    char *name;
+    void *data;
+} Sound;
+
+#define gCDDeviceID VAR(MCIDEVICEID, 0x5CA130)
+#define gSoundVoiceCount VAR(int, 0x5CA134)
+#define gMixerCount VAR(int, 0x5CA150)
+#define gDSPrimary VAR(IDirectSoundBuffer *, 0x5CA154)
+#define gCDUnk5CA188 VAR(char, 0x5CA188)
+#define gStreamBuffer VAR(IDirectSoundBuffer *, 0x5CA190)
+#define gStreamFile VAR(void *, 0x5CA194)
+#define gStreamHalf VAR(DWORD, 0x5CA198)
+#define gStreamEnd VAR(DWORD, 0x5CA19C)
+#define gStreamPos VAR(DWORD, 0x5CA1A0)
+#define gStreamHalfSize VAR(DWORD, 0x5CA1A4)
+#define gStreamLoop VAR(int, 0x5CA1B0)
+#define gStreamReady VAR(char, 0x5CA1B4)
+#define gSoundLists ((SoundList *)0x5CA1B8)
+#define gSoundStereo VAR(char, 0x543900)
+#define gMusicVolume VAR(float, 0x543904)
+#define gMasterVolume VAR(float, 0x543908)
+#define gSfxVolume VAR(float, 0x54390C)
+#define gCDTrack VAR(int, 0x543918)
+#define gUnk54391C VAR(int, 0x54391C)
+#define gCDUnk676AB4 VAR(char, 0x676AB4)
+#define gSoundUnk676E50 VAR(int, 0x676E50)
+#define gMixers ((Mixer *)0x676E58)
+#define gDSound VAR(IDirectSound *, 0x67A498)
+#define gDSListener VAR(IUnknown *, 0x67A49C)
+#define gVolumeTable ((int *)0x67A4A0)
+#define gCDAudioOpen VAR(char, 0x6840E8)
+#define gSoundReady VAR(char, 0x6840E9)
+#define gSound3D VAR(char, 0x6840EA)
+#define gSoundVoices VAR(char *, 0x6840F0)
+#define gSoundUnk6840F4 VAR(int, 0x6840F4)
+#define gSoundFreeVoices VAR(SoundNode *, 0x6840F8)
+
+void CD_Open(void);
+void Mixer_Init(void);
+void Sound_InitDirectSound(void);
+void Stream_Init(void);
+
+void Sound_Init(void)
+{
+    CD_Open();
+    Mixer_Init();
+    Sound_InitDirectSound();
+    Stream_Init();
+}
+HOOK(0x495280, Sound_Init);
+
+void CD_Open(void)
+{
+    MCI_OPEN_PARMSA p;
+
+    p.lpstrDeviceType = "cdaudio";
+    if (!mciSendCommandA_(0, MCI_OPEN, MCI_OPEN_TYPE, (DWORD_PTR)&p)) {
+        gCDAudioOpen = 1;
+        gCDDeviceID = p.wDeviceID;
+        gCDUnk5CA188 = 0;
+        gCDUnk676AB4 = 0;
+    }
+}
+HOOK(0x4952A0, CD_Open);
+
+static long double Ln(long double x)
+{
+    long double r;
+
+    __asm__("fldln2\n\tfxch\n\tfyl2x" : "=t"(r) : "0"(x));
+    return r;
+}
+
+static long long Round(long double x)
+{
+    long long r;
+
+    __asm__("fistpll %0" : "=m"(r) : "t"(x) : "st");
+    return r;
+}
+
+void Sound_InitLists(SoundList *lists);
+void Sound_ListPush(SoundNode *node, SoundNode **head);
+
+void Sound_InitDirectSound(void)
+{
+    DSCAPS caps;
+    DSBUFFERDESC desc;
+    DSBCAPS bcaps;
+    WAVEFORMATEX wf;
+    int i, v;
+
+    gSoundReady = 0;
+    Sound_InitLists(gSoundLists);
+    /* linear volume in 1/10000 steps to DirectSound hundredths of a decibel */
+    gVolumeTable[0] = -10000;
+    for (i = 10000; i > 0; i--) {
+        v = (int)Round(Ln((long double)i * 0.0001) * 1442.6950408888495);
+        if (v < -10000)
+            v = -10000;
+        else if (v > 0)
+            v = 0;
+        gVolumeTable[i] = v;
+    }
+    if (DirectSoundCreate_(NULL, &gDSound, NULL))
+        goto fail;
+    if (IDirectSound_SetCooperativeLevel(gDSound, AppContext_GethWnd(), DSSCL_EXCLUSIVE))
+        goto release;
+    caps.dwSize = sizeof(caps);
+    if (IDirectSound_GetCaps(gDSound, &caps)) {
+        IDirectSound_Release(gDSound);
+        gDSound = NULL;
+        return;
+    }
+    gSound3D = 0;
+    gSoundStereo = (caps.dwFlags & DSCAPS_PRIMARYSTEREO) != 0;
+    memset(&desc, 0, sizeof(desc));
+    desc.dwSize = sizeof(desc);
+    desc.dwFlags = DSBCAPS_PRIMARYBUFFER | DSBCAPS_LOCSOFTWARE;
+    if (IDirectSound_CreateSoundBuffer(gDSound, &desc, &gDSPrimary, NULL)) {
+        IDirectSound_Release(gDSound);
+        gDSound = NULL;
+        return;
+    }
+    memset(&bcaps, 0, sizeof(bcaps));
+    bcaps.dwSize = sizeof(bcaps);
+    if (IDirectSoundBuffer_GetCaps(gDSPrimary, &bcaps))
+        goto release_primary;
+    wf.wFormatTag = WAVE_FORMAT_PCM;
+    wf.nChannels = gSoundStereo ? 2 : 1;
+    wf.nSamplesPerSec = 22050;
+    gSoundUnk676E50 = 1;
+    gSoundVoiceCount = 32;
+    wf.wBitsPerSample = (caps.dwFlags & DSCAPS_PRIMARY16BIT) ? 16 : 8;
+    wf.nBlockAlign = (wf.wBitsPerSample >> 3) * wf.nChannels;
+    wf.cbSize = sizeof(WAVEFORMATEX);
+    wf.nAvgBytesPerSec = wf.nBlockAlign * 22050;
+    if (IDirectSoundBuffer_SetFormat(gDSPrimary, &wf))
+        goto release_primary;
+    if (IDirectSoundBuffer_Play(gDSPrimary, 0, 0, DSBPLAY_LOOPING))
+        goto release_primary;
+    gSoundVoices = Mem_Alloc(gSoundVoiceCount * 0x4C, 4);
+    memset(gSoundVoices, 0, gSoundVoiceCount * 0x4C);
+    for (i = 0; i < gSoundVoiceCount; i++)
+        Sound_ListPush((SoundNode *)(gSoundVoices + i * 0x4C), &gSoundFreeVoices);
+    gSoundUnk6840F4 = 0;
+    gSoundReady = 1;
+    return;
+
+release_primary:
+    IDirectSoundBuffer_Release(gDSPrimary);
+release:
+    IDirectSound_Release(gDSound);
+fail:
+    gDSound = NULL;
+}
+HOOK(0x4952F0, Sound_InitDirectSound);
+
+void Sound_InitLists(SoundList *lists)
+{
+    int i;
+
+    for (i = 0; i < 101; i++) {
+        lists[i].head = (SoundNode *)&lists[i].tail;
+        lists[i].tailpred = (SoundNode *)&lists[i].head;
+        lists[i].tail = NULL;
+    }
+}
+HOOK(0x4955F0, Sound_InitLists);
+
+void Sound_ListPush(SoundNode *node, SoundNode **head)
+{
+    node->prev = NULL;
+    node->next = *head;
+    if (*head)
+        (*head)->prev = node;
+    *head = node;
+}
+HOOK(0x495620, Sound_ListPush);
+
+/* Mixers are stored at the running count of saved controls, not at their device number. */
+void Mixer_Init(void)
+{
+    int count = 0, dev, numDevs = mixerGetNumDevs_();
+    DWORD dst, src, i;
+
+    for (dev = 0; dev < numDevs; dev++) {
+        Mixer *m = &gMixers[count];
+
+        memset(m, 0, sizeof(*m));
+        if (mixerOpen_(&m->hmx, dev, 0, 0, 0) || mixerGetDevCapsA_((UINT_PTR)m->hmx, &m->caps, sizeof(m->caps)))
+            continue;
+        for (dst = 0; dst < m->caps.cDestinations; dst++) {
+            MIXERLINEA line;
+
+            memset(&line, 0, sizeof(line));
+            line.cbStruct = sizeof(line);
+            line.dwDestination = dst;
+            line.dwSource = 0;
+            if (mixerGetLineInfoA_((HMIXEROBJ)m->hmx, &line, MIXER_OBJECTF_HMIXER | MIXER_GETLINEINFOF_DESTINATION))
+                continue;
+            if (line.Target.dwType != MIXERLINE_TARGETTYPE_WAVEOUT && line.Target.dwType != MIXERLINE_TARGETTYPE_AUX)
+                continue;
+            m->dest = line;
+            for (src = 0; src < line.cConnections; src++) {
+                MIXERLINEA sl;
+                MIXERLINEA *lineDst = NULL;
+                MIXERCONTROLA *ctrlDst = NULL;
+                DWORD *leftDst = NULL, *rightDst = NULL;
+                MIXERLINECONTROLSA mlc;
+
+                memset(&sl, 0, sizeof(sl));
+                sl.cbStruct = sizeof(sl);
+                sl.dwDestination = dst;
+                sl.dwSource = src;
+                if (mixerGetLineInfoA_((HMIXEROBJ)m->hmx, &sl, MIXER_OBJECTF_HMIXER | MIXER_GETLINEINFOF_SOURCE))
+                    continue;
+                if (sl.dwComponentType == MIXERLINE_COMPONENTTYPE_SRC_WAVEOUT || !strcmp(sl.szName, "Wave")) {
+                    lineDst = &m->waveLine;
+                    leftDst = &m->waveLeft;
+                    rightDst = &m->waveRight;
+                    ctrlDst = &m->waveCtrl;
+                }
+                if (sl.dwComponentType == MIXERLINE_COMPONENTTYPE_SRC_AUXILIARY ||
+                    sl.dwComponentType == MIXERLINE_COMPONENTTYPE_SRC_COMPACTDISC || !strcmp(sl.szName, "CD Audio")) {
+                    if (gCDAudioOpen) {
+                        lineDst = &m->cdLine;
+                        leftDst = &m->cdLeft;
+                        rightDst = &m->cdRight;
+                        ctrlDst = &m->cdCtrl;
+                    }
+                }
+                if (!ctrlDst)
+                    continue;
+                mlc.cbStruct = sizeof(mlc);
+                mlc.dwLineID = sl.dwLineID;
+                mlc.cControls = sl.cControls;
+                mlc.cbmxctrl = sizeof(MIXERCONTROLA);
+                mlc.pamxctrl = Mem_Alloc(sl.cControls * sizeof(MIXERCONTROLA), 4);
+                if (mixerGetLineControlsA_((HMIXEROBJ)m->hmx, &mlc, MIXER_OBJECTF_HMIXER | MIXER_GETLINECONTROLSF_ALL))
+                    continue;
+                for (i = 0; i < mlc.cControls; i++) {
+                    MIXERCONTROLDETAILS d;
+                    DWORD *vals;
+
+                    if (mlc.pamxctrl[i].dwControlType != MIXERCONTROL_CONTROLTYPE_VOLUME)
+                        continue;
+                    *lineDst = sl;
+                    *ctrlDst = mlc.pamxctrl[i];
+                    d.cbStruct = sizeof(d);
+                    d.dwControlID = ctrlDst->dwControlID;
+                    d.cChannels = lineDst->cChannels;
+                    d.cMultipleItems = ctrlDst->cMultipleItems;
+                    d.cbDetails = sizeof(DWORD);
+                    vals = d.paDetails = Mem_Alloc(d.cChannels * sizeof(DWORD), 4);
+                    if (!mixerGetControlDetailsA_((HMIXEROBJ)m->hmx, &d,
+                                                  MIXER_OBJECTF_HMIXER | MIXER_GETCONTROLDETAILSF_VALUE)) {
+                        if (lineDst->cChannels > 0)
+                            *leftDst = vals[0];
+                        if (lineDst->cChannels > 1)
+                            *rightDst = vals[1];
+                    }
+                    Mem_Free(vals);
+                    count++;
+                }
+                Mem_Free(mlc.pamxctrl);
+            }
+            if (m->waveCtrl.cbStruct && m->cdCtrl.cbStruct)
+                count++;
+        }
+    }
+    gMixerCount = count;
+}
+HOOK(0x495640, Mixer_Init);
+
+void Stream_Init(void)
+{
+    gStreamReady = 0;
+    if (gSoundReady) {
+        gStreamFile = NULL;
+        gStreamBuffer = NULL;
+        gStreamReady = 1;
+    }
+}
+HOOK(0x495A60, Stream_Init);
+
+void Stream_Close(void);
+void Sound_ShutdownDirectSound(void);
+void Mixer_Shutdown(void);
+void CD_Close(void);
+void CD_Stop(void);
+
+void Sound_Shutdown(void)
+{
+    Stream_Close();
+    Sound_ShutdownDirectSound();
+    Mixer_Shutdown();
+    CD_Close();
+}
+HOOK(0x495A90, Sound_Shutdown);
+
+void CD_Close(void)
+{
+    if (gCDAudioOpen) {
+        CD_Stop();
+        mciSendCommandA_(gCDDeviceID, MCI_CLOSE, 0, 0);
+    }
+}
+HOOK(0x495AB0, CD_Close);
+
+void Sound_ShutdownDirectSound(void)
+{
+    if (gSoundVoices) {
+        Mem_Free(gSoundVoices);
+        gSoundVoices = NULL;
+        gSoundFreeVoices = NULL;
+        gSoundUnk6840F4 = 0;
+    }
+    if (gDSound) {
+        if (gSound3D)
+            gDSListener->lpVtbl->Release(gDSListener);
+        IDirectSoundBuffer_Stop(gDSPrimary);
+        IDirectSoundBuffer_Release(gDSPrimary);
+        IDirectSound_Release(gDSound);
+    }
+}
+HOOK(0x495AE0, Sound_ShutdownDirectSound);
+
+MMRESULT Mixer_SetVolume(HMIXEROBJ hmx, MIXERLINEA *line, MIXERCONTROLA *ctrl, DWORD left, DWORD right);
+
+void Mixer_Shutdown(void)
+{
+    int i;
+
+    for (i = 0; i < gMixerCount; i++) {
+        Mixer *m = &gMixers[i];
+
+        if (!m->hmx)
+            continue;
+        if (m->dest.cbStruct) {
+            if (m->waveLine.cbStruct && m->waveCtrl.cbStruct)
+                Mixer_SetVolume((HMIXEROBJ)m->hmx, &m->waveLine, &m->waveCtrl, m->waveLeft, m->waveRight);
+            if (m->cdLine.cbStruct)
+                Mixer_SetVolume((HMIXEROBJ)m->hmx, &m->cdLine, &m->cdCtrl, m->cdLeft, m->cdRight);
+        }
+        mixerClose_(m->hmx);
+    }
+}
+HOOK(0x495B50, Mixer_Shutdown);
+
+MMRESULT Mixer_SetVolume(HMIXEROBJ hmx, MIXERLINEA *line, MIXERCONTROLA *ctrl, DWORD left, DWORD right)
+{
+    MIXERCONTROLDETAILS d;
+    DWORD vals[2];
+
+    d.cbStruct = sizeof(d);
+    d.cbDetails = sizeof(DWORD);
+    d.dwControlID = ctrl->dwControlID;
+    d.cChannels = line->cChannels;
+    d.cMultipleItems = ctrl->cMultipleItems;
+    d.paDetails = vals;
+    if (d.cChannels > 0)
+        vals[0] = left;
+    if (d.cChannels > 1)
+        vals[1] = right;
+    return mixerSetControlDetails_(hmx, &d, MIXER_OBJECTF_HMIXER | MIXER_SETCONTROLDETAILSF_VALUE);
+}
+HOOK(0x495C10, Mixer_SetVolume);
+
+/* Like Stream_Stop but without the ready check, and the pointers are kept. */
+void Stream_Close(void)
+{
+    if (gStreamFile) {
+        File_Close(gStreamFile);
+        IDirectSoundBuffer_Stop(gStreamBuffer);
+        IDirectSoundBuffer_Release(gStreamBuffer);
+    }
+}
+HOOK(0x495C80, Stream_Close);
+
+char Sound_IsReady(void)
+{
+    return gSoundReady;
+}
+HOOK(0x495CB0, Sound_IsReady);
+
+void sub_495CC0(int v)
+{
+    gUnk54391C = v;
+}
+HOOK(0x495CC0, sub_495CC0);
+
+/* Fills part of the stream buffer from the file, wrapping to the data start (offset 0x2C) at the end.
+   Returns 1 when it wrapped. */
+int Stream_Fill(IDirectSoundBuffer *buf, DWORD offset, DWORD size)
+{
+    void *p;
+    DWORD n;
+    DWORD left;
+    int wrapped;
+
+    if (IDirectSoundBuffer_Lock(buf, offset, size, &p, &n, NULL, NULL, 0))
+        return 0;
+    if (gStreamEnd >= gStreamPos + size) {
+        File_Read(gStreamFile, p, size);
+        gStreamPos += size;
+        wrapped = 0;
+    } else {
+        left = gStreamEnd - gStreamPos;
+        File_Read(gStreamFile, p, left);
+        File_Seek(gStreamFile, 0x2C, 0);
+        File_Read(gStreamFile, (char *)p + left, size - left);
+        gStreamPos = size - left;
+        wrapped = 1;
+    }
+    IDirectSoundBuffer_Unlock(buf, p, n, NULL, 0);
+    return wrapped;
+}
+HOOK(0x495CD0, Stream_Fill);
+
+void Stream_Stop(void)
+{
+    if (gStreamReady && gStreamFile) {
+        File_Close(gStreamFile);
+        gStreamFile = NULL;
+        IDirectSoundBuffer_Stop(gStreamBuffer);
+        IDirectSoundBuffer_Release(gStreamBuffer);
+        gStreamBuffer = NULL;
+    }
+}
+HOOK(0x495DA0, Stream_Stop);
+
+/* Double buffering: refills the half that is not playing. */
+void Stream_Update(void)
+{
+    DWORD play;
+
+    if (!gStreamReady || !gStreamFile)
+        return;
+    IDirectSoundBuffer_GetCurrentPosition(gStreamBuffer, &play, NULL);
+    if (play < gStreamHalfSize) {
+        if (!gStreamHalf)
+            return;
+    } else if (gStreamHalf) {
+        return;
+    }
+    if (Stream_Fill(gStreamBuffer, gStreamHalf, gStreamHalfSize) && !gStreamLoop)
+        Stream_Stop();
+    gStreamHalf ^= gStreamHalfSize;
+}
+HOOK(0x495DF0, Stream_Update);
+
+/* Scales the CD audio mixer volume saved at startup. */
+void Music_SetVolume(float music, float master)
+{
+    int i;
+
+    gMusicVolume = music;
+    gMasterVolume = master;
+    for (i = 0; i < gMixerCount; i++) {
+        Mixer *m = &gMixers[i];
+        long double scale;
+        DWORD left, right;
+
+        if (!m->hmx || !m->dest.cbStruct || !m->cdLine.cbStruct)
+            continue;
+        scale = (long double)music * master;
+        right = (DWORD)Round(m->cdRight * scale);
+        left = (DWORD)Round(m->cdLeft * scale);
+        Mixer_SetVolume((HMIXEROBJ)m->hmx, &m->cdLine, &m->cdCtrl, left, right);
+    }
+}
+HOOK(0x495E70, Music_SetVolume);
+
+void Music_SetSfxVolume(float v)
+{
+    gSfxVolume = v;
+}
+HOOK(0x495F30, Music_SetSfxVolume);
+
+void CD_Stop(void)
+{
+    MCI_GENERIC_PARMS p;
+
+    p.dwCallback = 0;
+    mciSendCommandA_(gCDDeviceID, MCI_STOP, 0, (DWORD_PTR)&p);
+    gCDTrack = -1;
+}
+HOOK(0x495F40, CD_Stop);
+
+void Sound_Load(const char *name)
+{
+    char key[32];
+    char state[12];
+    int size, key1, key2;
+    int *res;
+    Sound *s;
+    WAVEFORMATEX wf;
+    DSBUFFERDESC desc;
+
+    if (!gSoundReady)
+        return;
+    res = Resource_Load(name, &size);
+    if (res[0] != 0x46534C49) {
+        Warning_Show("SOUND - File %s not valid format!", name);
+        Resource_Unload(name);
+        return;
+    }
+    sub_497390(key, name);
+    key1 = sub_497450(key);
+    key2 = sub_497410(key);
+    if (sub_496450(key1, key2)) {
+        Warning_Show("SOUND - File %s already loaded!", name);
+        Resource_Unload(name);
+        return;
+    }
+    s = Mem_Alloc(sizeof(Sound), 4);
+    memset(s, 0, sizeof(*s));
+    memcpy(&s->magic, res, 0x14);
+    switch (s->format) {
+    case 0:
+    case 2:
+        s->name = Mem_Alloc(strlen(name) + 1, 4);
+        if (!s->name) {
+            Mem_Free(s);
+            s = NULL;
+            Resource_Unload(name);
+        }
+        strcpy(s->name, name);
+        break;
+    case 1:
+        s->data = res + 5;
+        break;
+    case 3:
+        s->data = Mem_Alloc((unsigned)(s->channels * s->bits * s->samples) >> 3, 4);
+        if (!s->data) {
+            Mem_Free(s);
+            s = NULL;
+            Resource_Unload(name);
+        }
+        sub_496420(state, s->channels);
+        sub_496280(res + 5, s->data, s->samples, state);
+        break;
+    }
+    if (s->data) {
+        wf.cbSize = sizeof(WAVEFORMATEX);
+        wf.wFormatTag = WAVE_FORMAT_PCM;
+        wf.nChannels = s->channels;
+        wf.nSamplesPerSec = s->rate;
+        wf.wBitsPerSample = s->bits;
+        wf.nBlockAlign = s->channels * s->bits / 8;
+        wf.nAvgBytesPerSec = wf.nBlockAlign * s->rate;
+        memset(&desc, 0, sizeof(desc));
+        desc.dwSize = sizeof(desc);
+        desc.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPAN | DSBCAPS_CTRLFREQUENCY |
+                       DSBCAPS_LOCSOFTWARE;
+        desc.lpwfxFormat = &wf;
+        desc.dwBufferBytes = s->samples * wf.nBlockAlign;
+        if (IDirectSound_CreateSoundBuffer(gDSound, &desc, &s->buffer, NULL)) {
+            Mem_Free(s);
+            Resource_Unload(name);
+            return;
+        }
+        if (!sub_4964A0(0, s, 0)) {
+            IDirectSoundBuffer_Release(s->buffer);
+            Mem_Free(s);
+            Resource_Unload(name);
+            return;
+        }
+        if (s->format == 3)
+            Mem_Free(s->data);
+        s->data = NULL;
+    }
+    sub_496250(gSoundLists, key1, key2, s);
+    Resource_Unload(name);
+}
+HOOK(0x495F70, Sound_Load);
