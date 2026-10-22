@@ -55,7 +55,7 @@ ORIG(0x5177F0, void, sub_5177F0, (void *p));
 #define gCounterE VAR(int, 0xBA5060)
 #define gSavedCounters ((int *)0xB97D80)
 
-void sub_4C5810(void)
+void Coll_ResetMods(void)
 {
     gCounterA = 0;
     gCounterB = 0;
@@ -63,9 +63,9 @@ void sub_4C5810(void)
     gCounterD = 0;
     gCounterE = 0;
 }
-HOOK(0x4C5810, sub_4C5810);
+HOOK(0x4C5810, Coll_ResetMods);
 
-void sub_4C5830(void)
+void Coll_SaveMods(void)
 {
     gSavedCounters[0] = gCounterA;
     gSavedCounters[1] = gCounterB;
@@ -73,9 +73,9 @@ void sub_4C5830(void)
     gSavedCounters[3] = gCounterD;
     gSavedCounters[4] = gCounterE;
 }
-HOOK(0x4C5830, sub_4C5830);
+HOOK(0x4C5830, Coll_SaveMods);
 
-void sub_4C5870(void)
+void Coll_RestoreMods(void)
 {
     gCounterA = gSavedCounters[0];
     gCounterB = gSavedCounters[1];
@@ -83,7 +83,7 @@ void sub_4C5870(void)
     gCounterD = gSavedCounters[3];
     gCounterE = gSavedCounters[4];
 }
-HOOK(0x4C5870, sub_4C5870);
+HOOK(0x4C5870, Coll_RestoreMods);
 
 int DynCubeTree_GetChildCount(int kind)
 {
@@ -206,7 +206,7 @@ World *sub_4C5B20(int rooms)
     w->unkDC8 = 0;
     w->unkDF0 = 0;
     gUnkB97D20 = 0;
-    sub_4C5810();
+    Coll_ResetMods();
     return w;
 }
 HOOK(0x4C5B20, sub_4C5B20);

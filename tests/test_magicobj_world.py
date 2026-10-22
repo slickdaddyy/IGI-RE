@@ -62,8 +62,8 @@ def fill_counters(e):
     e.write(SAVED, struct.pack("<5I", 11, 22, 33, 44, 55))
 
 
-@pytest.mark.parametrize("orig,ours", [(0x4C5810, "sub_4C5810"), (0x4C5830, "sub_4C5830"),
-                                       (0x4C5870, "sub_4C5870")])
+@pytest.mark.parametrize("orig,ours", [(0x4C5810, "Coll_ResetMods"), (0x4C5830, "Coll_SaveMods"),
+                                       (0x4C5870, "Coll_RestoreMods")])
 def test_counters(orig, ours):
     compare(emu, orig, ours, setup=fill_counters, check_eax=False)
 

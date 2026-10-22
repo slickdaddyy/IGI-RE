@@ -172,9 +172,9 @@ char RigidDynCubeObj_GetEvent3(void);
 void RigidDynCubeObj_Init(int unk68, RigidDynCubeObj *o, void **model);
 char RigidDynCubeObj_GetEvent4(void);
 
-void sub_4C5810(void);
-void sub_4C5830(void);
-void sub_4C5870(void);
+void Coll_ResetMods(void);
+void Coll_SaveMods(void);
+void Coll_RestoreMods(void);
 int DynCubeTree_GetChildCount(int kind);
 void sub_4C5900(void);
 void sub_4C5A10(MagicTask *t, void **arg);
