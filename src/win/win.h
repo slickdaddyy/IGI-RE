@@ -115,4 +115,11 @@ void AppMain_AddWinProcCallback(WinProcCallback fn);
 void AppMain_RemoveWinProcCallback(WinProcCallback fn);
 int Timer_GetMs(void);
 
+#define gDisplayPrefDesc VAR(const char *, 0x5C9F9C)
+#define gDisplayPrefDevice VAR(const char *, 0x5C9FA0)
+
+int Display_FindModes(DisplayMode *mode, int flags, void (*fn)(DisplayMode *mode));
+void Display_SetMode(DisplayMode *mode);
+void Display_SwapBuffers(void);
+
 #endif
