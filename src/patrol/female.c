@@ -720,7 +720,7 @@ void SoldierFemale_UseEnter(SoldierSM *sm, Soldier *h)
 HOOK(0x454940, SoldierFemale_UseEnter);
 
 void SoldierFemale_Create(Soldier *h, void *arg);
-void Human_RunHandler(void *task);
+void Human_RunBase(void *task);
 void SoldierFemale_GetParams(Soldier *h, void **out);
 void SoldierFemale_Changed(Soldier *h, void *arg);
 
@@ -731,7 +731,7 @@ void SoldierFemale_Open(void)
     gSoldierFemaleType = TaskType_New("HumanSoldierFemale", sizeof(Soldier), Human_GetType(), 0);
     TaskType_SetFlags(gSoldierFemaleType, 1);
     TaskType_SetHandler(gSoldierFemaleType, 0, SoldierFemale_Create);
-    TaskType_SetHandler2(gSoldierFemaleType, 1, Human_RunHandler);
+    TaskType_SetHandler2(gSoldierFemaleType, 1, Human_RunBase);
     TaskType_SetHandler2(gSoldierFemaleType, 2, SoldierFemale_DeleteHandler);
     TaskType_SetHandler(gSoldierFemaleType, Param_GetTableEvent(), SoldierFemale_GetParams);
     TaskType_SetHandler(gSoldierFemaleType, Param_GetChangedEvent(), SoldierFemale_Changed);
@@ -842,12 +842,12 @@ void SoldierFemale_UseTarget(Soldier *h)
 }
 HOOK(0x454DA0, SoldierFemale_UseTarget);
 
-/* the run handler of the Human type, which takes only the task */
-void Human_RunHandler(void *task)
+/* calls the Human type's run handler with only the task */
+void Human_RunBase(void *task)
 {
     ((void (*)(void *))TASK_HANDLER(1, Human_GetType()))(task);
 }
-HOOK(0x454EE0, Human_RunHandler);
+HOOK(0x454EE0, Human_RunBase);
 
 void SoldierFemale_GetParams(Soldier *h, void **out)
 {

@@ -24,7 +24,7 @@ ORIG(0x444B30, void, Obj_GetUsePoint, (void *obj, double *pos, float *matrix));
 ORIG(0x444BC0, void, Switch_Press, (void *t));
 ORIG(0x447DA0, void, Door_Toggle, (void *t));
 ORIG(0x450D50, void, SoldierAI_Message, (SoldierAI *ai, SoldierAIMsg *msg));
-ORIG(0x454EE0, void, Human_RunHandler, (void *task));
+ORIG(0x454EE0, void, Human_RunBase, (void *task));
 ORIG(0x456E50, void, SoldierRPG_ParamsChanged, (Soldier *h, void *arg));
 ORIG(0x457810, void, SoldierPistol_Footstep, (Soldier *h));
 ORIG(0x45D360, void, sub_45D360, (Soldier *h));
@@ -539,7 +539,7 @@ void SoldierPistol_Open(void)
     gSoldierPistolType = TaskType_New("HumanSoldierPistol", sizeof(SoldierP), Human_GetType(), 0);
     TaskType_SetFlags(gSoldierPistolType, 1);
     TaskType_SetHandler(gSoldierPistolType, 0, SoldierPistol_CreateHandler);
-    TaskType_SetHandler2(gSoldierPistolType, 1, Human_RunHandler);
+    TaskType_SetHandler2(gSoldierPistolType, 1, Human_RunBase);
     TaskType_SetHandler2(gSoldierPistolType, 2, Soldier_DeleteHandler);
     TaskType_SetHandler(gSoldierPistolType, Param_GetTableEvent(), SoldierPistol_GetParamTable);
     TaskType_SetHandler(gSoldierPistolType, Param_GetChangedEvent(), SoldierRPG_ParamsChanged);

@@ -174,7 +174,7 @@ ORIG(0x47E990, uint8_t, sub_47E990, (void));
 ORIG(0x487190, uint8_t, sub_487190, (void));
 
 /* handlers registered by HumanPlayer_Open that live outside this file */
-#define Human_RunHandler ((void *)0x454EE0)
+#define Human_RunBase ((void *)0x454EE0)
 #define sub_4123F0 ((void *)0x4123F0)
 #define sub_412420 ((void *)0x412420)
 #define sub_412440 ((void *)0x412440)
@@ -1115,7 +1115,7 @@ void HumanPlayer_Open(void)
     TaskType_SetFlags(gHumanPlayerType, 1);
     gHumanPlayerList = QTaskList_New(8);
     TaskType_SetHandler(gHumanPlayerType, 0, HumanPlayer_CreateHandler);
-    TaskType_SetHandler2(gHumanPlayerType, 1, Human_RunHandler);
+    TaskType_SetHandler2(gHumanPlayerType, 1, Human_RunBase);
     TaskType_SetHandler2(gHumanPlayerType, 2, HumanPlayer_DeleteHandler);
     TaskType_SetHandler(gHumanPlayerType, sub_4F1A60(), sub_4108B0);
     TaskType_SetHandler(gHumanPlayerType, sub_4F1A70(), sub_4108C0);

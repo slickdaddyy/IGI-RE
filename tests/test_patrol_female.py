@@ -246,7 +246,7 @@ def test_create():
 
 
 def test_run_get_params():
-    call(0x454EE0, "Human_RunHandler", args=lambda e, h: (h,))
+    call(0x454EE0, "Human_RunBase", args=lambda e, h: (h,))
 
     def args(e, h):
         u32(e, 0x5BDA84, 0x4455)
