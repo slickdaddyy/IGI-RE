@@ -350,7 +350,7 @@ def diff_text(a, b, limit=16):
     return ", ".join("%s: %s/%s" % (hex(k) if isinstance(k, int) else k, a.get(k), b.get(k)) for k in bad)
 
 
-def compare_hooked(plain, hooked, addr, args=(), setup=None, ignore=()):
+def compare_hooked(plain, hooked, addr, args=(), setup=None, ignore=(), check_eax=True):
     """Run original code on a clean exe and on one patched with our hooks.
     Memory is compared through normalize, so our handler pointers match the originals."""
     results = []
@@ -362,4 +362,5 @@ def compare_hooked(plain, hooked, addr, args=(), setup=None, ignore=()):
         results.append((r[0], e.words(e.changes(before, ignore))))
     (ro, mo), (rn, mn) = results
     assert mo == mn, "memory differs: %s" % diff_text(mo, mn)
-    assert ro == rn, "eax differs: 0x%x / 0x%x" % (ro, rn)
+    if check_eax:
+        assert ro == rn, "eax differs: 0x%x / 0x%x" % (ro, rn)

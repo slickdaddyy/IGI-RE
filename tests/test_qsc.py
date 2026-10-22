@@ -594,4 +594,5 @@ def test_hooked_run_script(src):
         obj = e.alloc(0x90)
         e.write(obj + 0x80, u32(cstr(e, src)) + u32(len(src)))
         return (obj,)
-    compare_hooked(emu, hooked, 0x4B85B0, setup=setup)
+    # Script_Run returns nothing; eax is whatever its last call left there
+    compare_hooked(emu, hooked, 0x4B85B0, setup=setup, check_eax=False)
