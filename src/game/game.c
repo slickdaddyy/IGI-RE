@@ -705,7 +705,7 @@ void Game_FreeSprites(void)
 }
 HOOK(0x416690, Game_FreeSprites);
 
-void Game_Shutdown(void)
+void Game_Close(void)
 {
     static const uint8_t order[15] = {13, 7, 8, 9, 10, 11, 12, 6, 5, 4, 3, 2, 1, 0, 14};
     int i;
@@ -716,7 +716,7 @@ void Game_Shutdown(void)
     for (i = 0; i < 6; i++)
         QTaskList_Free(gGameTaskLists[i]);
 }
-HOOK(0x4166C0, Game_Shutdown);
+HOOK(0x4166C0, Game_Close);
 
 uint8_t Game_GetEvent0(void)
 {

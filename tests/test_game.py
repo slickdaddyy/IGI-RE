@@ -391,7 +391,7 @@ def test_shutdown():
         e.write(EVENTS, bytes(range(0x60, 0x6F)))
         e.write(GAME_TYPE, struct.pack("<H", 0x99))
         e.write(LISTS, b"".join(u32(0x8800 + i) for i in range(6)))
-    compare(emu, 0x4166C0, "Game_Shutdown", setup=setup, check_eax=False, normalized=True)
+    compare(emu, 0x4166C0, "Game_Close", setup=setup, check_eax=False, normalized=True)
 
 
 GETTERS = [(0x4167D0, "Game_GetEvent0"), (0x4167E0, "Game_GetEvent1"), (0x4167F0, "Game_GetEvent2"),
