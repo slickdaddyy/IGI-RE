@@ -4,8 +4,9 @@ import struct
 
 import pytest
 
-from emu import Emu
-from test_terredit_util import CWS, WORLD, d64, f32, logfake, run, u32
+from emu import Emu, ErrorShown
+from test_menu_util import logger
+from test_terredit_util import CWS, LOG, WORLD, d64, f32, logfake, pyfake, run, u32, with_cw
 
 NAN = float("nan")
 e = Emu()
@@ -15,6 +16,26 @@ logfake(e, 0x52FFA0, 2)  # WaterMesh_Subdivide
 logfake(e, 0x52FE60, 2)  # WaterMesh_CheckVisible
 logfake(e, 0x52FBA0, 4)  # WaterMesh_SetEdgeFlags
 logfake(e, 0x52E660, 5)  # WaterMesh_DrawNode
+pyfake(e, e.symbols["WaterMesh_DrawNode"], logger(e, 0x52E660, 5))
+
+
+def tri_log(tag, nargs, index):
+    """Logs a WaterTri without its uv, which is stale stack unless the env map pass filled it."""
+    def fn(em):
+        a = [em.arg(i) for i in range(nargs)]
+        t = a[index]
+        env = em.u32(t + 0x88)
+        if LOG:
+            LOG[-1].append((tag,) + tuple(a[:index]) + (em.read(t, 0x6C), em.read(t + 0x84, 0x10),
+                                                         em.read(t + 0x6C, 0x18) if env else None) + tuple(a[index + 1:]))
+        em.ret(0)
+    return fn
+
+
+ne = Emu()
+pyfake(ne, 0x52F630, tri_log("split", 6, 2))  # WaterMesh_DrawSplitTri
+pyfake(ne, 0x5116D0, tri_log("tri", 1, 0))
+ne.baseline = ne.snapshot()
 logfake(e, 0x4C1780, 0)  # Debug_Log
 logfake(e, 0x4DA180, 2)  # Haze_GetVisible
 e.baseline = e.snapshot()
@@ -207,3 +228,52 @@ def test_draw_cells(seed, cw):
         grids(em, rng, w, rng.choice([0, 1, 3, 6]))
         return (w,)
     run(e, 0x52E2D0, "WaterMesh_DrawCells", setup, cw=cw)
+
+
+def node_scene(em, rng, case):
+    w = water(em, rng)
+    world(em, rng)
+    lights(em, rng, rng.choice([0, 2]))
+    lvl = rng.randrange(0, 3)
+    u32(em, w + 0x4AB8, lvl if case != "nolevel" else 0)
+    u32(em, w + 0x4ABC, rng.choice([lvl + 2, lvl + 3, 8]))
+    u32(em, w + 0x4AC0, rng.choice([0, 1]), 0x4AC4, rng.choice([0, 0, 1]))
+    u32(em, w + 0x4AA0, 0x7E01, 0x7E02)
+    u32(em, w + 0x4ACC, 0x4ACC, 0x4AD0)
+    S = rng.choice([1 << 12, 1 << 14])
+    x0, y0 = float(rng.randrange(-1 << 20, 1 << 20)), float(rng.randrange(-1 << 20, 1 << 20))
+    for a in range(4):
+        for b in range(4):
+            d64(em, w + 0xC40 + lvl * 0x300 + (a * 4 + b) * 0x30, x0 + a * S, y0 + b * S)
+    node = em.alloc(0x30)
+    nlevel = {"same": lvl + 1, "deeper": lvl + 2, "coarse": lvl, "nolevel": 5, "hidden": lvl + 1}[case]
+    size = 3 * S if case != "deeper" else 4 * S
+    far = 3 * S if case != "deeper" else 4 * S
+    d64(em, node, rng.choice([x0, x0, x0 + S, x0 + far]), rng.choice([y0, y0, y0 - S, y0 + far]))
+    f32(em, node + 0x10, rng.choice([0.0, 0.3, 1.0, rng.uniform(0, 1), NAN]))
+    if rng.random() < 0.3:
+        f32(em, w + 0x4A98, 0.0)
+    u32(em, node + 0x14, 0, rng.choice([0, 0x14, 0xA, 0x1FE, rng.getrandbits(9)]), nlevel, size,
+        0 if case == "hidden" else 1, 0, 0)
+    return w, node, lvl
+
+
+@pytest.mark.parametrize("cw", CWS)
+@pytest.mark.parametrize("case", ["same", "deeper", "coarse", "nolevel", "hidden"])
+@pytest.mark.parametrize("seed", range(12))
+def test_draw_node(seed, case, cw):
+    def setup(em):
+        w, node, lvl = node_scene(em, random.Random(seed * 7 + len(case)), case)
+        return w, node, lvl, 1, 2
+    orig, ours = with_cw(ne, 0x52E660, cw), with_cw(ne, "WaterMesh_DrawNode", cw)
+    ne.reset()
+    try:
+        ne.call(orig, *setup(ne))
+    except ErrorShown as err:
+        # a flat normal makes the env map's atan2 fail in the original too
+        ne.reset()
+        with pytest.raises(ErrorShown) as mine:
+            ne.call(ours, *setup(ne))
+        assert str(mine.value) == str(err)
+        return
+    run(ne, 0x52E660, "WaterMesh_DrawNode", setup, cw=cw)

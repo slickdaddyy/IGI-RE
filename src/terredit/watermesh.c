@@ -45,7 +45,7 @@ typedef struct WaterMesh {
     float level;            /* 0x4A94 */
     float slope;            /* 0x4A98: amp / wavelength */
     uint32_t size;          /* 0x4A9C */
-    char unk4AA0[8];
+    void *texture[2];       /* 0x4AA0: water, then the environment map */
     uint32_t time;          /* 0x4AA8 */
     uint32_t period1;       /* 0x4AAC */
     uint32_t period2;       /* 0x4AB0 */
@@ -58,6 +58,17 @@ typedef struct WaterMesh {
     void *hazeList;         /* 0x4ACC */
     void *hazeCount;        /* 0x4AD0 */
 } WaterMesh;
+
+/* one triangle for sub_5116D0 / WaterMesh_DrawSplitTri */
+typedef struct WaterTri {
+    Vec3d pos[3];
+    float color[3][3];
+    float uv[3][2];
+    void *hazeList;
+    int env;
+    void *texture;
+    void *hazeCount;
+} WaterTri;
 
 /* the WaterMesh primitive in the render queue */
 typedef struct WaterDrawNode {
@@ -90,6 +101,8 @@ _Static_assert(offsetof(WaterMesh, ambient) == 0x4A54, "ambient");
 _Static_assert(offsetof(WaterMesh, amp) == 0x4A80, "amp");
 _Static_assert(offsetof(WaterMesh, time) == 0x4AA8, "time");
 _Static_assert(offsetof(WaterVertex, normal) == 0x38, "normal");
+_Static_assert(offsetof(WaterTri, hazeList) == 0x84, "WaterTri");
+_Static_assert(offsetof(WaterMesh, texture) == 0x4AA0, "texture");
 _Static_assert(offsetof(WaterVertex, depth) == 0x60, "depth");
 
 ORIG(0x4978D0, int, Primitive_Register, (const char *name));
@@ -102,7 +115,10 @@ ORIG(0x4DA180, void, Haze_GetVisible, (void *list, void *count));
 ORIG(0x52FFA0, void, WaterMesh_Subdivide, (WaterMesh *w, WaterNode *node));
 ORIG(0x52FE60, void, WaterMesh_CheckVisible, (WaterMesh *w, WaterNode *node));
 ORIG(0x52FBA0, void, WaterMesh_SetEdgeFlags, (WaterMesh *w, int level, int x, int y));
-ORIG(0x52E660, void, sub_52E660, (WaterMesh *w, WaterNode *node, int level, int x, int y));
+ORIG(0x52F630, void, WaterMesh_DrawSplitTri, (WaterMesh *w, WaterNode *node, WaterTri *t, int base, int count,
+                                              int recalc));
+ORIG(0x52F3D0, void, WaterMesh_CalcEnvUV, (WaterMesh *w, float *uv, const Vec3d *pos, const float *normal));
+ORIG(0x5116D0, void, sub_5116D0, (WaterTri *t));
 
 #define gWaterPrimitive VAR(int, 0xA84578)
 #define gLightData VAR(char *, 0xB041E0)
@@ -130,6 +146,7 @@ ORIG(0x52E660, void, sub_52E660, (WaterMesh *w, WaterNode *node, int level, int 
 #define kZeroD VAR(double, 0x5333B0)
 #define kMinusTwo VAR(double, 0x534CD0)
 #define kFinestSize VAR(double, 0x534CD8)
+#define kHalfD VAR(double, 0x5335C0)
 
 /* x87 "not equal" (C3 clear): false for NaN */
 static inline int fne(long double a)
@@ -139,6 +156,7 @@ static inline int fne(long double a)
 
 void WaterMesh_Draw(WaterDrawNode *node);
 void WaterMesh_DrawCells(WaterMesh *w);
+void WaterMesh_DrawNode(WaterMesh *w, WaterNode *node, int level, int x, int y);
 
 /* fills the 5 x 5 wave table from the time; returns time / period2 */
 uint32_t WaterMesh_UpdateWaves(WaterMesh *w)
@@ -439,7 +457,7 @@ void WaterMesh_DrawCells(WaterMesh *w)
             c->edges = 0;
             if (!c->active) {
                 WaterMesh_CheckVisible(w, c);
-                sub_52E660(w, c, 0, 0, 0);
+                WaterMesh_DrawNode(w, c, 0, 0, 0);
             }
         }
     }
@@ -489,7 +507,7 @@ void WaterMesh_DrawCells(WaterMesh *w)
 
                 if (!c->active) {
                     WaterMesh_SetEdgeFlags(w, g, a, b);
-                    sub_52E660(w, c, g, a, b);
+                    WaterMesh_DrawNode(w, c, g, a, b);
                 } else {
                     c->edges = 0;
                 }
@@ -498,3 +516,216 @@ void WaterMesh_DrawCells(WaterMesh *w)
     }
 }
 HOOK(0x52E2D0, WaterMesh_DrawCells);
+
+/* x87 "equal" (C3 set): also true for NaN */
+static inline int feq(long double a, long double b)
+{
+    return !(a < b || a > b);
+}
+
+/* blends a vertex between its two neighbours by the node's fade */
+static void smooth(Vec3d *p, float *n, double za, double zb, long double f, long double nf)
+{
+    float nz;
+
+    p->z = ((long double)za + zb) * nf * kHalfD + f * p->z;
+    nz = f * n[2] + nf;
+    n[2] = nz;
+    if (fne(n[0]) || fne(n[1]) || fne(nz)) {
+        long double inv = kOneD / x87_sqrt((long double)n[0] * n[0] + (long double)n[1] * n[1] +
+                                           (long double)nz * nz);
+
+        n[0] = n[0] * inv;
+        n[1] = n[1] * inv;
+        n[2] = n[2] * inv;
+    }
+}
+
+static void draw_tri(WaterMesh *w, WaterNode *node, WaterTri *t, uint32_t flags, uint32_t extra, int fine)
+{
+    uint32_t edges = node->edges;
+
+    if (edges & flags) {
+        int parts = fine && (edges & extra & 0x1E0) ? 4 : 2;
+
+        t->texture = w->texture[0];
+        t->env = 0;
+        WaterMesh_DrawSplitTri(w, node, t, 0, parts, fine);
+        if (w->envMap && fine) {
+            t->texture = w->texture[1];
+            t->env = 1;
+            WaterMesh_DrawSplitTri(w, node, t, 0, parts, fine);
+        }
+    } else {
+        t->env = 0;
+        t->texture = w->texture[0];
+        sub_5116D0(t);
+        if (w->envMap && fine) {
+            t->env = 1;
+            t->texture = w->texture[1];
+            sub_5116D0(t);
+        }
+    }
+}
+
+/* draws one unsplit node as an n x n patch (n is 6 at the finest levels,
+   else 1); vertices on the edge of a finer grid stay flat so they meet it */
+__attribute__((noipa)) void WaterMesh_DrawNode(WaterMesh *w, WaterNode *node, int level, int x, int y)
+{
+    Vec3d pos[13 * 13], p;
+    float normal[13 * 13][3], color[13 * 13][3], uv[13 * 13][2];
+    WaterVertex v;
+    WaterTri t;
+    int fine = 0, n, i, j, r, k, idx;
+    double step;
+
+    (void)level;
+    (void)x;
+    (void)y;
+    if (!node->visible)
+        return;
+    gWaterUnk7C++;
+    if ((uint32_t)node->level > (uint32_t)w->unk4AB8 || w->unk4AB8 == 0) {
+        fine = 1;
+        n = 6;
+    } else {
+        n = 1;
+    }
+    t.hazeList = w->hazeList;
+    t.hazeCount = w->hazeCount;
+    step = (long double)(uint64_t)node->size / n;
+    p.x = node->x;
+    p.y = node->y;
+    p.z = w->level;
+    for (i = 0; i <= n; i++) {
+        for (j = 0; j <= n; j++) {
+            idx = i * 13 + j;
+            if (!fine) {
+                pos[idx] = p;
+            } else {
+                uint32_t lvl = w->unk4AB8;
+                WaterNode (*g)[4] = w->grid[lvl];
+                int ok = 1;
+
+                if ((uint32_t)node->level == lvl + 1 &&
+                    ((feq(node->x, g[0][0].x) && i == 0) || (feq(node->x, g[3][0].x) && i == n) ||
+                     (feq(node->y, g[0][0].y) && j == 0) || (feq(node->y, g[0][3].y) && j == n)))
+                    ok = 0;
+                if ((uint32_t)node->level == lvl + 2 &&
+                    ((feq(node->x, g[0][0].x) && i == 0) || (node->x > g[3][0].x && i == n) ||
+                     (feq(node->y, g[0][0].y) && j == 0) || (node->y > g[0][3].y && j == n)))
+                    ok = 0;
+                if ((uint32_t)w->count <= lvl + 2 || ok) {
+                    WaterMesh_GetVertex(w, &v, &p);
+                    pos[idx] = v.pos;
+                    memcpy(normal[idx], v.normal, sizeof(normal[idx]));
+                } else {
+                    pos[idx].x = p.x;
+                    pos[idx].y = p.y;
+                    pos[idx].z = w->level;
+                    normal[idx][0] = 0.0f;
+                    normal[idx][1] = 0.0f;
+                    normal[idx][2] = 1.0f;
+                }
+            }
+            p.y = p.y + step;
+        }
+        p.y = node->y;
+        p.x = p.x + step;
+    }
+    if (fine) {
+        long double f = node->fade, nf = (long double)kOne - f;
+
+        /* odd rows, even columns from above and below */
+        for (r = 0; r < (n + 1) >> 1; r++)
+            if (n > 2)
+                for (k = 0; k < (n - 1) >> 1; k++) {
+                    idx = (1 + 2 * r) * 13 + 2 + 2 * k;
+                    smooth(&pos[idx], normal[idx], pos[idx - 13].z, pos[idx + 13].z, f, nf);
+                }
+        /* even rows, odd columns from the sides */
+        if (n > 2)
+            for (r = 0; r < (n - 1) >> 1; r++)
+                if (n >= 1)
+                    for (k = 0; k < (n + 1) >> 1; k++) {
+                        idx = (2 + 2 * r) * 13 + 1 + 2 * k;
+                        smooth(&pos[idx], normal[idx], pos[idx - 1].z, pos[idx + 1].z, f, nf);
+                    }
+        /* odd rows, odd columns along the diagonal */
+        if (n >= 1)
+            for (r = 0; r < (n + 1) >> 1; r++)
+                for (k = 0; k < (n + 1) >> 1; k++) {
+                    idx = (1 + 2 * r) * 13 + 1 + 2 * k;
+                    smooth(&pos[idx], normal[idx], pos[idx - 12].z, pos[idx + 12].z, f, nf);
+                }
+    }
+    for (i = 0; i <= n; i++) {
+        for (j = 0; j <= n; j++) {
+            idx = i * 13 + j;
+            if (fine) {
+                WaterMesh_Light(w, color[idx], normal[idx]);
+                WaterMesh_CalcEnvUV(w, uv[idx], &pos[idx], normal[idx]);
+            } else {
+                uv[idx][0] = 0.0f;
+                uv[idx][1] = 0.0f;
+                memcpy(color[idx], w->lit, sizeof(color[idx]));
+            }
+        }
+    }
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            uint32_t flags = 0, extra = 0;
+
+            idx = i * 13 + j;
+            if (i == 0) {
+                flags = 0x10;
+                extra = j >= n / 2 ? 0x100 : 0x20;
+            }
+            if (j == 0) {
+                flags |= 4;
+                extra |= i < n / 2 ? 0x80 : 0x100;
+            }
+            if (i == n - 1) {
+                flags |= 8;
+                extra |= j < n / 2 ? 0x40 : 0x80;
+            }
+            if (j == n - 1) {
+                flags |= 2;
+                extra |= i < n / 2 ? 0x40 : 0x20;
+            }
+            t.pos[0] = pos[idx];
+            t.pos[1] = pos[idx + 13];
+            t.pos[2] = pos[idx + 1];
+            memcpy(t.color[0], color[idx], sizeof(t.color[0]));
+            memcpy(t.color[1], color[idx + 13], sizeof(t.color[1]));
+            memcpy(t.color[2], color[idx + 1], sizeof(t.color[2]));
+            if (w->envMap && fine) {
+                memcpy(t.uv[0], uv[idx], sizeof(t.uv[0]));
+                memcpy(t.uv[1], uv[idx + 13], sizeof(t.uv[1]));
+                memcpy(t.uv[2], uv[idx + 1], sizeof(t.uv[2]));
+            }
+            draw_tri(w, node, &t, flags & 0x14, extra, fine);
+            t.pos[0] = pos[idx + 1];
+            t.pos[1] = pos[idx + 14];
+            t.pos[2] = pos[idx + 13];
+            if (w->debugColors) {
+                for (k = 0; k < 3; k++) {
+                    t.color[k][0] = 1.0f;
+                    t.color[k][1] = 1.0f;
+                    t.color[k][2] = 0.0f;
+                }
+            } else {
+                memcpy(t.color[0], color[idx + 1], sizeof(t.color[0]));
+                memcpy(t.color[1], color[idx + 14], sizeof(t.color[1]));
+                memcpy(t.color[2], color[idx + 13], sizeof(t.color[2]));
+            }
+            if (w->envMap && fine) {
+                memcpy(t.uv[0], uv[idx + 1], sizeof(t.uv[0]));
+                memcpy(t.uv[1], uv[idx + 14], sizeof(t.uv[1]));
+                memcpy(t.uv[2], uv[idx + 13], sizeof(t.uv[2]));
+            }
+            draw_tri(w, node, &t, flags & 0xA, extra, fine);
+        }
+    }
+}
+HOOK(0x52E660, WaterMesh_DrawNode);
