@@ -12,7 +12,9 @@ e = Emu()
 logfake(e, 0x4978D0, 1, strings=(0,), ret=0x77)  # Primitive_Register
 logfake(e, 0x4978F0, 2)  # Primitive_SetHandler
 logfake(e, 0x52FFA0, 2)  # WaterMesh_Subdivide
-logfake(e, 0x52E2D0, 1)  # the triangle pass
+logfake(e, 0x52FE60, 2)  # WaterMesh_CheckVisible
+logfake(e, 0x52FBA0, 4)  # WaterMesh_SetEdgeFlags
+logfake(e, 0x52E660, 5)  # WaterMesh_DrawNode
 logfake(e, 0x4C1780, 0)  # Debug_Log
 logfake(e, 0x4DA180, 2)  # Haze_GetVisible
 e.baseline = e.snapshot()
@@ -170,3 +172,38 @@ def test_draw(seed, cw):
         u32(em, node + 0xC, w)
         return (node,)
     run(e, 0x52DD90, "WaterMesh_Draw", setup, cw=cw)
+
+
+def grids(em, rng, w, count):
+    u32(em, w + 0x4ABC, count)
+    for g in range(count):
+        size = rng.choice([1 << 23, 1 << 24, 1 << 26])
+        flip = rng.random() < 0.5
+        x0, y0 = rng.uniform(-1e6, 1e6), rng.uniform(-1e6, 1e6)
+        for a in range(4):
+            for b in range(4):
+                p = w + 0xC40 + g * 0x300 + (a * 4 + b) * 0x30
+                em.write(p, bytes(rng.randrange(256) for _ in range(0x30)))
+                ax, by = (3 - a, 3 - b) if flip else (a, b)
+                d64(em, p, x0 + ax * size, y0 + by * size)
+                u32(em, p + 0x18, rng.getrandbits(32), rng.randrange(0, 20), size, rng.choice([0, 1]),
+                    rng.choice([0, 0, 1]))
+        if rng.random() < 0.2:
+            d64(em, w + 0xC40 + g * 0x300, NAN)
+
+
+@pytest.mark.parametrize("cw", CWS)
+@pytest.mark.parametrize("seed", range(20))
+def test_draw_cells(seed, cw):
+    def setup(em):
+        rng = random.Random(seed + 400)
+        w = water(em, rng)
+        u32(em, w + 0x4A9C, rng.choice([1 << 28, 3 << 28]))
+        d64(em, w + 0x4840, rng.uniform(-1e6, 1e6), rng.uniform(-1e6, 1e6))
+        em.call(0x52D6C0, w)
+        for i in range(8):
+            for j in range(8):
+                u32(em, w + 0x40 + (i * 8 + j) * 0x30 + 0x28, rng.choice([0, 1]))
+        grids(em, rng, w, rng.choice([0, 1, 3, 6]))
+        return (w,)
+    run(e, 0x52E2D0, "WaterMesh_DrawCells", setup, cw=cw)

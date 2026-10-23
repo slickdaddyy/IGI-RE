@@ -10,7 +10,7 @@
 /* a quad tree node; the top level is an n x n grid of these */
 typedef struct WaterNode {
     double x, y;
-    int unk10;
+    float fade;
     uint32_t flags;
     uint32_t edges;
     int level;
@@ -24,7 +24,7 @@ typedef struct WaterMesh {
     char unk0[0x10];
     WaterNode root;         /* 0x10 */
     WaterNode top[8][8];    /* 0x40 */
-    char unkC40[0x4840 - 0xC40];
+    WaterNode grid[20][4][4]; /* 0xC40: the children of the nodes split at each level */
     double originX, originY; /* 0x4840 */
     char unk4850[0x20];
     Vec3d cam;              /* 0x4870 */
@@ -80,6 +80,7 @@ typedef struct WaterVertex {
 } WaterVertex;
 
 _Static_assert(sizeof(WaterNode) == 0x30, "WaterNode");
+_Static_assert(offsetof(WaterMesh, grid) == 0xC40, "grid");
 _Static_assert(offsetof(WaterMesh, originX) == 0x4840, "origin");
 _Static_assert(offsetof(WaterMesh, waves) == 0x48B8, "waves");
 _Static_assert(offsetof(WaterMesh, lit) == 0x4A6C, "lit");
@@ -99,7 +100,9 @@ ORIG(0x4B29F0, long double, Vec2d_Dot, (const double *a, const double *b));
 ORIG(0x4C1780, void, Debug_Log, (void));
 ORIG(0x4DA180, void, Haze_GetVisible, (void *list, void *count));
 ORIG(0x52FFA0, void, WaterMesh_Subdivide, (WaterMesh *w, WaterNode *node));
-ORIG(0x52E2D0, void, sub_52E2D0, (WaterMesh *w));
+ORIG(0x52FE60, void, WaterMesh_CheckVisible, (WaterMesh *w, WaterNode *node));
+ORIG(0x52FBA0, void, WaterMesh_SetEdgeFlags, (WaterMesh *w, int level, int x, int y));
+ORIG(0x52E660, void, sub_52E660, (WaterMesh *w, WaterNode *node, int level, int x, int y));
 
 #define gWaterPrimitive VAR(int, 0xA84578)
 #define gLightData VAR(char *, 0xB041E0)
@@ -126,6 +129,7 @@ ORIG(0x52E2D0, void, sub_52E2D0, (WaterMesh *w));
 #define kGridScale VAR(double, 0x534CB8)
 #define kZeroD VAR(double, 0x5333B0)
 #define kMinusTwo VAR(double, 0x534CD0)
+#define kFinestSize VAR(double, 0x534CD8)
 
 /* x87 "not equal" (C3 clear): false for NaN */
 static inline int fne(long double a)
@@ -134,6 +138,7 @@ static inline int fne(long double a)
 }
 
 void WaterMesh_Draw(WaterDrawNode *node);
+void WaterMesh_DrawCells(WaterMesh *w);
 
 /* fills the 5 x 5 wave table from the time; returns time / period2 */
 uint32_t WaterMesh_UpdateWaves(WaterMesh *w)
@@ -408,6 +413,88 @@ void WaterMesh_Draw(WaterDrawNode *node)
             WaterMesh_Subdivide(w, c);
         }
     }
-    sub_52E2D0(w);
+    WaterMesh_DrawCells(w);
 }
 HOOK(0x52DD90, WaterMesh_Draw);
+
+static void swap_nodes(WaterNode *a, WaterNode *b)
+{
+    WaterNode t = *a;
+
+    *a = *b;
+    *b = t;
+}
+
+/* draws the top cells that were not split, then every unsplit node of the
+   finer grids, each with a fade from its distance to the camera */
+void WaterMesh_DrawCells(WaterMesh *w)
+{
+    uint32_t i, j, g;
+    int a, b;
+
+    for (i = 0; i < w->n; i++) {
+        for (j = 0; j < w->n; j++) {
+            WaterNode *c = &w->top[i][j];
+
+            c->edges = 0;
+            if (!c->active) {
+                WaterMesh_CheckVisible(w, c);
+                sub_52E660(w, c, 0, 0, 0);
+            }
+        }
+    }
+    /* a grid filled from the far corner is turned so that [0][0] is the
+       corner with the smallest x and y */
+    for (g = 0; g < (uint32_t)w->count; g++) {
+        WaterNode (*q)[4] = w->grid[g];
+        double minx = q[0][0].x, miny = q[0][0].y, twice;
+        int r, k;
+
+        twice = (long double)(uint64_t)q[0][0].size + (long double)(uint64_t)q[0][0].size;
+        for (r = 0; r < 4; r++) {
+            for (k = 1; k < 4; k++) {
+                if (minx > q[r][k].x)
+                    minx = q[r][k].x;
+                if (!(q[r][k].y >= miny))
+                    miny = q[r][k].y;
+            }
+        }
+        if (!(minx >= q[0][2].x) && (long double)twice + miny > q[0][2].y) {
+            swap_nodes(&q[0][2], &q[2][0]);
+            swap_nodes(&q[0][3], &q[2][1]);
+            swap_nodes(&q[1][2], &q[3][0]);
+            swap_nodes(&q[1][3], &q[3][1]);
+        }
+    }
+    for (g = 0; g < (uint32_t)w->count; g++) {
+        for (a = 0; a < 4; a++) {
+            for (b = 0; b < 4; b++) {
+                WaterNode *c = &w->grid[g][a][b];
+                long double half = (long double)(uint64_t)(c->size >> 1);
+                Vec3d p;
+
+                p.x = half + c->x;
+                p.y = half + c->y;
+                p.z = w->level;
+                c->fade = WaterMesh_GetFade(w, &p, c->size);
+            }
+        }
+    }
+    for (g = 0; g < (uint32_t)w->count; g++) {
+        if ((long double)(uint64_t)w->grid[g][0][0].size == kFinestSize)
+            w->unk4AB8 = w->grid[g][0][0].level;
+        for (a = 0; a < 4; a++) {
+            for (b = 0; b < 4; b++) {
+                WaterNode *c = &w->grid[g][a][b];
+
+                if (!c->active) {
+                    WaterMesh_SetEdgeFlags(w, g, a, b);
+                    sub_52E660(w, c, g, a, b);
+                } else {
+                    c->edges = 0;
+                }
+            }
+        }
+    }
+}
+HOOK(0x52E2D0, WaterMesh_DrawCells);
