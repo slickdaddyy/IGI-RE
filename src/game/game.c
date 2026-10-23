@@ -1067,9 +1067,9 @@ int Game_IsRaining(void)
 }
 HOOK(0x416FB0, Game_IsRaining);
 
-void Game_CountHuman(void)
+int Game_CountHuman(void)
 {
-    gGame->unkE4++;
+    return gGame->unkE4++;
 }
 HOOK(0x416FC0, Game_CountHuman);
 

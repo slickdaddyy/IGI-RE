@@ -431,6 +431,13 @@ def test_flags(addr, name, args):
     compare(emu, addr, name, args=args, setup=setup, eax_mask=0xFF, check_eax=not args)
 
 
+def test_count_human():
+    def setup(e):
+        g = new_game(e)
+        e.write(g + 0xE4, u32(0x12345))
+    compare(emu, 0x416FC0, "Game_CountHuman", setup=setup)
+
+
 def test_new():
     def setup(e):
         new_game(e)
