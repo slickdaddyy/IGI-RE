@@ -39,7 +39,7 @@ void Siren_GetSoundSource(Siren *s, void **out);
 void Siren_Create(Siren *s, void *arg)
 {
     HANDLER(0, ExplodeObject_GetType())(s, arg);
-    ExplodeObject_Setup(s, 1.0f, 0.5f, 0.5f, 1.0f, 0, 5, 4, "explosion_1");
+    ExplodeObject_Setup(s, 1.0f, 0.5f, 0.5f, 1.0f, 0.0f, 5, 4, "explosion_1");
     s->on = 0;
     s->last_on = 0;
     s->registered = 0;

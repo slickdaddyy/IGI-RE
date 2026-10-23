@@ -95,7 +95,7 @@ void GenericTBA_Create(GenericTBA *t, void *arg)
 {
     QTaskList_Add(Game_GetTaskList0(), t);
     HANDLER(0, ExplodeObject_GetType())(t, arg);
-    ExplodeObject_Setup(t, 1.0f, 0.5f, 0.5f, 1.0f, 0, 5, 4, "explo_02_m");
+    ExplodeObject_Setup(t, 1.0f, 0.5f, 0.5f, 1.0f, 0.0f, 5, 4, "explo_02_m");
     t->unk238 = 0;
     t->use_time = 4.0f;
     t->anim = -1;

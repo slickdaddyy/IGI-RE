@@ -173,7 +173,7 @@ ORIG(0x416920, int, Game_GetWorld, (void));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x481340, uint16_t, ExplodeObject_GetType, (void));
 ORIG(0x481350, void *, ExplodeObject_GetParams, (void));
-ORIG(0x481360, void, ExplodeObject_Setup, (void *o, float a, float b, float c, float d, int e, int f, int g,
+ORIG(0x481360, void, ExplodeObject_Setup, (void *o, float a, float b, float c, float d, float delay, int f, int g,
                                           const char *sound));
 ORIG(0x4B7EE0, void, Script_RegisterBool8, (const char *name, char *value));
 ORIG(0x4B80A0, void, Script_RemoveSymbol, (const char *name));
