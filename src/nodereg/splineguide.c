@@ -127,7 +127,7 @@ void SplinePathGuide_Run(SplinePathGuide *g)
             }
         }
     }
-    u = g->u < kOneF ? g->u : kOneF;
+    u = !(g->u >= kOneF) ? g->u : kOneF;
     g->u = u;
     sub_51A4A0(p, t->matrix.m, g->segment, u);
     pos = *SplinePath_GetPos(&tmp, p, g->segment, g->u);
@@ -139,7 +139,7 @@ void SplinePathGuide_Run(SplinePathGuide *g)
     if (fn)
         fn(t, &delta);
 }
-/* not hooked: differs from the original at truncating control words */
+HOOK(0x51AEB0, SplinePathGuide_Run);
 
 /* puts the guide at fraction start of the whole path length */
 void SplinePathGuide_SetStart(SplinePathGuide *g)
@@ -166,7 +166,7 @@ void SplinePathGuide_SetStart(SplinePathGuide *g)
         d -= a->length;
     }
 }
-/* not hooked yet: fails some tests */
+HOOK(0x51B0B0, SplinePathGuide_SetStart);
 
 void SplinePathGuide_ParamsChanged(SplinePathGuide *g);
 void SplinePathGuide_GetParamTable(SplinePathGuide *g, ParamTable *out);
@@ -178,11 +178,10 @@ void SplinePathGuide_Open(void)
     gSplinePathGuideType = TaskType_New("SplinePathGuideQTask", sizeof(SplinePathGuide), Task_GetRootType(), 0, 0);
     gGuideMoveEvent = TaskEvent_Alloc(0);
     gGuideStartEvent = TaskEvent_Alloc(0);
-    /* Run and ParamsChanged are not exact yet, so keep the originals */
-    TaskType_SetHandler2(gSplinePathGuideType, 1, (void *)0x51AEB0);
+    TaskType_SetHandler2(gSplinePathGuideType, 1, SplinePathGuide_Run);
     TaskType_SetHandler(gSplinePathGuideType, 0, SplinePathGuide_Create);
     TaskType_SetHandler(gSplinePathGuideType, Param_GetTableEvent(), SplinePathGuide_GetParamTable);
-    TaskType_SetHandler(gSplinePathGuideType, Param_GetChangedEvent(), (void *)0x51B2C0);
+    TaskType_SetHandler(gSplinePathGuideType, Param_GetChangedEvent(), SplinePathGuide_ParamsChanged);
     TaskType_SetHandler2(gSplinePathGuideType, 2, SplinePathGuide_Delete);
     gSplinePathGuideParams = ParamTable_New(5);
     ParamTable_Add(gSplinePathGuideParams, &p, &p.pathId, Param_Int32(), 7, NULL);
@@ -200,7 +199,7 @@ void SplinePathGuide_ParamsChanged(SplinePathGuide *g)
     Task *t;
 
     gUnkA8375C = 0;
-    if (g->start < kZeroF)
+    if (!(g->start >= kZeroF))
         v = kZeroF;
     else if (g->start > kOneF)
         v = kOneF;
@@ -221,7 +220,7 @@ void SplinePathGuide_ParamsChanged(SplinePathGuide *g)
             fn(t, NULL);
     }
 }
-/* not hooked yet: fails some tests */
+HOOK(0x51B2C0, SplinePathGuide_ParamsChanged);
 
 void SplinePathGuide_GetParamTable(SplinePathGuide *g, ParamTable *out)
 {

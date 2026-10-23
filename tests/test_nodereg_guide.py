@@ -3,7 +3,7 @@
 import pytest
 
 from emu import Emu
-from test_nodereg_util import (CWS, NODE, PATH, RET, d64, f32, handler, logfake, path, rnd, run, set_handler,
+from test_nodereg_util import (CWS, FISTP_CWS, NODE, PATH, RET, d64, f32, handler, logfake, path, rnd, run, set_handler,
                                task, u8, u16, u32)
 
 TARGET, GUIDE = 0x58, 0x59
@@ -61,8 +61,7 @@ RUNS = [
 ]
 
 
-@pytest.mark.skip(reason="rewrite not finished, not hooked")
-@pytest.mark.parametrize("cw", CWS)
+@pytest.mark.parametrize("cw", FISTP_CWS)
 @pytest.mark.parametrize("n", [2, 4])
 @pytest.mark.parametrize("kw", RUNS)
 def test_run(kw, n, cw):
@@ -75,8 +74,7 @@ def test_run(kw, n, cw):
     run(emu, 0x51AEB0, "SplinePathGuide_Run", setup, cw=cw)
 
 
-@pytest.mark.skip(reason="rewrite not finished, not hooked")
-@pytest.mark.parametrize("cw", CWS)
+@pytest.mark.parametrize("cw", FISTP_CWS)
 @pytest.mark.parametrize("n,start,found", [(4, 0.0, 1), (4, 0.3, 1), (4, 0.999, 1), (4, 1.0, 1), (4, 1.5, 1),
                                            (2, 0.5, 1), (4, 0.5, 0), (5, float("nan"), 1)])
 def test_set_start(n, start, found, cw):
@@ -88,8 +86,7 @@ def test_set_start(n, start, found, cw):
     run(emu, 0x51B0B0, "SplinePathGuide_SetStart", setup, cw=cw)
 
 
-@pytest.mark.skip(reason="rewrite not finished, not hooked")
-@pytest.mark.parametrize("cw", CWS)
+@pytest.mark.parametrize("cw", FISTP_CWS)
 @pytest.mark.parametrize("start", [-1.0, 0.0, 0.5, 1.0, 2.0, float("nan")])
 @pytest.mark.parametrize("active,speed,target_id", [(0, -1.0, 0), (1, 0.0, 2), (1, 2.0, 3), (0, float("nan"), 2),
                                                     (1, 3.0, 4)])
