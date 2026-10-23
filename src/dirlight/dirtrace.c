@@ -11,7 +11,7 @@ ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4B4010, void, Matrix_SetDirection, (Matrix *m, const Vec3f *dir));
 ORIG(0x4CE410, char, Coll_LineOfSight, (void *world, const Vec3d *from, const Vec3d *to, int event, int unk,
                                         int filter, int flags, float *hit));
-ORIG(0x521E40, void, sub_521E40, (LightmapInfo *info, const Vec3d *origin, const Matrix *m, int *ids, float *depth,
+ORIG(0x521E40, void, Hemicube_DrawLightmapSet, (LightmapInfo *info, const Vec3d *origin, const Matrix *m, int *ids, float *depth,
                                   int w, int h, float centerX, float centerY, int pass, int unk1, int unk2, int unk3,
                                   float radius, int unk4));
 
@@ -118,7 +118,7 @@ void Dirlight_TraceVertices(Dirlight *dl, TraceArg *arg)
         for (scan = 0; scan < 2; scan++) {
             float *p = depth;
 
-            sub_521E40(info, &O, &m, idbuf, depth, size, size, half, half, pass, 1, scan, !scan, radius, 0);
+            Hemicube_DrawLightmapSet(info, &O, &m, idbuf, depth, size, size, half, half, pass, 1, scan, !scan, radius, 0);
             for (row = 0; row < size; row++) {
                 for (col = 0; col < size; col++, p++) {
                     int id = idbuf[p - depth];
