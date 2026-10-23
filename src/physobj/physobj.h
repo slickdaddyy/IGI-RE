@@ -1,0 +1,87 @@
+#ifndef PHYSOBJ_PHYSOBJ_H
+#define PHYSOBJ_PHYSOBJ_H
+
+#include <stddef.h>
+#include <stdint.h>
+
+#include "igi.h"
+
+/* the first 0x20 bytes of every task */
+typedef struct Task {
+    struct Task *next;
+    struct Task *prev;
+    struct Task *head;
+    void *tail;
+    void *tailpred;
+    struct Task *parent;
+    int refs;
+    uint16_t type;
+    char pooled;
+    char unk1F;
+} Task;
+
+typedef void (*TaskFn)(void *task, void *arg);
+
+#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+#define HANDLER(slot, type) gTaskHandlers[(uint8_t)(slot)][(uint16_t)(type)]
+
+#define TASK_NOTHING ((void *)0x4D3710)
+
+/* what a script function returns */
+typedef struct ScriptValue {
+    int i;
+    int unk4;
+    double d;
+    void *type;
+    int unk14;
+} ScriptValue;
+
+#define gScriptNumberType ((void *)0x567C74)
+
+/* a point of a physics object type, read from the script */
+typedef struct PhysicsObjJoint {
+    int point;          /* model point index */
+    int unk4;
+    int unk8;
+    float unkC;
+    float unk10;
+    float unk14;
+} PhysicsObjJoint;
+
+/* one DefinePhysicsObjType() entry (0x2D8 bytes) */
+typedef struct PhysicsObjType {
+    uint16_t type;      /* task type that parses the extra arguments */
+    int unk4;
+    float mass;         /* 0x08 */
+    float size[3];      /* 0x0C, 0 means "from the model points" */
+    char unk18[0x20];
+    char unk38[0x100];
+    char model[0x10];   /* 0x138 */
+    int jointCount;     /* 0x148 */
+    PhysicsObjJoint joints[16]; /* 0x14C */
+    float unk2CC;
+    float unk2D0;
+    void *data;         /* 0x2D4, filled by the task type */
+} PhysicsObjType;
+
+/* where a parameter parser is in the arguments of a script Task_New call */
+typedef struct ParamCursor {
+    int index;
+    void *args;
+    const char *file;
+    int line;
+} ParamCursor;
+
+/* output of the parameter format operation, appended to buf */
+typedef struct ParamText {
+    int unk0;
+    char *buf;
+} ParamText;
+
+_Static_assert(sizeof(PhysicsObjType) == 0x2D8, "PhysicsObjType");
+_Static_assert(offsetof(PhysicsObjType, model) == 0x138, "model");
+_Static_assert(offsetof(PhysicsObjType, joints) == 0x14C, "joints");
+_Static_assert(offsetof(PhysicsObjType, data) == 0x2D4, "data");
+_Static_assert(sizeof(ScriptValue) == 0x18, "ScriptValue");
+
+#endif
