@@ -102,7 +102,7 @@ def test_ptr_list():
         p = e.call(0x4B73F0, 5)[0]
         e.call(0x4B7430, p, 0x111)
         return p, 0x222
-    compare(emu, 0x4B7430, "PtrList_Add", setup=setup, check_eax=False)
+    compare(emu, 0x4B7430, "PtrList_Add", setup=setup)
 
     def setup_clear(e):
         p, _ = setup(e)

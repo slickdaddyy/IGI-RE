@@ -25,9 +25,11 @@ PtrList *PtrList_New(int capacity)
 }
 HOOK(0x4B73F0, PtrList_New);
 
-void PtrList_Add(PtrList *l, void *p)
+int PtrList_Add(PtrList *l, void *p)
 {
-    l->items[l->count++] = p;
+    int i = l->count++;
+    l->items[i] = p;
+    return i;
 }
 HOOK(0x4B7430, PtrList_Add);
 
