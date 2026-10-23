@@ -68,6 +68,13 @@ static long double x87_sin(long double x)
     return r;
 }
 
+/* fchs, so gcc can't turn -(a - b) into b - a (they round apart in round-down) */
+static long double x87_neg(long double x)
+{
+    __asm__("fchs" : "+t"(x));
+    return x;
+}
+
 void SplinePathNode_Create(SplinePathNode *n);
 void SplinePathNode_Delete(SplinePathNode *n);
 void SplinePathNode_ParamsChanged(SplinePathNode *n);
@@ -422,7 +429,7 @@ void SplinePath_GetMatrix(SplinePath *p, float *out, int i, float u)
         tz = tz * inv;
     }
     u0 = ty * c2 - tz * c1;
-    u1 = -(tx * c2 - tz * c0);
+    u1 = x87_neg(tx * c2 - tz * c0);
     u2 = tx * c1 - ty * c0;
     if (nonzero(u0) || nonzero(u1) || nonzero(u2)) {
         inv = kOne / sqrtl((long double)u0 * u0 + (long double)u1 * u1 + (long double)u2 * u2);
@@ -433,7 +440,7 @@ void SplinePath_GetMatrix(SplinePath *p, float *out, int i, float u)
         uz = u2;
     }
     v0 = u1 * tz - uz * ty;
-    v1 = -(u0 * tz - uz * tx);
+    v1 = x87_neg(u0 * tz - uz * tx);
     v2 = u0 * ty - u1 * tx;
     if (nonzero(v0) || nonzero(v1) || nonzero(v2)) {
         inv = kOne / sqrtl((long double)v0 * v0 + (long double)v1 * v1 + (long double)v2 * v2);
@@ -453,7 +460,7 @@ void SplinePath_GetMatrix(SplinePath *p, float *out, int i, float u)
     out[2] = v0;
     out[5] = v1;
 }
-/* not hooked: differs from the original at truncating control words */
+HOOK(0x51A4A0, SplinePath_GetMatrix);
 
 static long double step_length(const Vec3d *a, const Vec3d *b)
 {

@@ -95,7 +95,7 @@ def test_hermite(orig, ours, cw):
         run(emu, orig, ours, setup, cw=cw, check_eax=True)
 
 
-@pytest.mark.parametrize("cw", CWS)
+@pytest.mark.parametrize("cw", FISTP_CWS)
 @pytest.mark.parametrize("seed", range(6))
 def test_get_matrix(seed, cw):
     for u in US:
