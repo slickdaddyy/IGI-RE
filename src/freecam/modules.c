@@ -1,0 +1,490 @@
+/* keep each module step a real call, as in the original */
+#pragma GCC optimize("no-inline")
+
+#include "freecam/freecam.h"
+
+/* Start up and shut down of the engine modules, in the order the game
+   uses. Debug_Log is an empty function here. */
+
+ORIG(0x4C1780, void, Debug_Log, (void));
+ORIG(0x4B0B90, void, sub_4B0B90, (void));
+ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
+ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t slot));
+ORIG(0x4010D0, void, Task_InitSystem, (void));
+ORIG(0x4011F0, void, Task_ShutdownSystem, (void));
+ORIG(0x4B8B20, void, Script_Init, (void));
+ORIG(0x4B8CC0, void, Script_Shutdown, (void));
+
+ORIG(0x4EC160, void, sub_4EC160, (void));
+ORIG(0x4EBE70, void, AnimTrigger_Init, (void));
+ORIG(0x4ED000, void, sub_4ED000, (void));
+ORIG(0x4EBFC0, void, AnimTrigger_Shutdown, (void));
+ORIG(0x4EC180, void, sub_4EC180, (void));
+
+ORIG(0x4E6070, void, SoundSys_Init, (void));
+ORIG(0x4EBC60, void, SoundSysMicrophone_Init, (void));
+ORIG(0x4EB1D0, void, SoundDefGroup_Init, (void));
+ORIG(0x4E8390, void, SoundDefSound_Init, (void));
+ORIG(0x4EA3D0, void, SoundDefGraph_Init, (void));
+ORIG(0x4E9520, void, SoundDefTriggerOnce_Init, (void));
+ORIG(0x4E7370, void, Screen_Init, (void));
+ORIG(0x4E7D90, void, Viewport_Init, (void));
+ORIG(0x4E82C0, void, TerraDraw_Init, (void));
+ORIG(0x4E7C50, void, CameraControl_Init, (void));
+ORIG(0x4E7840, void, DebugText_Init, (void));
+ORIG(0x4E92C0, void, FadeOut_Init, (void));
+ORIG(0x4E9480, void, GlowTask_Init, (void));
+ORIG(0x4A2A00, void, CameraFilter_Init, (void));
+ORIG(0x4A4F60, void, CameraFilter_Close, (void));
+ORIG(0x4E94E0, void, GlowTask_Shutdown, (void));
+ORIG(0x4E9410, void, FadeOut_Shutdown, (void));
+ORIG(0x4E7B40, void, DebugText_Shutdown, (void));
+ORIG(0x4E7D30, void, CameraControl_Shutdown, (void));
+ORIG(0x4E8350, void, TerraDraw_Shutdown, (void));
+ORIG(0x4E80D0, void, Viewport_Shutdown, (void));
+ORIG(0x4E7500, void, Screen_Shutdown, (void));
+ORIG(0x4E9E80, void, SoundDefTriggerOnce_Shutdown, (void));
+ORIG(0x4EACE0, void, SoundDefGraph_Shutdown, (void));
+ORIG(0x4E8C20, void, SoundDefSound_Shutdown, (void));
+ORIG(0x4EBA50, void, SoundDefGroup_Shutdown, (void));
+ORIG(0x4EBDB0, void, SoundSysMicrophone_Shutdown, (void));
+ORIG(0x4E63E0, void, SoundSys_Shutdown, (void));
+
+ORIG(0x4CEEB0, void, Model_Init, (void));
+ORIG(0x52D420, void, Sky_Init, (void));
+ORIG(0x518260, void, LensFlare_Init, (void));
+ORIG(0x4A1470, void, RigidDynCubeObj_OpenD3D, (void));
+ORIG(0x4D9A00, void, MagicObj_Open, (void));
+ORIG(0x5125A0, void, BoneDynCubeObj_OpenD3D, (void));
+ORIG(0x49A520, void, PolyList_Init, (void));
+ORIG(0x4E41B0, void, SplineObjSegment_Init, (void));
+ORIG(0x4E0950, void, Shadow_Open, (void));
+ORIG(0x4D0B30, void, Mesh3D_Init, (void));
+ORIG(0x4DCF20, void, Sector_Open, (void));
+ORIG(0x4E0840, void, MagicObjContainer_Open, (void));
+ORIG(0x498AB0, void, Rain_Init, (void));
+ORIG(0x52D360, void, SkyDome_Init, (void));
+ORIG(0x49BB40, void, Direct3DRender_Init, (void));
+ORIG(0x4A0110, void, Direct3DRender_Shutdown, (void));
+ORIG(0x499CE0, void, Rain_Close, (void));
+ORIG(0x4E0920, void, MagicObjContainer_Close, (void));
+ORIG(0x4DEE40, void, Sector_Close, (void));
+ORIG(0x4D0C50, void, Mesh3D_Shutdown, (void));
+ORIG(0x4E0CB0, void, Shadow_Close, (void));
+ORIG(0x4E43B0, void, SplineObjSegment_Shutdown, (void));
+ORIG(0x49B260, void, PolyList_Close, (void));
+ORIG(0x5127D0, void, BoneDynCubeObj_CloseD3D, (void));
+ORIG(0x4D9F60, void, MagicObj_Close, (void));
+ORIG(0x4A23D0, void, RigidDynCubeObj_CloseD3D, (void));
+ORIG(0x518290, void, LensFlare_Shutdown, (void));
+ORIG(0x4CEF40, void, Model_Shutdown, (void));
+
+ORIG(0x4E5D90, void, QCube_InitTables, (void));
+ORIG(0x4D0EF0, void, QCube_Init, (void));
+ORIG(0x50FAC0, void, TerrainMesh_Init, (void));
+ORIG(0x52DD70, void, sub_52DD70, (void));
+ORIG(0x4DA1D0, void, HazeLayer_Open, (void));
+ORIG(0x4DA2E0, void, HazeLayer_Close, (void));
+ORIG(0x4D1260, void, QCube_Shutdown, (void));
+ORIG(0x4E5EA0, void, QCube_FreeTables, (void));
+ORIG(0x4C5900, void, sub_4C5900, (void));
+ORIG(0x4E55C0, void, CellMask_Init, (void));
+ORIG(0x4E55F0, void, CellMask_Shutdown, (void));
+ORIG(0x4C5AA0, void, sub_4C5AA0, (void));
+ORIG(0x4D9730, void, QObj_Open, (void));
+ORIG(0x4D9810, void, Camera_Open, (void));
+ORIG(0x4E5370, void, DynCubeObj_Init, (void));
+ORIG(0x4D2C30, void, BoneObj_Init, (void));
+ORIG(0x4DA880, void, Light_Open, (void));
+ORIG(0x4DA8A0, void, Light_Close, (void));
+ORIG(0x4D2CF0, void, BoneObj_Shutdown, (void));
+ORIG(0x4E53A0, void, DynCubeObj_Shutdown, (void));
+ORIG(0x4D9830, void, Camera_Close, (void));
+ORIG(0x4D9790, void, QObj_Close, (void));
+
+ORIG(0x498950, void, App_ResetErrorHandlers, (void));
+ORIG(0x4AF8B0, void, sub_4AF8B0, (int v));
+ORIG(0x48F020, void, AppContext_Open, (void));
+ORIG(0x4B46A0, void, Math_InitTables, (void));
+ORIG(0x4B0BA0, void, Mem_Init, (void));
+ORIG(0x4B1200, void, File_Init, (void));
+ORIG(0x4B0DC0, void, RenderMode_Init, (void));
+ORIG(0x491700, void, Display_Open, (void));
+ORIG(0x4B5E70, void, Resource_Init, (void));
+ORIG(0x4B7C80, void, Palette_Register, (void));
+ORIG(0x4B2180, void, Texture_Init, (void));
+ORIG(0x495280, void, Sound_Init, (void));
+ORIG(0x4B59A0, void, QVertex_Init, (void));
+ORIG(0x48FFF0, void, Keyboard_Open, (void));
+ORIG(0x48FDE0, void, Mouse_Open, (void));
+ORIG(0x509980, void, Joystick_Init, (void));
+ORIG(0x497550, void, Scene_InitList, (void));
+ORIG(0x497980, void, TransContext_Init, (void));
+ORIG(0x490360, void, Timer_Open, (void));
+ORIG(0x4B73C0, void, SortRender_Init, (void));
+ORIG(0x490380, void, Movie_Init, (void));
+ORIG(0x4903A0, void, Movie_Shutdown, (void));
+ORIG(0x4B73E0, void, SortRender_Shutdown, (void));
+ORIG(0x497D40, void, TransContext_Shutdown, (void));
+ORIG(0x509E90, void, Joystick_Shutdown, (void));
+ORIG(0x48FFA0, void, Mouse_Close, (void));
+ORIG(0x4902F0, void, Keyboard_Close, (void));
+ORIG(0x4B59D0, void, QVertex_Shutdown, (void));
+ORIG(0x495A90, void, Sound_Shutdown, (void));
+ORIG(0x4B2250, void, Texture_Shutdown, (void));
+ORIG(0x4B7CC0, void, Palette_Unregister, (void));
+ORIG(0x4B5EC0, void, Resource_Shutdown, (void));
+ORIG(0x491930, void, Display_Close, (void));
+ORIG(0x4B1260, void, File_Shutdown, (void));
+ORIG(0x4B0BE0, void, Mem_Shutdown, (void));
+ORIG(0x48F070, void, AppContext_Close, (void));
+
+/* rewritten in this folder */
+void Lzss_Register(void);
+void FreeCamera_Init(void);
+void FreeCamera_Shutdown(void);
+void ParticleSystem_Init(void);
+void ParticleSystem_Shutdown(void);
+void SpriteParticleSystem_Init(void);
+void SpriteParticleSystem_Shutdown(void);
+void FlashTask_Init(void);
+void FlashTask_Shutdown(void);
+void LightObj_Init(void);
+void LightObj_Shutdown(void);
+void Sprite3D_Init(void);
+void Sprite3D_Shutdown(void);
+void BoneMagicObj_Init(void);
+void BoneMagicObj_Shutdown(void);
+void TransparencyList_Init(void);
+void TransparencyList_Shutdown(void);
+void WaterMesh_Close(void);
+
+#define gEventA845E0 VAR(uint8_t, 0xA845E0)
+#define gEventA845E1 VAR(uint8_t, 0xA845E1)
+
+void sub_5309C0(void);
+void sub_530A20(void);
+void sub_530960(void);
+void sub_530980(void);
+void sub_5311E0(void);
+void sub_5311F0(void);
+void sub_531540(void);
+void sub_5315B0(void);
+void sub_531D30(void);
+void sub_531D70(void);
+void sub_531DB0(void);
+void sub_531DC0(void);
+void sub_531DD0(void);
+void sub_531DF0(void);
+void sub_5323C0(void);
+void sub_5323D0(void);
+void sub_5323E0(void);
+void sub_5323F0(void);
+void Core_Init(void);
+void Core_Shutdown(void);
+
+void sub_530270(void)
+{
+    sub_5309C0();
+    sub_530960();
+    sub_4EC160();
+    AnimTrigger_Init();
+    Debug_Log();
+    Lzss_Register();
+    sub_4ED000();
+}
+HOOK(0x530270, sub_530270);
+
+void sub_5302A0(void)
+{
+    Debug_Log();
+    Debug_Log();
+    Debug_Log();
+    AnimTrigger_Shutdown();
+    sub_4EC180();
+    sub_530980();
+    sub_530A20();
+}
+HOOK(0x5302A0, sub_5302A0);
+
+void sub_530960(void)
+{
+    gEventA845E1 = TaskEvent_Alloc(0);
+    gEventA845E0 = TaskEvent_Alloc(0);
+}
+HOOK(0x530960, sub_530960);
+
+void sub_530980(void)
+{
+    TaskEvent_Free(gEventA845E0);
+    TaskEvent_Free(gEventA845E1);
+}
+HOOK(0x530980, sub_530980);
+
+void sub_5309C0(void)
+{
+    sub_5311E0();
+    SoundSys_Init();
+    SoundSysMicrophone_Init();
+    SoundDefGroup_Init();
+    SoundDefSound_Init();
+    SoundDefGraph_Init();
+    SoundDefTriggerOnce_Init();
+    Screen_Init();
+    Viewport_Init();
+    TerraDraw_Init();
+    CameraControl_Init();
+    FreeCamera_Init();
+    DebugText_Init();
+    FadeOut_Init();
+    GlowTask_Init();
+    ParticleSystem_Init();
+    SpriteParticleSystem_Init();
+    FlashTask_Init();
+    CameraFilter_Init();
+}
+HOOK(0x5309C0, sub_5309C0);
+
+void sub_530A20(void)
+{
+    CameraFilter_Close();
+    FlashTask_Shutdown();
+    SpriteParticleSystem_Shutdown();
+    ParticleSystem_Shutdown();
+    GlowTask_Shutdown();
+    FadeOut_Shutdown();
+    DebugText_Shutdown();
+    FreeCamera_Shutdown();
+    CameraControl_Shutdown();
+    TerraDraw_Shutdown();
+    Viewport_Shutdown();
+    Screen_Shutdown();
+    SoundDefTriggerOnce_Shutdown();
+    SoundDefGraph_Shutdown();
+    SoundDefSound_Shutdown();
+    SoundDefGroup_Shutdown();
+    SoundSysMicrophone_Shutdown();
+    SoundSys_Shutdown();
+    sub_5311F0();
+}
+HOOK(0x530A20, sub_530A20);
+
+void sub_5311E0(void)
+{
+    sub_5323C0();
+    sub_531540();
+}
+HOOK(0x5311E0, sub_5311E0);
+
+void sub_5311F0(void)
+{
+    sub_5315B0();
+    sub_5323D0();
+}
+HOOK(0x5311F0, sub_5311F0);
+
+void sub_531540(void)
+{
+    sub_531D30();
+    Model_Init();
+    LightObj_Init();
+    Sky_Init();
+    LensFlare_Init();
+    Sprite3D_Init();
+    RigidDynCubeObj_OpenD3D();
+    MagicObj_Open();
+    BoneDynCubeObj_OpenD3D();
+    PolyList_Init();
+    Debug_Log();
+    SplineObjSegment_Init();
+    Shadow_Open();
+    Mesh3D_Init();
+    BoneMagicObj_Init();
+    Sector_Open();
+    MagicObjContainer_Open();
+    Rain_Init();
+    SkyDome_Init();
+    Direct3DRender_Init();
+}
+HOOK(0x531540, sub_531540);
+
+void sub_5315B0(void)
+{
+    Direct3DRender_Shutdown();
+    Debug_Log();
+    Debug_Log();
+    Rain_Close();
+    MagicObjContainer_Close();
+    Sector_Close();
+    BoneMagicObj_Shutdown();
+    Mesh3D_Shutdown();
+    Shadow_Close();
+    SplineObjSegment_Shutdown();
+    Debug_Log();
+    PolyList_Close();
+    BoneDynCubeObj_CloseD3D();
+    MagicObj_Close();
+    RigidDynCubeObj_CloseD3D();
+    Sprite3D_Shutdown();
+    LensFlare_Shutdown();
+    Debug_Log();
+    LightObj_Shutdown();
+    Model_Shutdown();
+    sub_531D70();
+}
+HOOK(0x5315B0, sub_5315B0);
+
+void sub_531D30(void)
+{
+    sub_531DB0();
+    QCube_InitTables();
+    Debug_Log();
+    QCube_Init();
+    Debug_Log();
+    Debug_Log();
+    TerrainMesh_Init();
+    sub_52DD70();
+    HazeLayer_Open();
+    TransparencyList_Init();
+}
+HOOK(0x531D30, sub_531D30);
+
+void sub_531D70(void)
+{
+    TransparencyList_Shutdown();
+    HazeLayer_Close();
+    WaterMesh_Close();
+    sub_4B0B90();
+    Debug_Log();
+    Debug_Log();
+    QCube_Shutdown();
+    Debug_Log();
+    QCube_FreeTables();
+    sub_531DC0();
+}
+HOOK(0x531D70, sub_531D70);
+
+void sub_531DB0(void)
+{
+    sub_531DD0();
+    sub_4C5900();
+    CellMask_Init();
+}
+HOOK(0x531DB0, sub_531DB0);
+
+void sub_531DC0(void)
+{
+    CellMask_Shutdown();
+    sub_4C5AA0();
+    sub_531DF0();
+}
+HOOK(0x531DC0, sub_531DC0);
+
+void sub_531DD0(void)
+{
+    QObj_Open();
+    Camera_Open();
+    DynCubeObj_Init();
+    BoneObj_Init();
+    Light_Open();
+}
+HOOK(0x531DD0, sub_531DD0);
+
+void sub_531DF0(void)
+{
+    Light_Close();
+    BoneObj_Shutdown();
+    DynCubeObj_Shutdown();
+    Camera_Close();
+    QObj_Close();
+}
+HOOK(0x531DF0, sub_531DF0);
+
+void sub_5323C0(void)
+{
+    sub_5323E0();
+    Task_InitSystem();
+    Debug_Log();
+}
+HOOK(0x5323C0, sub_5323C0);
+
+void sub_5323D0(void)
+{
+    Debug_Log();
+    Task_ShutdownSystem();
+    sub_5323F0();
+}
+HOOK(0x5323D0, sub_5323D0);
+
+void sub_5323E0(void)
+{
+    Core_Init();
+    Script_Init();
+}
+HOOK(0x5323E0, sub_5323E0);
+
+void sub_5323F0(void)
+{
+    Script_Shutdown();
+    Core_Shutdown();
+}
+HOOK(0x5323F0, sub_5323F0);
+
+void Core_Init(void)
+{
+    Debug_Log();
+    App_ResetErrorHandlers();
+    sub_4AF8B0(1);
+    AppContext_Open();
+    Debug_Log();
+    Math_InitTables();
+    Mem_Init();
+    Debug_Log();
+    File_Init();
+    RenderMode_Init();
+    Display_Open();
+    Resource_Init();
+    Palette_Register();
+    Texture_Init();
+    Sound_Init();
+    QVertex_Init();
+    Keyboard_Open();
+    Mouse_Open();
+    Joystick_Init();
+    Scene_InitList();
+    TransContext_Init();
+    Timer_Open();
+    Debug_Log();
+    SortRender_Init();
+    Movie_Init();
+}
+HOOK(0x532400, Core_Init);
+
+void Core_Shutdown(void)
+{
+    Movie_Shutdown();
+    SortRender_Shutdown();
+    Debug_Log();
+    Timer_Open();
+    TransContext_Shutdown();
+    Debug_Log();
+    Joystick_Shutdown();
+    Mouse_Close();
+    Keyboard_Close();
+    QVertex_Shutdown();
+    Sound_Shutdown();
+    Texture_Shutdown();
+    Palette_Unregister();
+    Resource_Shutdown();
+    Display_Close();
+    Debug_Log();
+    File_Shutdown();
+    sub_4B0B90();
+    Mem_Shutdown();
+    Debug_Log();
+    Debug_Log();
+    AppContext_Close();
+    sub_4B0B90();
+    Debug_Log();
+}
+HOOK(0x532490, Core_Shutdown);
