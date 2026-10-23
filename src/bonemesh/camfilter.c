@@ -1,0 +1,537 @@
+/* Camera filters: scan lines and noise, wide screen bars, the band filter
+   texture and the hand held camera overlay. */
+#pragma GCC optimize("excess-precision=standard")
+
+#include "hook.h"
+#include "bonemesh/bonemesh.h"
+
+ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
+ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
+ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
+ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
+ORIG(0x490370, unsigned int, Timer_GetMs, (void));
+ORIG(0x4950E0, int, Direct3D_GetRenderMode, (void));
+ORIG(0x4978D0, int, RenderTask_Register, (const char *name));
+ORIG(0x4978F0, void, RenderTask_SetHandler, (int id, void *fn));
+ORIG(0x4B0D40, void, Mem_SetDefaultMode, (void));
+ORIG(0x4B0D50, void, Mem_ClearMode, (void));
+ORIG(0x4B0DB0, char, Mem_GetMode, (void));
+ORIG(0x4B0E70, int, RenderMode_CreateMethod, (const char *name));
+ORIG(0x4B0EC0, void, RenderMode_SetMethod, (int mode, int method, void *fn));
+ORIG(0x4B22F0, void, Texture_Free, (void *tex));
+ORIG(0x4B2320, void, Texture_Alloc, (void *tex, int a2, int pitch, int width, int height, int format, int a7, int a8));
+ORIG(0x4B4720, void, Random_Init, (void *r));
+ORIG(0x4B4770, long double, Random_Float, (void *r));
+ORIG(0x4B66A0, void, Sprite_Free, (void *slot));
+ORIG(0x4B6720, int, Sprite_Load, (void *slot, const char *name));
+ORIG(0x4B7000, void *, Sprite_New, (const char *name));
+ORIG(0x4B7030, void, Sprite_Delete, (void *sprite));
+ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
+ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
+
+/* horizontal scan lines in a colour, plus random noise streaks */
+typedef struct LineFilter {
+    Task task;
+    float color[3];
+    float depth;
+    float level;
+    int sorted;
+} LineFilter;
+
+/* black bars at the top and bottom of a clip window */
+typedef struct WideScreenFilter {
+    Task task;
+    float color[3];
+    int unk2C;
+    int clipW, clipH, clipX, clipY;
+    float barHeight;
+} WideScreenFilter;
+
+/* a 16x16 texture of colour bands */
+typedef struct BandFilter {
+    Task task;
+    float depth;
+    float level;
+    float maxLevel;
+    char tex[0x24];
+    int counter;
+    int period;
+    int timer;
+    int interval;
+    int camera;
+    float color[3];
+    void *font;
+} BandFilter;
+
+typedef struct HandiCamFilter {
+    Task task;
+    float color[3];
+    float depth;
+    void *font;
+    char battery[0x18];
+    int blink;
+    unsigned int lastTime;
+} HandiCamFilter;
+
+typedef struct FilterVertex {
+    float x, y, z, rhw;
+    uint32_t color;
+    float u, v;
+} FilterVertex;
+
+_Static_assert(sizeof(LineFilter) == 0x38, "LineFilter");
+_Static_assert(sizeof(WideScreenFilter) == 0x44, "WideScreenFilter");
+_Static_assert(sizeof(BandFilter) == 0x74, "BandFilter");
+_Static_assert(sizeof(HandiCamFilter) == 0x54, "HandiCamFilter");
+
+#define gLineFilterType VAR(uint16_t, 0x543D4C)
+#define gWideScreenFilterType VAR(uint16_t, 0x543D4E)
+#define gBandFilterType VAR(uint16_t, 0x543D50)
+#define gBandCamera VAR(int, 0x543D54)
+#define gHandiCamFilterType VAR(uint16_t, 0x543D58)
+#define gHandiCamDrawMethod VAR(int, 0x935BFC)
+#define gBandDrawMethod VAR(int, 0x935C00)
+#define gBandFont VAR(const char *, 0x935C04)
+#define gHandiCamFilterTask VAR(int, 0x935C08)
+#define gBandFilterTask VAR(int, 0x935C0C)
+#define gBandPixels ((int *)0x935C10)
+#define gFilterRandom ((void *)0x935BF0)
+#define gLineDrawMethod VAR(int, 0x936010)
+#define gLineFilterTask VAR(int, 0x936014)
+#define gWideScreenFilterTask VAR(int, 0x936018)
+#define gHandiCamSprite VAR(const char *, 0x936020)
+#define gHandiCamFont VAR(const char *, 0x936024)
+#define gHandiCamSpriteX VAR(int, 0x936028)
+#define gHandiCamSpriteY VAR(int, 0x93602C)
+#define gHandiCamFontX VAR(int, 0x936030)
+#define gHandiCamFontY VAR(int, 0x936034)
+#define gFilterNoiseSeed VAR(float, 0x936038)
+#define gBandFontA VAR(float, 0x93603C)
+#define gBandFontB VAR(float, 0x936040)
+#define gBandFontC VAR(float, 0x936044)
+#define gBandFontD VAR(int, 0x936048)
+
+#define gFilterVB VAR(void *, 0xBCAD00)
+#define gFilterVBSize VAR(int, 0xBCAD04)
+#define gFilterVBUsed VAR(int, 0xBCAD08)
+#define gD3DMinZ VAR(float, 0xBCADA0)
+#define gD3DViewMinZ VAR(float, 0xBCADB4)
+#define gD3DViewMaxZ VAR(float, 0xBCAD8C)
+#define gNearClipZ VAR(float, 0xBCADC0)
+
+#define TASK_NOTHING ((void *)0x4D3710)
+#define TASK_DEBUG_LOG ((void *)0x4C1780)
+
+void LineFilter_Render(LineFilter *t);
+
+F32(kZero, 0x00000000);
+F32(kOne, 0x3F800000);
+F32(kM128, 0xC3000000);
+F32(k128, 0x43000000);
+F32(kM255, 0xC37F0000);
+F32(k255, 0x437F0000);
+F32(k256, 0x43800000);
+F32(kM256, 0xC3800000);
+F32(kSeedScale, 0x46A8C000); /* 21600 */
+F32(kLineStep, 0x40800000);  /* 4 */
+F32(kNoiseScale, 0x41200000); /* 10 */
+F32(kStreak, 0x42480000);    /* 50 */
+
+LineFilter *LineFilter_New(void *parent, float r, float g, float b, float depth, int sorted)
+{
+    LineFilter *t = (LineFilter *)Task_New(parent, gLineFilterType, NULL);
+
+    t->color[0] = r;
+    t->color[1] = g;
+    t->color[2] = b;
+    t->depth = depth;
+    t->level = 0;
+    t->sorted = sorted;
+    return t;
+}
+HOOK(0x4A23E0, LineFilter_New);
+
+WideScreenFilter *WideScreenFilter_New(void *parent, float r, float g, float b, int unk2C, int w, int h, int x, int y,
+                                       float barHeight)
+{
+    WideScreenFilter *t = (WideScreenFilter *)Task_New(parent, gWideScreenFilterType, NULL);
+
+    t->color[0] = r;
+    t->color[1] = g;
+    t->color[2] = b;
+    t->unk2C = unk2C;
+    t->clipW = w;
+    t->clipH = h;
+    t->clipX = x;
+    t->clipY = y;
+    t->barHeight = barHeight;
+    return t;
+}
+HOOK(0x4A2430, WideScreenFilter_New);
+
+static float clamp01(float v)
+{
+    if (kZero.f > v)
+        return kZero.f;
+    if (kOne.f < v)
+        return kOne.f;
+    return v;
+}
+
+BandFilter *BandFilter_New(void *parent, float depth, float r, float g, float b, int period, int interval,
+                           float maxLevel)
+{
+    BandFilter *t = (BandFilter *)Task_New(parent, gBandFilterType, NULL);
+    char mode;
+
+    t->depth = depth;
+    t->level = 0;
+    t->maxLevel = maxLevel;
+    Texture_Alloc(t->tex, 0, 0x40, 0x10, 0x10, 3, 0, 0);
+    t->timer = interval;
+    t->interval = interval;
+    t->counter = 0;
+    t->period = period;
+    t->color[2] = clamp01(b);
+    t->color[0] = clamp01(r);
+    t->color[1] = clamp01(g);
+    t->camera = gBandCamera;
+    mode = Mem_GetMode();
+    if (!mode)
+        Mem_SetDefaultMode();
+    t->font = NULL;
+    t->font = Sprite_New(gBandFont);
+    if (!mode)
+        Mem_ClearMode();
+    return t;
+}
+HOOK(0x4A2490, BandFilter_New);
+
+void BandFilter_Delete(BandFilter *t)
+{
+    Sprite_Delete(t->font);
+    Texture_Free(t->tex);
+}
+HOOK(0x4A25E0, BandFilter_Delete);
+
+/* colour of the light (scale 128) and dark (scale 255) bands */
+static int band_color(const BandFilter *t, float neg, float pos)
+{
+    int c = (int)round_ll(t->color[0] * neg) << 8;
+
+    c = (c + (int)round_ll(t->color[1] * neg)) << 8;
+    return (int)round_ll(t->color[2] * pos) - c;
+}
+
+void BandFilter_FillStripes(BandFilter *t)
+{
+    int light = band_color(t, kM128.f, k128.f);
+    int dark = band_color(t, kM255.f, k255.f);
+    int *p = gBandPixels;
+    int i, j;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 32; j++)
+            *p++ = light;
+        for (j = 0; j < 32; j++)
+            *p++ = dark;
+    }
+}
+HOOK(0x4A2600, BandFilter_FillStripes);
+
+void BandFilter_FillSolid(BandFilter *t)
+{
+    int dark = band_color(t, kM255.f, k255.f);
+    int i;
+
+    for (i = 0; i < 0x100; i++)
+        gBandPixels[i] = dark;
+}
+HOOK(0x4A26C0, BandFilter_FillSolid);
+
+/* darkens level * 256 random pixels by a random factor. The index can
+   reach 256, one past the table. */
+void BandFilter_AddNoise(BandFilter *t)
+{
+    int n = (int)round_ll(t->level * k256.f);
+    long double f;
+    int *p;
+    int v, lo, mid, hi, c;
+
+    for (; n > 0; n--) {
+        f = Random_Float(gFilterRandom);
+        p = gBandPixels - (int)round_ll(f * kM256.f);
+        v = *p;
+        lo = v & 0xFF;
+        mid = (v >> 8) & 0xFF;
+        hi = (v >> 16) & 0xFF;
+        f = Random_Float(gFilterRandom);
+        c = (int)round_ll(hi * f) << 8;
+        c = (c + (int)round_ll(mid * f)) << 8;
+        *p = (c + (int)round_ll(lo * f)) << 8;
+    }
+}
+HOOK(0x4A2720, BandFilter_AddNoise);
+
+void BandFilter_SetColor(BandFilter *t, float r, float g, float b)
+{
+    t->color[0] = clamp01(r);
+    t->color[1] = clamp01(g);
+    t->color[2] = clamp01(b);
+}
+HOOK(0x4A2800, BandFilter_SetColor);
+
+void BandFilter_SetFont(const char *font, float a, float b, float c, int d)
+{
+    gBandFont = font;
+    gBandFontA = a;
+    gBandFontB = b;
+    gBandFontC = c;
+    gBandFontD = d;
+}
+HOOK(0x4A28B0, BandFilter_SetFont);
+
+/* camera numbers cycle through 1..9 */
+void BandFilter_NextCamera(void)
+{
+    if (gBandCamera < 9)
+        gBandCamera++;
+    else
+        gBandCamera = 1;
+}
+HOOK(0x4A28F0, BandFilter_NextCamera);
+
+HandiCamFilter *HandiCamFilter_New(void *parent, float r, float g, float b, float depth)
+{
+    char mode = Mem_GetMode();
+    HandiCamFilter *t;
+
+    if (!mode)
+        Mem_SetDefaultMode();
+    t = (HandiCamFilter *)Task_New(parent, gHandiCamFilterType, NULL);
+    t->color[0] = r;
+    t->color[1] = g;
+    t->color[2] = b;
+    t->depth = depth;
+    t->blink = 0;
+    t->lastTime = Timer_GetMs();
+    t->font = NULL;
+    t->font = Sprite_New(gHandiCamFont);
+    Sprite_Load(t->battery, gHandiCamSprite);
+    if (!mode)
+        Mem_ClearMode();
+    return t;
+}
+HOOK(0x4A2910, HandiCamFilter_New);
+
+void HandiCamFilter_Delete(HandiCamFilter *t)
+{
+    Sprite_Free(t->battery);
+    Sprite_Delete(t->font);
+}
+HOOK(0x4A29A0, HandiCamFilter_Delete);
+
+void HandiCamFilter_SetSprite(const char *name, int x, int y)
+{
+    gHandiCamSprite = name;
+    gHandiCamSpriteX = x;
+    gHandiCamSpriteY = y;
+}
+HOOK(0x4A29C0, HandiCamFilter_SetSprite);
+
+void HandiCamFilter_SetFont(const char *name, int x, int y)
+{
+    gHandiCamFont = name;
+    gHandiCamFontX = x;
+    gHandiCamFontY = y;
+}
+HOOK(0x4A29E0, HandiCamFilter_SetFont);
+
+void CameraFilter_Init(void)
+{
+    Script_RegisterConstant("CAMERAFILTER_TYPE_NONE", 0);
+    Script_RegisterConstant("CAMERAFILTER_TYPE_LINE", 1);
+    Script_RegisterConstant("CAMERAFILTER_TYPE_BAND", 2);
+    Script_RegisterConstant("CAMERAFILTER_TYPE_BAND_UPDATE", 3);
+    Script_RegisterConstant("CAMERAFILTER_TYPE_HANDICAM", 4);
+    gLineFilterType = TaskType_New("LineFilter", sizeof(LineFilter), Task_GetRootType(), 0);
+    gWideScreenFilterType = TaskType_New("WideScreenFilter", sizeof(WideScreenFilter), Task_GetRootType(), 0);
+    gBandFilterType = TaskType_New("BandFilter", sizeof(BandFilter), Task_GetRootType(), 0);
+    gHandiCamFilterType = TaskType_New("HandiCamFilter", sizeof(HandiCamFilter), Task_GetRootType(), 0);
+    TaskType_SetHandler2(gLineFilterType, Screen_GetDrawEvent(), (void *)0x4A3550);
+    TaskType_SetHandler2(gLineFilterType, 1, TASK_NOTHING);
+    TaskType_SetHandler2(gLineFilterType, 2, TASK_DEBUG_LOG);
+    TaskType_SetHandler2(gWideScreenFilterType, Screen_GetDrawEvent(), (void *)0x4A3650);
+    TaskType_SetHandler2(gWideScreenFilterType, 1, TASK_NOTHING);
+    TaskType_SetHandler2(gBandFilterType, Screen_GetDrawEvent(), (void *)0x4A36D0);
+    TaskType_SetHandler2(gBandFilterType, 1, (void *)0x4A38A0);
+    TaskType_SetHandler2(gBandFilterType, 2, BandFilter_Delete);
+    TaskType_SetHandler2(gHandiCamFilterType, Screen_GetDrawEvent(), (void *)0x4A4D10);
+    TaskType_SetHandler2(gHandiCamFilterType, 1, (void *)0x4A4CB0);
+    TaskType_SetHandler2(gHandiCamFilterType, 2, HandiCamFilter_Delete);
+    gLineDrawMethod = RenderMode_CreateMethod("DrawLineFilter");
+    gBandDrawMethod = RenderMode_CreateMethod("DrawBandFilter");
+    gHandiCamDrawMethod = RenderMode_CreateMethod("DrawHandiCamFilter");
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), gLineDrawMethod, LineFilter_Render);
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), gBandDrawMethod, (void *)0x4A3940);
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), gHandiCamDrawMethod, (void *)0x4A4300);
+    gLineFilterTask = RenderTask_Register("LineFilter");
+    gWideScreenFilterTask = RenderTask_Register("WideScreenFilter");
+    gBandFilterTask = RenderTask_Register("BandFilter");
+    gHandiCamFilterTask = RenderTask_Register("HandiCamFilter");
+    RenderTask_SetHandler(gLineFilterTask, (void *)0x4A3530);
+    RenderTask_SetHandler(gWideScreenFilterTask, (void *)0x4A35B0);
+    RenderTask_SetHandler(gBandFilterTask, (void *)0x4A36B0);
+    RenderTask_SetHandler(gHandiCamFilterTask, (void *)0x4A4C90);
+    Random_Init(gFilterRandom);
+    gFilterNoiseSeed = Random_Float(gFilterRandom) * kSeedScale.f;
+}
+HOOK(0x4A2A00, CameraFilter_Init);
+
+/* locks room for 200 vertices in the filter buffer, discarding it when
+   full; 0 on failure */
+#define LOCK_BATCH(v, first)                                            \
+    (gFilterVBUsed + 200 > gFilterVBSize                                \
+         ? (hr = VB_Lock(gFilterVB, 0x2020, &(v), NULL), (first) = 0,   \
+            gFilterVBUsed = 200, !hr && (v))                            \
+         : (hr = VB_Lock(gFilterVB, 0x1020, &(v), NULL),                \
+            (first) = gFilterVBUsed, (v) += (first),                    \
+            gFilterVBUsed = (first) + 200, !hr && (v)))
+
+static uint32_t line_color(const LineFilter *t)
+{
+    uint32_t c = (uint32_t)round_ll(t->color[0] * k255.f) | 0x4C00;
+
+    c = c << 8 | (uint32_t)round_ll(t->color[1] * k255.f);
+    return c << 8 | (uint32_t)round_ll(t->color[2] * k255.f);
+}
+
+/* every 4 pixels a line across the view, then level * 10 noise streaks
+   per row (one every 1 / (level * 10) rows when that is below 1) */
+void LineFilter_Render(LineFilter *t)
+{
+    float m[16];
+    float depth, rhw, z, level, y, ny, fy, step;
+    long double s, lim;
+    FilterVertex *v;
+    uint32_t c, gray;
+    long hr;
+    int first, count, n, k;
+
+    depth = t->depth > gNearClipZ ? t->depth : gNearClipZ;
+    DEV_GetTransform(gDevice, 3, m);
+    rhw = kOne.f / (gNearPlaneScale * depth);
+    z = (kOne.f - gD3DMinZ * rhw) * m[10] * (gD3DViewMaxZ - gD3DViewMinZ) + gD3DViewMinZ;
+    gStateListA->cur = -1;
+    gStateListB->cur = -1;
+    gStateListC->cur = -1;
+    gStateListD->cur = -1;
+    DEV_SetRenderState(gDevice, 0x2F, 0);
+    DEV_SetRenderState(gDevice, 0x1C, 0);
+    DEV_SetRenderState(gDevice, 0x1D, 0);
+    DEV_SetRenderState(gDevice, 0x16, 1);
+    DEV_SetRenderState(gDevice, 0x89, 0);
+    DEV_SetRenderState(gDevice, 0x1A, 1);
+    DEV_SetRenderState(gDevice, 0x0F, 0);
+    DEV_SetRenderState(gDevice, 0x17, 4);
+    DEV_SetRenderState(gDevice, 0x07, 1);
+    DEV_SetRenderState(gDevice, 0x0E, 0);
+    DEV_SetTextureStageState(gDevice, 0, 4, 3);
+    DEV_SetTextureStageState(gDevice, 0, 5, 2);
+    DEV_SetTextureStageState(gDevice, 0, 6, 0);
+    DEV_SetTextureStageState(gDevice, 0, 1, 3);
+    DEV_SetTextureStageState(gDevice, 0, 2, 2);
+    DEV_SetTextureStageState(gDevice, 0, 3, 0);
+    DEV_SetTextureStageState(gDevice, 1, 1, 1);
+    DEV_SetTexture(gDevice, 0, NULL);
+    DEV_SetRenderState(gDevice, 0x1B, 1);
+    DEV_SetRenderState(gDevice, 0x13, 5);
+    DEV_SetRenderState(gDevice, 0x14, 6);
+    level = t->level;
+    if (!LOCK_BATCH(v, first))
+        return;
+    count = 0;
+    y = gSceneArea.y;
+    while (!(gSceneArea.h + gSceneArea.y < y + kLineStep.f)) {
+        if (count < 200) {
+            fy = (int)round_ll(y);
+            v->x = (int)round_ll(gSceneArea.x);
+            v->y = fy;
+            v->z = z;
+            v->rhw = rhw;
+            v->color = line_color(t);
+            v++;
+            v->x = (int)round_ll(gSceneArea.w + gSceneArea.x);
+            v->y = fy;
+            v->z = z;
+            v->rhw = rhw;
+            v->color = line_color(t);
+            v++;
+            count += 2;
+        } else {
+            VB_Unlock(gFilterVB);
+            DEV_DrawPrimitiveVB(gDevice, 2, gFilterVB, first, count, 0);
+            if (!LOCK_BATCH(v, first))
+                return;
+            y = y - kLineStep.f;
+            count = 0;
+        }
+        y = y + kLineStep.f;
+    }
+    VB_Unlock(gFilterVB);
+    if (count > 0)
+        DEV_DrawPrimitiveVB(gDevice, 2, gFilterVB, first, count, 0);
+    if (!(level > kZero.f))
+        return;
+    s = level * kNoiseScale.f;
+    step = kOne.f;
+    if (s < kOne.f) {
+        step = kOne.f / s;
+        s = kOne.f;
+    }
+    n = (int)round_ll(s);
+    if (!LOCK_BATCH(v, first))
+        return;
+    count = 0;
+    y = gSceneArea.y;
+    ny = step + y;
+    while (!(gSceneArea.h + gSceneArea.y < ny)) {
+        for (k = 0; k < n; k++) {
+            if (count < 200) {
+                fy = (int)round_ll(y);
+                v->x = Random_Float(gFilterRandom) * gSceneArea.w + gSceneArea.x;
+                v->y = fy;
+                v->z = z;
+                v->rhw = rhw;
+                gray = (uint32_t)round_ll(Random_Float(gFilterRandom) * k255.f);
+                c = (uint32_t)round_ll(level * k255.f);
+                c = ((c << 8 | gray) << 8 | gray) << 8 | gray;
+                v->color = c;
+                v++;
+                count++;
+                v->x = Random_Float(gFilterRandom) * kStreak.f + v[-1].x;
+                lim = gSceneArea.w + gSceneArea.x;
+                if (lim <= v->x)
+                    v->x = lim;
+                v->y = fy;
+                v->z = z;
+                v->rhw = rhw;
+                v->color = c;
+                v++;
+                count++;
+            } else {
+                VB_Unlock(gFilterVB);
+                DEV_DrawPrimitiveVB(gDevice, 2, gFilterVB, first, count, 0);
+                if (!LOCK_BATCH(v, first))
+                    return;
+                count = 0;
+            }
+        }
+        y = ny;
+        ny = step + y;
+    }
+    VB_Unlock(gFilterVB);
+    if (count > 0)
+        DEV_DrawPrimitiveVB(gDevice, 2, gFilterVB, first, count, 0);
+}
+HOOK(0x4A2CD0, LineFilter_Render);
