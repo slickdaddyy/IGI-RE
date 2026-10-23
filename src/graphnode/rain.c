@@ -1,0 +1,63 @@
+#include "hook.h"
+#include "graphnode/graphnode.h"
+
+ORIG(0x4C1830, void, QTaskList_Free, (void *list));
+ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
+ORIG(0x4F65E0, char *, RainDynCubeObj_FindCell, (void *rain, const Vec3d *pos));
+
+#define RAIN_MAX 8
+
+#define gRainParams VAR(void *, 0xA76CCC)
+#define gRainType VAR(uint16_t, 0x54E2CC)
+#define gRains ((char **)0xA76CA4)
+#define gRainCallback VAR(void *, 0xA76CC4)
+
+static const float kOne = 1.0f;
+static const float kZero = 0.0f;
+
+void RainDynCubeObj_Shutdown(void)
+{
+    QTaskList_Free(gRainParams);
+    TaskType_Free(gRainType);
+    gRainType = TASK_NO_TYPE;
+}
+HOOK(0x4F80B0, RainDynCubeObj_Shutdown);
+
+void RainDynCubeObj_SetCallback(void *fn)
+{
+    gRainCallback = fn;
+}
+HOOK(0x4F80E0, RainDynCubeObj_SetCallback);
+
+/* 1 when a rain cell with drops covers pos */
+long double RainDynCubeObj_IsRainingAt(const Vec3d *pos)
+{
+    int i;
+
+    for (i = 0; i < RAIN_MAX; i++) {
+        char *cell;
+
+        if (gRains[i] && (cell = RainDynCubeObj_FindCell(gRains[i], pos)) && *(int *)(cell + 0x1C))
+            return kOne;
+    }
+    return kZero;
+}
+HOOK(0x4F80F0, RainDynCubeObj_IsRainingAt);
+
+/* the ground hit list and its length of every rain object */
+void RainDynCubeObj_GetHits(void **hits, int *counts, int *n)
+{
+    int i;
+
+    *n = 0;
+    for (i = 0; i < RAIN_MAX; i++) {
+        char *r = gRains[i];
+
+        if (r) {
+            hits[*n] = r + 0x2D18;
+            counts[*n] = *(int *)(r + 0x4288);
+            (*n)++;
+        }
+    }
+}
+HOOK(0x4F8140, RainDynCubeObj_GetHits);
