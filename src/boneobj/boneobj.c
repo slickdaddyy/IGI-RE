@@ -15,7 +15,7 @@ ORIG(0x4B44D0, void, Quat_SlerpPrepare_, (char *flip, float *angle, float *inv_s
 ORIG(0x4B5F00, void *, Resource_Load, (const char *name, int flags));
 ORIG(0x4B6380, void, Resource_Unload, (const char *name));
 ORIG(0x4D3020, int, BoneBlend_GetMotion, (float *pos, float *delta, BlendNode *node));
-ORIG(0x4D3710, void, BoneObj_Nop, (void *p));
+void Task_Nothing(void *task);
 ORIG(0x4D6D40, void, sub_4D6D40, (int skel));
 
 typedef struct IffNode {
@@ -142,7 +142,7 @@ int BoneObj_GetNodeEvents(BoneEvent *ev, int n, Bone *bone, BlendNode *node)
     BlendBranch *b0, *b1;
     int r;
 
-    BoneObj_Nop(node);
+    Task_Nothing(node);
     b0 = &node->branch[0];
     b1 = &node->branch[1];
     if (!node->select) {
@@ -280,7 +280,7 @@ HOOK(0x4D3660, BoneObj_DeleteBlendSource);
 
 void BoneObj_ReleaseBlendNodeData(BlendNode *node)
 {
-    BoneObj_Nop(node);
+    Task_Nothing(node);
     if (node->free)
         node->free(node->data);
     node->data = NULL;
@@ -289,6 +289,12 @@ void BoneObj_ReleaseBlendNodeData(BlendNode *node)
     node->select = NULL;
 }
 HOOK(0x4D36E0, BoneObj_ReleaseBlendNodeData);
+
+void Task_Nothing(void *task)
+{
+    (void)task;
+}
+HOOK(0x4D3710, Task_Nothing);
 
 BlendBranch *BoneObj_GetBlendBranch(BlendNode *node, int i)
 {
@@ -1332,7 +1338,7 @@ void BoneObj_FadeIn(Bone *bone, BlendSource *src, float duration, int result)
 
     BoneObj_InitFade(f, duration, result);
     if (n) {
-        BoneObj_Nop(n);
+        Task_Nothing(n);
         if (n->branch[1].type != BRANCH_NONE) {
             BlendNode *m = BoneObj_AllocBlendNode();
 
@@ -1385,7 +1391,7 @@ void BoneObj_BlendTo(Bone *bone, BlendNode *node, float duration, int result)
 
             BoneObj_InitFade(f, duration, result);
             if (old) {
-                BoneObj_Nop(old);
+                Task_Nothing(old);
                 if (old->branch[1].type != BRANCH_NONE) {
                     n = BoneObj_AllocBlendNode();
                     old->parent = n;

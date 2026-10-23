@@ -287,3 +287,4 @@ int HumanPlayerInput_GetWeaponSelect(void)
 {
     return -1;
 }
+HOOK(0x45E3C0, HumanPlayerInput_GetWeaponSelect);

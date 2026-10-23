@@ -230,3 +230,12 @@ void QvmDis_OpCall(QvmDis *d, QvmImage *vm)
     d->pc += count * 4 + 5;
 }
 HOOK(0x4C1600, QvmDis_OpCall);
+
+/* debug output is compiled out in this build */
+void Debug_Log(void *task, int level, const char *fmt, ...)
+{
+    (void)task;
+    (void)level;
+    (void)fmt;
+}
+HOOK(0x4C1780, Debug_Log);

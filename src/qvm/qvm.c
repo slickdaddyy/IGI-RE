@@ -345,6 +345,15 @@ char *Qvm_GetStringArg(ScriptArgs *args, int index, char *buf, int size)
 }
 HOOK(0x4BD040, Qvm_GetStringArg);
 
+/* line numbers are not kept in this build */
+int Qvm_GetArgLine(ScriptArgs *args, int index)
+{
+    (void)args;
+    (void)index;
+    return 0;
+}
+HOOK(0x4BD070, Qvm_GetArgLine);
+
 /* Shared "return 0" stub, too short to hook */
 int sub_4BD070(void)
 {
