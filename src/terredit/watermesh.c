@@ -7,16 +7,36 @@
 #include "hook.h"
 #include "terredit/terredit.h"
 
+/* a quad tree node; the top level is an n x n grid of these */
+typedef struct WaterNode {
+    double x, y;
+    int unk10;
+    uint32_t flags;
+    uint32_t edges;
+    int level;
+    uint32_t size;
+    int visible;
+    int active;
+    struct WaterNode *parent;
+} WaterNode;
+
 typedef struct WaterMesh {
-    char unk0[0x4870];
+    char unk0[0x10];
+    WaterNode root;         /* 0x10 */
+    WaterNode top[8][8];    /* 0x40 */
+    char unkC40[0x4840 - 0xC40];
+    double originX, originY; /* 0x4840 */
+    char unk4850[0x20];
     Vec3d cam;              /* 0x4870 */
     double dirX, dirY;      /* 0x4888 wave direction */
-    char unk4898[0x10];
+    double side[2];         /* 0x4898: the direction turned by 90 degrees */
     double projX, projY;    /* 0x48A8 */
     double waves[25][2];    /* 0x48B8 */
     char unk4A48[0xC];
     float ambient[3];       /* 0x4A54 */
-    char unk4A60[0x20];
+    char unk4A60[0xC];
+    float lit[3];           /* 0x4A6C: ambient plus all lights */
+    char unk4A78[8];
     float amp;              /* 0x4A80 */
     float wavelength;       /* 0x4A84 */
     float cell;             /* 0x4A88: wavelength / 10 */
@@ -24,10 +44,17 @@ typedef struct WaterMesh {
     float unk4A90;
     float level;            /* 0x4A94 */
     float slope;            /* 0x4A98: amp / wavelength */
-    char unk4A9C[0xC];
+    uint32_t size;          /* 0x4A9C */
+    char unk4AA0[8];
     uint32_t time;          /* 0x4AA8 */
     uint32_t period1;       /* 0x4AAC */
     uint32_t period2;       /* 0x4AB0 */
+    uint32_t n;             /* 0x4AB4: top grid is n x n */
+    int unk4AB8;
+    int unk4ABC;
+    int envMap;             /* 0x4AC0 */
+    int unk4AC4;
+    int debugColors;        /* 0x4AC8 */
 } WaterMesh;
 
 typedef struct WaterVertex {
@@ -44,7 +71,11 @@ typedef struct WaterVertex {
     double depth;           /* 0x60 */
 } WaterVertex;
 
+_Static_assert(sizeof(WaterNode) == 0x30, "WaterNode");
+_Static_assert(offsetof(WaterMesh, originX) == 0x4840, "origin");
 _Static_assert(offsetof(WaterMesh, waves) == 0x48B8, "waves");
+_Static_assert(offsetof(WaterMesh, lit) == 0x4A6C, "lit");
+_Static_assert(offsetof(WaterMesh, debugColors) == 0x4AC8, "debugColors");
 _Static_assert(offsetof(WaterMesh, ambient) == 0x4A54, "ambient");
 _Static_assert(offsetof(WaterMesh, amp) == 0x4A80, "amp");
 _Static_assert(offsetof(WaterMesh, time) == 0x4AA8, "time");
@@ -53,6 +84,9 @@ _Static_assert(offsetof(WaterVertex, depth) == 0x60, "depth");
 
 ORIG(0x4978D0, int, Primitive_Register, (const char *name));
 ORIG(0x4978F0, void, Primitive_SetHandler, (int id, void *fn));
+ORIG(0x4B29A0, void, Vec2d_Normalize, (double *v));
+ORIG(0x4B29D0, long double, Vec2d_Length, (const double *v));
+ORIG(0x4B29F0, long double, Vec2d_Dot, (const double *a, const double *b));
 
 #define gWaterPrimitive VAR(int, 0xA84578)
 #define gLightData VAR(char *, 0xB041E0)
@@ -70,6 +104,8 @@ ORIG(0x4978F0, void, Primitive_SetHandler, (int id, void *fn));
 #define kTwoPiF VAR(float, 0x5334A8)
 #define kTwoPi VAR(double, 0x534CC0)
 #define kPeriodScale VAR(float, 0x534CC8)
+#define kGridMin VAR(double, 0x534170)
+#define kGridScale VAR(double, 0x534CB8)
 
 /* x87 "not equal" (C3 clear): false for NaN */
 static inline int fne(long double a)
@@ -106,6 +142,83 @@ uint32_t WaterMesh_UpdateWaves(WaterMesh *w)
     return t / period;
 }
 HOOK(0x52D9F0, WaterMesh_UpdateWaves);
+
+/* lays out the top grid, the wave table and the lighting after a change */
+void WaterMesh_Init(WaterMesh *w)
+{
+    float light[3] = { 0, 0, 0 };
+    long double size = (long double)(uint64_t)w->size, d, r;
+    double v[2];
+    uint32_t i, j;
+    int k, n;
+
+    if (size > kGridMin)
+        w->n = x87_fistp(size * kGridScale);
+    else
+        w->n = 1;
+    w->root.parent = NULL;
+    w->root.x = w->originX;
+    w->root.y = w->originY;
+    w->root.active = 0;
+    w->root.level = -1;
+    w->root.flags = 0;
+    w->root.size = w->size * 2 / w->n;
+    for (i = 0; i < w->n; i++) {
+        for (j = 0; j < w->n; j++) {
+            WaterNode *c = &w->top[i][j];
+
+            c->parent = NULL;
+            c->x = (long double)(uint64_t)(w->size / w->n) * (uint64_t)i + w->originX;
+            c->y = (long double)(uint64_t)(w->size / w->n) * (uint64_t)j + w->originY;
+            c->size = w->size / w->n;
+            c->active = 0;
+            c->level = 0;
+            c->flags = 0;
+        }
+    }
+    w->cell = w->wavelength * kTenth;
+    w->time = 0;
+    w->unk4AB8 = 0;
+    WaterMesh_UpdateWaves(w);
+    w->side[1] = -w->dirX;
+    w->side[0] = w->dirY;
+    Vec2d_Normalize(w->side);
+    v[0] = 1.0;
+    v[1] = 0.0;
+    d = Vec2d_Dot(w->side, v);
+    v[0] = d * w->side[0];
+    v[1] = d * w->side[1];
+    w->projX = Vec2d_Length(v);
+    v[0] = 0.0;
+    v[1] = 1.0;
+    d = Vec2d_Dot(w->side, v);
+    v[0] = d * w->side[0];
+    v[1] = d * w->side[1];
+    w->projY = Vec2d_Length(v);
+    w->slope = w->amp / w->wavelength;
+    r = light[0];
+    n = gLightCount;
+    if (n > 0) {
+        long double g = light[1], b = light[2];
+
+        for (k = 0; k < n; k++) {
+            const float *l = (const float *)(gLightData + gLightStride * gLightIndex[k]);
+
+            r = r + l[3];
+            g = g + l[4];
+            b = b + l[5];
+        }
+        light[2] = b;
+        light[1] = g;
+    }
+    w->debugColors = 0;
+    w->unk4AC4 = 0;
+    w->envMap = 0;
+    w->lit[0] = r + w->ambient[0];
+    w->lit[1] = (long double)light[1] + w->ambient[1];
+    w->lit[2] = (long double)light[2] + w->ambient[2];
+}
+HOOK(0x52D6C0, WaterMesh_Init);
 
 /* the water surface at pos: height, depth below it, normal and colours */
 void WaterMesh_GetVertex(WaterMesh *w, WaterVertex *out, const Vec3d *pos)

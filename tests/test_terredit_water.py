@@ -122,3 +122,23 @@ def test_light(seed, cw):
         color = em.alloc(12)
         return w, color, normal
     run(e, 0x52E180, "WaterMesh_Light", setup, cw=cw)
+
+
+SIZES = [0, 1, 4096, 1 << 28, (1 << 28) + 1, int(2.5 * (1 << 28)), 3 << 28, int(5.5 * (1 << 28)), 1 << 31,
+         0xFFFFFFFF]
+
+
+@pytest.mark.parametrize("cw", CWS)
+@pytest.mark.parametrize("size", SIZES)
+@pytest.mark.parametrize("nlights", [0, 2, 8])
+def test_init(size, nlights, cw):
+    def setup(em):
+        rng = random.Random(size % 1000 + nlights)
+        w = water(em, rng)
+        u32(em, w + 0x4A9C, size)
+        d64(em, w + 0x4840, rng.uniform(-1e6, 1e6), rng.uniform(-1e6, 1e6))
+        if nlights == 2:
+            d64(em, w + 0x4888, 0.0, 0.0)
+        lights(em, rng, nlights)
+        return (w,)
+    run(e, 0x52D6C0, "WaterMesh_Init", setup, cw=cw)
