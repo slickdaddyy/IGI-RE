@@ -9,6 +9,7 @@ from unicorn import UC_HOOK_CODE
 from emu import Emu, compare
 
 LINE_HIT = 0x4D7620
+COLL_LINE = 0x4D88D0
 SUB_4BD070 = 0x4BD070
 SLOT12_HANDLER = 0x4C35D0  # *arg = obj != arg[1]
 HANDLERS = 0xA96AE0
@@ -204,6 +205,12 @@ class Scene:
                 en[ax] = pos[ax] + off * rng.uniform(1, 2)
             if k > 0.97:
                 s, en = en, s
+            if cfg.get("box_miss"):
+                # on a line through the sphere centre, but wholly past it along one axis
+                ax, sign = cfg["box_miss"]
+                s, en = list(pos), list(pos)
+                s[ax] += sign * (cfg["radius"] + 5)
+                en[ax] += sign * (cfg["radius"] + 10)
             if cfg.get("degenerate") and rng.random() < 0.3:
                 en = list(s)
             if cfg.get("nan") and rng.random() < 0.2:
@@ -225,12 +232,23 @@ class Scene:
 
         arg = em.alloc(8)
         em.write(arg, struct.pack("<II", 0x99, obj if cfg.get("slot_reject") else 0x1234))
-        q = em.alloc(0x24)
-        em.write(q, struct.pack("<3IB3x5I", starts, ends, n, cfg.get("slot", 0xFF), arg, cfg["mesh"],
-                                0x31323334, 0x41424344, results))
         if cfg.get("slot") == 12:
             em.write(HANDLERS + 4 * (12 * 0x180 + TYPE), struct.pack("<I", SLOT12_HANDLER))
         reject["mode"] = cfg.get("reject", 0)
+        if cfg.get("sight"):
+            # slot 8 query: one segment, world materials are float pointers
+            vis = em.alloc(4 * 8)
+            em.write(vis, f32(0.5, 0.0, 1.0, 0.25, 0.8, -0.0, 0.6, 2.0))
+            sw = em.alloc(0xD3C + 4 * 8)
+            for i in range(8):
+                em.write(sw + 0xD3C + 4 * i, struct.pack("<I", vis + 4 * ((i + cfg["seed"]) % 8)))
+            q = em.alloc(0x1C)
+            em.write(q, struct.pack("<2IB3x2IB3xf", starts, ends, cfg.get("slot", 0xFF), arg, sw,
+                                    cfg.get("blocked", 0), cfg.get("visibility", 1.0)))
+            return obj, q
+        q = em.alloc(0x24)
+        em.write(q, struct.pack("<3IB3x5I", starts, ends, n, cfg.get("slot", 0xFF), arg, cfg["mesh"],
+                                0x31323334, 0x41424344, results))
         return obj, q
 
 
@@ -250,7 +268,7 @@ def config(seed, **over):
     return cfg
 
 
-def run(scene, cfg, cw):
+def run(scene, cfg, cw, orig=LINE_HIT, ours="BoneDynCubeObj_LineHit"):
     """Original against ours from the same scene; the 0x4BD070 calls must match too."""
     logs = []
 
@@ -259,7 +277,7 @@ def run(scene, cfg, cw):
         calls.clear()
         return scene.write(em, cfg)
 
-    compare(e, with_cw(LINE_HIT, cw), with_cw("BoneDynCubeObj_LineHit", cw), setup=setup, check_eax=False)
+    compare(e, with_cw(orig, cw), with_cw(ours, cw), setup=setup, check_eax=False)
     assert logs[1] == calls, "0x4BD070 calls differ:\n orig %s\n ours %s" % (logs[1], calls)
     return list(calls)
 
@@ -298,3 +316,46 @@ def test_line_hit_paths(over):
     rng = random.Random(5)
     scene = Scene(rng, ntri=12)
     run(scene, config(5, **over), 0x37F)
+
+
+def sight(scene, seed, cw, **over):
+    cfg = config(seed, sight=1, mesh=0, count=1, prior=0.0, blocked=seed % 2,
+                 visibility=[1.0, 0.75, 0.0][seed % 3], **over)
+    return run(scene, cfg, cw, COLL_LINE, "BoneDynCubeObj_CollLine")
+
+
+@pytest.mark.parametrize("cw", [0x37F, 0x7F])
+@pytest.mark.parametrize("seed", range(60))
+def test_coll_line(seed, cw):
+    rng = random.Random(3000 + seed)
+    scene = Scene(rng, ntri=rng.choice([6, 16, 30]), nbones=rng.choice([1, 3, 6]))
+    sight(scene, 3000 + seed, cw)
+
+
+@pytest.mark.parametrize("cw", [0x37F, 0x7F])
+@pytest.mark.parametrize("seed", range(8))
+def test_coll_line_nan(seed, cw):
+    rng = random.Random(4000 + seed)
+    scene = Scene(rng, ntri=30)
+    sight(scene, 4000 + seed, cw, nan=1)
+
+
+@pytest.mark.parametrize("over", [
+    {"no_model": 1}, {"data_unk28": 1}, {"no_coll": 1}, {"tri_count": 0}, {"tri_count": -1},
+    {"vert_count": 0, "radius": 0.0}, {"slot": 12}, {"slot": 12, "slot_reject": 1}, {"slot": 5},
+    {"radius": 0.01}, {"radius": 0.0}, {"degenerate": 1}, {"reject": 2},
+])
+def test_coll_line_paths(over):
+    rng = random.Random(6)
+    scene = Scene(rng, ntri=12)
+    for seed in range(6):
+        sight(scene, 60 + seed, 0x37F, **over)
+
+
+@pytest.mark.parametrize("sign", [-1, 1])
+@pytest.mark.parametrize("axis", range(3))
+def test_box_miss(axis, sign):
+    rng = random.Random(7)
+    scene = Scene(rng, ntri=12)
+    sight(scene, 70, 0x37F, box_miss=(axis, sign))
+    run(scene, config(70, box_miss=(axis, sign), count=2), 0x37F)
