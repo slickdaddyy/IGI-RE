@@ -11,6 +11,10 @@ NAN = float("nan")
 e = Emu()
 logfake(e, 0x4978D0, 1, strings=(0,), ret=0x77)  # Primitive_Register
 logfake(e, 0x4978F0, 2)  # Primitive_SetHandler
+logfake(e, 0x52FFA0, 2)  # WaterMesh_Subdivide
+logfake(e, 0x52E2D0, 1)  # the triangle pass
+logfake(e, 0x4C1780, 0)  # Debug_Log
+logfake(e, 0x4DA180, 2)  # Haze_GetVisible
 e.baseline = e.snapshot()
 
 
@@ -142,3 +146,27 @@ def test_init(size, nlights, cw):
         lights(em, rng, nlights)
         return (w,)
     run(e, 0x52D6C0, "WaterMesh_Init", setup, cw=cw)
+
+
+@pytest.mark.parametrize("cw", CWS)
+@pytest.mark.parametrize("seed", range(24))
+def test_draw(seed, cw):
+    def setup(em):
+        rng = random.Random(seed + 300)
+        w = water(em, rng)
+        size = rng.choice([1 << 28, 2 << 28, 3 << 28, 1 << 31, 4096 * 64])
+        u32(em, w + 0x4A9C, size)
+        org = (rng.uniform(-1e6, 1e6), rng.uniform(-1e6, 1e6))
+        d64(em, w + 0x4840, *org)
+        lights(em, rng, rng.choice([0, 3]))
+        em.call(0x52D6C0, w)
+        span = size * rng.choice([1.0, 1.3])
+        cam = [org[0] + rng.uniform(-0.2, 1.0) * span, org[1] + rng.uniform(-0.2, 1.0) * span,
+               rng.uniform(-300, 3000)]
+        d64(em, 0xBCAB08, *cam)
+        f32(em, 0xBCAAF8, rng.uniform(-1, 1), rng.uniform(-1, 1), rng.uniform(-1, 1))
+        u32(em, w + 0x4AA8, rng.randrange(0, 1 << 20), rng.randrange(1, 5000))
+        node = em.alloc(16)
+        u32(em, node + 0xC, w)
+        return (node,)
+    run(e, 0x52DD90, "WaterMesh_Draw", setup, cw=cw)

@@ -32,11 +32,11 @@ typedef struct WaterMesh {
     double side[2];         /* 0x4898: the direction turned by 90 degrees */
     double projX, projY;    /* 0x48A8 */
     double waves[25][2];    /* 0x48B8 */
-    char unk4A48[0xC];
+    float camDir[3];        /* 0x4A48 */
     float ambient[3];       /* 0x4A54 */
     char unk4A60[0xC];
     float lit[3];           /* 0x4A6C: ambient plus all lights */
-    char unk4A78[8];
+    double camHeight;       /* 0x4A78: camera above the water, at least 0 */
     float amp;              /* 0x4A80 */
     float wavelength;       /* 0x4A84 */
     float cell;             /* 0x4A88: wavelength / 10 */
@@ -51,11 +51,19 @@ typedef struct WaterMesh {
     uint32_t period2;       /* 0x4AB0 */
     uint32_t n;             /* 0x4AB4: top grid is n x n */
     int unk4AB8;
-    int unk4ABC;
+    int count;              /* 0x4ABC */
     int envMap;             /* 0x4AC0 */
     int unk4AC4;
     int debugColors;        /* 0x4AC8 */
+    void *hazeList;         /* 0x4ACC */
+    void *hazeCount;        /* 0x4AD0 */
 } WaterMesh;
+
+/* the WaterMesh primitive in the render queue */
+typedef struct WaterDrawNode {
+    char unk0[0xC];
+    WaterMesh *mesh;
+} WaterDrawNode;
 
 typedef struct WaterVertex {
     char unk0[8];
@@ -76,6 +84,7 @@ _Static_assert(offsetof(WaterMesh, originX) == 0x4840, "origin");
 _Static_assert(offsetof(WaterMesh, waves) == 0x48B8, "waves");
 _Static_assert(offsetof(WaterMesh, lit) == 0x4A6C, "lit");
 _Static_assert(offsetof(WaterMesh, debugColors) == 0x4AC8, "debugColors");
+_Static_assert(offsetof(WaterMesh, camHeight) == 0x4A78, "camHeight");
 _Static_assert(offsetof(WaterMesh, ambient) == 0x4A54, "ambient");
 _Static_assert(offsetof(WaterMesh, amp) == 0x4A80, "amp");
 _Static_assert(offsetof(WaterMesh, time) == 0x4AA8, "time");
@@ -87,6 +96,10 @@ ORIG(0x4978F0, void, Primitive_SetHandler, (int id, void *fn));
 ORIG(0x4B29A0, void, Vec2d_Normalize, (double *v));
 ORIG(0x4B29D0, long double, Vec2d_Length, (const double *v));
 ORIG(0x4B29F0, long double, Vec2d_Dot, (const double *a, const double *b));
+ORIG(0x4C1780, void, Debug_Log, (void));
+ORIG(0x4DA180, void, Haze_GetVisible, (void *list, void *count));
+ORIG(0x52FFA0, void, WaterMesh_Subdivide, (WaterMesh *w, WaterNode *node));
+ORIG(0x52E2D0, void, sub_52E2D0, (WaterMesh *w));
 
 #define gWaterPrimitive VAR(int, 0xA84578)
 #define gLightData VAR(char *, 0xB041E0)
@@ -94,6 +107,11 @@ ORIG(0x4B29F0, long double, Vec2d_Dot, (const double *a, const double *b));
 #define gLightCount VAR(int, 0xB041E8)
 #define gLightStride VAR(int, 0xB041F0)
 #define gWaterName ((const char *)0x54F75C)
+#define gWaterSplits ((uint32_t *)0xA84584)
+#define gWaterUnk7C VAR(int, 0xA8457C)
+#define gWaterUnk80 VAR(int, 0xA84580)
+#define gCamPos VAR(Vec3d, 0xBCAB08)
+#define gCamDir ((const float *)0xBCAAF8)
 
 #define kZero VAR(float, 0x5333EC)
 #define kOne VAR(float, 0x5333E0)
@@ -106,6 +124,8 @@ ORIG(0x4B29F0, long double, Vec2d_Dot, (const double *a, const double *b));
 #define kPeriodScale VAR(float, 0x534CC8)
 #define kGridMin VAR(double, 0x534170)
 #define kGridScale VAR(double, 0x534CB8)
+#define kZeroD VAR(double, 0x5333B0)
+#define kMinusTwo VAR(double, 0x534CD0)
 
 /* x87 "not equal" (C3 clear): false for NaN */
 static inline int fne(long double a)
@@ -113,7 +133,7 @@ static inline int fne(long double a)
     return a < kZero || a > kZero;
 }
 
-void WaterMesh_Draw(void *node);
+void WaterMesh_Draw(WaterDrawNode *node);
 
 /* fills the 5 x 5 wave table from the time; returns time / period2 */
 uint32_t WaterMesh_UpdateWaves(WaterMesh *w)
@@ -283,7 +303,7 @@ HOOK(0x52DCB0, WaterMesh_GetFade);
 void WaterMesh_Open(void)
 {
     gWaterPrimitive = Primitive_Register(gWaterName);
-    Primitive_SetHandler(gWaterPrimitive, (void *)0x52DD90);
+    Primitive_SetHandler(gWaterPrimitive, WaterMesh_Draw);
 }
 HOOK(0x52DD70, WaterMesh_Open);
 
@@ -319,3 +339,75 @@ void WaterMesh_Light(WaterMesh *w, float *color, const float *normal)
     color[2] = (long double)b + w->ambient[2];
 }
 HOOK(0x52E180, WaterMesh_Light);
+
+/* the camera's top cell and the three next to it on the camera's side are
+   subdivided; every other top cell is switched off */
+void WaterMesh_Draw(WaterDrawNode *node)
+{
+    WaterMesh *w = node->mesh;
+    float up[3] = { 0.0f, 0.0f, 1.0f };
+    long double h, size, n, cs;
+    uint32_t ix, iy, i, j, q;
+    int sx, sy, nx, ny;
+    WaterNode *c;
+
+    memset(gWaterSplits, 0, 20 * sizeof(uint32_t));
+    gWaterUnk7C = 0;
+    gWaterUnk80 = 0;
+    WaterMesh_Light(w, w->lit, up);
+    w->cam = gCamPos;
+    h = (long double)w->cam.z - w->level;
+    memcpy(w->camDir, gCamDir, sizeof(w->camDir));
+    if (!(h > kZeroD))
+        h = kZeroD;
+    w->camHeight = h;
+    q = w->time % w->period1;
+    w->phase = (long double)(uint64_t)q * w->wavelength / (int)w->period1;
+    WaterMesh_UpdateWaves(w);
+    Debug_Log();
+    Haze_GetVisible(&w->hazeList, &w->hazeCount);
+    size = (long double)(uint64_t)w->size;
+    n = (long double)(uint64_t)w->n;
+    w->count = 0;
+    ix = x87_fistp(((long double)w->cam.x - w->originX) / size * n);
+    iy = x87_fistp(((long double)w->cam.y - w->originY) / size * n);
+    if (w->n - 1 < ix)
+        ix = w->n - 1;
+    if (w->n - 1 < iy)
+        iy = w->n - 1;
+    c = &w->top[ix][iy];
+    cs = (long double)(uint64_t)c->size;
+    sx = -1 - 2 * x87_fistp(((long double)w->cam.x - c->x) / cs * kMinusTwo);
+    sy = -1 - 2 * x87_fistp(((long double)w->cam.y - c->y) / cs * kMinusTwo);
+    nx = (int)ix + (sx >= 0 ? 0 : sx);
+    ny = (int)iy + (sy >= 0 ? 0 : sy);
+    c = &w->top[nx <= 0 ? 0 : nx][ny <= 0 ? 0 : ny];
+    w->root.x = c->x;
+    w->root.y = c->y;
+    for (i = 0; i < w->n; i++) {
+        for (j = 0; j < w->n; j++) {
+            c = &w->top[i][j];
+            c->active = 1;
+            if (i == ix && j == iy) {
+                c->flags |= sx > 0 ? 0x10 : 8;
+                c->flags |= sy > 0 ? 2 : 4;
+            } else if (i == ix + sx && j == iy) {
+                c->flags |= sx > 0 ? 8 : 0x10;
+                c->flags |= sy > 0 ? 2 : 4;
+            } else if (i == ix && j == iy + sy) {
+                c->flags |= sx > 0 ? 0x10 : 8;
+                c->flags |= sy > 0 ? 4 : 2;
+            } else if (i == ix + sx && j == iy + sy) {
+                c->flags |= sx > 0 ? 8 : 0x10;
+                c->flags |= sy > 0 ? 4 : 2;
+            } else {
+                c->active = 0;
+                continue;
+            }
+            c->parent = &w->root;
+            WaterMesh_Subdivide(w, c);
+        }
+    }
+    sub_52E2D0(w);
+}
+HOOK(0x52DD90, WaterMesh_Draw);
