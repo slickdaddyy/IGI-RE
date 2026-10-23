@@ -69,7 +69,7 @@ static float max_scale(const AnimObj *o)
     return o->scale[0] > m ? o->scale[0] : m;
 }
 
-ORIG(0x52A230, void, AnimObj_Control, (AnimObj *o, AnimControlMsg *msg));
+void AnimObj_Control(AnimObj *o, AnimControlMsg *msg);
 void AnimObj_GetInputInfo(AnimObj *o, AnimInputMsg *msg);
 void AnimObj_GetStateSize(AnimObj *o, int *out);
 void AnimObj_SaveState(AnimObj *o, AnimObjSaveMsg *msg);
@@ -91,8 +91,6 @@ void AnimObj_Open(void)
 }
 HOOK(0x52AAF0, AnimObj_Open);
 
-/* not tested yet: written from the disassembly, kept out of the build */
-#if 0
 /* channels 0-2 position, 3-8 speed and acceleration in world axes, 9-14 in
    object axes, 15-20 turn speed and acceleration, 21 the id of a task to
    move with (none when <= 0). The keys are integrated in place. */
@@ -221,7 +219,6 @@ void AnimObj_Control(AnimObj *o, AnimControlMsg *msg)
     DynCube_Move(o->room, o, &p, VirModel_GetRadius(o->model) * scale);
 }
 HOOK(0x52A230, AnimObj_Control);
-#endif
 
 void AnimObj_GetInputInfo(AnimObj *o, AnimInputMsg *msg)
 {
