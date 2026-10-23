@@ -1,0 +1,373 @@
+#pragma GCC optimize("excess-precision=standard")
+
+#include <string.h>
+
+#include "hook.h"
+#include "dxinit/dxinit.h"
+
+typedef struct DynVB {
+    IDirect3DVertexBuffer7 *vb;
+    int size;
+    int used;
+} DynVB;
+
+typedef struct List {
+    void *head;
+    void *tail;
+    void *tailpred;
+} List;
+
+/* meshes waiting to be copied into a static vertex buffer: 0 rigid, 1 bone, 2 rigid */
+typedef struct MeshBatch {
+    char *items[1000];
+    int total;
+    int count;
+} MeshBatch;
+
+/* a static vertex buffer and the meshes stored in it */
+typedef struct MeshVB {
+    IDirect3DVertexBuffer7 *vb;
+    D3DVERTEXBUFFERDESC desc;
+    int stride;
+    List meshes;
+} MeshVB;
+
+/* bone mesh vertex: position, normal, uv, weight, output vertex, bone */
+typedef struct SkinVertex {
+    float p[3];
+    float n[3];
+    float uv[2];
+    float w;
+    uint16_t target;
+    uint16_t bone;
+} SkinVertex;
+
+typedef struct Bone {
+    char unk0[0x18];
+    float t[3];
+    float m[9];
+    char unk48[0x3C];
+} Bone;
+
+typedef struct NormalVertex {
+    float x, y, z;
+    float nx, ny, nz;
+    float u, v;
+} NormalVertex;
+
+_Static_assert(sizeof(MeshBatch) == 0xFA8, "MeshBatch");
+_Static_assert(sizeof(MeshVB) == 0x24, "MeshVB");
+_Static_assert(sizeof(SkinVertex) == 0x28, "SkinVertex");
+_Static_assert(sizeof(Bone) == 0x84, "Bone");
+
+ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
+ORIG(0x4950E0, int, Direct3D_GetRenderMode, (void));
+ORIG(0x495200, void, Direct3D_AddRestoreCallback, (void *fn));
+ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
+ORIG(0x4AF8F0, void, List_AddTail, (List *list, void *node));
+ORIG(0x4B0EC0, void, RenderMode_SetMethod, (int mode, int method, void *fn));
+ORIG(0x4B7430, int, PtrList_Add, (PtrList *list, void *fn));
+ORIG(0x4CEA60, int, Model_GetInitMethod, (void));
+ORIG(0x4CEA70, int, Model_GetDeinitMethod, (void));
+ORIG(0x4CEA80, int, Model_GetLoadMethod, (void));
+ORIG(0x4CEA90, int, Model_GetUnloadMethod, (void));
+ORIG(0x4CFC30, int, Mesh_GetDrawRigidMethod, (void));
+ORIG(0x4CFC40, int, Mesh_GetDrawBoneMethod, (void));
+ORIG(0x4CFC50, int, Mesh_GetDrawSplineMethod, (void));
+ORIG(0x4CFC60, int, Mesh_GetDrawLightmapMethod, (void));
+ORIG(0x4D14D0, uint8_t, sub_4D14D0, (void));
+ORIG(0x4E5350, uint16_t, sub_4E5350, (void));
+
+#define gFogDensity VAR(float, 0xB46D04)
+#define gVBNormal VAR(DynVB, 0xBCAD90)
+#define gMeshBatches ((MeshBatch *)0x7205C0)
+#define gMeshVBs ((MeshVB *)0x7AC0A0)
+#define gMeshVBCount VAR(int, 0x72350C)
+#define gMeshFVF ((const unsigned *)0x543CB8)
+#define gMeshCaps ((const unsigned *)0x543CC4)
+#define gMeshCapsTnL ((const unsigned *)0x543CD0)
+#define gGenericUVFromRenderModeUV VAR(int, 0xB817A0)
+#define gRenderModeUVFromGenericUV VAR(int, 0xB8170C)
+
+#define kOne VAR(const float, 0x5333E0)
+
+/* render functions and callbacks that live past this range */
+#define Direct3D_DrawRigidMesh ((void *)0x49DF60)
+#define Direct3D_DrawBoneMesh ((void *)0x49F700)
+#define Direct3D_DrawSplineMesh ((void *)0x49C850)
+#define Direct3D_ConvertUV ((void *)0x49FAF0)
+#define Direct3D_DrawLightmapMesh ((void *)0x49FEB0)
+#define Direct3D_ModelLoad ((void *)0x49FB10)
+#define Direct3D_ModelUnload ((void *)0x49FE60)
+#define Direct3D_ModelInit ((void *)0x49C7D0)
+#define Direct3D_ModelDeinit ((void *)0x49C800)
+
+/* e^x the way the original computes it: 2^(x * log2 e) with frndint, f2xm1 and fscale */
+static __attribute__((noinline)) long double x87_exp(long double x)
+{
+    long double r;
+
+    __asm__("fldl2e\n\t"
+            "fmulp\n\t"
+            "fld %%st(0)\n\t"
+            "frndint\n\t"
+            "fxch %%st(1)\n\t"
+            "fsub %%st(1), %%st\n\t"
+            "f2xm1\n\t"
+            "fld1\n\t"
+            "faddp\n\t"
+            "fscale\n\t"
+            "fstp %%st(1)"
+            : "=t"(r)
+            : "0"(x));
+    return r;
+}
+
+/* Sets linear fog start / end so that it matches exponential fog of gFogDensity at the
+   near and far side of a sphere around pos. */
+void Fog_SetRange(const Vec3d *pos, float radius)
+{
+    float y = pos->y, z = pos->z;
+    long double px = pos->x - gViewPos.x, py = y - gViewPos.y, pz = z - gViewPos.z;
+    long double d = gView.m[8] * pz + gView.m[7] * py + gView.m[6] * px;
+    float n = d - radius;
+    float f = d + radius;
+    float a = kOne / x87_exp(gNearPlaneScale * n * gFogDensity);
+    long double bl = kOne / x87_exp(gNearPlaneScale * f * gFogDensity);
+    float b = bl;
+    long double diffl = bl - a;
+    float diff = diffl;
+    float start, end;
+
+    if (x87_eq(diffl, 0) || x87_eq(a, 0)) {
+        start = 0.0f;
+        end = 0.0f;
+    } else {
+        long double t = (b * n - a * f) / diff;
+
+        start = (t - (t - n) / a) * gNearPlaneScale;
+        end = gNearPlaneScale * t;
+    }
+    SET_RS(D3DRENDERSTATE_FOGSTART, f2u(start));
+    SET_RS(D3DRENDERSTATE_FOGEND, f2u(end));
+}
+HOOK(0x49B2D0, Fog_SetRange);
+
+void MeshBatch_Flush(int list);
+
+void MeshBatch_Add(int list, char *mesh, int verts)
+{
+    MeshBatch *b = &gMeshBatches[list];
+
+    if (b->total + verts > 0xFFFF)
+        MeshBatch_Flush(list);
+    b->items[b->count] = mesh;
+    b->count++;
+    b->total += verts;
+    if (b->count == 1000)
+        MeshBatch_Flush(list);
+}
+HOOK(0x49B430, MeshBatch_Add);
+
+/* Copies the waiting meshes into a new static vertex buffer. */
+void MeshBatch_Flush(int list)
+{
+    MeshBatch *b = &gMeshBatches[list];
+    unsigned fvf = gMeshFVF[list];
+    unsigned caps = gD3DTnL ? gMeshCapsTnL[list] : gMeshCaps[list];
+    MeshVB *rec = &gMeshVBs[gMeshVBCount++];
+    D3DVERTEXBUFFERDESC desc;
+    int start = 0, i;
+
+    desc.dwSize = sizeof(desc);
+    desc.dwCaps = caps;
+    desc.dwFVF = fvf;
+    desc.dwNumVertices = b->total;
+    gD3D->lpVtbl->CreateVertexBuffer(gD3D, &desc, &rec->vb, 0);
+    rec->desc = desc;
+    rec->meshes.tail = NULL;
+    rec->meshes.head = &rec->meshes.tail;
+    rec->meshes.tailpred = &rec->meshes.head;
+    for (i = 0; i < b->count; i++) {
+        char *item = b->items[i];
+        char *m = *(char **)(item + 0x24);
+        char *p = NULL;
+        MeshVB *r;
+
+        switch (*(int *)(item + 0x20)) {
+        case 0:
+            *(uint16_t *)(m + 0x24) = start;
+            *(uint16_t *)(m + 0x26) = *(int *)(m + 0xC);
+            *(MeshVB **)(m + 0x28) = rec;
+            *(int *)(m + 0x20) = 1;
+            *(int *)(m + 0x2C) = *(int *)(m + 0x10);
+            r = *(MeshVB **)(m + 0x28);
+            r->vb->lpVtbl->Lock(r->vb, DDLOCK_WRITEONLY, (void **)&p, NULL);
+            memcpy(p + start * 0x20, *(void **)(m + 0x10), *(int *)(m + 0xC) * 0x20);
+            r = *(MeshVB **)(m + 0x28);
+            r->vb->lpVtbl->Unlock(r->vb);
+            rec->stride = 0x20;
+            List_AddTail(&rec->meshes, m + 0x18);
+            start += *(int *)(m + 0xC);
+            break;
+        case 1:
+            break;
+        case 3:
+            *(uint16_t *)(m + 0x2C) = start;
+            *(uint16_t *)(m + 0x2E) = *(int *)(m + 0x10);
+            *(MeshVB **)(m + 0x30) = rec;
+            *(int *)(m + 0x28) = 1;
+            *(int *)(m + 0x34) = *(int *)(m + 0x14);
+            r = *(MeshVB **)(m + 0x30);
+            r->vb->lpVtbl->Lock(r->vb, DDLOCK_WRITEONLY, (void **)&p, NULL);
+            memcpy(p + start * 0x28, *(void **)(m + 0x14), *(int *)(m + 0x10) * 0x28);
+            r = *(MeshVB **)(m + 0x30);
+            r->vb->lpVtbl->Unlock(r->vb);
+            rec->stride = 0x28;
+            List_AddTail(&rec->meshes, m + 0x20);
+            start += *(int *)(m + 0x10);
+            break;
+        default:
+            Error_Show("Mesh format not supported");
+            for (;;)
+                ;
+        }
+    }
+    b->count = 0;
+    b->total = 0;
+}
+HOOK(0x49B4B0, MeshBatch_Flush);
+
+/* Transforms a bone mesh into the dynamic normal vertex buffer and returns the first vertex.
+   Without rigid, every vertex is weighted by its bone and the extra vertices after the mesh
+   add their weighted share to a vertex. */
+int BoneMesh_Skin(char *mesh, char *model, char *bones, int rigid)
+{
+    int count = *(int *)(mesh + 0x10);
+    NormalVertex *out = NULL;
+    SkinVertex *v;
+    HRESULT hr;
+    int start, i;
+
+    if (count > 4000) {
+        Error_Show("Bone model too large. Model %s has %d vertices.", model + 0x14, count);
+        for (;;)
+            ;
+    }
+    if (gVBNormal.used + count > gVBNormal.size) {
+        hr = gVBNormal.vb->lpVtbl->Lock(gVBNormal.vb, DDLOCK_DISCARDCONTENTS | DDLOCK_WRITEONLY, (void **)&out,
+                                        NULL);
+        start = 0;
+        gVBNormal.used = *(int *)(mesh + 0x10);
+    } else {
+        hr = gVBNormal.vb->lpVtbl->Lock(gVBNormal.vb, DDLOCK_NOOVERWRITE | DDLOCK_WRITEONLY, (void **)&out, NULL);
+        start = gVBNormal.used;
+        out += start;
+        gVBNormal.used = start + *(int *)(mesh + 0x10);
+    }
+    if (hr || !out)
+        return start;
+    count = *(int *)(mesh + 0x10);
+    v = *(SkinVertex **)(mesh + 0x18);
+    if (!rigid) {
+        NormalVertex *o = out;
+
+        for (i = count; i > 0; i--, v++, o++) {
+            const Bone *b = &(*(Bone **)(bones + 8))[v->bone];
+            float x = v->p[0] * b->m[0] + v->p[2] * b->m[2] + v->p[1] * b->m[1];
+            float y = v->p[0] * b->m[3] + v->p[2] * b->m[5] + v->p[1] * b->m[4];
+            float z = v->p[2] * b->m[8] + b->m[7] * v->p[1] + b->m[6] * v->p[0];
+            long double X = x + b->t[0];
+            float Y = y + b->t[1];
+            float Z = z + b->t[2];
+
+            o->x = X * v->w;
+            o->y = Y * v->w;
+            o->z = Z * v->w;
+            o->u = v->uv[0];
+            o->v = v->uv[1];
+            o->nx = b->m[1] * v->n[1] + b->m[2] * v->n[2] + v->n[0] * b->m[0];
+            o->ny = v->n[2] * b->m[5] + v->n[1] * b->m[4] + v->n[0] * b->m[3];
+            o->nz = b->m[6] * v->n[0] + b->m[8] * v->n[2] + b->m[7] * v->n[1];
+        }
+        v = *(SkinVertex **)(mesh + 0x18) + *(int *)(mesh + 0x10);
+        for (i = *(int *)(mesh + 0xC); i > 0; i--, v++) {
+            const Bone *b = &(*(Bone **)(bones + 8))[v->bone];
+            float x = b->m[2] * v->p[2] + b->m[1] * v->p[1] + b->m[0] * v->p[0];
+            float y = b->m[5] * v->p[2] + b->m[4] * v->p[1] + b->m[3] * v->p[0];
+            float z = b->m[8] * v->p[2] + b->m[7] * v->p[1] + b->m[6] * v->p[0];
+            long double X = x + b->t[0];
+            float Y = y + b->t[1];
+            float Z = z + b->t[2];
+            float w = v->w;
+            NormalVertex *t = &out[v->target];
+
+            t->x = w * X + t->x;
+            t->y = w * Y + t->y;
+            t->z = w * Z + t->z;
+        }
+    } else {
+        NormalVertex *o = out;
+
+        for (i = count; i > 0; i--, v++, o++) {
+            const Bone *b = &(*(Bone **)(bones + 8))[v->bone];
+            long double x = v->p[0] * b->m[0] + v->p[2] * b->m[2] + v->p[1] * b->m[1];
+            float y = v->p[0] * b->m[3] + v->p[2] * b->m[5] + v->p[1] * b->m[4];
+            float z = v->p[2] * b->m[8] + b->m[7] * v->p[1] + b->m[6] * v->p[0];
+
+            o->x = x + b->t[0];
+            o->y = y + b->t[1];
+            o->z = z + b->t[2];
+            o->nx = b->m[1] * v->n[1] + b->m[2] * v->n[2] + v->n[0] * b->m[0];
+            o->ny = v->n[2] * b->m[5] + v->n[1] * b->m[4] + v->n[0] * b->m[3];
+            o->nz = b->m[6] * v->n[0] + b->m[8] * v->n[2] + b->m[7] * v->n[1];
+            o->u = v->uv[0];
+            o->v = v->uv[1];
+        }
+    }
+    gVBNormal.vb->lpVtbl->Unlock(gVBNormal.vb);
+    return start;
+}
+HOOK(0x49B700, BoneMesh_Skin);
+
+void Direct3DRender_Init(void)
+{
+    uint8_t slot;
+    int m, i;
+
+    m = Mesh_GetDrawRigidMethod();
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_DrawRigidMesh);
+    m = Mesh_GetDrawBoneMethod();
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_DrawBoneMesh);
+    m = Mesh_GetDrawSplineMethod();
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_DrawSplineMesh);
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), gGenericUVFromRenderModeUV, Direct3D_ConvertUV);
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), gRenderModeUVFromGenericUV, Direct3D_ConvertUV);
+    m = Mesh_GetDrawLightmapMethod();
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_DrawLightmapMesh);
+    m = Model_GetLoadMethod();
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_ModelLoad);
+    m = Model_GetUnloadMethod();
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_ModelUnload);
+    m = Model_GetInitMethod();
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_ModelInit);
+    m = Model_GetDeinitMethod();
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_ModelDeinit);
+    for (i = 0; i < 3; i++) {
+        gMeshBatches[i].count = 0;
+        gMeshBatches[i].total = 0;
+    }
+    gMeshVBCount = 0;
+    VAR(int, 0x7205B0) = PtrList_Add(gD3DListA, (void *)0x49D730);
+    VAR(int, 0x7AC09C) = PtrList_Add(gD3DListB, (void *)0x49DB10);
+    VAR(int, 0x7234B8) = PtrList_Add(gD3DListC, (void *)0x49D480);
+    VAR(int, 0x723504) = PtrList_Add(gD3DListA, (void *)0x49D960);
+    VAR(int, 0x7ADDD4) = PtrList_Add(gD3DListC, (void *)0x49D810);
+    VAR(int, 0x7205B8) = PtrList_Add(gD3DListB, (void *)0x49DB10);
+    VAR(int, 0x7205BC) = PtrList_Add(gD3DListC, (void *)0x49DB20);
+    VAR(int, 0x723508) = PtrList_Add(gD3DListC, (void *)0x49DDF0);
+    Direct3D_AddRestoreCallback((void *)0x49BD30);
+    slot = sub_4D14D0();
+    TaskType_SetHandler(sub_4E5350(), slot, (void *)0x49BE10);
+}
+HOOK(0x49BB40, Direct3DRender_Init);
