@@ -45,7 +45,7 @@ void Flow_CreateHandler(Flow *flow);
 void Flow_FocusChanged(int active);
 void Flow_RunHandler(Flow *flow);
 void Flow_DeleteHandler(Flow *flow);
-void Flow_RequestEvent(ScriptValue *ret, void *unused, void *args);
+ScriptValue *Flow_RequestEvent(ScriptValue *ret, void *unused, void *args);
 void Flow_Close(void);
 uint16_t Flow_GetType(void);
 void Flow_New(Task *parent);

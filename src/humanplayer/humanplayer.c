@@ -303,10 +303,10 @@ void HumanPlayer_WeaponMedipackStartRun(StateMachine *sm, HumanPlayer *h);
 void HumanPlayer_WeaponMedipackRun(StateMachine *sm, HumanPlayer *h);
 void HumanPlayer_WeaponWaitRun(StateMachine *sm, HumanPlayer *h);
 void HumanPlayer_WeaponComputerRun(StateMachine *sm, HumanPlayer *h);
-void DefineHumanPlayerGeneral(ScriptValue *ret, void *unused, void *args);
-void DefineHumanPlayerWeaponCycle(ScriptValue *ret, void *unused, int *args);
-void DefineHumanPlayerWeaponCategory(ScriptValue *ret, void *unused, void *args);
-void DefineHumanPlayerAmmoLimit(ScriptValue *ret, void *unused, int *args);
+ScriptValue *DefineHumanPlayerGeneral(ScriptValue *ret, void *unused, void *args);
+ScriptValue *DefineHumanPlayerWeaponCycle(ScriptValue *ret, void *unused, int *args);
+ScriptValue *DefineHumanPlayerWeaponCategory(ScriptValue *ret, void *unused, void *args);
+ScriptValue *DefineHumanPlayerAmmoLimit(ScriptValue *ret, void *unused, int *args);
 void HumanPlayer_SetUnlimitedAmmo(void);
 void HumanPlayer_CreateHandler(HumanPlayer *h, void *arg);
 void HumanPlayer_UpdateBodyInput(StateMachine *sm, HumanPlayer *h);
@@ -1146,7 +1146,7 @@ static void return_one(ScriptValue *ret)
     ret->type = gScriptNumberType;
 }
 
-void DefineHumanPlayerGeneral(ScriptValue *ret, void *unused, void *args)
+ScriptValue *DefineHumanPlayerGeneral(ScriptValue *ret, void *unused, void *args)
 {
     int i = 9, k;
 
@@ -1165,10 +1165,11 @@ void DefineHumanPlayerGeneral(ScriptValue *ret, void *unused, void *args)
     for (k = 0; k < 17; k++)
         gTurnSpeeds[k * 4] = Script_GetArgReal(args, i++);
     return_one(ret);
+    return ret;
 }
 HOOK(0x410070, DefineHumanPlayerGeneral);
 
-void DefineHumanPlayerWeaponCycle(ScriptValue *ret, void *unused, int *args)
+ScriptValue *DefineHumanPlayerWeaponCycle(ScriptValue *ret, void *unused, int *args)
 {
     int i;
 
@@ -1177,10 +1178,11 @@ void DefineHumanPlayerWeaponCycle(ScriptValue *ret, void *unused, int *args)
     for (i = 0; i < *args; i++)
         gWeaponCycle[gWeaponCycleCount++] = Script_GetArgInt(args, i);
     return_one(ret);
+    return ret;
 }
 HOOK(0x4101C0, DefineHumanPlayerWeaponCycle);
 
-void DefineHumanPlayerWeaponCategory(ScriptValue *ret, void *unused, void *args)
+ScriptValue *DefineHumanPlayerWeaponCategory(ScriptValue *ret, void *unused, void *args)
 {
     WeaponCategory *c;
     int i = 0, k;
@@ -1192,10 +1194,11 @@ void DefineHumanPlayerWeaponCategory(ScriptValue *ret, void *unused, void *args)
             c->ids[k] = Script_GetArgInt(args, i++);
     }
     return_one(ret);
+    return ret;
 }
 HOOK(0x410240, DefineHumanPlayerWeaponCategory);
 
-void DefineHumanPlayerAmmoLimit(ScriptValue *ret, void *unused, int *args)
+ScriptValue *DefineHumanPlayerAmmoLimit(ScriptValue *ret, void *unused, int *args)
 {
     AmmoLimit *l;
     int i;
@@ -1208,6 +1211,7 @@ void DefineHumanPlayerAmmoLimit(ScriptValue *ret, void *unused, int *args)
         l->limit = Script_GetArgInt(args, i++);
     }
     return_one(ret);
+    return ret;
 }
 HOOK(0x4102D0, DefineHumanPlayerAmmoLimit);
 

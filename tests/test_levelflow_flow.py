@@ -56,19 +56,19 @@ def script_value(fn, setup_globals):
 @pytest.mark.parametrize("key", [0, 0x80, 0x81, 0x7F, 0xFF])
 def test_get_break_cut_scene_key(key):
     setup, ign = script_value(None, lambda e: e.write(KEYS + 1, bytes([key])))
-    run(emu, 0x488E00, "LevelFlow_GetBreakCutSceneKey", setup, ignore=ign)
+    run(emu, 0x488E00, "LevelFlow_GetBreakCutSceneKey", setup, ignore=ign, check_eax=True)
 
 
 @pytest.mark.parametrize("failed", [0, 1, 0x80, 0xFF])
 def test_level_failed(failed):
     setup, ign = script_value(None, lambda e: flow(e, failed=failed))
-    run(emu, 0x488E50, "LevelFlow_LevelFailed", setup, ignore=ign)
+    run(emu, 0x488E50, "LevelFlow_LevelFailed", setup, ignore=ign, check_eax=True)
 
 
 @pytest.mark.parametrize("usa", [0, 1])
 def test_is_country_usa(usa):
     setup, ign = script_value(None, lambda e: RET.update(usa=usa))
-    run(emu, 0x488E90, "LevelFlow_IsCountryUSA", setup, ignore=ign)
+    run(emu, 0x488E90, "LevelFlow_IsCountryUSA", setup, ignore=ign, check_eax=True)
 
 
 @pytest.mark.parametrize("profile", [0, 2])

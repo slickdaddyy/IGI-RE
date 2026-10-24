@@ -61,9 +61,9 @@ void LevelFlow_GetParams(void *task, ParamTable **out);
 void LevelFlow_Changed(LevelFlow *lf);
 void LevelFlow_Activate(LevelFlow *lf);
 void LevelFlow_Deactivate(LevelFlow *lf);
-void LevelFlow_GetBreakCutSceneKey(ScriptValue *ret);
-void LevelFlow_LevelFailed(ScriptValue *ret);
-void LevelFlow_IsCountryUSA(ScriptValue *ret);
+ScriptValue *LevelFlow_GetBreakCutSceneKey(ScriptValue *ret);
+ScriptValue *LevelFlow_LevelFailed(ScriptValue *ret);
+ScriptValue *LevelFlow_IsCountryUSA(ScriptValue *ret);
 
 void LevelFlow_Init(void)
 {
@@ -96,31 +96,34 @@ void LevelFlow_Init(void)
 HOOK(0x488BB0, LevelFlow_Init);
 
 /* 1 while Escape is held */
-void LevelFlow_GetBreakCutSceneKey(ScriptValue *ret)
+ScriptValue *LevelFlow_GetBreakCutSceneKey(ScriptValue *ret)
 {
     int key = gKeys[1] & 0x80;
 
     ret->i = key;
     ret->d = key;
     ret->type = gScriptNumberType;
+    return ret;
 }
 HOOK(0x488E00, LevelFlow_GetBreakCutSceneKey);
 
-void LevelFlow_LevelFailed(ScriptValue *ret)
+ScriptValue *LevelFlow_LevelFailed(ScriptValue *ret)
 {
     int failed = gLevelFlow->isFailed;
 
     ret->i = failed;
     ret->d = failed;
     ret->type = gScriptNumberType;
+    return ret;
 }
 HOOK(0x488E50, LevelFlow_LevelFailed);
 
-void LevelFlow_IsCountryUSA(ScriptValue *ret)
+ScriptValue *LevelFlow_IsCountryUSA(ScriptValue *ret)
 {
     ret->i = AppContext_IsUSA();
     ret->d = AppContext_IsUSA();
     ret->type = gScriptNumberType;
+    return ret;
 }
 HOOK(0x488E90, LevelFlow_IsCountryUSA);
 

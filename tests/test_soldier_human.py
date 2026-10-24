@@ -86,7 +86,7 @@ def test_cut_scene_delta(x, cw):
         f32(em, h + 0x1B0, x)
         RET[0x4F1030] = h
         return (p,)
-    run(e, 0x45EAE0, "Human_GetCutSceneDeltaTime", setup, cw=cw,
+    run(e, 0x45EAE0, "Human_GetCutSceneDeltaTime", setup, cw=cw, check_eax=True,
         ignore=((out + 4, out + 8), (out + 20, out + 24)))
 
 

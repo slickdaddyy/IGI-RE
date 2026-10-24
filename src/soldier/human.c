@@ -215,7 +215,7 @@ HOOK(0x45E3E0, sub_45E3E0);
 void Human_CreateHandler(Human *h);
 void Human_RunHandler(Human *h);
 void Human_DeleteHandler(Human *h);
-void Human_GetCutSceneDeltaTime(ScriptValue *ret);
+ScriptValue *Human_GetCutSceneDeltaTime(ScriptValue *ret);
 
 void Human_Open(void)
 {
@@ -299,7 +299,7 @@ void Human_Open(void)
 HOOK(0x45E450, Human_Open);
 
 /* script function: input 0 of task 0 times 1.5 */
-void Human_GetCutSceneDeltaTime(ScriptValue *ret)
+ScriptValue *Human_GetCutSceneDeltaTime(ScriptValue *ret)
 {
     long double v = Task_FindById(0)->input[0] * kCutSceneScale;
     ScriptValue r;
@@ -308,6 +308,7 @@ void Human_GetCutSceneDeltaTime(ScriptValue *ret)
     r.d = v;
     r.type = gScriptNumberType;
     memcpy(ret, &r, sizeof(r));
+    return ret;
 }
 HOOK(0x45EAE0, Human_GetCutSceneDeltaTime);
 

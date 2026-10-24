@@ -263,13 +263,14 @@ void Flow_DeleteHandler(Flow *flow)
 }
 HOOK(0x402740, Flow_DeleteHandler);
 
-void Flow_RequestEvent(ScriptValue *ret, void *unused, void *args)
+ScriptValue *Flow_RequestEvent(ScriptValue *ret, void *unused, void *args)
 {
     (void)unused;
     Flow_SetRequest(Script_GetArgInt(args, 0));
     ret->i = 1;
     ret->d = 1.0;
     ret->type = gScriptNumberType;
+    return ret;
 }
 HOOK(0x402780, Flow_RequestEvent);
 

@@ -224,8 +224,8 @@ def player(e, inputs=None, prev=None, body_state=0, body_in=0, weapon_state=1, w
     return p
 
 
-def check(orig, ours, setup, **kw):
-    compare(emu, orig, ours, setup=setup, check_eax=False, normalized=True, **kw)
+def check(orig, ours, setup, check_eax=False, **kw):
+    compare(emu, orig, ours, setup=setup, check_eax=check_eax, normalized=True, **kw)
 
 
 INPUT = dict(left=2, right=3, fwd=4, back=5, fire=6, alt=7, reload=8, use=9, lean=12, weapon=13, d45=20,
@@ -653,7 +653,7 @@ def test_define_general():
     def setup(e):
         e.write(REALS, struct.pack("<43d", *[1.5 + i * 0.37 for i in range(43)]))
         return script_ret(e), 0, e.alloc(16)
-    check(0x410070, "DefineHumanPlayerGeneral", setup, ignore=SCRIPT_IGNORE)
+    check(0x410070, "DefineHumanPlayerGeneral", setup, ignore=SCRIPT_IGNORE, check_eax=True)
 
 
 @pytest.mark.parametrize("n", [0, 1, 5])
@@ -666,7 +666,7 @@ def test_define_weapon_cycle(n):
         i32(e, args, n)
         e.write(0x56DF18, struct.pack("<i", 9))
         return script_ret(e), 0, args
-    check(0x4101C0, "DefineHumanPlayerWeaponCycle", setup, ignore=SCRIPT_IGNORE)
+    check(0x4101C0, "DefineHumanPlayerWeaponCycle", setup, ignore=SCRIPT_IGNORE, check_eax=True)
 
 
 def test_define_weapon_category():
@@ -678,7 +678,7 @@ def test_define_weapon_category():
     def setup(e):
         R["ints"] = ints
         return script_ret(e), 0, e.alloc(16)
-    check(0x410240, "DefineHumanPlayerWeaponCategory", setup, ignore=SCRIPT_IGNORE)
+    check(0x410240, "DefineHumanPlayerWeaponCategory", setup, ignore=SCRIPT_IGNORE, check_eax=True)
 
 
 @pytest.mark.parametrize("n", [0, 2, 6])
@@ -689,7 +689,7 @@ def test_define_ammo_limit(n):
         i32(e, args, n)
         e.write(0x56DF98, struct.pack("<i", 5))
         return script_ret(e), 0, args
-    check(0x4102D0, "DefineHumanPlayerAmmoLimit", setup, ignore=SCRIPT_IGNORE)
+    check(0x4102D0, "DefineHumanPlayerAmmoLimit", setup, ignore=SCRIPT_IGNORE, check_eax=True)
 
 
 def test_set_unlimited_ammo():

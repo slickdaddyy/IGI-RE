@@ -154,7 +154,7 @@ def test_request_event():
         State(e)
         return e.alloc(24), 0, 0x1234
     # bytes 4 and 20 of the result come from uninitialised stack in the original
-    compare(emu, 0x402780, "Flow_RequestEvent", setup=with_fakes({}, setup), check_eax=False, normalized=True,
+    compare(emu, 0x402780, "Flow_RequestEvent", setup=with_fakes({}, setup), check_eax=True, normalized=True,
             ignore=[(0x20000000, 0x24000000)])
     for target in (0x402780, "Flow_RequestEvent"):
         emu.reset()
