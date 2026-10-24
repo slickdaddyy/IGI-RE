@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "vehicle/vehicle.h"
 #include "widget/widgettypes.h"
+#include "win/wintypes.h"
 
 ORIG(0x48F130, int, AppContext_IsFullscreen, (void));
 ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
@@ -13,7 +14,7 @@ extern int gCursorWindowX;
 extern int gCursorWindowY;
 extern float gMouseDX;
 extern float gMouseDY;
-extern unsigned int gMouseButtons;
+extern Mouse gMouse;
 
 static const float kSpeedX = 320.0f;
 static const float kSpeedY = 240.0f;
@@ -57,7 +58,7 @@ void Cursor_RunHandler(Cursor *c)
         v = c->y;
     c->y = v;
     c->prevButtons = c->buttons;
-    c->buttons = gMouseButtons & 1;
+    c->buttons = gMouse.buttons & 1;
 }
 HOOK(0x424CE0, Cursor_RunHandler);
 

@@ -8,6 +8,7 @@
 #include "qasm/qasmtypes.h"
 #include "coll/colltypes.h"
 #include "comprun/compruntypes.h"
+#include "win/wintypes.h"
 
 /* the storage of a loaded sprite */
 typedef struct SpriteSlot {
@@ -140,7 +141,7 @@ extern uint8_t gMapSelectEvent;
 extern const float gMapZoomAngle[];
 extern const float gItemColor[][3];
 extern char *gLevelFlow;
-extern unsigned int gMouseButtons;
+extern Mouse gMouse;
 
 #define MENU_MANAGER() (*(void **)(gLevelFlow + 0x120))
 #define RUN_SLOT() 1

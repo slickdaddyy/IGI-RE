@@ -455,14 +455,14 @@ void ComputerMap_Trace(ComputerMap *map)
                 map->rclickTime = 0;
             }
         }
-        if (((gMouseButtons & 0x100) && !(map->lastButtons & 0x100)) || dbl) {
+        if (((gMouse.buttons & 0x100) && !(map->lastButtons & 0x100)) || dbl) {
             if ((uint16_t)gMapZoom < 3) {
                 gMapZoom++;
                 ComputerMap_SetFov(map, ftan(gMapZoomAngle[gMapZoom]));
                 ComputerStartup_Start(map->startup);
             }
         }
-        if (((gMouseButtons & 0x200) && !(map->lastButtons & 0x200)) || rdbl) {
+        if (((gMouse.buttons & 0x200) && !(map->lastButtons & 0x200)) || rdbl) {
             if (gMapZoom != 0) {
                 gMapZoom--;
                 ComputerMap_SetFov(map, ftan(gMapZoomAngle[gMapZoom]));
@@ -571,7 +571,7 @@ void ComputerMap_Trace(ComputerMap *map)
         ComputerMap_ClearTarget(map);
     }
 done:
-    map->lastButtons = gMouseButtons;
+    map->lastButtons = gMouse.buttons;
 }
 HOOK(0x46A330, ComputerMap_Trace);
 

@@ -210,7 +210,7 @@ extern void *gCurrentWorld;
 extern void (*gRenderFuncs[])(void *);
 extern int gUnkBC20A0;
 extern char gKeyboardPresent;
-extern char gUnkC28F80;
+extern Mouse gMouse;
 
 #define KEY_R 0x13
 #define KEY_I 0x17
@@ -446,7 +446,7 @@ void LevelStart(Game *g)
     gGame->unk48 = NULL;
     BoneObj_SetFrameRate(30.0f);
     if (gKeyboardPresent) {
-        int mode = gUnkC28F80 ? 3 : 0;
+        int mode = gMouse.present ? 3 : 0;
         void *keys = Profile_GetKeys(mode, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f,
                                      0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f);
 

@@ -3,6 +3,7 @@
 #include "widget/widget.h"
 #include "script/scripttypes.h"
 #include "config/configtypes.h"
+#include "win/wintypes.h"
 
 ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
 ORIG(0x4B8920, void, Script_UnregisterSymbol, (const char *name));
@@ -54,7 +55,7 @@ extern uint16_t gControlsMenuType;
 extern void *gControlsMenuParams;
 extern Random gControlsRandom;
 extern uint8_t gKeys[];
-extern int gJoyButton;
+extern Mouse gMouse;
 extern const float gHalf;
 
 #define KEY_ESCAPE 1
@@ -232,7 +233,7 @@ void ControlsMenu_Run(ControlsMenu *cm)
             Sound_PlayName("menu_sel2", 0, NULL);
         }
     } else {
-        int joy = gJoyButton;
+        int joy = gMouse.buttons;
         char found = 0;
 
         if (gKeys[KEY_ESCAPE] & 0x80) {

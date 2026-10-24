@@ -6,6 +6,7 @@
 #include "igi.h"
 #include "game/game.h"
 #include "menu/menutypes.h"
+#include "win/wintypes.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -57,7 +58,7 @@ extern uint16_t gMenuManagerType;
 extern void *gMenuManagerParams;
 extern int gUnkBC20A0;
 extern char gKeyboardPresent;
-extern char gUnkC28F80;
+extern Mouse gMouse;
 
 #define FIELD(name) ((void *)offsetof(MenuManager, name))
 
@@ -117,7 +118,7 @@ void MenuManager_Create(MenuManager *mm)
     Script_RegisterConstant("MENUMANAGER_RESTARTLEVEL", 12);
     mm->unk26BE = 0;
     if (gKeyboardPresent) {
-        int mode = gUnkC28F80 ? 3 : 0;
+        int mode = gMouse.present ? 3 : 0;
         void *keys = Profile_GetKeys(mode, 0.05f, 0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.25f, 0x1.b4e81cp-9f,
                                      0x1.b4e81cp-9f, 0.05f, 0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.25f, 0x1.b4e81cp-9f,
                                      0x1.b4e81cp-9f);

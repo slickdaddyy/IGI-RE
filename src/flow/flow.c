@@ -5,6 +5,7 @@
 #include "igi.h"
 #include "hook.h"
 #include "flow/flow.h"
+#include "win/wintypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A5350, FILE *, crt_fopen, (const char *path, const char *mode));
@@ -65,7 +66,7 @@ extern int gUnkA4438C[];
 extern int gUnkBC20A0;
 extern int gFlowFrames;
 extern char gKeyboardPresent;
-extern char gUnkC28F80;
+extern Mouse gMouse;
 extern char gEmptyString[];
 
 void Flow_Open(void)
@@ -111,7 +112,7 @@ void Flow_CreateHandler(Flow *flow)
     gFlow->unk24 = InputPort_New(gFlow);
     SoundSys_NewController(gFlow);
     if (gKeyboardPresent) {
-        int mode = gUnkC28F80 ? 3 : 0;
+        int mode = gMouse.present ? 3 : 0;
         void *keys = Profile_GetKeys(mode, 0.03f, 0.001f, 0.001f, 0.03f, 0.001f, 0.001f, 0.03f, 0.001f, 0.001f, 0.03f,
                                      0.001f, 0.001f);
 

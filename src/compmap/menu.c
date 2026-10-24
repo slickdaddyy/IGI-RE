@@ -97,9 +97,9 @@ void ComputerMenu_Run(ComputerMenu *m)
             m->y = !(hi >= y) ? hi : y;
         }
     }
-    if (gMouseButtons & 1)
+    if (gMouse.buttons & 1)
         buttons = 0x10;
-    if (gMouseButtons & 2)
+    if (gMouse.buttons & 2)
         buttons |= 0x20;
     pos[0] = round_int(m->x);
     pos[1] = round_int(m->y);

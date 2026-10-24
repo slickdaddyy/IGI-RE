@@ -2,6 +2,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "animtrig/animtrig.h"
+#include "win/wintypes.h"
 
 ORIG(0x490230, void, Keyboard_Update, (void));
 ORIG(0x48FC20, void, Mouse_Update, (void));
@@ -67,9 +68,7 @@ extern uint16_t gInputPortType;
 extern int gInputPortUnused;
 extern Joypad gJoypads[];
 extern uint8_t gKeys[];
-extern float gMouseX;
-extern float gMouseY;
-extern uint32_t gMouseButtons;
+extern Mouse gMouse;
 
 static const float kZero = 0.0f;
 static const float kOne = 1.0f;
@@ -148,7 +147,7 @@ void InputPort_InputHandler(InputState *out)
                 bits |= b->bits;
             break;
         case INPUTPORT_DEVICE_MOUSE:
-            if (b->key & gMouseButtons)
+            if (b->key & gMouse.buttons)
                 bits |= b->bits;
             break;
         }
@@ -162,8 +161,8 @@ void InputPort_InputHandler(InputState *out)
         rudder = j->rudder;
         x = j->x;
     } else if (p->analog == INPUTPORT_DEVICE_MOUSE) {
-        y = gMouseY;
-        x = gMouseX;
+        y = gMouse.dy;
+        x = gMouse.dx;
     }
     move_axis(&p->axis[0], bits & 0x10, bits & 0x20, p->limit[0], p->accel[0], p->ret[0]);
     move_axis(&p->axis[1], bits & 0x40, bits & 0x80, p->limit[0], p->accel[1], p->ret[1]);
