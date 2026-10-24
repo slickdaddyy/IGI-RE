@@ -12,6 +12,7 @@
 #include "model/model.h"
 #include "res/restypes.h"
 #include "d3d/d3dtypes.h"
+#include "litmap/litmaptypes.h"
 
 /* Direct3D mesh renderer: rigid, spline and lightmapped meshes. */
 
@@ -140,25 +141,6 @@ typedef struct LmMesh {
     IDirect3DVertexBuffer7 **vb;
 } LmMesh;
 
-typedef struct LightmapTex {
-    char unk0[0x10];
-    float uScale;
-    float vScale;
-    char unk18[8];
-    IDirectDrawSurface7 *surface;
-    char unk24[8];
-} LightmapTex;
-
-typedef struct LightmapSet {
-    char unk0[0x3C];
-    LightmapTex tex[];
-} LightmapSet;
-
-typedef struct LightmapRef {
-    LightmapSet *set;
-    char unk4[0x20];
-} LightmapRef;
-
 typedef struct ModelObj {
     char task[0x1C];
     uint16_t type;
@@ -221,7 +203,7 @@ typedef struct SortedPrim {
     int layer;
     union {
         int *anim;
-        LightmapSet *lightmap;
+        Lightmaps *lightmap;
     };
     int unk64;
 } SortedPrim;
@@ -235,8 +217,6 @@ _Static_assert(offsetof(MeshGroup, indices) == 0x1C, "MeshGroup");
 _Static_assert(offsetof(LmGroup, indices) == 0x20, "LmGroup");
 _Static_assert(offsetof(RigidMesh, vb) == 0x28, "RigidMesh");
 _Static_assert(offsetof(LmMesh, vb) == 0x30, "LmMesh");
-_Static_assert(sizeof(LightmapTex) == 0x2C, "LightmapTex");
-_Static_assert(sizeof(LightmapRef) == 0x24, "LightmapRef");
 _Static_assert(offsetof(ModelObj, model) == 0x6C, "ModelObj model");
 _Static_assert(offsetof(ModelObj, unkD8) == 0xD8, "ModelObj D8");
 _Static_assert(offsetof(ModelObj, layer) == 0xEC, "ModelObj layer");
@@ -1133,11 +1113,11 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
             }
         }
     } else if (h->type == 3) {
-        LightmapSet *set;
+        Lightmaps *set;
         LmMesh *d = h->data;
         LmGroup *g;
 
-        if (o->lightmaps && (set = o->lightmaps[lod].set) != NULL) {
+        if (o->lightmaps && (set = o->lightmaps[lod].lightmaps) != NULL) {
             g = d->groups;
             base = d->vbBase;
             gTaskHandlers[Mesh3D_GetEvent4()][o->type](o, NULL);
@@ -1151,7 +1131,7 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
                     if (!g->sorted) {
                         Direct3DRender_SetObjectFog(o, h);
                         IDirect3DDevice7_SetTexture(DEV, 0, lod_texture(ml, g->texture));
-                        IDirect3DDevice7_SetTexture(DEV, 1, set->tex[g->lightmap].surface);
+                        IDirect3DDevice7_SetTexture(DEV, 1, set->tex[g->lightmap].texture.surface);
                         draw_lm_group(d, base, g);
                     } else {
                         SortedPrim *p = SortRender_Add(
@@ -1223,7 +1203,7 @@ void Direct3DRender_UploadLightmapMesh(LmMesh *d, LightmapRef *lm)
         return;
     dst = (float *)lock + d->vbBase * 10;
     memcpy(dst, d->vertices, d->vertexCount * 40);
-    if (lm && lm->set) {
+    if (lm && lm->lightmaps) {
         /* groups without a lightmap keep the scales of the group before;
            the first one reads them from the LightmapRef itself */
         const LightmapTex *t = (const LightmapTex *)lm;
@@ -1233,10 +1213,10 @@ void Direct3DRender_UploadLightmapMesh(LmMesh *d, LightmapRef *lm)
             float *out = dst + g->base * 10;
 
             if (g->lightmap != 0xFFFF)
-                t = &lm->set->tex[g->lightmap];
+                t = &lm->lightmaps->tex[g->lightmap];
             for (i = 0; i < g->vertexCount; i++) {
-                out[i * 10 + 8] = src[i * 10 + 8] * t->uScale;
-                out[i * 10 + 9] = src[i * 10 + 9] * t->vScale;
+                out[i * 10 + 8] = src[i * 10 + 8] * t->texture.uScale;
+                out[i * 10 + 9] = src[i * 10 + 9] * t->texture.vScale;
             }
             if (g->next == 0xFFFF)
                 break;
@@ -1331,7 +1311,7 @@ void Direct3DRender_DrawSortedFaceGroup_Lightmap(SortedPrim *p)
     if (g->texture != 0xFFFF) {
         IDirect3DDevice7_SetTexture(DEV, 0, lod_texture(p->lod, g->texture));
         if (p->lightmap)
-            IDirect3DDevice7_SetTexture(DEV, 1, p->lightmap->tex[g->lightmap].surface);
+            IDirect3DDevice7_SetTexture(DEV, 1, p->lightmap->tex[g->lightmap].texture.surface);
         IDirect3DDevice7_DrawIndexedPrimitiveVB(DEV, d->primType, *d->vb, d->vbBase + g->base, g->vertexCount,
                                                 (WORD *)g->indices, g->indexCount, 0);
     }

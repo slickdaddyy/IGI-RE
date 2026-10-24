@@ -278,7 +278,7 @@ void World_Free(World *w)
         Resource_Flush(w->unkDD0);
     for (i = 0; i < gLightmapCount; i++) {
         if (gLightmaps[i].data)
-            Texture_Free(gLightmaps[i].texture);
+            Texture_Free(&gLightmaps[i].texture);
     }
     for (i = 0; i < 6; i++) {
         if (w->rooms[i]->unk3C)
@@ -339,7 +339,7 @@ void World_LoadTextures(World *w, const char *name)
             if (n) {
                 if (Texture_GetTMUs() > 1)
                     Texture_SetActiveTMU(1);
-                Texture_Create(lm->texture, w->palette, n, n, n, 1, 0, 0x20000000, p);
+                Texture_Create(&lm->texture, w->palette, n, n, n, 1, 0, 0x20000000, p);
                 if (Texture_GetTMUs() > 1)
                     Texture_SetActiveTMU(-1);
                 lm->size = n;

@@ -6,6 +6,7 @@
 
 #include "sector/sector.h"
 #include "hook.h"
+#include "litmap/litmaptypes.h"
 
 FN_EXTERN(SectorInteriorObject_WorldAdd);
 FN_EXTERN(SectorInteriorObject_WorldRemove);
@@ -127,27 +128,6 @@ typedef struct LineQuery {
     LineHit *hit;
 } LineQuery;
 
-/* one LOD of an object in a sector object's lightmap set */
-typedef struct LightmapRef {
-    void *lightmaps;
-    void *lod;
-    RigidDynCubeObj *obj;
-    Matrix *matrix;
-    Vec3d *pos;
-    int unkD8;
-    int lodIndex;
-    int lodCount;
-    int unk20;
-} LightmapRef;
-
-typedef struct LightmapSet {
-    int count;
-    VirModel *model;
-    float radius;
-    Vec3f center;
-    LightmapRef refs[];
-} LightmapSet;
-
 /* an object placed in a sector */
 typedef struct SectorLink {
     RigidDynCubeObj **slot;
@@ -183,8 +163,6 @@ _Static_assert(offsetof(SceneArea, maxY) == 0x3C, "SceneArea");
 _Static_assert(sizeof(LocateArg) == 0x30, "LocateArg");
 _Static_assert(sizeof(LineQuery) == 0x24, "LineQuery");
 _Static_assert(sizeof(LineHit) == 0x70, "LineHit");
-_Static_assert(sizeof(LightmapRef) == 0x24, "LightmapRef");
-_Static_assert(sizeof(LightmapSet) == 0x18, "LightmapSet");
 
 extern void (*gRenderFuncs[])(void *);
 extern int gQCubeInside;
@@ -223,7 +201,6 @@ static inline int feq0(long double x)
 {
     return !(x < 0 || x > 0);
 }
-
 
 /* screen outcode: 1 left, 2 top, 4 right, 8 bottom, 0x10 in front of the near plane */
 static int outcode(float sx, float sy)
@@ -629,11 +606,11 @@ static void fill_refs(int *n, LightmapSet *set, RigidDynCubeObj *o)
         r->obj = o;
         r->matrix = &o->matrix;
         r->pos = &o->pos;
-        r->unkD8 = o->unkD8;
+        r->unk14 = o->unkD8;
         r->lodIndex = i;
         r->lodCount = ((VirModel *)o->model)->lodCount;
         r->lod = ((VirModel *)o->model)->lod[i];
-        r->unk20 = 0;
+        r->uploaded = 0;
         (*n)++;
     }
 }

@@ -6,6 +6,7 @@
 #include "igi.h"
 #include "task/tasktypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "litmap/litmaptypes.h"
 
 typedef void (*MagicHandler)(void *task, void *arg);
 
@@ -93,12 +94,6 @@ typedef struct World {
     int unkDFC;
     char lightmapPath[0x100];
 } World;
-
-typedef struct Lightmap {
-    int size;
-    int *data;
-    char texture[0x24];
-} Lightmap;
 
 void RigidDynCubeObj_CreateHandler(RigidDynCubeObj *o, RigidCreateArg *arg);
 void RigidDynCubeObj_GetInfo(RigidDynCubeObj *o, ObjInfo *info);

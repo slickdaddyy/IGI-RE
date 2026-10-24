@@ -7,61 +7,7 @@
 #include "igi.h"
 #include "hook.h"
 #include "types.h"
-
-typedef struct LightmapTex {
-    char texture[0x24];
-    int *pixels;
-    short width;
-    short height;
-} LightmapTex;
-
-typedef struct LightmapTexInfo {
-    char unk0[0x24];
-    int *texelIds;
-} LightmapTexInfo;
-
-typedef struct Lightmaps {
-    char unk0[0x38];
-    LightmapTexInfo *info;
-    LightmapTex tex[];
-} Lightmaps;
-
-typedef struct LightmapVertex {
-    float pos[3];
-    char unkC[0x14];
-    float uv[2];
-} LightmapVertex;
-
-/* a run of triangles; the next one starts `next` bytes after the indices */
-typedef struct LightmapChunk {
-    char unk0[0xC];
-    uint16_t indexCount;
-    uint16_t next;
-    char unk10[2];
-    uint16_t texture;
-    uint16_t base;
-    char unk16[2];
-    uint16_t unk18;
-    char unk1A[6];
-    uint16_t index[];
-} LightmapChunk;
-
-typedef struct LightmapMesh {
-    int unk0;
-    int texCount;
-    int unk8;
-    int unkC;
-    int vertCount;
-    LightmapVertex *verts;
-    void *sizes;
-    LightmapChunk *chunks;
-} LightmapMesh;
-
-typedef struct LightmapMeshHeader {
-    char unk0[0x20];
-    int format;
-    LightmapMesh *mesh;
-} LightmapMeshHeader;
+#include "litmap/litmaptypes.h"
 
 typedef struct MeshLod {
     char unk0[0xC];
@@ -70,41 +16,6 @@ typedef struct MeshLod {
         LightmapMeshHeader *header;
     } *data;
 } MeshLod;
-
-typedef struct LightmapRef {
-    Lightmaps *lightmaps;
-    MeshLod *lod;
-    void *obj;
-    Matrix *matrix;
-    Vec3d *pos;
-    int unk14;
-    int lodIndex;
-    int lodCount;
-    int uploaded;
-} LightmapRef;
-
-typedef struct LightmapSet {
-    int count;
-    void *model;
-    float radius;
-    float center[3];
-    LightmapRef refs[];
-} LightmapSet;
-
-typedef struct LightmapInfo {
-    char unk0[0x88];
-    LightmapSet *set;
-} LightmapInfo;
-
-_Static_assert(sizeof(LightmapTex) == 0x2C, "LightmapTex");
-_Static_assert(offsetof(Lightmaps, tex) == 0x3C, "Lightmaps");
-_Static_assert(sizeof(LightmapVertex) == 0x28, "LightmapVertex");
-_Static_assert(offsetof(LightmapChunk, unk18) == 0x18, "LightmapChunk.unk18");
-_Static_assert(offsetof(LightmapChunk, index) == 0x20, "LightmapChunk");
-_Static_assert(offsetof(LightmapMesh, chunks) == 0x1C, "LightmapMesh");
-_Static_assert(offsetof(LightmapMeshHeader, mesh) == 0x24, "LightmapMeshHeader");
-_Static_assert(sizeof(LightmapRef) == 0x24, "LightmapRef");
-_Static_assert(offsetof(LightmapSet, refs) == 0x18, "LightmapSet");
 
 ORIG(0x521110, void, Hemicube_DrawTriangle, (int *color, float *depth, int pitch, int *ids, int idW, int idH,
                                              int minX, int minY, int maxX, int maxY, float *a, float *b, float *c,
@@ -216,7 +127,7 @@ void Hemicube_DrawLightmapSet(LightmapInfo *info, const Vec3d *origin, const Mat
             float c[3], *o = pv[k], y;
             long double x, z;
 
-            rotate(c, q, mesh->verts[k].pos);
+            rotate(c, q, &mesh->verts[k].pos.x);
             x = (long double)c[0] + t[0];
             y = c[1] + t[1];
             z = (long double)c[2] + t[2];
@@ -308,7 +219,7 @@ void Hemicube_DrawLightmapSet(LightmapInfo *info, const Vec3d *origin, const Mat
                        world space normal and the direction to the first
                        vertex */
                     const LightmapVertex *V = mesh->verts;
-                    const float *a = V[vi[0]].pos, *b = V[vi[1]].pos, *c = V[vi[2]].pos;
+                    const float *a = &V[vi[0]].pos.x, *b = &V[vi[1]].pos.x, *c = &V[vi[2]].pos.x;
                     long double e1x, e1y, e1z, e2z, nz, s0, s1, s2, W2, dot;
                     float e2x, e2y, nx, ny, wn[3], W0, W1, h1, h2, g1, g2, len, C[3][3];
                     const Vec3d *pos = ref->pos;
@@ -369,7 +280,7 @@ void Hemicube_DrawLightmapSet(LightmapInfo *info, const Vec3d *origin, const Mat
                                 float cc[3];
 
                                 P[k] = C[k];
-                                rotate(cc, q, V[vi[k]].pos);
+                                rotate(cc, q, &V[vi[k]].pos.x);
                                 C[k][2] = (long double)cc[2] + t[2];
                                 C[k][0] = (long double)cc[0] + t[0];
                                 C[k][1] = (long double)cc[1] + t[1];
@@ -390,7 +301,7 @@ void Hemicube_DrawLightmapSet(LightmapInfo *info, const Vec3d *origin, const Mat
                             } else {
                                 float cc[3];
 
-                                rotate(cc, q, V[vi[k]].pos);
+                                rotate(cc, q, &V[vi[k]].pos.x);
                                 C[k][2] = ((long double)cc[2] + t[2]) * kFrontScale;
                                 C[k][0] = (long double)cc[0] + t[0];
                                 C[k][1] = (long double)cc[1] + t[1];

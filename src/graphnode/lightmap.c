@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "graphnode/graphnode.h"
 #include "coll/colltypes.h"
+#include "litmap/litmaptypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -86,12 +87,6 @@ typedef struct TerrainLightMap {
 } TerrainLightMap;
 
 _Static_assert(sizeof(TerrainLightMap) == 0x110, "TerrainLightMap");
-
-typedef struct Lightmap {
-    int unk0;
-    void *data;
-    char texture[0x24];
-} Lightmap;
 
 typedef struct LightMapDraw {
     int unk0;
@@ -297,7 +292,7 @@ static void place(TerrainLightMap *lm)
     lm->world->lightMapCount = n;
     if (lm->world->lmpData) {
         if (lm->lightmap != -1 && gLightmaps[lm->lightmap].data)
-            lm->texture = gLightmaps[lm->lightmap].texture;
+            lm->texture = &gLightmaps[lm->lightmap].texture;
     } else if (lm->lightmap != -1) {
         load_texture(lm);
     }
