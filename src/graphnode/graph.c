@@ -59,11 +59,11 @@ void Graph_Create(Graph *g)
     g->capacity = 0;
     g->nodeCount = 0;
     g->linkCount = 0;
-    g->unk65[0] = 0;
-    g->unk65[3] = 0;
-    g->unk69[0] = 0;
-    g->unk65[1] = 0;
-    g->unk65[2] = 0;
+    g->unk65 = 0;
+    g->unk68 = 0;
+    g->unk69 = 0;
+    g->unk66[0] = 0;
+    g->unk66[1] = 0;
     g->nodes = NULL;
     r = Mem_Alloc(sizeof(GraphRef), 4);
     r->ref = TaskRef_Add(g);

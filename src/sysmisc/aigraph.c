@@ -8,43 +8,7 @@
 #include "sysmisc/sysmisctypes.h"
 #include "graphnode/graphnodetypes.h"
 
-/* the parts of the Graph base task used here */
-typedef struct Graph {
-    char unk0[0x58];
-    int capacity;       /* node ids are below this */
-    char unk5C[0x20];
-} Graph;
-
-typedef struct GraphNode {
-    int id;
-    int unk4;
-    Vec3d pos;
-    float gamma;
-    float radius;
-    float diameter;
-    int unk2C;
-    int flags;          /* NODECRITERIA_* bits */
-} GraphNode;
-
 typedef struct GraphStream GraphStream;
-
-/* AIGraph: the graph task the AI walks on, with a route table that gives
-   the next node and the distance from any node to any other. */
-typedef struct AIGraph {
-    Graph graph;
-    double unk80;       /* params; 80 and 88 over 100 are scaled by 1/4096 */
-    double unk88;
-    double unk90;
-    double unk98;
-    double unkA0;
-    double unkA8;
-    int unkB0;
-    int unkB4;
-    struct GraphStep *routes;   /* capacity * capacity, indexed [to][from] */
-    char unkBC;
-} AIGraph;
-
-_Static_assert(sizeof(AIGraph) == 0xC0, "AIGraph size");
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -156,7 +120,7 @@ void AIGraph_Init(void)
     gRangeA8[1] = 1.0;
     gRangeA8[0] = 0.01;
     gAIGraphParams = ParamTable_Extend(Graph_GetParamTable(), 7);
-    ParamTable_Add(gAIGraphParams, &p, &p.unk80, Param_Real64(), 7, NULL);
+    ParamTable_Add(gAIGraphParams, &p, &p.eyeHeight, Param_Real64(), 7, NULL);
     ParamTable_Add(gAIGraphParams, &p, &p.unk88, Param_Real64(), 5, NULL);
     ParamTable_Add(gAIGraphParams, &p, &p.unk90, Param_Real64(), 7, NULL);
     ParamTable_Add(gAIGraphParams, &p, &p.unk98, Param_Real64(), 7, gRange98);
@@ -230,8 +194,8 @@ void AIGraph_ParamsChanged(AIGraph *g, void *arg)
 {
     if (Task_GetId(g) == -1)
         Level_SetTaskId(Level_CountTaskIds(g), g);
-    if (g->unk80 > kParamUnitLimit)
-        g->unk80 = g->unk80 * kParamUnitScale;
+    if (g->eyeHeight > kParamUnitLimit)
+        g->eyeHeight = g->eyeHeight * kParamUnitScale;
     if (g->unk88 > kParamUnitLimit)
         g->unk88 = g->unk88 * kParamUnitScale;
     Graph_ParamsChanged(&g->graph, arg);
@@ -280,7 +244,7 @@ HOOK(0x509520, AIGraph_SaveRoutes);
 void AIGraph_Create(AIGraph *g, void *arg)
 {
     Graph_Create(&g->graph, arg);
-    g->unk80 = 1.0;
+    g->eyeHeight = 1.0;
     g->unkA0 = 1.0;
     g->unk88 = 2.0;
     g->unk90 = 3.0;

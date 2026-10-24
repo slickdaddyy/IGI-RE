@@ -4,7 +4,7 @@
 #include "nodereg/nodereg.h"
 
 /* "GraphNode" (0x118), a child of a Graph */
-typedef struct GraphNode {
+typedef struct GraphNodeTask {
     Task task;
     char unk20[0x18];
     int id;
@@ -14,9 +14,9 @@ typedef struct GraphNode {
     int unk48;
     void *texts[3];
     char unk58[0x118 - 0x58];
-} GraphNode;
+} GraphNodeTask;
 
-_Static_assert(sizeof(GraphNode) == 0x118, "GraphNode");
+_Static_assert(sizeof(GraphNodeTask) == 0x118, "GraphNodeTask");
 
 /* a script constant whose value is one bit of a node's criteria */
 typedef struct NodeCriteria {
@@ -86,16 +86,16 @@ void NodeCriteria_Unregister(int mask)
 }
 HOOK(0x518720, NodeCriteria_Unregister);
 
-void GraphNode_Create(GraphNode *n, int *id);
-void GraphNode_Run(GraphNode *n);
-void GraphNode_Delete(GraphNode *n);
-void GraphNode_ParamsChanged(GraphNode *n);
-void GraphNode_GetParamTable(GraphNode *n, ParamTable **out);
+void GraphNode_Create(GraphNodeTask *n, int *id);
+void GraphNode_Run(GraphNodeTask *n);
+void GraphNode_Delete(GraphNodeTask *n);
+void GraphNode_ParamsChanged(GraphNodeTask *n);
+void GraphNode_GetParamTable(GraphNodeTask *n, ParamTable **out);
 
 void GraphNode_Open(void)
 {
-    GraphNode p;
-    uint16_t t = TaskType_New("GraphNode", sizeof(GraphNode), EditorRigidObj_GetType(), 0, 0);
+    GraphNodeTask p;
+    uint16_t t = TaskType_New("GraphNode", sizeof(GraphNodeTask), EditorRigidObj_GetType(), 0, 0);
     int i;
 
     gGraphNodeType = t;
@@ -115,7 +115,7 @@ void GraphNode_Open(void)
 }
 HOOK(0x518760, GraphNode_Open);
 
-void GraphNode_Create(GraphNode *n, int *id)
+void GraphNode_Create(GraphNodeTask *n, int *id)
 {
     n->id = *id;
     n->world = gCurrentWorld;
@@ -123,25 +123,25 @@ void GraphNode_Create(GraphNode *n, int *id)
 }
 HOOK(0x518870, GraphNode_Create);
 
-void GraphNode_ParamsChanged(GraphNode *n)
+void GraphNode_ParamsChanged(GraphNodeTask *n)
 {
     Task_Nothing(n, Graph_GetNode(n->task.parent, n->id));
 }
 HOOK(0x518890, GraphNode_ParamsChanged);
 
-void GraphNode_GetParamTable(GraphNode *n, ParamTable **out)
+void GraphNode_GetParamTable(GraphNodeTask *n, ParamTable **out)
 {
     *out = gGraphNodeParams;
 }
 HOOK(0x5188B0, GraphNode_GetParamTable);
 
-void GraphNode_Run(GraphNode *n)
+void GraphNode_Run(GraphNodeTask *n)
 {
     Task_Delete(n);
 }
 HOOK(0x5188C0, GraphNode_Run);
 
-void GraphNode_Delete(GraphNode *n)
+void GraphNode_Delete(GraphNodeTask *n)
 {
     int i;
 

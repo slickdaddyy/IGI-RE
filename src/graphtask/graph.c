@@ -7,46 +7,11 @@
 
 typedef struct GraphLink GraphLink;
 
-typedef struct Graph {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x18];
-    int id;             /* 0x50 */
-    int unk54;
-    int capacity;       /* 0x58, nMaxNodes */
-    int nodeCount;      /* 0x5C */
-    int linkCount;      /* 0x60 */
-    char attached;
-    char unk65;         /* PushButton parameter */
-    char unk66[2];
-    char unk68;         /* two Bool8 parameters */
-    char unk69;
-    char unk6A[2];
-    char *nodes;        /* 0x6C */
-} Graph;
-
-typedef struct GraphNode {
-    int id;
-    int unk4;
-    Vec3d pos;          /* 0x08 */
-    float angle;        /* 0x20 */
-    float radius;       /* 0x24 */
-    char unk28[0xC];
-    char criteria[0x100]; /* 0x34 */
-    Graph *graph;       /* 0x134 */
-    void *material;     /* 0x138 */
-    GraphLink *links[64]; /* 0x13C */
-} GraphNode;
-
 /* node record size per task type */
 typedef struct GraphNodeSize {
     uint16_t type;
     int size;
 } GraphNodeSize;
-
-_Static_assert(offsetof(GraphNode, links) == 0x13C, "GraphNode");
-_Static_assert(sizeof(GraphNode) == 0x240, "GraphNode size");
-_Static_assert(offsetof(Graph, nodes) == 0x6C, "Graph");
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -287,7 +252,7 @@ HOOK(0x4FAF80, Graph_ReadNodePosition);
 
 void Graph_ReadNodeGamma(GraphStreamValue *v)
 {
-    GraphStream_ReadValue(v, &gGraphNodeTemp.angle, 0);
+    GraphStream_ReadValue(v, &gGraphNodeTemp.gamma, 0);
 }
 HOOK(0x4FAFA0, Graph_ReadNodeGamma);
 
@@ -312,7 +277,7 @@ void Graph_ReadNodeCriteria(GraphStreamValue *v)
     GraphNode *t = &gGraphNodeTemp;
 
     GraphStream_ReadValue(v, t->criteria, sizeof(t->criteria));
-    v->node = Graph_AddNode(v->graph, t->id, &t->pos, t->angle, t->radius, t->material, t->criteria, 0);
+    v->node = Graph_AddNode(v->graph, t->id, &t->pos, t->gamma, t->radius, t->material, t->criteria, 0);
 }
 HOOK(0x4FB030, Graph_ReadNodeCriteria);
 

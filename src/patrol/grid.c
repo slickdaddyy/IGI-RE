@@ -4,17 +4,7 @@
 #include "hook.h"
 #include "patrol/patrol.h"
 #include "patrol/patroltypes.h"
-
-typedef struct GraphNode {
-    int id;
-    char unk4[0x24];
-    float radius;
-} GraphNode;
-
-typedef struct Graph {
-    char unk0[0x50];
-    int id;
-} Graph;
+#include "graphnode/graphnodetypes.h"
 
 /* AI brain of a soldier, only the fields used here */
 typedef struct SoldierAI {
@@ -201,8 +191,8 @@ static NodeGrid *NodeGrid_New(Graph *graph, int nodeId, GraphNode *node, int get
     g->refs = 0;
     g->graph = graph->id;
     g->nodeId = nodeId;
-    g->w = x87_fistp(node->radius * kHalfF);
-    g->h = x87_fistp(node->radius * kHalfF);
+    g->w = x87_fistp(node->diameter * kHalfF);
+    g->h = x87_fistp(node->diameter * kHalfF);
     return g;
 }
 
@@ -289,8 +279,8 @@ void NodeGrid_GetSize(int *w, int *h, Graph *graph, int nodeId)
     *w = 0;
     *h = 0;
     node = Graph_GetNode(graph, nodeId);
-    *w = x87_fistp(node->radius * kHalfF);
-    *h = x87_fistp(node->radius * kHalfF);
+    *w = x87_fistp(node->diameter * kHalfF);
+    *h = x87_fistp(node->diameter * kHalfF);
 }
 HOOK(0x453040, NodeGrid_GetSize);
 

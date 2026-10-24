@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "res/restypes.h"
+#include "graphnode/graphnodetypes.h"
 
 typedef struct DirEntry {
     char *name;
@@ -38,5 +39,19 @@ typedef struct PaletteDesc {
     int count;
     uint32_t *colors;
 } PaletteDesc;
+
+typedef struct AIGraph {
+    Graph graph;
+    double eyeHeight;   /* params; 80 and 88 over 100 are scaled by 1/4096 */
+    double unk88;
+    double unk90;
+    double unk98;
+    double unkA0;
+    double unkA8;
+    int unkB0;
+    int unkB4;
+    struct GraphStep *routes;   /* capacity * capacity, indexed [to][from] */
+    char unkBC;
+} AIGraph;
 
 #endif

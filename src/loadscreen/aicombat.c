@@ -14,6 +14,7 @@
 #include "sysmisc/sysmisctypes.h"
 #include "humanai/humanaitypes.h"
 #include "statgun/statguntypes.h"
+#include "graphnode/graphnodetypes.h"
 
 FN_EXTERN(AICombat_End);
 FN_EXTERN(AICombat_KneelFire);
@@ -45,29 +46,6 @@ typedef struct WeaponType {
     int clip;
     int burst;
 } WeaponType;
-
-typedef struct GraphLink {
-    char unk0[8];
-    int a;
-    int b;
-} GraphLink;
-
-typedef struct Graph {
-    char unk0[0x5C];
-    int nodeCount;
-    char unk60[0x20];
-    double eyeHeight;
-} Graph;
-
-typedef struct GraphNode {
-    int id;
-    char unk4[0x20];
-    float radius;
-    char unk28[0x134 - 0x28];
-    Graph *graph;
-    char unk138[4];
-    GraphLink *links[64];
-} GraphNode;
 
 /* one cell grid per graph node, so AIs at the same node spread out */
 typedef struct NodeGrid {
@@ -197,10 +175,6 @@ _Static_assert(offsetof(Human, weapons) == 0x4C4, "weapons");
 _Static_assert(offsetof(Human, aimError) == 0x4D4, "aimError");
 _Static_assert(offsetof(Human, statGun) == 0x7B4, "statGun");
 _Static_assert(offsetof(WeaponType, clip) == 0x648, "clip");
-_Static_assert(offsetof(Graph, eyeHeight) == 0x80, "eyeHeight");
-_Static_assert(offsetof(GraphNode, radius) == 0x24, "radius");
-_Static_assert(offsetof(GraphNode, graph) == 0x134, "graph");
-_Static_assert(offsetof(GraphNode, links) == 0x13C, "links");
 _Static_assert(offsetof(NodeGrid, cells) == 0x20, "cells");
 _Static_assert(offsetof(AIEvent, about) == 0x2C, "about");
 _Static_assert(offsetof(AIAction, param) == 0x28, "param");
@@ -866,7 +840,7 @@ char AICombat_CanSeeFrom(GraphNode *node, HumanAI *ai)
     void *world;
 
     Graph_GetNodePos(&from, node);
-    from.z = ai->graph->eyeHeight * kEyeScale + from.z;
+    from.z = ((AIGraph *)ai->graph)->eyeHeight * kEyeScale + from.z;
     HumanAI_GetTargetPos(&to, ai);
     filter.self = ai->task.parent;
     filter.flag = 1;

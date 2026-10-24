@@ -15,47 +15,7 @@ extern TaskHandler gTaskHandlers[];
 #define TASK_HANDLER(slot, type) gTaskHandlers[(slot) * 0x180 + (type)]
 #define TASK_NO_TYPE 0x181
 
-/* Graph task: a node array indexed by node id plus a list of links */
-typedef struct Graph {
-    Task task;
-    Vec3d pos;          /* relative to the parent when attached */
-    char unk38[0x18];
-    int id;
-    int unk54;
-    int capacity;
-    int nodeCount;
-    int linkCount;
-    char attached;      /* parent is a RigidDynCubeObj */
-    char unk65[4];
-    char unk69[3];
-    char *nodes;
-    List links;
-} Graph;
-
-typedef struct GraphLink {
-    Node node;
-    int a;
-    int b;
-    int cost;
-    Graph *graph;
-} GraphLink;
-
 #define GRAPHNODE_LINKS 64
-
-typedef struct GraphNode {
-    int id;             /* -1 for a free slot */
-    int unk4;
-    Vec3d pos;
-    float gamma;
-    float radius;
-    float diameter;
-    int unk2C;
-    int flags;          /* the criteria text, evaluated */
-    char criteria[0x100];
-    Graph *graph;
-    void *material;
-    GraphLink *links[GRAPHNODE_LINKS];
-} GraphNode;
 
 int Graph_GetNodeSize(Graph *g);
 GraphNode *Graph_AddNode(Graph *g, int id, const Vec3d *pos, float gamma, float radius, void *material,

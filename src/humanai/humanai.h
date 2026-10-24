@@ -11,16 +11,9 @@
 #include "graphtask/graphtasktypes.h"
 #include "sysmisc/sysmisctypes.h"
 #include "humanai/humanaitypes.h"
+#include "graphnode/graphnodetypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct GraphNode {
-    int id;
-    char unk04[0x20];
-    float radius;
-    char unk28[8];
-    unsigned flags;
-} GraphNode;
 
 /* the parts of a human task the AI reads */
 typedef struct Human {
@@ -297,7 +290,6 @@ _Static_assert(sizeof(AIDetectView) == 0x78, "AIDetectView");
 _Static_assert(sizeof(AIEvent) == 0x30, "AIEvent");
 _Static_assert(sizeof(AIAction) == 0x30, "AIAction");
 _Static_assert(sizeof(AITarget) == 0x130, "AITarget");
-_Static_assert(offsetof(GraphNode, flags) == 0x30, "GraphNode");
 _Static_assert(offsetof(HumanAI, eventPool) == 0xF0, "eventPool");
 _Static_assert(offsetof(HumanAI, events) == 0x6F0, "events");
 _Static_assert(offsetof(HumanAI, eventEnabled) == 0x8E4, "eventEnabled");

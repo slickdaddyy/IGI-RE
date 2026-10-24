@@ -10,6 +10,7 @@
 #include "task/tasktypes.h"
 #include "terrain/terraintypes.h"
 #include "humanai/humanaitypes.h"
+#include "graphnode/graphnodetypes.h"
 
 typedef struct Human {
     Task task;
@@ -26,23 +27,6 @@ typedef struct WeaponType {
     char unk614[0x64C - 0x614];
     int unk64C;
 } WeaponType;
-
-typedef struct GraphLink {
-    char unk0[8];
-    int a;
-    int b;
-} GraphLink;
-
-typedef struct GraphNode {
-    int id;
-    char unk4[0x13C - 4];
-    GraphLink *links[64];
-} GraphNode;
-
-typedef struct Graph {
-    char unk0[0x5C];
-    int unk5C;
-} Graph;
 
 /* {path, cur, end, move, prevMove, ...}, see the patrol notes */
 typedef struct PatrolRoute {
@@ -204,7 +188,6 @@ typedef char (*AIGraphFn)(HumanAI *ai, GraphNode *node, void *ctx);
 _Static_assert(offsetof(Human, weapons) == 0x4C4, "Human");
 _Static_assert(offsetof(Human, statGun) == 0x7B4, "Human");
 _Static_assert(offsetof(WeaponType, unk64C) == 0x64C, "WeaponType");
-_Static_assert(offsetof(GraphNode, links) == 0x13C, "GraphNode");
 _Static_assert(sizeof(PatrolRoute) == 0x1C, "PatrolRoute");
 _Static_assert(offsetof(HumanAI, routes) == 0x1518, "routes");
 _Static_assert(offsetof(HumanAI, target) == 0x3AA8, "target");
@@ -696,7 +679,7 @@ void AIRunPanicking_Start(HumanAI *ai, AIAction *a)
     p->panic.node = -1;
     if (!(Vec3d_Distance(&p->pos, &ai->pos) <= p->panic.radius * kUnit))
         return;
-    if (ai->graph->unk5C >= 0x400) {
+    if (ai->graph->nodeCount >= 0x400) {
         Warning_Show("RunPanicking stack not large enough");
         return;
     }
