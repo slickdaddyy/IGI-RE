@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "task/tasktypes.h"
 #include "script/scripttypes.h"
+#include "physobj/physobjtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -52,12 +53,6 @@ typedef struct ParamCursor {
     const char *file;
     int line;
 } ParamCursor;
-
-/* output of the parameter format operation, appended to buf */
-typedef struct ParamText {
-    int unk0;
-    char *buf;
-} ParamText;
 
 _Static_assert(sizeof(PhysicsObjType) == 0x2D8, "PhysicsObjType");
 _Static_assert(offsetof(PhysicsObjType, model) == 0x138, "model");

@@ -40,10 +40,6 @@ typedef struct ScrollListBox {
 
 _Static_assert(sizeof(ScrollListBox) == 0x13FC, "ScrollListBox");
 
-typedef struct Color {
-    float r, g, b;
-} Color;
-
 extern uint16_t gScrollListBoxType;
 extern void *gScrollListBoxParams;
 extern ScrollListBox *gScrollListBoxFilling;

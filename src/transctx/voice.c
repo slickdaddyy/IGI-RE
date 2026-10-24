@@ -31,17 +31,6 @@ typedef struct AdpcmState {
     char odd; /* the low nibble of the last byte is still to be decoded */
 } AdpcmState;
 
-typedef struct SoundNode {
-    struct SoundNode *next;
-    struct SoundNode *prev;
-} SoundNode;
-
-typedef struct SoundList {
-    SoundNode *head;
-    SoundNode *tail;
-    SoundNode *tailpred;
-} SoundList;
-
 /* A loaded sample (0x30 bytes), filed in gSoundLists[key1] (see Sound_Load). */
 typedef struct Sound {
     SoundNode node;

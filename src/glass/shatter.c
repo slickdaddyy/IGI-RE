@@ -2,6 +2,7 @@
 
 #include "glass/glass.h"
 #include "hook.h"
+#include "glass/glasstypes.h"
 
 ORIG(0x4012A0, void *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
@@ -60,14 +61,6 @@ typedef struct GlassShatter {
     ShardMesh *mesh;    /* 0x2B040 */
     char unk2B044[4];
 } GlassShatter;
-
-/* the collision mesh of a model LOD */
-typedef struct TriMesh {
-    int count;
-    char unk4[0xC];
-    uint16_t (*tris)[4]; /* 0x10 */
-    float (*verts)[4];  /* 0x14 */
-} TriMesh;
 
 /* where a bullet hit */
 typedef struct HitInfo {

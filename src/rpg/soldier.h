@@ -6,6 +6,7 @@
 
 #include "igi.h"
 #include "loadscreen/loadscreentypes.h"
+#include "soldier/soldiertypes.h"
 
 typedef struct Soldier Soldier;
 typedef struct SoldierSM SoldierSM;
@@ -17,18 +18,6 @@ extern void *gTaskHandlers[][0x180];
 
 /* the subtypes continue right after the 0xD04 byte base */
 #pragma pack(push, 4)
-
-/* Movement state machine of an AI soldier, same layout as the player's.
-   input() turns the controls into input bits, then run() is called. */
-struct SoldierSM {
-    SoldierStateFn input;
-    SoldierStateFn *states;
-    uint32_t bits;
-    int prev;
-    int state;
-    SoldierStateFn run;
-    char unk18[0x34];
-};
 
 /* SoldierSM.bits */
 enum {
@@ -47,18 +36,6 @@ typedef struct SoldierMotion {
     char unk8[0x44];
     int unk4C[5];
 } SoldierMotion;
-
-/* Damage per body part. Hits add mult * damage to a part and to total. */
-typedef struct SoldierDamage {
-    float total;
-    float max;
-    float unk08;
-    struct {
-        float dmg;
-        float mult;
-    } part[17];
-    int hitZone;
-} SoldierDamage;
 
 /* The AI brain that drives a soldier (Soldier.ai). */
 typedef struct SoldierAI {
@@ -180,44 +157,6 @@ typedef struct SoldierRPG {
     double deathDir[3];
     double deathVel[3];
 } SoldierRPG;
-
-typedef struct SoldierHit {
-    int unk00;
-    float damage;
-    float dir[3];
-    void *attacker;
-    int *weapon;
-} SoldierHit;
-
-typedef struct SoldierBlast {
-    int unk00;
-    double *pos;
-    int unk08;
-    float radius;
-    float unk10;
-    int shakeFrames;
-} SoldierBlast;
-
-typedef struct SoldierPunch {
-    float damage;
-    void *attacker;
-} SoldierPunch;
-
-/* message 0xF sent to the AI when the soldier is hurt */
-typedef struct SoldierAIMsg {
-    int type;
-    int unk4;
-    int unk8;
-    int unkC;
-    void *data;
-    void *attacker;
-    void *attacker2;
-} SoldierAIMsg;
-
-typedef struct SoldierInputMsg {
-    int unk0;
-    float *input;
-} SoldierInputMsg;
 
 void SoldierFemale_Update(Soldier *h);
 void SoldierRPG_Update(Soldier *h);

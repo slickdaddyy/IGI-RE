@@ -8,4 +8,10 @@ typedef struct SoundFindArg {
     Task *found;
 } SoundFindArg;
 
+typedef struct FileInfo {
+    const char *path;
+    void *data;
+    char isDir;
+} FileInfo;
+
 #endif

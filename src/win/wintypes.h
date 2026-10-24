@@ -18,4 +18,12 @@ typedef struct DisplayMode {
 } DisplayMode;
 _Static_assert(sizeof(DisplayMode) == 0x11C, "DisplayMode");
 
+typedef struct Mouse {
+    char present;
+    char numButtons;
+    float dx;
+    float dy;
+    int buttons;
+} Mouse;
+
 #endif

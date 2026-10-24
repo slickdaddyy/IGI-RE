@@ -515,14 +515,6 @@ typedef struct ModelAttach {
     float m[9];         /* 0x1C */
 } ModelAttach;
 
-typedef struct MagicObjDef {
-    char name[16];
-    char model[16];
-    uint16_t type;
-    uint16_t unk22;
-    void *data;
-} MagicObjDef;
-
 extern int gMagicObjDefCount;
 extern MagicObjDef gMagicObjDefs[];
 

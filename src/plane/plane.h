@@ -11,6 +11,7 @@
 #include "magicobj/magicobjtypes.h"
 #include "vehicle/vehicletypes.h"
 #include "graphtask/graphtasktypes.h"
+#include "plane/planetypes.h"
 
 /* per type data of a vehicle physics type, parsed by 0x5031F0 */
 typedef struct VehicleConfig {
@@ -124,23 +125,11 @@ typedef struct PlaneControlArg {
     PlaneInput *input;
 } PlaneControlArg;
 
-/* argument of the MagicObj definition parsers */
-typedef struct DefParseArg {
-    void *out;
-    void *args;
-    int index;
-} DefParseArg;
-
 typedef struct GearDef {
     float angle;
     char roll;
     float unk8, unkC, unk10;
 } GearDef;
-
-typedef struct RudderDef {
-    int kind;
-    float angle;
-} RudderDef;
 
 /* CockpitShield, Gear, Hatch and Rudder (0x140 bytes) */
 typedef struct Part {

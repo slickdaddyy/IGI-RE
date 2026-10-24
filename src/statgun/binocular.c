@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "statgun/statgun.h"
+#include "binocular/binoculartypes.h"
 
 /* the binocular view drawn over the screen ("BinocularOverlay", 0x2E00 bytes) */
 typedef struct BinocularOverlay {
@@ -13,17 +14,7 @@ typedef struct BinocularOverlay {
     Vec3f unk7C;
 } BinocularOverlay;
 
-/* "BinocularOverlayHolder" (0x78 bytes): shows an overlay while "active" is true */
-typedef struct BinocularHolder {
-    Task task;
-    Task **overlay;     /* 0x20 */
-    VarString active;   /* 0x24 */
-    char isActive;      /* 0x74 */
-    char pad75[3];
-} BinocularHolder;
-
 _Static_assert(offsetof(BinocularOverlay, unk7C) == 0x7C, "BinocularOverlay");
-_Static_assert(sizeof(BinocularHolder) == 0x78, "BinocularHolder");
 
 extern uint16_t gBinocularOverlayType;
 extern uint16_t gBinocularHolderType;

@@ -16,20 +16,6 @@ FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)();
 
-typedef struct ParamEntry {
-    int offset;
-    int type;
-    void *extra;
-    char flags;
-    char unk0D[3];
-} ParamEntry;
-
-typedef struct ParamTable {
-    int count;
-    int max;
-    ParamEntry *entries;
-} ParamTable;
-
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;

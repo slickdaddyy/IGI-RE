@@ -5,12 +5,7 @@
 #include "hook.h"
 #include "animcam/animcam.h"
 #include "param/paramtypes.h"
-
-typedef struct AnimKey {
-    char channel;
-    char unk1[3];
-    float value;
-} AnimKey;
+#include "vehbase/vehbasetypes.h"
 
 enum {
     ANIM_CHANNELS = 0x22,

@@ -1,6 +1,8 @@
 #ifndef RENDERMODE_H
 #define RENDERMODE_H
 
+#include "core/coretypes.h"
+
 #define RENDERMODE_MAX 8
 #define RENDERMODE_METHOD_MAX 128
 
@@ -16,11 +18,6 @@ typedef struct RenderModeMethod {
     const char *name;
     char used;
 } RenderModeMethod;
-
-typedef struct RenderModeInfo {
-    int index;
-    const char *name;
-} RenderModeInfo;
 
 void RenderMode_Init(void);
 int RenderMode_Create(const char *name);

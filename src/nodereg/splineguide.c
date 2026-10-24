@@ -169,7 +169,7 @@ void SplinePathGuide_SetStart(SplinePathGuide *g)
 HOOK(0x51B0B0, SplinePathGuide_SetStart);
 
 void SplinePathGuide_ParamsChanged(SplinePathGuide *g);
-void SplinePathGuide_GetParamTable(SplinePathGuide *g, ParamTable *out);
+void SplinePathGuide_GetParamTable(SplinePathGuide *g, ParamTable **out);
 
 void SplinePathGuide_Open(void)
 {
@@ -222,7 +222,7 @@ void SplinePathGuide_ParamsChanged(SplinePathGuide *g)
 }
 HOOK(0x51B2C0, SplinePathGuide_ParamsChanged);
 
-void SplinePathGuide_GetParamTable(SplinePathGuide *g, ParamTable *out)
+void SplinePathGuide_GetParamTable(SplinePathGuide *g, ParamTable **out)
 {
     *out = gSplinePathGuideParams;
 }

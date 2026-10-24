@@ -84,14 +84,6 @@ typedef struct Profile {
     char gfxDriver[0x100];
 } Profile;
 
-typedef struct Mouse {
-    char present;
-    char numButtons;
-    float dx;
-    float dy;
-    int buttons;
-} Mouse;
-
 extern uint16_t gMenuManagerType;
 extern int gMenuKeepScreen;
 extern MenuInput gMenuLastInput;

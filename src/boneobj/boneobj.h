@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "core/pool.h"
 #include "math/vecmath.h"
+#include "boneobj/boneobjtypes.h"
 
 typedef struct Bone Bone;
 typedef struct BlendNode BlendNode;
@@ -70,45 +71,6 @@ typedef struct BoneObj {
     int unk4;
     Bone *bones;
 } BoneObj;
-
-/* Loaded hierarchy: parent index and offset per bone */
-typedef struct Skeleton {
-    int count;
-    int *parents;
-    Vec3f *offsets;
-} Skeleton;
-
-typedef struct PosKey {
-    float pos[3];
-    float time;
-    float out[3];
-    float in[3];
-} PosKey;
-
-typedef struct PosTrack {
-    int count;
-    PosKey *keys;
-} PosTrack;
-
-/* Only q and time when the track has a single key */
-typedef struct RotKey {
-    float q[4];
-    float time;
-    float a[4];
-    float b[4];
-} RotKey;
-
-typedef struct SlerpInfo {
-    float angle;
-    float invSin;
-} SlerpInfo;
-
-typedef struct RotTrack {
-    int count;
-    RotKey *keys;
-    SlerpInfo *slerp;
-    SlerpInfo *slerp2;
-} RotTrack;
 
 typedef struct EventKey {
     int id;

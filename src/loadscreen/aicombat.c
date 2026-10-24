@@ -11,6 +11,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "sysmisc/sysmisctypes.h"
 
 FN_EXTERN(AICombat_End);
 FN_EXTERN(AICombat_KneelFire);
@@ -79,11 +80,6 @@ typedef struct GraphNode {
     char unk138[4];
     GraphLink *links[64];
 } GraphNode;
-
-typedef struct GraphStep {
-    int next;
-    float dist;
-} GraphStep;
 
 /* one cell grid per graph node, so AIs at the same node spread out */
 typedef struct NodeGrid {

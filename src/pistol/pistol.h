@@ -6,6 +6,7 @@
 
 #include "igi.h"
 #include "loadscreen/loadscreentypes.h"
+#include "soldier/soldiertypes.h"
 
 typedef struct Soldier Soldier;
 typedef struct SoldierSM SoldierSM;
@@ -16,18 +17,6 @@ extern void *gTaskHandlers[][0x180];
 #define TASK_HANDLER(slot, type) (((TaskHandler *)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 #pragma pack(push, 4)
-
-/* Movement state machine of a soldier. input() turns the controls into
-   bits, then run() is called. */
-struct SoldierSM {
-    SoldierStateFn input;
-    SoldierStateFn *states;
-    uint32_t bits;
-    int prev;
-    int state;
-    SoldierStateFn run;
-    char unk18[0x34];
-};
 
 /* SoldierSM.bits */
 enum {
@@ -46,18 +35,6 @@ typedef struct SoldierMotion {
     char unk8[0x850];
     float throwPos[3];
 } SoldierMotion;
-
-/* Damage per body part. Hits add mult * damage to a part and to total. */
-typedef struct SoldierDamage {
-    float total;
-    float max;
-    float unk08;
-    struct {
-        float dmg;
-        float mult;
-    } part[17];
-    int hitZone;
-} SoldierDamage;
 
 typedef struct AITarget {
     char unk0[0xC];
@@ -176,44 +153,6 @@ typedef struct SoldierP {
     double deathDir[3];
     double deathVel[3];
 } SoldierP;
-
-typedef struct SoldierHit {
-    int unk00;
-    float damage;
-    float dir[3];
-    void *attacker;
-    int *weapon;
-} SoldierHit;
-
-typedef struct SoldierBlast {
-    int unk00;
-    double *pos;
-    int unk08;
-    float radius;
-    float unk10;
-    int shakeFrames;
-} SoldierBlast;
-
-typedef struct SoldierPunch {
-    float damage;
-    void *attacker;
-} SoldierPunch;
-
-/* message 0xF sent to the AI when the soldier is hurt */
-typedef struct SoldierAIMsg {
-    int type;
-    int unk4;
-    int unk8;
-    int unkC;
-    void *data;
-    void *attacker;
-    void *attacker2;
-} SoldierAIMsg;
-
-typedef struct SoldierInputMsg {
-    int unk0;
-    float *input;
-} SoldierInputMsg;
 
 #pragma pack(pop)
 

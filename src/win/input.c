@@ -12,14 +12,6 @@ ORIG_STD(0x4AE730, HRESULT, DirectInputCreateEx_, (HINSTANCE inst, DWORD version
 ORIG_STD(0x4AF740, HRESULT, DirectInputCreateA_, (HINSTANCE inst, DWORD version, IDirectInputA **out,
                                                   IUnknown *outer));
 
-typedef struct Mouse {
-    char present;
-    char numButtons;
-    float dx;
-    float dy;
-    int buttons;
-} Mouse;
-
 extern Mouse gMouse;
 extern int gMouseWheel;
 extern int gMouseRight;

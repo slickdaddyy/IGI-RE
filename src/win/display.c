@@ -5,12 +5,10 @@
 
 #include "hook.h"
 #include "win/win.h"
+#include "core/coretypes.h"
+#include "d3d/d3dtypes.h"
 
 typedef void (*ErrorHandler)(const char *text);
-typedef struct RenderModeInfo {
-    int index;
-    const char *name;
-} RenderModeInfo;
 
 ORIG(0x4AF860, void, Error_SetHandler, (ErrorHandler fn));
 ORIG(0x4AF880, void, Warning_SetHandler, (ErrorHandler fn));
@@ -50,17 +48,6 @@ typedef struct DisplayCallback {
 
 #define DISPLAY_CALLBACK_MAX 32
 
-/* One DirectDraw driver. */
-typedef struct DDDriver {
-    char name[0x80];
-    char desc[0x80];
-    GUID *guid;
-    GUID guidData;
-    DDCAPS halCaps;
-    DDCAPS helCaps;
-    D3DDEVICEDESC7 d3dDesc;
-} DDDriver;
-
 /* What Display_EnumDrivers passes to its callback. */
 typedef struct DDEnumCtx {
     int listDevices;
@@ -76,7 +63,6 @@ typedef struct DDEnumCtx {
 } DDEnumCtx;
 
 _Static_assert(sizeof(DisplayMode) == 0x11C, "DisplayMode");
-_Static_assert(sizeof(DDDriver) == 0x4F8, "DDDriver");
 _Static_assert(offsetof(DDEnumCtx, cur.d3dDesc) == 0x430, "DDEnumCtx");
 
 extern char gDisplayOpen;

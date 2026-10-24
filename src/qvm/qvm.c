@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "orig.h"
 #include "qvm/qvm.h"
+#include "qvm/qvmtypes.h"
 
 FN_EXTERN(Qvm_OpAssign);
 FN_EXTERN(Qvm_OpBinary);
@@ -45,24 +46,6 @@ extern int gQvmUnkA442F8;
 extern int gQvmUnkA442FC;
 extern int gQvmUnkA44300;
 extern int gQvmUnkA44308;
-
-typedef struct QvmHeader {
-    char magic[4];      /* "LOOP" */
-    int version;        /* 8 */
-    int unk08;          /* 5, older files are refused */
-    int symOffsets;
-    int symText;
-    int symTableSize;
-    int symTextSize;
-    int strOffsets;
-    int strText;
-    int strTableSize;
-    int strTextSize;
-    int code;
-    int codeSize;
-    int stackSize;
-    int typeStackSize;
-} QvmHeader;
 
 int Qvm_PopString(Qvm *vm, char **out, int *len, int type);
 int Qvm_Pop(Qvm *vm, int *value, int *size, int *type);

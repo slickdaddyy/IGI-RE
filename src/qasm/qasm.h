@@ -5,6 +5,7 @@
 
 #include "igi.h"
 #include "types.h"
+#include "qasm/qasmtypes.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -73,18 +74,6 @@ typedef struct QvmAsm {
     List strings;
     List fixups;
 } QvmAsm;
-
-typedef struct QvmLabelRef {
-    Node node;
-    int offset;
-    int base;
-} QvmLabelRef;
-
-typedef struct QvmFixup {
-    Node node;
-    int offset;
-    int value;
-} QvmFixup;
 
 /* Name or string table of a loaded Qvm (at 0x30 and 0x48). */
 typedef struct QvmTable {

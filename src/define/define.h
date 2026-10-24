@@ -10,17 +10,9 @@
 #include "script/scripttypes.h"
 #include "sound/soundtypes.h"
 #include "transctx/transctxtypes.h"
+#include "viewport/viewporttypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* what a task keeps to restart or query a sound of its own */
-typedef struct SoundHandle {
-    int bucket;
-    int hash;
-    int id;
-    uint32_t flags; /* 2 positional, 0x10 loop */
-    SoundParams params;
-} SoundHandle;
 
 /* what an object answers to the sound info event */
 typedef struct SoundInfo {

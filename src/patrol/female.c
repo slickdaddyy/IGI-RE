@@ -6,6 +6,7 @@
 #include "hook.h"
 #include "patrol/patrol.h"
 #include "loadscreen/loadscreentypes.h"
+#include "soldier/soldiertypes.h"
 
 FN_EXTERN(Human_DeadRun);
 FN_EXTERN(Human_UseRun);
@@ -19,17 +20,6 @@ FN_EXTERN(Task_Nothing);
 typedef struct Soldier Soldier;
 typedef struct SoldierSM SoldierSM;
 typedef void (*SoldierStateFn)(SoldierSM *sm, Soldier *h);
-
-/* same layout as the player's state machine */
-struct SoldierSM {
-    SoldierStateFn input;
-    SoldierStateFn *states;
-    uint32_t bits;
-    int prev;
-    int state;
-    SoldierStateFn run;
-    char unk18[0x34];
-};
 
 enum {
     SB_ANIM_DONE = 0x1,
@@ -161,17 +151,6 @@ SCHECK(useTarget, 0xD10);
 SCHECK(deathVel, 0xD38);
 _Static_assert(sizeof(Soldier) == 0xD50, "Soldier");
 #undef SCHECK
-
-/* sent to the used task through the slot of 0x416800 */
-typedef struct UseMsg {
-    Soldier *h;
-    int unk4;
-    double pos[3];
-    int unk534[7];
-    float *input;
-    float *prevInput;
-    int unk44;
-} UseMsg;
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));

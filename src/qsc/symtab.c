@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "orig.h"
 #include "qsc/qsc.h"
+#include "qsc/qsctypes.h"
 
 /* Same layout as script/symtab.h. */
 typedef struct Symbol {
@@ -8,11 +9,6 @@ typedef struct Symbol {
     char *name;
     void *value;
 } Symbol;
-
-typedef struct SymbolTable {
-    List *buckets;
-    unsigned int count;
-} SymbolTable;
 
 typedef void (*SymbolFunc)(const char *name, void *value, void *data);
 typedef int (*SymbolFilter)(const char *name, void *value, void *data);

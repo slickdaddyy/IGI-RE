@@ -6,6 +6,7 @@
 
 #include "hook.h"
 #include "igi.h"
+#include "transctx/transctxtypes.h"
 
 ORIG(0x48F0A0, HWND, AppContext_GethWnd, (void));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
@@ -35,17 +36,6 @@ extern MMRESULT (WINAPI *mixerGetDevCapsA_)(UINT_PTR, MIXERCAPSA *, UINT);
 extern MMRESULT (WINAPI *mixerGetLineInfoA_)(HMIXEROBJ, MIXERLINEA *, DWORD);
 extern MMRESULT (WINAPI *mixerGetControlDetailsA_)(HMIXEROBJ, MIXERCONTROLDETAILS *, DWORD);
 extern MCIERROR (WINAPI *mciSendCommandA_)(MCIDEVICEID, UINT, DWORD_PTR, DWORD_PTR);
-
-typedef struct SoundNode {
-    struct SoundNode *next;
-    struct SoundNode *prev;
-} SoundNode;
-
-typedef struct SoundList {
-    SoundNode *head;
-    SoundNode *tail;
-    SoundNode *tailpred;
-} SoundList;
 
 /* Volume controls of one mixer, saved at startup and put back at shutdown. */
 typedef struct Mixer {

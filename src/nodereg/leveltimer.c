@@ -58,7 +58,7 @@ void LevelTimer_Create(LevelTimer *t);
 void LevelTimer_Register(LevelTimer *t);
 void LevelTimer_Unregister(LevelTimer *t);
 void LevelTimer_Delete(LevelTimer *t);
-void LevelTimer_GetParamTable(LevelTimer *t, ParamTable *out);
+void LevelTimer_GetParamTable(LevelTimer *t, ParamTable **out);
 void LevelTimer_Run(LevelTimer *t);
 void LevelTimer_ParamsChanged(LevelTimer *t, const char *name);
 
@@ -150,7 +150,7 @@ void LevelTimer_Delete(LevelTimer *t)
 }
 HOOK(0x51BDB0, LevelTimer_Delete);
 
-void LevelTimer_GetParamTable(LevelTimer *t, ParamTable *out)
+void LevelTimer_GetParamTable(LevelTimer *t, ParamTable **out)
 {
     *out = gLevelTimerParams;
 }

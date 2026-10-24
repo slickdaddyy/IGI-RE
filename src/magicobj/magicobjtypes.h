@@ -1,6 +1,8 @@
 #ifndef MAGICOBJ_MAGICOBJTYPES_H
 #define MAGICOBJ_MAGICOBJTYPES_H
 
+#include <stdint.h>
+
 #include "types.h"
 #include "task/tasktypes.h"
 
@@ -59,5 +61,14 @@ typedef struct Frame {
     Vec3d pos;
     Matrix matrix;
 } Frame;
+
+/* one DefineMagicObj() entry */
+typedef struct MagicObjDef {
+    char name[16];
+    char model[16];
+    uint16_t type;
+    uint16_t unk22;
+    void *data;
+} MagicObjDef;
 
 #endif

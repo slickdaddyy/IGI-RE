@@ -3,17 +3,7 @@
 
 #include "hook.h"
 #include "igi.h"
-
-typedef struct IffNode {
-    struct IffNode *next;
-    struct IffNode *parent;
-    struct IffNode *child;
-    int owned;
-    int id;
-    int type;
-    int size;
-    void *data;
-} IffNode;
+#include "terrdraw/terrdrawtypes.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));

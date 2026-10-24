@@ -5,6 +5,7 @@
 #include "qasm/qasmtypes.h"
 #include "sound/soundtypes.h"
 #include "transctx/transctxtypes.h"
+#include "viewport/viewporttypes.h"
 
 /* Playing sounds by name or through a handle, on top of the sound system of src/sound. */
 
@@ -20,15 +21,6 @@ typedef struct SoundInst {
     void *voice;
     SoundParams params;
 } SoundInst;
-
-/* what callers keep to restart or query a sound of theirs */
-typedef struct SoundHandle {
-    int bucket;
-    int hash;
-    int id; /* 0 until first played */
-    uint32_t flags;
-    SoundParams params;
-} SoundHandle;
 
 typedef void (*TaskFn2)(Task *task, void *arg);
 

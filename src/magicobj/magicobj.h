@@ -25,15 +25,6 @@ typedef struct RigidDrawView {
     float range;
 } RigidDrawView;
 
-/* one DefineMagicObj() entry */
-typedef struct MagicObjDef {
-    char name[16];
-    char model[16];
-    uint16_t type;
-    uint16_t unk22;
-    void *data;
-} MagicObjDef;
-
 typedef struct MagicScriptValue {
     int i;
     int unk4;

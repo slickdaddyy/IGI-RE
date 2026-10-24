@@ -7,13 +7,13 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)(void *task, void *arg);
 
 /* what the param table handlers get: the table is stored through out */
-typedef void *ParamTable;
 
 #define TASK_NO_TYPE 0x181
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))

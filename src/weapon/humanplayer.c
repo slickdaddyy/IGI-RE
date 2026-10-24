@@ -103,10 +103,6 @@ extern float gFenceDamage;
 extern void *gHumanPlayerList;
 extern int gQVertexStrip;
 
-typedef struct WeaponCategory {
-    int count;
-    int ids[8];
-} WeaponCategory;
 extern WeaponCategory gWeaponCategories[];
 
 extern void (*gRenderFuncs[])(QVertexStrip *);

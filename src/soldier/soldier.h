@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "task/tasktypes.h"
 #include "loadscreen/loadscreentypes.h"
+#include "soldier/soldiertypes.h"
 
 #pragma pack(push, 4)
 
@@ -201,25 +202,6 @@ typedef struct Soldier {
     double deathDir[3];
     double deathVel[3];
 } Soldier;
-
-typedef struct SoldierHit {
-    int unk00;
-    float damage;
-    float dir[3];
-    void *attacker;
-    int *weapon;
-} SoldierHit;
-
-/* message 0xF sent to the AI when the soldier is hurt */
-typedef struct SoldierAIMsg {
-    int type;
-    int unk4;
-    int unk8;
-    int unkC;
-    void *data;
-    void *attacker;
-    void *attacker2;
-} SoldierAIMsg;
 
 typedef struct HumanInputMsg {
     int unk0;

@@ -23,17 +23,6 @@ typedef struct PartScriptArg {
     int index;
 } PartScriptArg;
 
-/* node of a list of task references (vehicle seats, targets) */
-typedef struct RefNode {
-    struct RefNode *next;
-    struct RefNode *prev;
-    Task **ref;
-    char unkC[0x1D];
-    char active;
-} RefNode;
-
-_Static_assert(offsetof(RefNode, active) == 0x29, "RefNode");
-
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;

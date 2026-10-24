@@ -5,6 +5,7 @@
 
 #include "igi.h"
 #include "script/scripttypes.h"
+#include "weapon/weapontypes.h"
 
 #define WEAPON_TYPE_MAX 30
 #define TASK_NO_TYPE 0x181
@@ -46,14 +47,6 @@ typedef struct WeaponType {
 } WeaponType;
 
 _Static_assert(sizeof(WeaponType) == 0x6E8, "WeaponType");
-
-/* What a weapon task type's init handler gets: its private data and the
-   rest of the DefineWeaponType() arguments, starting at index next. */
-typedef struct WeaponInitArgs {
-    void *data;
-    void *args;
-    int next;
-} WeaponInitArgs;
 
 typedef void (*TaskHandler)(void *task, void *arg);
 

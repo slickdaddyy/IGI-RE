@@ -26,7 +26,7 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, int 
 extern uint16_t gShadowTaskType;
 extern void *gShadowTaskParams;
 
-void ShadowTask_GetParamTable(ShadowTask *s, ParamTable *out);
+void ShadowTask_GetParamTable(ShadowTask *s, ParamTable **out);
 
 void ShadowTask_Open(void)
 {
@@ -41,7 +41,7 @@ void ShadowTask_Open(void)
 }
 HOOK(0x519760, ShadowTask_Open);
 
-void ShadowTask_GetParamTable(ShadowTask *s, ParamTable *out)
+void ShadowTask_GetParamTable(ShadowTask *s, ParamTable **out)
 {
     *out = gShadowTaskParams;
 }

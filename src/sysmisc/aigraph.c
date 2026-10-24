@@ -5,6 +5,8 @@
 #include "hook.h"
 #include "igi.h"
 #include "types.h"
+#include "sysmisc/sysmisctypes.h"
+#include "graphnode/graphnodetypes.h"
 
 /* the parts of the Graph base task used here */
 typedef struct Graph {
@@ -26,14 +28,6 @@ typedef struct GraphNode {
 
 typedef struct GraphStream GraphStream;
 
-typedef struct GraphStreamValue {
-    GraphStream *stream;
-    Graph *graph;
-    int unk8;
-    int unkC;
-    int type;
-} GraphStreamValue;
-
 /* AIGraph: the graph task the AI walks on, with a route table that gives
    the next node and the distance from any node to any other. */
 typedef struct AIGraph {
@@ -49,11 +43,6 @@ typedef struct AIGraph {
     struct GraphStep *routes;   /* capacity * capacity, indexed [to][from] */
     char unkBC;
 } AIGraph;
-
-typedef struct GraphStep {
-    int next;           /* -1: no route */
-    float dist;
-} GraphStep;
 
 _Static_assert(sizeof(AIGraph) == 0xC0, "AIGraph size");
 

@@ -7,17 +7,7 @@
 
 #include "igi.h"
 #include "win/wintypes.h"
-
-/* One DirectDraw driver, filled by the DirectDrawEnumerateEx callback at 0x491F10. */
-typedef struct DDDriver {
-    char name[0x80];
-    char desc[0x80];
-    GUID *guid;
-    GUID guidData;
-    DDCAPS halCaps;
-    DDCAPS helCaps;
-    D3DDEVICEDESC7 d3dDesc;
-} DDDriver;
+#include "d3d/d3dtypes.h"
 
 /* One Direct3D device of a driver, listed by Direct3D_ListDeviceCB. */
 typedef struct D3DDeviceEntry {
@@ -46,7 +36,6 @@ typedef struct D3DCallback {
     void (*fn)(void);
 } D3DCallback;
 
-_Static_assert(sizeof(DDDriver) == 0x4F8, "DDDriver");
 _Static_assert(sizeof(D3DDeviceEntry) == 0x668, "D3DDeviceEntry");
 _Static_assert(sizeof(DDEnumCtx) == 0x51C, "DDEnumCtx");
 

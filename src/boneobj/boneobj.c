@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "math/x87.h"
 #include "boneobj/boneobj.h"
+#include "terrdraw/terrdrawtypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
@@ -17,17 +18,6 @@ ORIG(0x4B6380, void, Resource_Unload, (const char *name));
 ORIG(0x4D3020, int, BoneBlend_GetMotion, (float *pos, float *delta, BlendNode *node));
 void Task_Nothing(void *task);
 ORIG(0x4D6D40, void, Anim_PrepareSlerps, (int skel));
-
-typedef struct IffNode {
-    struct IffNode *next;
-    struct IffNode *parent;
-    struct IffNode *child;
-    int owned;
-    int id;
-    int type;
-    int size;
-    void *data;
-} IffNode;
 
 ORIG(0x517840, void, Iff_Free, (IffNode *n));
 ORIG(0x517890, IffNode *, Iff_FindForm, (IffNode *n, int type));

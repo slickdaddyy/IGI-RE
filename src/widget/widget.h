@@ -11,6 +11,8 @@
 #include "qvertex/qvertextypes.h"
 #include "win/wintypes.h"
 #include "res/restypes.h"
+#include "menu/menutypes.h"
+#include "widget/widgettypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -34,23 +36,6 @@ typedef struct MenuWindow {
     char pad4E[2];
     int key;
 } MenuWindow;
-
-/* mouse and keys, as seen by the menu elements */
-typedef struct MenuInput {
-    char button;
-    char pressed;
-    char released;
-    char entered;
-    char back;
-    char select;
-    char pad[2];
-    int wheel;
-    int x, y;
-} MenuInput;
-
-typedef struct IntRange {
-    int min, max;
-} IntRange;
 
 _Static_assert(sizeof(MenuWindow) == 0x54, "MenuWindow");
 

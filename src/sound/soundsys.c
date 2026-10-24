@@ -75,12 +75,6 @@ typedef struct SoundCreateArg {
     char unk4;
 } SoundCreateArg;
 
-typedef struct FileInfo {
-    const char *path;
-    void *data;
-    char isDir;
-} FileInfo;
-
 typedef struct ResourceEntry {
     const char *name;
     void *data;

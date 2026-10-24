@@ -28,15 +28,6 @@ typedef struct ConfigArg {
     char *weaponType;
 } ConfigArg;
 
-/* node of a list of task references */
-typedef struct RefNode {
-    struct RefNode *next;
-    struct RefNode *prev;
-    Task **ref;
-    char unkC[0x1D];
-    char active;
-} RefNode;
-
 /* what a weapon gets through the Human event 0 slot */
 typedef struct WeaponUseArg {
     char fire;
@@ -68,7 +59,6 @@ typedef struct View {
     float centerY;
 } View;
 
-_Static_assert(offsetof(RefNode, active) == 0x29, "RefNode");
 _Static_assert(sizeof(WeaponUseArg) == 0x30, "WeaponUseArg");
 _Static_assert(offsetof(View, centerY) == 0x54, "View");
 

@@ -9,6 +9,7 @@
 #include "igi.h"
 #include "humanplayer/humanplayer.h"
 #include "qasm/qasmtypes.h"
+#include "weapon/weapontypes.h"
 
 FN_EXTERN(HumanPlayer_BlastHandler);
 FN_EXTERN(HumanPlayer_FenceHandler);
@@ -37,11 +38,6 @@ typedef struct PositionMsg {
     int unk4;
     double pos[3];
 } PositionMsg;
-
-typedef struct WeaponCategory {
-    int count;
-    int ids[8];
-} WeaponCategory;
 
 typedef struct AmmoLimit {
     int id;

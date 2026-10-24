@@ -78,7 +78,7 @@ static long double x87_neg(long double x)
 void SplinePathNode_Create(SplinePathNode *n);
 void SplinePathNode_Delete(SplinePathNode *n);
 void SplinePathNode_ParamsChanged(SplinePathNode *n);
-void SplinePathNode_GetParamTable(SplinePathNode *n, ParamTable *out);
+void SplinePathNode_GetParamTable(SplinePathNode *n, ParamTable **out);
 void SplinePathNode_GetInfo(SplinePathNode *n, ObjInfo *info);
 
 void SplinePathNode_Open(void)
@@ -113,7 +113,7 @@ void SplinePathNode_GetInfo(SplinePathNode *n, ObjInfo *info)
 }
 HOOK(0x5199D0, SplinePathNode_GetInfo);
 
-void SplinePathNode_GetParamTable(SplinePathNode *n, ParamTable *out)
+void SplinePathNode_GetParamTable(SplinePathNode *n, ParamTable **out)
 {
     *out = gSplinePathNodeParams;
 }
@@ -295,7 +295,7 @@ void SplinePath_RemoveNode(SplinePath *p, SplinePathNode *n)
 HOOK(0x51A160, SplinePath_RemoveNode);
 
 void SplinePath_Create(SplinePath *p);
-void SplinePath_GetParamTable(SplinePath *p, ParamTable *out);
+void SplinePath_GetParamTable(SplinePath *p, ParamTable **out);
 
 void SplinePath_Open(void)
 {
@@ -308,7 +308,7 @@ void SplinePath_Open(void)
 }
 HOOK(0x51A1D0, SplinePath_Open);
 
-void SplinePath_GetParamTable(SplinePath *p, ParamTable *out)
+void SplinePath_GetParamTable(SplinePath *p, ParamTable **out)
 {
     *out = gSplinePathParams;
 }

@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "menu/menu.h"
+#include "widget/widgettypes.h"
 
 FN_EXTERN(MenuWindow_ForwardEvent914);
 
@@ -19,10 +20,6 @@ typedef struct DialogWindow {
 } DialogWindow;
 
 _Static_assert(sizeof(DialogWindow) == 0x5C, "DialogWindow");
-
-typedef struct IntRange {
-    int min, max;
-} IntRange;
 
 extern uint16_t gDialogWindowType;
 extern IntRange gDialogRange;

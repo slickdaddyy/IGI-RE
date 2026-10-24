@@ -7,6 +7,7 @@
 #include "sector/sector.h"
 #include "hook.h"
 #include "litmap/litmaptypes.h"
+#include "bonemesh/bonemeshtypes.h"
 
 FN_EXTERN(SectorInteriorObject_WorldAdd);
 FN_EXTERN(SectorInteriorObject_WorldRemove);
@@ -70,13 +71,6 @@ ORIG(0x4E55B0, uint8_t, CellMask_GetDrawEvent, (void));
 #define SectorInteriorObject_WorldAdd (FN(0x4DEB90, SectorInteriorObject_WorldAdd))
 #define SectorInteriorObject_WorldRemove (FN(0x4DED30, SectorInteriorObject_WorldRemove))
 #define sub_4D3710 (FN(0x4D3710, Task_Nothing))
-
-/* a view space vertex with its screen position and outcode */
-typedef struct ClipVertex {
-    float x, y, z;
-    float sx, sy, rhw;
-    int code;
-} ClipVertex;
 
 /* the active camera (0xBCAAE0), fields used here */
 typedef struct TransCtx {

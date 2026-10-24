@@ -9,4 +9,16 @@ typedef struct QTaskList {
     Task *items[];
 } QTaskList;
 
+typedef struct QvmLabelRef {
+    Node node;
+    int offset;
+    int base;
+} QvmLabelRef;
+
+typedef struct QvmFixup {
+    Node node;
+    int offset;
+    int value;
+} QvmFixup;
+
 #endif

@@ -72,7 +72,7 @@ void Anim_PrepareSlerps(int skel)
                     }
                     continue;
                 }
-                slerp_prepare(&t->slerp[k], &t->keys[k].q.x, &t->keys[next].q.x);
+                slerp_prepare(&t->slerp[k], t->keys[k].q, t->keys[next].q);
                 if (gBoneSmoothAnims)
                     slerp_prepare(&t->slerp2[k], t->keys[k].a, t->keys[next].b);
             }

@@ -643,17 +643,6 @@ void SoldierPistol_UpdateInput(SoldierSM *sm, Soldier *h)
 }
 HOOK(0x459AB0, SoldierPistol_UpdateInput);
 
-/* sent to the used task through the slot of Game_GetEvent4 */
-typedef struct UseMsg {
-    Soldier *h;
-    int unk4;
-    double pos[3];
-    int unk534[7];
-    float *input;
-    float *prevInput;
-    int unk44;
-} UseMsg;
-
 void SoldierPistol_UseTarget(Soldier *h)
 {
     void *t = Task_FindById(((SoldierP *)h)->useTarget);

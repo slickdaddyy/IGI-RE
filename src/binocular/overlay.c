@@ -7,6 +7,7 @@
 #include "coll/colltypes.h"
 #include "win/wintypes.h"
 #include "res/restypes.h"
+#include "binocular/binoculartypes.h"
 
 FN_EXTERN(BinocularHolder_Changed);
 FN_EXTERN(BinocularHolder_GetParams);
@@ -60,15 +61,6 @@ typedef struct BinocularOverlay {
     int unk2DFC;
 } BinocularOverlay;
 
-/* "BinocularOverlayHolder" (0x78 bytes): shows an overlay while "active" is true */
-typedef struct BinocularHolder {
-    Task task;
-    Task **overlay;         /* 0x20 */
-    VarString active;       /* 0x24 */
-    char isActive;          /* 0x74 */
-    char pad75[3];
-} BinocularHolder;
-
 _Static_assert(sizeof(VUMeter) == 0x14, "VUMeter");
 _Static_assert(sizeof(Target) == 0x2C, "Target");
 _Static_assert(offsetof(BinocularOverlay, ctx) == 0x88, "BinocularOverlay");
@@ -76,7 +68,6 @@ _Static_assert(offsetof(BinocularOverlay, grid) == 0x14C, "BinocularOverlay");
 _Static_assert(offsetof(BinocularOverlay, meters) == 0x2B54, "BinocularOverlay");
 _Static_assert(offsetof(BinocularOverlay, targets) == 0x2C44, "BinocularOverlay");
 _Static_assert(sizeof(BinocularOverlay) == 0x2E00, "BinocularOverlay");
-_Static_assert(sizeof(BinocularHolder) == 0x78, "BinocularHolder");
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));

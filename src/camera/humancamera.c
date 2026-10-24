@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "camera/camera.h"
 #include "material/materialtypes.h"
+#include "camera/cameratypes.h"
 
 FN_EXTERN(HumanCamera_DeleteHandler);
 
@@ -48,14 +49,6 @@ typedef struct HumanCamera {
     Task **savedRef;
     unsigned flags;
 } HumanCamera;
-
-/* an entry of the list of humans the camera can follow */
-typedef struct HumanCameraEntry {
-    Task **ref;
-    char unk4;
-    char used;
-    char pad6[2];
-} HumanCameraEntry;
 
 typedef struct Profile {
     char unk0[0x538];

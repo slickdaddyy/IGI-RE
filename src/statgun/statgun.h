@@ -11,6 +11,7 @@
 #include "param/paramtypes.h"
 #include "win/wintypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "weapon/weapontypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -70,13 +71,6 @@ typedef struct WeaponUseMsg {
     int unk28;
     Human *h;
 } WeaponUseMsg;
-
-/* the weapon init message of a DefineWeaponType() task type */
-typedef struct WeaponInitArgs {
-    void *data;
-    void *args;
-    int next;
-} WeaponInitArgs;
 
 /* the weapon config message: parameters of the weapon's config task */
 typedef struct WeaponConfigMsg {

@@ -7,6 +7,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "graphnode/graphnodetypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
@@ -55,27 +56,6 @@ typedef struct GraphNode {
     void *material;
     GraphLink *links[GRAPHNODE_LINKS];
 } GraphNode;
-
-typedef struct GraphStream {
-    int unk0;
-    void *file;
-} GraphStream;
-
-/* passed to a GraphStream handler while a tagged graph file is read */
-typedef struct GraphStreamValue {
-    GraphStream *stream;
-    Graph *graph;
-    int unk8;
-    int unkC;
-    int type;
-} GraphStreamValue;
-
-typedef struct GraphStreamHandler {
-    Node node;
-    int hash;
-    int type;
-    void (*fn)(GraphStreamValue *v);
-} GraphStreamHandler;
 
 int Graph_GetNodeSize(Graph *g);
 GraphNode *Graph_AddNode(Graph *g, int id, const Vec3d *pos, float gamma, float radius, void *material,

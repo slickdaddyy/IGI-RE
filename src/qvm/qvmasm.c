@@ -5,6 +5,8 @@
 #include "igi.h"
 #include "orig.h"
 #include "qvm/qvm.h"
+#include "qasm/qasmtypes.h"
+#include "qvm/qvmtypes.h"
 
 /* Assembles QVM assembler text into a "LOOP" file. */
 
@@ -34,12 +36,6 @@ typedef struct QvmAsm {
     List fixups;
 } QvmAsm;
 
-typedef struct QvmLabelRef {
-    Node node;
-    int offset;     /* where the 4 byte displacement goes */
-    int base;       /* pc it is relative to */
-} QvmLabelRef;
-
 typedef struct QvmLabel {
     Node node;
     List refs;
@@ -48,34 +44,10 @@ typedef struct QvmLabel {
     char name[0x80];
 } QvmLabel;
 
-typedef struct QvmFixup {
-    Node node;
-    int offset;
-    int value;
-} QvmFixup;
-
 typedef struct QvmText {
     Node node;
     char text[];
 } QvmText;
-
-typedef struct QvmHeader {
-    char magic[4];
-    int version;
-    int unk08;
-    int symOffsets;
-    int symText;
-    int symTableSize;
-    int symTextSize;
-    int strOffsets;
-    int strText;
-    int strTableSize;
-    int strTextSize;
-    int code;
-    int codeSize;
-    int stackSize;
-    int typeStackSize;
-} QvmHeader;
 
 typedef void (*QvmAsmCallback)(const char *msg, void *data);
 

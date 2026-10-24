@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "mission/mission.h"
 #include "coll/colltypes.h"
+#include "camera/cameratypes.h"
 
 /* the end of the "HumanCamera" task (the rest is in src/camera) */
 typedef struct HumanCamera {
@@ -20,14 +21,6 @@ typedef struct HumanCamera {
     Task **savedRef;
     unsigned flags;
 } HumanCamera;
-
-/* an entry of the list of humans the camera can follow */
-typedef struct HumanCameraEntry {
-    Task **ref;
-    char unk4;
-    char used;
-    char pad6[2];
-} HumanCameraEntry;
 
 _Static_assert(offsetof(HumanCamera, index) == 0x118, "HumanCamera.index");
 _Static_assert(sizeof(HumanCamera) == 0x128, "HumanCamera");

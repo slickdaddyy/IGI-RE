@@ -8,6 +8,7 @@
 #include "task/tasktypes.h"
 #include "qvertex/qvertextypes.h"
 #include "res/restypes.h"
+#include "menu/menutypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -42,19 +43,6 @@ typedef struct MenuString {
     char text[0x44];
     struct MenuString *next;
 } MenuString;
-
-/* mouse and keys, as seen by the menu elements */
-typedef struct MenuInput {
-    char button;
-    char pressed;
-    char released;
-    char entered;
-    char back;
-    char select;
-    char pad[2];
-    int wheel;
-    int x, y;
-} MenuInput;
 
 typedef struct MenuManager {
     Task task;

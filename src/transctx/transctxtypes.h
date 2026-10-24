@@ -17,4 +17,15 @@ typedef struct SoundParams {
 } SoundParams;
 _Static_assert(sizeof(SoundParams) == 0x58, "SoundParams");
 
+typedef struct SoundNode {
+    struct SoundNode *next;
+    struct SoundNode *prev;
+} SoundNode;
+
+typedef struct SoundList {
+    SoundNode *head;
+    SoundNode *tail;
+    SoundNode *tailpred;
+} SoundList;
+
 #endif

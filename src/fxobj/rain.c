@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "fxobj/fxobj.h"
+#include "plane/planetypes.h"
 
 ORIG(0x498960, void *, Rain_New, (void *world, void *texture, int unk, float a, float b));
 ORIG(0x498A70, void, Rain_Free, (void *rain, void *world));
@@ -23,11 +24,6 @@ typedef struct RainEffect {
 } RainEffect;
 
 _Static_assert(sizeof(RainEffect) == 0x88, "RainEffect");
-
-typedef struct RudderDef {
-    int kind;
-    float angle;
-} RudderDef;
 
 extern uint16_t gRudderType;
 extern char *gRainTexture;

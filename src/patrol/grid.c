@@ -3,6 +3,7 @@
 
 #include "hook.h"
 #include "patrol/patrol.h"
+#include "patrol/patroltypes.h"
 
 typedef struct GraphNode {
     int id;
@@ -48,24 +49,11 @@ typedef struct GridStamp {
     int dx, dy, weight;
 } GridStamp;
 
-/* nearest graph node of one target, refreshed once per tick */
-typedef struct MonitorTarget {
-    Node node;
-    int nodeId;
-    int tick;
-    void *target;
-} MonitorTarget;
-
 typedef struct MonitorGraph {
     Node node;
     Graph *graph;
     List targets;
 } MonitorGraph;
-
-typedef struct Claim {
-    Node node;
-    void *task;
-} Claim;
 
 ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x4148F0, long double, Vec3d_PitchAngle, (Vec3d v));

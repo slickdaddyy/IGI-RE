@@ -4,6 +4,8 @@
 
 #include "aiaction/aiaction.h"
 #include "hook.h"
+#include "patrol/patroltypes.h"
+#include "humanai/humanaitypes.h"
 
 FN_EXTERN(AIActivate_Start);
 FN_EXTERN(AICombatAnya_Start);
@@ -244,18 +246,6 @@ typedef struct MonitorGraph {
     List targets;
 } MonitorGraph;
 
-typedef struct MonitorTarget {
-    Node node;
-    int nodeId;
-    int tick;
-    void *target;
-} MonitorTarget;
-
-typedef struct Claim {
-    Node node;
-    void *task;
-} Claim;
-
 typedef struct AITarget {
     Node node;
     char used;
@@ -267,13 +257,6 @@ typedef struct AITarget {
     int count;
     int removed;
 } AITarget;
-
-typedef struct MoveItem {
-    Node node;
-    Vec3d pos;
-    int door;
-    int id;
-} MoveItem;
 
 typedef struct NodeGrid {
     Node node;
@@ -287,10 +270,7 @@ typedef struct NodeGrid {
 } NodeGrid;
 
 _Static_assert(sizeof(MonitorGraph) == 0x18, "MonitorGraph");
-_Static_assert(sizeof(MonitorTarget) == 0x14, "MonitorTarget");
-_Static_assert(sizeof(Claim) == 0xC, "Claim");
 _Static_assert(sizeof(AITarget) == 0x130, "AITarget");
-_Static_assert(sizeof(MoveItem) == 0x28, "MoveItem");
 _Static_assert(sizeof(NodeGrid) == 0x660, "NodeGrid");
 
 #define AI_MONITOR_GRAPHS 64

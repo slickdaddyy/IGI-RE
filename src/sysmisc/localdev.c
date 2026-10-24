@@ -4,15 +4,10 @@
 #include "hook.h"
 #include "igi.h"
 #include "sysmisc/sysmisctypes.h"
+#include "file/filetypes.h"
 
 /* The "LOCAL:" device: files of the host file system through the C
    runtime, 16 open files at a time. */
-
-typedef struct File {
-    int device;
-    int unk04[5];
-    char name[128];
-} File;
 
 typedef struct LocalFile {
     File file;

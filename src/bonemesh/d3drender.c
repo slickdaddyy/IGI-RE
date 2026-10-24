@@ -7,6 +7,7 @@
 #include "hook.h"
 #include "bonemesh/bonemesh.h"
 #include "magicobj/magicobjtypes.h"
+#include "bonemesh/bonemeshtypes.h"
 
 ORIG(0x491D40, long double, Display_GetAspect, (void));
 ORIG(0x4950F0, void, Direct3D_MakeMatrix, (void *out, const Matrix *rot, const Vec3f *pos));
@@ -67,20 +68,6 @@ typedef struct SphereArg {
     Vec3d pos;
     float radius;
 } SphereArg;
-
-/* a view space vertex with its screen position and outcode */
-typedef struct ClipVertex {
-    float x, y, z;
-    float sx, sy, rhw;
-    int code;
-} ClipVertex;
-
-/* argument of the 0x4D14D0 event: the nearest view depth so far */
-typedef struct NearZArg {
-    int unk0;
-    int unk4;
-    float minZ;
-} NearZArg;
 
 /* one draw call of a lightmapped mesh (format 3) */
 typedef struct LightmapGroup {

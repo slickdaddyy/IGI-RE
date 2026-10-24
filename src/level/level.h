@@ -8,6 +8,7 @@
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "script/scripttypes.h"
+#include "physobj/physobjtypes.h"
 
 /* the "Level" task, root of everything a level script creates */
 typedef struct Level {
@@ -33,33 +34,6 @@ typedef struct ParamCursor {
     const char *file;
     int line;
 } ParamCursor;
-
-/* output of the parameter format operation, appended to buf */
-typedef struct ParamText {
-    int unk0;
-    char *buf;
-} ParamText;
-
-typedef struct ParamEntry {
-    int offset;
-    int type;
-    void *extra;
-    char flags;
-    char unk0D[3];
-} ParamEntry;
-
-typedef struct ParamTable {
-    int count;
-    int max;
-    ParamEntry *entries;
-} ParamTable;
-
-/* a text note attached to a task, kept in a hash of lists by task address */
-typedef struct TaskNote {
-    Node node;
-    Task **ref;
-    char text[0x41];
-} TaskNote;
 
 typedef void (*TaskFn)(Task *task);
 

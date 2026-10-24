@@ -90,7 +90,7 @@ void GraphNode_Create(GraphNode *n, int *id);
 void GraphNode_Run(GraphNode *n);
 void GraphNode_Delete(GraphNode *n);
 void GraphNode_ParamsChanged(GraphNode *n);
-void GraphNode_GetParamTable(GraphNode *n, ParamTable *out);
+void GraphNode_GetParamTable(GraphNode *n, ParamTable **out);
 
 void GraphNode_Open(void)
 {
@@ -129,7 +129,7 @@ void GraphNode_ParamsChanged(GraphNode *n)
 }
 HOOK(0x518890, GraphNode_ParamsChanged);
 
-void GraphNode_GetParamTable(GraphNode *n, ParamTable *out)
+void GraphNode_GetParamTable(GraphNode *n, ParamTable **out)
 {
     *out = gGraphNodeParams;
 }

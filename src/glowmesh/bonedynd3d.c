@@ -7,6 +7,7 @@
 #include "glowmesh/glowmesh.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "bonemesh/bonemeshtypes.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
@@ -62,12 +63,6 @@ typedef struct PlaceArg {
     double pos[3];
     float matrix[10];
 } PlaceArg;
-
-typedef struct NearZArg {
-    int unk0;
-    int unk4;
-    float minZ;
-} NearZArg;
 
 _Static_assert(offsetof(BoneDynCubeObj, model) == 0x74, "model");
 _Static_assert(offsetof(BoneDynCubeObj, scale) == 0xA4, "scale");

@@ -10,6 +10,7 @@
 #include "qvertex/qvertextypes.h"
 #include "win/wintypes.h"
 #include "res/restypes.h"
+#include "menu/menutypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -32,10 +33,6 @@ typedef struct MenuWindow {
     char unk4E[2];
     int key;
 } MenuWindow;
-
-typedef struct Color {
-    float r, g, b;
-} Color;
 
 _Static_assert(sizeof(MenuWindow) == 0x54, "MenuWindow");
 

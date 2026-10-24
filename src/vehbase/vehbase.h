@@ -10,6 +10,7 @@
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "vehbase/vehbasetypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -33,12 +34,6 @@ typedef struct WorldMsg {
     void *unk0;
     void *world;
 } WorldMsg;
-
-typedef struct AnimKey {
-    char channel;       /* ANIM_WAIT holds the value rounded to an int */
-    char unk1[3];
-    float value;
-} AnimKey;
 
 enum {
     ANIM_CHANNELS = 0x22,

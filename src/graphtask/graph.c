@@ -2,6 +2,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "graphtask/graphtask.h"
+#include "graphnode/graphnodetypes.h"
 
 typedef struct GraphLink GraphLink;
 
@@ -36,20 +37,6 @@ typedef struct GraphNode {
     GraphLink *links[64]; /* 0x13C */
 } GraphNode;
 
-typedef struct GraphStream {
-    int unk0;
-    void *file;
-} GraphStream;
-
-/* passed to the field handlers while a graph file is read */
-typedef struct GraphStreamValue {
-    GraphStream *stream;
-    Graph *graph;
-    GraphNode *node;
-    GraphLink *link;
-    int type;
-} GraphStreamValue;
-
 /* a graph task reference, kept in gGraphRefs */
 typedef struct GraphRef {
     Node node;
@@ -61,14 +48,6 @@ typedef struct GraphNodeSize {
     uint16_t type;
     int size;
 } GraphNodeSize;
-
-/* a free field handler slot */
-typedef struct GraphStreamHandler {
-    Node node;
-    int hash;
-    int type;
-    void (*fn)(GraphStreamValue *v);
-} GraphStreamHandler;
 
 typedef struct ParamCursor {
     int index;

@@ -9,6 +9,8 @@
 #include "task/tasktypes.h"
 #include "qasm/qasmtypes.h"
 #include "graphtask/graphtasktypes.h"
+#include "sysmisc/sysmisctypes.h"
+#include "humanai/humanaitypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -19,12 +21,6 @@ typedef struct GraphNode {
     char unk28[8];
     unsigned flags;
 } GraphNode;
-
-/* one step of a route: the next node and the distance */
-typedef struct GraphStep {
-    int next;
-    float dist;
-} GraphStep;
 
 typedef struct HumanModel {
     char unk0[0x2AC];
@@ -145,14 +141,6 @@ typedef struct AIParam {
     Node node;
     char data[0x28];
 } AIParam;
-
-/* a point of the walk queue */
-typedef struct MoveItem {
-    Node node;
-    Vec3d pos;
-    int door;
-    int id;
-} MoveItem;
 
 /* a task several AIs are after, with what each of them is doing about it */
 typedef struct AITarget {

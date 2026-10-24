@@ -7,6 +7,8 @@
 #include "hook.h"
 #include "glowmesh/glowmesh.h"
 #include "types.h"
+#include "bonemesh/bonemeshtypes.h"
+#include "lod/lodtypes.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -25,14 +27,6 @@ ORIG(0x518240, int, ViewSlot_GetCurrent, (void));
 ORIG(0x512C30, void, TerrainMesh_DrawD3D, (void));
 ORIG(0x4C1780, void, Debug_Log, (int unk));
 ORIG(0x4DA790, void, Fog_Compute, (float *out, const double *pos, float depth, float scale, void *layers, int count));
-
-/* view space vertex with its screen position and outcode, as
-   Direct3DRender_ClipTriangleDepth takes them */
-typedef struct ClipVertex {
-    float x, y, z;
-    float sx, sy, rhw;
-    int code;
-} ClipVertex;
 
 typedef struct TerrainMeshVertex {
     float x, y, z;
@@ -74,14 +68,6 @@ typedef struct TerrainClipVertex {
     float u, v;
     int unk28, unk2C;
 } TerrainClipVertex;
-
-/* a slot of the QCube cache; data is the cell's mesh */
-typedef struct QCacheEntry {
-    int cell[4];
-    int frame;
-    int kind; /* pool the data comes from */
-    char *data;
-} QCacheEntry;
 
 /* a terrain cell QCube wants built this frame */
 typedef struct TerrainCell {
@@ -171,7 +157,6 @@ typedef struct TerrainPoly {
     int fogCount;
 } TerrainPoly;
 
-_Static_assert(sizeof(ClipVertex) == 0x1C, "ClipVertex");
 _Static_assert(sizeof(TerrainCell) == 0x30, "TerrainCell");
 _Static_assert(sizeof(TerrainLightMapInfo) == 0x30, "TerrainLightMapInfo");
 _Static_assert(sizeof(TerrainHeightMapInfo) == 0x30, "TerrainHeightMapInfo");

@@ -10,6 +10,7 @@
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "vehicle/vehicletypes.h"
+#include "plane/planetypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -27,13 +28,6 @@ typedef struct CarMoveArg {
     Matrix *matrix;
     struct Car *car;
 } CarMoveArg;
-
-/* argument of the MagicObj definition parsers */
-typedef struct DefParseArg {
-    void *out;
-    void *args;
-    int index;
-} DefParseArg;
 
 /* Afterburner and Rotor (0x140 bytes) */
 typedef struct Part {

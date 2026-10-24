@@ -2,6 +2,7 @@
 
 #include "aiaction/aiaction.h"
 #include "hook.h"
+#include "glass/glasstypes.h"
 
 ORIG(0x44A630, void, GlassShatter_PlaySound, (const Vec3d *pos));
 ORIG(0x44A670, void, GlassShatter_AddTri, (float *a, float *b, float *c));
@@ -24,14 +25,6 @@ typedef struct GlassShatter {
     void *mesh;         /* 0x2B040 */
     char unk2B044[4];
 } GlassShatter;
-
-/* the collision mesh of a model LOD */
-typedef struct TriMesh {
-    int count;
-    char unk4[0xC];
-    uint16_t (*tris)[4]; /* 0x10 */
-    float (*verts)[4];  /* 0x14 */
-} TriMesh;
 
 _Static_assert(sizeof(GlassShatter) == 0x2B048, "GlassShatter");
 

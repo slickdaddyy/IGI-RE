@@ -9,6 +9,7 @@
 #include "task/tasktypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "qasm/qasmtypes.h"
+#include "boneobj/boneobjtypes.h"
 
 typedef void (*HzHandler)(void *task, void *arg);
 
@@ -34,42 +35,6 @@ typedef struct BoneObj {
     int unk4;
     Bone *bones;
 } BoneObj;
-
-typedef struct Skeleton {
-    int count;
-    int *parents;
-    Vec3f *offsets;
-} Skeleton;
-
-typedef struct PosKey {
-    float pos[3];
-    float time;
-    float out[3];
-    float in[3];
-} PosKey;
-
-typedef struct PosTrack {
-    int count;
-    PosKey *keys;
-} PosTrack;
-
-typedef struct RotKey {
-    Quat q;             /* unk10 holds the key time */
-    float a[4];
-    float b[4];
-} RotKey;
-
-typedef struct SlerpInfo {
-    float angle;
-    float invSin;
-} SlerpInfo;
-
-typedef struct RotTrack {
-    int count;
-    RotKey *keys;
-    SlerpInfo *slerp;
-    SlerpInfo *slerp2;
-} RotTrack;
 
 #define ANIM_LOOPS 0x80000000u
 
@@ -180,7 +145,6 @@ typedef struct HazeLayer {
 } HazeLayer;
 
 _Static_assert(sizeof(Bone) == 0x84, "Bone");
-_Static_assert(sizeof(RotKey) == 0x34, "RotKey");
 _Static_assert(sizeof(AnimSet) == 0x28, "AnimSet");
 _Static_assert(sizeof(QObj) == 0x50, "QObj");
 _Static_assert(sizeof(BoneDynCubeObj) == 0xD8, "BoneDynCubeObj");
