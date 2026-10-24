@@ -27,6 +27,28 @@ Needs CMake, Ninja and the i686 MinGW toolchain.
 
 Copy `build/dinput.dll` next to `IGI.exe`.
 
+## Settings and log
+
+Without a `dinput.ini` next to the DLL every rewritten function is used.
+With one, you can turn functions off to find the one behind a crash:
+
+    [hooks]
+    ; 0 runs the game's own code everywhere; the DLL only forwards DirectInput
+    enabled=1
+    ; use only these src folders, function names or 0x addresses
+    only=
+    ; leave these out
+    skip=haze, TerrainMesh_DrawD3D, 0x521E40
+    ; use only hooks first-last, numbered as in the log, for halving down
+    range=
+    ; 1 writes dinput.log with the hook counts and any crash, 2 also every hook
+    log=1
+
+A function that is turned off still gets called through our code by other
+rewritten functions in its folder; turn off the whole folder to rule it out.
+The crash lines in `dinput.log` name the function and the offset in the DLL.
+They can also show exceptions the game catches and handles itself.
+
 ## Tests
 
 Each rewritten function is run against the original code in an x86

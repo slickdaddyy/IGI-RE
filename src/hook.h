@@ -5,10 +5,10 @@
 
 /* Replace the original function at addr with fn when the DLL loads. */
 #define HOOK(addr, fn) \
-    static void __attribute__((constructor)) hook_##fn(void) { Hook_Add(addr, (void *)fn); }
+    static void __attribute__((constructor)) hook_##fn(void) { Hook_Add(addr, (void *)fn, #fn, __FILE__); }
 
-void Hook_Add(uint32_t addr, void *fn);
+void Hook_Add(uint32_t addr, void *fn, const char *name, const char *file);
 int Hook_IsSupportedExe(void);
-void Hook_InstallAll(void);
+void Hook_InstallAll(void *module);
 
 #endif
