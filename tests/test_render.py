@@ -45,12 +45,12 @@ LOD = {"lod": 0}
 FRUSTUM = {"ret": 0}
 
 rig.fake(0x49B2D0, "SetFog", 2, fmt=fogfmt)
-rig.fake(0x49B4B0, "sub_49B4B0", 1)
-rig.fake(0x4D0510, "sub_4D0510", 2, fmt=clipfmt, ret=clip_ret)
-rig.fake(0x4D0790, "sub_4D0790", 2, fmt=clipfmt, ret=clip_ret)
+rig.fake(0x49B4B0, "MeshBatch_Flush", 1)
+rig.fake(0x4D0510, "Mesh3D_ExcludeRigid", 2, fmt=clipfmt, ret=clip_ret)
+rig.fake(0x4D0790, "Mesh3D_ExcludeSpline", 2, fmt=clipfmt, ret=clip_ret)
 rig.fake(0x4CFCB0, "ModelObj_GetLOD", 1, ret=lambda e, a: LOD["lod"])
 rig.fake(0x4D0180, "Mesh3D_GetSplineMeshLOD", 1, ret=lambda e, a: LOD["lod"])
-rig.fake(0x4D03D0, "sub_4D03D0", 3, fmt=lambda e, a: (e.read(a[0], 12), a[1], a[2]), ret=lambda e, a: FRUSTUM["ret"])
+rig.fake(0x4D03D0, "Mesh3D_Exclude", 3, fmt=lambda e, a: (e.read(a[0], 12), a[1], a[2]), ret=lambda e, a: FRUSTUM["ret"])
 rig.fake(0x491D40, "Display_GetAspect", 0, ret=4.0 / 3.0, st0=True)
 rig.fake(0x497E70, "TransContext_Select", 1, fmt=lambda e, a: (e.read(a[0], 0xA8),))
 HANDLER = rig.func("handler", 2)
@@ -74,7 +74,7 @@ def near_ret(e, a):
     return 0
 
 
-rig.fake(0x4A0340, "sub_4A0340", 23, fmt=near_fmt, ret=near_ret)
+rig.fake(0x4A0340, "Direct3DRender_ClipTriangleDepth", 23, fmt=near_fmt, ret=near_ret)
 
 
 def sort_fmt(e, a):

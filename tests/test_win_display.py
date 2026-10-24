@@ -23,14 +23,14 @@ RENDER_FUNCS = 0xA94E84
 FOUND = 0xBCACF4
 
 for name, addr, n in [("RenderMode_ForEach", 0x4B0EE0, 2), ("RenderMode_Call", 0x4B1000, 3),
-                      ("RenderMode_Select", 0x4B0F30, 1), ("sub_493580", 0x493580, 0),
-                      ("sub_498080", 0x498080, 0), ("sub_495060", 0x495060, 0), ("sub_498350", 0x498350, 0),
-                      ("sub_4988D0", 0x4988D0, 1), ("sub_4977F0", 0x4977F0, 0), ("sub_497700", 0x497700, 0),
-                      ("Display_RemoveCallback", 0x495220, 2), ("sub_492370", 0x492370, 5)]:
+                      ("RenderMode_Select", 0x4B0F30, 1), ("Direct3D_Init", 0x493580, 0),
+                      ("Offscreen_Init", 0x498080, 0), ("Direct3D_Shutdown", 0x495060, 0), ("Offscreen_Shutdown", 0x498350, 0),
+                      ("App_MessageBox", 0x4988D0, 1), ("Frame_Reset", 0x4977F0, 0), ("Scene_DrawAll", 0x497700, 0),
+                      ("Display_RemoveCallback", 0x495220, 2), ("Guid_ToString", 0x492370, 5)]:
     before = None
     if name == "RenderMode_ForEach":
         before = lambda e: (0, (e.u32(e.arg(1)), e.u32(e.arg(1) + 4)))
-    elif name == "sub_4988D0":
+    elif name == "App_MessageBox":
         before = lambda e: (0, e.read_cstr(e.arg(0)))
     pyfake(emu, addr, name, n, before=before)
 
@@ -355,13 +355,13 @@ def name_guid(e):
 @pytest.mark.parametrize("found", [0, 1])
 @pytest.mark.parametrize("driver_name", [None, b"drvname", b"other"])
 def test_enum_driver_cb(guid, list_devices, found, driver_name):
-    pyfake(emu, 0x492370, "sub_492370", 5, before=name_guid)
+    pyfake(emu, 0x492370, "Guid_ToString", 5, before=name_guid)
     check(emu, 0x491F10, "Display_EnumDriverCB",
           setup=lambda e: setup_driver(e, guid, list_devices, found, driver_name, None))
 
 
 @pytest.mark.parametrize("fail,list_devices", [(1, 0), (2, 0), (3, 0), (4, 0), (4, 1)])
 def test_enum_driver_cb_errors(fail, list_devices):
-    pyfake(emu, 0x492370, "sub_492370", 5, before=name_guid)
+    pyfake(emu, 0x492370, "Guid_ToString", 5, before=name_guid)
     check_raises(emu, 0x491F10, "Display_EnumDriverCB",
                  setup=lambda e: setup_driver(e, True, list_devices, 1, None, fail))

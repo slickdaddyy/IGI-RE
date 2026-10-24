@@ -735,7 +735,7 @@ def test_qvm_get_arg_error(t):
 
 
 def test_qvm_return_zero():
-    compare(emu, 0x4BD070, "sub_4BD070")
+    compare(emu, 0x4BD070, "Qvm_GetArgLine")
 
 
 # --- whole programs with every hook installed ------------------------------

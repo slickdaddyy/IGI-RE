@@ -88,15 +88,16 @@ def test_open_close():
     check(e, ef, 0x4DA2E0, "HazeLayer_Close", setup=setup2, check_eax=False)
 
 
-@pytest.mark.parametrize("fn", [0x4DA240, 0x4DA270, 0x4DA2A0, 0x4DA2C0])
+@pytest.mark.parametrize("fn,name", [(0x4DA240, "HazeLayer_Push"), (0x4DA270, "HazeLayer_Enter"),
+                                     (0x4DA2A0, "HazeLayer_Pop"), (0x4DA2C0, "HazeLayer_Leave")])
 @pytest.mark.parametrize("visible", [0, 1])
-def test_visibility_handlers(fn, visible):
+def test_visibility_handlers(fn, name, visible):
     def setup(em):
         t = new_task(em, 0x77, 0x90)
         em.write(t + 0x8C, struct.pack("<I", visible))
         em.write(VIS_COUNT, struct.pack("<I", 3))
         return (t,)
-    check(fe, fk, fn, "sub_%X" % fn, setup=setup, check_eax=False)
+    check(fe, fk, fn, name, setup=setup, check_eax=False)
 
 
 def test_reset_frame():

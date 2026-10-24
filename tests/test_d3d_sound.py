@@ -432,15 +432,15 @@ def test_sound_load(case):
         pyfake(e, 0x4B5F00, "Resource_Load", 2, res, before=lambda e: e.write(e.arg(1), struct.pack("<I", 216)))
         pyfake(e, 0x4B6380, "Resource_Unload", 1)
         pyfake(e, 0x4AF810, "Warning_Show", 2)
-        pyfake(e, 0x497390, "sub_497390", 2)
-        pyfake(e, 0x497450, "sub_497450", 1, 0x1111)
-        pyfake(e, 0x497410, "sub_497410", 1, 0x2222)
-        pyfake(e, 0x496450, "sub_496450", 2, c.get("found", 0))
-        pyfake(e, 0x496420, "sub_496420", 2)
-        pyfake(e, 0x496280, "sub_496280", 4, before=lambda e: (None, e.read(e.arg(0), 8)))
-        pyfake(e, 0x4964A0, "sub_4964A0", 3, c.get("attach", 1),
+        pyfake(e, 0x497390, "Sound_GetName", 2)
+        pyfake(e, 0x497450, "Sound_HashBucket", 1, 0x1111)
+        pyfake(e, 0x497410, "Sound_HashName", 1, 0x2222)
+        pyfake(e, 0x496450, "Sound_Find", 2, c.get("found", 0))
+        pyfake(e, 0x496420, "Adpcm_Init", 2)
+        pyfake(e, 0x496280, "Adpcm_Decode", 4, before=lambda e: (None, e.read(e.arg(0), 8)))
+        pyfake(e, 0x4964A0, "Sound_Upload", 3, c.get("attach", 1),
                before=lambda e: (None, e.read(e.arg(1), 0x30)))
-        pyfake(e, 0x496250, "sub_496250", 4, before=lambda e: (None, e.read(e.arg(3), 0x30)))
+        pyfake(e, 0x496250, "SoundList_Add", 4, before=lambda e: (None, e.read(e.arg(3), 0x30)))
         buf = com(e, "buf", DSBUFFER)
 
         def create(e):
