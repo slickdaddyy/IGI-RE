@@ -5,6 +5,9 @@
 #include "hook.h"
 #include "computer/computer.h"
 
+FN_EXTERN(Task_FalseHandler);
+FN_EXTERN(VehiclePart_Delete);
+
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -31,8 +34,8 @@ ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
 ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
 ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (void *obj));
 
-#define VEHICLEPART_DELETE ((void *)0x426860)
-#define HANDLER_45F920 ((void *)0x45F920)
+#define VEHICLEPART_DELETE (FN(0x426860, VehiclePart_Delete))
+#define HANDLER_45F920 (FN(0x45F920, Task_FalseHandler))
 
 /* a MagicObj that rides on a vehicle and hurts the humans it touches */
 typedef struct DeathZone {

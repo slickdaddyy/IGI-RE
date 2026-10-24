@@ -3,6 +3,9 @@
 #include "hook.h"
 #include "shadow/shadow.h"
 
+FN_EXTERN(SubLevel_Run);
+FN_EXTERN(Task_Nothing);
+
 ORIG(0x4012A0, Task *, Task_New, (Task *parent, uint16_t type, void *arg));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -23,8 +26,8 @@ ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
 #define kShadowMinFade VAR(float, 0x5336A4)
 #define kShadowDepth VAR(float, 0x533480)
 
-#define SubLevel_Run ((void *)0x488700)
-#define sub_4D3710 ((void *)0x4D3710)
+#define SubLevel_Run (FN(0x488700, SubLevel_Run))
+#define sub_4D3710 (FN(0x4D3710, Task_Nothing))
 
 void MagicObjContainer_Event(Task *t, void *arg);
 

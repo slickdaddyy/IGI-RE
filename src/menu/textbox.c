@@ -2,6 +2,14 @@
 #include "igi.h"
 #include "menu/menu.h"
 
+FN_EXTERN(TextBox_Changed);
+FN_EXTERN(TextBox_Create);
+FN_EXTERN(TextBox_Delete);
+FN_EXTERN(TextBox_Draw);
+FN_EXTERN(TextBox_GetParams);
+FN_EXTERN(TextBox_Layout);
+FN_EXTERN(TextBox_Run);
+
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
 ORIG(0x4F0FC0, void *, Param_VarString, (void));
 ORIG(0x4F0FE0, void *, Param_String32, (void));
@@ -20,13 +28,13 @@ _Static_assert(sizeof(TextBox) == 0x2244, "TextBox");
 #define gTextBoxParams VAR(void *, 0x57BB98)
 
 /* the handlers are not rewritten yet */
-#define TextBox_Create ((void *)0x41ACA0)
-#define TextBox_Delete ((void *)0x41AD20)
-#define TextBox_Changed ((void *)0x41AD70)
-#define TextBox_Run ((void *)0x41AE20)
-#define TextBox_Draw ((void *)0x41AEA0)
-#define TextBox_GetParams ((void *)0x41B160)
-#define TextBox_Layout ((void *)0x41B170)
+#define TextBox_Create (FN(0x41ACA0, TextBox_Create))
+#define TextBox_Delete (FN(0x41AD20, TextBox_Delete))
+#define TextBox_Changed (FN(0x41AD70, TextBox_Changed))
+#define TextBox_Run (FN(0x41AE20, TextBox_Run))
+#define TextBox_Draw (FN(0x41AEA0, TextBox_Draw))
+#define TextBox_GetParams (FN(0x41B160, TextBox_GetParams))
+#define TextBox_Layout (FN(0x41B170, TextBox_Layout))
 
 void TextBox_Init(void)
 {

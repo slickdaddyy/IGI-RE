@@ -5,6 +5,10 @@
 #include "hook.h"
 #include "door/door.h"
 
+FN_EXTERN(ParamInt16_Size);
+FN_EXTERN(Task_Nothing);
+FN_EXTERN(Terminal_MapHandler);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
@@ -64,9 +68,9 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 #define gSwitchParams VAR(void *, 0x57C1B4)
 #define gSwitchType VAR(uint16_t, 0x57C1B8)
 
-#define Terminal_MapHandler ((void *)0x443DC0)
-#define sub_4F01B0 ((void *)0x4F01B0)
-#define TASK_NOTHING ((void *)0x4D3710)
+#define Terminal_MapHandler (FN(0x443DC0, Terminal_MapHandler))
+#define sub_4F01B0 (FN(0x4F01B0, ParamInt16_Size))
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 #define FIELD(name) ((void *)offsetof(Switch, name))
 

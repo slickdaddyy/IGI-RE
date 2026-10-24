@@ -2,6 +2,8 @@
 #include "hook.h"
 #include "terredit/terredit.h"
 
+FN_EXTERN(Task_Nothing);
+
 /* "DiscardTerrainArea": an editor box that fills itself with DiscardTerrain
    cubes. The box is cut into octants down to maxDepth levels; a cube is
    placed where every 4096 unit column below its top is solid ground with a
@@ -26,7 +28,7 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 
-#define Task_Nothing ((void *)0x4D3710)
+#define Task_Nothing (FN(0x4D3710, Task_Nothing))
 
 void *DiscardTerrain_New(void *parent, const Vec3d *pos, int shift);
 

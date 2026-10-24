@@ -4,6 +4,8 @@
 #include "igi.h"
 #include "binocular/binocular.h"
 
+FN_EXTERN(VehiclePart_Delete);
+
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -45,7 +47,7 @@ ORIG(0x4F2060, Task *, WeaponSlots_Get, (void **slots, int i));
 ORIG(0x4F2140, void, WeaponSlots_SelectNext, (void *owner, void **slots, int a));
 ORIG(0x4F2310, void, Weapon_Move, (Task *w, Vec3d *pos, Matrix *m));
 
-#define VEHICLEPART_DELETE ((void *)0x426860)
+#define VEHICLEPART_DELETE (FN(0x426860, VehiclePart_Delete))
 
 #define gGunHolderList VAR(void *, 0x5BE330)
 #define gAIStationaryGunType VAR(uint16_t, 0x53FEC0)

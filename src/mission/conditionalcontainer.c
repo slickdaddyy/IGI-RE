@@ -1,6 +1,13 @@
 #include "hook.h"
 #include "mission/mission.h"
 
+FN_EXTERN(ConditionalContainer_Activate);
+FN_EXTERN(ConditionalContainer_Deactivate);
+FN_EXTERN(ConditionalContainer_ForwardEvent4);
+FN_EXTERN(ConditionalContainer_WorldAdd);
+FN_EXTERN(ConditionalContainer_WorldRemove);
+FN_EXTERN(MagicObjContainer_Event);
+
 /* "ConditionalContainer" (0x114 bytes): shows its children while cond is true */
 typedef struct ConditionalContainer {
     Task task;
@@ -30,12 +37,12 @@ ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x505D40, uint16_t, Container_GetType, (void));
 
-#define Handler4E0890 ((void *)0x4E0890)
-#define ConditionalContainer_Activate ((void *)0x487920)
-#define ConditionalContainer_Deactivate ((void *)0x487980)
-#define ConditionalContainer_Move ((void *)0x4879E0)
-#define ConditionalContainer_Removed ((void *)0x487B20)
-#define ConditionalContainer_Added ((void *)0x487A70)
+#define Handler4E0890 (FN(0x4E0890, MagicObjContainer_Event))
+#define ConditionalContainer_Activate (FN(0x487920, ConditionalContainer_Activate))
+#define ConditionalContainer_Deactivate (FN(0x487980, ConditionalContainer_Deactivate))
+#define ConditionalContainer_Move (FN(0x4879E0, ConditionalContainer_ForwardEvent4))
+#define ConditionalContainer_Removed (FN(0x487B20, ConditionalContainer_WorldRemove))
+#define ConditionalContainer_Added (FN(0x487A70, ConditionalContainer_WorldAdd))
 
 #define gConditionalContainerType VAR(uint16_t, 0x5C8A80)
 #define gConditionalContainerParams VAR(void *, 0x5C8A7C)

@@ -32,10 +32,11 @@ Copy `build/dinput.dll` next to `IGI.exe`.
 The same build also makes `igidecomp.exe`. Put it in the game folder next to
 `IGI.exe` and run it instead of the game. It reads the data sections of your
 `IGI.exe` (tables, strings, the import list) into memory at their original
-addresses but none of its code. All calls link straight to the rewrite; the
-code addresses that the data still holds get a jump to the rewrite. The C
-runtime the game code calls comes from `msvcrt.dll`. Code that nothing
-rewrites stops the game with "No rewrite for IGI.exe code at ...".
+addresses but none of its code, and fills the code range with int3. All
+calls link straight to the rewrite, and the handler tables in the data are
+pointed at it at startup. The C runtime the game code calls comes from
+`msvcrt.dll`. Anything that still reaches for original code stops the game
+with "No rewrite for IGI.exe code at ...".
 `igidecomp.ini` and `igidecomp.log` work like the DLL's files below.
 
 ## Settings and log

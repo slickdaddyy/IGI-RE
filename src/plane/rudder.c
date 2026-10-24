@@ -4,6 +4,11 @@
 #include "igi.h"
 #include "plane/plane.h"
 
+FN_EXTERN(EditorMagicObj_Delete);
+FN_EXTERN(HitZone_GetArgSize);
+FN_EXTERN(Rudder_ParseDef);
+FN_EXTERN(SubLevel_Run);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
@@ -17,10 +22,10 @@ ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
 ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
 
-#define MAGICOBJ_DELETE ((void *)0x51B940)
-#define TASK_RUN_CHILDREN ((void *)0x488700)
-#define RUDDER_PARSE_DEF ((void *)0x436740)
-#define RUDDER_DEF_SIZE ((void *)0x427F80)
+#define MAGICOBJ_DELETE (FN(0x51B940, EditorMagicObj_Delete))
+#define TASK_RUN_CHILDREN (FN(0x488700, SubLevel_Run))
+#define RUDDER_PARSE_DEF (FN(0x436740, Rudder_ParseDef))
+#define RUDDER_DEF_SIZE (FN(0x427F80, HitZone_GetArgSize))
 
 #define gRudderType VAR(uint16_t, 0x57BD74)
 

@@ -5,6 +5,8 @@
 #include "hook.h"
 #include "nodereg/nodereg.h"
 
+FN_EXTERN(Debug_Log);
+
 /* the trigger data, 0x21 bytes */
 typedef struct AnimSoundDef {
     char name[32];
@@ -38,7 +40,7 @@ ORIG(0x4EC050, uint8_t, AnimTrigger_GetSizeEvent, (void));
 ORIG(0x4EC060, uint8_t, AnimTrigger_GetParseEvent, (void));
 ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 
-#define TASK_DEBUG_LOG ((void *)0x4C1780)
+#define TASK_DEBUG_LOG (FN(0x4C1780, Debug_Log))
 
 #define gAnimSoundType VAR(uint16_t, 0xA83764)
 

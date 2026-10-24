@@ -4,6 +4,8 @@
 #include "igi.h"
 #include "rotor/rotor.h"
 
+FN_EXTERN(EditorMagicObj_Delete);
+
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -45,7 +47,7 @@ ORIG(0x4EE0F0, uint8_t, PhysicsObjType_GetSizeEvent, (void));
 ORIG(0x4EE100, uint8_t, PhysicsObjType_GetFreeEvent, (void));
 ORIG(0x4EE140, MagicDef *, PhysicsObjType_Find, (const char *name));
 
-#define MAGICOBJ_DELETE ((void *)0x51B940)
+#define MAGICOBJ_DELETE (FN(0x51B940, EditorMagicObj_Delete))
 
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
 #define gRotorType VAR(uint16_t, 0x57BD10)

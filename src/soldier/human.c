@@ -7,6 +7,46 @@
 #include "igi.h"
 #include "soldier/soldier.h"
 
+FN_EXTERN(Car_CollFilter);
+FN_EXTERN(Human_ActivateHandler);
+FN_EXTERN(Human_BlastHandler);
+FN_EXTERN(Human_CollLineHandler);
+FN_EXTERN(Human_CollLinesHandler);
+FN_EXTERN(Human_CountCriteria);
+FN_EXTERN(Human_CountTeamCriteria);
+FN_EXTERN(Human_CrushHandler);
+FN_EXTERN(Human_DeactivateHandler);
+FN_EXTERN(Human_DrawHandler);
+FN_EXTERN(Human_GetAmmoHandler);
+FN_EXTERN(Human_GetHumanCameraInfoHandler);
+FN_EXTERN(Human_GetParamTableHandler);
+FN_EXTERN(Human_GetSoundInfoHandler);
+FN_EXTERN(Human_GetWeaponBoneHandler);
+FN_EXTERN(Human_GetWeaponHandler);
+FN_EXTERN(Human_GetWeaponsHandler);
+FN_EXTERN(Human_GunshotHandler);
+FN_EXTERN(Human_HitHandler);
+FN_EXTERN(Human_ParamChangedHandler);
+FN_EXTERN(Human_PreDeleteHandler);
+FN_EXTERN(Human_RegisterVarsHandler);
+FN_EXTERN(Human_RenderHandler);
+FN_EXTERN(Human_UnregisterVarsHandler);
+FN_EXTERN(Task_FalseHandler);
+FN_EXTERN(Task_Nothing);
+FN_EXTERN(Task_ReturnZero);
+FN_EXTERN(WeaponAmmoPickup);
+FN_EXTERN(WeaponGunPickup);
+FN_EXTERN(sub_416AB0);
+FN_EXTERN(sub_45F050);
+FN_EXTERN(sub_45FDA0);
+FN_EXTERN(sub_45FE30);
+FN_EXTERN(sub_45FE70);
+FN_EXTERN(sub_460090);
+FN_EXTERN(sub_4601A0);
+FN_EXTERN(sub_460210);
+FN_EXTERN(sub_460280);
+FN_EXTERN(sub_4609F0);
+
 typedef struct ScriptValue {
     int i;
     int unk4;
@@ -125,45 +165,45 @@ ORIG(0x5096A0, uint8_t, AIGraph_GetEvent, (void));
 #define gScriptNumberType ((void *)0x567C74)
 
 /* handlers of the Human type that live after this file */
-#define Human_Handler45F280 ((void *)0x45F280)
-#define Human_Handler45F050 ((void *)0x45F050)
-#define Human_Handler45F500 ((void *)0x45F500)
-#define Human_Handler45F800 ((void *)0x45F800)
-#define Human_GetParams ((void *)0x45F880)
-#define Human_ParamsChanged ((void *)0x45F890)
-#define Human_Handler45F900 ((void *)0x45F900)
-#define Human_Handler45F910 ((void *)0x45F910)
-#define Human_Handler45F930 ((void *)0x45F930)
-#define Human_Handler45F920 ((void *)0x45F920)
-#define Human_Handler45F9D0 ((void *)0x45F9D0)
-#define Human_Handler45FA80 ((void *)0x45FA80)
-#define Human_Handler416AB0 ((void *)0x416AB0)
-#define Human_GetHumanCameraInfoHandler ((void *)0x45FCD0)
-#define Human_Handler45FDA0 ((void *)0x45FDA0)
-#define Human_Handler45FE30 ((void *)0x45FE30)
-#define Human_Handler42FC50 ((void *)0x42FC50)
-#define Human_Handler45FE70 ((void *)0x45FE70)
-#define WeaponAmmoPickup ((void *)0x45FF80)
-#define WeaponGunPickup ((void *)0x45FFC0)
-#define Human_Handler460070 ((void *)0x460070)
-#define Human_Handler460090 ((void *)0x460090)
-#define Human_gun_event_related_3 ((void *)0x4600C0)
-#define Human_gun_event_related_4 ((void *)0x4601A0)
-#define Human_gun_event_related_5 ((void *)0x460210)
-#define Human_Handler4D3710 ((void *)0x4D3710)
-#define Human_Handler460280 ((void *)0x460280)
-#define Human_Handler460400 ((void *)0x460400)
-#define Human_Handler4606D0 ((void *)0x4606D0)
-#define Human_Handler4606F0 ((void *)0x4606F0)
-#define Human_Handler4F64E0 ((void *)0x4F64E0)
-#define Human_Handler460850 ((void *)0x460850)
-#define Human_Handler4608D0 ((void *)0x4608D0)
-#define Human_Handler460950 ((void *)0x460950)
-#define Human_Handler4609A0 ((void *)0x4609A0)
-#define Human_Handler4609F0 ((void *)0x4609F0)
-#define Human_Handler460AC0 ((void *)0x460AC0)
-#define Human_Criteria ((void *)0x460A70)
-#define Human_CriteriaN ((void *)0x460A10)
+#define Human_Handler45F280 (FN(0x45F280, Human_DrawHandler))
+#define Human_Handler45F050 (FN(0x45F050, sub_45F050))
+#define Human_Handler45F500 (FN(0x45F500, Human_CollLinesHandler))
+#define Human_Handler45F800 (FN(0x45F800, Human_CollLineHandler))
+#define Human_GetParams (FN(0x45F880, Human_GetParamTableHandler))
+#define Human_ParamsChanged (FN(0x45F890, Human_ParamChangedHandler))
+#define Human_Handler45F900 (FN(0x45F900, Human_GetWeaponsHandler))
+#define Human_Handler45F910 (FN(0x45F910, Human_GetAmmoHandler))
+#define Human_Handler45F930 (FN(0x45F930, Human_HitHandler))
+#define Human_Handler45F920 (FN(0x45F920, Task_FalseHandler))
+#define Human_Handler45F9D0 (FN(0x45F9D0, Human_BlastHandler))
+#define Human_Handler45FA80 (FN(0x45FA80, Human_CrushHandler))
+#define Human_Handler416AB0 (FN(0x416AB0, sub_416AB0))
+#define Human_GetHumanCameraInfoHandler (FN(0x45FCD0, Human_GetHumanCameraInfoHandler))
+#define Human_Handler45FDA0 (FN(0x45FDA0, sub_45FDA0))
+#define Human_Handler45FE30 (FN(0x45FE30, sub_45FE30))
+#define Human_Handler42FC50 (FN(0x42FC50, Car_CollFilter))
+#define Human_Handler45FE70 (FN(0x45FE70, sub_45FE70))
+#define WeaponAmmoPickup (FN(0x45FF80, WeaponAmmoPickup))
+#define WeaponGunPickup (FN(0x45FFC0, WeaponGunPickup))
+#define Human_Handler460070 (FN(0x460070, Human_GetWeaponHandler))
+#define Human_Handler460090 (FN(0x460090, sub_460090))
+#define Human_gun_event_related_3 (FN(0x4600C0, Human_GetWeaponBoneHandler))
+#define Human_gun_event_related_4 (FN(0x4601A0, sub_4601A0))
+#define Human_gun_event_related_5 (FN(0x460210, sub_460210))
+#define Human_Handler4D3710 (FN(0x4D3710, Task_Nothing))
+#define Human_Handler460280 (FN(0x460280, sub_460280))
+#define Human_Handler460400 (FN(0x460400, Human_RenderHandler))
+#define Human_Handler4606D0 (FN(0x4606D0, Human_GetSoundInfoHandler))
+#define Human_Handler4606F0 (FN(0x4606F0, Human_GunshotHandler))
+#define Human_Handler4F64E0 (FN(0x4F64E0, Task_ReturnZero))
+#define Human_Handler460850 (FN(0x460850, Human_RegisterVarsHandler))
+#define Human_Handler4608D0 (FN(0x4608D0, Human_UnregisterVarsHandler))
+#define Human_Handler460950 (FN(0x460950, Human_ActivateHandler))
+#define Human_Handler4609A0 (FN(0x4609A0, Human_DeactivateHandler))
+#define Human_Handler4609F0 (FN(0x4609F0, sub_4609F0))
+#define Human_Handler460AC0 (FN(0x460AC0, Human_PreDeleteHandler))
+#define Human_Criteria (FN(0x460A70, Human_CountCriteria))
+#define Human_CriteriaN (FN(0x460A10, Human_CountTeamCriteria))
 
 static const float kCutSceneScale = 1.5f;
 static const float kShadowSize = 4096000.0f;

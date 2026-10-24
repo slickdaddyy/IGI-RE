@@ -3,6 +3,13 @@
 #include "hook.h"
 #include "editobj/editobj.h"
 
+FN_EXTERN(MenuItem_Commit);
+FN_EXTERN(MenuItem_ForwardPointer);
+FN_EXTERN(MenuItem_Identify);
+FN_EXTERN(MenuItem_Select);
+FN_EXTERN(MenuWindow_Draw);
+FN_EXTERN(SubLevel_Run);
+
 /* the list node of a MenuItem (at +0x54 of the item) */
 typedef struct ItemNode {
     struct ItemNode *next;
@@ -49,12 +56,12 @@ ORIG(0x505C70, uint8_t, MenuItem_GetCommitEvent, (void));
 ORIG(0x508F60, uint8_t, Sync_GetEvent0, (void));
 ORIG(0x508F70, uint8_t, Sync_GetEvent1, (void));
 
-#define MENUWINDOW_DRAW ((void *)0x424280)
-#define TASK_RUNCHILDREN ((void *)0x488700)
-#define MENUITEM_COMMIT ((void *)0x505710)
-#define MENUITEM_SELECT ((void *)0x5057C0)
-#define MENUITEM_IDENTIFY ((void *)0x505840)
-#define MENUITEM_FORWARDPOINTER ((void *)0x505850)
+#define MENUWINDOW_DRAW (FN(0x424280, MenuWindow_Draw))
+#define TASK_RUNCHILDREN (FN(0x488700, SubLevel_Run))
+#define MENUITEM_COMMIT (FN(0x505710, MenuItem_Commit))
+#define MENUITEM_SELECT (FN(0x5057C0, MenuItem_Select))
+#define MENUITEM_IDENTIFY (FN(0x505840, MenuItem_Identify))
+#define MENUITEM_FORWARDPOINTER (FN(0x505850, MenuItem_ForwardPointer))
 
 #define gMenuItemTaskType VAR(uint16_t, 0x54E708)
 #define gMenuItemTaskPointerEvent VAR(uint8_t, 0x54E70A)

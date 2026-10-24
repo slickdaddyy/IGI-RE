@@ -1,6 +1,11 @@
 #include "hook.h"
 #include "computer/computer.h"
 
+FN_EXTERN(ComputerLog_Create);
+FN_EXTERN(ComputerLog_Delete);
+FN_EXTERN(ComputerLog_Draw);
+FN_EXTERN(SubLevel_Run);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
@@ -8,10 +13,10 @@ ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t par
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 
 /* the handlers of "ComputerLog" come right after this range */
-#define LOG_CREATE ((void *)0x468920)
-#define LOG_RUN ((void *)0x488700)
-#define LOG_DELETE ((void *)0x468BB0)
-#define LOG_DRAW ((void *)0x468BC0)
+#define LOG_CREATE (FN(0x468920, ComputerLog_Create))
+#define LOG_RUN (FN(0x488700, SubLevel_Run))
+#define LOG_DELETE (FN(0x468BB0, ComputerLog_Delete))
+#define LOG_DRAW (FN(0x468BC0, ComputerLog_Draw))
 
 #define gLogType VAR(uint16_t, 0x5BDC98)
 

@@ -1,6 +1,8 @@
 #include "hook.h"
 #include "computer/computer.h"
 
+FN_EXTERN(Task_FalseHandler);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
@@ -16,7 +18,7 @@ ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 ORIG(0x504AD0, void, EditRigidObjAttachedToBone_Create, (void *task, void *arg));
 ORIG(0x504DB0, uint16_t, EditRigidObjAttachedToBone_GetType, (void));
 
-#define HANDLER_45F920 ((void *)0x45F920)
+#define HANDLER_45F920 (FN(0x45F920, Task_FalseHandler))
 
 /* a part attached to a human that is thrown off as a physics object */
 typedef struct HumanAttach {

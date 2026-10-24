@@ -3,6 +3,37 @@
 #include "aiaction/aiaction.h"
 #include "hook.h"
 
+FN_EXTERN(AIActivate_Start);
+FN_EXTERN(AICombatAnya_Start);
+FN_EXTERN(AICombatGuard_Start);
+FN_EXTERN(AICombatGunner_Start);
+FN_EXTERN(AICombatPatrol_Start);
+FN_EXTERN(AICombatRPG_Start);
+FN_EXTERN(AIDead_Start);
+FN_EXTERN(AIFallFlat_Start);
+FN_EXTERN(AIFireAtNode_Start);
+FN_EXTERN(AIFireAtTask_Start);
+FN_EXTERN(AIIdle_Start);
+FN_EXTERN(AIKickGrenade_Start);
+FN_EXTERN(AILookAtEvent_Start);
+FN_EXTERN(AIMoveToEvent_Start);
+FN_EXTERN(AIPatrol_Start);
+FN_EXTERN(AIPlayAnim_Start);
+FN_EXTERN(AIPlaySound_Start);
+FN_EXTERN(AIRunPanicking_Start);
+FN_EXTERN(AIRunToNode_Start);
+FN_EXTERN(AISetCombat_Start);
+FN_EXTERN(AIStunned_Start);
+FN_EXTERN(AIWalkToNode_Start);
+FN_EXTERN(HumanAI_AddSymbols);
+FN_EXTERN(HumanAI_Create);
+FN_EXTERN(HumanAI_Destroy);
+FN_EXTERN(HumanAI_GetParams);
+FN_EXTERN(HumanAI_OnEvent);
+FN_EXTERN(HumanAI_ParamsChanged);
+FN_EXTERN(HumanAI_RemoveSymbols);
+FN_EXTERN(HumanAI_Update);
+
 ORIG(0x440C00, char, AlarmControl_IsAlarm, (Task *t));
 ORIG(0x450C80, uint8_t, HumanAI_GetEventSlot, (void));
 ORIG(0x450D80, void, HumanAI_SendSimple, (Task *to, int event, int unk));
@@ -32,36 +63,36 @@ ORIG(0x509880, unsigned, AIGraph_GetStairCriteria, (void));
 ORIG(0x509890, char, GraphNode_HasCriteria, (void *node, unsigned mask));
 
 /* handlers of HumanAI and of the queued actions */
-#define HumanAI_Create ((void *)0x44F060)
-#define HumanAI_Run ((void *)0x44F410)
-#define HumanAI_Delete ((void *)0x44FFC0)
-#define HumanAI_OnEvent ((void *)0x450110)
-#define HumanAI_GetParams ((void *)0x4505C0)
-#define HumanAI_Changed ((void *)0x4505D0)
-#define HumanAI_OnLevelDA8 ((void *)0x450770)
-#define HumanAI_OnLevelDAC ((void *)0x4507D0)
-#define AI_DEAD ((void *)0x48AB70)
-#define AI_COMBAT_PATROL ((void *)0x48ABA0)
-#define AI_COMBAT_ANYA ((void *)0x48AC60)
-#define AI_COMBAT_RPG ((void *)0x48CB40)
-#define AI_COMBAT_GUARD ((void *)0x48D000)
-#define AI_COMBAT_GUNNER ((void *)0x48D2C0)
-#define AI_PLAY_ANIMATION ((void *)0x48DEA0)
-#define AI_PLAY_SOUND ((void *)0x48DF70)
-#define AI_MOVE_TO_EVENT ((void *)0x48DFE0)
-#define AI_LOOK_AT_EVENT ((void *)0x48E080)
-#define AI_STUNNED ((void *)0x48E130)
-#define AI_KICK_GRENADE ((void *)0x48E1E0)
-#define AI_RUN_PANICKING ((void *)0x48E270)
-#define AI_IDLE ((void *)0x48E510)
-#define AI_SET_COMBAT ((void *)0x48E540)
-#define AI_ACTIVATE ((void *)0x48E620)
-#define AI_PATROL ((void *)0x48E8C0)
-#define AI_FALL_FLAT ((void *)0x48EB40)
-#define AI_WALK_TO_NODE ((void *)0x48EBE0)
-#define AI_RUN_TO_NODE ((void *)0x48EC40)
-#define AI_FIRE_AT_NODE ((void *)0x48ECA0)
-#define AI_FIRE_AT_TASK ((void *)0x48EDE0)
+#define HumanAI_Create (FN(0x44F060, HumanAI_Create))
+#define HumanAI_Run (FN(0x44F410, HumanAI_Update))
+#define HumanAI_Delete (FN(0x44FFC0, HumanAI_Destroy))
+#define HumanAI_OnEvent (FN(0x450110, HumanAI_OnEvent))
+#define HumanAI_GetParams (FN(0x4505C0, HumanAI_GetParams))
+#define HumanAI_Changed (FN(0x4505D0, HumanAI_ParamsChanged))
+#define HumanAI_OnLevelDA8 (FN(0x450770, HumanAI_AddSymbols))
+#define HumanAI_OnLevelDAC (FN(0x4507D0, HumanAI_RemoveSymbols))
+#define AI_DEAD (FN(0x48AB70, AIDead_Start))
+#define AI_COMBAT_PATROL (FN(0x48ABA0, AICombatPatrol_Start))
+#define AI_COMBAT_ANYA (FN(0x48AC60, AICombatAnya_Start))
+#define AI_COMBAT_RPG (FN(0x48CB40, AICombatRPG_Start))
+#define AI_COMBAT_GUARD (FN(0x48D000, AICombatGuard_Start))
+#define AI_COMBAT_GUNNER (FN(0x48D2C0, AICombatGunner_Start))
+#define AI_PLAY_ANIMATION (FN(0x48DEA0, AIPlayAnim_Start))
+#define AI_PLAY_SOUND (FN(0x48DF70, AIPlaySound_Start))
+#define AI_MOVE_TO_EVENT (FN(0x48DFE0, AIMoveToEvent_Start))
+#define AI_LOOK_AT_EVENT (FN(0x48E080, AILookAtEvent_Start))
+#define AI_STUNNED (FN(0x48E130, AIStunned_Start))
+#define AI_KICK_GRENADE (FN(0x48E1E0, AIKickGrenade_Start))
+#define AI_RUN_PANICKING (FN(0x48E270, AIRunPanicking_Start))
+#define AI_IDLE (FN(0x48E510, AIIdle_Start))
+#define AI_SET_COMBAT (FN(0x48E540, AISetCombat_Start))
+#define AI_ACTIVATE (FN(0x48E620, AIActivate_Start))
+#define AI_PATROL (FN(0x48E8C0, AIPatrol_Start))
+#define AI_FALL_FLAT (FN(0x48EB40, AIFallFlat_Start))
+#define AI_WALK_TO_NODE (FN(0x48EBE0, AIWalkToNode_Start))
+#define AI_RUN_TO_NODE (FN(0x48EC40, AIRunToNode_Start))
+#define AI_FIRE_AT_NODE (FN(0x48ECA0, AIFireAtNode_Start))
+#define AI_FIRE_AT_TASK (FN(0x48EDE0, AIFireAtTask_Start))
 
 /* an entry of the event stack */
 typedef struct AIEvent {

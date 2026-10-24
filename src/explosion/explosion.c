@@ -3,6 +3,10 @@
 #include "hook.h"
 #include "explosion/explosion.h"
 
+FN_EXTERN(Explosion_CreateHandler);
+FN_EXTERN(Explosion_RunHandler);
+FN_EXTERN(FireBall_DeleteHandler);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
@@ -64,9 +68,9 @@ ORIG(0x503D50, void, SimpointObjContainer_SetAutoDelete, (void *group, int a));
 #define gViewPos VAR(Vec3d, 0xBCAB08)
 #define gRenderFuncs ((void (**)(RenderArg *))0xA94E84)
 
-#define Explosion_Create ((void *)0x480F30)
-#define Explosion_Run ((void *)0x480F40)
-#define FireBall_Delete ((void *)0x480F00)
+#define Explosion_Create (FN(0x480F30, Explosion_CreateHandler))
+#define Explosion_Run (FN(0x480F40, Explosion_RunHandler))
+#define FireBall_Delete (FN(0x480F00, FireBall_DeleteHandler))
 
 static const double kOne = 1.0;
 static const double kZeroD = 0.0;

@@ -10,6 +10,20 @@
 #include "hook.h"
 #include "igi.h"
 
+FN_EXTERN(AICombat_End);
+FN_EXTERN(AICombat_KneelFire);
+FN_EXTERN(AICombat_KneelReload);
+FN_EXTERN(AICombat_KneelRollLeft);
+FN_EXTERN(AICombat_KneelRollRight);
+FN_EXTERN(AICombat_LieDownFire);
+FN_EXTERN(AICombat_LieDownReload);
+FN_EXTERN(AICombat_StandCloseCombat);
+FN_EXTERN(AICombat_StandFire);
+FN_EXTERN(AICombat_StandReload);
+FN_EXTERN(AICombat_StandRollLeft);
+FN_EXTERN(AICombat_StandRollRight);
+FN_EXTERN(AICombat_StandThrowGrenade);
+
 typedef struct Vec3d {
     double x, y, z;
 } Vec3d;
@@ -319,19 +333,19 @@ _Static_assert(offsetof(HumanAI, cover) == 0x3EB0, "cover");
 #define CTRL_COMBAT 26
 
 /* the combat moves and the end callback (src/aitask) */
-#define AICombat_End ((AIActionFn)0x48D7D0)
-#define AICombat_StandRollLeft ((AIStepFn)0x48D830)
-#define AICombat_StandRollRight ((AIStepFn)0x48D870)
-#define AICombat_StandFire ((AIStepFn)0x48D8B0)
-#define AICombat_StandReload ((AIStepFn)0x48DB10)
-#define AICombat_StandCloseCombat ((AIStepFn)0x48DBB0)
-#define AICombat_StandThrowGrenade ((AIStepFn)0x48DBF0)
-#define AICombat_KneelRollLeft ((AIStepFn)0x48DC30)
-#define AICombat_KneelRollRight ((AIStepFn)0x48DC80)
-#define AICombat_KneelFire ((AIStepFn)0x48DCD0)
-#define AICombat_KneelReload ((AIStepFn)0x48DD10)
-#define AICombat_LieDownFire ((AIStepFn)0x48DDC0)
-#define AICombat_LieDownReload ((AIStepFn)0x48DE00)
+#define AICombat_End ((AIActionFn)FN(0x48D7D0, AICombat_End))
+#define AICombat_StandRollLeft ((AIStepFn)FN(0x48D830, AICombat_StandRollLeft))
+#define AICombat_StandRollRight ((AIStepFn)FN(0x48D870, AICombat_StandRollRight))
+#define AICombat_StandFire ((AIStepFn)FN(0x48D8B0, AICombat_StandFire))
+#define AICombat_StandReload ((AIStepFn)FN(0x48DB10, AICombat_StandReload))
+#define AICombat_StandCloseCombat ((AIStepFn)FN(0x48DBB0, AICombat_StandCloseCombat))
+#define AICombat_StandThrowGrenade ((AIStepFn)FN(0x48DBF0, AICombat_StandThrowGrenade))
+#define AICombat_KneelRollLeft ((AIStepFn)FN(0x48DC30, AICombat_KneelRollLeft))
+#define AICombat_KneelRollRight ((AIStepFn)FN(0x48DC80, AICombat_KneelRollRight))
+#define AICombat_KneelFire ((AIStepFn)FN(0x48DCD0, AICombat_KneelFire))
+#define AICombat_KneelReload ((AIStepFn)FN(0x48DD10, AICombat_KneelReload))
+#define AICombat_LieDownFire ((AIStepFn)FN(0x48DDC0, AICombat_LieDownFire))
+#define AICombat_LieDownReload ((AIStepFn)FN(0x48DE00, AICombat_LieDownReload))
 
 #define gDetectedSounds ((const char **)0x5416D0)
 #define gLastDetectedTick VAR(int, 0x5416CC)

@@ -3,6 +3,9 @@
 #include "hook.h"
 #include "statgun/statgun.h"
 
+FN_EXTERN(GunMovingPart_RenderHandler);
+FN_EXTERN(Human_ClearResult);
+
 /* "GunCABarrel" and "GunCAClip" (0x138 bytes each), MagicObj parts */
 typedef struct GunCAPart {
     RigidObj obj;
@@ -42,8 +45,8 @@ _Static_assert(offsetof(GunCAArgs, unk88) == 0x88, "GunCAArgs");
 #define gGunCABarrelType VAR(uint16_t, 0x5402FE)
 #define gGunCAMagic VAR(float, 0x534130)
 
-#define HANDLER_45E3D0 ((void *)0x45E3D0)
-#define HANDLER_477B10 ((void *)0x477B10)
+#define HANDLER_45E3D0 (FN(0x45E3D0, Human_ClearResult))
+#define HANDLER_477B10 (FN(0x477B10, GunMovingPart_RenderHandler))
 
 ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));

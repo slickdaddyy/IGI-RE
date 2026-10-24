@@ -4,6 +4,8 @@
 #include "igi.h"
 #include "sound/sound.h"
 
+FN_EXTERN(SplineObjSegment_Hit);
+
 ORIG(0x49A010, void, SplineCache_Remove, (void *obj));
 ORIG(0x49A050, float *, SplineMesh_GetVerts, (void *obj, int model, int part, int unk3, int unk4, int *count));
 ORIG(0x4B32B0, long double, Vec3d_Distance, (const Vec3d *a, const Vec3d *b));
@@ -24,7 +26,7 @@ ORIG(0x4E4530, void, SplineObjSegment_Setup, (void *o, Vec3d *from, Vec3d *to, f
                                               char rigid, char reversed, int segments, int unk,
                                               const char *model));
 
-#define SplineObjSegment_Hit ((void *)0x4E16E0)
+#define SplineObjSegment_Hit (FN(0x4E16E0, SplineObjSegment_Hit))
 
 typedef void (*RenderFn)(void *arg);
 #define gRenderFuncs ((RenderFn *)0xA94E84)

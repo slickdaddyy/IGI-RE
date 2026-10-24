@@ -2,6 +2,8 @@
 
 #include "freecam/freecam.h"
 
+FN_EXTERN(HitZone_GetArgSize);
+
 /* BoneMagicObj: an animated bone model fixed to a parent object. It follows
    the parent's moves at an offset and adds the animation's root motion. */
 
@@ -94,7 +96,7 @@ ORIG(0x4D3210, void, BoneObj_GetEvents, (void *unk, void *anim));
 
 #define gBoneMagicObjType VAR(uint16_t, 0x54F848)
 #define gBoneMagicObjTypeWord VAR(uint32_t, 0x54F848)
-#define kSomeHandler427F80 ((void *)0x427F80)
+#define kSomeHandler427F80 (FN(0x427F80, HitZone_GetArgSize))
 
 void BoneMagicObj_Run(BoneMagicObj *o)
 {

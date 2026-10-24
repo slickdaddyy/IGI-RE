@@ -6,6 +6,8 @@
 
 #include "igi.h"
 
+FN_EXTERN(Task_Nothing);
+
 /* the first 0x20 bytes of every task */
 typedef struct Task {
     struct Task *next;
@@ -40,7 +42,7 @@ typedef struct Matrix {
 typedef void *ParamTable;
 
 #define TASK_NO_TYPE 0x181
-#define TASK_NOTHING ((void *)0x4D3710)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
 #define gTaskStack ((Task **)0xAFA6E0)

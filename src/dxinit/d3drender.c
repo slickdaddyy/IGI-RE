@@ -5,6 +5,26 @@
 #include "hook.h"
 #include "dxinit/dxinit.h"
 
+FN_EXTERN(Direct3DRender_AlphaBlendOff);
+FN_EXTERN(Direct3DRender_SetLightmapStages);
+FN_EXTERN(Direct3DRender_SetLitAlphaState);
+FN_EXTERN(Direct3DRender_SetLitState);
+FN_EXTERN(Direct3DRender_SetTextureStages);
+FN_EXTERN(Direct3DRender_SetUnlitAlphaState);
+FN_EXTERN(Direct3DRender_SetUnlitState);
+
+FN_EXTERN(Direct3DRender_CopyUV);
+FN_EXTERN(Direct3DRender_DeinitModels);
+FN_EXTERN(Direct3DRender_DrawBoneMesh);
+FN_EXTERN(Direct3DRender_DrawRigidMesh);
+FN_EXTERN(Direct3DRender_DrawSplineMesh);
+FN_EXTERN(Direct3DRender_ExcludeObject);
+FN_EXTERN(Direct3DRender_InitModels);
+FN_EXTERN(Direct3DRender_LoadModel);
+FN_EXTERN(Direct3DRender_RestoreVertexBuffers);
+FN_EXTERN(Direct3DRender_SplineNearZ);
+FN_EXTERN(Direct3DRender_UnloadModel);
+
 typedef struct DynVB {
     IDirect3DVertexBuffer7 *vb;
     int size;
@@ -92,15 +112,15 @@ ORIG(0x4E5350, uint16_t, SplineObjSegment_GetType, (void));
 #define kOne VAR(const float, 0x5333E0)
 
 /* render functions and callbacks that live past this range */
-#define Direct3D_DrawRigidMesh ((void *)0x49DF60)
-#define Direct3D_DrawBoneMesh ((void *)0x49F700)
-#define Direct3D_DrawSplineMesh ((void *)0x49C850)
-#define Direct3D_ConvertUV ((void *)0x49FAF0)
-#define Direct3D_DrawLightmapMesh ((void *)0x49FEB0)
-#define Direct3D_ModelLoad ((void *)0x49FB10)
-#define Direct3D_ModelUnload ((void *)0x49FE60)
-#define Direct3D_ModelInit ((void *)0x49C7D0)
-#define Direct3D_ModelDeinit ((void *)0x49C800)
+#define Direct3D_DrawRigidMesh (FN(0x49DF60, Direct3DRender_DrawRigidMesh))
+#define Direct3D_DrawBoneMesh (FN(0x49F700, Direct3DRender_DrawBoneMesh))
+#define Direct3D_DrawSplineMesh (FN(0x49C850, Direct3DRender_DrawSplineMesh))
+#define Direct3D_ConvertUV (FN(0x49FAF0, Direct3DRender_CopyUV))
+#define Direct3D_DrawLightmapMesh (FN(0x49FEB0, Direct3DRender_ExcludeObject))
+#define Direct3D_ModelLoad (FN(0x49FB10, Direct3DRender_LoadModel))
+#define Direct3D_ModelUnload (FN(0x49FE60, Direct3DRender_UnloadModel))
+#define Direct3D_ModelInit (FN(0x49C7D0, Direct3DRender_InitModels))
+#define Direct3D_ModelDeinit (FN(0x49C800, Direct3DRender_DeinitModels))
 
 /* e^x the way the original computes it: 2^(x * log2 e) with frndint, f2xm1 and fscale */
 static __attribute__((noinline)) long double x87_exp(long double x)
@@ -358,16 +378,16 @@ void Direct3DRender_Init(void)
         gMeshBatches[i].total = 0;
     }
     gMeshVBCount = 0;
-    VAR(int, 0x7205B0) = PtrList_Add(gD3DListA, (void *)0x49D730);
-    VAR(int, 0x7AC09C) = PtrList_Add(gD3DListB, (void *)0x49DB10);
-    VAR(int, 0x7234B8) = PtrList_Add(gD3DListC, (void *)0x49D480);
-    VAR(int, 0x723504) = PtrList_Add(gD3DListA, (void *)0x49D960);
-    VAR(int, 0x7ADDD4) = PtrList_Add(gD3DListC, (void *)0x49D810);
-    VAR(int, 0x7205B8) = PtrList_Add(gD3DListB, (void *)0x49DB10);
-    VAR(int, 0x7205BC) = PtrList_Add(gD3DListC, (void *)0x49DB20);
-    VAR(int, 0x723508) = PtrList_Add(gD3DListC, (void *)0x49DDF0);
-    Direct3D_AddRestoreCallback((void *)0x49BD30);
+    VAR(int, 0x7205B0) = PtrList_Add(gD3DListA, FN(0x49D730, Direct3DRender_SetTextureStages));
+    VAR(int, 0x7AC09C) = PtrList_Add(gD3DListB, FN(0x49DB10, Direct3DRender_AlphaBlendOff));
+    VAR(int, 0x7234B8) = PtrList_Add(gD3DListC, FN(0x49D480, Direct3DRender_SetLitState));
+    VAR(int, 0x723504) = PtrList_Add(gD3DListA, FN(0x49D960, Direct3DRender_SetLightmapStages));
+    VAR(int, 0x7ADDD4) = PtrList_Add(gD3DListC, FN(0x49D810, Direct3DRender_SetUnlitState));
+    VAR(int, 0x7205B8) = PtrList_Add(gD3DListB, FN(0x49DB10, Direct3DRender_AlphaBlendOff));
+    VAR(int, 0x7205BC) = PtrList_Add(gD3DListC, FN(0x49DB20, Direct3DRender_SetLitAlphaState));
+    VAR(int, 0x723508) = PtrList_Add(gD3DListC, FN(0x49DDF0, Direct3DRender_SetUnlitAlphaState));
+    Direct3D_AddRestoreCallback(FN(0x49BD30, Direct3DRender_RestoreVertexBuffers));
     slot = QCube_GetNearClipEvent();
-    TaskType_SetHandler(SplineObjSegment_GetType(), slot, (void *)0x49BE10);
+    TaskType_SetHandler(SplineObjSegment_GetType(), slot, FN(0x49BE10, Direct3DRender_SplineNearZ));
 }
 HOOK(0x49BB40, Direct3DRender_Init);

@@ -4,6 +4,9 @@
 #include "igi.h"
 #include "binocular/binocular.h"
 
+FN_EXTERN(ProxMine_Move);
+FN_EXTERN(RocketPod_GetArgSize);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
@@ -22,8 +25,8 @@ ORIG(0x4F1FE0, uint8_t, Weapon_GetMoveEvent, (void));
 ORIG(0x4FE650, char *, TagItem_AddReal32, (void *config, const char *name, float value));
 ORIG(0x4FE730, char *, TagItem_Find, (void *config, const char *name));
 
-#define WEAPON_HANDLER_4754C0 ((void *)0x4754C0)
-#define ROCKETPOD_GETARGSIZE ((void *)0x427D70)
+#define WEAPON_HANDLER_4754C0 (FN(0x4754C0, ProxMine_Move))
+#define ROCKETPOD_GETARGSIZE (FN(0x427D70, RocketPod_GetArgSize))
 
 #define gMedipackType VAR(uint16_t, 0x5BE334)
 

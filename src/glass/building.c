@@ -3,6 +3,9 @@
 #include "glass/glass.h"
 #include "hook.h"
 
+FN_EXTERN(Terminal_MapHandler);
+FN_EXTERN(sub_416AB0);
+
 ORIG(0x416880, uint8_t, Game_GetEvent13, (void));
 ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
@@ -30,8 +33,8 @@ _Static_assert(sizeof(Building) == 0x1F0, "Building");
 #define gBuildingType VAR(uint16_t, 0x57C200)
 #define gBuildingParams VAR(void *, 0x57C204)
 
-#define sub_416AB0 ((void *)0x416AB0)
-#define Terminal_MapHandler ((void *)0x443DC0)
+#define sub_416AB0 (FN(0x416AB0, sub_416AB0))
+#define Terminal_MapHandler (FN(0x443DC0, Terminal_MapHandler))
 
 void Building_Create(Building *b, void *arg);
 void Building_Delete(Building *b);

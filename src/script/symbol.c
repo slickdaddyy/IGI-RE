@@ -8,18 +8,25 @@
 #include "script/symbol.h"
 #include "script/symtab.h"
 
+FN_EXTERN(Script_Bool8Value);
+FN_EXTERN(Script_ConstantValue);
+FN_EXTERN(Script_Int16Value);
+FN_EXTERN(Script_IntValue);
+FN_EXTERN(Script_RealValue);
+FN_EXTERN(Script_StringValue);
+
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
 ORIG(0x4C0360, SymbolTable *, SymbolTable_Create, (unsigned int count));
 ORIG(0x4C03C0, void, SymbolTable_Destroy, (SymbolTable *table));
 ORIG(0x4C0460, void, SymbolTable_Remove, (SymbolTable *table, const char *name));
 
 /* symbols keep the original handler addresses, which are hooked to the functions below */
-#define IntValueHandler ((void *)0x4B7EA0)
-#define Bool8ValueHandler ((void *)0x4B7F00)
-#define Int16ValueHandler ((void *)0x4B7F60)
-#define RealValueHandler ((void *)0x4B7FE0)
-#define StringValueHandler ((void *)0x4B8060)
-#define ConstantValueHandler ((void *)0x4B8830)
+#define IntValueHandler (FN(0x4B7EA0, Script_IntValue))
+#define Bool8ValueHandler (FN(0x4B7F00, Script_Bool8Value))
+#define Int16ValueHandler (FN(0x4B7F60, Script_Int16Value))
+#define RealValueHandler (FN(0x4B7FE0, Script_RealValue))
+#define StringValueHandler (FN(0x4B8060, Script_StringValue))
+#define ConstantValueHandler (FN(0x4B8830, Script_ConstantValue))
 
 #define gScriptRefCount VAR(unsigned int, 0xA43E8C)
 #define gScriptRefs VAR(List, 0xA43E90)

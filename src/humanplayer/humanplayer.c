@@ -9,6 +9,18 @@
 #include "igi.h"
 #include "humanplayer/humanplayer.h"
 
+FN_EXTERN(HumanPlayer_BlastHandler);
+FN_EXTERN(HumanPlayer_FenceHandler);
+FN_EXTERN(HumanPlayer_FlashbangHandler);
+FN_EXTERN(HumanPlayer_HitHandler);
+FN_EXTERN(HumanPlayer_InputChannelHandler);
+FN_EXTERN(HumanPlayer_PunchHandler);
+FN_EXTERN(HumanPlayer_ReadInputHandler);
+FN_EXTERN(HumanPlayer_RenderHandler);
+FN_EXTERN(Human_DeadRun);
+FN_EXTERN(Human_RunBase);
+FN_EXTERN(sub_413730);
+
 typedef void (*TaskHandler)(void *task, void *arg);
 typedef void (*TaskHandler1)(void *task);
 
@@ -174,17 +186,17 @@ ORIG(0x47E990, uint8_t, FlashBang_GetEvent, (void));
 ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 
 /* handlers registered by HumanPlayer_Open that live outside this file */
-#define Human_RunBase ((void *)0x454EE0)
-#define sub_4123F0 ((void *)0x4123F0)
-#define sub_412420 ((void *)0x412420)
-#define sub_412440 ((void *)0x412440)
-#define sub_412990 ((void *)0x412990)
-#define sub_412CE0 ((void *)0x412CE0)
-#define sub_412F80 ((void *)0x412F80)
-#define sub_413090 ((void *)0x413090)
-#define sub_413120 ((void *)0x413120)
-#define sub_413730 ((void *)0x413730)
-#define HumanPlayer_DeadRun ((StateFn)0x45C740)
+#define Human_RunBase (FN(0x454EE0, Human_RunBase))
+#define sub_4123F0 (FN(0x4123F0, HumanPlayer_InputChannelHandler))
+#define sub_412420 (FN(0x412420, HumanPlayer_ReadInputHandler))
+#define sub_412440 (FN(0x412440, HumanPlayer_HitHandler))
+#define sub_412990 (FN(0x412990, HumanPlayer_BlastHandler))
+#define sub_412CE0 (FN(0x412CE0, HumanPlayer_PunchHandler))
+#define sub_412F80 (FN(0x412F80, HumanPlayer_FenceHandler))
+#define sub_413090 (FN(0x413090, HumanPlayer_FlashbangHandler))
+#define sub_413120 (FN(0x413120, HumanPlayer_RenderHandler))
+#define sub_413730 (FN(0x413730, sub_413730))
+#define HumanPlayer_DeadRun ((StateFn)FN(0x45C740, Human_DeadRun))
 
 #define gTaskHandlers ((void **(*)[0x180])0xA96AE0)
 #define TASK_HANDLER(slot, type) (((void **)0xA96AE0)[(slot) * 0x180 + (type)])

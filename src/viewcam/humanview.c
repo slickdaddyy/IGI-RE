@@ -9,6 +9,10 @@
 #include "igi.h"
 #include "viewcam/viewcam.h"
 
+FN_EXTERN(HumanAttach_Detect);
+FN_EXTERN(SubLevel_Run);
+FN_EXTERN(Task_FalseHandler);
+
 typedef struct Vec3d {
     double x, y, z;
 } Vec3d;
@@ -89,9 +93,9 @@ ORIG(0x4F2310, void, Weapon_Move, (Task *w, double *pos, Rot *m));
 #define gHumanViewType VAR(uint16_t, 0x5BDC40)
 #define gHumanMaskType VAR(int, 0x5BDC3C)
 
-#define TASK_RUN_CHILDREN ((void *)0x488700)
-#define HANDLER_45F920 ((void *)0x45F920)
-#define HANDLER_465B80 ((void *)0x465B80)
+#define TASK_RUN_CHILDREN (FN(0x488700, SubLevel_Run))
+#define HANDLER_45F920 (FN(0x45F920, Task_FalseHandler))
+#define HANDLER_465B80 (FN(0x465B80, HumanAttach_Detect))
 
 #define PI_F 0x1.921fb6p+1f
 #define HALF_PI_F 0x1.921fb6p+0f

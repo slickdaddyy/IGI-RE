@@ -9,6 +9,16 @@
 #include "igi.h"
 #include "soldier/soldier.h"
 
+FN_EXTERN(SoldierPistol_BlastHandler);
+FN_EXTERN(SoldierPistol_HitUpdate);
+FN_EXTERN(SoldierPistol_PunchHandler);
+FN_EXTERN(SoldierPistol_State19Update);
+FN_EXTERN(SoldierPistol_State22Update);
+FN_EXTERN(SoldierPistol_State28Update);
+FN_EXTERN(SoldierRPG_ParamsChanged);
+FN_EXTERN(Soldier_DeleteHandler);
+FN_EXTERN(Task_Nothing);
+
 typedef struct Vec3d {
     double x, y, z;
 } Vec3d;
@@ -124,11 +134,11 @@ ORIG(0x4F2390, void, Weapon_Drop, (void *weapon));
 ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 
 /* handlers of the other soldier types this one shares */
-#define Soldier_DeleteHandler ((void *)0x459EC0)
-#define SoldierRPG_ParamsChanged ((void *)0x456E50)
-#define SoldierPistol_BlastHandler ((void *)0x45A3D0)
-#define SoldierPistol_PunchHandler ((void *)0x45A5E0)
-#define Human_Handler4D3710 ((void *)0x4D3710)
+#define Soldier_DeleteHandler (FN(0x459EC0, Soldier_DeleteHandler))
+#define SoldierRPG_ParamsChanged (FN(0x456E50, SoldierRPG_ParamsChanged))
+#define SoldierPistol_BlastHandler (FN(0x45A3D0, SoldierPistol_BlastHandler))
+#define SoldierPistol_PunchHandler (FN(0x45A5E0, SoldierPistol_PunchHandler))
+#define Human_Handler4D3710 (FN(0x4D3710, Task_Nothing))
 
 #define gSoldierParams VAR(void *, 0x5BDAB4)
 #define gSoldierType VAR(uint16_t, 0x5BDABC)
@@ -142,10 +152,10 @@ ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 #define gSoldierSpeeds ((void *)0x53F1D0)
 
 /* states entered from code in this file whose handlers live elsewhere */
-#define Soldier_CrouchRun ((HumanStateFn)0x458BF0)
-#define Soldier_CrouchFireRun ((HumanStateFn)0x458EB0)
-#define Soldier_ReloadRun ((HumanStateFn)0x459180)
-#define Soldier_HitRun ((HumanStateFn)0x4592F0)
+#define Soldier_CrouchRun ((HumanStateFn)FN(0x458BF0, SoldierPistol_State19Update))
+#define Soldier_CrouchFireRun ((HumanStateFn)FN(0x458EB0, SoldierPistol_State22Update))
+#define Soldier_ReloadRun ((HumanStateFn)FN(0x459180, SoldierPistol_State28Update))
+#define Soldier_HitRun ((HumanStateFn)FN(0x4592F0, SoldierPistol_HitUpdate))
 
 static const double kUseOffset = 2867.2;
 static const float kPi = 0x1.921fb6p+1f;

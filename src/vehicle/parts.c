@@ -4,6 +4,10 @@
 #include "igi.h"
 #include "vehicle/vehicle.h"
 
+FN_EXTERN(EditorMagicObj_GetArgSize);
+FN_EXTERN(Rotor_ForwardEvent9);
+FN_EXTERN(Task_FalseHandler);
+
 ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
 ORIG(0x4B3BA0, void, Matrix_SetRotY, (Matrix *m, float a));
 ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Matrix *m, float a));
@@ -62,9 +66,9 @@ _Static_assert(offsetof(Vehicle, targets) == 0x8D8, "Vehicle");
 #define gRocketPodType VAR(uint16_t, 0x53BB3C)
 #define gHitZoneType VAR(uint16_t, 0x53BB6C)
 
-#define HANDLER_42D9B0 ((void *)0x42D9B0)
-#define HANDLER_45F920 ((void *)0x45F920)
-#define HANDLER_51BAA0 ((void *)0x51BAA0)
+#define HANDLER_42D9B0 (FN(0x42D9B0, Rotor_ForwardEvent9))
+#define HANDLER_45F920 (FN(0x45F920, Task_FalseHandler))
+#define HANDLER_51BAA0 (FN(0x51BAA0, EditorMagicObj_GetArgSize))
 
 static const float kZeroF = 0.0f;
 static const float kDegToRad = 0x1.1df46ap-6f;

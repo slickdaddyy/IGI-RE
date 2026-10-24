@@ -4,6 +4,8 @@
 #include "hook.h"
 #include "tagitem/tagitem.h"
 
+FN_EXTERN(Task_Nothing);
+
 /* "TagItem": a named value task hung under another task, read back by name. */
 
 ORIG(0x4012A0, Task *, Task_New, (Task *parent, uint16_t type, void *arg));
@@ -27,7 +29,7 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *extra));
 
-#define HANDLER_4D3710 ((void *)0x4D3710)
+#define HANDLER_4D3710 (FN(0x4D3710, Task_Nothing))
 
 #define gTagItemReal32Type VAR(uint16_t, 0xA7A4E0)
 #define gTagItemString16Params VAR(void *, 0xA7A4E4)

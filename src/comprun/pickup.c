@@ -4,6 +4,9 @@
 #include "igi.h"
 #include "comprun/comprun.h"
 
+FN_EXTERN(Task_FalseHandler);
+FN_EXTERN(Terminal_MapHandler);
+
 ORIG(0x4012A0, Task *, Task_New, (void *parent, int type, void *arg));
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -75,8 +78,8 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 ORIG(0x4F1E20, void *, Param_EnumString32, (void));
 
-#define Task_HandlerNothing45F920 ((void *)0x45F920)
-#define ComputerObject_Draw443DC0 ((void *)0x443DC0)
+#define Task_HandlerNothing45F920 (FN(0x45F920, Task_FalseHandler))
+#define ComputerObject_Draw443DC0 (FN(0x443DC0, Terminal_MapHandler))
 
 /* "GenericPickup" (0x120 bytes), a model that disappears when touched */
 typedef struct GenericPickup {

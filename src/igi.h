@@ -17,4 +17,17 @@
 #endif
 #define VAR(type, addr) (*(type *)(uintptr_t)(addr))
 
+/* A rewritten function used by address (handler tables). The DLL keeps the original number,
+   which its tests compare; the standalone exe takes the function. FN_EXTERN(name) at file
+   scope declares it by its assembler name, so no prototype has to be in scope. FN_ASM is
+   the same as an immediate operand for basic asm. */
+#define FN_EXTERN(name) extern char fn_##name[] __asm__("_" #name)
+#ifdef IGI_STANDALONE
+#define FN(addr, name) ((void *)fn_##name)
+#define FN_ASM(addr, name) "$_" #name
+#else
+#define FN(addr, name) ((void *)(uintptr_t)(addr))
+#define FN_ASM(addr, name) "$" #addr
+#endif
+
 #endif

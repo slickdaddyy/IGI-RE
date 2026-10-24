@@ -4,6 +4,19 @@
 #include "igi.h"
 #include "fxobj/fxobj.h"
 
+FN_EXTERN(crt_CIfmod);
+
+FN_EXTERN(AlarmLight_Activate);
+FN_EXTERN(AlarmLight_Blast);
+FN_EXTERN(AlarmLight_Changed);
+FN_EXTERN(AlarmLight_Create);
+FN_EXTERN(AlarmLight_Deactivate);
+FN_EXTERN(AlarmLight_Delete);
+FN_EXTERN(AlarmLight_GetParams);
+FN_EXTERN(AlarmLight_Hit);
+FN_EXTERN(AlarmLight_Run);
+FN_EXTERN(VehiclePart_Delete);
+
 ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int i));
 ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
 ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
@@ -23,16 +36,16 @@ ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
 ORIG(0x4E0830, uint16_t, SectorInteriorObject_GetType, (void));
 ORIG(0x4F0F70, void *, Param_Real32x9, (void));
 
-#define AlarmLight_Create ((void *)0x43A0E0)
-#define AlarmLight_Run ((void *)0x43A270)
-#define AlarmLight_Delete ((void *)0x43A3C0)
-#define AlarmLight_GetParams ((void *)0x43A440)
-#define AlarmLight_Changed ((void *)0x43A450)
-#define AlarmLight_Hit ((void *)0x43A5E0)
-#define AlarmLight_Blast ((void *)0x43A660)
-#define AlarmLight_Activate ((void *)0x43A710)
-#define AlarmLight_Deactivate ((void *)0x43A790)
-#define VehiclePart_Delete ((void *)0x426860)
+#define AlarmLight_Create (FN(0x43A0E0, AlarmLight_Create))
+#define AlarmLight_Run (FN(0x43A270, AlarmLight_Run))
+#define AlarmLight_Delete (FN(0x43A3C0, AlarmLight_Delete))
+#define AlarmLight_GetParams (FN(0x43A440, AlarmLight_GetParams))
+#define AlarmLight_Changed (FN(0x43A450, AlarmLight_Changed))
+#define AlarmLight_Hit (FN(0x43A5E0, AlarmLight_Hit))
+#define AlarmLight_Blast (FN(0x43A660, AlarmLight_Blast))
+#define AlarmLight_Activate (FN(0x43A710, AlarmLight_Activate))
+#define AlarmLight_Deactivate (FN(0x43A790, AlarmLight_Deactivate))
+#define VehiclePart_Delete (FN(0x426860, VehiclePart_Delete))
 
 /* a rotating warning light ("AlarmLight", 0x1F8 bytes) */
 typedef struct AlarmLight {
@@ -85,7 +98,7 @@ static inline long double crt_fmod(long double x, long double y)
 {
     long double r;
 
-    __asm__ volatile("call *%3" : "=t"(r) : "0"(y), "u"(x), "r"(0x4A56DA) : "st(1)", "eax", "ecx", "edx", "memory");
+    __asm__ volatile("call *%3" : "=t"(r) : "0"(y), "u"(x), "r"(FN(0x4A56DA, crt_CIfmod)) : "st(1)", "eax", "ecx", "edx", "memory");
     return r;
 }
 

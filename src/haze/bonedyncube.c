@@ -5,6 +5,11 @@
 #include "igi.h"
 #include "haze/haze.h"
 
+FN_EXTERN(BoneDynCubeObj_CollLine);
+FN_EXTERN(BoneDynCubeObj_EnterHandler);
+FN_EXTERN(BoneDynCubeObj_LineHit);
+FN_EXTERN(Vehicle_CollFilter);
+
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
@@ -20,10 +25,10 @@ ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D2D60, void, BoneObj_Create, (BoneObj *obj, int skel));
 ORIG(0x4D2E40, void, BoneObj_Free, (BoneObj *obj));
 
-#define BONE_ENTER_HANDLER ((void *)0x5124C0)
-#define BONE_HANDLER_4D7620 ((void *)0x4D7620)
-#define BONE_HANDLER_4D88D0 ((void *)0x4D88D0)
-#define BONE_HANDLER_4F4390 ((void *)0x4F4390)
+#define BONE_ENTER_HANDLER (FN(0x5124C0, BoneDynCubeObj_EnterHandler))
+#define BONE_HANDLER_4D7620 (FN(0x4D7620, BoneDynCubeObj_LineHit))
+#define BONE_HANDLER_4D88D0 (FN(0x4D88D0, BoneDynCubeObj_CollLine))
+#define BONE_HANDLER_4F4390 (FN(0x4F4390, Vehicle_CollFilter))
 
 #define gBoneType VAR(uint16_t, 0x548618)
 #define gBoneEvent VAR(uint8_t, 0x54861A)

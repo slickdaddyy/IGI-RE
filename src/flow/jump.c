@@ -15,7 +15,7 @@ typedef void (*GameRunHandler)(void *task);
 /* tail jump into the exe's _setjmp3 (0x4A5000), so it records our own frame */
 static int __attribute__((naked, noinline, returns_twice)) Crt_SetJmp3(void *buf, int count)
 {
-    __asm__("movl $0x4A5000, %eax\n\tjmp *%eax");
+    __asm__("movl " FN_ASM(0x4A5000, crt_setjmp3) ", %eax\n\tjmp *%eax");
 }
 
 void __attribute__((optimize("no-omit-frame-pointer"))) Game_Update(void)

@@ -5,6 +5,10 @@
 #include "hook.h"
 #include "door/door.h"
 
+FN_EXTERN(Param_Three);
+FN_EXTERN(Task_Nothing);
+FN_EXTERN(Terminal_MapHandler);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x4015F0, void, Task_Delete, (void *task));
@@ -115,9 +119,9 @@ _Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 #define kUseMaxX VAR(double, 0x5338A8)
 #define kUseMaxY VAR(double, 0x533498)
 
-#define Terminal_MapHandler ((void *)0x443DC0)
-#define sub_4EFB00 ((void *)0x4EFB00)
-#define TASK_NOTHING ((void *)0x4D3710)
+#define Terminal_MapHandler (FN(0x443DC0, Terminal_MapHandler))
+#define sub_4EFB00 (FN(0x4EFB00, Param_Three))
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 #define FIELD(name) ((void *)offsetof(Door, name))
 

@@ -2,6 +2,8 @@
 #include "igi.h"
 #include "define/define.h"
 
+FN_EXTERN(Task_Nothing);
+
 /* the Scene of notes/transctx.md, only its rectangle is used here */
 typedef struct FadeScene {
     void *next;
@@ -29,7 +31,7 @@ _Static_assert(sizeof(FadeOut) == 0x7C, "FadeOut");
 #define gGlowTaskType VAR(uint16_t, 0x54DA50)
 #define gSceneRect ((const float *)0xBCABB8)
 
-#define TASK_NOTHING ((void *)0x4D3710)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 ORIG(0x497570, void, Scene_Init, (FadeScene *s, int queues));
 ORIG(0x4975F0, void, Scene_Free, (FadeScene *s));

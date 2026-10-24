@@ -2,6 +2,8 @@
 #include "hook.h"
 #include "terredit/terredit.h"
 
+FN_EXTERN(VehiclePart_Delete);
+
 /* "DiscardTerrain": a cube of the dynamic cube tree that tells the qcube
    walk to drop the terrain inside it, and takes collision points that fall
    inside it away from the terrain. */
@@ -33,7 +35,7 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
-#define VehiclePart_Delete ((void *)0x426860)
+#define VehiclePart_Delete (FN(0x426860, VehiclePart_Delete))
 
 typedef struct DiscardTerrain {
     Task task;

@@ -4,6 +4,8 @@
 #include "igi.h"
 #include "comprun/comprun.h"
 
+FN_EXTERN(Task_FalseHandler);
+
 ORIG(0x4012A0, Task *, Task_New, (void *parent, int type, void *arg));
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -63,7 +65,7 @@ _Static_assert(sizeof(Computer) == 0x198, "Computer");
 #define gComputerMapEnabled VAR(int, 0x53FD98)
 #define gComputerSaved499 VAR(int, 0x53FD9C)
 
-#define Task_HandlerNothing45F920 ((void *)0x45F920)
+#define Task_HandlerNothing45F920 (FN(0x45F920, Task_FalseHandler))
 
 static const float kForward = 532.48f;
 static const float kUp = 40.96f;

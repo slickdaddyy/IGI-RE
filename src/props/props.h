@@ -7,6 +7,8 @@
 
 #include "igi.h"
 
+FN_EXTERN(Task_Nothing);
+
 /* the first 0x20 bytes of every task */
 typedef struct Task {
     struct Task *next;
@@ -122,7 +124,7 @@ _Static_assert(offsetof(UseQuery, range) == 0x78, "UseQuery");
 #define gTaskStackTop VAR(int, 0xAFA7E0)
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
-#define TASK_NOTHING ((void *)0x4D3710)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* exe constants, read in place */
 #define kZero VAR(float, 0x5333EC)

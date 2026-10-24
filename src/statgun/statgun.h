@@ -7,6 +7,8 @@
 
 #include "igi.h"
 
+FN_EXTERN(Task_Nothing);
+
 /* the first 0x20 bytes of every task */
 typedef struct Task {
     struct Task *next;
@@ -166,7 +168,7 @@ typedef struct Gun {
 #define gTaskStackTop VAR(int, 0xAFA7E0)
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
-#define TASK_NOTHING ((void *)0x4D3710)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* copies 4 bytes without going through the FPU, like the original */
 #define MOV32(dst, src) memcpy(&(dst), &(src), 4)

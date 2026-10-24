@@ -6,6 +6,8 @@
 #include "igi.h"
 #include "fxobj/fxobj.h"
 
+FN_EXTERN(AIStationaryGun_GetDefSize);
+
 ORIG(0x408320, uint8_t, GameMaterial_GetSizeEvent, (void));
 ORIG(0x408330, uint8_t, GameMaterial_GetParseEvent, (void));
 ORIG(0x408340, uint8_t, GameMaterial_GetImpactEvent, (void));
@@ -105,7 +107,7 @@ _Static_assert(offsetof(AimArg, found) == 0x80, "AimArg");
 #define gPlaceExplosiveParams VAR(void *, 0x57BE8C)
 
 #define gScriptEmptyString ((const char *)0x567C74)
-#define GameMaterial_GetSize ((void *)0x46FB50)
+#define GameMaterial_GetSize (FN(0x46FB50, AIStationaryGun_GetDefSize))
 
 static const double kDecalUnit = 4096.0;
 static const double kThree = 3.0;

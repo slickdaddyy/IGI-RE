@@ -6,6 +6,8 @@
 
 #include "igi.h"
 
+FN_EXTERN(Task_Nothing);
+
 /* the first 0x20 bytes of every task */
 typedef struct Task {
     struct Task *next;
@@ -86,7 +88,7 @@ _Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
-#define TASK_NOTHING ((void *)0x4D3710)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* exe constants, read in place */
 #define K(type, addr) VAR(const type, addr)

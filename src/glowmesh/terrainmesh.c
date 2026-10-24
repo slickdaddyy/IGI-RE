@@ -7,6 +7,8 @@
 #include "hook.h"
 #include "glowmesh/glowmesh.h"
 
+FN_EXTERN(crt_CIfmod);
+
 ORIG(0x4B0E70, int, RenderMode_CreateMethod, (const char *name));
 ORIG(0x4B0F80, int, RenderMode_GetCurrent, (void));
 ORIG(0x4950E0, int, Direct3D_GetRenderMode, (void));
@@ -944,7 +946,7 @@ static inline long double crt_fmod(long double x, long double y)
 {
     long double r;
 
-    __asm__ volatile("call *%3" : "=t"(r) : "0"(y), "u"(x), "r"(0x4A56DA) : "st(1)", "eax", "ecx", "edx", "memory",
+    __asm__ volatile("call *%3" : "=t"(r) : "0"(y), "u"(x), "r"(FN(0x4A56DA, crt_CIfmod)) : "st(1)", "eax", "ecx", "edx", "memory",
                      "cc");
     return r;
 }

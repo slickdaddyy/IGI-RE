@@ -8,6 +8,8 @@
 #include "core/pool.h"
 #include "transctx/transctx.h"
 
+FN_EXTERN(crt_CIpow);
+
 ORIG(0x401860, void, TaskEvent_Set, (uint16_t type, uint8_t index));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
@@ -141,7 +143,7 @@ static inline long double ci_pow(long double x, long double y)
 {
     long double r;
 
-    __asm__ volatile("call *%3" : "=t"(r) : "0"(y), "u"(x), "r"(0x4A5760) : "st(1)", "eax", "ecx", "edx", "memory");
+    __asm__ volatile("call *%3" : "=t"(r) : "0"(y), "u"(x), "r"(FN(0x4A5760, crt_CIpow)) : "st(1)", "eax", "ecx", "edx", "memory");
     return r;
 }
 

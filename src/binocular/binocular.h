@@ -6,6 +6,8 @@
 
 #include "igi.h"
 
+FN_EXTERN(Task_Nothing);
+
 /* the first 0x20 bytes of every task */
 typedef struct Task {
     struct Task *next;
@@ -141,7 +143,7 @@ _Static_assert(offsetof(View, centerY) == 0x54, "View");
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
-#define TASK_NOTHING ((void *)0x4D3710)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* Calls fn(child, arg) for each child of t (not deeper), keeping the next
    child on gTaskStack so handlers may delete tasks. slot is evaluated once

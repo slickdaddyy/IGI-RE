@@ -6,6 +6,13 @@
 #include "igi.h"
 #include "pistol/pistol.h"
 
+FN_EXTERN(SoldierPistol_StandUpdate);
+FN_EXTERN(SoldierPistol_State11Update);
+FN_EXTERN(SoldierPistol_State17Update);
+FN_EXTERN(SoldierPistol_State1Update);
+FN_EXTERN(SoldierPistol_State3Update);
+FN_EXTERN(Soldier_ToCrouchRun);
+
 ORIG(0x413BD0, void *, WeaponType_Find, (const char *name));
 ORIG(0x413C80, void *, Weapon_GetType, (void *weapon));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
@@ -38,12 +45,12 @@ ORIG(0x4F23D0, void, Weapon_GetAmmo, (void *weapon, int *out));
 #define gSoldierFootsteps ((const int *)0x53ECE0)
 
 /* updates that live with the HumanSoldierPistol states */
-#define SoldierPistol_StandUpdate ((SoldierStateFn)0x457A00)
-#define SoldierPistol_State1Update ((SoldierStateFn)0x457D30)
-#define SoldierPistol_State17Update ((SoldierStateFn)0x457FC0)
-#define SoldierPistol_State3Update ((SoldierStateFn)0x4582C0)
-#define SoldierPistol_State11Update ((SoldierStateFn)0x458810)
-#define Soldier_State4Update ((SoldierStateFn)0x45B900)
+#define SoldierPistol_StandUpdate ((SoldierStateFn)FN(0x457A00, SoldierPistol_StandUpdate))
+#define SoldierPistol_State1Update ((SoldierStateFn)FN(0x457D30, SoldierPistol_State1Update))
+#define SoldierPistol_State17Update ((SoldierStateFn)FN(0x457FC0, SoldierPistol_State17Update))
+#define SoldierPistol_State3Update ((SoldierStateFn)FN(0x4582C0, SoldierPistol_State3Update))
+#define SoldierPistol_State11Update ((SoldierStateFn)FN(0x458810, SoldierPistol_State11Update))
+#define Soldier_State4Update ((SoldierStateFn)FN(0x45B900, Soldier_ToCrouchRun))
 
 static const float kPitchRange = 0.5f;
 static const float kPitchDown = 0x1.99999ap-3f;

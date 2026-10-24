@@ -7,6 +7,8 @@
 #include "hook.h"
 #include "flatwater/flatwater.h"
 
+FN_EXTERN(MoveRigidObj_Changed);
+
 /* "MoveRigidObj": a rigid object placed between two key positions and
    orientations by a script value; whole numbers are the keys and the value
    wraps around. */
@@ -71,7 +73,7 @@ _Static_assert(sizeof(MoveRigidObj) == 0x208, "MoveRigidObj");
 #define kOne64 VAR(double, 0x5333F8)
 #define kTwo64 VAR(double, 0x533928)
 
-#define MOVERIGID_PARAMS_CHANGED ((void *)0x51FD60)
+#define MOVERIGID_PARAMS_CHANGED (FN(0x51FD60, MoveRigidObj_Changed))
 
 void MoveRigidObj_Create(MoveRigidObj *t);
 void MoveRigidObj_Run(MoveRigidObj *t);

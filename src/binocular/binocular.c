@@ -4,6 +4,9 @@
 #include "igi.h"
 #include "binocular/binocular.h"
 
+FN_EXTERN(EditorMagicObj_GetArgSize);
+FN_EXTERN(ProxMine_Move);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
@@ -34,8 +37,8 @@ ORIG(0x4F2030, int, Weapon_GetDeselectEvent, (void));
 ORIG(0x4FE650, char *, TagItem_AddReal32, (void *config, const char *name, float value));
 ORIG(0x4FE730, char *, TagItem_Find, (void *config, const char *name));
 
-#define WEAPON_HANDLER_4754C0 ((void *)0x4754C0)
-#define WEAPON_GETARGSIZE_51BAA0 ((void *)0x51BAA0)
+#define WEAPON_HANDLER_4754C0 (FN(0x4754C0, ProxMine_Move))
+#define WEAPON_GETARGSIZE_51BAA0 (FN(0x51BAA0, EditorMagicObj_GetArgSize))
 
 #define gBinocularType VAR(uint16_t, 0x5BE33C)
 

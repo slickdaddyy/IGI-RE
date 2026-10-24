@@ -5,6 +5,15 @@
 #include "igi.h"
 #include "rpg/soldier.h"
 
+FN_EXTERN(SoldierPistol_State13Update);
+FN_EXTERN(Soldier_State10Update);
+FN_EXTERN(Soldier_State12Update);
+FN_EXTERN(Soldier_State18Update);
+FN_EXTERN(Soldier_State2Update);
+FN_EXTERN(Soldier_State6Update);
+FN_EXTERN(Soldier_State7Update);
+FN_EXTERN(Soldier_ThrowUpdate);
+
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x416FB0, int, Game_IsRaining, (void));
 ORIG(0x460C40, uint8_t, Human_GetPunchEvent, (void));
@@ -26,14 +35,14 @@ ORIG(0x4E6CA0, void, Sound_SetPitch, (void *sound, float pitch));
 ORIG(0x4F0EE0, void *, Level_GetDynamic, (const char *name));
 
 #define gFootstepSeq ((const int *)0x53E988)
-#define SoldierPistol_State2Update ((SoldierStateFn)0x45AD10)
-#define SoldierPistol_State4Update ((SoldierStateFn)0x458DD0)
-#define SoldierPistol_State6Update ((SoldierStateFn)0x45B060)
-#define SoldierPistol_State7Update ((SoldierStateFn)0x45B1C0)
-#define SoldierPistol_State8Update ((SoldierStateFn)0x45B2F0)
-#define SoldierPistol_State10Update ((SoldierStateFn)0x45B6E0)
-#define SoldierPistol_State12Update ((SoldierStateFn)0x45B820)
-#define SoldierPistol_State18Update ((SoldierStateFn)0x45AB00)
+#define SoldierPistol_State2Update ((SoldierStateFn)FN(0x45AD10, Soldier_State2Update))
+#define SoldierPistol_State4Update ((SoldierStateFn)FN(0x458DD0, SoldierPistol_State13Update))
+#define SoldierPistol_State6Update ((SoldierStateFn)FN(0x45B060, Soldier_State6Update))
+#define SoldierPistol_State7Update ((SoldierStateFn)FN(0x45B1C0, Soldier_State7Update))
+#define SoldierPistol_State8Update ((SoldierStateFn)FN(0x45B2F0, Soldier_ThrowUpdate))
+#define SoldierPistol_State10Update ((SoldierStateFn)FN(0x45B6E0, Soldier_State10Update))
+#define SoldierPistol_State12Update ((SoldierStateFn)FN(0x45B820, Soldier_State12Update))
+#define SoldierPistol_State18Update ((SoldierStateFn)FN(0x45AB00, Soldier_State18Update))
 
 static const float kPitchRange = 0.5f;
 static const float kPitchDown = 0x1.99999ap-3f;

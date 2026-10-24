@@ -5,6 +5,8 @@
 
 #include "igi.h"
 
+FN_EXTERN(SubLevel_Run);
+
 /* the first 0x20 bytes of every task */
 typedef struct Task {
     struct Task *next;
@@ -47,7 +49,7 @@ typedef void (*TaskFn2)(void *task, void *arg);
 #define gScriptEmptyString ((const char *)0x567C74)
 
 #define TASK_HANDLER(slot, type) (gTaskHandlers[slot][type])
-#define SUBLEVEL_RUN ((void *)0x488700)
+#define SUBLEVEL_RUN (FN(0x488700, SubLevel_Run))
 
 /* next sibling to visit after c, NULL at the end of the list */
 static inline Task *next_sibling(Task *c)

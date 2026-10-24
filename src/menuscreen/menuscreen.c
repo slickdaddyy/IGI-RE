@@ -2,6 +2,13 @@
 #include "igi.h"
 #include "menuscreen/menuscreen.h"
 
+FN_EXTERN(MenuScreen_Activate);
+FN_EXTERN(MenuScreen_Apply);
+FN_EXTERN(MenuScreen_Deactivate);
+FN_EXTERN(MenuScreen_GetParams);
+FN_EXTERN(MenuScreen_Open);
+FN_EXTERN(MenuScreen_Run);
+
 ORIG(0x4B4AF0, void, Draw_RectAZ, (float x, float y, float w, float h, float r, float g, float b, float a, float z,
                                    int flags, int unk));
 ORIG(0x418D80, Text *, MenuManager_FindPic, (void *mm, const char *name));
@@ -13,12 +20,12 @@ ORIG(0x4B6E70, int, Text_Width, (Text *t));
 ORIG(0x4B6E80, int, Text_Height, (Text *t));
 
 /* handlers that follow this range */
-#define MenuScreen_Run ((void *)0x422110)
-#define MenuScreen_GetParams ((void *)0x422180)
-#define MenuScreen_Activate ((void *)0x422190)
-#define MenuScreen_Deactivate ((void *)0x422200)
-#define MenuScreen_Layout ((void *)0x422260)
-#define MenuScreen_Forward918 ((void *)0x422300)
+#define MenuScreen_Run (FN(0x422110, MenuScreen_Run))
+#define MenuScreen_GetParams (FN(0x422180, MenuScreen_GetParams))
+#define MenuScreen_Activate (FN(0x422190, MenuScreen_Activate))
+#define MenuScreen_Deactivate (FN(0x422200, MenuScreen_Deactivate))
+#define MenuScreen_Layout (FN(0x422260, MenuScreen_Open))
+#define MenuScreen_Forward918 (FN(0x422300, MenuScreen_Apply))
 
 /* one page of the front end: a background picture, the game logo and a
    framed box, all other elements are its children */

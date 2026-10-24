@@ -6,6 +6,8 @@
 
 #include "igi.h"
 
+FN_EXTERN(Task_Nothing);
+
 /* the first 0x20 bytes of every task */
 typedef struct Task {
     struct Task *next;
@@ -70,7 +72,7 @@ _Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 #define gTaskStackTop VAR(int, 0xAFA7E0)
 
 #define gScriptEmptyString ((const char *)0x567C74)
-#define TASK_NOTHING ((void *)0x4D3710)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* calls fn(child, arg) on each child of t (not deeper), with fn read from the
    slot given by ev, evaluated once per child. The next child is kept on

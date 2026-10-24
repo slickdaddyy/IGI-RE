@@ -6,6 +6,9 @@
 
 #include "igi.h"
 
+FN_EXTERN(MagicObjContainer_Event);
+FN_EXTERN(Task_Nothing);
+
 /* the first 0x20 bytes of every task */
 typedef struct Task {
     struct Task *next;
@@ -156,8 +159,8 @@ ORIG(0x4C5800, uint8_t, RigidDynCubeObj_GetEvent4, (void));
 ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
 ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
-#define TASK_NOTHING ((void *)0x4D3710)
-#define HANDLER_4E0890 ((void *)0x4E0890)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
+#define HANDLER_4E0890 (FN(0x4E0890, MagicObjContainer_Event))
 
 void ConditionalContainer_ForwardEvent4(Task *t, void *arg);
 

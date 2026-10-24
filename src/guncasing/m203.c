@@ -5,6 +5,8 @@
 #include "igi.h"
 #include "guncasing/guncasing.h"
 
+FN_EXTERN(sub_416A90);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
@@ -57,7 +59,7 @@ ORIG(0x4FE120, void, Particle2D_Add, (void *smoke, Vec3d *pos, Vec3f *dir, float
 #define kPuffSpin VAR(float, 0x5337F4)
 #define kPuffSpinBase VAR(float, 0x5337F0)
 
-#define Game_NullHandler ((void *)0x416A90)
+#define Game_NullHandler (FN(0x416A90, sub_416A90))
 
 void M203_CreateHandler(M203 *g);
 void M203_RunHandler(M203 *g);

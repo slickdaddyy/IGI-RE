@@ -4,6 +4,10 @@
 #include "igi.h"
 #include "haze/haze.h"
 
+FN_EXTERN(PhysicsMagicObj_Slot12);
+FN_EXTERN(Task_Nothing);
+FN_EXTERN(VehiclePart_Delete);
+
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -24,9 +28,9 @@ ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D0950, long double, VirModel_GetRadius_, (void **model, int unk));
 
-#define MAGIC_HANDLER_504250 ((void *)0x504250)
-#define TASK_NOTHING ((void *)0x4D3710)
-#define VEHICLEPART_DELETE ((void *)0x426860)
+#define MAGIC_HANDLER_504250 (FN(0x504250, PhysicsMagicObj_Slot12))
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
+#define VEHICLEPART_DELETE (FN(0x426860, VehiclePart_Delete))
 
 #define gMagicType VAR(uint16_t, 0x548648)
 #define gMagicMoveEvent VAR(uint8_t, 0x54864A)

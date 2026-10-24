@@ -7,6 +7,8 @@
 
 #include "igi.h"
 
+FN_EXTERN(Task_Nothing);
+
 /* the first 0x20 bytes of every task */
 typedef struct Task {
     struct Task *next;
@@ -78,7 +80,7 @@ _Static_assert(offsetof(ObjInfo, unk50) == 0x50, "ObjInfo");
 #define gKeys ((uint8_t *)0xC28C62)
 #define gKeysPrev ((uint8_t *)0xC28D62)
 
-#define TASK_NOTHING ((void *)0x4D3710)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* keys never touched by the key handlers */
 #define ANIM_NO_KEY -999.0f

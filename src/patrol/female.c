@@ -6,6 +6,15 @@
 #include "hook.h"
 #include "patrol/patrol.h"
 
+FN_EXTERN(Human_DeadRun);
+FN_EXTERN(Human_UseRun);
+FN_EXTERN(SoldierFemale_BlastHandler);
+FN_EXTERN(SoldierFemale_HitHandler);
+FN_EXTERN(SoldierFemale_InputHandler);
+FN_EXTERN(SoldierFemale_PunchHandler);
+FN_EXTERN(Soldier_DeleteHandler);
+FN_EXTERN(Task_Nothing);
+
 typedef struct Soldier Soldier;
 typedef struct SoldierSM SoldierSM;
 typedef void (*SoldierStateFn)(SoldierSM *sm, Soldier *h);
@@ -237,14 +246,14 @@ ORIG(0x4F23D0, void, Weapon_GetAmmo, (void *weapon, int *out));
 ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 
 /* handlers that live outside this file */
-#define SoldierFemale_DeleteHandler ((void *)0x459EC0)
-#define SoldierFemale_InputHandler ((void *)0x455070)
-#define SoldierFemale_Handler4553E0 ((void *)0x4553E0)
-#define SoldierFemale_Handler455570 ((void *)0x455570)
-#define SoldierFemale_Handler455780 ((void *)0x455780)
-#define Human_Handler4D3710 ((void *)0x4D3710)
-#define Human_DeadRun ((SoldierStateFn)0x45C740)
-#define Human_UseRun ((SoldierStateFn)0x45CA80)
+#define SoldierFemale_DeleteHandler (FN(0x459EC0, Soldier_DeleteHandler))
+#define SoldierFemale_InputHandler (FN(0x455070, SoldierFemale_InputHandler))
+#define SoldierFemale_Handler4553E0 (FN(0x4553E0, SoldierFemale_HitHandler))
+#define SoldierFemale_Handler455570 (FN(0x455570, SoldierFemale_BlastHandler))
+#define SoldierFemale_Handler455780 (FN(0x455780, SoldierFemale_PunchHandler))
+#define Human_Handler4D3710 (FN(0x4D3710, Task_Nothing))
+#define Human_DeadRun ((SoldierStateFn)FN(0x45C740, Human_DeadRun))
+#define Human_UseRun ((SoldierStateFn)FN(0x45CA80, Human_UseRun))
 
 #define gFootstepSounds ((const int *)0x53E470)
 #define gSoldierFemaleStates ((SoldierStateFn *)0x53E400)

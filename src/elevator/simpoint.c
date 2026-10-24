@@ -5,7 +5,9 @@
 #include "hook.h"
 #include "elevator/elevator.h"
 
-#define VEHICLEPART_DELETE ((void *)0x426860)
+FN_EXTERN(VehiclePart_Delete);
+
+#define VEHICLEPART_DELETE (FN(0x426860, VehiclePart_Delete))
 
 ORIG(0x503BF0, uint16_t, SimpointObj_GetType, (void));
 ORIG(0x503C00, void *, SimpointObjContainer_New, (int frames, const char *a, const char *b, float c, float d, float e,

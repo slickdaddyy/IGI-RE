@@ -7,6 +7,8 @@
 #include "hook.h"
 #include "camera/camera.h"
 
+FN_EXTERN(Task_Nothing);
+
 typedef struct VarString {
     char *text;
     char *expanded;
@@ -140,7 +142,7 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 #define gRealRange ((float *)0x5C1170)
 #define gIntRange ((int *)0x5C1178)
 
-#define TASK_NOTHING ((void *)0x4D3710)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 static const float kUnits = 4096.0f;
 static const float kFrames = 30.0f;

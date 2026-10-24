@@ -3,12 +3,14 @@
 #include "math/vecmath.h"
 #include "math/x87.h"
 
+FN_EXTERN(crt_CIacos);
+
 /* Calls the C runtime acos helper, which takes and returns st(0). */
 static long double crt_CIacos(long double x)
 {
     __asm__ volatile("call *%1"
                      : "+t"(x)
-                     : "r"(0x516810)
+                     : "r"(FN(0x516810, crt_CIacos))
                      : "eax", "ecx", "edx", "memory", "cc",
                        "st(1)", "st(2)", "st(3)", "st(4)", "st(5)", "st(6)", "st(7)");
     return x;

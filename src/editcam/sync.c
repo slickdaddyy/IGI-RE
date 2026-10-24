@@ -3,6 +3,8 @@
 #include "hook.h"
 #include "editcam/editcam.h"
 
+FN_EXTERN(Task_Nothing);
+
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
@@ -14,7 +16,7 @@ ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 ORIG(0x5183D0, void, TaskTypes_Open, (void));
 ORIG(0x508FA0, void, AIGraph_Init, (void));
 
-#define Task_Nothing ((void *)0x4D3710)
+#define Task_Nothing (FN(0x4D3710, Task_Nothing))
 
 /* a pixel block handed to Display_DrawPrimitive */
 typedef struct SyncBlit {

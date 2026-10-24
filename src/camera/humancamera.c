@@ -5,6 +5,8 @@
 #include "hook.h"
 #include "camera/camera.h"
 
+FN_EXTERN(HumanCamera_DeleteHandler);
+
 /* filled by the human's camera info handler */
 typedef struct HumanCameraInfo {
     Vec3d pos;
@@ -98,7 +100,7 @@ ORIG(0x4E75A0, int, Screen_GetFrame, (void));
 #define gMouseDY VAR(float, 0xBC20F8)
 
 #define HUMAN_LIST_SIZE 128
-#define HumanCamera_DeleteHandler ((void *)0x484CE0)
+#define HumanCamera_DeleteHandler (FN(0x484CE0, HumanCamera_DeleteHandler))
 
 static const double kOne = 1.0;
 static const double kQuarterPi = 0x1.921fb6p-1;

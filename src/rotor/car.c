@@ -4,6 +4,23 @@
 #include "igi.h"
 #include "rotor/rotor.h"
 
+FN_EXTERN(Car_Blast);
+FN_EXTERN(Car_CollFilter);
+FN_EXTERN(Car_Explode);
+FN_EXTERN(Car_GetControlInfo);
+FN_EXTERN(Car_GetFrame);
+FN_EXTERN(Car_GetLight);
+FN_EXTERN(Car_GetSoundParams);
+FN_EXTERN(Car_LoadState);
+FN_EXTERN(Car_OnWorldEvent1);
+FN_EXTERN(Car_ParamsChanged);
+FN_EXTERN(Car_ReadKeys);
+FN_EXTERN(Car_RegisterSymbols);
+FN_EXTERN(Car_RemoveSymbols);
+FN_EXTERN(Car_SaveState);
+FN_EXTERN(Heli_GetStateSize);
+FN_EXTERN(sub_4E4280);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x4015F0, void, Task_Delete, (void *task));
@@ -96,22 +113,22 @@ ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (Car *o, MagicDef *def));
 ORIG(0x4FC0E0, void, PhysicsObj_Collide, (Car *o, float a, float b, float c, void *world, int n, void *arg));
 ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (Car *o));
 
-#define CAR_PARAMS_CHANGED ((void *)0x42F530)
-#define CAR_HANDLER_42F850 ((void *)0x42F850)
-#define CAR_HANDLER_42F870 ((void *)0x42F870)
-#define CAR_HANDLER_42F8A0 ((void *)0x42F8A0)
-#define CAR_HANDLER_42FA60 ((void *)0x42FA60)
-#define CAR_HANDLER_42FB10 ((void *)0x42FB10)
-#define CAR_HANDLER_42FB40 ((void *)0x42FB40)
-#define CAR_HANDLER_42FC00 ((void *)0x42FC00)
-#define CAR_HANDLER_42FC40 ((void *)0x42FC40)
-#define CAR_HANDLER_42FC50 ((void *)0x42FC50)
-#define CAR_HANDLER_42FC70 ((void *)0x42FC70)
-#define CAR_HANDLER_42FC80 ((void *)0x42FC80)
-#define CAR_HANDLER_42FCE0 ((void *)0x42FCE0)
-#define CAR_HANDLER_42FD40 ((void *)0x42FD40)
-#define CAR_HANDLER_432BD0 ((void *)0x432BD0)
-#define TASK_HANDLER_4E4280 ((void *)0x4E4280)
+#define CAR_PARAMS_CHANGED (FN(0x42F530, Car_ParamsChanged))
+#define CAR_HANDLER_42F850 (FN(0x42F850, Car_GetSoundParams))
+#define CAR_HANDLER_42F870 (FN(0x42F870, Car_GetControlInfo))
+#define CAR_HANDLER_42F8A0 (FN(0x42F8A0, Car_ReadKeys))
+#define CAR_HANDLER_42FA60 (FN(0x42FA60, Car_LoadState))
+#define CAR_HANDLER_42FB10 (FN(0x42FB10, Car_SaveState))
+#define CAR_HANDLER_42FB40 (FN(0x42FB40, Car_Blast))
+#define CAR_HANDLER_42FC00 (FN(0x42FC00, Car_GetFrame))
+#define CAR_HANDLER_42FC40 (FN(0x42FC40, Car_Explode))
+#define CAR_HANDLER_42FC50 (FN(0x42FC50, Car_CollFilter))
+#define CAR_HANDLER_42FC70 (FN(0x42FC70, Car_GetLight))
+#define CAR_HANDLER_42FC80 (FN(0x42FC80, Car_OnWorldEvent1))
+#define CAR_HANDLER_42FCE0 (FN(0x42FCE0, Car_RegisterSymbols))
+#define CAR_HANDLER_42FD40 (FN(0x42FD40, Car_RemoveSymbols))
+#define CAR_HANDLER_432BD0 (FN(0x432BD0, Heli_GetStateSize))
+#define TASK_HANDLER_4E4280 (FN(0x4E4280, sub_4E4280))
 
 #define gCarType VAR(uint16_t, 0x53BDA8)
 #define gCarRange ((float *)0x57BD20)

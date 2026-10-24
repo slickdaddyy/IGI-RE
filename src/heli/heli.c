@@ -6,6 +6,15 @@
 #include "igi.h"
 #include "heli/heli.h"
 
+FN_EXTERN(Heli_GetConfigSize);
+FN_EXTERN(Heli_GetSoundInfo);
+FN_EXTERN(Heli_LoadState);
+FN_EXTERN(Heli_ParseArgs);
+FN_EXTERN(Heli_RemoveFromWorld);
+FN_EXTERN(Heli_SaveState);
+FN_EXTERN(Task_Nothing);
+FN_EXTERN(sub_4E4280);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x4015F0, void, Task_Delete, (void *task));
@@ -106,14 +115,14 @@ void Car_CollFilter(Task *t, char *msg);
 #define gHeliRange ((float *)0x57BD38)
 #define gHeliControls ((ControlInfo *)0x53BE60)
 
-#define TASK_NOTHING ((void *)0x4D3710)
-#define HELI_LOAD_STATE ((void *)0x432F20)
-#define HELI_SAVE_STATE ((void *)0x432F40)
-#define HELI_PARSE_DEF ((void *)0x432F60)
-#define HELI_GET_DEF_SIZE ((void *)0x432F80)
-#define HELI_ON_WORLD_EVENT1 ((void *)0x432F90)
-#define HELI_HANDLER_433000 ((void *)0x433000)
-#define TASK_HANDLER_4E4280 ((void *)0x4E4280)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
+#define HELI_LOAD_STATE (FN(0x432F20, Heli_LoadState))
+#define HELI_SAVE_STATE (FN(0x432F40, Heli_SaveState))
+#define HELI_PARSE_DEF (FN(0x432F60, Heli_ParseArgs))
+#define HELI_GET_DEF_SIZE (FN(0x432F80, Heli_GetConfigSize))
+#define HELI_ON_WORLD_EVENT1 (FN(0x432F90, Heli_RemoveFromWorld))
+#define HELI_HANDLER_433000 (FN(0x433000, Heli_GetSoundInfo))
+#define TASK_HANDLER_4E4280 (FN(0x4E4280, sub_4E4280))
 
 #define kAccelSpeed VAR(double, 0x533758)  /* 0.8 */
 #define kMaxThrottle VAR(double, 0x533770) /* 1.25 */

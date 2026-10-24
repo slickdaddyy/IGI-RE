@@ -4,6 +4,8 @@
 #include "hook.h"
 #include "compmap/compmap.h"
 
+FN_EXTERN(crt_CIpow);
+
 /* the area the map camera may move in */
 typedef struct MapLimit {
     Vec3d pos;
@@ -87,7 +89,7 @@ static inline long double ci_pow(long double x, long double y)
 {
     long double r;
 
-    __asm__ volatile("call *%3" : "=t"(r) : "0"(y), "u"(x), "r"(0x4A5760) : "st(1)", "eax", "ecx", "edx", "memory");
+    __asm__ volatile("call *%3" : "=t"(r) : "0"(y), "u"(x), "r"(FN(0x4A5760, crt_CIpow)) : "st(1)", "eax", "ecx", "edx", "memory");
     return r;
 }
 

@@ -5,6 +5,8 @@
 #include "hook.h"
 #include "scamera/scamera.h"
 
+FN_EXTERN(Car_CollFilter);
+
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -74,7 +76,7 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 #define gSCameraDetectMask VAR(int, 0x57C198)
 
 /* handlers that live outside this folder */
-#define sub_42FC50 ((void *)0x42FC50)
+#define sub_42FC50 (FN(0x42FC50, Car_CollFilter))
 
 void SCamera_Create(SCamera *c);
 void SCamera_Run(SCamera *c);

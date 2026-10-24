@@ -5,6 +5,28 @@
 #include "orig.h"
 #include "qvm/qvm.h"
 
+FN_EXTERN(Qvm_OpAssign);
+FN_EXTERN(Qvm_OpBinary);
+FN_EXTERN(Qvm_OpBlk);
+FN_EXTERN(Qvm_OpBranch);
+FN_EXTERN(Qvm_OpBrk);
+FN_EXTERN(Qvm_OpCall);
+FN_EXTERN(Qvm_OpIllegal);
+FN_EXTERN(Qvm_OpName);
+FN_EXTERN(Qvm_OpNop);
+FN_EXTERN(Qvm_OpNotImplemented);
+FN_EXTERN(Qvm_OpPop);
+FN_EXTERN(Qvm_OpPush);
+FN_EXTERN(Qvm_OpPush0);
+FN_EXTERN(Qvm_OpPush1);
+FN_EXTERN(Qvm_OpPushB);
+FN_EXTERN(Qvm_OpPushF);
+FN_EXTERN(Qvm_OpPushIndexed);
+FN_EXTERN(Qvm_OpPushM);
+FN_EXTERN(Qvm_OpPushS);
+FN_EXTERN(Qvm_OpPushW);
+FN_EXTERN(Qvm_OpUnary);
+
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -506,12 +528,12 @@ void Qvm_CallHandler(int op, int slot, void *a, void *b)
 }
 HOOK(0x4BD3F0, Qvm_CallHandler);
 
-#define Qvm_OpError ((void *)0x4BEC90)
-#define Qvm_OpName ((void *)0x4BECB0)
-#define Qvm_OpArith ((void *)0x4BDC40)
-#define Qvm_OpUnary ((void *)0x4BE6A0)
-#define Qvm_OpPushName ((void *)0x4BEA30)
-#define Qvm_OpPushString ((void *)0x4BE9D0)
+#define Qvm_OpError (FN(0x4BEC90, Qvm_OpIllegal))
+#define Qvm_OpName (FN(0x4BECB0, Qvm_OpName))
+#define Qvm_OpArith (FN(0x4BDC40, Qvm_OpBinary))
+#define Qvm_OpUnary (FN(0x4BE6A0, Qvm_OpUnary))
+#define Qvm_OpPushName (FN(0x4BEA30, Qvm_OpPushIndexed))
+#define Qvm_OpPushString (FN(0x4BE9D0, Qvm_OpPushS))
 
 /* Run and name handlers. Assemble and disassemble ones are set elsewhere. */
 void Qvm_Init(void)
@@ -520,36 +542,36 @@ void Qvm_Init(void)
 
     for (slot = 0; slot < QVM_SLOTS; slot++)
         for (op = 0; op < QVM_OPCODES; op++)
-            Qvm_SetHandler(op, slot, (void *)0x4BC950);
+            Qvm_SetHandler(op, slot, FN(0x4BC950, Qvm_OpNotImplemented));
     for (op = 0; op < QVM_OPCODES; op++) {
         Qvm_SetHandler(op, 0, Qvm_OpError);
         Qvm_SetHandler(op, 1, Qvm_OpName);
     }
-    Qvm_SetHandler(OP_BRK, 0, (void *)0x4BEC80);
-    Qvm_SetHandler(OP_NOP, 0, (void *)0x4BEC70);
-    Qvm_SetHandler(OP_PUSHB, 0, (void *)0x4BE870);
-    Qvm_SetHandler(OP_PUSHW, 0, (void *)0x4BE8B0);
-    Qvm_SetHandler(OP_PUSH, 0, (void *)0x4BE8F0);
-    Qvm_SetHandler(OP_PUSHF, 0, (void *)0x4BE9A0);
-    Qvm_SetHandler(OP_PUSHA, 0, (void *)0x4BE8F0);
+    Qvm_SetHandler(OP_BRK, 0, FN(0x4BEC80, Qvm_OpBrk));
+    Qvm_SetHandler(OP_NOP, 0, FN(0x4BEC70, Qvm_OpNop));
+    Qvm_SetHandler(OP_PUSHB, 0, FN(0x4BE870, Qvm_OpPushB));
+    Qvm_SetHandler(OP_PUSHW, 0, FN(0x4BE8B0, Qvm_OpPushW));
+    Qvm_SetHandler(OP_PUSH, 0, FN(0x4BE8F0, Qvm_OpPush));
+    Qvm_SetHandler(OP_PUSHF, 0, FN(0x4BE9A0, Qvm_OpPushF));
+    Qvm_SetHandler(OP_PUSHA, 0, FN(0x4BE8F0, Qvm_OpPush));
     Qvm_SetHandler(OP_PUSHS, 0, Qvm_OpPushString);
     Qvm_SetHandler(OP_PUSHI, 0, Qvm_OpPushString);
-    Qvm_SetHandler(OP_PUSH0, 0, (void *)0x4BE830);
-    Qvm_SetHandler(OP_PUSH1, 0, (void *)0x4BE810);
-    Qvm_SetHandler(OP_PUSHM, 0, (void *)0x4BE850);
+    Qvm_SetHandler(OP_PUSH0, 0, FN(0x4BE830, Qvm_OpPush0));
+    Qvm_SetHandler(OP_PUSH1, 0, FN(0x4BE810, Qvm_OpPush1));
+    Qvm_SetHandler(OP_PUSHM, 0, FN(0x4BE850, Qvm_OpPushM));
     Qvm_SetHandler(OP_RET, 0, Qvm_OpError);
     Qvm_SetHandler(OP_JSR, 0, Qvm_OpError);
-    Qvm_SetHandler(OP_CALL, 0, (void *)0x4BD880);
+    Qvm_SetHandler(OP_CALL, 0, FN(0x4BD880, Qvm_OpCall));
     for (op = OP_ADD; op <= OP_GE; op++)
         Qvm_SetHandler(op, 0, Qvm_OpArith);
     for (op = OP_PLUS; op <= OP_NOT; op++)
         Qvm_SetHandler(op, 0, Qvm_OpUnary);
-    Qvm_SetHandler(OP_ASSIGN, 0, (void *)0x4BDA60);
-    Qvm_SetHandler(OP_POP, 0, (void *)0x4BD860);
-    Qvm_SetHandler(OP_BRA, 0, (void *)0x4BD730);
-    Qvm_SetHandler(OP_BT, 0, (void *)0x4BD730);
-    Qvm_SetHandler(OP_BF, 0, (void *)0x4BD730);
-    Qvm_SetHandler(OP_BLK, 0, (void *)0x4BE980);
+    Qvm_SetHandler(OP_ASSIGN, 0, FN(0x4BDA60, Qvm_OpAssign));
+    Qvm_SetHandler(OP_POP, 0, FN(0x4BD860, Qvm_OpPop));
+    Qvm_SetHandler(OP_BRA, 0, FN(0x4BD730, Qvm_OpBranch));
+    Qvm_SetHandler(OP_BT, 0, FN(0x4BD730, Qvm_OpBranch));
+    Qvm_SetHandler(OP_BF, 0, FN(0x4BD730, Qvm_OpBranch));
+    Qvm_SetHandler(OP_BLK, 0, FN(0x4BE980, Qvm_OpBlk));
     Qvm_SetHandler(OP_PUSHII, 0, Qvm_OpPushName);
     Qvm_SetHandler(OP_PUSHIIB, 0, Qvm_OpPushName);
     Qvm_SetHandler(OP_PUSHIIW, 0, Qvm_OpPushName);

@@ -6,6 +6,9 @@
 #include "igi.h"
 #include "guncasing/guncasing.h"
 
+FN_EXTERN(HitZone_GetArgSize);
+FN_EXTERN(Task_FalseHandler);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
@@ -73,8 +76,8 @@ ORIG(0x4FE730, float *, TagItem_Find, (void *table, const char *name));
 
 #define kFuseFrames VAR(float, 0x5339B8) /* -30 */
 
-#define Task_FalseHandler ((void *)0x45F920)
-#define HitZone_GetArgSize ((void *)0x427F80)
+#define Task_FalseHandler (FN(0x45F920, Task_FalseHandler))
+#define HitZone_GetArgSize (FN(0x427F80, HitZone_GetArgSize))
 
 /* a value of a weapon config table */
 #define CONFIG_VALUE(c) (*(float *)((char *)(c) + 0x124))

@@ -7,6 +7,8 @@
 #include "hook.h"
 #include "camera/camera.h"
 
+FN_EXTERN(crt_CIfmod);
+
 typedef struct VarString {
     char *text;
     char *expanded;
@@ -160,7 +162,7 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 
 /* MSVC _CIfmod: fmod(st1, st0), both popped */
-#define CRT_CIFMOD 0x4A56DA
+#define CRT_CIFMOD FN(0x4A56DA, crt_CIfmod)
 
 #define gCurrentWorld VAR(void *, 0xA44344)
 #define gDynCubeObjType VAR(uint16_t, 0x54875C)

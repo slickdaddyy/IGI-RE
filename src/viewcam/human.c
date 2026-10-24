@@ -9,6 +9,8 @@
 #include "igi.h"
 #include "viewcam/viewcam.h"
 
+FN_EXTERN(crt_CIpow);
+
 /* something a human stands on and moves with */
 typedef struct Platform {
     Task task;
@@ -160,7 +162,7 @@ static __attribute__((noinline)) long double crt_pow(long double x, long double 
 {
     long double r;
 
-    __asm__ volatile("call *%3" : "=t"(r) : "0"(y), "u"(x), "r"(0x4A5760) : "st(1)", "eax", "ecx", "edx", "memory");
+    __asm__ volatile("call *%3" : "=t"(r) : "0"(y), "u"(x), "r"(FN(0x4A5760, crt_CIpow)) : "st(1)", "eax", "ecx", "edx", "memory");
     return r;
 }
 

@@ -3,7 +3,9 @@
 #include "hook.h"
 #include "elevator/elevator.h"
 
-#define HANDLER_449950 ((void *)0x449950)
+FN_EXTERN(Glass_Delete);
+
+#define HANDLER_449950 (FN(0x449950, Glass_Delete))
 
 ORIG(0x4D0D80, int, Mesh3D_GetEvent5, (void));
 

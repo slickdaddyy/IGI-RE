@@ -8,6 +8,9 @@
    static msvc 6 runtime in IGI.exe (same FILE layout). Our own code keeps the toolchain's
    runtime, as in the dll build. terrdraw/crt.c is left out of this build. */
 #define CRT_LIST(X) \
+    X(crt_CIacos, _CIacos) \
+    X(crt_CIfmod, _CIfmod) \
+    X(crt_CIpow, _CIpow) \
     X(crt_acos, acos) \
     X(crt_asin, asin) \
     X(crt_atof, atof) \
@@ -30,6 +33,7 @@
     X(crt_memcpy, memcpy) \
     X(crt_read, _read) \
     X(crt_remove, remove) \
+    X(crt_setjmp3, _setjmp3) \
     X(crt_splitpath, _splitpath) \
     X(crt_sprintf, sprintf) \
     X(crt_strchr, strchr) \

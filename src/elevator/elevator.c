@@ -3,13 +3,21 @@
 #include "hook.h"
 #include "elevator/elevator.h"
 
-#define Elevator_DeleteHandler ((void *)0x43DCF0)
-#define Elevator_GetParams ((void *)0x43DDA0)
-#define Elevator_ParamsChanged ((void *)0x43DDB0)
-#define Elevator_Activate ((void *)0x43DF20)
-#define Elevator_Deactivate ((void *)0x43E0A0)
-#define Elevator_MoveHandler ((void *)0x43E1F0)
-#define Elevator_GetMotion ((void *)0x43E290)
+FN_EXTERN(Elevator_Activate);
+FN_EXTERN(Elevator_Deactivate);
+FN_EXTERN(Elevator_DeleteHandler);
+FN_EXTERN(Elevator_GetMotion);
+FN_EXTERN(Elevator_GetParams);
+FN_EXTERN(Elevator_MoveHandler);
+FN_EXTERN(Elevator_ParamsChanged);
+
+#define Elevator_DeleteHandler (FN(0x43DCF0, Elevator_DeleteHandler))
+#define Elevator_GetParams (FN(0x43DDA0, Elevator_GetParams))
+#define Elevator_ParamsChanged (FN(0x43DDB0, Elevator_ParamsChanged))
+#define Elevator_Activate (FN(0x43DF20, Elevator_Activate))
+#define Elevator_Deactivate (FN(0x43E0A0, Elevator_Deactivate))
+#define Elevator_MoveHandler (FN(0x43E1F0, Elevator_MoveHandler))
+#define Elevator_GetMotion (FN(0x43E290, Elevator_GetMotion))
 
 ORIG(0x43D960, void, Elevator_UpdatePlace, (void *elevator));
 ORIG(0x5020C0, long double, SplineObj_GetLength, (int id));

@@ -6,6 +6,9 @@
 #include "igi.h"
 #include "transctx/transctx.h"
 
+FN_EXTERN(SubLevel_Run);
+FN_EXTERN(Task_Nothing);
+
 /* the first 0x20 bytes of every task */
 typedef struct Task {
     struct Task *next;
@@ -26,8 +29,8 @@ typedef void (*TaskFn)(Task *task);
 #define gTaskStack ((Task **)0xAFA6E0)
 #define gTaskStackTop VAR(int, 0xAFA7E0)
 
-#define TASK_NOTHING ((void *)0x4D3710)
-#define SUBLEVEL_RUN ((void *)0x488700)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
+#define SUBLEVEL_RUN (FN(0x488700, SubLevel_Run))
 
 /* next sibling to visit after c, NULL at the end of the list */
 #define TASK_NEXT(c) ((c)->next && (c)->next->next ? (c)->next : NULL)

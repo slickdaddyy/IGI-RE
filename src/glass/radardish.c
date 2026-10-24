@@ -5,6 +5,8 @@
 #include "glass/glass.h"
 #include "hook.h"
 
+FN_EXTERN(ParamReal32x9_Size);
+
 ORIG(0x401AE0, Task **, TaskRef_Add, (Task *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
@@ -48,7 +50,7 @@ typedef struct DefArg {
 
 #define k360 VAR(float, 0x533818)
 
-#define sub_4EFCD0 ((void *)0x4EFCD0)
+#define sub_4EFCD0 (FN(0x4EFCD0, ParamReal32x9_Size))
 
 void RadarDish_Create(RadarDish *r, MagicArg *arg);
 void RadarDish_Run(RadarDish *r);

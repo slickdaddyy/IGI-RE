@@ -8,6 +8,11 @@
 #include "igi.h"
 #include "missile/missile.h"
 
+FN_EXTERN(ParamQuat32_Size);
+FN_EXTERN(Train_GetFrame);
+FN_EXTERN(Train_OnWorldEvent0);
+FN_EXTERN(Train_OnWorldEvent1);
+
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -74,10 +79,10 @@ ORIG(0x4FEC10, void, SplineObj_GetPoints, (int path, int unk, Vec3d *out, char *
 #define gTrainChannels ((char *)0x53BCE8)
 
 /* handlers of the Train type that live outside this file */
-#define sub_4EFF20 ((void *)0x4EFF20)
-#define sub_42B930 ((void *)0x42B930)
-#define sub_42BB60 ((void *)0x42BB60)
-#define sub_42BBA0 ((void *)0x42BBA0)
+#define sub_4EFF20 (FN(0x4EFF20, ParamQuat32_Size))
+#define sub_42B930 (FN(0x42B930, Train_GetFrame))
+#define sub_42BB60 (FN(0x42BB60, Train_OnWorldEvent0))
+#define sub_42BBA0 (FN(0x42BBA0, Train_OnWorldEvent1))
 
 #define kKmhToFrame VAR(float, 0x5336C8)
 #define kSoundMin VAR(float, 0x5336CC) /* 0.8 */

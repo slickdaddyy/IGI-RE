@@ -4,6 +4,11 @@
 #include "igi.h"
 #include "sound/sound.h"
 
+FN_EXTERN(DefineGraph);
+FN_EXTERN(DefineGroup);
+FN_EXTERN(DefineSound);
+FN_EXTERN(DefineTriggerOnce);
+
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x517580, char *, Str_ToUpper, (char *s));
 ORIG(0x4B1420, void, File_ScanDir, (const char *dir, void *fn, void *user));
@@ -38,10 +43,10 @@ ORIG(0x497510, int, Sound_GetVoiceCount, (void));
 ORIG(0x4E7350, void, sub_4E7350, (int unk));
 
 /* script functions of the sound definitions, not rewritten yet */
-#define DefineGroup ((void *)0x4EBA90)
-#define DefineSound ((void *)0x4E8C60)
-#define DefineGraph ((void *)0x4EAD20)
-#define DefineTriggerOnce ((void *)0x4E9EC0)
+#define DefineGroup (FN(0x4EBA90, DefineGroup))
+#define DefineSound (FN(0x4E8C60, DefineSound))
+#define DefineGraph (FN(0x4EAD20, DefineGraph))
+#define DefineTriggerOnce (FN(0x4E9EC0, DefineTriggerOnce))
 
 /* one playing (or wanted) sound, there is one per DirectSound voice */
 typedef struct SoundInst {

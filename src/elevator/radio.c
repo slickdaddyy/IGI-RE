@@ -3,7 +3,9 @@
 #include "hook.h"
 #include "elevator/elevator.h"
 
-#define HANDLER_443DC0 ((void *)0x443DC0)
+FN_EXTERN(Terminal_MapHandler);
+
+#define HANDLER_443DC0 (FN(0x443DC0, Terminal_MapHandler))
 
 ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
 

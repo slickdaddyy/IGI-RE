@@ -3,6 +3,8 @@
 #include "hook.h"
 #include "qsc/qsc.h"
 
+FN_EXTERN(Reader_ReadLine);
+
 #define gReaderLineSize VAR(int, 0xA969C4)
 
 Reader *Reader_Init(Reader *r, const char *src, int size, int (*refill)(Reader *r))
@@ -111,7 +113,7 @@ HOOK(0x4BEFE0, Reader_ReadLine);
 
 Reader *Reader_InitMem(Reader *r, const char *src, int size)
 {
-    return Reader_Init(r, src, size, (int (*)(Reader *))0x4BEFE0);
+    return Reader_Init(r, src, size, (int (*)(Reader *))FN(0x4BEFE0, Reader_ReadLine));
 }
 HOOK(0x4BF1C0, Reader_InitMem);
 

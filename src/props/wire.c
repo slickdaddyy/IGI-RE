@@ -5,6 +5,8 @@
 #include "hook.h"
 #include "props/props.h"
 
+FN_EXTERN(Human_ClearResult);
+
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -68,7 +70,7 @@ _Static_assert(sizeof(Wire) == 0x138, "Wire");
 #define gWireParams VAR(void *, 0x57C148)
 #define gRoom VAR(void *, 0xA44344)
 
-#define sub_45E3D0 ((void *)0x45E3D0)
+#define sub_45E3D0 (FN(0x45E3D0, Human_ClearResult))
 
 #define kWireScale VAR(double, 0x5334B0) /* 1/4096 */
 #define kHalfD VAR(double, 0x5335C0)

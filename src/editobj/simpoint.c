@@ -7,6 +7,9 @@
 #include "hook.h"
 #include "editobj/editobj.h"
 
+FN_EXTERN(Task_FalseHandler);
+FN_EXTERN(Task_Nothing);
+
 /* "SimpointObjContainer" (0x64) */
 typedef struct SimpointObjContainer {
     Task task;
@@ -50,8 +53,8 @@ ORIG(0x4C6890, void, DynCube_ListAdd, (void *world, void *obj, int list));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 
-#define TASK_NOTHING ((void *)0x4D3710)
-#define TASK_FALSEHANDLER ((void *)0x45F920)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
+#define TASK_FALSEHANDLER (FN(0x45F920, Task_FalseHandler))
 
 #define gSimpointObjContainerType VAR(uint16_t, 0xA7A628)
 #define gSimpointObjType VAR(uint16_t, 0xA7A62A)

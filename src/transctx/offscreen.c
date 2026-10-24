@@ -3,6 +3,8 @@
 #include "hook.h"
 #include "transctx/transctx.h"
 
+FN_EXTERN(Task_Nothing);
+
 ORIG(0x491DB0, int, Display_GetClipWindowPrim, (void));
 ORIG(0x491DC0, int, Display_GetBlitPrim, (void));
 ORIG(0x491DF0, int, Display_GetOpenMethod, (void));
@@ -14,7 +16,7 @@ ORIG(0x4B0E50, void, RenderMode_Delete, (int mode));
 ORIG(0x4B0EC0, void, RenderMode_SetMethod, (int mode, int method, void *fn));
 
 /* the shared do-nothing function */
-#define NOTHING ((void *)0x4D3710)
+#define NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* What the OffscreenBuffer render mode draws into: 32 bit pixels in memory. */
 #define gOffscreenWidth VAR(int, 0xBCAAA0)

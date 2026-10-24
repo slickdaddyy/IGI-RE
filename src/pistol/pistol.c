@@ -7,6 +7,17 @@
 #include "igi.h"
 #include "pistol/pistol.h"
 
+FN_EXTERN(Human_DeadRun);
+FN_EXTERN(Human_UseRun);
+FN_EXTERN(Soldier_AimHitRun);
+FN_EXTERN(Soldier_AimRun);
+FN_EXTERN(Soldier_AnimRun);
+FN_EXTERN(Soldier_CrouchAimRun);
+FN_EXTERN(Soldier_CrouchReloadRun);
+FN_EXTERN(Soldier_FallRun);
+FN_EXTERN(Soldier_FireRun);
+FN_EXTERN(Soldier_MountRun);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
@@ -106,16 +117,16 @@ ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 #define gSoldierPistolSpeeds ((void *)0x53EAE8)
 
 /* updates that live with the HumanSoldier states */
-#define Soldier_State23Update ((SoldierStateFn)0x45BCC0)
-#define Soldier_State24Update ((SoldierStateFn)0x45BDC0)
-#define Soldier_State26Update ((SoldierStateFn)0x45BF90)
-#define Soldier_State27Update ((SoldierStateFn)0x45C0C0)
-#define Soldier_FallUpdate ((SoldierStateFn)0x45C210)
-#define Soldier_State31Update ((SoldierStateFn)0x45C370)
-#define Soldier_DeadUpdate ((SoldierStateFn)0x45C740)
-#define Soldier_AnimUpdate ((SoldierStateFn)0x45C7E0)
-#define Soldier_UseUpdate ((SoldierStateFn)0x45C9B0)
-#define Soldier_State37Update ((SoldierStateFn)0x45CA80)
+#define Soldier_State23Update ((SoldierStateFn)FN(0x45BCC0, Soldier_CrouchReloadRun))
+#define Soldier_State24Update ((SoldierStateFn)FN(0x45BDC0, Soldier_CrouchAimRun))
+#define Soldier_State26Update ((SoldierStateFn)FN(0x45BF90, Soldier_AimRun))
+#define Soldier_State27Update ((SoldierStateFn)FN(0x45C0C0, Soldier_FireRun))
+#define Soldier_FallUpdate ((SoldierStateFn)FN(0x45C210, Soldier_FallRun))
+#define Soldier_State31Update ((SoldierStateFn)FN(0x45C370, Soldier_AimHitRun))
+#define Soldier_DeadUpdate ((SoldierStateFn)FN(0x45C740, Human_DeadRun))
+#define Soldier_AnimUpdate ((SoldierStateFn)FN(0x45C7E0, Soldier_AnimRun))
+#define Soldier_UseUpdate ((SoldierStateFn)FN(0x45C9B0, Soldier_MountRun))
+#define Soldier_State37Update ((SoldierStateFn)FN(0x45CA80, Human_UseRun))
 
 static const double kUseDistance = 2867.2;
 static const float kPi = 0x1.921fb6p+1f;

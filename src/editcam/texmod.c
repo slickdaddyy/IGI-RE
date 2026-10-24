@@ -4,6 +4,8 @@
 #include "hook.h"
 #include "editcam/editcam.h"
 
+FN_EXTERN(Task_ReturnZero);
+
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -38,7 +40,7 @@ ORIG(0x4C6E70, void, DynCube_MoveBox, (void *world, void *obj, Vec3d *center, Ve
 ORIG(0x4CABF0, void, Coll_DropPoints, (void *world, CollHit *hit, Vec3d *points, int count, const double *dz,
                                        int unk, int unk2, unsigned int flags));
 
-#define DynCubeObj_MaskVisible ((void *)0x4F64E0)
+#define DynCubeObj_MaskVisible (FN(0x4F64E0, Task_ReturnZero))
 
 /* a box of terrain whose .bit map entry marks material holes */
 typedef struct TextureModifier {

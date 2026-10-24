@@ -2,6 +2,8 @@
 #include "igi.h"
 #include "menu/menu.h"
 
+FN_EXTERN(MenuWindow_ForwardEvent914);
+
 ORIG(0x4B4AF0, void, Draw_RectAZ, (float x, float y, float w, float h, float r, float g, float b, float a, float z,
                                    int flags, int unk));
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
@@ -25,7 +27,7 @@ typedef struct IntRange {
 #define gDialogWindowType VAR(uint16_t, 0x539C28)
 #define gDialogRange VAR(IntRange, 0x57BB80)
 #define gDialogWindowParams VAR(void *, 0x57BB88)
-#define MenuWindow_SetLayout ((void *)0x424300)
+#define MenuWindow_SetLayout (FN(0x424300, MenuWindow_ForwardEvent914))
 
 void DialogWindow_Run(DialogWindow *dw);
 void DialogWindow_Draw(DialogWindow *dw);

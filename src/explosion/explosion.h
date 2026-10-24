@@ -6,6 +6,9 @@
 
 #include "igi.h"
 
+FN_EXTERN(Task_FalseHandler);
+FN_EXTERN(Task_Nothing);
+
 /* the first 0x20 bytes of every task */
 typedef struct Task {
     struct Task *next;
@@ -256,8 +259,8 @@ _Static_assert(sizeof(FlashNoise) == 0x1C, "FlashNoise");
 #define gTaskStack ((Task **)0xAFA6E0)
 #define gTaskStackTop VAR(int, 0xAFA7E0)
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
-#define TASK_NOTHING ((TaskFn)0x4D3710)
-#define TASK_FALSE ((TaskFn)0x45F920)
+#define TASK_NOTHING ((TaskFn)FN(0x4D3710, Task_Nothing))
+#define TASK_FALSE ((TaskFn)FN(0x45F920, Task_FalseHandler))
 
 /* exe constants, read in place */
 #define K(type, addr) VAR(const type, addr)

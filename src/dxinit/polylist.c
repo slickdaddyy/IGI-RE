@@ -5,6 +5,8 @@
 #include "hook.h"
 #include "dxinit/dxinit.h"
 
+FN_EXTERN(Task_Nothing);
+
 typedef struct Vec3f {
     float x, y, z;
 } Vec3f;
@@ -95,7 +97,7 @@ ORIG(0x4C6840, void, DynCube_ListRemove, (void *world, void *obj, int list));
 ORIG(0x4C6890, void, DynCube_ListAdd, (void *world, void *obj, int list));
 ORIG(0x4D97E0, uint8_t, QObj_GetEvent, (void));
 
-#define Direct3D_Nothing ((void *)0x4D3710)
+#define Direct3D_Nothing (FN(0x4D3710, Task_Nothing))
 
 #define gPolyListType VAR(uint16_t, 0x543C64)
 #define gPolyListPrim VAR(int, 0xC311BC)

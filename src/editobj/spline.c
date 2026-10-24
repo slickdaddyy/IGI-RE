@@ -4,6 +4,12 @@
 #include "hook.h"
 #include "editobj/editobj.h"
 
+FN_EXTERN(ConditionalContainer_ForwardEvent4);
+FN_EXTERN(SplineObjWaypoint_Changed);
+FN_EXTERN(SplineObjWaypoint_Create);
+FN_EXTERN(SplineObjWaypoint_Delete);
+FN_EXTERN(Task_Nothing);
+
 /* "SplineObj" (0x68) */
 typedef struct SplineObj {
     Task task;
@@ -85,11 +91,11 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 
-#define TASK_NOTHING ((void *)0x4D3710)
-#define CONDITIONALCONTAINER_FORWARDEVENT4 ((void *)0x4879E0)
-#define SPLINEOBJWAYPOINT_CREATE ((void *)0x5008F0)
-#define SPLINEOBJWAYPOINT_DELETE ((void *)0x500DE0)
-#define SPLINEOBJWAYPOINT_CHANGED ((void *)0x500EF0)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
+#define CONDITIONALCONTAINER_FORWARDEVENT4 (FN(0x4879E0, ConditionalContainer_ForwardEvent4))
+#define SPLINEOBJWAYPOINT_CREATE (FN(0x5008F0, SplineObjWaypoint_Create))
+#define SPLINEOBJWAYPOINT_DELETE (FN(0x500DE0, SplineObjWaypoint_Delete))
+#define SPLINEOBJWAYPOINT_CHANGED (FN(0x500EF0, SplineObjWaypoint_Changed))
 
 #define gSplineObjDebugText ((char *)0xA7A50C)
 #define gSplineObjWaypointParams VAR(void *, 0xA7A508)

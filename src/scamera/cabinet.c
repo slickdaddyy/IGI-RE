@@ -3,6 +3,19 @@
 #include "hook.h"
 #include "scamera/scamera.h"
 
+FN_EXTERN(Cabinet_AddSymbols);
+FN_EXTERN(Cabinet_CheckUse);
+FN_EXTERN(Cabinet_Delete);
+FN_EXTERN(Cabinet_GetParams);
+FN_EXTERN(Cabinet_ParamsChanged);
+FN_EXTERN(Cabinet_RemoveSymbols);
+FN_EXTERN(Cabinet_Run);
+FN_EXTERN(Cabinet_Use);
+FN_EXTERN(RocketPod_GetArgSize);
+FN_EXTERN(Task_Nothing);
+FN_EXTERN(VehiclePart_Delete);
+FN_EXTERN(sub_4449A0);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
@@ -43,18 +56,18 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 #define gCabinetType VAR(uint16_t, 0x57C1AC)
 
 /* handlers that live outside this folder */
-#define Cabinet_Run ((void *)0x444590)
-#define Cabinet_Delete ((void *)0x444660)
-#define Cabinet_GetParams ((void *)0x4446D0)
-#define Cabinet_ParamsChanged ((void *)0x4446E0)
-#define Cabinet_CheckUse ((void *)0x444860)
-#define RocketPod_GetArgSize ((void *)0x427D70) /* writes 4 */
-#define Cabinet_Use ((void *)0x444940)
-#define sub_4449A0 ((void *)0x4449A0)
-#define Task_Nothing ((void *)0x4D3710)
-#define Cabinet_AddSymbols ((void *)0x4449C0)
-#define Cabinet_RemoveSymbols ((void *)0x444A70)
-#define VehiclePart_Delete ((void *)0x426860)
+#define Cabinet_Run (FN(0x444590, Cabinet_Run))
+#define Cabinet_Delete (FN(0x444660, Cabinet_Delete))
+#define Cabinet_GetParams (FN(0x4446D0, Cabinet_GetParams))
+#define Cabinet_ParamsChanged (FN(0x4446E0, Cabinet_ParamsChanged))
+#define Cabinet_CheckUse (FN(0x444860, Cabinet_CheckUse))
+#define RocketPod_GetArgSize (FN(0x427D70, RocketPod_GetArgSize)) /* writes 4 */
+#define Cabinet_Use (FN(0x444940, Cabinet_Use))
+#define sub_4449A0 (FN(0x4449A0, sub_4449A0))
+#define Task_Nothing (FN(0x4D3710, Task_Nothing))
+#define Cabinet_AddSymbols (FN(0x4449C0, Cabinet_AddSymbols))
+#define Cabinet_RemoveSymbols (FN(0x444A70, Cabinet_RemoveSymbols))
+#define VehiclePart_Delete (FN(0x426860, VehiclePart_Delete))
 
 #define kDrawerOpenStep VAR(float, 0x5338A0) /* 153.6 */
 #define kDrawerOpen VAR(float, 0x53389C) /* 1843.2 */

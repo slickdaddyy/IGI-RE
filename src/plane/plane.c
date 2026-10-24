@@ -8,6 +8,8 @@
 #include "igi.h"
 #include "plane/plane.h"
 
+FN_EXTERN(Heli_GetStateSize);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
@@ -78,7 +80,7 @@ ORIG(0x4FC0E0, void, PhysicsObj_Collide, (void *obj, float a, float b, float c, 
 ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (void *obj));
 ORIG(0x435C40, uint16_t, Gear_GetType, (void));
 
-#define HANDLER_432BD0 ((void *)0x432BD0)
+#define HANDLER_432BD0 (FN(0x432BD0, Heli_GetStateSize))
 
 #define gPlaneType VAR(uint16_t, 0x53BEE8)
 #define gPlaneInputs ((char *)0x53BEF0) /* {name, 0, min, max} for each PlaneInput field */

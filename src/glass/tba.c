@@ -5,6 +5,10 @@
 #include "glass/glass.h"
 #include "hook.h"
 
+FN_EXTERN(EditorMagicObj_GetArgSize);
+FN_EXTERN(Terminal_CheckUse);
+FN_EXTERN(Terminal_MapHandler);
+
 ORIG(0x4167F0, uint8_t, Game_GetEvent2, (void));
 ORIG(0x416800, uint8_t, Game_GetEvent4, (void));
 ORIG(0x416810, uint8_t, Game_GetEvent3, (void));
@@ -49,9 +53,9 @@ _Static_assert(sizeof(GenericTBA) == 0x2A8, "GenericTBA");
 #define gTBAParams VAR(void *, 0x57C1FC)
 
 /* handlers shared with the Terminal and others */
-#define Terminal_CheckUse ((void *)0x443C80)
-#define Terminal_MapHandler ((void *)0x443DC0)
-#define sub_51BAA0 ((void *)0x51BAA0)
+#define Terminal_CheckUse (FN(0x443C80, Terminal_CheckUse))
+#define Terminal_MapHandler (FN(0x443DC0, Terminal_MapHandler))
+#define sub_51BAA0 (FN(0x51BAA0, EditorMagicObj_GetArgSize))
 
 void GenericTBA_Create(GenericTBA *t, void *arg);
 void GenericTBA_Run(GenericTBA *t);

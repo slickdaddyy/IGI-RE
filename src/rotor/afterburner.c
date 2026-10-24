@@ -4,6 +4,8 @@
 #include "igi.h"
 #include "rotor/rotor.h"
 
+FN_EXTERN(EditorMagicObj_Delete);
+
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -33,7 +35,7 @@ ORIG(0x4DA180, void, Haze_GetVisible, (int *a, int *b));
 ORIG(0x4DAA20, int, Light_GetActive, (int *a));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 
-#define MAGICOBJ_DELETE ((void *)0x51B940)
+#define MAGICOBJ_DELETE (FN(0x51B940, EditorMagicObj_Delete))
 
 #define gAfterburnerType VAR(uint16_t, 0x57BCF8)
 #define gAfterburnerRandom ((void *)0x57BD00)

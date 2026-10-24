@@ -1,6 +1,13 @@
 #include "hook.h"
 #include "statgun/statgun.h"
 
+FN_EXTERN(Mine_DeleteHandler);
+FN_EXTERN(Mine_GetParamTableHandler);
+FN_EXTERN(Mine_MapHandler);
+FN_EXTERN(Mine_ParamChangedHandler);
+FN_EXTERN(Mine_ProximityHandler);
+FN_EXTERN(Mine_RunHandler);
+
 /* "Mine" (0x250 bytes), a placed mine, an ExplodeObject */
 typedef struct Mine {
     Task task;
@@ -21,12 +28,12 @@ _Static_assert(sizeof(Mine) == 0x250, "Mine");
 #define gMineParams VAR(void *, 0x5BE39C)
 #define gMineList VAR(void *, 0x5BE3A8)
 
-#define HANDLER_475CC0 ((void *)0x475CC0)
-#define HANDLER_475D30 ((void *)0x475D30)
-#define HANDLER_475D80 ((void *)0x475D80)
-#define HANDLER_475D90 ((void *)0x475D90)
-#define HANDLER_475DF0 ((void *)0x475DF0)
-#define HANDLER_475F30 ((void *)0x475F30)
+#define HANDLER_475CC0 (FN(0x475CC0, Mine_RunHandler))
+#define HANDLER_475D30 (FN(0x475D30, Mine_DeleteHandler))
+#define HANDLER_475D80 (FN(0x475D80, Mine_GetParamTableHandler))
+#define HANDLER_475D90 (FN(0x475D90, Mine_ParamChangedHandler))
+#define HANDLER_475DF0 (FN(0x475DF0, Mine_ProximityHandler))
+#define HANDLER_475F30 (FN(0x475F30, Mine_MapHandler))
 
 ORIG(0x481340, uint16_t, ExplodeObject_GetType, (void));
 ORIG(0x481350, void *, ExplodeObject_GetParams, (void));

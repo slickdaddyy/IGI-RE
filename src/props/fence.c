@@ -5,6 +5,8 @@
 #include "hook.h"
 #include "props/props.h"
 
+FN_EXTERN(ParamGraphEnvelope_ArgCount);
+
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -78,7 +80,7 @@ typedef struct TouchMsg {
 #define gFenceType VAR(uint16_t, 0x57C154)
 #define gFenceParams VAR(void *, 0x57C150)
 
-#define sub_4EF8B0 ((void *)0x4EF8B0)
+#define sub_4EF8B0 (FN(0x4EF8B0, ParamGraphEnvelope_ArgCount))
 
 #define kHalf VAR(float, 0x533504)
 #define kSparkUp VAR(double, 0x533708)    /* 8192 */

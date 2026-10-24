@@ -1,6 +1,10 @@
 #include "hook.h"
 #include "mission/mission.h"
 
+FN_EXTERN(MenuWindow_Draw);
+FN_EXTERN(SubLevel_Run);
+FN_EXTERN(Task_Nothing);
+
 /* "GameScreen" task (0x28 bytes): holds the 3D view of the level and the status screen */
 typedef struct GameScreen {
     Task task;
@@ -18,9 +22,9 @@ ORIG(0x4E9430, void, FadeOutStart_New, (Task *view));
 ORIG(0x4E9460, void, FadeOutEnd_New, (Task *view));
 ORIG(0x4E9500, void, GlowTask_New, (Task *view));
 
-#define Task_RunChildren ((void *)0x488700)
-#define Task_Nothing ((void *)0x4D3710)
-#define MenuWindow_Draw ((void *)0x424280)
+#define Task_RunChildren (FN(0x488700, SubLevel_Run))
+#define Task_Nothing (FN(0x4D3710, Task_Nothing))
+#define MenuWindow_Draw (FN(0x424280, MenuWindow_Draw))
 
 #define gGameScreenType VAR(uint16_t, 0x5C8A28)
 #define gGameStatusScreen VAR(Task *, 0x5C8A20)

@@ -2,6 +2,12 @@
 #include "igi.h"
 #include "ammotype/ammotype.h"
 
+FN_EXTERN(BulletHole_AddRigid);
+FN_EXTERN(BulletHole_AddSpline);
+FN_EXTERN(BulletHole_Delete);
+FN_EXTERN(BulletHole_Draw);
+FN_EXTERN(GraphNode_Run);
+
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -32,11 +38,11 @@ ORIG(0x4F1CD0, void, ParamEnum_Init, (void *e));
 ORIG(0x4F1D80, void, ParamEnum_Free, (void *e));
 ORIG(0x4F1DB0, void, ParamEnum_AddConstants, (void *e, const char *pattern));
 
-#define BulletHole_Handler47D380 ((void *)0x47D380)
-#define BulletHole_Handler47E0C0 ((void *)0x47E0C0)
-#define BulletHole_Handler47D0B0 ((void *)0x47D0B0)
-#define BulletHole_Delete ((void *)0x47D320)
-#define BulletHole_Handler5188C0 ((void *)0x5188C0)
+#define BulletHole_Handler47D380 (FN(0x47D380, BulletHole_AddRigid))
+#define BulletHole_Handler47E0C0 (FN(0x47E0C0, BulletHole_AddSpline))
+#define BulletHole_Handler47D0B0 (FN(0x47D0B0, BulletHole_Draw))
+#define BulletHole_Delete (FN(0x47D320, BulletHole_Delete))
+#define BulletHole_Handler5188C0 (FN(0x5188C0, GraphNode_Run))
 
 #define gAmmoTypes ((AmmoType *)0x5BE3E0)
 #define gAmmoTypeCount VAR(int, 0x5C10E4)

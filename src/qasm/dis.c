@@ -3,10 +3,12 @@
 #include "hook.h"
 #include "qasm/qasm.h"
 
+FN_EXTERN(Qvm_OpNotImplemented);
+
 /* Operand printers of the QVM disassembler, slot 3 of the opcode table.
    Nothing in the game calls them. */
 
-#define Qvm_OpNotImplemented ((void *)0x4BC950)
+#define Qvm_OpNotImplemented (FN(0x4BC950, Qvm_OpNotImplemented))
 
 void QvmDis_OpPlain(QvmDis *d);
 void QvmDis_OpPush(QvmDis *d, QvmImage *vm);

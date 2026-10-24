@@ -8,6 +8,48 @@
 #include "hook.h"
 #include "physobj/physobj.h"
 
+FN_EXTERN(CameraBase_Create);
+FN_EXTERN(CameraBase_Delete);
+FN_EXTERN(Dynamic_Create);
+FN_EXTERN(Dynamic_Delete);
+FN_EXTERN(Dynamic_Run);
+FN_EXTERN(EditorMagicObj_GetArgSize);
+FN_EXTERN(GuardGenerator_WorldAdd);
+FN_EXTERN(GuardGenerator_WorldRemove);
+FN_EXTERN(HitZone_GetArgSize);
+FN_EXTERN(Idle_Create);
+FN_EXTERN(Idle_Delete);
+FN_EXTERN(Level_Create);
+FN_EXTERN(Level_Delete);
+FN_EXTERN(Level_NewTask);
+FN_EXTERN(Level_Run);
+FN_EXTERN(ParamBool8_Copy);
+FN_EXTERN(ParamBool8_Format);
+FN_EXTERN(ParamBool8_Parse);
+FN_EXTERN(ParamBool8_Paste);
+FN_EXTERN(ParamExpression_Format);
+FN_EXTERN(ParamExpression_Parse);
+FN_EXTERN(ParamInt16_Copy);
+FN_EXTERN(ParamInt16_Paste);
+FN_EXTERN(ParamInt16_Size);
+FN_EXTERN(ParamString16_Parse);
+FN_EXTERN(ParamString256_Parse);
+FN_EXTERN(ParamString32_Parse);
+FN_EXTERN(ParamString_Copy);
+FN_EXTERN(ParamString_Format);
+FN_EXTERN(ParamString_Paste);
+FN_EXTERN(ParamString_Size);
+FN_EXTERN(ParamVarString_Copy);
+FN_EXTERN(ParamVarString_Parse);
+FN_EXTERN(ParamVarString_Paste);
+FN_EXTERN(ParamVarString_Size);
+FN_EXTERN(RocketPod_GetArgSize);
+FN_EXTERN(Static_Create);
+FN_EXTERN(Static_Delete);
+FN_EXTERN(SubLevel_Run);
+FN_EXTERN(Task_DeclareParameters);
+FN_EXTERN(Task_ReturnZero);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
@@ -130,7 +172,6 @@ void ParamGraphEnvelope_Copy(uint32_t *v, uint32_t **dst);
 void ParamGraphEnvelope_Paste(uint32_t *v, uint32_t **src);
 void ParamGraphEnvelope_Size(void *v, int *size);
 
-#define O(a) ((void *)(a))
 
 /* parse, format, copy, paste, size, argument count; NULL is not set */
 static const struct {
@@ -141,31 +182,31 @@ static const struct {
     {"Quat32", &gParamQuat32, {ParamQuat32_Parse, ParamQuat32_Format, ParamQuat32_Copy, ParamQuat32_Paste,
                                ParamQuat32_Size, Param_Three}},
     {"Real32", &gParamReal32, {ParamReal32_Parse, ParamReal32_Format, Param32_Copy, Param32_Paste,
-                               O(0x427D70), Param_One}},
+                               FN(0x427D70, RocketPod_GetArgSize), Param_One}},
     {"Real32x3", &gParamReal32x3, {ParamReal32x3_Parse, ParamReal32x3_Format, ParamReal32x3_Copy,
-                                   ParamReal32x3_Paste, O(0x51BAA0), Param_Three}},
+                                   ParamReal32x3_Paste, FN(0x51BAA0, EditorMagicObj_GetArgSize), Param_Three}},
     {"Real32x9", &gParamReal32x9, {ParamReal32x9_Parse, ParamReal32x9_Format, ParamReal32x9_Copy,
                                    ParamReal32x9_Paste, ParamReal32x9_Size, Param_Three}},
     {"Real64", &gParamReal64, {ParamReal64_Parse, ParamReal64_Format, ParamReal64_Copy, ParamReal64_Paste,
-                               O(0x427F80), Param_One}},
+                               FN(0x427F80, HitZone_GetArgSize), Param_One}},
     {"Real64x3", &gParamReal64x3, {ParamReal64x3_Parse, ParamReal64x3_Format, ParamReal64x3_Copy,
                                    ParamReal64x3_Paste, ParamReal64x3_Size, Param_Three}},
-    {"Int32", &gParamInt32, {ParamInt32_Parse, ParamInt32_Format, Param32_Copy, Param32_Paste, O(0x427D70),
+    {"Int32", &gParamInt32, {ParamInt32_Parse, ParamInt32_Format, Param32_Copy, Param32_Paste, FN(0x427D70, RocketPod_GetArgSize),
                              Param_One}},
-    {"Int16", &gParamInt16, {ParamInt16_Parse, ParamInt16_Format, O(0x4F0170), O(0x4F0190), O(0x4F01B0),
+    {"Int16", &gParamInt16, {ParamInt16_Parse, ParamInt16_Format, FN(0x4F0170, ParamInt16_Copy), FN(0x4F0190, ParamInt16_Paste), FN(0x4F01B0, ParamInt16_Size),
                              Param_One}},
-    {"VarString", &gParamVarString, {O(0x4F01C0), TASK_NOTHING, O(0x4F0270), O(0x4F02B0), O(0x4F0320),
+    {"VarString", &gParamVarString, {FN(0x4F01C0, ParamVarString_Parse), TASK_NOTHING, FN(0x4F0270, ParamVarString_Copy), FN(0x4F02B0, ParamVarString_Paste), FN(0x4F0320, ParamVarString_Size),
                                      Param_One}},
-    {"String16", &gParamString16, {O(0x4F0350), O(0x4F0430), O(0x4F04D0), O(0x4F03D0), O(0x4F0380), Param_One}},
-    {"String32", &gParamString32, {O(0x4F03A0), O(0x4F0430), O(0x4F04D0), O(0x4F03D0), O(0x4F0380), Param_One}},
-    {"String256", &gParamString256, {O(0x4F0400), O(0x4F0430), O(0x4F04D0), O(0x4F03D0), O(0x4F0380),
+    {"String16", &gParamString16, {FN(0x4F0350, ParamString16_Parse), FN(0x4F0430, ParamString_Format), FN(0x4F04D0, ParamString_Copy), FN(0x4F03D0, ParamString_Paste), FN(0x4F0380, ParamString_Size), Param_One}},
+    {"String32", &gParamString32, {FN(0x4F03A0, ParamString32_Parse), FN(0x4F0430, ParamString_Format), FN(0x4F04D0, ParamString_Copy), FN(0x4F03D0, ParamString_Paste), FN(0x4F0380, ParamString_Size), Param_One}},
+    {"String256", &gParamString256, {FN(0x4F0400, ParamString256_Parse), FN(0x4F0430, ParamString_Format), FN(0x4F04D0, ParamString_Copy), FN(0x4F03D0, ParamString_Paste), FN(0x4F0380, ParamString_Size),
                                      Param_One}},
-    {"LevelExpression", &gParamLevelExpression, {O(0x4F0460), O(0x4F04A0), O(0x4F04D0), O(0x4F03D0),
-                                                 O(0x4F0380), Param_One}},
+    {"LevelExpression", &gParamLevelExpression, {FN(0x4F0460, ParamExpression_Parse), FN(0x4F04A0, ParamExpression_Format), FN(0x4F04D0, ParamString_Copy), FN(0x4F03D0, ParamString_Paste),
+                                                 FN(0x4F0380, ParamString_Size), Param_One}},
     {"QTaskNote", &gParamQTaskNote, {NULL, NULL, ParamQTaskNote_Copy, ParamQTaskNote_Paste,
                                      ParamQTaskNote_Size, Param_One}},
-    {"bool8", &gParamBool8, {O(0x4F0500), O(0x4F0530), O(0x4F0560), O(0x4F0570), Param_One, Param_One}},
-    {"Graph", &gParamGraph, {TASK_NOTHING, TASK_NOTHING, TASK_NOTHING, TASK_NOTHING, O(0x4F64E0),
+    {"bool8", &gParamBool8, {FN(0x4F0500, ParamBool8_Parse), FN(0x4F0530, ParamBool8_Format), FN(0x4F0560, ParamBool8_Copy), FN(0x4F0570, ParamBool8_Paste), Param_One, Param_One}},
+    {"Graph", &gParamGraph, {TASK_NOTHING, TASK_NOTHING, TASK_NOTHING, TASK_NOTHING, FN(0x4F64E0, Task_ReturnZero),
                              TASK_NOTHING}},
     {"GraphEnvelope", &gParamGraphEnvelope, {ParamGraphEnvelope_Parse, ParamGraphEnvelope_Format,
                                              ParamGraphEnvelope_Copy, ParamGraphEnvelope_Paste,
@@ -223,23 +264,23 @@ void Level_Open(void)
     gLevelEventDA8 = TaskEvent_Alloc2(0);
     gLevelEventDAC = TaskEvent_Alloc2(0);
     gLevelEventDB0 = TaskEvent_Alloc2(0);
-    TaskType_SetHandler2(gLevelType, 1, O(0x4F0580));
-    TaskType_SetHandler(gLevelType, 0, O(0x4F0600));
-    TaskType_SetHandler2(gLevelType, 2, O(0x4F0610));
+    TaskType_SetHandler2(gLevelType, 1, FN(0x4F0580, Level_Run));
+    TaskType_SetHandler(gLevelType, 0, FN(0x4F0600, Level_Create));
+    TaskType_SetHandler2(gLevelType, 2, FN(0x4F0610, Level_Delete));
     TaskType_SetHandler2(gStaticType, 1, TASK_NOTHING);
-    TaskType_SetHandler(gStaticType, 0, O(0x4F0620));
-    TaskType_SetHandler2(gStaticType, 2, O(0x4F0640));
-    TaskType_SetHandler(gStaticType, World_GetEvent1(), O(0x487E20));
-    TaskType_SetHandler(gStaticType, World_GetEvent0(), O(0x487D90));
-    TaskType_SetHandler2(gDynamicType, 1, O(0x4F0660));
-    TaskType_SetHandler(gDynamicType, 0, O(0x4F06E0));
-    TaskType_SetHandler2(gDynamicType, 2, O(0x4F06F0));
+    TaskType_SetHandler(gStaticType, 0, FN(0x4F0620, Static_Create));
+    TaskType_SetHandler2(gStaticType, 2, FN(0x4F0640, Static_Delete));
+    TaskType_SetHandler(gStaticType, World_GetEvent1(), FN(0x487E20, GuardGenerator_WorldRemove));
+    TaskType_SetHandler(gStaticType, World_GetEvent0(), FN(0x487D90, GuardGenerator_WorldAdd));
+    TaskType_SetHandler2(gDynamicType, 1, FN(0x4F0660, Dynamic_Run));
+    TaskType_SetHandler(gDynamicType, 0, FN(0x4F06E0, Dynamic_Create));
+    TaskType_SetHandler2(gDynamicType, 2, FN(0x4F06F0, Dynamic_Delete));
     TaskType_SetHandler2(gIdleType, 1, TASK_NOTHING);
-    TaskType_SetHandler(gIdleType, 0, O(0x4F0700));
-    TaskType_SetHandler2(gIdleType, 2, O(0x4F0710));
-    TaskType_SetHandler2(gCameraBaseType, 1, O(0x488700));
-    TaskType_SetHandler(gCameraBaseType, 0, O(0x4F0720));
-    TaskType_SetHandler2(gCameraBaseType, 2, O(0x4F0730));
+    TaskType_SetHandler(gIdleType, 0, FN(0x4F0700, Idle_Create));
+    TaskType_SetHandler2(gIdleType, 2, FN(0x4F0710, Idle_Delete));
+    TaskType_SetHandler2(gCameraBaseType, 1, FN(0x488700, SubLevel_Run));
+    TaskType_SetHandler(gCameraBaseType, 0, FN(0x4F0720, CameraBase_Create));
+    TaskType_SetHandler2(gCameraBaseType, 2, FN(0x4F0730, CameraBase_Delete));
     for (i = 0; i < sizeof(kParamTypes) / sizeof(kParamTypes[0]); i++) {
         *kParamTypes[i].id = ParamType_New(kParamTypes[i].name, -1);
         for (k = 0; k < 6; k++)
@@ -248,8 +289,8 @@ void Level_Open(void)
     }
     for (i = 0; i < sizeof(kParamAliases) / sizeof(kParamAliases[0]); i++)
         *kParamAliases[i].id = ParamType_New(kParamAliases[i].name, *kParamAliases[i].parent);
-    Script_RegisterFunction("Task_New", O(0x4F0780), NULL, -1);
-    Script_RegisterFunction("Task_DeclareParameters", O(0x4F0740), NULL, -1);
+    Script_RegisterFunction("Task_New", FN(0x4F0780, Level_NewTask), NULL, -1);
+    Script_RegisterFunction("Task_DeclareParameters", FN(0x4F0740, Task_DeclareParameters), NULL, -1);
     gLevelA758BD = 0;
     gLevelA758BE = 0;
     for (b = gTaskRefBuckets; b < gTaskRefBucketsEnd; b += 3) {

@@ -4,6 +4,10 @@
 #include "orig.h"
 #include "param/param.h"
 
+FN_EXTERN(ParamEnum_ForEachConstant);
+
+FN_EXTERN(ParamEnum_VisitConstant);
+
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x4AF8F0, void, List_AddTail, (List *list, Node *node));
@@ -43,8 +47,8 @@ ORIG(0x4F0FF0, int, Param_String256, (void));
 #define gParamRange02 VAR(ParamRange, 0xA76BF0)
 
 /* the enum list callback keeps the original address, hooked below */
-#define ParamEnumForEachConstant ((void (*)(void *))0x4F1CF0)
-#define ParamEnumVisitConstant ((void *)0x4F1D10)
+#define ParamEnumForEachConstant ((void (*)(void *))FN(0x4F1CF0, ParamEnum_ForEachConstant))
+#define ParamEnumVisitConstant (FN(0x4F1D10, ParamEnum_VisitConstant))
 
 char ParamEvent_Alloc(void);
 void ParamEvent_Free(char index);

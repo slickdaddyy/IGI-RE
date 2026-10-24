@@ -4,6 +4,11 @@
 #include "igi.h"
 #include "binocular/binocular.h"
 
+FN_EXTERN(BinocularHolder_Changed);
+FN_EXTERN(BinocularHolder_GetParams);
+FN_EXTERN(BinocularOverlay_DrawHandler);
+FN_EXTERN(BinocularOverlay_UseHandler);
+
 /* a text line drawn on screen; only the position is used here */
 typedef struct Text {
     void *grid;
@@ -183,10 +188,10 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 void View_Project(View *v, float *out, float *depth, const Vec3d *p);
 void View_ScaleSize(View *v, float *out, const float *size, float depth);
 
-#define BINOCULAROVERLAY_DRAWHANDLER ((void *)0x472400)
-#define BINOCULAROVERLAY_USEHANDLER ((void *)0x472440)
-#define BINOCULARHOLDER_GETPARAMS ((void *)0x4723D0)
-#define BINOCULARHOLDER_CHANGED ((void *)0x4723E0)
+#define BINOCULAROVERLAY_DRAWHANDLER (FN(0x472400, BinocularOverlay_DrawHandler))
+#define BINOCULAROVERLAY_USEHANDLER (FN(0x472440, BinocularOverlay_UseHandler))
+#define BINOCULARHOLDER_GETPARAMS (FN(0x4723D0, BinocularHolder_GetParams))
+#define BINOCULARHOLDER_CHANGED (FN(0x4723E0, BinocularHolder_Changed))
 
 #define gBinocularOverlayType VAR(uint16_t, 0x5401F8)
 #define gBinocularHolderType VAR(uint16_t, 0x5401FA)

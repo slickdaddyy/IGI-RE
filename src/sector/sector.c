@@ -7,6 +7,24 @@
 #include "sector/sector.h"
 #include "hook.h"
 
+FN_EXTERN(SectorInteriorObject_WorldAdd);
+FN_EXTERN(SectorInteriorObject_WorldRemove);
+FN_EXTERN(SectorObject_Create);
+FN_EXTERN(SectorObject_Delete);
+FN_EXTERN(SectorObject_NearClip);
+FN_EXTERN(SectorObject_Run);
+FN_EXTERN(SectorObject_Slot10);
+FN_EXTERN(SectorObject_Slot11);
+FN_EXTERN(SectorObject_Slot8);
+FN_EXTERN(SectorObject_Slot9);
+FN_EXTERN(SectorObject_WorldAdd);
+FN_EXTERN(SectorObject_WorldRemove);
+FN_EXTERN(Sector_Create);
+FN_EXTERN(Sector_Delete);
+FN_EXTERN(Sector_WorldAdd);
+FN_EXTERN(Sector_WorldRemove);
+FN_EXTERN(Task_Nothing);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
@@ -34,23 +52,23 @@ ORIG(0x4DEE80, uint16_t, SectorObject_GetType, (void));
 ORIG(0x4E55B0, uint8_t, CellMask_GetDrawEvent, (void));
 
 /* handlers of the next range */
-#define Sector_Create ((void *)0x4DE6B0)
-#define Sector_Delete ((void *)0x4DE740)
-#define Sector_WorldAdd ((void *)0x4DE770)
-#define Sector_WorldRemove ((void *)0x4DE800)
-#define SectorObject_Create ((void *)0x4DDF60)
-#define SectorObject_Delete ((void *)0x4DDFF0)
-#define SectorObject_Handler10 ((void *)0x4DE240)
-#define SectorObject_Handler9 ((void *)0x4DE2D0)
-#define SectorObject_Handler8 ((void *)0x4DE360)
-#define SectorObject_Handler11 ((void *)0x4DE3F0)
-#define SectorObject_Run ((void *)0x4DE4E0)
-#define SectorObject_NearZHandler ((void *)0x4DE8A0)
-#define SectorObject_WorldAdd ((void *)0x4DE970)
-#define SectorObject_WorldRemove ((void *)0x4DEA80)
-#define SectorInteriorObject_WorldAdd ((void *)0x4DEB90)
-#define SectorInteriorObject_WorldRemove ((void *)0x4DED30)
-#define sub_4D3710 ((void *)0x4D3710)
+#define Sector_Create (FN(0x4DE6B0, Sector_Create))
+#define Sector_Delete (FN(0x4DE740, Sector_Delete))
+#define Sector_WorldAdd (FN(0x4DE770, Sector_WorldAdd))
+#define Sector_WorldRemove (FN(0x4DE800, Sector_WorldRemove))
+#define SectorObject_Create (FN(0x4DDF60, SectorObject_Create))
+#define SectorObject_Delete (FN(0x4DDFF0, SectorObject_Delete))
+#define SectorObject_Handler10 (FN(0x4DE240, SectorObject_Slot10))
+#define SectorObject_Handler9 (FN(0x4DE2D0, SectorObject_Slot9))
+#define SectorObject_Handler8 (FN(0x4DE360, SectorObject_Slot8))
+#define SectorObject_Handler11 (FN(0x4DE3F0, SectorObject_Slot11))
+#define SectorObject_Run (FN(0x4DE4E0, SectorObject_Run))
+#define SectorObject_NearZHandler (FN(0x4DE8A0, SectorObject_NearClip))
+#define SectorObject_WorldAdd (FN(0x4DE970, SectorObject_WorldAdd))
+#define SectorObject_WorldRemove (FN(0x4DEA80, SectorObject_WorldRemove))
+#define SectorInteriorObject_WorldAdd (FN(0x4DEB90, SectorInteriorObject_WorldAdd))
+#define SectorInteriorObject_WorldRemove (FN(0x4DED30, SectorInteriorObject_WorldRemove))
+#define sub_4D3710 (FN(0x4D3710, Task_Nothing))
 
 /* a view space vertex with its screen position and outcode */
 typedef struct ClipVertex {

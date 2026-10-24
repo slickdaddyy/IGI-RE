@@ -5,6 +5,21 @@
 #include "hook.h"
 #include "bonemesh/bonemesh.h"
 
+FN_EXTERN(BandFilter_Draw);
+FN_EXTERN(BandFilter_DrawPrim);
+FN_EXTERN(BandFilter_Render);
+FN_EXTERN(BandFilter_Run);
+FN_EXTERN(Debug_Log);
+FN_EXTERN(HandiCamFilter_Draw);
+FN_EXTERN(HandiCamFilter_DrawPrim);
+FN_EXTERN(HandiCamFilter_Render);
+FN_EXTERN(HandiCamFilter_Run);
+FN_EXTERN(LineFilter_Draw);
+FN_EXTERN(LineFilter_DrawPrim);
+FN_EXTERN(Task_Nothing);
+FN_EXTERN(WideScreenFilter_Draw);
+FN_EXTERN(WideScreenFilter_DrawPrim);
+
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
@@ -119,8 +134,8 @@ _Static_assert(sizeof(HandiCamFilter) == 0x54, "HandiCamFilter");
 #define gD3DViewMaxZ VAR(float, 0xBCAD8C)
 #define gNearClipZ VAR(float, 0xBCADC0)
 
-#define TASK_NOTHING ((void *)0x4D3710)
-#define TASK_DEBUG_LOG ((void *)0x4C1780)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
+#define TASK_DEBUG_LOG (FN(0x4C1780, Debug_Log))
 
 void LineFilter_Render(LineFilter *t);
 
@@ -358,31 +373,31 @@ void CameraFilter_Init(void)
     gWideScreenFilterType = TaskType_New("WideScreenFilter", sizeof(WideScreenFilter), Task_GetRootType(), 0);
     gBandFilterType = TaskType_New("BandFilter", sizeof(BandFilter), Task_GetRootType(), 0);
     gHandiCamFilterType = TaskType_New("HandiCamFilter", sizeof(HandiCamFilter), Task_GetRootType(), 0);
-    TaskType_SetHandler2(gLineFilterType, Screen_GetDrawEvent(), (void *)0x4A3550);
+    TaskType_SetHandler2(gLineFilterType, Screen_GetDrawEvent(), FN(0x4A3550, LineFilter_Draw));
     TaskType_SetHandler2(gLineFilterType, 1, TASK_NOTHING);
     TaskType_SetHandler2(gLineFilterType, 2, TASK_DEBUG_LOG);
-    TaskType_SetHandler2(gWideScreenFilterType, Screen_GetDrawEvent(), (void *)0x4A3650);
+    TaskType_SetHandler2(gWideScreenFilterType, Screen_GetDrawEvent(), FN(0x4A3650, WideScreenFilter_Draw));
     TaskType_SetHandler2(gWideScreenFilterType, 1, TASK_NOTHING);
-    TaskType_SetHandler2(gBandFilterType, Screen_GetDrawEvent(), (void *)0x4A36D0);
-    TaskType_SetHandler2(gBandFilterType, 1, (void *)0x4A38A0);
+    TaskType_SetHandler2(gBandFilterType, Screen_GetDrawEvent(), FN(0x4A36D0, BandFilter_Draw));
+    TaskType_SetHandler2(gBandFilterType, 1, FN(0x4A38A0, BandFilter_Run));
     TaskType_SetHandler2(gBandFilterType, 2, BandFilter_Delete);
-    TaskType_SetHandler2(gHandiCamFilterType, Screen_GetDrawEvent(), (void *)0x4A4D10);
-    TaskType_SetHandler2(gHandiCamFilterType, 1, (void *)0x4A4CB0);
+    TaskType_SetHandler2(gHandiCamFilterType, Screen_GetDrawEvent(), FN(0x4A4D10, HandiCamFilter_Draw));
+    TaskType_SetHandler2(gHandiCamFilterType, 1, FN(0x4A4CB0, HandiCamFilter_Run));
     TaskType_SetHandler2(gHandiCamFilterType, 2, HandiCamFilter_Delete);
     gLineDrawMethod = RenderMode_CreateMethod("DrawLineFilter");
     gBandDrawMethod = RenderMode_CreateMethod("DrawBandFilter");
     gHandiCamDrawMethod = RenderMode_CreateMethod("DrawHandiCamFilter");
     RenderMode_SetMethod(Direct3D_GetRenderMode(), gLineDrawMethod, LineFilter_Render);
-    RenderMode_SetMethod(Direct3D_GetRenderMode(), gBandDrawMethod, (void *)0x4A3940);
-    RenderMode_SetMethod(Direct3D_GetRenderMode(), gHandiCamDrawMethod, (void *)0x4A4300);
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), gBandDrawMethod, FN(0x4A3940, BandFilter_Render));
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), gHandiCamDrawMethod, FN(0x4A4300, HandiCamFilter_Render));
     gLineFilterTask = Primitive_Register("LineFilter");
     gWideScreenFilterTask = Primitive_Register("WideScreenFilter");
     gBandFilterTask = Primitive_Register("BandFilter");
     gHandiCamFilterTask = Primitive_Register("HandiCamFilter");
-    Primitive_SetHandler(gLineFilterTask, (void *)0x4A3530);
-    Primitive_SetHandler(gWideScreenFilterTask, (void *)0x4A35B0);
-    Primitive_SetHandler(gBandFilterTask, (void *)0x4A36B0);
-    Primitive_SetHandler(gHandiCamFilterTask, (void *)0x4A4C90);
+    Primitive_SetHandler(gLineFilterTask, FN(0x4A3530, LineFilter_DrawPrim));
+    Primitive_SetHandler(gWideScreenFilterTask, FN(0x4A35B0, WideScreenFilter_DrawPrim));
+    Primitive_SetHandler(gBandFilterTask, FN(0x4A36B0, BandFilter_DrawPrim));
+    Primitive_SetHandler(gHandiCamFilterTask, FN(0x4A4C90, HandiCamFilter_DrawPrim));
     Random_Init(gFilterRandom);
     gFilterNoiseSeed = Random_Float(gFilterRandom) * kSeedScale.f;
 }

@@ -6,6 +6,8 @@
 
 #include "igi.h"
 
+FN_EXTERN(Task_Nothing);
+
 /* the first 0x20 bytes of every task */
 typedef struct Task {
     struct Task *next;
@@ -25,7 +27,7 @@ typedef void (*TaskFn)(void *task, void *arg);
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
 #define HANDLER(slot, type) gTaskHandlers[(uint8_t)(slot)][(uint16_t)(type)]
 
-#define TASK_NOTHING ((void *)0x4D3710)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* what a script function returns */
 typedef struct ScriptValue {

@@ -3,7 +3,9 @@
 #include "hook.h"
 #include "elevator/elevator.h"
 
-#define TASK_NOTHING ((void *)0x4D3710)
+FN_EXTERN(Task_Nothing);
+
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
 ORIG(0x4453E0, void, Switch_UpdateLocal, (void *obj));

@@ -5,6 +5,10 @@
 #include "glass/glass.h"
 #include "hook.h"
 
+FN_EXTERN(RocketPod_GetArgSize);
+FN_EXTERN(Task_FalseHandler);
+FN_EXTERN(Task_Nothing);
+
 ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
 ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
 ORIG(0x416C90, long double, Game_BlastFalloff, (void *blast, void *obj, Vec3d *pos, float radius, int unk));
@@ -54,9 +58,9 @@ typedef struct TouchArg {
 #define kThreeQuarters VAR(float, 0x53351C)
 #define kHitForce VAR(float, 0x5338B8)  /* 0.007 */
 
-#define Task_Nothing ((void *)0x4D3710)
-#define sub_427D70 ((void *)0x427D70)
-#define sub_45F920 ((void *)0x45F920)
+#define Task_Nothing (FN(0x4D3710, Task_Nothing))
+#define sub_427D70 (FN(0x427D70, RocketPod_GetArgSize))
+#define sub_45F920 (FN(0x45F920, Task_FalseHandler))
 
 void GlassShatter_Spawn(void **model, Vec3f *dir, Vec3d *pos, Matrix *m, void *hit);
 

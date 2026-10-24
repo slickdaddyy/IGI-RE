@@ -4,6 +4,9 @@
 #include "igi.h"
 #include "plane/plane.h"
 
+FN_EXTERN(EditorMagicObj_Delete);
+FN_EXTERN(ParamQuat32_Size);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
@@ -17,8 +20,8 @@ ORIG(0x4C56E0, uint8_t, RigidDynCubeObj_GetEvent1, (void));
 ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
 ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
 
-#define MAGICOBJ_DELETE ((void *)0x51B940)
-#define GEAR_DEF_SIZE ((void *)0x4EFF20)
+#define MAGICOBJ_DELETE (FN(0x51B940, EditorMagicObj_Delete))
+#define GEAR_DEF_SIZE (FN(0x4EFF20, ParamQuat32_Size))
 
 #define gGearType VAR(uint16_t, 0x57BD64)
 #define kQuarterPi VAR(float, 0x5337C0)

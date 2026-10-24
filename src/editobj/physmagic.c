@@ -4,6 +4,8 @@
 #include "hook.h"
 #include "editobj/editobj.h"
 
+FN_EXTERN(MagicObj_RunHandler);
+
 /* "PhysicsMagicObj" (0x768), a PhysicsObj (0x720) */
 typedef struct PhysicsMagicObj {
     Obj obj;
@@ -55,7 +57,7 @@ ORIG(0x4FB5E0, uint16_t, PhysicsObj_GetType, (void));
 ORIG(0x4FB5F0, void, PhysicsObj_Init, (void *obj));
 ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (void *obj, void *phys));
 
-#define MAGICOBJ_RUN ((void *)0x4D9970)
+#define MAGICOBJ_RUN (FN(0x4D9970, MagicObj_RunHandler))
 
 #define gPhysicsMagicObjType VAR(uint16_t, 0x54E66C)
 

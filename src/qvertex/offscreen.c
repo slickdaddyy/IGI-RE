@@ -4,6 +4,8 @@
 #include "hook.h"
 #include "qvertex/qvertex.h"
 
+FN_EXTERN(Task_Nothing);
+
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -14,7 +16,7 @@ ORIG(0x4978B0, void, RenderQueue_Add, (int queue, void *node));
 ORIG(0x498370, int, Offscreen_GetMode, (void));
 
 /* the shared do-nothing function */
-#define NOTHING ((void *)0x4D3710)
+#define NOTHING (FN(0x4D3710, Task_Nothing))
 
 #define gAllocTextureId VAR(int, 0x546FA8)
 #define gDeAllocTextureId VAR(int, 0x546FAC)

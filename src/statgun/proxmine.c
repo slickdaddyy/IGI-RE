@@ -3,6 +3,8 @@
 #include "hook.h"
 #include "statgun/statgun.h"
 
+FN_EXTERN(Missile_GetModelSize);
+
 /* the private data of the proximity mine weapon type */
 typedef struct ProxData {
     float armTime;      /* seconds */
@@ -47,7 +49,7 @@ _Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 #define kRangeScale VAR(float, 0x5333B8)
 #define kTicksPerSecond VAR(float, 0x5333BC)
 
-#define HANDLER_429910 ((void *)0x429910)
+#define HANDLER_429910 (FN(0x429910, Missile_GetModelSize))
 
 ORIG(0x4F1FE0, uint8_t, Weapon_GetMoveEvent, (void));
 ORIG(0x416830, uint8_t, Game_GetEvent7, (void));

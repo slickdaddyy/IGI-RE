@@ -5,6 +5,24 @@
 #include "igi.h"
 #include "guncasing/guncasing.h"
 
+FN_EXTERN(Gun_AddHandler);
+FN_EXTERN(Gun_CollFilter);
+FN_EXTERN(Gun_DropHandler);
+FN_EXTERN(Gun_FillClipHandler);
+FN_EXTERN(Gun_GetAmmoHandler);
+FN_EXTERN(Gun_GetShotSourceHandler);
+FN_EXTERN(Gun_GetTypeHandler);
+FN_EXTERN(Gun_Handler479CA0);
+FN_EXTERN(Gun_HudHandler);
+FN_EXTERN(Gun_ReloadHandler);
+FN_EXTERN(Gun_RemoveFromWorldHandler);
+FN_EXTERN(Gun_RemoveHandler);
+FN_EXTERN(Gun_ResetHandler);
+FN_EXTERN(Gun_ShootHandler);
+FN_EXTERN(Human_ClearResult);
+FN_EXTERN(Task_FalseHandler);
+FN_EXTERN(Task_Nothing);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
@@ -97,9 +115,9 @@ ORIG(0x4F2040, uint8_t, Weapon_GetEvent7b, (void));
 #define kTwoPi VAR(float, 0x5334A8)
 #define kSpinStep VAR(float, 0x5334BC)    /* 1/45 */
 
-#define Task_NullHandler ((void *)0x4D3710)
-#define Task_FalseHandler ((void *)0x45F920)
-#define Human_ClearResult ((void *)0x45E3D0)
+#define Task_NullHandler (FN(0x4D3710, Task_Nothing))
+#define Task_FalseHandler (FN(0x45F920, Task_FalseHandler))
+#define Human_ClearResult (FN(0x45E3D0, Human_ClearResult))
 
 void Gun_CreateHandler(Gun *g);
 void Gun_RunHandler(Gun *g);
@@ -223,20 +241,20 @@ void Gun_Open(void)
     TaskType_SetHandler(gGunType, Weapon_GetStateEvent(), Gun_GetStateHandler);
     TaskType_SetHandler(gGunType, Weapon_GetMoveEvent(), Gun_MoveHandler);
     TaskType_SetHandler(gGunType, Weapon_GetTriggerEvent(), Gun_FireHandler);
-    TaskType_SetHandler(gGunType, Weapon_GetEvent3(), (void *)0x4798C0);
-    TaskType_SetHandler(gGunType, Weapon_GetEvent4(), (void *)0x479AA0);
-    TaskType_SetHandler2(gGunType, Weapon_GetSelectEvent(), (void *)0x479B20);
-    TaskType_SetHandler2(gGunType, Weapon_GetDeselectEvent(), (void *)0x479C10);
-    TaskType_SetHandler(gGunType, Weapon_GetEvent7b(), (void *)0x479C20);
-    TaskType_SetHandler(gGunType, Weapon_GetTypeEvent(), (void *)0x479C80);
-    TaskType_SetHandler(gGunType, Weapon_GetEvent7(), (void *)0x479CA0);
-    TaskType_SetHandler(gGunType, StatusScreen_GetEvent(), (void *)0x479D20);
-    TaskType_SetHandler(gGunType, AIDetection_GetEvent0(), (void *)0x47A8E0);
-    TaskType_SetHandler(gGunType, GunShot_GetEvent(), (void *)0x47A940);
-    TaskType_SetHandler(gGunType, Human_GetEvent0(), (void *)0x479780);
-    TaskType_SetHandler(gGunType, Human_GetEvent1(), (void *)0x479990);
-    TaskType_SetHandler(gGunType, World_GetEvent1(), (void *)0x47A960);
-    TaskType_SetHandler(gGunType, World_GetEvent0(), (void *)0x47A9E0);
+    TaskType_SetHandler(gGunType, Weapon_GetEvent3(), FN(0x4798C0, Gun_FillClipHandler));
+    TaskType_SetHandler(gGunType, Weapon_GetEvent4(), FN(0x479AA0, Gun_GetAmmoHandler));
+    TaskType_SetHandler2(gGunType, Weapon_GetSelectEvent(), FN(0x479B20, Gun_ResetHandler));
+    TaskType_SetHandler2(gGunType, Weapon_GetDeselectEvent(), FN(0x479C10, Gun_RemoveFromWorldHandler));
+    TaskType_SetHandler(gGunType, Weapon_GetEvent7b(), FN(0x479C20, Gun_DropHandler));
+    TaskType_SetHandler(gGunType, Weapon_GetTypeEvent(), FN(0x479C80, Gun_GetTypeHandler));
+    TaskType_SetHandler(gGunType, Weapon_GetEvent7(), FN(0x479CA0, Gun_Handler479CA0));
+    TaskType_SetHandler(gGunType, StatusScreen_GetEvent(), FN(0x479D20, Gun_HudHandler));
+    TaskType_SetHandler(gGunType, AIDetection_GetEvent0(), FN(0x47A8E0, Gun_CollFilter));
+    TaskType_SetHandler(gGunType, GunShot_GetEvent(), FN(0x47A940, Gun_GetShotSourceHandler));
+    TaskType_SetHandler(gGunType, Human_GetEvent0(), FN(0x479780, Gun_ShootHandler));
+    TaskType_SetHandler(gGunType, Human_GetEvent1(), FN(0x479990, Gun_ReloadHandler));
+    TaskType_SetHandler(gGunType, World_GetEvent1(), FN(0x47A960, Gun_RemoveHandler));
+    TaskType_SetHandler(gGunType, World_GetEvent0(), FN(0x47A9E0, Gun_AddHandler));
     TaskType_SetHandler(gGunType, BulletHole_GetEvent(), NULL);
     gGunParams = ParamTable_New(3);
     e = WeaponType_GetIdEnum();

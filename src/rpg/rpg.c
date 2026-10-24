@@ -7,6 +7,8 @@
 #include "igi.h"
 #include "rpg/soldier.h"
 
+FN_EXTERN(Human_DeadRun);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
@@ -97,7 +99,7 @@ ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 #define gSoldierRPGCombos ((void *)0x53E718)
 #define gSoldierRPGAnimSlots ((void *)0x53E720)
 #define gSoldierRPGSpeeds ((void *)0x53E798)
-#define Human_DeadRun ((SoldierStateFn)0x45C740)
+#define Human_DeadRun ((SoldierStateFn)FN(0x45C740, Human_DeadRun))
 
 static const float kShakeAmount = 0x1.99999ap+7f;
 static const float kShakeAngle = 0x1.aceea0p-6f;

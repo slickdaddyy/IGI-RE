@@ -1,6 +1,9 @@
 #include "hook.h"
 #include "terredit/terredit.h"
 
+FN_EXTERN(Lensflare_Delete);
+FN_EXTERN(Task_Nothing);
+
 /* Small task types: SkyTask, LevelScript, SimBoneDynCubeObj, PushButton */
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -28,8 +31,8 @@ ORIG(0x504DC0, void, MenuItemTask_AddToList, (void *list, void *item));
 ORIG(0x504DF0, uint8_t, MenuItemTask_GetListEvent, (void));
 ORIG(0x505C80, uint16_t, MenuItem_GetType, (void));
 
-#define Task_Nothing ((void *)0x4D3710)
-#define DynCubeObj_ListRemove ((void *)0x520F20)
+#define Task_Nothing (FN(0x4D3710, Task_Nothing))
+#define DynCubeObj_ListRemove (FN(0x520F20, Lensflare_Delete))
 
 /* ---- SkyTask ---- */
 

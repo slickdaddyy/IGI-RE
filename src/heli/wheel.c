@@ -4,6 +4,10 @@
 #include "igi.h"
 #include "heli/heli.h"
 
+FN_EXTERN(Rotor_FreeDef);
+FN_EXTERN(Task_Nothing);
+FN_EXTERN(VehiclePart_CollFilter);
+
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -40,9 +44,9 @@ void Car_LiftJoint(Car *c, int joint, float amount, float max);
 
 #define gWheelType VAR(uint16_t, 0x57BD30)
 
-#define TASK_NOTHING ((void *)0x4D3710)
-#define ROTOR_FREE_DEF ((void *)0x42DA70)
-#define VEHICLEPART_COLL_FILTER ((void *)0x426D30)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
+#define ROTOR_FREE_DEF (FN(0x42DA70, Rotor_FreeDef))
+#define VEHICLEPART_COLL_FILTER (FN(0x426D30, VehiclePart_CollFilter))
 
 static float radius(Wheel *w)
 {

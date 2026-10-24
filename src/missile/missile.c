@@ -9,6 +9,8 @@
 #include "orig.h"
 #include "missile/missile.h"
 
+FN_EXTERN(Task_FalseHandler);
+
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -98,7 +100,7 @@ ORIG(0x4FE730, char *, TagItem_Find, (void *task, const char *name));
 #define gMissileRandom ((void *)0x57BC88)
 #define gUnkBC2360 VAR(char *, 0xBC2360)
 
-#define Missile_UnkHandlerC ((void *)0x45F920)
+#define Missile_UnkHandlerC (FN(0x45F920, Task_FalseHandler))
 
 #define kSmokeSize VAR(float, 0x5336A4)      /* 0.3 */
 #define kSmokeMin VAR(float, 0x533598)       /* 0.15 */

@@ -5,6 +5,11 @@
 #include "igi.h"
 #include "guncasing/guncasing.h"
 
+FN_EXTERN(GunCABarrel_Follow);
+FN_EXTERN(Human_ClearResult);
+FN_EXTERN(Param_One);
+FN_EXTERN(Task_Nothing);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
@@ -39,10 +44,10 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 #define gGunClipType VAR(uint16_t, 0x54074E)
 #define gGunMovingPartType VAR(uint16_t, 0x540750)
 
-#define Task_NullHandler ((void *)0x4D3710)
-#define Task_TrueHandler ((void *)0x4EFA10)
-#define Human_ClearResult ((void *)0x45E3D0)
-#define GunClip_RenderHandler ((void *)0x472880)
+#define Task_NullHandler (FN(0x4D3710, Task_Nothing))
+#define Task_TrueHandler (FN(0x4EFA10, Param_One))
+#define Human_ClearResult (FN(0x45E3D0, Human_ClearResult))
+#define GunClip_RenderHandler (FN(0x472880, GunCABarrel_Follow))
 
 void GunFlame_CreateHandler(GunPart *p, GunPartArgs *a);
 void GunFlame_DeleteHandler(GunPart *p);

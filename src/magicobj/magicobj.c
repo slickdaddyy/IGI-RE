@@ -4,6 +4,12 @@
 #include "igi.h"
 #include "magicobj/magicobj.h"
 
+FN_EXTERN(RigidDynCubeObj_CollLine);
+FN_EXTERN(RigidDynCubeObj_EnterHandler);
+FN_EXTERN(RigidDynCubeObj_LineHit);
+FN_EXTERN(Task_Nothing);
+FN_EXTERN(sub_4C2F90);
+
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A5BB0, char *, crt_strstr, (const char *s, const char *find));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
@@ -34,11 +40,11 @@ ORIG(0x4E5360, uint8_t, DynCubeObj_GetMaskVisibleEvent, (void));
 ORIG(0x4E55B0, uint8_t, CellMask_GetDrawEvent, (void));
 ORIG(0x4E5610, void, CellMask_FillTriangle, (int target, float ax, float ay, float bx, float by, float cx, float cy));
 
-#define RIGID_ENTER_HANDLER ((void *)0x4A01B0)
-#define RIGID_HANDLER_4C1840 ((void *)0x4C1840)
-#define RIGID_HANDLER_4D3710 ((void *)0x4D3710)
-#define RIGID_HANDLER_4C35F0 ((void *)0x4C35F0)
-#define DIR_CALLBACK_4C2F90 ((void *)0x4C2F90)
+#define RIGID_ENTER_HANDLER (FN(0x4A01B0, RigidDynCubeObj_EnterHandler))
+#define RIGID_HANDLER_4C1840 (FN(0x4C1840, RigidDynCubeObj_LineHit))
+#define RIGID_HANDLER_4D3710 (FN(0x4D3710, Task_Nothing))
+#define RIGID_HANDLER_4C35F0 (FN(0x4C35F0, RigidDynCubeObj_CollLine))
+#define DIR_CALLBACK_4C2F90 (FN(0x4C2F90, sub_4C2F90))
 
 #define gTaskHandlers ((MagicHandler (*)[0x180])0xA96AE0)
 #define gTaskStack ((MagicNode **)0xAFA6E0)

@@ -7,6 +7,8 @@
 #include "hook.h"
 #include "camera/camera.h"
 
+FN_EXTERN(Task_Nothing);
+
 typedef struct VarString {
     char *text;
     char *expanded;
@@ -170,7 +172,7 @@ ORIG(0x518190, long double, Hermite_Eval, (double *h, double u));
 #define gCutSceneCamera VAR(void *, 0xA76C7C)
 #define gCutSceneFilterParent VAR(void *, 0xA76C80)
 
-#define TASK_NOTHING ((void *)0x4D3710)
+#define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 static const double kPi = 0x1.921fb54442d1bp+1;
 static const double kNegPi = -0x1.921fb54442d1bp+1;

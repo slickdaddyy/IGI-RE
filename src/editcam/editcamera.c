@@ -4,6 +4,8 @@
 #include "hook.h"
 #include "editcam/editcam.h"
 
+FN_EXTERN(SubLevel_Run);
+
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
@@ -33,7 +35,7 @@ ORIG(0x4F1DB0, void, ParamEnum_AddConstants, (void *e, const char *pattern));
 ORIG(0x4F1E20, void *, Param_EnumString32, (void));
 ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
-#define SubLevel_Run ((void *)0x488700)
+#define SubLevel_Run (FN(0x488700, SubLevel_Run))
 
 /* a camera key of a cut scene */
 typedef struct EditCamera {

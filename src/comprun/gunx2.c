@@ -2,6 +2,9 @@
 #include "igi.h"
 #include "comprun/comprun.h"
 
+FN_EXTERN(GunCABarrel_Follow);
+FN_EXTERN(Human_ClearResult);
+
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -18,8 +21,8 @@ ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
 ORIG(0x4E0930, Task *, MagicObjContainer_New, (void *parent, void *obj));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 
-#define Gunx2_Handler472880 ((void *)0x472880)
-#define Gunx2_Handler45E3D0 ((void *)0x45E3D0)
+#define Gunx2_Handler472880 (FN(0x472880, GunCABarrel_Follow))
+#define Gunx2_Handler45E3D0 (FN(0x45E3D0, Human_ClearResult))
 
 /* the argument of the create handler of the vehicle parts */
 typedef struct PartCreateArg {

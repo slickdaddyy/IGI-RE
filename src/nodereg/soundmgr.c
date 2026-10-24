@@ -2,6 +2,13 @@
 #include "hook.h"
 #include "nodereg/nodereg.h"
 
+FN_EXTERN(SoundManager_Create);
+FN_EXTERN(SoundManager_Delete);
+FN_EXTERN(SoundManager_GetInfo);
+FN_EXTERN(SoundManager_GetParams);
+FN_EXTERN(SoundManager_ParamsChanged);
+FN_EXTERN(SubLevel_Run);
+
 /* "SoundManager" (0x44) */
 typedef struct SoundManager {
     Task task;
@@ -22,12 +29,12 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, int type, int flags, void *extra));
 
-#define SOUNDMANAGER_CREATE ((void *)0x51C090)
-#define SOUNDMANAGER_RUN ((void *)0x488700)
-#define SOUNDMANAGER_DELETE ((void *)0x51C0A0)
-#define SOUNDMANAGER_INFO ((void *)0x51C0C0)
-#define SOUNDMANAGER_CHANGED ((void *)0x51C100)
-#define SOUNDMANAGER_TABLE ((void *)0x51C280)
+#define SOUNDMANAGER_CREATE (FN(0x51C090, SoundManager_Create))
+#define SOUNDMANAGER_RUN (FN(0x488700, SubLevel_Run))
+#define SOUNDMANAGER_DELETE (FN(0x51C0A0, SoundManager_Delete))
+#define SOUNDMANAGER_INFO (FN(0x51C0C0, SoundManager_GetInfo))
+#define SOUNDMANAGER_CHANGED (FN(0x51C100, SoundManager_ParamsChanged))
+#define SOUNDMANAGER_TABLE (FN(0x51C280, SoundManager_GetParams))
 
 #define gSoundManagerType VAR(uint16_t, 0x54EE3C)
 #define gSoundManagerParams VAR(void *, 0xA83780)

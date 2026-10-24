@@ -7,6 +7,9 @@
 #include "script/script.h"
 #include "script/symbol.h"
 
+FN_EXTERN(BreakScript);
+FN_EXTERN(Script_SetWarningLevelCmd);
+
 ORIG(0x48F1D0, int, AppContext_GetCompileScripts, (void));
 ORIG(0x48F340, int, AppContext_GetQvmOnly, (void));
 ORIG(0x4B1E90, char *, Path_GetExtension, (char *buf, int size, char *path));
@@ -366,8 +369,8 @@ void Script_Init(void)
     Script_RegisterConstant("SCRIPT_WARNINGLEVEL_NO_WARNINGS", 0);
     Script_RegisterConstant("SCRIPT_WARNINGLEVEL_NORMAL", 1);
     Script_RegisterConstant("SCRIPT_WARNINGLEVEL_HIGH", 2);
-    Script_RegisterFunction("_Script_SetWarningLevel", (void *)0x4B8C60, NULL, 1);
-    Script_RegisterFunction("BreakScript", (void *)0x4B8C10, NULL, 0);
+    Script_RegisterFunction("_Script_SetWarningLevel", FN(0x4B8C60, Script_SetWarningLevelCmd), NULL, 1);
+    Script_RegisterFunction("BreakScript", FN(0x4B8C10, BreakScript), NULL, 0);
     Script_SetLineSize(0x800);
     Script_SetMaxArgs(0x2000);
     gScriptWarningSp = 0x100;
