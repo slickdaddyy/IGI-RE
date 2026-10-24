@@ -1,4 +1,5 @@
 #pragma GCC optimize("excess-precision=standard")
+#pragma GCC optimize("rounding-math")
 
 #include <string.h>
 
@@ -210,7 +211,7 @@ static void setup_segments(SegObj *o, Vec3d *from, Vec3d *to, float *rotFrom, fl
    largest axis length */
 static float setup_rigid(SegObj *o, Vec3d *from, Vec3d *to)
 {
-    long double dx, k, n0;
+    long double dx, k, n0, r2;
     float d[3], r0, r1, n1, n2, radius = kOne;
 
     if (Vec3d_Equal(from, to))
@@ -233,11 +234,13 @@ static float setup_rigid(SegObj *o, Vec3d *from, Vec3d *to)
     o->rot[0] = r0;
     r1 = k * o->rot[1];
     o->rot[1] = r1;
-    o->rot[2] = k * o->rot[2];
+    r2 = k * o->rot[2];
+    o->rot[2] = r2;
     if (o->reversed) {
         o->rot[0] = -r0;
         o->rot[1] = -r1;
-        o->rot[2] = -o->rot[2];
+        /* negated before rounding, unlike the other two */
+        o->rot[2] = -r2;
     }
     transpose10((uint32_t *)o->rot, (uint32_t *)o->rot);
     n0 = __builtin_sqrtl((long double)o->rot[0] * o->rot[0] + (long double)o->rot[1] * o->rot[1] +
