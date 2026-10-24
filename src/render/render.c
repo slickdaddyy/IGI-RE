@@ -200,10 +200,7 @@ extern int gOpaqueBlendIdx;
 extern ModelVB gMeshVBs[];
 extern int gUnlitIdx;
 extern void (* gTaskHandlers[][0x180])(void *, void *);
-extern char *gLightBase;
-extern int *gLightIndex;
-extern int gLightCount;
-extern int gLightStride;
+extern Pool gLightPool;
 extern DWORD gFogDensity;
 extern float gLayerFov[];
 extern float gLightColor[];
@@ -791,8 +788,8 @@ static void set_lights(void)
     int i;
 
     memset(&light, 0, sizeof(light));
-    for (i = 0; i < gLightCount; i++) {
-        const float *l = (const float *)(gLightBase + gLightIndex[i] * gLightStride);
+    for (i = 0; i < gLightPool.used; i++) {
+        const float *l = (const float *)(gLightPool.data + gLightPool.free[i] * gLightPool.stride);
 
         light.dltType = D3DLIGHT_DIRECTIONAL;
         light.dcvDiffuse.r = gWorldScale * l[3];

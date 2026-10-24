@@ -31,10 +31,7 @@ ORIG(0x52F3D0, void, WaterMesh_CalcEnvUV, (WaterMesh *w, float *uv, const Vec3d 
 ORIG(0x5116D0, void, TerrainMesh_DrawTriangle, (WaterTri *t));
 
 extern int gWaterPrimitive;
-extern char *gLightData;
-extern int *gLightIndex;
-extern int gLightCount;
-extern int gLightStride;
+extern Pool gLightPool;
 extern const char gWaterName[];
 extern uint32_t gWaterSplits[];
 extern int gWaterUnk7C;
@@ -149,12 +146,12 @@ void WaterMesh_Init(WaterMesh *w)
     w->projY = Vec2d_Length(v);
     w->slope = w->amp / w->wavelength;
     r = light[0];
-    n = gLightCount;
+    n = gLightPool.used;
     if (n > 0) {
         long double g = light[1], b = light[2];
 
         for (k = 0; k < n; k++) {
-            const float *l = (const float *)(gLightData + gLightStride * gLightIndex[k]);
+            const float *l = (const float *)(gLightPool.data + gLightPool.stride * gLightPool.free[k]);
 
             r = r + l[3];
             g = g + l[4];
@@ -252,10 +249,10 @@ void WaterMesh_Light(WaterMesh *w, float *color, const float *normal)
         len = x87_sqrt((long double)v[2] * v[2] + (long double)v[0] * v[0] + (long double)v[1] * v[1]);
         v[2] = kOneD / len * v[2];
     }
-    n = gLightCount;
+    n = gLightPool.used;
     if (n > 0) {
         for (i = 0; i < n; i++) {
-            const float *l = (const float *)(gLightData + gLightStride * gLightIndex[i]);
+            const float *l = (const float *)(gLightPool.data + gLightPool.stride * gLightPool.free[i]);
 
             if (v[2] > kZero) {
                 sr = (long double)v[2] * l[3] + sr;
@@ -654,3 +651,4 @@ ALIAS(gWaterName, store_54F75C, 0);
 BSS(A84578) int gWaterPrimitive;
 BSS(A84578) int gWaterUnk7C;
 BSS(A84578) int gWaterUnk80;
+BSS(B041E0) Pool gLightPool;

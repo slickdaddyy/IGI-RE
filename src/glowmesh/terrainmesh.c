@@ -163,10 +163,7 @@ extern TerrainHeightMapInfo gCollBumps[];
 extern TerrainMaterialMapInfo gTerrainMaterialMaps[];
 extern uint8_t gTerrainTileMaps[][8];
 extern int gTerrainMeshRenderAll;
-extern char *gLights;
-extern int *gLightIndex;
-extern int gLightCount;
-extern int gLightStride;
+extern Pool gLightPool;
 extern float gTerrainFogScale;
 extern float gTerrainAmbient[];
 extern float gTerrainFogColor[];
@@ -302,9 +299,9 @@ void TerrainMesh_SetupLighting(Terrain *t)
     float *c;
     int i, s;
 
-    if (!gLightCount)
+    if (!gLightPool.used)
         return;
-    c = (float *)(gLights + *gLightIndex * gLightStride + 0xC);
+    c = (float *)(gLightPool.data + *gLightPool.free * gLightPool.stride + 0xC);
     r = c[0];
     g = c[1];
     b = c[2];

@@ -633,6 +633,7 @@ PAD(igb, A538CC, A538D9, 0x3);
 BSS(A538CC) int gQCubeUnkA538DC;
 BSS(A538CC) int gQCubeUnkA538E0;
 BSS(A538CC) QCallback *gQCubeCallbacks;
+BSS(B04264) float gQCubeEnclosingRadius;
 STORE(igb, B04340, 4) __typeof__(gQCubeCache[0]) store_B04340[2048];
 ALIAS(gQCubeCache, store_B04340, 0);
 STORE(igb, B04340, 1) uint8_t store_B12340[8][256];

@@ -61,10 +61,7 @@ extern int gParticle2DMem;
 extern int gParticle2DMemMax;
 extern int gParticle2DTrailIdx;
 extern int16_t gParticle2DTimer;
-extern char *gLights;
-extern int *gLightIndex;
-extern int gLightCount;
-extern int gLightStride;
+extern Pool gLightPool;
 extern float gAmbient[];
 
 F32(kZero, 0x00000000);
@@ -217,8 +214,8 @@ void Particle2D_GetLight(Particle2DTask *t, float *out)
     float fy, fz, y, z;
     int i;
 
-    for (i = 0; i < gLightCount; i++) {
-        float *l = (float *)(gLights + gLightIndex[i] * gLightStride);
+    for (i = 0; i < gLightPool.used; i++) {
+        float *l = (float *)(gLightPool.data + gLightPool.free[i] * gLightPool.stride);
 
         sx = sx + l[3];
         sy = sy + l[4];

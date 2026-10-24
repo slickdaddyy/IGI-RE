@@ -41,10 +41,7 @@ extern IDirect3DDevice7 *gD3DDevice;
 extern SkyDome *gSkyDome;
 extern void *gSkyModel;
 extern uint32_t gSkyUnk54F720[];
-extern char *gLightBase;
-extern int *gLightIndex;
-extern int gLightCount;
-extern int gLightStride;
+extern Pool gLightPool;
 extern float gWorldScale;
 extern int gD3DTnL;
 extern PtrList *gD3DBlendStates;
@@ -237,8 +234,8 @@ void SkyDome_Render(SkyDome *d)
     float c;
     long double s;
 
-    if (gLightCount) {
-        float *l = (float *)(gLightBase + *gLightIndex * gLightStride);
+    if (gLightPool.used) {
+        float *l = (float *)(gLightPool.data + *gLightPool.free * gLightPool.stride);
 
         angle = x87_atan2(l[0], l[1]) + kHalfPi;
     }

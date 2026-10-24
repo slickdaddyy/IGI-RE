@@ -90,10 +90,7 @@ extern int gPolyListNothingB;
 extern int gPolyListLightState;
 extern int gPolyListNothingD;
 extern char gPolyListRandom[];
-extern char *gLights;
-extern int *gLightIndex;
-extern int gLightCount;
-extern int gLightStride;
+extern Pool gLightPool;
 extern float gLightColor[];
 extern float gFogColor[];
 extern float gFogDensity;
@@ -110,7 +107,7 @@ extern const float kNearScale;
 
 static Light *Light_Get(int i)
 {
-    return (Light *)(gLights + gLightIndex[i] * gLightStride);
+    return (Light *)(gLightPool.data + gLightPool.free[i] * gLightPool.stride);
 }
 
 void PolyList_Delete(PolyList *p)
@@ -225,7 +222,7 @@ void PolyList_SetLightsCB(void)
     int i;
 
     memset(&light, 0, sizeof(light));
-    for (i = 0; i < gLightCount; i++) {
+    for (i = 0; i < gLightPool.used; i++) {
         Light *l = Light_Get(i);
 
         light.dltType = D3DLIGHT_DIRECTIONAL;
@@ -308,7 +305,7 @@ void PolyList_Draw(void **msg)
     if (p->lit) {
         long double r = 0, g = 0, b = 0;
 
-        for (i = 0; i < gLightCount; i++) {
+        for (i = 0; i < gLightPool.used; i++) {
             Light *l = Light_Get(i);
 
             if (l->on) {
