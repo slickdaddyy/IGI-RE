@@ -20,8 +20,8 @@ ORIG(0x4B0EE0, void, RenderMode_ForEach, (void (*fn)(RenderModeInfo *info, void 
 ORIG(0x4B0F30, void, RenderMode_Select, (int mode));
 ORIG(0x4B0F70, void, RenderMode_Deselect, (void));
 ORIG(0x4B1000, int, RenderMode_Call, (int mode, int method, void *arg));
-ORIG(0x492230, HRESULT, Direct3D_FindDeviceCB, (void));
-ORIG(0x4922B0, HRESULT, Direct3D_ListDeviceCB, (void));
+ORIG_STD(0x492230, HRESULT, Direct3D_FindDeviceCB, (char *desc, char *name, D3DDEVICEDESC7 *dev, void *ctx));
+ORIG_STD(0x4922B0, HRESULT, Direct3D_ListDeviceCB, (char *desc, char *name, D3DDEVICEDESC7 *dev, void *ctx));
 ORIG(0x492370, void, Guid_ToString, (char *out, GUID guid));
 ORIG(0x492BE0, const char *, DDraw_GetErrorString, (HRESULT hr));
 ORIG(0x493580, void, Direct3D_Init, (void));

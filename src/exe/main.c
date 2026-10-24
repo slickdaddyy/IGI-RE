@@ -9,7 +9,8 @@
    the original addresses, fills the code range with int3 and puts a jump to our rewrite at
    every original function, so ORIG calls and code pointers in the data reach our code.
    The exe is linked at 0x400000 with this section first, so the range is ours from the start
-   (see CMakeLists.txt); our own headers take the place of IGI.exe's. */
+   (see CMakeLists.txt); our own headers take the place of IGI.exe's. ORIG calls link to the
+   rewrite directly (link.c); the jumps serve code addresses held in data. */
 __asm__(".section .igi,\"bw\"\n\t.space 0x834000\n\t.text");
 
 #define EXE_BASE 0x400000
@@ -19,6 +20,7 @@ __asm__(".section .igi,\"bw\"\n\t.space 0x834000\n\t.text");
 #define TEXT_HI 0x533000
 
 int WINAPI AppMain_WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdLine, int show);
+int Link_Bind(HMODULE msvcrt, HMODULE dinput);
 
 /* the exe's import thunks (jmp [slot]) that our code calls by address */
 static const uint32_t thunks[][2] = {
@@ -122,11 +124,6 @@ static void load_exe(void)
 static void load_imports(uint32_t dir)
 {
     const IMAGE_IMPORT_DESCRIPTOR *d = (const IMAGE_IMPORT_DESCRIPTOR *)(EXE_BASE + dir);
-    char sys[MAX_PATH];
-
-    /* the system dinput, not this project's proxy dll if it sits in the game folder */
-    GetSystemDirectoryA(sys, MAX_PATH - 12);
-    LoadLibraryA(strcat(sys, "\\dinput.dll"));
 
     for (; d->Name; d++) {
         HMODULE m = LoadLibraryA((const char *)(EXE_BASE + d->Name));
@@ -139,12 +136,6 @@ static void load_imports(uint32_t dir)
             *slot = m ? (DWORD)(uintptr_t)GetProcAddress(m, fn) : 0;
         }
     }
-}
-
-/* terrdraw/lexer.c calls the dll build's atof rewrite by name; linked with --wrap */
-double __wrap_crt_atof(const char *s)
-{
-    return atof(s);
 }
 
 /* an int3 in the code range is original code nothing rewrote */
@@ -163,12 +154,17 @@ static LONG CALLBACK on_trap(EXCEPTION_POINTERS *ep)
 
 int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdLine, int show)
 {
-    HMODULE msvcrt = GetModuleHandleA("msvcrt.dll");
+    HMODULE msvcrt = LoadLibraryA("msvcrt.dll"), dinput;
     unsigned short cw = 0x27F; /* msvc's startup precision */
     unsigned i;
+    char sys[MAX_PATH];
     void *fn;
 
     (void)prev;
+    /* the system dinput, not this project's proxy dll if it sits in the game folder; the
+       import table below then finds it already loaded */
+    GetSystemDirectoryA(sys, MAX_PATH - 12);
+    dinput = LoadLibraryA(strcat(sys, "\\dinput.dll"));
     load_exe();
     hook_exe_mapped = 1;
     Hook_InstallAll(inst);
@@ -178,8 +174,10 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdLine, int show)
         p[1] = 0x25;
         *(uint32_t *)(p + 2) = thunks[i][1];
     }
+    if (!msvcrt || !dinput || !Link_Bind(msvcrt, dinput))
+        fail("msvcrt.dll is missing a function the game needs.");
     for (i = 0; i < sizeof(crt) / sizeof(crt[0]); i++) {
-        if (!msvcrt || !(fn = (void *)GetProcAddress(msvcrt, crt[i].name)))
+        if (!(fn = (void *)GetProcAddress(msvcrt, crt[i].name)))
             fail("msvcrt.dll is missing a function the game needs.");
         jump(crt[i].addr, fn);
     }
