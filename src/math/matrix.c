@@ -1,3 +1,5 @@
+#pragma GCC optimize("excess-precision=standard")
+
 #include "hook.h"
 #include "igi.h"
 #include "orig.h"
@@ -30,7 +32,11 @@ static long double Atan2(long double y, long double x)
             for (;;)
                 ;
         }
-        return (y < 0.0f ? -1.0 : 1.0) * HALF_PI;
+        long double sign = y < 0.0f ? -1.0 : 1.0;
+
+        /* multiplied at run time like the original: it rounds at the game's precision */
+        __asm__("" : "+t"(sign));
+        return sign * HALF_PI;
     }
     return x87_atan2(y, x);
 }
@@ -50,7 +56,7 @@ static void Vec3f_Normalize(Vec3f *v)
 static void Vec3f_Cross(Vec3f *out, const Vec3f *a, const Vec3f *b)
 {
     out->x = (float)((long double)b->z * a->y - (long double)a->z * b->y);
-    out->y = (float)-((long double)b->z * a->x - (long double)a->z * b->x);
+    out->y = (float)x87_neg((long double)b->z * a->x - (long double)a->z * b->x);
     out->z = (float)((long double)a->x * b->y - (long double)b->x * a->y);
 }
 
@@ -115,7 +121,7 @@ void Matrix_SetRotX(Matrix *m, float a)
     m->m[6] = 0.0f;
     m->unk24 = 0;
     m->m[4] = c;
-    m->m[5] = (float)-s;
+    m->m[5] = (float)x87_neg(s);
     m->m[8] = c;
     m->m[7] = (float)s;
 }
@@ -134,7 +140,7 @@ void Matrix_SetRotY(Matrix *m, float a)
     m->unk24 = 0;
     m->m[0] = (float)c;
     m->m[2] = (float)s;
-    m->m[6] = (float)-s;
+    m->m[6] = (float)x87_neg(s);
     m->m[8] = (float)c;
 }
 HOOK(0x4B3BA0, Matrix_SetRotY);
@@ -151,7 +157,7 @@ void Matrix_SetRotZ(Matrix *m, float a)
     m->m[8] = 1.0f;
     m->unk24 = 0;
     m->m[0] = c;
-    m->m[1] = (float)-s;
+    m->m[1] = (float)x87_neg(s);
     m->m[4] = c;
     m->m[3] = (float)s;
 }
@@ -284,13 +290,13 @@ void Matrix_Invert(Matrix *out, const Matrix *m)
 
     inv = (float)(1.0f / (c * e[0] + a * e[2] + b * e[1] - d * e[0] - (long double)f * e[1] - (long double)g * e[2]));
     t.m[0] = (float)((c - d) * inv);
-    t.m[1] = (float)-((f - b) * inv);
+    t.m[1] = (float)x87_neg((f - b) * inv);
     t.m[2] = (float)((a - g) * inv);
-    t.m[3] = (float)-(((long double)e[8] * e[1] - (long double)e[2] * e[7]) * inv);
+    t.m[3] = (float)x87_neg(((long double)e[8] * e[1] - (long double)e[2] * e[7]) * inv);
     t.m[4] = (float)(((long double)e[8] * e[0] - (long double)e[6] * e[2]) * inv);
-    t.m[5] = (float)-(((long double)e[0] * e[7] - (long double)e[6] * e[1]) * inv);
+    t.m[5] = (float)x87_neg(((long double)e[0] * e[7] - (long double)e[6] * e[1]) * inv);
     t.m[6] = (float)(((long double)e[5] * e[1] - (long double)e[2] * e[4]) * inv);
-    t.m[7] = (float)-(((long double)e[5] * e[0] - (long double)e[3] * e[2]) * inv);
+    t.m[7] = (float)x87_neg(((long double)e[5] * e[0] - (long double)e[3] * e[2]) * inv);
     t.m[8] = (float)(((long double)e[4] * e[0] - (long double)e[3] * e[1]) * inv);
     t.unk24 = m->unk24 + 1;
     *out = t;

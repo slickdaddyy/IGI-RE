@@ -9,6 +9,13 @@ static inline long double x87_sqrt(long double x)
     return x;
 }
 
+/* fchs, so gcc cannot move the negation after a rounding or turn -(a - b) into b - a */
+static inline long double x87_neg(long double x)
+{
+    __asm__("fchs" : "+t"(x));
+    return x;
+}
+
 static inline long double x87_sin(long double x)
 {
     __asm__("fsin" : "+t"(x));

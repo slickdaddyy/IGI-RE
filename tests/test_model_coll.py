@@ -6,6 +6,15 @@ from unicorn import UC_HOOK_CODE
 
 from emu import Emu, compare, compare_hooked
 
+
+@pytest.fixture(autouse=True, params=[0x37F, 0x7F, 0xC7F, 0x77F], ids=hex)
+def cw(request):
+    """Every test at the emulator default and at the control words the game uses."""
+    Emu.cw = request.param
+    yield
+    Emu.cw = None
+
+
 emu = Emu()
 
 MEM_INIT, TERRAIN_NEW, ADD = 0x4B0BA0, 0x4C5B20, 0x4C7140

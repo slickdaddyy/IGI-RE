@@ -9,6 +9,14 @@ from unicorn.x86_const import UC_X86_REG_FP0, UC_X86_REG_FPSW
 from emu import TRAP_BASE, Emu, compare
 
 
+@pytest.fixture(autouse=True, params=[0x37F, 0x7F, 0xC7F, 0x77F], ids=hex)
+def cw(request):
+    """Every test at the emulator default and at the control words the game uses."""
+    Emu.cw = request.param
+    yield
+    Emu.cw = None
+
+
 class FpuEmu(Emu):
     """Emu.call reports physical register R0 as st0; report (TOP, st(0)) instead."""
 

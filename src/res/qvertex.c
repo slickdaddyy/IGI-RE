@@ -146,6 +146,13 @@ static float Fsin(float x)
 /* The intermediate values stay on the FPU stack in the original, so this
    uses long double where it keeps full precision and float where it
    stores to memory. */
+/* fchs, so gcc cannot turn -(a - b) into b - a (they round apart in round-down) */
+static inline long double x87_neg(long double x)
+{
+    __asm__("fchs" : "+t"(x));
+    return x;
+}
+
 void QVertex_DrawPolyline(const float *p, int n, float ox, float oy, float z, float r, float g, float b, float a,
                           float angle, float sx, float sy, unsigned int flags, int unk20)
 {
@@ -161,10 +168,10 @@ void QVertex_DrawPolyline(const float *p, int n, float ox, float oy, float z, fl
 
         if (angle < 0.0 || angle > 0.0) {
             volatile float ry0 = x0 * s + y0 * c;
-            long double rx0 = -(y0 * s - x0 * c);
+            long double rx0 = x87_neg(y0 * s - x0 * c);
             long double ry1 = (long double)x1 * s + (long double)y1f * c;
 
-            x1 = -((long double)y1f * s - (long double)x1 * c);
+            x1 = x87_neg((long double)y1f * s - (long double)x1 * c);
             x0 = rx0;
             y0 = ry0;
             y1 = ry1;

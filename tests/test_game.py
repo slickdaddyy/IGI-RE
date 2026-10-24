@@ -5,6 +5,15 @@ import pytest
 from emu import Emu, ErrorShown, compare
 from test_game_stubs import PyFake, d64, f32, fakes, u32
 
+
+@pytest.fixture(autouse=True, params=[0x37F, 0x7F, 0xC7F, 0x77F], ids=hex)
+def cw(request):
+    """Every test at the emulator default and at the control words the game uses."""
+    Emu.cw = request.param
+    yield
+    Emu.cw = None
+
+
 emu = Emu()
 
 G_GAME, MISSION_ID, RAINING, GAME_TYPE = 0x57BABC, 0x539560, 0x57B1A0, 0x57B1A2

@@ -81,6 +81,8 @@ def align(n, a=0x1000):
 
 
 class Emu:
+    cw = None  # x87 control word for call(); None keeps fninit's 0x37F
+
     def __init__(self, exe=GAME_EXE, dll=OUR_DLL):
         if not exe or not os.path.exists(exe):
             raise RuntimeError("set IGI_EXE to your EU IGI.exe")
@@ -231,9 +233,13 @@ class Emu:
         self.uc.mem_write(RETURN_MAGIC, b"\xc3")
         for reg, v in ((UC_X86_REG_ESP, esp), (UC_X86_REG_EBP, 0), (UC_X86_REG_ECX, ecx), (UC_X86_REG_EDX, edx), (UC_X86_REG_EAX, 0)):
             self.uc.reg_write(reg, v)
-        # start every call with an empty x87 stack: fninit; jmp addr
-        self.uc.mem_write(FAKE_BASE, b"\xdb\xe3\xe9" + struct.pack("<i", addr - (FAKE_BASE + 7)))
-        self.uc.ctl_remove_cache(FAKE_BASE, FAKE_BASE + 7)
+        # start every call with an empty x87 stack: fninit; [fldcw self.cw;] jmp addr
+        code = b"\xdb\xe3"
+        if self.cw is not None:
+            code += b"\xd9\x2d" + struct.pack("<I", FAKE_BASE + 14)
+        code += b"\xe9" + struct.pack("<i", addr - (FAKE_BASE + len(code) + 5))
+        self.uc.mem_write(FAKE_BASE, code.ljust(14, b"\x90") + struct.pack("<H", self.cw or 0))
+        self.uc.ctl_remove_cache(FAKE_BASE, FAKE_BASE + 16)
         try:
             self.uc.emu_start(FAKE_BASE, RETURN_MAGIC, count=limit)
         except UcError as e:

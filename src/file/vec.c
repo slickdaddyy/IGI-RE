@@ -19,6 +19,12 @@ static inline long double fsqrt(long double x)
     return x;
 }
 
+static inline long double fchs(long double x)
+{
+    __asm__("fchs" : "+t"(x));
+    return x;
+}
+
 static inline long double fpatan(long double y, long double x)
 {
     long double r;
@@ -235,7 +241,7 @@ void Vec3_ToAngles(const float *v, float *pitch, float *yaw)
     if (IsZero(len))
         *pitch = 0.0f;
     else
-        *pitch = -Math_ASinF(v[2] / len);
+        *pitch = fchs(Math_ASinF(v[2] / len));
 }
 HOOK(0x4B2D00, Vec3_ToAngles);
 

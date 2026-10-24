@@ -1,7 +1,17 @@
 import pytest
 
+from emu import Emu
 from test_plane_util import (CHILD, EV_MOVE, LOG, PLANE, RET, add_child, cstr, d64, f32, handler, init_emu,  # noqa: F401
                              matrix, msg_handler, plane_emu, run, setup_init, task, u16, u32)
+
+
+@pytest.fixture(autouse=True, params=[0x37F, 0x7F, 0xC7F, 0x77F], ids=hex)
+def cw(request):
+    """Every test at the emulator default and at the control words the game uses."""
+    Emu.cw = request.param
+    yield
+    Emu.cw = None
+
 
 PART = 0x74
 emu = plane_emu()

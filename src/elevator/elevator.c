@@ -304,7 +304,8 @@ void Elevator_Move(Elevator *e)
         if (!(v >= e->maxSpeed))
             e->speed = e->maxSpeed;
     }
-    step = e->speed * kStepUnits;
+    /* read back, not folded at compile time: the product depends on the rounding mode */
+    step = *(volatile float *)&e->speed * kStepUnits;
     if (d > kEpsilon) {
         v = step + e->height;
         step = v;

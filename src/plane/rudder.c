@@ -31,6 +31,13 @@ enum {
     RUDDER_GAMMA,
 };
 
+/* fchs on the x87 value, so gcc cannot move the negation after a rounding */
+static inline long double x87_neg(long double x)
+{
+    __asm__("fchs" : "+t"(x));
+    return x;
+}
+
 void Rudder_Create(Part *o, PartCreateArg *arg)
 {
     PlanePart_Init(o, arg);
@@ -95,10 +102,10 @@ void Rudder_Move(Part *o, PartMoveArg *a)
             angle = cfg->axis[0].rate;
         break;
     case RUDDER_AILERON:
-        angle = -(k * a->owner->v.turn[0]);
+        angle = x87_neg(k * a->owner->v.turn[0]);
         break;
     case RUDDER_GAMMA:
-        angle = -(k * a->owner->v.turn[2]);
+        angle = x87_neg(k * a->owner->v.turn[2]);
         break;
     }
     Matrix_SetRotX(&rot, angle);

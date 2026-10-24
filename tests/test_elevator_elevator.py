@@ -3,9 +3,18 @@ import random
 
 import pytest
 
-from emu import compare
+from emu import Emu, compare
 from test_elevator_util import (RET, add_child, d64, f32, init_emu, make_emu, run, setup_types, strz, task, u16,
                                 u32, obj)
+
+
+@pytest.fixture(autouse=True, params=[0x37F, 0x7F, 0xC7F, 0x77F], ids=hex)
+def cw(request):
+    """Every test at the emulator default and at the control words the game uses."""
+    Emu.cw = request.param
+    yield
+    Emu.cw = None
+
 
 ELEV, IND, CHILD = 0x6B, 0x6C, 0x6D
 

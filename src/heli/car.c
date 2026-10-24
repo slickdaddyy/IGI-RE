@@ -470,11 +470,11 @@ void Car_UpdateWheel(Car *c, int i, int joint)
         if (fne(ct->normal.x, u.x) || fne(ct->normal.y, u.y) || fne(ct->normal.z, u.z)) {
             const Vec3f *n = &ct->normal;
             long double a = u.z * n->y - u.y * n->z;
-            long double b = -(u.z * n->x - u.x * n->z);
+            long double b = x87_neg(u.z * n->x - u.x * n->z);
             long double cc = u.y * n->x - u.x * n->y;
 
             w.x = b * n->z - cc * n->y;
-            w.y = -(a * n->z - cc * n->x);
+            w.y = x87_neg(a * n->z - cc * n->x);
             w.z = a * n->y - b * n->x;
         }
         if (cfg->tank)

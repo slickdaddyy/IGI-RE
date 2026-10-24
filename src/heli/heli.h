@@ -392,6 +392,13 @@ static inline int round_int(long double f)
     return (int)r;
 }
 
+/* fchs on the x87 value, so gcc cannot move the negation after a rounding */
+static inline long double x87_neg(long double x)
+{
+    __asm__("fchs" : "+t"(x));
+    return x;
+}
+
 static inline long double x87_sqrt(long double x)
 {
     __asm__("fsqrt" : "+t"(x));

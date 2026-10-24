@@ -4,7 +4,17 @@ import struct
 
 import pytest
 
+from emu import Emu
 from test_heli_util import RET, f32, new_emu, run, task, u32, vfake
+
+
+@pytest.fixture(autouse=True, params=[0x37F, 0x7F, 0xC7F, 0x77F], ids=hex)
+def cw(request):
+    """Every test at the emulator default and at the control words the game uses."""
+    Emu.cw = request.param
+    yield
+    Emu.cw = None
+
 
 CAR = 0x60
 

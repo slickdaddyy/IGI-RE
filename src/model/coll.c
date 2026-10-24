@@ -5,6 +5,15 @@
 #include "igi.h"
 #include "coll/coll.h"
 
+static const double kOneOver24 = 1.0 / 24.0;
+
+/* fchs on the x87 value, so gcc cannot move the negation after a rounding */
+static inline long double x87_neg(long double x)
+{
+    __asm__("fchs" : "+t"(x));
+    return x;
+}
+
 ORIG(0x4B2C70, int, Vec3_RayPlane, (Vec3f *out, const Vec3f *p, const Vec3f *d, const Vec3f *n));
 ORIG(0x4B2D90, char, Vec3_TriangleCoords, (float *u, float *v, const Vec3f *p, const Vec3f *e1, const Vec3f *e2,
                                            const Vec3f *n));
@@ -280,7 +289,7 @@ int Coll_LeafLineHit(const short *leaf, const Vec3d *base, const Vec3d *s, const
     }
     if (flags & 4)
         sign = -1.0f;
-    scale = (double)((long double)(0x40000000 >> (shift & 31)) * (1.0 / 24.0));
+    scale = (double)((long double)(0x40000000 >> (shift & 31)) * kOneOver24);
     for (i = 0; i < nverts; i++) {
         int p = verts[i];
         long double x = (long double)(((p >> 26) & 0x3F) - 24) * scale;
@@ -294,7 +303,7 @@ int Coll_LeafLineHit(const short *leaf, const Vec3d *base, const Vec3d *s, const
             double t = y;
 
             if (flags & 2) {
-                y = (double)-x;
+                y = (double)x87_neg(x);
                 x = t;
             } else {
                 y = (double)x;

@@ -197,7 +197,7 @@ void Wheel_Run(Wheel *w)
         c = &cfg->wheels[w->index];
         w->spin_speed = v / (wc->radius * kTwoPiD) * kTwoPiD * kThreeTenths + w->spin_speed * kSevenTenths;
         if (c->steered)
-            w->steer = -(c->steer * owner->v.turn[2] * kDegToRad);
+            w->steer = x87_neg(c->steer * owner->v.turn[2] * kDegToRad);
         if (fne(w->lift, kZero) && c->joint >= 0) {
             wc = w->phys->data;
             Car_LiftJoint(car, c->joint, w->lift * wc->unk2EC, wc->unk2EC);
@@ -211,7 +211,13 @@ void Wheel_Run(Wheel *w)
         w->spin_speed = 0;
         w->spin = 0;
     }
-    w->spin = w->spin - w->spin_speed;
+    {
+        /* not folded: after the zeroing above, 0 - 0 is -0 in round-down mode */
+        long double spin = w->spin;
+
+        __asm__("" : "+t"(spin));
+        w->spin = spin - w->spin_speed;
+    }
     BROADCAST(w->task.head, 1);
 }
 HOOK(0x4301C0, Wheel_Run);

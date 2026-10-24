@@ -103,6 +103,24 @@ void Game_DropToGround(void *task, Vec3d *pos)
 }
 HOOK(0x4149B0, Game_DropToGround);
 
+static const float kNearlyUp = 0.95f;
+
+/* fchs on the x87 value, so gcc cannot turn -(a - b) into b - a (they differ in round-down) */
+static inline long double x87_neg(long double x)
+{
+    __asm__("fchs" : "+t"(x));
+    return x;
+}
+
+/* v - 0.0 done by the x87: in round-down mode +0 - 0 gives -0 */
+static inline long double x87_sub_zero(float v)
+{
+    long double zero = 0.0L;
+
+    __asm__("" : "+t"(zero));
+    return v - zero;
+}
+
 /* zero or NaN, like the original's fcomp test */
 static int IsZero(float f)
 {
@@ -122,10 +140,10 @@ void Matrix_SetYAxis(float *m, const Vec3f *dir)
     Vec3f u, v, w;
     long double inv, wz;
 
-    if (az > 0.95f) {
+    if (az > kNearlyUp) {
         u.x = 0.0f;
-        u.y = -z;
-        u.z = y;
+        u.y = (float)x87_neg(x87_sub_zero(z));
+        u.z = (float)x87_sub_zero(y);
         if (!Vec3f_IsZero(&u)) {
             inv = 1.0 / __builtin_sqrtl((long double)u.y * u.y + (long double)u.z * u.z + (long double)u.x * u.x);
             u.x = u.x * inv;
@@ -133,7 +151,7 @@ void Matrix_SetYAxis(float *m, const Vec3f *dir)
             u.z = u.z * inv;
         }
         v.x = (long double)y * u.z - (long double)z * u.y;
-        v.y = -((long double)x * u.z - (long double)z * u.x);
+        v.y = x87_neg((long double)x * u.z - (long double)z * u.x);
         v.z = (long double)x * u.y - (long double)y * u.x;
         w = v;
         wz = w.z;
@@ -144,8 +162,8 @@ void Matrix_SetYAxis(float *m, const Vec3f *dir)
             wz = inv * w.z;
         }
     } else {
-        v.x = y;
-        v.y = -x;
+        v.x = (float)x87_sub_zero(y);
+        v.y = (float)x87_neg(x87_sub_zero(x));
         v.z = 0.0f;
         w = v;
         wz = w.z;
@@ -156,7 +174,7 @@ void Matrix_SetYAxis(float *m, const Vec3f *dir)
             wz = inv * w.z;
         }
         v.x = (long double)z * w.y - (long double)y * wz;
-        v.y = -((long double)z * w.x - (long double)x * wz);
+        v.y = x87_neg((long double)z * w.x - (long double)x * wz);
         v.z = (long double)y * w.x - (long double)x * w.y;
         u = v;
         if (!Vec3f_IsZero(&v)) {

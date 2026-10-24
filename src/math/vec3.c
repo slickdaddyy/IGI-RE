@@ -55,7 +55,7 @@ void Vec3d_Cross(Vec3d *out, const Vec3d *a, const Vec3d *b)
     Vec3d t;
 
     t.x = (double)((long double)b->z * a->y - (long double)a->z * b->y);
-    t.y = (double)-((long double)b->z * a->x - (long double)a->z * b->x);
+    t.y = (double)x87_neg((long double)b->z * a->x - (long double)a->z * b->x);
     t.z = (double)((long double)a->x * b->y - (long double)b->x * a->y);
     *out = t;
 }

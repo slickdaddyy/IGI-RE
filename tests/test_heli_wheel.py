@@ -3,9 +3,18 @@ import struct
 
 import pytest
 
-from emu import ErrorShown, compare
+from emu import Emu, ErrorShown, compare
 from test_heli_util import (RET, children, cstr, d64, f32, handler, new_emu, run, set_handler, task, task_system, u16,
                             u32, vfake)
+
+
+@pytest.fixture(autouse=True, params=[0x37F, 0x7F, 0xC7F, 0x77F], ids=hex)
+def cw(request):
+    """Every test at the emulator default and at the control words the game uses."""
+    Emu.cw = request.param
+    yield
+    Emu.cw = None
+
 
 CAR, VEHICLE, WHEEL, CHILD = 0x60, 0x61, 0x62, 0x70
 

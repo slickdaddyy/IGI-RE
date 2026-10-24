@@ -7,6 +7,18 @@
 #include "igi.h"
 #include "coll/coll.h"
 
+static const double kOneOver24 = 1.0 / 24.0;
+static const float kTenth = 0.1f;
+static const float kSlack = 0.01f;
+static const float kStepUp = 0.3f;
+
+/* fchs on the x87 value, so gcc cannot move the negation after a rounding */
+static inline long double x87_neg(long double x)
+{
+    __asm__("fchs" : "+t"(x));
+    return x;
+}
+
 ORIG(0x4C5810, void, Coll_ResetMods, (void));
 ORIG(0x4C5830, void, Coll_SaveMods, (void));
 ORIG(0x4C5870, void, Coll_RestoreMods, (void));
@@ -333,14 +345,14 @@ int Coll_LeafHit(const short *leaf, const Vec3d *base, const Vec3d *p, Vec3d *hi
     nverts = leaf[3] + leaf[2];
     if (flags & 4)
         sign = -1.0f;
-    scale = (float)((long double)(0x40000000 >> (shift & 31)) * (1.0 / 24.0));
+    scale = (float)((long double)(0x40000000 >> (shift & 31)) * kOneOver24);
     dx = (float)((long double)p->x - base->x);
     dy = (float)((long double)p->y - base->y);
     if (!up) {
-        zlim = (float)((long double)p->z - base->z + 0.1f);
+        zlim = (float)((long double)p->z - base->z + kTenth);
         best = -268435456.0f;
     } else {
-        zlim = (float)((long double)p->z - base->z - 0.1f);
+        zlim = (float)((long double)p->z - base->z - kTenth);
         best = 268435456.0f;
     }
 
@@ -357,7 +369,7 @@ int Coll_LeafHit(const short *leaf, const Vec3d *base, const Vec3d *p, Vec3d *hi
             float t = y;
 
             if (flags & 2) {
-                y = (float)-x;
+                y = (float)x87_neg(x);
                 x = t;
             } else {
                 y = (float)x;
@@ -415,7 +427,7 @@ int Coll_LeafHit(const short *leaf, const Vec3d *base, const Vec3d *p, Vec3d *hi
             lox = c->x;
         else if (c->x > hix)
             hix = c->x;
-        if (lox - 0.01f > dx || !(hix + 0.01f >= dx))
+        if (lox - kSlack > dx || !(hix + kSlack >= dx))
             continue;
         lox = a->y;
         hix = a->y;
@@ -427,7 +439,7 @@ int Coll_LeafHit(const short *leaf, const Vec3d *base, const Vec3d *p, Vec3d *hi
             lox = c->y;
         else if (c->y > hix)
             hix = c->y;
-        if (lox - 0.01f > dy || !(hix + 0.01f >= dy))
+        if (lox - kSlack > dy || !(hix + kSlack >= dy))
             continue;
 
         /* sort by y */
@@ -475,7 +487,7 @@ int Coll_LeafHit(const short *leaf, const Vec3d *base, const Vec3d *p, Vec3d *hi
             bx = (mid->x - lo->x) * f2 + lo->x;
             bz = (float)((mid->z - lo->z) * f2 + lo->z);
         }
-        if (!((!(ax - 0.01f > dx) && bx + 0.01f >= dx) || (ax + 0.01f >= dx && !(bx - 0.01f > dx))))
+        if (!((!(ax - kSlack > dx) && bx + kSlack >= dx) || (ax + kSlack >= dx && !(bx - kSlack > dx))))
             continue;
         gCollTriangleTests++;
         d = bx - ax;
@@ -495,7 +507,7 @@ int Coll_LeafHit(const short *leaf, const Vec3d *base, const Vec3d *p, Vec3d *hi
             long double e2z = c->z - a->z;
 
             bn.x = (float)(e2z * e1y - e2y * e1z);
-            bn.y = (float)-(e2z * e1x - e2x * e1z);
+            bn.y = (float)x87_neg(e2z * e1x - e2x * e1z);
             bn.z = (float)(e2y * e1x - e2x * e1y);
             if (bn.x != 0.0f || bn.y != 0.0f || bn.z != 0.0f) {
                 long double len = bn.x * bn.x + bn.y * bn.y + bn.z * bn.z;
@@ -818,7 +830,7 @@ unsigned int Coll_GetHitMaterial(Terrain *t, const Vec3d *p)
         long double top = (long double)(b01 - b00) * tx + b00;
         long double bottom = (b11 - b10) * tx + b10;
 
-        if ((bottom - top) * ty + top >= 0.3f) {
+        if ((bottom - top) * ty + top >= kStepUp) {
             idx = h->material;
             break;
         }

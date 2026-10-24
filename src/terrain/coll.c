@@ -5,6 +5,8 @@
 #include "igi.h"
 #include "terrain/terrain.h"
 
+static const double kOneOver24 = 1.0 / 24.0;
+
 typedef struct Vec3f {
     float x, y, z;
 } Vec3f;
@@ -72,7 +74,7 @@ int Coll_LeafPointInside(const short *leaf, const Vec3d *base, const Vec3d *p, u
     }
     if (flags & ~3u)
         sign = -1.0f;
-    scale = (long double)(0x40000000 >> (shift & 31)) * (1.0 / 24.0);
+    scale = (long double)(0x40000000 >> (shift & 31)) * kOneOver24;
     for (i = 0; i < nverts; i++) {
         unsigned int q = verts[i];
         long double x = (long double)(int)((q >> 26) - 24) * scale;

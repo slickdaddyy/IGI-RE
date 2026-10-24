@@ -899,6 +899,13 @@ void sub_416AB0(void *item, char *ctx)
 }
 HOOK(0x416AB0, sub_416AB0);
 
+/* fchs on the x87 value, so gcc cannot move the negation after a rounding */
+static inline long double x87_neg(long double x)
+{
+    __asm__("fchs" : "+t"(x));
+    return x;
+}
+
 char sub_416AD0(ViewQuery *q, void *item, const Vec3d *pos)
 {
     Vec3d d, l;
@@ -917,7 +924,7 @@ char sub_416AD0(ViewQuery *q, void *item, const Vec3d *pos)
     if (!(y > 0.0))
         return 0;
     if (!(Vec3d_PitchAngle(l) >= 0.0f))
-        pitch = -Vec3d_PitchAngle(l);
+        pitch = x87_neg(Vec3d_PitchAngle(l));
     else
         pitch = Vec3d_PitchAngle(l);
     if (!(Vec3d_YawAngle(l) >= 0.0f))
