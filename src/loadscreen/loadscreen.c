@@ -21,9 +21,7 @@ typedef struct LoadingScreen {
     Bitmap bar;
 } LoadingScreen;
 
-extern int gClearR;
-extern int gClearG;
-extern int gClearB;
+extern int gDisplayClearColor[];
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -100,7 +98,7 @@ HOOK(0x48A440, LoadingScreen_New);
 
 void LoadingScreen_Delete(LoadingScreen *ls)
 {
-    int r = gClearR, g = gClearG, b = gClearB;
+    int r = gDisplayClearColor[0], g = gDisplayClearColor[1], b = gDisplayClearColor[2];
 
     Display_SetClearColor(0, 0, 0);
     Display_Clear();

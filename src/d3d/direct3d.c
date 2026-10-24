@@ -121,9 +121,7 @@ extern DynVB gVBTL;
 extern DynVB gVBLit;
 extern DynVB gVBNormal;
 extern D3DCallback gD3DCallbackPool[];
-extern int gClearRed;
-extern int gClearGreen;
-extern int gClearBlue;
+extern int gDisplayClearColor[];
 extern DisplayMode gDisplayModes[];
 extern int gDisplayModeCount;
 extern int *gD3DTextureStates;
@@ -207,7 +205,7 @@ void Direct3D_Clear(void)
     if (!gD3DDevice)
         return;
     hr = IDirect3DDevice7_Clear(gD3DDevice, 0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
-                                (((gClearRed << 8) + gClearGreen) << 8) + gClearBlue, 1.0f, 0);
+                                (((gDisplayClearColor[0] << 8) + gDisplayClearColor[1]) << 8) + gDisplayClearColor[2], 1.0f, 0);
     if (hr)
         DXError("Couldn't clear screen", hr);
 }

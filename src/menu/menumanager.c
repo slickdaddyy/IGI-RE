@@ -87,7 +87,7 @@ extern void *gMenuManagerParams;
 extern MenuWindow *gMenuLastScreen;
 extern int gMenuIdleTimer;
 extern MenuWindow *gMenuLastFocus;
-extern int gSavedDisplay[];
+extern int gDisplayClearColor[];
 extern unsigned char gKeys[];
 extern unsigned char gKeysPrev[];
 extern Mouse gMouse;
@@ -152,7 +152,7 @@ void MenuManager_Delete(MenuManager *mm)
     MenuManager_FreeResources(mm);
     Scene_Free(mm->unk266C);
     if (mm->savedFrames > -1) {
-        int a = gSavedDisplay[0], b = gSavedDisplay[1], c = gSavedDisplay[2];
+        int a = gDisplayClearColor[0], b = gDisplayClearColor[1], c = gDisplayClearColor[2];
 
         Display_SetClearColor(0, 0, 0);
         Display_Clear();
