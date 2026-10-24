@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "rotor/rotor.h"
+#include "coll/colltypes.h"
 
 FN_EXTERN(Car_Blast);
 FN_EXTERN(Car_CollFilter);
@@ -133,21 +134,6 @@ ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (Car *o));
 extern uint16_t gCarType;
 extern float gCarRange[];
 extern void *gCarParams;
-
-/* one result of Coll_Lines (0x70 bytes) */
-typedef struct CollHit {
-    char unk0[8];
-    Vec3d pos;
-    char unk20[0x18];
-    float normal[3];
-    char unk44[0x14];
-    int found;
-    char unk5C[4];
-    double dist;
-    char unk68[8];
-} CollHit;
-
-_Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 
 typedef struct CarControlArg {
     int unk0;
@@ -716,9 +702,9 @@ void Car_UpdateWheels(Car *o)
         ct->hit = hit;
         jp->unk1A = hit;
         if (hit) {
-            ct->normal[0] = h->normal[0];
-            ct->normal[1] = h->normal[1];
-            ct->normal[2] = h->normal[2];
+            ct->normal[0] = h->normal.x;
+            ct->normal[1] = h->normal.y;
+            ct->normal[2] = h->normal.z;
             if (ct->normal[0] != 0 || ct->normal[1] != 0 || ct->normal[2] != 0) {
                 long double x = ct->normal[0], y = ct->normal[1], z = ct->normal[2];
                 long double inv = kOneD / x87_sqrt(x * x + y * y + z * z);

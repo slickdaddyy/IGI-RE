@@ -634,13 +634,13 @@ static void Coll_Drop(Terrain *t, CollHit *results, const Vec3d *points, int cou
         if (!q.active[0])
             continue;
         r->dist = (double)Coll_Abs((long double)h.pos.z - points[i].z);
-        r->unk0 = 0;
+        r->task = 0;
         r->pos = h.pos;
         r->found = 1;
         r->normal = h.normal;
         if (variant != 0) {
             r->material = h.material;
-            r->material2 = h.material2;
+            r->back = h.back;
         }
     }
 }
@@ -746,7 +746,7 @@ int Coll_VerticalHit(CollHit *out, CollCursor *c, const Vec3d *p, int up, int ra
                     int below = (side ^ 1) ? m : 0;
 
                     out->material = c->terrain->materials[above];
-                    out->material2 = c->terrain->materials[below];
+                    out->back = c->terrain->materials[below];
                 }
                 Coll_RestoreMods();
                 return 1;
@@ -904,7 +904,7 @@ void Coll_Lines(Terrain *t, CollHit *results, const Vec3d *starts, const Vec3d *
         else if (e->z < lo.z)
             lo.z = e->z;
         results[i].found = 0;
-        results[i].unk0 = 0;
+        results[i].task = 0;
         results[i].pos = *e;
     }
     hi.x = hi.x + 2.0;
@@ -969,10 +969,10 @@ void Coll_Lines(Terrain *t, CollHit *results, const Vec3d *starts, const Vec3d *
         r->dist = h.dist;
         r->pos = h.pos;
         r->material = h.material;
-        r->material2 = h.material2;
+        r->back = h.back;
         r->normal = h.normal;
         r->found = 1;
-        r->unk0 = 0;
+        r->task = 0;
     }
 }
 HOOK(0x4CC2A0, Coll_Lines);

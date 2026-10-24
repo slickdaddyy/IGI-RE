@@ -257,7 +257,7 @@ found:
     out->normal = n;
     out->pos = hp;
     out->material = m1 ? t->materials[m1] : NULL;
-    out->material2 = m2 ? t->materials[m2] : NULL;
+    out->back = m2 ? t->materials[m2] : NULL;
     out->dist = (double)Vec3d_Distance(&out->pos, s);
     Coll_RestoreMods();
     return 1;
@@ -491,7 +491,7 @@ void Coll_LinesEx(Terrain *t, CollHit *results, const Vec3d *starts, const Vec3d
         else if (!(e->z >= lo.z))
             lo.z = e->z;
         results[i].found = 0;
-        results[i].unk0 = 0;
+        results[i].task = 0;
         results[i].pos = *e;
     }
     hi.x = hi.x + 2.0;
@@ -563,10 +563,10 @@ void Coll_LinesEx(Terrain *t, CollHit *results, const Vec3d *starts, const Vec3d
         r->dist = h.dist;
         r->pos = h.pos;
         r->material = h.material;
-        r->material2 = h.material2;
+        r->back = h.back;
         r->normal = h.normal;
         r->found = 1;
-        r->unk0 = 0;
+        r->task = 0;
     }
 }
 HOOK(0x4CDB20, Coll_LinesEx);

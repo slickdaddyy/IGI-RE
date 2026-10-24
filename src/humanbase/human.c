@@ -579,9 +579,9 @@ void Human_CrushHandler(Human *h, void **msg)
     q.hits = &hit;
     hit.found = 0;
     hit.material = 0;
-    hit.material2 = 0;
+    hit.back = 0;
     gTaskHandlers[9][RigidDynCubeObj_GetType()](msg[0], &q);
-    if (hit.found && !hit.material2)
+    if (hit.found && !hit.back)
         return;
     v = msg[1];
     dmg = 0;
@@ -1411,9 +1411,9 @@ void Human_UpdateMove(Human *h)
     v[2] = h->vel[2] + h->delta[2];
     if (!h->ground.found || !(bits & HUMAN_ON_GROUND))
         goto still;
-    n[0] = h->ground.normal[0];
-    n[1] = h->ground.normal[1];
-    n[2] = h->ground.normal[2];
+    n[0] = h->ground.normal.x;
+    n[1] = h->ground.normal.y;
+    n[2] = h->ground.normal.z;
     if (!is_zero(n[0]) || !is_zero(n[1]) || !is_zero(n[2])) {
         len = __builtin_sqrtl((long double)n[0] * n[0] + (long double)n[1] * n[1] + (long double)n[2] * n[2]);
         inv = kOneD / len;
@@ -1526,7 +1526,7 @@ typedef struct HumanFilter {
 /* z of the unit normal of a hit (the raw z when the normal is zero) */
 static long double Hit_UpZ(const CollHit *hit)
 {
-    float x = hit->normal[0], y = hit->normal[1], z = hit->normal[2];
+    float x = hit->normal.x, y = hit->normal.y, z = hit->normal.z;
 
     if (is_zero(x) && is_zero(y) && is_zero(z))
         return z;
@@ -1546,13 +1546,13 @@ static CollHit *Hit_PickWall(CollHit *hit, int n, CollHit *best)
             z = -z;
         if (z >= kWallSteep)
             continue;
-        hit->normal[2] = 0;
-        if (!is_zero(hit->normal[0]) || !is_zero(hit->normal[1])) {
-            inv = kOneD / __builtin_sqrtl((long double)hit->normal[1] * hit->normal[1] +
-                                          (long double)hit->normal[0] * hit->normal[0]);
-            hit->normal[0] = hit->normal[0] * inv;
-            hit->normal[1] = hit->normal[1] * inv;
-            hit->normal[2] = hit->normal[2] * inv;
+        hit->normal.z = 0;
+        if (!is_zero(hit->normal.x) || !is_zero(hit->normal.y)) {
+            inv = kOneD / __builtin_sqrtl((long double)hit->normal.y * hit->normal.y +
+                                          (long double)hit->normal.x * hit->normal.x);
+            hit->normal.x = hit->normal.x * inv;
+            hit->normal.y = hit->normal.y * inv;
+            hit->normal.z = hit->normal.z * inv;
         }
         if (!best || !(hit->dist >= best->dist))
             best = hit;
@@ -1620,17 +1620,17 @@ void Human_CollideWalls(Human *h, double *from, double *to, float *vel, uint32_t
         if (!(*bits & HUMAN_ON_GROUND)) {
             best = Hit_PickWall(hits, 3, 0);
             if (hits[0].found && !best && Hit_UpZ(&hits[0]) > kFloorUp) {
-                memcpy(to, hits[0].pos, sizeof(hits[0].pos));
+                memcpy(to, &hits[0].pos, sizeof(hits[0].pos));
                 to[2] = (foot[2] - kWallLow) + to[2];
             }
             if (hits[2].found && !best) {
                 if (Hit_UpZ(&hits[2]) >= kCeilingDown) {
-                    memcpy(to, hits[2].pos, 2 * sizeof(double));
+                    memcpy(to, &hits[2].pos, 2 * sizeof(double));
                     h->vel[0] = 0;
                     h->vel[1] = 0;
                 }
                 h->vel[2] = 0;
-                to[2] = (hits[2].pos[2] - (kWallHigh - foot[2])) - kWallPad;
+                to[2] = (hits[2].pos.z - (kWallHigh - foot[2])) - kWallPad;
                 goto next;
             }
         } else {
@@ -1638,9 +1638,9 @@ void Human_CollideWalls(Human *h, double *from, double *to, float *vel, uint32_t
         }
         if (!best)
             goto next;
-        nd[0] = best->normal[0];
-        nd[1] = best->normal[1];
-        nd[2] = best->normal[2];
+        nd[0] = best->normal.x;
+        nd[1] = best->normal.y;
+        nd[2] = best->normal.z;
         Vec3d_Normalize(nd);
         xd = dist * dir[0];
         memcpy(c, dir, sizeof(c));
@@ -1648,13 +1648,13 @@ void Human_CollideWalls(Human *h, double *from, double *to, float *vel, uint32_t
         zd = c[2] * dist;
         c[2] = zd;
         if (!(zd * nd[2] + c[1] * nd[1] + xd * nd[0] >= kZeroD)) {
-            rel[0] = to[0] - best->pos[0];
-            rel[1] = to[1] - best->pos[1];
-            rel[2] = to[2] - best->pos[2];
-            Vec3_RayPlane(buf, rel, best->normal, best->normal);
-            to[0] = buf[0] + best->pos[0];
-            to[1] = buf[1] + best->pos[1];
-            to[2] = buf[2] + best->pos[2];
+            rel[0] = to[0] - best->pos.x;
+            rel[1] = to[1] - best->pos.y;
+            rel[2] = to[2] - best->pos.z;
+            Vec3_RayPlane(buf, rel, &best->normal.x, &best->normal.x);
+            to[0] = buf[0] + best->pos.x;
+            to[1] = buf[1] + best->pos.y;
+            to[2] = buf[2] + best->pos.z;
             again = 1;
             px = nd[0] * kWallPad;
             nd[1] = nd[1] * kWallPad;
@@ -1708,35 +1708,35 @@ void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t 
         if (!ai->path)
             goto check;
         node = Graph_GetNode(ai->path, ai->node);
-        memcpy(hits[0].pos, to, sizeof(hits[0].pos));
-        hits[0].pos[2] = hits[0].pos[2] - foot[2];
+        memcpy(&hits[0].pos, to, sizeof(hits[0].pos));
+        hits[0].pos.z = hits[0].pos.z - foot[2];
         if (node) {
             hits[0].material = *(void **)((char *)node + 0x138);
             hits[0].found = 1;
-            hits[0].normal[0] = 0;
-            hits[0].normal[1] = 0;
-            hits[0].normal[2] = kOne;
+            hits[0].normal.x = 0;
+            hits[0].normal.y = 0;
+            hits[0].normal.z = kOne;
         }
         if (List_Count(ai->route) <= 0) {
             node = Graph_GetNode(ai->path, ai->node);
             if (node) {
                 Graph_GetNodePos(d, node);
-                hits[0].pos[2] = d[2];
+                hits[0].pos.z = d[2];
             }
         } else if ((n0 = ai->route[0])->next) {
             if (Vec3d_IsZero(h->pathCur)) {
-                memcpy(h->pathPrev, hits[0].pos, sizeof(h->pathPrev));
-                memcpy(h->pathCur, hits[0].pos, sizeof(h->pathCur));
+                memcpy(h->pathPrev, &hits[0].pos, sizeof(h->pathPrev));
+                memcpy(h->pathCur, &hits[0].pos, sizeof(h->pathCur));
             }
             if (Vec3d_Distance(MoveItem_GetPos(n0), h->pathCur) > kPathJump) {
                 memcpy(h->pathPrev, h->pathCur, sizeof(h->pathPrev));
                 memcpy(h->pathCur, MoveItem_GetPos(n0), sizeof(h->pathCur));
             }
-            d[0] = h->pathCur[0] - hits[0].pos[0];
-            d[1] = h->pathCur[1] - hits[0].pos[1];
-            d[2] = h->pathCur[2] - hits[0].pos[2];
+            d[0] = h->pathCur[0] - hits[0].pos.x;
+            d[1] = h->pathCur[1] - hits[0].pos.y;
+            d[2] = h->pathCur[2] - hits[0].pos.z;
             if (Vec3d_IsZero(d)) {
-                hits[0].pos[2] = h->pathCur[2];
+                hits[0].pos.z = h->pathCur[2];
             } else {
                 len = Vec3d_Length(d);
                 zdiff = h->pathCur[2] - h->pathPrev[2];
@@ -1747,7 +1747,7 @@ void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t 
                     t = kOneD;
                 else
                     t = len / Vec3d_Distance(h->pathCur, h->pathPrev);
-                hits[0].pos[2] = (kOneD - t) * zdiff + h->pathPrev[2];
+                hits[0].pos.z = (kOneD - t) * zdiff + h->pathPrev[2];
             }
         }
         path = ai->path;
@@ -1764,7 +1764,7 @@ void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t 
         ev = Game_GetEvent13();
         world = Game_GetWorld();
         Coll_DropPointsEx(world, hits, pts, 2, dz, ev, &filter, -1, 1);
-        if (hits[1].found && !(hits[1].normal[2] >= kZero)) {
+        if (hits[1].found && !(hits[1].normal.z >= kZero)) {
             memcpy(top, Human_GetBonePos(buf, h, 0), sizeof(top));
             gd = top[2] + hits[1].dist;
             h->roofDistance = gd;
@@ -1782,8 +1782,8 @@ check:
     task = hits[0].task;
     if (hits[0].found && !h->ai) {
         if (task) {
-            memcpy(d, hits[0].pos, sizeof(d));
-            d[2] = hits[0].pos[2] + kStepUp;
+            memcpy(d, &hits[0].pos, sizeof(d));
+            d[2] = hits[0].pos.z + kStepUp;
             memcpy(end, d, sizeof(end));
             end[2] = d[2] - kStepProbe;
             q.starts = d;
@@ -1805,7 +1805,7 @@ check:
                 task = hits[0].task;
             }
         }
-        gd = (to[2] - hits[0].pos[2]) - foot[2];
+        gd = (to[2] - hits[0].pos.z) - foot[2];
         h->groundDistance = gd;
         if (!(gd > reach))
             goto ground;
@@ -1820,7 +1820,7 @@ check:
     }
 ground:
     *bits |= HUMAN_ON_GROUND;
-    to[2] = foot[2] + hits[0].pos[2];
+    to[2] = foot[2] + hits[0].pos.z;
     if (task) {
         Human_SetGround(h, task);
     } else {
@@ -1848,9 +1848,9 @@ done:
         h->groundValid = 0;
         return;
     }
-    memcpy(h->groundPos, hits[0].pos, sizeof(h->groundPos));
+    memcpy(h->groundPos, &hits[0].pos, sizeof(h->groundPos));
     h->groundDist = h->groundDistance;
-    memcpy(h->groundUp, hits[0].normal, sizeof(h->groundUp));
+    memcpy(h->groundUp, &hits[0].normal, sizeof(h->groundUp));
     if (!is_zero(h->groundUp[0]) || !is_zero(h->groundUp[1]) || !is_zero(h->groundUp[2])) {
         t = kOneD / __builtin_sqrtl((long double)h->groundUp[0] * h->groundUp[0] +
                                     (long double)h->groundUp[1] * h->groundUp[1] +

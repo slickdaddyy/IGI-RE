@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "camera/camera.h"
+#include "material/materialtypes.h"
 
 FN_EXTERN(HumanCamera_DeleteHandler);
 
@@ -612,7 +613,7 @@ static void follow(HumanCamera *c)
         Coll_Lines(Game_GetWorld(), &hit, &start, &end, 1, ev, &filter, -1);
         if (!hit.found)
             break;
-        if (hit.unk54 && hit.material && *hit.material > 0) {
+        if (hit.unk54 && hit.material && hit.material->unk00 > 0) {
             d.x = hit.pos.x - start.x;
             d.y = hit.pos.y - start.y;
             d.z = hit.pos.z - start.z;
@@ -678,7 +679,7 @@ char HumanCamera_IsBlocked(HumanCamera *c, Task *h, Vec3d *to, Vec3d *from)
         Coll_Lines(Game_GetWorld(), &hit, pt, to, 1, ev, &filter, -1);
         if (!hit.found)
             return 0;
-        if (hit.unk54 && hit.material && *hit.material > 0) {
+        if (hit.unk54 && hit.material && hit.material->unk00 > 0) {
             d.x = hit.pos.x - pt->x;
             d.y = hit.pos.y - pt->y;
             d.z = hit.pos.z - pt->z;
@@ -799,8 +800,8 @@ void HumanCamera_DeathCameraCollide(HumanCamera *c, float dpitch, float dyaw)
 
         if (!h->found)
             continue;
-        dot = (ends[i].y - starts[i].y) * h->normal[1] + (ends[i].x - starts[i].x) * h->normal[0] +
-              (ends[i].z - starts[i].z) * h->normal[2];
+        dot = (ends[i].y - starts[i].y) * h->normal.y + (ends[i].x - starts[i].x) * h->normal.x +
+              (ends[i].z - starts[i].z) * h->normal.z;
         if (dot >= 0)
             continue;
         dx = h->pos.x - p.x;

@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "graphnode/graphnode.h"
+#include "coll/colltypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -102,15 +103,6 @@ typedef struct LightMapDraw {
     void *texture;
     int unk2C;
 } LightMapDraw;
-
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x38];
-    int found;
-    char unk5C[0x14];
-} CollHit;
 
 #define LIGHTMAP_MAX 0x800
 

@@ -8,6 +8,8 @@
 #include "hook.h"
 #include "igi.h"
 #include "viewcam/viewcam.h"
+#include "coll/colltypes.h"
+#include "material/materialtypes.h"
 
 FN_EXTERN(crt_CIpow);
 
@@ -55,23 +57,6 @@ typedef struct HumanNoise {
     Human *from;
     Human *from2;
 } HumanNoise;
-
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    double pos[3];
-    char unk20[0x18];
-    float normal[3];
-    int unk44;
-    int unk48;
-    char *material;
-    void *material2;
-    int unk54;
-    int found;
-    int unk5C;
-    double dist;
-    char unk68[8];
-} CollHit;
 
 /* asks the hit task to put a decal on itself */
 typedef struct DecalMsg {
@@ -692,7 +677,7 @@ void Human_Bleed(Human *h, const float *dir, CollHit *src)
     static const float kSplatSize = 0x1.333334p+9f;  /* 614.4 */
     static const float kSpread = 0x1.aceeap-5f;      /* 0.0524 */
     static const float kSpreadBase = 0x1.a3667ap-7f; /* 0.0128 */
-    double *pos = src->pos;
+    double *pos = &src->pos.x;
     double from[3], to[3], ys, zs;
     float d[3], a[3], color[3], size[2], zero[3];
     struct {
@@ -724,7 +709,7 @@ void Human_Bleed(Human *h, const float *dir, CollHit *src)
     }
     ev = Game_GetEvent8();
     Coll_Lines(Game_GetWorld(), &hit, from, to, 1, ev, &filter, 0x20000000);
-    if (hit.found && hit.material && !hit.material2 && *(int *)(*(char **)(hit.material + 0x258) + 0x58)) {
+    if (hit.found && hit.material && !hit.back && *(int *)((char *)hit.material->params + 0x58)) {
         DecalMsg msg;
         TaskHandler fn;
         float sz = (Random_Float(Game_GetRandom()) + 1.0f) * kSplatSize;
@@ -817,8 +802,8 @@ void Human_BloodDrop(void *arg)
     dx = (long double)p->pos[0] - p->prev[0];
     dy = (long double)p->pos[1] - p->prev[1];
     dz = (long double)p->pos[2] - p->prev[2];
-    normalize3(hit->normal);
-    if ((dz * hit->normal[2] + dy * hit->normal[1]) + dx * hit->normal[0] >= 0.0f)
+    normalize3(&hit->normal.x);
+    if ((dz * hit->normal.z + dy * hit->normal.y) + dx * hit->normal.x >= 0.0f)
         return;
     sz = Random_Float(Game_GetRandom()) * kDropSize + kDropBase;
     k = Random_Int(Game_GetRandom(), 2);

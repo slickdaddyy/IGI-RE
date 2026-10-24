@@ -5,6 +5,7 @@
 
 #include "igi.h"
 #include "types.h"
+#include "coll/colltypes.h"
 
 /* Terrain octree node. At the deepest level, leaf points at the triangles. */
 typedef struct CollNode {
@@ -56,23 +57,6 @@ typedef struct CollCursor {
     Terrain *terrain;
     ObjNode *objects;
 } CollCursor;
-
-typedef struct CollHit {
-    int unk0;
-    int unk4;
-    Vec3d pos;       /* 0x08 */
-    char unk20[0x18];
-    Vec3f normal;    /* 0x38 */
-    int unk44;
-    int unk48;
-    void *material;  /* 0x4C */
-    void *material2; /* 0x50 */
-    int unk54;
-    int found;       /* 0x58 */
-    int unk5C;
-    double dist;     /* 0x60 */
-    char unk68[8];
-} CollHit;
 
 /* Passed to the tasks' collision handlers */
 typedef struct CollQuery {

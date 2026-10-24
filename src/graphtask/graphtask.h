@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "coll/colltypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -14,24 +15,6 @@ extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[(uint8_t)(slot)][(uint16_t)(type)]
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-
-/* one result of Coll_Lines (0x70 bytes) */
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x18];
-    Vec3f normal;       /* 0x38 */
-    int unk44;
-    int unk48;
-    void *material;     /* 0x4C */
-    float *material2;   /* 0x50, its float at +0xC is the bounce */
-    int unk54;
-    int found;          /* 0x58 */
-    int unk5C;
-    double dist;        /* 0x60 */
-    char unk68[8];
-} CollHit;
 
 /* the rigid body of a PhysicsObj (0x64 bytes, see the animtrig notes) */
 typedef struct Body {
@@ -139,7 +122,6 @@ typedef struct PhysPointMsg {
     Matrix turn;
 } PhysPointMsg;
 
-_Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 _Static_assert(sizeof(Body) == 0x64, "Body");
 _Static_assert(offsetof(PhysType, joints) == 0x14C, "PhysType.joints");
 _Static_assert(offsetof(PhysType, data) == 0x2D4, "PhysType.data");

@@ -8,6 +8,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "coll/colltypes.h"
 
 /* a physics object type (DefinePhysicsObjType); data is its parsed arguments */
 typedef struct PhysType {
@@ -214,14 +215,6 @@ typedef struct Heli {
     char unk2CFC[4];
 } Heli;
 
-typedef struct CollHit {
-    char unk0[0x58];
-    int found;
-    int unk5C;
-    double dist;        /* 0x60 */
-    char unk68[8];
-} CollHit;
-
 /* the argument of the create handler of the vehicle parts */
 typedef struct PartCreateArg {
     const char *model;
@@ -284,7 +277,6 @@ _Static_assert(offsetof(Heli, light_matrix) == 0x860, "Heli");
 _Static_assert(offsetof(Heli, light) == 0x8C0, "Heli");
 _Static_assert(sizeof(Heli) == 0x2D00, "Heli");
 _Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
-_Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;

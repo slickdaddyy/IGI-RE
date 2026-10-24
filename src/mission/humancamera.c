@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "mission/mission.h"
+#include "coll/colltypes.h"
 
 /* the end of the "HumanCamera" task (the rest is in src/camera) */
 typedef struct HumanCamera {
@@ -28,16 +29,6 @@ typedef struct HumanCameraEntry {
     char pad6[2];
 } HumanCameraEntry;
 
-/* a hit of the collision queries, 0x70 bytes */
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x38];
-    int found;
-    char unk5C[0x14];
-} CollHit;
-
 typedef struct CollFilter {
     int unk0;
     Task *ignore;
@@ -45,7 +36,6 @@ typedef struct CollFilter {
 
 _Static_assert(offsetof(HumanCamera, index) == 0x118, "HumanCamera.index");
 _Static_assert(sizeof(HumanCamera) == 0x128, "HumanCamera");
-_Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
 ORIG(0x483100, void, HumanCamera_LookAt, (Matrix *out, const Vec3d *from, const Vec3d *to));

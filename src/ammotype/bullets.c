@@ -7,6 +7,8 @@
 #include "hook.h"
 #include "igi.h"
 #include "ammotype/ammotype.h"
+#include "material/materialtypes.h"
+#include "coll/colltypes.h"
 
 typedef struct Bullet {
     int used;
@@ -35,39 +37,6 @@ typedef struct GunShot {
     char unk9C[8];
     Bullet *activeList[15]; /* 0xA4 */
 } GunShot;
-
-/* a material record (0x268 bytes), see material.md */
-typedef struct GameMaterial {
-    char unk0[0x40];
-    float hardness;      /* 0x40 */
-    float ricochet;      /* 0x44, degrees */
-    char unk48[0x10C];
-    char sounds[6][32];  /* 0x154, impact sounds */
-    char unk214[0x40];
-    uint16_t effect;     /* 0x254, effect task types and their parameters */
-    char pad256[2];
-    char *params;        /* 0x258 */
-    uint16_t backEffect; /* 0x25C */
-    char pad25E[2];
-    void *backParams;    /* 0x260 */
-} GameMaterial;
-
-/* a result of Coll_Lines */
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x18];
-    Vec3f normal;           /* 0x38 */
-    char unk44[8];
-    GameMaterial *material; /* 0x4C, front side */
-    GameMaterial *back;     /* 0x50, back side */
-    int unk54;
-    int found;              /* 0x58 */
-    int unk5C;
-    double dist;            /* 0x60 */
-    char unk68[8];
-} CollHit;
 
 /* the filter Coll_Lines passes to the objects it meets */
 typedef struct BulletFilter {
@@ -100,8 +69,6 @@ typedef struct BulletImpact {
 
 _Static_assert(sizeof(Bullet) == 0x48, "Bullet");
 _Static_assert(offsetof(GunShot, activeList) == 0xA4, "GunShot");
-_Static_assert(offsetof(GameMaterial, backParams) == 0x260, "GameMaterial");
-_Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 _Static_assert(sizeof(BulletImpact) == 0x88, "BulletImpact");
 
 ORIG(0x4028B0, int, Flow_GetFrames, (void));

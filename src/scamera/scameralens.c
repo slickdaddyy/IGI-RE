@@ -3,6 +3,8 @@
 #include "hook.h"
 #include "scamera/scamera.h"
 #include "qvertex/qvertextypes.h"
+#include "coll/colltypes.h"
+#include "material/materialtypes.h"
 
 ORIG(0x401AE0, Task **, TaskRef_Add, (Task *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
@@ -66,18 +68,6 @@ extern void (*gRenderFuncs[])(QVertexStrip *);
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
 extern void *gQVertexPalette;
-
-typedef struct CollHit {
-    Task *task;
-    char unk4[4];
-    Vec3d pos;          /* 0x08 */
-    char unk20[0x2C];
-    float *material;    /* 0x4C */
-    void *unk50;
-    void *unk54;
-    int found;          /* 0x58 */
-    char unk5C[0x14];
-} CollHit;
 
 extern float kZero;
 extern float kHalf;
@@ -626,7 +616,7 @@ void SCameraLens_DrawViewCone(SCameraLens *l, void *arg)
             Coll_Lines(Game_GetWorld(), &hit, &start, &end, 1, ev, &ignore, 0xFFFFFFFF);
             if (!hit.found)
                 break;
-            if (!hit.unk54 || !hit.material || !(*hit.material > kZero)) {
+            if (!hit.unk54 || !hit.material || !(hit.material->unk00 > kZero)) {
                 end = hit.pos;
                 break;
             }

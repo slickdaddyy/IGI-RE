@@ -8,15 +8,10 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "coll/colltypes.h"
 
 typedef void (*TaskFn1)(Task *task);
 typedef void (*TaskFn2)(Task *task, void *arg);
-
-typedef struct CollHit {
-    char unk0[0x58];
-    int found;
-    char unk5C[0x14];
-} CollHit;
 
 typedef struct CollIgnore {
     int unk0;

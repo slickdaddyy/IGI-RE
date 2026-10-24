@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "statgun/statgun.h"
+#include "coll/colltypes.h"
 
 FN_EXTERN(Missile_GetModelSize);
 
@@ -19,18 +20,6 @@ typedef struct GunMoveMsg {
     Matrix *matrix;
 } GunMoveMsg;
 
-/* a hit of Coll_Lines (0x70 bytes) */
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x18];
-    Vec3f normal;       /* 0x38 */
-    char unk44[0x14];
-    int found;          /* 0x58 */
-    char unk5C[0x14];
-} CollHit;
-
 /* the filter Coll_Lines passes to the objects it meets */
 typedef struct CollQuery {
     float unk0;
@@ -39,8 +28,6 @@ typedef struct CollQuery {
     int unkC;
     float unk10;
 } CollQuery;
-
-_Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 
 extern uint16_t gProxMineType;
 

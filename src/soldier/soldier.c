@@ -9,6 +9,7 @@
 #include "igi.h"
 #include "soldier/soldier.h"
 #include "types.h"
+#include "coll/colltypes.h"
 
 FN_EXTERN(SoldierPistol_BlastHandler);
 FN_EXTERN(SoldierPistol_HitUpdate);
@@ -19,17 +20,6 @@ FN_EXTERN(SoldierPistol_State28Update);
 FN_EXTERN(SoldierRPG_ParamsChanged);
 FN_EXTERN(Soldier_DeleteHandler);
 FN_EXTERN(Task_Nothing);
-
-typedef struct CollHit {
-    int unk0;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x38];
-    int found;
-    int unk5C;
-    double dist;
-    char unk68[8];
-} CollHit;
 
 /* who the death slide traces ignore */
 typedef struct CollIgnore {

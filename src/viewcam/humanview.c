@@ -9,21 +9,11 @@
 #include "igi.h"
 #include "viewcam/viewcam.h"
 #include "types.h"
+#include "coll/colltypes.h"
 
 FN_EXTERN(HumanAttach_Detect);
 FN_EXTERN(SubLevel_Run);
 FN_EXTERN(Task_FalseHandler);
-
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    double pos[3];
-    char unk20[0x38];
-    int found;
-    int unk5C;
-    double dist;
-    char unk68[8];
-} CollHit;
 
 /* the second word is the object the line ignores */
 typedef struct CollFilter {
@@ -515,9 +505,9 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
             double d[3], len;
             long double t;
 
-            d[0] = hit.pos[0] - start[0];
-            d[1] = hit.pos[1] - start[1];
-            d[2] = hit.pos[2] - start[2];
+            d[0] = hit.pos.x - start[0];
+            d[1] = hit.pos.y - start[1];
+            d[2] = hit.pos.z - start[2];
             len = Vec3d_Length(d);
             Vec3d_Normalize(d);
             t = len - kWallGap;

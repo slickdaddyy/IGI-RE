@@ -6,6 +6,7 @@
 
 #include "igi.h"
 #include "task/tasktypes.h"
+#include "coll/colltypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
@@ -37,24 +38,6 @@ typedef struct HumanView {
     float fov;
     int unk1E8;
 } HumanView;
-
-/* a hit of the collision queries, 0x70 bytes */
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    double pos[3];
-    char unk20[0x18];
-    float normal[3];
-    int unk44;
-    int unk48;
-    void *material;
-    void *material2;
-    int unk54;
-    int found;
-    int unk5C;
-    double dist;
-    char unk68[8];
-} CollHit;
 
 typedef struct HumanPath {
     char unk0[0x14];
@@ -255,7 +238,6 @@ _Static_assert(offsetof(HumanAI, immortal) == 0x3ABC, "immortal");
 _Static_assert(offsetof(HumanAI, path) == 0x3B6C, "path");
 _Static_assert(offsetof(HumanAI, node) == 0x3E2C, "node");
 _Static_assert(offsetof(HumanPath, unk64) == 0x64, "unk64");
-_Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 _Static_assert(offsetof(HumanText, flags) == 0x24, "flags");
 
 /* where a weapon sits: hand bone of the body, or of the view model */

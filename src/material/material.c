@@ -63,7 +63,7 @@ ScriptValue *GameMaterial_DefineQ(ScriptValue *out, void *data, ScriptArgs *args
 {
     (void)data;
     gMaterials[gMaterialActive].unk00 = Script_GetArgReal(args, 0);
-    gMaterials[gMaterialActive].unk0C = Script_GetArgReal(args, 1);
+    gMaterials[gMaterialActive].bounce = Script_GetArgReal(args, 1);
     gMaterials[gMaterialActive].unk08 = Script_GetArgReal(args, 2);
     gMaterials[gMaterialActive].unk14 = Script_GetArgInt(args, 3) * (long double)(1.0f / 1048576);
     gMaterials[gMaterialActive].unk18 = Script_GetArgInt(args, 4) * (long double)(1.0f / 1048576);
@@ -103,8 +103,8 @@ ScriptValue *GameMaterial_Define(ScriptValue *out, void *data, ScriptArgs *args)
     (void)data;
     gMaterials[gMaterialActive].used = 1;
     Script_GetArgString(args, 0, gMaterials[gMaterialActive].name, 32);
-    gMaterials[gMaterialActive].unk40 = Script_GetArgReal(args, 1);
-    gMaterials[gMaterialActive].unk44 = Script_GetArgReal(args, 2);
+    gMaterials[gMaterialActive].hardness = Script_GetArgReal(args, 1);
+    gMaterials[gMaterialActive].ricochet = Script_GetArgReal(args, 2);
     gMaterials[gMaterialActive].unk48 = Script_GetArgReal(args, 3);
     gMaterials[gMaterialActive].unk4C = Script_GetArgInt(args, 4);
     gMaterials[gMaterialActive].unk50 = Script_GetArgReal(args, 5);
@@ -114,13 +114,13 @@ ScriptValue *GameMaterial_Define(ScriptValue *out, void *data, ScriptArgs *args)
     Script_GetArgString(args, arg++, gMaterials[gMaterialActive].unk114, 32);
     Script_GetArgString(args, arg++, gMaterials[gMaterialActive].unk134, 32);
     for (i = 0; i < 6; i++)
-        Script_GetArgString(args, arg++, gMaterials[gMaterialActive].unk154[i], 32);
+        Script_GetArgString(args, arg++, gMaterials[gMaterialActive].sounds[i], 32);
     for (i = 0; i < 2; i++)
         Script_GetArgString(args, arg++, gMaterials[gMaterialActive].unk214[i], 32);
     m = &gMaterials[gMaterialActive];
-    arg = Material_ReadEffect(args, arg, &m->effectType, &m->effectParams);
+    arg = Material_ReadEffect(args, arg, &m->effect, &m->params);
     m = &gMaterials[gMaterialActive];
-    Material_ReadEffect(args, arg, &m->effect2Type, &m->effect2Params);
+    Material_ReadEffect(args, arg, &m->backEffect, &m->backParams);
     return Material_Return(out);
 }
 HOOK(0x407F50, GameMaterial_Define);
@@ -132,13 +132,13 @@ void GameMaterial_Close(void)
     for (m = gMaterials; m < gMaterials + MATERIAL_COUNT; m++) {
         if (!m->used)
             continue;
-        if (m->effectParams) {
-            Mem_Free(m->effectParams);
-            m->effectParams = NULL;
+        if (m->params) {
+            Mem_Free(m->params);
+            m->params = NULL;
         }
-        if (m->effect2Params) {
-            Mem_Free(m->effect2Params);
-            m->effect2Params = NULL;
+        if (m->backParams) {
+            Mem_Free(m->backParams);
+            m->backParams = NULL;
         }
         m->used = 0;
     }

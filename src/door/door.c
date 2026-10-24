@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "door/door.h"
+#include "coll/colltypes.h"
 
 FN_EXTERN(Param_Three);
 FN_EXTERN(Task_Nothing);
@@ -79,14 +80,6 @@ typedef struct NearQuery {
     Door *found;        /* 0x20 */
 } NearQuery;
 
-/* one result of Coll_Lines (0x70 bytes) */
-typedef struct CollHit {
-    Task *task;
-    char unk4[0x54];
-    int found;          /* 0x58 */
-    char unk5C[0x14];
-} CollHit;
-
 /* passed to Coll_Lines; the first word is left uninitialised */
 typedef struct CollIgnore {
     int unk0;
@@ -99,8 +92,6 @@ typedef struct DoorMoveMsg {
     Matrix *matrix;
     Door *door;
 } DoorMoveMsg;
-
-_Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 
 extern uint16_t gDoorType;
 extern RangeF gDoorSlideRange;

@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "binocular/binocular.h"
 #include "qvertex/qvertextypes.h"
+#include "coll/colltypes.h"
 
 FN_EXTERN(BinocularHolder_Changed);
 FN_EXTERN(BinocularHolder_GetParams);
@@ -31,14 +32,6 @@ typedef struct CollFilter {
     void *c;
     float unk10;
 } CollFilter;
-
-typedef struct CollHit {
-    char unk0[0x58];
-    int found;
-    int unk5C;
-    double dist;
-    char unk68[8];
-} CollHit;
 
 /* a bar that jumps to random levels and falls back */
 typedef struct VUMeter {
@@ -104,7 +97,6 @@ _Static_assert(offsetof(BinocularOverlay, meters) == 0x2B54, "BinocularOverlay")
 _Static_assert(offsetof(BinocularOverlay, targets) == 0x2C44, "BinocularOverlay");
 _Static_assert(sizeof(BinocularOverlay) == 0x2E00, "BinocularOverlay");
 _Static_assert(sizeof(BinocularHolder) == 0x78, "BinocularHolder");
-_Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));

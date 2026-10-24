@@ -7,16 +7,9 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "coll/colltypes.h"
 
 typedef void (*TaskFn)();
-
-typedef struct CollHit {
-    char unk0[8];
-    Vec3d pos;
-    char unk20[0x38];
-    int found;
-    char unk5C[0x14];
-} CollHit;
 
 typedef struct CollIgnore {
     int unk0;

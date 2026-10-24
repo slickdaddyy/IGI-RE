@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "coll/colltypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -50,16 +51,6 @@ static inline int x87_fistp(long double x)
     __asm__("fistpll %0" : "=m"(r) : "t"(x) : "st");
     return (int)r;
 }
-
-/* the hit record of Coll_DropPoints */
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x38];
-    int found;
-    char unk5C[0x14];
-} CollHit;
 
 /* one .bit or .hmp table entry */
 typedef struct TerrainMap {
