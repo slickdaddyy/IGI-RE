@@ -32,6 +32,12 @@ for f in glob.glob('src/**/*.c', recursive=True):
         if n in sym:
             ours[sym[n]] = int(a, 16)
 
+# dinput.lib's object formats, which the exe carries as data instead of in its code range
+for n, a, size in (('igi_dimouse', 0x4AE680, 0xB0), ('igi_dikeyboard', 0x4AE740, 0x1000), ('igi_dijoystick', 0x516FA0, 0x2C0)):
+    if n in sym:
+        for k in range(size):
+            ours[sym[n] + k] = a + k
+
 lo, hi = 0x533000, 0x550000
 for a in range(lo, hi, 4):
     o, x = oimg[a - B:a - B + 4], ximg[a - B:a - B + 4]

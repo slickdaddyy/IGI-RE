@@ -41,6 +41,7 @@
 #define PAD(sec, run, addr, n) static uint8_t pad_##addr[n] __attribute__((section("." #sec "$" #run), used, aligned(1)))
 #define PAD_CONST(sec, run, addr, n) \
     static const uint8_t pad_##addr[n] __attribute__((section("." #sec "$" #run), used, aligned(1)))
+#define STORE(sec, run, align) static __attribute__((section("." #sec "$" #run), used, aligned(align)))
 #define ALIAS(name, of, off) __asm__(".globl _" #name "\n.set _" #name ", _" #of "+" #off)
 #else
 #define BSS(run) extern
@@ -48,6 +49,7 @@
 #define INIT(...)
 #define PAD(sec, run, addr, n) _Static_assert(1, "")
 #define PAD_CONST(sec, run, addr, n) _Static_assert(1, "")
+#define STORE(sec, run, align) extern
 #define ALIAS(name, of, off) _Static_assert(1, "")
 #endif
 /* a global or function by its assembler name, for initialisers that point at it */

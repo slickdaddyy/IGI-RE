@@ -628,13 +628,16 @@ void TaskType_SetFlags(uint16_t type, uint32_t flags)
 HOOK(0x401FA0, TaskType_SetFlags);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-DATA(54F928) uint16_t gTaskRootType INIT(0);
+PAD(igd, 544954, 544954, 0x1);
+DATA(544954) char str_544955[1] INIT("");
+PAD(igd, 544954, 544956, 0x2);
+DATA(54F928) uint16_t gTaskRootType;
 PAD(igd, 54F928, 54F92A, 0x2);
-DATA(54F928) int gTaskUnk54F92C INIT(0);
-PAD(igd, 54F928, 54F930, 0x5F4);
-ALIAS(gTaskEvents, pad_54F930, 0);
-PAD(igd, 54F928, 54FF24, 0x10);
-ALIAS(gTaskEventSlot, pad_54FF24, 0);
+DATA(54F928) int gTaskUnk54F92C;
+STORE(igd, 54F928, 2) __typeof__(gTaskEvents[0]) store_54F930[254];
+ALIAS(gTaskEvents, store_54F930, 0);
+STORE(igd, 54F928, 1) __typeof__(gTaskEventSlot[0]) store_54FF24[16];
+ALIAS(gTaskEventSlot, store_54FF24, 0);
 PAD(igd, 54F928, 54FF34, 0xCC);
 ALIAS(gTaskHandlerSet, pad_54FF34, 0);
 BSS(567C38) Pool gTaskRefs;

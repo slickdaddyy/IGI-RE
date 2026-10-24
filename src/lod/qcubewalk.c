@@ -536,8 +536,8 @@ void QCube_Walk(WWorld *w)
 HOOK(0x4D14E0, QCube_Walk);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igd, 548444, 548444, 0x8) INIT({0x00, 0x01, 0x02, 0x04, 0x05});
-ALIAS(gWalkTreeIndex, pad_548444, 0);
+STORE(igd, 548444, 1) __typeof__(gWalkTreeIndex[0]) store_548444[8] INIT({0, 1, 2, 4, 5});
+ALIAS(gWalkTreeIndex, store_548444, 0);
 PAD(igb, A4EF38, A4EF38, 0x20C4);
 ALIAS(gWalkSavedRoots, pad_A4EF38, 0);
 PAD(igb, A53740, A53740, 0x18C);

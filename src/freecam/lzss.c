@@ -21,7 +21,17 @@ typedef struct BitStream {
     int rack;
 } BitStream;
 
-typedef struct Codec Codec;
+/* a compression method; only the lzss one is registered */
+typedef struct Codec {
+    int unk0;
+    int unk4;
+    void (*compress)(void *unused, int len, uint8_t **src, BitStream *out);
+    int unkC;
+    int unk10;
+    void (*decompress)(void *unused, BitStream *in, uint8_t **dst);
+} Codec;
+
+_Static_assert(sizeof(Codec) == 0x18, "Codec");
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, int align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -301,5 +311,8 @@ void Codec_Register(int index, Codec *codec)
 HOOK(0x530950, Codec_Register);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+REF_EXTERN(Lzss_Compress);
+REF_EXTERN(Lzss_Decompress);
+DATA(54F778) Codec gLzssCodec INIT({.compress = (__typeof__(gLzssCodec.compress))ref_Lzss_Compress, .decompress = (__typeof__(gLzssCodec.decompress))ref_Lzss_Decompress});
 PAD(igb, A845D8, A845D8, 0x8);
 ALIAS(gCodecs, pad_A845D8, 0);

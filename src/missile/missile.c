@@ -833,6 +833,8 @@ DATA(5336A8) double kMinusOneD INIT(-1.0);
 DATA(5336C4) float kSevenTenths INIT(0.7f);
 DATA(53BB8C) uint16_t gMissileType INIT(385);
 PAD(igd, 53BB8C, 53BB8E, 0x2);
+PAD(igd, 544344, 544344, 0x1) INIT({0x08});
+DATA(544344) char str_544345[3] INIT("GS");
 PAD(igb, 57BC88, 57BC88, 0xC);
 ALIAS(gMissileRandom, pad_57BC88, 0);
 BSS(57BC88) void *gMissileParams;

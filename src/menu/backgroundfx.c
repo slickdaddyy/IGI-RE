@@ -280,11 +280,24 @@ Task *BackgroundFX_New(Task *parent)
 HOOK(0x4199D0, BackgroundFX_New);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+REF_EXTERN(dat_539AF8);
+REF_EXTERN(dat_539B50);
+REF_EXTERN(dat_539BD0);
+REF_EXTERN(str_539BA8);
+REF_EXTERN(str_539BC0);
 DATA(53357C) const float gGridStep INIT(0.05f);
 DATA(53357C) const float gCircleDetail INIT(0.31415927f);
-PAD_CONST(igd, 53357C, 533584, 0x4) INIT({0xB4, 0xA2, 0x91, 0x3A});
-ALIAS(gBgSpeed, pad_533584, 0);
+STORE(igd, 53357C, 4) __typeof__(gBgSpeed[0]) store_533584[1] INIT({0.0011111111f});
+ALIAS(gBgSpeed, store_533584, 0);
 DATA(539AF0) uint16_t gBackgroundFXType INIT(385);
-PAD(igd, 539AF0, 539AF2, 0x2);
-PAD(igd, 539BE8, 539BE8, 0x40) INIT({0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xD0, 0x9B, 0x53, 0x00, 0xF8, 0x9A, 0x53, 0x00, 0x02, 0x00, 0x00, 0x00, 0xA8, 0x9B, 0x53, 0x00, 0x00, 0x00, 0x00, 0x00, 0x50, 0x9B, 0x53, 0x00, 0x01, 0x00, 0x00, 0x00, 0xC0, 0x9B, 0x53, 0x00, 0x00, 0x00, 0x00, 0x00, 0x42, 0x61, 0x63, 0x6B, 0x67, 0x72, 0x6F, 0x75, 0x6E, 0x64, 0x46, 0x58});
-ALIAS(gBgShapes, pad_539BE8, 0);
+PAD(igd, 539AF0, 539AF2, 0x6);
+DATA(539AF0) uint8_t dat_539AF8[88] INIT({5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 140, 66, 0, 0, 0, 0, 0, 0, 150, 67, 0, 0, 160, 64, 0, 0, 140, 66, 0, 0, 160, 64, 0, 0, 150, 67, 0, 0, 0, 0, 0, 0, 160, 194, 0, 0, 0, 0, 0, 0, 150, 195, 0, 0, 180, 66, 0, 0, 0, 0, 0, 0, 150, 67, 0, 0, 0, 0, 0, 0, 130, 194, 0, 0, 130, 66, 0, 0, 62, 195, 0, 0, 62, 67});
+DATA(539AF0) uint8_t dat_539B50[88] INIT({5, 0, 0, 0, 0, 0, 150, 195, 0, 0, 200, 194, 0, 0, 150, 67, 0, 0, 200, 194, 0, 0, 150, 195, 0, 0, 200, 66, 0, 0, 150, 67, 0, 0, 200, 66, 0, 0, 72, 195, 0, 0, 200, 66, 0, 0, 72, 195, 0, 0, 200, 194, 0, 0, 72, 67, 0, 0, 200, 66, 0, 0, 72, 67, 0, 0, 200, 194, 0, 0, 0, 0, 0, 0, 200, 195, 0, 0, 0, 0, 0, 0, 22, 67});
+DATA(539AF0) char str_539BA8[1] INIT("");
+PAD(igd, 539AF0, 539BA9, 0x17) INIT({0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC8, 0x42, 0x00, 0x00, 0xE0, 0x41, 0x00, 0x00, 0xE0, 0xC1, 0x00, 0x00, 0x70, 0x42});
+DATA(539AF0) char str_539BC0[1] INIT("");
+PAD(igd, 539AF0, 539BC1, 0xF) INIT({0x00, 0x00, 0x00, 0x00, 0x00, 0xC8, 0xC2, 0x00, 0x00, 0x48, 0x43});
+DATA(539AF0) uint8_t dat_539BD0[24] INIT({20, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 150, 67, 0, 0, 150, 67});
+STORE(igd, 539AF0, 4) __typeof__(gBgShapes[0]) store_539BE8[3] INIT({{.grid = (__typeof__(store_539BE8[0].grid))ref_dat_539BD0}, {.lines = (__typeof__(store_539BE8[1].lines))ref_dat_539AF8, .circleCount = 2, .circles = (__typeof__(store_539BE8[1].circles))ref_str_539BA8}, {.lines = (__typeof__(store_539BE8[2].lines))ref_dat_539B50, .circleCount = 1, .circles = (__typeof__(store_539BE8[2].circles))ref_str_539BC0}});
+ALIAS(gBgShapes, store_539BE8, 0);
+PAD(igd, 539AF0, 539C18, 0x10) INIT({0x42, 0x61, 0x63, 0x6B, 0x67, 0x72, 0x6F, 0x75, 0x6E, 0x64, 0x46, 0x58});

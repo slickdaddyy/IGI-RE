@@ -21,17 +21,7 @@ __asm__(".section .igi,\"bw\"\n\t.space 0x132000\n\t.text");
 int WINAPI AppMain_WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdLine, int show);
 int Link_Bind(HMODULE msvcrt, HMODULE dinput);
 
-extern const uint8_t igi_dimouse[0xB0], igi_dikeyboard[0x1000];
 extern const uint32_t igi_imports;
-
-/* tables in IGI.exe's data that hold code addresses (handlers, the lzss pair) */
-static const uint32_t code_tables[][2] = {
-    {0x5385B4, 0x5386AC}, {0x53E400, 0x53E434}, {0x53E6A8, 0x53E6E4},
-    {0x53E8B8, 0x53E950}, {0x53EC10, 0x53ECA8}, {0x54F780, 0x54F790},
-};
-
-/* data that dinput.lib left in the code section (in fill.c too): mouse and keyboard formats */
-static const uint32_t text_data[][2] = {{0x4AE680, 0xB0}, {0x4AE740, 0x1000}};
 
 static void fail(const char *msg)
 {
@@ -42,7 +32,7 @@ static void fail(const char *msg)
 static void load_imports(uint32_t at);
 static void clear_code(void);
 
-/* the code range: int3 and dinput.lib's two tables; then the import table */
+/* the code range is int3; then the import table */
 static void load_data(void)
 {
     DWORD old;
@@ -50,8 +40,6 @@ static void load_data(void)
     if (!VirtualProtect((void *)TEXT_LO, EXE_SIZE - 0x1000, PAGE_EXECUTE_READWRITE, &old))
         fail("Couldn't open the game's memory at 0x401000.");
     clear_code();
-    memcpy((void *)(uintptr_t)text_data[0][0], igi_dimouse, sizeof(igi_dimouse));
-    memcpy((void *)(uintptr_t)text_data[1][0], igi_dikeyboard, sizeof(igi_dikeyboard));
     load_imports(igi_imports);
 }
 
@@ -73,31 +61,10 @@ static void load_imports(uint32_t at)
     }
 }
 
-/* point the data's code addresses at our functions, through the jumps the hooks just wrote */
-static void patch_code_tables(void)
-{
-    unsigned i;
-    uint32_t a, *w;
-
-    for (i = 0; i < sizeof(code_tables) / sizeof(code_tables[0]); i++)
-        for (a = code_tables[i][0]; a < code_tables[i][1]; a += 4) {
-            w = (uint32_t *)(uintptr_t)a;
-            if (*w >= TEXT_LO && *w < TEXT_HI && *(uint8_t *)(uintptr_t)*w == 0xE9)
-                *w += 5 + *(int32_t *)(uintptr_t)(*w + 1);
-        }
-}
-
-/* fill the code range with int3 again, except text_data (in address order) */
+/* fill the code range with int3 */
 static void clear_code(void)
 {
-    uint32_t a = TEXT_LO;
-    unsigned k;
-
-    for (k = 0; k < sizeof(text_data) / sizeof(text_data[0]); k++) {
-        memset((void *)(uintptr_t)a, 0xCC, text_data[k][0] - a);
-        a = text_data[k][0] + text_data[k][1];
-    }
-    memset((void *)(uintptr_t)a, 0xCC, TEXT_HI - a);
+    memset((void *)TEXT_LO, 0xCC, TEXT_HI - TEXT_LO);
 }
 
 /* an int3 in the code range is original code nothing rewrote */
@@ -128,8 +95,6 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdLine, int show)
     load_data();
     hook_exe_mapped = 1;
     Hook_InstallAll(inst);
-    patch_code_tables();
-    clear_code(); /* the hooks' jumps were only needed to find the functions */
     if (!msvcrt || !dinput || !Link_Bind(msvcrt, dinput))
         fail("msvcrt.dll is missing a function the game needs.");
     AddVectoredExceptionHandler(0, on_trap);

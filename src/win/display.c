@@ -623,8 +623,14 @@ BOOL WINAPI Display_EnumDriverCB(GUID *guid, char *desc, char *name, void *conte
 HOOK(0x491F10, Display_EnumDriverCB);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD_CONST(igd, 534A20, 534A20, 0x10) INIT({0x77, 0x9E, 0x04, 0xF5, 0x61, 0x48, 0xD2, 0x11, 0xA4, 0x07, 0x00, 0xA0, 0xC9, 0x06, 0x29, 0xA8});
-ALIAS(IID_IDirect3D7_, pad_534A20, 0);
+STORE(igd, 534A20, 4) __typeof__(IID_IDirect3D7_[0]) store_534A20[1] INIT({{.Data1 = 4110720631u, .Data2 = 18529, .Data3 = 4562, .Data4 = {164, 7, 0, 160, 201, 6, 41, 168}}});
+ALIAS(IID_IDirect3D7_, store_534A20, 0);
+PAD(igd, 534D40, 534D40, 0x1);
+DATA(534D40) char str_534D41[1] INIT("");
+PAD(igd, 534D40, 534D42, 0x2);
+PAD(igd, 535040, 535040, 0x1) INIT({0x47});
+DATA(535040) char str_535041[12] INIT("etLastError");
+PAD(igd, 535040, 53504D, 0x3) INIT({0x00, 0x3F});
 DATA(542310) int gMethodGetGFXCaps INIT(-1);
 DATA(542310) int gMethodOpen INIT(-1);
 DATA(542310) int gMethodClose INIT(-1);
@@ -638,6 +644,14 @@ DATA(542310) int gMethodEnum INIT(-1);
 DATA(542310) int gPrimBlit INIT(-1);
 DATA(542310) int gPrimSnapshot INIT(-1);
 DATA(542310) int gPrimClipWindow INIT(-1);
+PAD(igd, 54414C, 54414C, 0x1) INIT({0x02});
+DATA(54414C) char str_54414D[1] INIT("");
+PAD(igd, 54414C, 54414E, 0x2) INIT({0x02});
+PAD(igd, 54524C, 54524C, 0x3);
+DATA(54524C) char str_54524F[1] INIT("");
+PAD(igd, 545344, 545344, 0x1);
+DATA(545344) char str_545345[1] INIT("");
+PAD(igd, 545344, 545346, 0x2);
 PAD(igb, 5C9FA8, 5C9FA8, 0x84);
 ALIAS(gDisplayDevice, pad_5C9FA8, 0);
 BSS(5C9FA8) char gDisplayOpen;

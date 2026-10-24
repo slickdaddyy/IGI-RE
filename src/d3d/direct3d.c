@@ -1337,16 +1337,16 @@ HOOK(0x495260, Direct3D_RemoveRestoreCallback);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(5333C0) float gBytesToMb INIT(9.536743e-07f);
-PAD_CONST(igd, 5349E0, 5349E0, 0x10) INIT({0x78, 0x9E, 0x04, 0xF5, 0x61, 0x48, 0xD2, 0x11, 0xA4, 0x07, 0x00, 0xA0, 0xC9, 0x06, 0x29, 0xA8});
-ALIAS(IID_IDirect3DTnLHalDevice_, pad_5349E0, 0);
-PAD_CONST(igd, 5349E0, 5349F0, 0x10) INIT({0x43, 0x66, 0x93, 0x50, 0xE9, 0x13, 0xD1, 0x11, 0x89, 0xAA, 0x00, 0xA0, 0xC9, 0x05, 0x41, 0x29});
-ALIAS(IID_IDirect3DRefDevice_, pad_5349F0, 0);
-PAD_CONST(igd, 5349E0, 534A00, 0x10) INIT({0xE0, 0x3D, 0xE6, 0x84, 0xAA, 0x46, 0xCF, 0x11, 0x81, 0x6F, 0x00, 0x00, 0xC0, 0x20, 0x15, 0x6E});
-ALIAS(IID_IDirect3DHALDevice_, pad_534A00, 0);
-PAD_CONST(igd, 5349E0, 534A10, 0x10) INIT({0x60, 0x5C, 0x66, 0xA4, 0x73, 0x26, 0xCF, 0x11, 0xA3, 0x1A, 0x00, 0xAA, 0x00, 0xB9, 0x33, 0x56});
-ALIAS(IID_IDirect3DRGBDevice_, pad_534A10, 0);
-PAD_CONST(igd, 534A50, 534A50, 0x10) INIT({0xC0, 0x5E, 0xE6, 0x15, 0x9C, 0x3B, 0xD2, 0x11, 0xB9, 0x2F, 0x00, 0x60, 0x97, 0x97, 0xEA, 0x5B});
-ALIAS(IID_IDirectDraw7_, pad_534A50, 0);
+STORE(igd, 5349E0, 4) __typeof__(IID_IDirect3DTnLHalDevice_[0]) store_5349E0[1] INIT({{.Data1 = 4110720632u, .Data2 = 18529, .Data3 = 4562, .Data4 = {164, 7, 0, 160, 201, 6, 41, 168}}});
+ALIAS(IID_IDirect3DTnLHalDevice_, store_5349E0, 0);
+STORE(igd, 5349E0, 4) __typeof__(IID_IDirect3DRefDevice_[0]) store_5349F0[1] INIT({{.Data1 = 1351837251, .Data2 = 5097, .Data3 = 4561, .Data4 = {137, 170, 0, 160, 201, 5, 65, 41}}});
+ALIAS(IID_IDirect3DRefDevice_, store_5349F0, 0);
+STORE(igd, 5349E0, 4) __typeof__(IID_IDirect3DHALDevice_[0]) store_534A00[1] INIT({{.Data1 = 2229681632u, .Data2 = 18090, .Data3 = 4559, .Data4 = {129, 111, 0, 0, 192, 32, 21, 110}}});
+ALIAS(IID_IDirect3DHALDevice_, store_534A00, 0);
+STORE(igd, 5349E0, 4) __typeof__(IID_IDirect3DRGBDevice_[0]) store_534A10[1] INIT({{.Data1 = 2758171744u, .Data2 = 9843, .Data3 = 4559, .Data4 = {163, 26, 0, 170, 0, 185, 51, 86}}});
+ALIAS(IID_IDirect3DRGBDevice_, store_534A10, 0);
+STORE(igd, 534A50, 4) __typeof__(IID_IDirectDraw7_[0]) store_534A50[1] INIT({{.Data1 = 367419072, .Data2 = 15260, .Data3 = 4562, .Data4 = {185, 47, 0, 96, 151, 151, 234, 91}}});
+ALIAS(IID_IDirectDraw7_, store_534A50, 0);
 BSS(5CA044) int gScreenHeight;
 BSS(5CA044) int gDisplayEnumMode;
 BSS(5CA0D8) int gScreenWidth;

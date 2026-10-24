@@ -155,6 +155,11 @@ void TerrDraw_Restore(void)
 HOOK(0x5166F0, TerrDraw_Restore);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igd, 53474C, 53474C, 0x2) INIT({0x63, 0x6F});
+DATA(53474C) char str_53474E[2] INIT("s");
+PAD(igd, 544F4C, 544F4C, 0x2);
+DATA(544F4C) char str_544F4E[1] INIT("");
+PAD(igd, 544F4C, 544F4F, 0x1);
 DATA(5470B4) DWORD gFogEnable INIT(1);
 BSS(A7E068) DWORD gTerrainFogColorD3D;
 PAD(igb, A7E080, A7E080, 0x17DC);

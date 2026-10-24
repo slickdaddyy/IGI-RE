@@ -275,6 +275,10 @@ void Hook_InstallAll(void *module)
         return;
     }
     make_rdata_writable(module);
+    if (hook_exe_mapped) { /* the standalone exe calls the rewrite directly */
+        log_line("standalone, nothing to install");
+        return;
+    }
     for (i = 0; i < hook_count; i++) {
         if (!selected(i))
             continue;

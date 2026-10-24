@@ -8,6 +8,7 @@
 # into unnamed data) are kept as IGI.exe's bytes; globals that can't be placed exactly
 # (shared words, odd alignment) are left to fill.c.
 # usage: gendefs.py IGI.exe   (run from the repo root)
+import bisect
 import collections
 import glob
 import os
@@ -25,6 +26,8 @@ B = 0x400000
 assert pe.FILE_HEADER.TimeDateStamp == 0x3A1D74C6, 'needs the EU IGI.exe'
 
 SECTIONS = (('igd', 0x533000, 0x550000), ('igb', 0x550000, 0xC35000))
+# dinput.lib's object formats in .text, which src/exe/fill.c carries (tools/genfill.py)
+TEXT_DATA = ((0x4AE680, 'igi_dimouse', 0xB0), (0x4AE740, 'igi_dikeyboard', 0x1000), (0x516FA0, 'igi_dijoystick', 0x2C0))
 MARK = '/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */'
 CC = ['i686-w64-mingw32-gcc', '-std=gnu11', '-O2', '-fno-strict-aliasing', '-march=i686', '-malign-data=abi',
       '-DIGI_STANDALONE', '-Isrc', '-w']
@@ -161,6 +164,281 @@ def number(code, raw):
     return str(v)
 
 
+
+
+def c_string(raw):
+    """a C string literal for raw (which ends at its first NUL), or None"""
+    txt = raw[:raw.index(b'\0')]
+    if any(c < 32 and c not in b'\t\n\r' or c > 126 for c in txt):
+        return None
+    out = ''
+    for c in txt:
+        ch = chr(c)
+        out += {'"': '\\"', '\\': '\\\\', '\t': '\\t', '\n': '\\n', '\r': '\\r'}.get(ch, ch)
+    return '"%s"' % out
+
+
+# the declared type of each name, from the debug info of a probe object
+def dwarf(obj):
+    """{offset: (tag, {attr: value}, [child offsets])} from objdump --dwarf=info"""
+    out = subprocess.run(['i686-w64-mingw32-objdump', '--dwarf=info', obj], capture_output=True, text=True).stdout
+    dies, stack, cur = {}, [], None
+    for line in out.splitlines():
+        m = re.match(r'\s*<(\d+)><([0-9a-f]+)>: Abbrev Number: (\d+)(?: \((\w+)\))?', line)
+        if m:
+            depth, off = int(m[1]), int(m[2], 16)
+            if m[3] == '0':
+                continue
+            cur = [m[4], {}, []]
+            dies[off] = cur
+            del stack[depth:]
+            if stack:
+                stack[-1][2].append(off)
+            stack.append(cur)
+            continue
+        m = re.match(r'\s*<[0-9a-f]+>\s+(DW_AT_\w+)\s*:\s*(.*)$', line)
+        if m and cur is not None:
+            cur[1][m[1]] = m[2].strip()
+    return dies
+
+
+def ref(v):
+    m = re.match(r'<0x([0-9a-f]+)>', v)
+    return int(m[1], 16) if m else None
+
+
+def attr_int(v):
+    m = re.match(r'(-?\d+)', v)
+    return int(m[1]) if m else None
+
+
+def name_of(v):
+    return v.rsplit(': ', 1)[-1].strip() if v else None
+
+
+class Fallback(Exception):
+    pass
+
+
+def fallback(why):
+    if os.environ.get('GENDEFS_WHY'):
+        print('bytes:', why, file=sys.stderr)
+    raise Fallback(why)
+
+
+def strip_t(dies, t):
+    while t is not None and dies[t][0] in ('DW_TAG_typedef', 'DW_TAG_const_type', 'DW_TAG_volatile_type'):
+        t = ref(dies[t][1].get('DW_AT_type', ''))
+    return t
+
+
+def size_of(dies, t):
+    t = strip_t(dies, t)
+    tag, a, kids = dies[t]
+    if 'DW_AT_byte_size' in a:
+        return attr_int(a['DW_AT_byte_size'])
+    if tag == 'DW_TAG_array_type':
+        n = 1
+        for k in kids:
+            n *= dim(dies, k)
+        return n * size_of(dies, ref(a['DW_AT_type']))
+    fallback('no size')
+
+
+def dim(dies, k):
+    a = dies[k][1]
+    if 'DW_AT_count' in a:
+        return attr_int(a['DW_AT_count'])
+    if 'DW_AT_upper_bound' in a:
+        return attr_int(a['DW_AT_upper_bound']) + 1
+    fallback('array bound')
+
+
+def value(f, dies, t, raw, addr, expr):
+    """C initialiser for raw bytes of type t at addr; expr is an lvalue of that type for casts"""
+    t = strip_t(dies, t)
+    tag, a, kids = dies[t]
+    if tag == 'DW_TAG_base_type':
+        enc = attr_int(a['DW_AT_encoding'])
+        size = attr_int(a['DW_AT_byte_size'])
+        if enc == 4:
+            s = number({4: 'f', 8: 'd'}[size], raw)
+            if s is None:
+                fallback('%s: nan or inf' % expr)
+            return s
+        signed = enc in (5, 6)
+        v = int.from_bytes(raw, 'little', signed=signed)
+        return str(v) + ('u' if not signed and v > 0x7FFFFFFF else '')
+    if tag == 'DW_TAG_enumeration_type':
+        return str(int.from_bytes(raw, 'little', signed=True))
+    if tag == 'DW_TAG_pointer_type':
+        v = int.from_bytes(raw, 'little')
+        if v == 0:
+            return '0'
+        if v in hooks:
+            refs[f].add(hooks[v])
+            return '(__typeof__(%s))ref_%s' % (expr, hooks[v])
+        for lo, n, size in TEXT_DATA:
+            if lo <= v < lo + size:
+                refs[f].add(n)
+                return '(__typeof__(%s))(ref_%s + %d)' % (expr, n, v - lo) if v > lo else '(__typeof__(%s))ref_%s' % (expr, n)
+        hit = target(v) if 0x533000 <= v < 0xC35000 else None
+        if not hit:
+            fallback('%s: pointer 0x%X into nothing named' % (expr, v))
+        n, off = hit
+        refs[f].add(n)
+        return '(__typeof__(%s))ref_%s' % (expr, n) if not off else '(__typeof__(%s))(ref_%s + %d)' % (expr, n, off)
+    if tag == 'DW_TAG_array_type':
+        et = ref(a['DW_AT_type'])
+        dims = [dim(dies, k) for k in kids]
+        if len(dims) != 1:  # an array of arrays: one brace level per dimension
+            inner = size_of(dies, et)
+            for d in dims[1:]:
+                inner *= d
+            vals = []
+            for i in range(dims[0]):
+                chunk = raw[i * inner:(i + 1) * inner]
+                vals.append(sub_array(f, dies, et, dims[1:], chunk, addr + i * inner, '%s[%d]' % (expr, i)))
+            while vals and vals[-1] in ('0', '{0}'):
+                vals.pop()
+            return '{' + ', '.join(vals) + '}' if vals else '{0}'
+        es = size_of(dies, et)
+        n = dims[0]
+        e = strip_t(dies, et)
+        if dies[e][0] == 'DW_TAG_base_type' and es == 1 and attr_int(dies[e][1]['DW_AT_encoding']) in (6, 8) \
+                and b'\0' in raw and not raw[raw.index(b'\0'):].strip(b'\0'):
+            lit = c_string(raw)
+            if lit:
+                return lit
+        vals = [value(f, dies, et, raw[i * es:(i + 1) * es], addr + i * es, '%s[%d]' % (expr, i)) for i in range(n)]
+        while vals and vals[-1] in ('0', '{0}'):
+            vals.pop()
+        return '{' + ', '.join(vals) + '}' if vals else '{0}'
+    if tag == 'DW_TAG_structure_type':
+        covered = bytearray(len(raw))
+        out = []
+        for k in kids:
+            ktag, ka, _ = dies[k]
+            if ktag != 'DW_TAG_member':
+                continue
+            if 'DW_AT_bit_size' in ka or 'DW_AT_name' not in ka:
+                fallback('%s: bitfield or unnamed member' % expr)
+            off = attr_int(ka.get('DW_AT_data_member_location', '0'))
+            mt = ref(ka['DW_AT_type'])
+            ms = size_of(dies, mt)
+            name = name_of(ka['DW_AT_name'])
+            covered[off:off + ms] = b'\1' * ms
+            v = value(f, dies, mt, raw[off:off + ms], addr + off, '%s.%s' % (expr, name))
+            if v not in ('0', '{0}'):
+                out.append('.%s = %s' % (name, v))
+        if any(b and not c for b, c in zip(raw, covered)):
+            fallback('%s: bytes outside the named members' % expr)
+        return '{' + ', '.join(out) + '}' if out else '{0}'
+    fallback('%s: %s' % (expr, tag))
+
+
+def sub_array(f, dies, et, dims, raw, addr, expr):
+    es = size_of(dies, et)
+    for d in dims[1:]:
+        es *= d
+    if len(dims) == 1:
+        vals = [value(f, dies, et, raw[i * es:(i + 1) * es], addr + i * es, '%s[%d]' % (expr, i)) for i in range(dims[0])]
+    else:
+        vals = [sub_array(f, dies, et, dims[1:], raw[i * es:(i + 1) * es], addr + i * es, '%s[%d]' % (expr, i))
+                for i in range(dims[0])]
+    while vals and vals[-1] in ('0', '{0}'):
+        vals.pop()
+    return '{' + ', '.join(vals) + '}' if vals else '{0}'
+
+
+types = {}  # name -> (dies, type offset) as its owner file sees it
+
+
+def probe_types(f, names):
+    p = os.path.join(tmp, 'tprobe.c')
+    with open(p, 'w') as o:
+        o.write('#include "%s"\n' % os.path.abspath(f))
+        for n in names:
+            o.write('__typeof__(%s) *__probe_%s;\n' % (n + '[0]' if unsized(n) else n, n))
+    if subprocess.run(CC + ['-O0', '-g', '-c', p, '-o', p + '.o'], capture_output=True).returncode:
+        return
+    dies = dwarf(p + '.o')
+    for off, (tag, a, kids) in dies.items():
+        if tag == 'DW_TAG_variable' and (name_of(a.get('DW_AT_name')) or '').startswith('__probe_'):
+            n = name_of(a['DW_AT_name'])[8:]
+            ptr = ref(a['DW_AT_type'])
+            types[n] = (dies, ref(dies[ptr][1]['DW_AT_type']))
+
+
+for f, names in byfile.items():
+    want = [n for n in names if n in info and 0x533000 <= at[n] < 0x550000]
+    if want:
+        probe_types(f, want)
+
+
+def typed_init(f, n, a, size, expr):
+    """initialiser for n's bytes at a, or None"""
+    if n not in types:
+        return None
+    dies, t = types[n]
+    try:
+        if unsized(n):
+            es = size_of(dies, t)
+            if size % es:
+                return None
+            vals = [value(f, dies, t, img[a + i - B:a + i + es - B], a + i, '%s[%d]' % (expr, i // es))
+                    for i in range(0, size, es)]
+            while vals and vals[-1] in ('0', '{0}'):
+                vals.pop()
+            return '{' + ', '.join(vals) + '}' if vals else '{0}'
+        return value(f, dies, t, img[a - B:a - B + size], a, expr)
+    except (Fallback, KeyError):
+        return None
+
+
+# data the data points at that no global names (mostly string literals): each target gets a
+# definition of its own (igidecomp.exe only), owned by the file that defines the global
+# pointing at it, and runs up to the next named address
+synthetic = set()
+named = sorted(set(at.values()))
+
+
+def holder_of(a):
+    i = bisect.bisect_right(named, a) - 1
+    if i < 0:
+        return None
+    names = [n for n, x in at.items() if x == named[i] and n in owner]
+    return names[0] if names else None
+
+
+def inside_named(v):
+    i = bisect.bisect_right(named, v) - 1
+    if i < 0:
+        return False
+    if named[i] == v:
+        return True
+    sizes = [info[n][0] for n, x in at.items() if x == named[i] and n in info and not unsized(n)]
+    return bool(sizes) and v < named[i] + max(sizes)
+
+
+wanted = {}
+for a in range(0x533000, 0x550000, 4):
+    v = int.from_bytes(img[a - B:a - B + 4], 'little')
+    if 0x533000 <= v < 0x550000 and not inside_named(v) and holder_of(a):
+        wanted.setdefault(v, owner[holder_of(a)][0])
+stops = sorted(set(named) | set(wanted) | {0x550000})
+for v, f in sorted(wanted.items()):
+    nxt = stops[bisect.bisect_right(stops, v)]
+    raw = img[v - B:v - B + (nxt - v)]
+    if b'\0' in raw and c_string(raw):
+        n, size, decl = 'str_%06X' % v, raw.index(b'\0') + 1, 'char str_%06X[%d]'
+    else:
+        n, size, decl = 'dat_%06X' % v, nxt - v, 'uint8_t dat_%06X[%d]'
+    at[n] = v
+    owner[n] = (f, decl % (v, size))
+    info[n] = (size, 1)
+    synthetic.add(n)
+
 refs = collections.defaultdict(set)  # file -> names it points at by assembler name
 ats = sorted((a, n) for n, a in at.items())
 
@@ -216,9 +494,9 @@ def initialiser(f, n, a, size):
         return vals[0]
     raw = img[a - B:a - B + size]
     if t == 'char' and b'\0' in raw and not raw[raw.index(b'\0'):].strip(b'\0'):
-        txt = raw[:raw.index(b'\0')]
-        if all(32 <= c < 127 and c not in b'"\\?' for c in txt):
-            return '"%s"' % txt.decode()
+        lit = c_string(raw)
+        if lit:
+            return lit
     while len(vals) > 1 and vals[-1] in ('0', '0.0f', '0.0'):
         vals.pop()
     return '{' + ', '.join(vals) + '}'
@@ -229,6 +507,28 @@ def bytes_init(a, n):
     if not b.strip(b'\0'):
         return ''
     return ' INIT({%s})' % ', '.join('0x%02X' % x for x in b.rstrip(b'\0'))
+
+
+
+def typed_prefix(f, n, a, size, expr):
+    """(count, initialiser) for the longest run of n's elements from a that can be written"""
+    if n not in types:
+        return 0, None
+    dies, t = types[n]
+    try:
+        es = size_of(dies, t)
+    except (Fallback, KeyError):
+        return 0, None
+    vals = []
+    for i in range(0, size - size % es, es):
+        try:
+            vals.append(value(f, dies, t, img[a + i - B:a + i + es - B], a + i, '%s[%d]' % (expr, i // es)))
+        except (Fallback, KeyError):
+            break
+    count = len(vals)
+    while vals and vals[-1] in ('0', '{0}'):
+        vals.pop()
+    return count, ('{' + ', '.join(vals) + '}' if vals else '{0}')
 
 
 # phase 1: per section, the primaries that tile it and the runs they form
@@ -325,10 +625,24 @@ for SEC, prim, alias, runs in plans:
             if a > here:
                 out.append('%s(%s, %s, %06X, 0x%X)%s;' % (pad, SEC, run, here, a - here,
                                                         bytes_init(here, a - here) if SEC == 'igd' else ''))
-            init = initialiser(f, p, a, size) if typed and SEC == 'igd' else None
+            init = (initialiser(f, p, a, size) if p in synthetic else typed_init(f, p, a, size, p)) \
+                if typed and SEC == 'igd' else None
             if typed and (SEC == 'igb' or init is not None):
-                out.append('%s(%s) %s%s;' % (macro, run, owner[p][1], ' INIT(%s)' % init if init else ''))
+                out.append('%s(%s) %s%s;' % (macro, run, owner[p][1], ' INIT(%s)' % init if init not in (None, '{0}', '0') else ''))
                 home[p] = p
+                here = a + size
+                continue
+            store = 'store_%06X' % a
+            count, init = typed_prefix(f, p, a, size, store) if not typed and SEC == 'igd' else (0, None)
+            if count:  # an array of unknown length, as typed storage under the name
+                es = size_of(*types[p])
+                out.append('STORE(%s, %s, %d) __typeof__(%s[0]) %s[%d]%s;' % (
+                    SEC, run, info[p][1], p, store, count, ' INIT(%s)' % init if init != '{0}' else ''))
+                home[p] = store
+                out.append('ALIAS(%s, %s, 0);' % (p, store))
+                if count * es < size:
+                    out.append('%s(%s, %s, %06X, 0x%X)%s;' % (pad, SEC, run, a + count * es, size - count * es,
+                                                            bytes_init(a + count * es, size - count * es)))
             else:  # IGI.exe's bytes, under the name
                 out.append('%s(%s, %s, %06X, 0x%X)%s;' % (pad, SEC, run, a, size,
                                                         bytes_init(a, size) if SEC == 'igd' else ''))

@@ -291,8 +291,13 @@ LRESULT WINAPI AppMain_WinProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
 HOOK(0x48F970, AppMain_WinProc);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-REF_EXTERN(gTypeLines);
-DATA(541D68) const char *gClassName INIT((char *)(ref_gTypeLines + 6380));
+REF_EXTERN(str_53B534);
+PAD(igd, 535648, 535648, 0x1) INIT({0x41});
+DATA(535648) char str_535649[1] INIT("");
+PAD(igd, 535648, 53564A, 0x2) INIT({0x66});
+DATA(541D68) const char *gClassName INIT((__typeof__(gClassName))ref_str_53B534);
+PAD(igd, 54534C, 54534C, 0x3);
+DATA(54534C) char str_54534F[1] INIT("");
 PAD(igb, 5C8D28, 5C8D28, 0xC0);
 ALIAS(gWinProcs, pad_5C8D28, 0);
 BSS(5C8D28) char gRunning;

@@ -234,11 +234,12 @@ def test_unsupported_exe():
 
 
 def test_standalone_exe_checks_only_the_marker():
-    # igidecomp.exe checked the IGI.exe file itself; its own headers are the ones at 0x400000
+    # igidecomp.exe has no IGI.exe headers at 0x400000 and calls the rewrite directly: it only
+    # checks the data's marker, and patches nothing
     h = Host({"log": "1"}, exe_ok=False)
     h.e.write(h.e.symbols["hook_exe_mapped"], struct.pack("<i", 1))
-    h.install()
-    assert h.patched() == ALL
+    assert h.install()[-1] == "standalone, nothing to install"
+    assert h.patched() == []
 
     h = Host({"log": "1"}, exe_ok=False)
     h.e.write(h.e.symbols["hook_exe_mapped"], struct.pack("<i", 1))

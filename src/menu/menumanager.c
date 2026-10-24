@@ -975,6 +975,9 @@ HOOK(0x4190D0, MenuManager_MarkBusy);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(539828) int gMenuKeepScreen INIT(1);
+PAD(igd, 544E44, 544E44, 0x2);
+DATA(544E44) char str_544E46[1] INIT("");
+PAD(igd, 544E44, 544E47, 0x1);
 BSS(57BAC8) MenuInput gMenuLastInput;
 BSS(57BAC8) int gMenuDemoTimer;
 BSS(57BAE4) MenuWindow *gMenuLastScreen;

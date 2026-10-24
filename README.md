@@ -38,8 +38,9 @@ uses it, written by `tools/gendefs.py`) placed at its IGI.exe address, and
 global's declaration, run `tools/gendefs.py IGI.exe`, build, run
 `tools/genfill.py IGI.exe build/CMakeFiles/igidecomp.dir > src/exe/fill.c` and
 build again. The original code range is filled with int3. All calls
-link straight to the rewrite, and the handler tables in the data are pointed
-at it at startup. The C runtime the game code calls comes from `msvcrt.dll`.
+link straight to the rewrite, and the data's function pointers (handler
+tables, the lzss codec) are initialised with the rewritten functions, so
+nothing is patched at startup. The C runtime the game code calls comes from `msvcrt.dll`.
 Anything that still reaches for original code stops the game with "No
 rewrite for IGI.exe code at ...". `igidecomp.ini` and `igidecomp.log` work
 like the DLL's files below.

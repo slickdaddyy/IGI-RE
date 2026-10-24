@@ -32,8 +32,9 @@ print('#include <stdint.h>\n')
 print('/* where its import descriptors are */')
 imp = pe.OPTIONAL_HEADER.DATA_DIRECTORY[1].VirtualAddress
 print(f'const uint32_t igi_imports = 0x{B + imp:X};\n')
-# data that dinput.lib left in .text: the mouse and keyboard object formats, copied in at startup
-for name, addr, n in (('dimouse', 0x4AE680, 0xB0), ('dikeyboard', 0x4AE740, 0x1000)):
+# data that dinput.lib left in .text: the object formats of the mouse, keyboard and joystick
+# data formats, which point here instead
+for name, addr, n in (('dimouse', 0x4AE680, 0xB0), ('dikeyboard', 0x4AE740, 0x1000), ('dijoystick', 0x516FA0, 0x2C0)):
     b = img[addr - B:addr - B + n]
     print(f'const uint8_t igi_{name}[0x{n:X}] = {{')
     for i in range(0, n, 16):

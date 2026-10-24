@@ -442,8 +442,8 @@ void GlobalLight_SetTime(float time)
 HOOK(0x528460, GlobalLight_SetTime);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igd, 534CA0, 534CA0, 0x18) INIT({0xCD, 0xCC, 0x4C, 0x3D, 0x00, 0x00, 0x80, 0x40, 0x6F, 0x12, 0x03, 0x3A, 0x00, 0x00, 0x00, 0x00, 0x7B, 0x14, 0xAE, 0x47, 0xE1, 0x7A, 0x44, 0x40});
-ALIAS(gTexGammaRange, pad_534CA0, 0);
+STORE(igd, 534CA0, 1) __typeof__(gTexGammaRange[0]) store_534CA0[24] INIT({-51, -52, 76, 61, 0, 0, -128, 64, 111, 18, 3, 58, 0, 0, 0, 0, 123, 20, -82, 71, -31, 122, 68, 64});
+ALIAS(gTexGammaRange, store_534CA0, 0);
 PAD(igb, A83D60, A83D60, 0xA0);
 ALIAS(gLinkNames, pad_A83D60, 0);
 PAD(igb, A83D60, A83E00, 0xA0);

@@ -1120,12 +1120,12 @@ int Mission_GetFirst(void)
 HOOK(0x417090, Mission_GetFirst);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igd, 539540, 539540, 0x10) INIT({0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF});
-ALIAS(gGameEvents, pad_539540, 0);
-PAD_CONST(igd, 539550, 539550, 0x8) INIT({0x1B, 0x2D, 0x44, 0x54, 0xFB, 0x21, 0x09, 0x40});
-ALIAS(gMathPi, pad_539550, 0);
-PAD_CONST(igd, 539550, 539558, 0x8) INIT({0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xB0, 0x40});
-ALIAS(gWorldMeter, pad_539558, 0);
+STORE(igd, 539540, 1) __typeof__(gGameEvents[0]) store_539540[16] INIT({255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255});
+ALIAS(gGameEvents, store_539540, 0);
+STORE(igd, 539550, 8) __typeof__(gMathPi[0]) store_539550[1] INIT({3.1415926535897944});
+ALIAS(gMathPi, store_539550, 0);
+STORE(igd, 539550, 8) __typeof__(gWorldMeter[0]) store_539558[1] INIT({4096.0});
+ALIAS(gWorldMeter, store_539558, 0);
 DATA(539560) int gMission INIT(1);
 BSS(57B1A0) signed char gRaining;
 PAD(igb, 57B1A0, 57B1A1, 0x1);

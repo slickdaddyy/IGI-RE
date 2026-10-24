@@ -666,8 +666,8 @@ void ComputerMap_SetStartTask(Task *t)
 HOOK(0x46AB50, ComputerMap_SetStartTask);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD_CONST(igd, 53F750, 53F750, 0x10) INIT({0xDB, 0x0F, 0x49, 0x3F, 0x36, 0x8D, 0xA7, 0x3E, 0x35, 0xFA, 0x0E, 0x3E, 0x6E, 0x46, 0x1D, 0x3C});
-ALIAS(gMapZoomAngle, pad_53F750, 0);
+STORE(igd, 53F750, 4) __typeof__(gMapZoomAngle[0]) store_53F750[4] INIT({0.7853982f, 0.32724923f, 0.13962634f, 0.009599311f});
+ALIAS(gMapZoomAngle, store_53F750, 0);
 DATA(53F760) uint8_t gMapSelectEvent INIT(255);
 PAD(igd, 53F760, 53F761, 0x3);
 BSS(5BDD78) Vec3d gMapPos;

@@ -426,3 +426,8 @@ DATA(53B90C) int gEvent91C INIT(255);
 DATA(53B90C) uint8_t gPlaceEvent INIT(255);
 DATA(53B90C) uint8_t gSizeEvent INIT(255);
 PAD(igd, 53B90C, 53B922, 0x2);
+PAD(igd, 544644, 544644, 0x1);
+DATA(544644) char str_544645[1] INIT("");
+PAD(igd, 544644, 544646, 0x2);
+PAD(igd, 54554C, 54554C, 0x3);
+DATA(54554C) char str_54554F[1] INIT("");
