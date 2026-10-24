@@ -5,6 +5,7 @@
 #include "sound/sound.h"
 #include "qasm/qasmtypes.h"
 #include "sound/soundtypes.h"
+#include "define/definetypes.h"
 
 FN_EXTERN(DefineGraph);
 FN_EXTERN(DefineGroup);
@@ -69,11 +70,6 @@ typedef struct SoundSysDef {
     Task task;
     char path[0x80];
 } SoundSysDef;
-
-typedef struct SoundCreateArg {
-    Task *def;
-    char unk4;
-} SoundCreateArg;
 
 typedef struct ResourceEntry {
     const char *name;
@@ -585,7 +581,7 @@ Task *Sound_Play(Task *owner, const char *name)
     if (!find.found)
         return NULL;
     arg.def = find.found;
-    arg.unk4 = 0;
+    arg.isDef = 0;
     t = Task_New(owner, find.found->type, &arg);
     c = find.found->head;
     if (c->next && c) {

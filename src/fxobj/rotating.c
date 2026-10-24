@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "fxobj/fxobj.h"
+#include "define/definetypes.h"
 
 ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
 ORIG(0x4B38E0, void, Matrix_SetEuler, (Matrix *m, float ax, float ay, float az));
@@ -39,13 +40,6 @@ typedef struct RotatingObject {
     char stopped;
     VarString cond;
 } RotatingObject;
-
-/* what the sound of an object needs to follow it */
-typedef struct SoundInfo {
-    Vec3d *pos;
-    Matrix *matrix;
-    float *params;
-} SoundInfo;
 
 _Static_assert(offsetof(RotatingObject, maxSpeed) == 0x120, "maxSpeed");
 _Static_assert(offsetof(RotatingObject, target) == 0x13C, "target");
@@ -278,8 +272,8 @@ HOOK(0x439750, RotatingObject_Stop);
 void RotatingObject_GetSoundInfo(RotatingObject *t, SoundInfo *out)
 {
     out->pos = &t->obj.pos;
-    out->matrix = &t->obj.matrix;
-    out->params = t->soundParams;
+    out->matrix = t->obj.matrix.m;
+    out->values = (int *)t->soundParams;
 }
 HOOK(0x439770, RotatingObject_GetSoundInfo);
 

@@ -4,100 +4,10 @@
 #include "igi.h"
 #include "ammotype/ammotype.h"
 #include "qasm/qasmtypes.h"
+#include "ammotype/ammotypetypes.h"
 
 /* "GunShot" (0xC38 bytes): the bullets in flight of one gun and the
    tracer trails they leave. */
-
-typedef struct Bullet {
-    int used;
-    int unk04;
-    Vec3d pos;
-    Vec3f dir;
-    void *type;  /* 0x2C, WeaponType */
-    int unk30;
-    float speed; /* 0x34 */
-    int unk38;
-    int unk3C;
-    char unk40;
-    char unk41;
-    char pad42[2];
-    int unk44;
-} Bullet;
-
-typedef struct Trail {
-    Vec3d a, b;
-    int used;          /* 0x30 */
-    int life;          /* 0x34 */
-    float from, to;    /* 0x38, 0x3C: tracer part, divided by len */
-    float len;         /* 0x40 */
-    float v[3][3];     /* 0x44: corners relative to the first trail */
-    int color[3][3];   /* 0x68 */
-    float normal[3];   /* 0x8C */
-    float uv[3][2];    /* 0x98 */
-    float alpha[3];    /* 0xB0 */
-    int poly;          /* 0xBC */
-    int hasPoly;       /* 0xC0 */
-    int unkC4;
-} Trail;
-
-/* one triangle handed to the poly object */
-typedef struct ShotPoly {
-    float *v[3];
-    int *color[3];
-    float uv[3][2];
-    float alpha[3];
-    float normal[3];
-    int unk48;
-    int unk4C;
-} ShotPoly;
-
-typedef struct PolyObj {
-    Task task;
-    char unk20[0x7C];
-    int count; /* 0x9C */
-} PolyObj;
-
-typedef struct GunShot {
-    Task task;
-    Vec3d pos;              /* 0x20 */
-    char unk38[0x30];
-    int released;           /* 0x68 */
-    Task **gun;             /* 0x6C */
-    Task **ref70;           /* 0x70 */
-    int unk74;
-    Vec3d unk78;            /* 0x78 */
-    int total;              /* 0x90 */
-    int active;             /* 0x94 */
-    int unk98;
-    int trailCount;         /* 0x9C */
-    int unkA0;
-    Bullet *activeList[15]; /* 0xA4 */
-    Bullet bullets[15];     /* 0xE0 */
-    Trail trails[5];        /* 0x518 */
-    Trail *trailList[5];    /* 0x900 */
-    PolyObj *poly;          /* 0x914 */
-    ShotPoly polys[10];     /* 0x918 */
-} GunShot;
-
-/* the message of the weapon fire event */
-typedef struct FireArgs {
-    Task *weapon;
-    int unk04;
-    Vec3d *pos;
-    int unk0C[2];
-    float *matrix; /* 0x14 */
-    int unk18[2];
-    void *type;    /* 0x20 */
-    int unk24;
-    int unk28;
-    int unk2C;
-} FireArgs;
-
-_Static_assert(sizeof(Bullet) == 0x48, "Bullet");
-_Static_assert(sizeof(Trail) == 0xC8, "Trail");
-_Static_assert(sizeof(ShotPoly) == 0x50, "ShotPoly");
-_Static_assert(offsetof(GunShot, trails) == 0x518, "GunShot");
-_Static_assert(sizeof(GunShot) == 0xC38, "GunShot");
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -295,12 +205,12 @@ void GunShot_AddBullet(GunShot *s, Vec3d *pos, Vec3f *dir, char *type, int a5, i
     b->used = 1;
     b->pos = *pos;
     b->dir = *dir;
-    b->unk40 = 0;
+    b->ricocheted = 0;
     memcpy(&b->unk38, type + 0x654, 4);
     b->speed = *(float *)(type + 0x650) * k4096;
-    memcpy(&b->unk3C, type + 0x658, 4);
+    memcpy(&b->pierce, type + 0x658, 4);
     b->unk44 = a6;
-    b->unk41 = 0;
+    b->pierced = 0;
     b->type = type;
     b->unk30 = a5;
     s->active++;
@@ -399,7 +309,7 @@ void GunShot_Create(GunShot *s)
     s->ref70 = NULL;
     s->total = 0;
     s->active = 0;
-    s->unk98 = 10;
+    s->trailRate = 10;
     s->unkA0 = 0;
     memset(s->activeList, 0, sizeof(s->activeList));
     for (i = 0; i < 15; i++)
@@ -488,9 +398,9 @@ void GunShot_FireHandler(void *t, FireArgs *m)
     Vec3f dir;
 
     HANDLER(gGunShotEvent, m->weapon->type)(m->weapon, src);
-    memcpy(&dir.x, &m->matrix[1], 4);
-    memcpy(&dir.y, &m->matrix[4], 4);
-    memcpy(&dir.z, &m->matrix[7], 4);
+    memcpy(&dir.x, &m->matrix->m[1], 4);
+    memcpy(&dir.y, &m->matrix->m[4], 4);
+    memcpy(&dir.z, &m->matrix->m[7], 4);
     GunShot_AddBullet(src[0], m->pos, &dir, type, a5, m->unk2C);
 }
 HOOK(0x47C420, GunShot_FireHandler);

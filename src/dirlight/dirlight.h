@@ -10,42 +10,12 @@
 #include "task/tasktypes.h"
 #include "litmap/litmaptypes.h"
 #include "sector/sectortypes.h"
+#include "dirlight/dirlighttypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
 extern TaskHandler gTaskHandlers[];
 #define TASK_HANDLER(event, type) gTaskHandlers[(event) * 0x180 + (type)]
-
-typedef struct Dirlight {
-    Task task;
-    void *world;
-    Vec3f dir;
-    Vec3f color;
-    Vec3f ambient;
-    Light *light;
-    char unk4C;
-    char on;
-    char unk4E[2];
-    float unk50;
-    float minTime;
-    float maxTime;
-    float time;
-    void **slot;
-} Dirlight;
-
-typedef struct DirlightKeyframe {
-    Task task;
-    float angleY;
-    float angleZ;
-    Vec3f dir;
-    Vec3f color;
-    Vec3f ambient;
-    float editTime;
-    float time;
-} DirlightKeyframe;
-
-_Static_assert(sizeof(Dirlight) == 0x64, "Dirlight");
-_Static_assert(sizeof(DirlightKeyframe) == 0x54, "DirlightKeyframe");
 
 extern Pool gLightSourcePool;
 
