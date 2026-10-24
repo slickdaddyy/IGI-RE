@@ -135,9 +135,9 @@ void Qvm_DumpStack(Qvm *vm)
 }
 HOOK(0x4BC960, Qvm_DumpStack);
 
-int Qvm_GetArg(void *out, int size, ScriptArgs *args, int index, int type);
+int Qvm_GetArg(void *out, int size, QvmArgs *args, int index, int type);
 
-int Qvm_GetIntArg(ScriptArgs *args, int index)
+int Qvm_GetIntArg(QvmArgs *args, int index)
 {
     int v = 0;
 
@@ -147,7 +147,7 @@ int Qvm_GetIntArg(ScriptArgs *args, int index)
 HOOK(0x4BCAB0, Qvm_GetIntArg);
 
 /* Runs the code of one argument, which ends in BRK, and pops its value. */
-int Qvm_GetArg(void *out, int size, ScriptArgs *args, int index, int type)
+int Qvm_GetArg(void *out, int size, QvmArgs *args, int index, int type)
 {
     Qvm *vm = args->vm;
     int sp = vm->sp;
@@ -339,7 +339,7 @@ void Qvm_Execute(Qvm *vm)
 }
 HOOK(0x4BCFD0, Qvm_Execute);
 
-float Qvm_GetRealArg(ScriptArgs *args, int index)
+float Qvm_GetRealArg(QvmArgs *args, int index)
 {
     float v = 0.0f;
 
@@ -348,7 +348,7 @@ float Qvm_GetRealArg(ScriptArgs *args, int index)
 }
 HOOK(0x4BD010, Qvm_GetRealArg);
 
-char *Qvm_GetStringArg(ScriptArgs *args, int index, char *buf, int size)
+char *Qvm_GetStringArg(QvmArgs *args, int index, char *buf, int size)
 {
     *buf = 0;
     Qvm_GetArg(buf, size, args, index, 3);
@@ -357,7 +357,7 @@ char *Qvm_GetStringArg(ScriptArgs *args, int index, char *buf, int size)
 HOOK(0x4BD040, Qvm_GetStringArg);
 
 /* line numbers are not kept in this build */
-int Qvm_GetArgLine(ScriptArgs *args, int index)
+int Qvm_GetArgLine(QvmArgs *args, int index)
 {
     (void)args;
     (void)index;
@@ -470,23 +470,23 @@ Qvm *Qvm_Load(const char *name, int stackBytes, int typeCount)
     vm->types = vm->stack + words;
     vm->message[0] = 0;
     vm->name[0] = 0;
-    vm->symVars = (void **)(vm->types + typeCount);
+    vm->symVars = (ScriptSymbol **)(vm->types + typeCount);
     vm->sp = words;
     vm->tsp = typeCount;
     vm->stackSize = words;
-    vm->symRefs = vm->symVars + h->symTableSize;
+    vm->symRefs = (ScriptRef **)(vm->symVars + h->symTableSize);
     vm->typeStackSize = typeCount;
     if (h->symTableSize) {
-        vm->symOffsets = (int *)(file + h->symOffsets);
-        vm->symText = file + h->symText;
-        vm->symTableSize = h->symTableSize;
-        vm->symTextSize = h->symTextSize;
+        vm->names.offsets = (int *)(file + h->symOffsets);
+        vm->names.data = file + h->symText;
+        vm->names.count = h->symTableSize;
+        vm->names.size = h->symTextSize;
     }
     if (h->strTableSize) {
-        vm->strOffsets = (int *)(file + h->strOffsets);
-        vm->strText = file + h->strText;
-        vm->strTableSize = h->strTableSize;
-        vm->strTextSize = h->strTextSize;
+        vm->strings.offsets = (int *)(file + h->strOffsets);
+        vm->strings.data = file + h->strText;
+        vm->strings.count = h->strTableSize;
+        vm->strings.size = h->strTextSize;
     }
     return vm;
 }
@@ -496,7 +496,7 @@ void Qvm_Free(Qvm *vm)
 {
     int i;
 
-    for (i = 0; i < vm->symTableSize; i++)
+    for (i = 0; i < vm->names.count; i++)
         if (vm->symRefs[i])
             Script_UnrefSymbol(vm->symRefs[i]);
     Resource_Flush(vm->file);
@@ -657,7 +657,7 @@ void Qvm_OpCall(Qvm *vm)
             int tsp = vm->tsp;
             int sp = vm->sp;
             int argc = *(int *)(p + 1);
-            ScriptArgs args;
+            QvmArgs args;
             ScriptValue v, *r;
 
             args.count = argc;
@@ -665,7 +665,7 @@ void Qvm_OpCall(Qvm *vm)
             args.unk08 = NULL;
             args.vm = vm;
             args.argPc = (int *)(p + 5);
-            r = ((ScriptHandler)sym->handler)(&v, sym->data, &args);
+            r = ((ScriptHandler)sym->handler)(&v, sym->data, (ScriptArgs *)&args);
             v = *r;
             if (vm->error)
                 return;

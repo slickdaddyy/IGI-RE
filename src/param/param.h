@@ -7,6 +7,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "script/scripttypes.h"
 
 typedef struct Level {
     Task task;
@@ -64,16 +65,6 @@ typedef struct ParamEnumVisitor {
     int unk0;
     void (*add)(struct ParamEnumVisitor *v, ParamEnumValue *value);
 } ParamEnumVisitor;
-
-typedef struct ScriptSymbol {
-    int kind;
-    int valueType;
-    int unk08;
-    int size;
-    void *handler;
-    const char *name;
-    int data;
-} ScriptSymbol;
 
 /* what a weapon's state event handler points to */
 typedef struct WeaponState {

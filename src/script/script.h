@@ -92,33 +92,6 @@ enum {
     OP_COLON,
 };
 
-/* A node of a parsed expression. */
-typedef struct Expr {
-    char type;
-    char op;
-    char prec;
-    char pad[5];
-    union {
-        double d;
-        struct {
-            union {
-                int i;
-                char *s;
-                ScriptRef *ref;
-                struct Expr *child;
-            };
-            ScriptArgs *args;
-        };
-    };
-    char *name;
-    int unk14;
-    struct Expr *left;
-    struct Expr *right;
-    struct Expr *parent;
-    int line;
-    char text[];
-} Expr;
-
 extern int gScriptWarningLevel;
 extern int gScriptBreakEnabled;
 extern int gScriptBreak;

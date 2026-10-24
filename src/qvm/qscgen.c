@@ -6,14 +6,9 @@
 #include "igi.h"
 #include "orig.h"
 #include "qvm/qvm.h"
+#include "qsc/qsctypes.h"
 
 /* Turns parsed QSC statements into QVM assembler text. */
-
-typedef struct ExprArgs {
-    int count;
-    int unk04;
-    struct Expr **items;
-} ExprArgs;
 
 enum {
     EXPR_INT = 1,
@@ -28,28 +23,6 @@ enum {
 
 typedef double QscReal __attribute__((aligned(4)));
 
-typedef struct Expr {
-    signed char type;
-    signed char op;
-    char unk02[6];
-    union {
-        int i;
-        char *s;
-        QscReal d;
-        struct Expr *sub;
-        struct {
-            void *unk08;
-            ExprArgs *args;
-            char *name;
-        } call;
-    };
-    int unk14;
-    struct Expr *left;
-    struct Expr *right;
-} Expr;
-
-_Static_assert(offsetof(Expr, left) == 0x18, "Expr layout");
-
 enum {
     BLOCK_LIST = 1,
     BLOCK_IF,
@@ -59,25 +32,6 @@ enum {
     BLOCK_FOR,
     BLOCK_EXPR,
 };
-
-typedef struct Block {
-    Node node;
-    int type;
-    union {
-        List stmts;
-        Expr *expr;
-        struct {
-            Expr *cond;
-            struct Block *body;
-        } loop;
-        struct {
-            Expr *cond;
-            struct Block *then;
-            List elifs;
-            struct Block *otherwise;
-        } cond;
-    };
-} Block;
 
 typedef struct QscScript {
     char name[0x80];
@@ -343,7 +297,7 @@ static const unsigned char QscGen_OpCodes[0x1D] = {
 void QscGen_Expression(void *f, Expr *e)
 {
     char label[64];
-    ExprArgs *a;
+    ScriptArgs *a;
     int i, n, col;
 
     if (!e)
@@ -368,9 +322,9 @@ void QscGen_Expression(void *f, Expr *e)
         case EXPR_NAME:
         case EXPR_CALL:
             QscGen_WriteOpcode(OP_PUSHI, f);
-            QscGen_WriteText(f, e->call.name);
+            QscGen_WriteText(f, e->name);
             QscGen_WriteNewline(f);
-            a = e->call.args;
+            a = e->args;
             if (!a)
                 return;
             n = a->count;
@@ -382,7 +336,7 @@ void QscGen_Expression(void *f, Expr *e)
                     QscGen_WriteNewline(f);
                     QscGen_WriteIndent(f);
                 }
-                QscGen_WriteLabel(f, label, "Arg", a->items[i]);
+                QscGen_WriteLabel(f, label, "Arg", a->argv[i]);
                 if (i < n - 1)
                     QscGen_WriteText(f, ", ");
             }
@@ -393,10 +347,10 @@ void QscGen_Expression(void *f, Expr *e)
             QscGen_WriteText(f, label);
             QscGen_WriteNewline(f);
             for (i = 0; i < n; i++) {
-                QscGen_WriteLabel(f, label, "Arg", a->items[i]);
+                QscGen_WriteLabel(f, label, "Arg", a->argv[i]);
                 QscGen_WriteText(f, ":");
                 QscGen_WriteNewline(f);
-                QscGen_Expression(f, a->items[i]);
+                QscGen_Expression(f, a->argv[i]);
                 QscGen_WriteOpcode(OP_BRK, f);
                 QscGen_WriteNewline(f);
             }
@@ -405,13 +359,13 @@ void QscGen_Expression(void *f, Expr *e)
             QscGen_WriteNewline(f);
             return;
         case EXPR_PAREN:
-            e = e->sub;
+            e = e->child;
             if (!e)
                 return;
             continue;
         case EXPR_COND:
             /* the false branch gets no label line, as in the original */
-            QscGen_Expression(f, e->sub);
+            QscGen_Expression(f, e->child);
             QscGen_WriteOpcode(OP_BF, f);
             QscGen_WriteLabel(f, label, "CBF", e->right);
             QscGen_WriteNewline(f);

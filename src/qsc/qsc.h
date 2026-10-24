@@ -5,6 +5,7 @@
 
 #include "igi.h"
 #include "types.h"
+#include "qsc/qsctypes.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -86,31 +87,6 @@ enum {
     BLOCK_FOR,
     BLOCK_EXPR
 };
-
-typedef struct Block {
-    Node node;
-    int type;
-    union {
-        List stmts;
-        void *expr;
-        struct {
-            void *cond;
-            struct Block *body;
-        } loop; /* also used by else-if entries */
-        struct {
-            void *cond;
-            struct Block *then;
-            List elifs;
-            struct Block *otherwise;
-        } cond;
-        struct {
-            void *init;
-            void *cond;
-            void *step;
-            struct Block *body;
-        } loopfor;
-    };
-} Block;
 
 Reader *Reader_Init(Reader *r, const char *src, int size, int (*refill)(Reader *r));
 void Reader_Free(Reader *r);

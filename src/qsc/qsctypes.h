@@ -8,4 +8,36 @@ typedef struct SymbolTable {
     unsigned int count;
 } SymbolTable;
 
+typedef struct Symbol {
+    Node node;
+    char *name;
+    void *value;
+    char text[];
+} Symbol;
+
+typedef struct Block {
+    Node node;
+    int type;
+    union {
+        List stmts;
+        struct Expr *expr;
+        struct {
+            struct Expr *cond;
+            struct Block *body;
+        } loop; /* also used by else-if entries */
+        struct {
+            struct Expr *cond;
+            struct Block *then;
+            List elifs;
+            struct Block *otherwise;
+        } cond;
+        struct {
+            struct Expr *init;
+            struct Expr *cond;
+            struct Expr *step;
+            struct Block *body;
+        } loopfor;
+    };
+} Block;
+
 #endif

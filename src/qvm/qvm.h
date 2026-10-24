@@ -4,17 +4,7 @@
 #include "igi.h"
 #include "types.h"
 #include "script/scripttypes.h"
-
-/* Same record as Script_RegisterSymbol makes. */
-typedef struct ScriptSymbol {
-    int kind;       /* 0 variable, 1 function, 2 constant */
-    int type;       /* 1 int, 2 real, 3 string */
-    int flags2;
-    int size;       /* bytes of a variable, args of a function */
-    void *handler;
-    const char *name;
-    void *data;
-} ScriptSymbol;
+#include "qvm/qvmtypes.h"
 
 typedef struct ScriptArgs ScriptArgs;
 typedef ScriptValue *(*ScriptHandler)(ScriptValue *out, void *data, ScriptArgs *args);
@@ -47,47 +37,14 @@ enum {
     QVM_ERR_RANGE = 15,
 };
 
-/* A loaded program. Both stacks grow down; the data stack is words. */
-typedef struct Qvm {
-    unsigned char *code;    /* 0x00 */
-    int codeSize;           /* 0x04 */
-    int stackSize;          /* 0x08 */
-    int typeStackSize;      /* 0x0C */
-    int errorPc;            /* 0x10 */
-    int pc;                 /* 0x14 */
-    int sp;                 /* 0x18 */
-    int tsp;                /* 0x1C */
-    int error;              /* 0x20 */
-    int *stack;             /* 0x24 */
-    int *types;             /* 0x28 */
-    int stop;               /* 0x2C */
-    int unk30[2];
-    int strTableSize;       /* 0x38 */
-    int strTextSize;        /* 0x3C */
-    int *strOffsets;        /* 0x40 */
-    char *strText;          /* 0x44 */
-    int unk48[2];
-    int symTableSize;       /* 0x50 */
-    int symTextSize;        /* 0x54 */
-    int *symOffsets;        /* 0x58 */
-    char *symText;          /* 0x5C */
-    void **symVars;         /* 0x60, ScriptSymbol * per name */
-    void **symRefs;         /* 0x64, refs for names with flags2 set */
-    char name[0x200];       /* 0x68 */
-    char message[0x200];    /* 0x268 */
-    char *file;             /* 0x468 */
-} Qvm;
-
-_Static_assert(sizeof(Qvm) == 0x46C, "Qvm size");
-
-/* What a script function gets to read its arguments with. */
-struct ScriptArgs {
+/* the ScriptArgs of a call from QVM code: the machine and the pc of each argument */
+typedef struct QvmArgs {
     int count;
     int isQvm;
     void *unk08;
     Qvm *vm;
     int *argPc;
-};
+} QvmArgs;
 
 /* 0x31 opcodes, four handlers each: run, name, assemble, disassemble */
 #define QVM_OPCODES 0x31

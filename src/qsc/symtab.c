@@ -3,13 +3,6 @@
 #include "qsc/qsc.h"
 #include "qsc/qsctypes.h"
 
-/* Same layout as script/symtab.h. */
-typedef struct Symbol {
-    Node node;
-    char *name;
-    void *value;
-} Symbol;
-
 typedef void (*SymbolFunc)(const char *name, void *value, void *data);
 typedef int (*SymbolFilter)(const char *name, void *value, void *data);
 

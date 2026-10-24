@@ -21,12 +21,6 @@ typedef struct Level {
     int unk34;
 } Level;
 
-typedef struct ScriptArgs {
-    int count;
-    void *vm;
-    void **argv;
-} ScriptArgs;
-
 /* where a parameter parser is in the arguments of a script Task_New call */
 typedef struct ParamCursor {
     int index;

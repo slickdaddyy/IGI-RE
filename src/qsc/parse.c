@@ -3,8 +3,8 @@
 #include "hook.h"
 #include "qsc/qsc.h"
 
-ORIG(0x4B9CD0, int, Expr_ParseTokens, (Lexer *lex, void **out, int unk3, int unk4));
-ORIG(0x4B9CA0, int, Expr_Parse, (Lexer *lex, void **out, int unk3));
+ORIG(0x4B9CD0, int, Expr_ParseTokens, (Lexer *lex, struct Expr **out, int unk3, int unk4));
+ORIG(0x4B9CA0, int, Expr_Parse, (Lexer *lex, struct Expr **out, int unk3));
 
 static Block *NewBlock(size_t size, int type)
 {
@@ -18,7 +18,7 @@ static Block *NewBlock(size_t size, int type)
 int Parse_Block(Lexer *lex, Block **out)
 {
     Block *b, *stmt;
-    void *expr;
+    struct Expr *expr;
     int single;
 
     *out = NULL;

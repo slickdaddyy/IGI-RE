@@ -3,48 +3,8 @@
 #include "hook.h"
 #include "orig.h"
 #include "qsc/qsc.h"
-
-/* Strings or symbol names of a compiled program, found by index. */
-typedef struct QvmStrings {
-    int unk00;
-    int unk04;
-    int count;
-    int size;
-    int *offsets;
-    char *data;
-} QvmStrings;
-
-typedef struct ScriptSymbol {
-    int kind;
-    int flags1;
-    int flags2;
-} ScriptSymbol;
-
-/* Node from the script reference pool, see Script_RefSymbol. */
-typedef struct ScriptRef {
-    Node node;
-    ScriptSymbol *symbol;
-} ScriptRef;
-
-typedef struct Qvm {
-    unsigned char *code;
-    int unk04;
-    int unk08;
-    int unk0C;
-    int errpc;
-    int pc;
-    int sp;    /* value stack, grows down */
-    int tsp;   /* type stack, grows down */
-    int error;
-    int *stack;
-    int *types;
-    int halt;
-    QvmStrings strings;
-    QvmStrings names;
-    ScriptSymbol **symbols;
-    ScriptRef **refs;
-    char errtext[];
-} Qvm;
+#include "script/scripttypes.h"
+#include "qvm/qvmtypes.h"
 
 enum {
     VAL_INT = 1,
@@ -121,7 +81,7 @@ static int Read32(const unsigned char *p)
 static void Fail(Qvm *vm, int error)
 {
     vm->error = error;
-    vm->errpc = vm->pc;
+    vm->errorPc = vm->pc;
     Qvm_RestoreStack(vm);
 }
 
@@ -228,7 +188,7 @@ void Qvm_OpBinary(Qvm *vm)
             break;
         default:
             /* the stack is not restored here */
-            vm->errpc = vm->pc;
+            vm->errorPc = vm->pc;
             vm->error = QVM_ERR_OPCODE;
             break;
         }
@@ -462,11 +422,11 @@ void Qvm_OpPushIndexed(Qvm *vm)
     return;
 
 symbol:
-    sym = vm->symbols[idx];
+    sym = vm->symVars[idx];
     if (!sym) {
-        ref = vm->refs[idx];
+        ref = vm->symRefs[idx];
         if (ref) {
-            sym = ref->symbol;
+            sym = ref->sym;
             /* with no name a NULL symbol is pushed */
             if (!sym && (s = Qvm_GetString(&vm->names, idx)))
                 goto unknown;
@@ -476,10 +436,10 @@ symbol:
                 goto bad_index;
             if (!Script_FindSymbol(s, &sym))
                 goto unknown;
-            if (!sym->flags2)
-                vm->symbols[idx] = sym;
+            if (!sym->dynamic)
+                vm->symVars[idx] = sym;
             else
-                vm->refs[idx] = Script_RefSymbol(s);
+                vm->symRefs[idx] = Script_RefSymbol(s);
         }
     }
     Qvm_PushSymbol(vm, sym);
@@ -488,13 +448,13 @@ symbol:
 
 unknown:
     vm->error = QVM_ERR_SYMBOL;
-    vm->errpc = vm->pc;
-    strcpy(vm->errtext, s);
+    vm->errorPc = vm->pc;
+    strcpy(vm->name, s);
     return;
 
 bad_index:
     vm->error = QVM_ERR_INDEX;
-    vm->errpc = vm->pc;
+    vm->errorPc = vm->pc;
 }
 HOOK(0x4BEA30, Qvm_OpPushIndexed);
 
@@ -523,7 +483,7 @@ HOOK(0x4BEC70, Qvm_OpNop);
 
 void Qvm_OpBrk(Qvm *vm)
 {
-    vm->halt = 1;
+    vm->stop = 1;
 }
 HOOK(0x4BEC80, Qvm_OpBrk);
 
@@ -531,7 +491,7 @@ HOOK(0x4BEC80, Qvm_OpBrk);
 void Qvm_OpIllegal(Qvm *vm)
 {
     vm->error = QVM_ERR_ILLEGAL;
-    vm->errpc = vm->pc;
+    vm->errorPc = vm->pc;
 }
 HOOK(0x4BEC90, Qvm_OpIllegal);
 

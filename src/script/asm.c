@@ -7,6 +7,7 @@
 #include "core/list.h"
 #include "core/mem.h"
 #include "script/symtab.h"
+#include "qasm/qasmtypes.h"
 
 /* Helpers of the QVM assembler (QvmAssemble at 0x4BB270). */
 
@@ -18,21 +19,6 @@ typedef void (*AsmErrorHandler)(const char *text, void *context);
 extern void *gAsmErrorContext;
 extern int gAsmErrorCount;
 extern AsmErrorHandler gAsmErrorHandler;
-
-typedef struct QvmAsm {
-    int pc;
-    int failed;
-    int unk8;
-    int unkC;
-    void *out;
-    int unk14;
-    void *lex;
-    SymbolTable *labels;
-    List labelList;
-    List names;
-    List strings;
-    List fixups;
-} QvmAsm;
 
 typedef struct AsmLabel {
     Node node;
@@ -84,7 +70,7 @@ AsmLabel *Asm_DefineLabel(QvmAsm *a, const char *name)
     n = strlen(buf);
     if (n && buf[n - 1] == ':')
         buf[n - 1] = 0;
-    SymbolTable_Lookup(a->labels, (void **)&l, buf);
+    SymbolTable_Lookup(a->labelTable, (void **)&l, buf);
     if (l) {
         if (l->defined) {
             a->failed = 1;
@@ -94,10 +80,10 @@ AsmLabel *Asm_DefineLabel(QvmAsm *a, const char *name)
         return l;
     }
     l = Mem_Alloc(sizeof(AsmLabel), 4);
-    SymbolTable_Add(a->labels, buf, l);
+    SymbolTable_Add(a->labelTable, buf, l);
     l->node.prev = NULL;
     l->node.next = NULL;
-    List_AddTail(&a->labelList, &l->node);
+    List_AddTail(&a->labels, &l->node);
     l->defined = 0;
     strcpy(l->name, buf);
     l->refs.tail = NULL;
@@ -130,7 +116,7 @@ AsmLabel *Asm_FindLabel(QvmAsm *a, const char *name)
 {
     AsmLabel *l = NULL;
 
-    SymbolTable_Lookup(a->labels, (void **)&l, name);
+    SymbolTable_Lookup(a->labelTable, (void **)&l, name);
     return l;
 }
 HOOK(0x4BAFA0, Asm_FindLabel);
@@ -202,14 +188,14 @@ int Asm_AddName(QvmAsm *a, const char *name)
     Node *n;
     int i = 0;
 
-    for (n = a->names.head; n->next; n = n->next, i++) {
+    for (n = a->symbols.head; n->next; n = n->next, i++) {
         if (strcmp(((AsmName *)n)->text, name) == 0)
             return i;
     }
     s = Mem_Alloc(sizeof(AsmName), 4);
     s->node.prev = NULL;
     s->node.next = NULL;
-    List_AddTail(&a->names, &s->node);
+    List_AddTail(&a->symbols, &s->node);
     strcpy(s->text, name);
     return i;
 }

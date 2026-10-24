@@ -10,31 +10,10 @@
 
 /* Assembles QVM assembler text into a "LOOP" file. */
 
-typedef struct QvmToken {
-    int unk00[2];
-    char text[0x2BC];
-    int type;
-} QvmToken;
-
 enum {
     TOKEN_LABEL = 10,
     TOKEN_WORD = 9,
 };
-
-typedef struct QvmAsm {
-    int pc;
-    int failed;
-    int unk08;
-    int pass;
-    void *file;
-    QvmToken *token;
-    void *lexer;
-    void *labelTable;
-    List labels;
-    List symbols;   /* names used by the code */
-    List strings;   /* string constants */
-    List fixups;
-} QvmAsm;
 
 typedef struct QvmLabel {
     Node node;
@@ -176,7 +155,7 @@ int QvmAsm_Assemble(const char *path, const char *source)
     QvmLex_Init(lexer, &rules, reader);
     memset(&a, 0, sizeof(a));
     a.token = &token;
-    a.lexer = lexer;
+    a.lexer = (struct QvmLexer *)lexer;
     QvmAsm_InitList(&a.labels);
     QvmAsm_InitList(&a.symbols);
     QvmAsm_InitList(&a.strings);

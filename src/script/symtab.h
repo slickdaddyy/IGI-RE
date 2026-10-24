@@ -4,13 +4,6 @@
 #include "core/list.h"
 #include "qsc/qsctypes.h"
 
-typedef struct Symbol {
-    Node node;
-    char *name;
-    void *value;
-    char text[];
-} Symbol;
-
 unsigned int SymbolTable_Hash(const char *name, unsigned int count);
 char SymbolTable_Find(SymbolTable *table, Symbol **out, const char *name);
 char *SymbolTable_Add(SymbolTable *table, const char *name, void *value);

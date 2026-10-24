@@ -2,16 +2,7 @@
 
 #include "hook.h"
 #include "qsc/qsc.h"
-
-/* Token rules of the QVM assembler, matched as regular expressions. */
-typedef struct QvmLexRule {
-    Node node;
-    char pattern[0x100];
-    char prog[0x2800];
-    char data[0x2000];
-    int accept;
-    int id;
-} QvmLexRule;
+#include "qasm/qasmtypes.h"
 
 ORIG(0x4AF9D0, int, Regex_Compile, (void *prog, void *data, const char *pattern));
 
@@ -32,7 +23,7 @@ void QvmLex_AddRule(List *rules, const char *pattern, int id, int accept)
     strcpy(r->pattern, pattern);
     r->accept = accept;
     r->id = id;
-    if (Regex_Compile(r->prog, r->data, pattern))
+    if (Regex_Compile(r->prog, r->classes, pattern))
         List_AddTail(rules, &r->node);
     else
         Mem_Free(r);

@@ -303,8 +303,8 @@ void ParamEnum_VisitConstant(const char *name, ScriptSymbol *sym, ParamEnumVisit
     ParamEnumValue value;
     int data;
 
-    if (sym->kind == 2 && sym->valueType == 1) {
-        data = sym->data;
+    if (sym->kind == 2 && sym->type == 1) {
+        data = (int)sym->data;
         value.type = Param_Int32();
         value.name = name;
         value.value = &data;
