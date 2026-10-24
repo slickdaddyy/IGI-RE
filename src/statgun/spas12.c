@@ -1,13 +1,6 @@
 #include "hook.h"
 #include "statgun/statgun.h"
 
-/* the reload message (Human event 1) */
-typedef struct ReloadMsg {
-    void *h;
-    char unk4[0x1C];
-    char done;
-} ReloadMsg;
-
 extern uint16_t gSpas12Type;
 
 ORIG(0x489F20, void, HumanPlayer_PlayAnim, (void *h, int anim, int loop, float blend));
@@ -29,9 +22,9 @@ HOOK(0x472A70, Spas12_Open);
 void Spas12_Reload(Gun *g, ReloadMsg *msg)
 {
     void *h = msg->h;
-    WeaponType *info = g->info;
-    int *ammoId = g->ammoId;
-    Task *owner = g->obj.task.parent;
+    WeaponType *info = g->wt;
+    int *ammoId = (int *)g->ammoType;
+    Task *owner = g->o.task.parent;
     void *list = NULL;
     AmmoEntry *ammo;
     TaskFn fn;
@@ -85,7 +78,7 @@ HOOK(0x472AE0, Spas12_Reload);
 void Spas12_Create(Gun *g)
 {
     HANDLER(0, Gun_GetType())(g, 0);
-    memcpy(g->id, "WEAPON_ID_SPAS12", 17);
+    memcpy(g->name, "WEAPON_ID_SPAS12", 17);
 }
 HOOK(0x472CA0, Spas12_Create);
 

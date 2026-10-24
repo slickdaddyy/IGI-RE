@@ -6,6 +6,7 @@
 #include "camera/camera.h"
 #include "material/materialtypes.h"
 #include "camera/cameratypes.h"
+#include "config/configtypes.h"
 
 FN_EXTERN(HumanCamera_DeleteHandler);
 
@@ -17,18 +18,13 @@ enum {
     CAM_DEATH,
 };
 
-typedef struct Profile {
-    char unk0[0x538];
-    int invertMouse;
-} Profile;
-
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (int unk));
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
-ORIG(0x406220, Profile *, Profile_GetActive, (void));
+ORIG(0x406220, PlayerProfile *, Profile_GetActive, (void));
 ORIG(0x413A70, uint16_t, HumanPlayer_GetType, (void));
 ORIG(0x414FD0, int, Game_CheatKeyDown, (int key));
 ORIG(0x415020, int, Game_CheatKeyPressed, (int key));
@@ -511,13 +507,13 @@ static void ease_dist(HumanCamera *c)
 
 void HumanCamera_MovementControlInput(HumanCamera *c)
 {
-    Profile *p = Profile_GetActive();
+    PlayerProfile *p = Profile_GetActive();
     long double s;
     float dy;
 
     ease_dist(c);
     dy = gMouseDY;
-    if (p->invertMouse)
+    if (p->invert_mouse)
         dy = -dy;
     s = dy * kMouseTurn + c->pitch;
     c->pitch = s;

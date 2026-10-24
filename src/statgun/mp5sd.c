@@ -43,7 +43,7 @@ HOOK(0x4739D0, Mp5sd_Open);
 void Mp5sd_Create(ZoomGun *g, void *arg)
 {
     HANDLER(0, Gun_GetType())(g, arg);
-    crt_sprintf(g->gun.id, "WEAPON_ID_MP5SD");
+    crt_sprintf(g->gun.name, "WEAPON_ID_MP5SD");
     g->zoomed = 0;
 }
 HOOK(0x473AB0, Mp5sd_Create);
@@ -53,7 +53,7 @@ void Mp5sd_Use(ZoomGun *g, WeaponUseMsg *msg)
 {
     Human *h = msg->h;
     HumanView *v = h->view;
-    float *minFov = g->gun.info->data2;
+    float *minFov = g->gun.wt->data2;
     long double fov;
     float e, t;
     int pressed;

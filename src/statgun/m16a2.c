@@ -60,14 +60,14 @@ HOOK(0x4733F0, M16A2_Open);
 void M16A2_Create(Gun *g, void *arg)
 {
     HANDLER(0, Gun_GetType())(g, arg);
-    crt_sprintf(g->id, "WEAPON_ID_M16A2");
+    crt_sprintf(g->name, "WEAPON_ID_M16A2");
 }
 HOOK(0x4734D0, M16A2_Create);
 
 /* the alternate fire launches an M203 grenade */
 void M16A2_Use(Gun *g, WeaponUseMsg *msg)
 {
-    M203Data *d = g->info->data2;
+    M203Data *d = g->wt->data2;
     long double s;
     Matrix m;
     Vec3f vel;
@@ -84,7 +84,7 @@ void M16A2_Use(Gun *g, WeaponUseMsg *msg)
     snd = Sound_Play(Level_GetDynamic(), "m203_launch_1");
     if (snd)
         Sound_SetPos(snd, &g->muzzle);
-    M203_New(Level_GetDynamic(), g, g->obj.task.parent, &g->muzzle, &m, &vel, d->model, d->radius, d->activate);
+    M203_New(Level_GetDynamic(), g, g->o.task.parent, &g->muzzle, &m, &vel, d->model, d->radius, d->activate);
 }
 HOOK(0x473510, M16A2_Use);
 
@@ -104,7 +104,7 @@ void M16A2_Render(Gun *g, HudMsg *msg)
     Display_GetMode();
     Display_GetMode();
     HANDLER(StatusScreen_GetEvent(), Gun_GetType())(g, msg);
-    owner = g->obj.task.parent;
+    owner = g->o.task.parent;
     fn = HANDLER(AmmoList_GetEvent(), owner->type);
     if (fn)
         fn(owner, &list);

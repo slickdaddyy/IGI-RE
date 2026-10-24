@@ -51,7 +51,7 @@ HOOK(0x472D00, Dragunov_Open);
 void Dragunov_Create(ZoomGun *g, void *arg)
 {
     HANDLER(0, Gun_GetType())(g, arg);
-    crt_sprintf(g->gun.id, "WEAPON_ID_DRAGUNOV");
+    crt_sprintf(g->gun.name, "WEAPON_ID_DRAGUNOV");
     g->zoomed = 0;
 }
 HOOK(0x472E10, Dragunov_Create);
@@ -60,7 +60,7 @@ HOOK(0x472E10, Dragunov_Create);
 void Dragunov_Use(ZoomGun *g, WeaponUseMsg *msg)
 {
     Human *h = msg->h;
-    float *minFov = g->gun.info->data2;
+    float *minFov = g->gun.wt->data2;
     HumanView *v = h->view;
     long double t;
 

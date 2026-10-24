@@ -89,4 +89,17 @@ typedef struct FireArgs {
     int unk2C;
 } FireArgs;
 
+typedef struct ReloadMsg {
+    Task *h;
+    int anim[7];
+    char done;
+    char unlimited;
+} ReloadMsg;
+
+typedef struct AmmoEntry {
+    int id;
+    int count;
+    int limit; /* -1: none */
+} AmmoEntry;
+
 #endif

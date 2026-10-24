@@ -9,6 +9,7 @@
 #include "loadscreen/loadscreentypes.h"
 #include "humanplayer/humanplayertypes.h"
 #include "weapon/weapontypes.h"
+#include "ammotype/ammotypetypes.h"
 
 typedef struct HumanPlayerSM HumanPlayerSM;
 typedef struct HumanPlayer HumanPlayer;
@@ -74,11 +75,6 @@ typedef struct WeaponAmmo {
     int clip;
     int reserve;
 } WeaponAmmo;
-
-typedef struct AmmoEntry {
-    int id;
-    int count;
-} AmmoEntry;
 
 struct HumanPlayer {
     Task task;

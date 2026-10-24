@@ -8,50 +8,10 @@
 #include "res/restypes.h"
 #include "humanai/humanaitypes.h"
 #include "weapon/weapontypes.h"
+#include "guncasing/guncasingtypes.h"
 
 /* The "Gun" task (0x1B0 bytes, 0x5BE3C6), base of the hand weapons. These
    are its handlers from 0x479780 on; the type is registered by 0x477E30. */
-
-typedef struct Gun {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x30];
-    void *world;        /* 0x68 */
-    void **model;       /* 0x6C */
-    float matrix[9];    /* 0x70 */
-    int unk94;
-    float scale[3];     /* 0x98 */
-    char unkA4[0x44];
-    Task *child;        /* 0xE8 */
-    int unkEC;
-    char inWorld;       /* 0xF0 */
-    char unkF1;
-    char unkF2[2];
-    char unkF4;
-    char unkF5[3];
-    int unkF8;
-    char unkFC;
-    char unkFD[3];
-    int weaponId;       /* 0x100 */
-    char idExpr[0x20];  /* 0x104 */
-    short unk124;
-    char unk126[2];
-    WeaponType *type;   /* 0x128 */
-    AmmoType *ammo;     /* 0x12C */
-    Task **shot;        /* 0x130, its GunShot */
-    char unk134[0x10];
-    int rounds;         /* 0x144 */
-    char unk148[8];
-    Vec3d muzzle;       /* 0x150 */
-    Vec3f dir;          /* 0x168 */
-    char unk174[4];
-    char unk178[0x1C];
-    Task **ref194;      /* 0x194 */
-    int unk198;
-    int unk19C;
-    char unk1A0[0xC];
-    int reload;         /* 0x1AC */
-} Gun;
 
 /* the message of the weapon fire event */
 typedef struct FireMsg {
@@ -63,14 +23,6 @@ typedef struct FireMsg {
     int unk28;
     Task *h;
 } FireMsg;
-
-/* the message of the reload event */
-typedef struct ReloadMsg {
-    Task *h;
-    char unk4[0x1C];
-    char done;
-    char unlimited;
-} ReloadMsg;
 
 /* the HUD sprites and text the human render handler passes on */
 typedef struct Hud {
@@ -85,12 +37,6 @@ typedef struct TaskList {
     int max;
 } TaskList;
 
-_Static_assert(offsetof(Gun, inWorld) == 0xF0, "Gun");
-_Static_assert(offsetof(Gun, type) == 0x128, "Gun");
-_Static_assert(offsetof(Gun, rounds) == 0x144, "Gun");
-_Static_assert(offsetof(Gun, unk178) == 0x178, "Gun");
-_Static_assert(offsetof(Gun, ref194) == 0x194, "Gun");
-_Static_assert(sizeof(Gun) == 0x1B0, "Gun");
 _Static_assert(offsetof(FireMsg, h) == 0x2C, "FireMsg");
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -175,7 +121,7 @@ static int x87_round(long double x)
 /* asks the owner of the gun for its ammo list */
 static AmmoList *owner_ammo(Gun *g)
 {
-    Task *owner = g->task.parent;
+    Task *owner = g->o.task.parent;
     AmmoList *list = NULL;
     TaskFn fn = HANDLER(AmmoList_GetEvent(), owner->type);
 
@@ -187,7 +133,7 @@ static AmmoList *owner_ammo(Gun *g)
 /* the rounds of the gun's ammo type the owner carries */
 static int carried(Gun *g)
 {
-    AmmoType *at = g->ammo;
+    AmmoType *at = g->ammoType;
     AmmoList *list = owner_ammo(g);
     AmmoEntry *e = AmmoList_Find(list, at->id);
 
@@ -196,12 +142,12 @@ static int carried(Gun *g)
 
 void Gun_ShootHandler(Gun *g, FireMsg *m)
 {
-    WeaponType *w = g->type;
+    WeaponType *w = g->wt;
     AIMessage noise;
     float x;
     long double y;
 
-    HANDLER(Weapon_GetTriggerEvent(), g->task.type)(g, m);
+    HANDLER(Weapon_GetTriggerEvent(), g->o.task.type)(g, m);
     if (!m->fired)
         return;
     noise.type = 0x10;
@@ -230,8 +176,8 @@ HOOK(0x479780, Gun_ShootHandler);
 /* fills the clip from the ammo the owner carries */
 void Gun_FillClipHandler(Gun *g, char *unlimited)
 {
-    WeaponType *w = g->type;
-    AmmoType *at = g->ammo;
+    WeaponType *w = g->wt;
+    AmmoType *at = g->ammoType;
     AmmoList *list;
     AmmoEntry *e;
     int need;
@@ -275,7 +221,7 @@ void Gun_ReloadHandler(Gun *g, ReloadMsg *m)
         m->done = 1;
         g->reload = 0;
     }
-    c = g->child->head;
+    c = g->o.attached->head;
     if (!c->next || !c)
         return;
     do {
@@ -293,7 +239,7 @@ HOOK(0x479990, Gun_ReloadHandler);
 /* rounds in the clip and rounds carried */
 void Gun_GetAmmoHandler(Gun *g, int *out)
 {
-    AmmoType *at = g->ammo;
+    AmmoType *at = g->ammoType;
     AmmoList *list;
     AmmoEntry *e;
 
@@ -318,9 +264,9 @@ void Gun_ResetHandler(Gun *g)
     Gun_Reset(g);
     if (g->unkF1)
         return;
-    m = g->scale[2] >= g->scale[1] ? g->scale[2] : g->scale[1];
-    m = g->scale[0] > m ? g->scale[0] : m;
-    r = rf(VirModel_GetRadius(g->model, 2) * m);
+    m = g->o.scale[2] >= g->o.scale[1] ? g->o.scale[2] : g->o.scale[1];
+    m = g->o.scale[0] > m ? g->o.scale[0] : m;
+    r = rf(VirModel_GetRadius(g->o.model, 2) * m);
     DynCube_Add(Game_GetWorld(), g, &zero, r, 2);
     g->inWorld = 1;
 }
@@ -341,14 +287,14 @@ void Gun_DropHandler(Gun *g, Task **out)
         *out = NULL;
         return;
     }
-    *out = GunPickup_New(Level_GetDynamic(), &g->pos, g->matrix, g->weaponId, g->rounds);
-    g->unkFC = 1;
+    *out = GunPickup_New(Level_GetDynamic(), &g->o.pos, g->o.matrix.m, g->id, g->rounds);
+    g->remove = 1;
 }
 HOOK(0x479C20, Gun_DropHandler);
 
 void Gun_GetTypeHandler(Gun *g, WeaponType **out)
 {
-    *out = g->type;
+    *out = g->wt;
 }
 HOOK(0x479C80, Gun_GetTypeHandler);
 
@@ -409,7 +355,7 @@ static void *weapon_icon(Hud *hud, int id)
 void Gun_HudHandler(Gun *g, Hud **msg)
 {
     Hud *hud = *msg;
-    WeaponType *w = g->type;
+    WeaponType *w = g->wt;
     int width = Display_GetMode()->width;
     int height = Display_GetMode()->height;
     float textW = 0, iconW = 0;
@@ -528,7 +474,7 @@ HOOK(0x47A260, Gun_DrawAmmoCount);
    weapon 12 shows a loaded round instead and counts it */
 void Gun_DrawAmmoClip(Gun *g, Hud *hud)
 {
-    WeaponType *w = g->type;
+    WeaponType *w = g->wt;
     int width = Display_GetMode()->width;
     int height = Display_GetMode()->height;
     int rounds = g->rounds;
@@ -631,9 +577,9 @@ void Gun_CollFilter(Gun *g, char *msg)
 {
     Task *a = *(Task **)(msg + 8);
     Task *b = *(Task **)(msg + 0xC);
-    Task *owner = g->task.parent;
+    Task *owner = g->o.task.parent;
 
-    if (a == &g->task || a == owner || b == &g->task || b == owner) {
+    if (a == &g->o.task || a == owner || b == &g->o.task || b == owner) {
         *msg = 0;
         return;
     }
@@ -647,17 +593,17 @@ HOOK(0x47A8E0, Gun_CollFilter);
 
 void Gun_GetShotSourceHandler(Gun *g, void **out)
 {
-    out[0] = *g->shot;
-    out[1] = g->unk178;
+    out[0] = *g->shots;
+    out[1] = &g->point;
 }
 HOOK(0x47A940, Gun_GetShotSourceHandler);
 
 void Gun_RemoveHandler(Gun *g, void *arg)
 {
-    if (g->ref194 && *g->ref194) {
-        Task_Delete(*g->ref194);
-        TaskRef_Remove(g->ref194);
-        g->ref194 = NULL;
+    if (g->loopSound && *g->loopSound) {
+        Task_Delete(*g->loopSound);
+        TaskRef_Remove(g->loopSound);
+        g->loopSound = NULL;
     }
     if (g->inWorld) {
         uint8_t slot = World_GetEvent1();
@@ -695,7 +641,7 @@ HOOK(0x47AA40, Gun_Close);
 /* where the ammo text of a mounted gun goes */
 void Gun_GetAmmoTextPos(float *x, float *y, Gun *g, Hud *hud)
 {
-    WeaponType *w = g->type;
+    WeaponType *w = g->wt;
     int width = Display_GetMode()->width;
     int height = Display_GetMode()->height;
     int count = carried(g);

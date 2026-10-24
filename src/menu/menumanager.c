@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "menu/menu.h"
 #include "win/wintypes.h"
+#include "config/configtypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -77,12 +78,6 @@ ORIG(0x4F1050, int, Task_GetId, (void *task));
 typedef struct ResourceInfo {
     const char *name;
 } ResourceInfo;
-
-typedef struct Profile {
-    char unk0[0x1F];
-    char gfxDevice[0x100];
-    char gfxDriver[0x100];
-} Profile;
 
 extern uint16_t gMenuManagerType;
 extern int gMenuKeepScreen;
@@ -726,7 +721,7 @@ MenuManager *MenuManager_New(Task *parent, const char *script, char ownsDisplay,
     char reload;
 
     if (ownsDisplay) {
-        Profile *p = Profile_GetActive();
+        PlayerProfile *p = Profile_GetActive();
         DisplayMode mode;
         const char *str;
 
@@ -739,11 +734,11 @@ MenuManager *MenuManager_New(Task *parent, const char *script, char ownsDisplay,
         mode.renderMode = Direct3D_GetRenderMode();
         mode.unk16 = 1;
         mode.unk14 = 1;
-        str = p->gfxDriver;
+        str = p->gfx.device_desc;
         if (!str)
             str = gEmptyString;
         strcpy(mode.desc, str);
-        str = p->gfxDevice;
+        str = p->gfx.device;
         if (!str)
             str = gEmptyString;
         strcpy(mode.device, str);

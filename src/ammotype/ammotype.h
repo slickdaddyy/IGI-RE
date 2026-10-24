@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "ammotype/ammotypetypes.h"
 
 #define AMMO_TYPE_MAX 32
 #define AMMO_LIST_MAX 32
@@ -31,12 +32,6 @@ typedef struct AmmoType {
     char unk148[0x10];
     char sound[0x10];
 } AmmoType;
-
-typedef struct AmmoEntry {
-    int id;
-    int count;
-    int limit; /* -1: none */
-} AmmoEntry;
 
 /* The ammo a human carries (Human + 0x340). */
 typedef struct AmmoList {

@@ -12,6 +12,7 @@
 #include "material/materialtypes.h"
 #include "humanai/humanaitypes.h"
 #include "statgun/statguntypes.h"
+#include "config/configtypes.h"
 
 FN_EXTERN(crt_CIpow);
 
@@ -47,15 +48,10 @@ typedef struct ParticleHit {
     double prev[3];
 } ParticleHit;
 
-typedef struct Profile {
-    char unk0[8];
-    char blood;
-} Profile;
-
 ORIG(0x401AE0, Task **, TaskRef_Add, (Task *t));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x4028B0, int, Flow_GetFrames, (void));
-ORIG(0x406220, Profile *, Profile_GetActive, (void));
+ORIG(0x406220, PlayerProfile *, Profile_GetActive, (void));
 ORIG(0x413C80, WeaponType *, Weapon_GetType, (Task *w));
 ORIG(0x4167D0, uint8_t, Game_GetEvent0, (void));
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));

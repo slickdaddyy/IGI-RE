@@ -27,13 +27,6 @@ FN_EXTERN(HumanPlayer_MapMarkerHandler);
 typedef void (*TaskHandler)(void *task, void *arg);
 typedef void (*TaskHandler1)(void *task);
 
-typedef struct ReloadMsg {
-    HumanPlayer *h;
-    int anim[7];
-    char done;
-    char unlimited;
-} ReloadMsg;
-
 typedef struct PositionMsg {
     HumanPlayer *h;
     int unk4;
@@ -756,7 +749,7 @@ void HumanPlayer_WeaponReloadRun(HumanPlayerSM *sm, HumanPlayer *h)
     uint8_t slot;
 
     h->unk4D0 = 0;
-    msg.h = h;
+    msg.h = (Task *)h;
     memcpy(msg.anim, v->unk208, sizeof(msg.anim));
     msg.unlimited = gUnlimitedAmmo;
     slot = Human_GetEvent1();

@@ -13,6 +13,8 @@
 #include "magicobj/magicobjtypes.h"
 #include "weapon/weapontypes.h"
 #include "statgun/statguntypes.h"
+#include "guncasing/guncasingtypes.h"
+#include "ammotype/ammotypetypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -46,12 +48,6 @@ typedef struct WeaponConfigMsg {
     WeaponType *info;
 } WeaponConfigMsg;
 
-/* an entry of a human's ammo table */
-typedef struct AmmoEntry {
-    int id;
-    int count;
-} AmmoEntry;
-
 /* a value of a config task (0x4FE650 / 0x4FE730) */
 typedef struct ConfigVar {
     char unk0[0x124];
@@ -60,25 +56,6 @@ typedef struct ConfigVar {
         char s[0x20];
     } v;
 } ConfigVar;
-
-/* base of the hand weapons (type 0x477BF0, 0x1B0 bytes) */
-typedef struct Gun {
-    RigidDynCubeObj obj;
-    char unkF0;
-    char unkF1[0x13];
-    char id[0x24];      /* 0x104 */
-    WeaponType *info;   /* 0x128 */
-    int *ammoId;        /* 0x12C */
-    char unk130[4];
-    char unk134;
-    char unk135[0xF];
-    int rounds;         /* 0x144 */
-    char unk148[8];
-    Vec3d muzzle;       /* 0x150 */
-    Vec3f dir;          /* 0x168 */
-    char unk174[0x38];
-    int reload;         /* 0x1AC */
-} Gun;
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
@@ -149,10 +126,6 @@ static inline float max_scale(const RigidDynCubeObj *o)
 _Static_assert(offsetof(HumanView, fov) == 0x1E4, "HumanView");
 _Static_assert(offsetof(Human, input) == 0x1B0, "Human");
 _Static_assert(offsetof(Human, view) == 0x4EC, "Human");
-_Static_assert(offsetof(Gun, id) == 0x104, "Gun");
-_Static_assert(offsetof(Gun, rounds) == 0x144, "Gun");
-_Static_assert(offsetof(Gun, dir) == 0x168, "Gun");
-_Static_assert(sizeof(Gun) == 0x1B0, "Gun");
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
