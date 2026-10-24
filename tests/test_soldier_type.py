@@ -82,7 +82,7 @@ pyfake(e, 0x4F1A80, param_add)
 pyfake(e, 0x460C80, printf)
 pyfake(e, 0x450D50, ai_message)
 float_fake(e, 0x414950, 6)
-RUN1 = trap(e, "human_run", logger(e, "human_run", 2))
+RUN1 = trap(e, "human_run", logger(e, "human_run", 1))  # called with the task only
 CREATE = trap(e, "human_create", logger(e, "human_create", 2))
 e.baseline = e.snapshot()
 

@@ -84,7 +84,7 @@ def make():
     handler = fk.stubs(1)[0]
     e.write(0xA96AE0 + 4 * 0x13, i32(handler))
     e.write(0xA96AE0 + 4 * (0x31 * 0x180 + 0x13), i32(handler))
-    e.write(0xA96AE0 + 4 * (2 * 0x180 + 0x13), i32(handler))
+    e.write(0xA96AE0 + 4 * (2 * 0x180 + 0x13), i32(fk.stubs(1, 1)[0]))  # delete takes the task only
     query = fk.add(fk.code(b"\xc3"), 2, fmt=lambda em, a: (a[0],),
                    effect=lambda em, a: em.write(a[1], i32(cfg["result"])))
     use = fk.add(fk.code(b"\xc3"), 2, fmt=use_msg_fmt)

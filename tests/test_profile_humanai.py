@@ -43,7 +43,18 @@ def run_script(e):
 
 pyfake(emu, 0x4B8770, eval_expr)
 pyfake(emu, 0x4F0CF0, run_script)
-logfake(emu, 0x4AF810, 3, strings=(0,))
+
+
+def warning(e):
+    """Warning_Show: log only the args the format uses; the rest of the stack is junk."""
+    fmt = e.read_cstr(e.arg(0))
+    n = fmt.count(b"%") - 2 * fmt.count(b"%%")
+    if LOG:
+        LOG[-1].append((0x4AF810, fmt) + tuple(e.normalize(e.arg(1 + i)) for i in range(n)))
+    e.ret(0)
+
+
+pyfake(emu, 0x4AF810, warning)
 
 bad = Emu()
 logfake(bad, TASK_NEW, 3)

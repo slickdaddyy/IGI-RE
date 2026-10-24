@@ -2,7 +2,7 @@ import struct
 
 import pytest
 
-from emu import Emu, compare, RETURN_MAGIC, STACK_BASE, STACK_SIZE
+from emu import Emu, compare, RETURN_MAGIC, SAVED, STACK_BASE, STACK_SIZE
 
 
 
@@ -32,9 +32,11 @@ def recorder(e):
 
 def escape(e, nargs):
     """Exit handler that returns straight to the test, for error paths that hang."""
-    code = e.alloc(16)
+    code = e.alloc(32)
     esp = STACK_BASE + STACK_SIZE - 0x1000 - 4 * nargs
-    e.write(code, b"\xbc" + struct.pack("<I", esp) + b"\xb8" + struct.pack("<I", RETURN_MAGIC) + b"\xff\xe0")
+    # mov esp; mov ebx/esi/edi back to what call() gave them; jmp to the return trap
+    regs = b"".join(bytes([op]) + struct.pack("<I", SAVED[r][1]) for op, r in ((0xBB, "ebx"), (0xBE, "esi"), (0xBF, "edi")))
+    e.write(code, b"\xbc" + struct.pack("<I", esp) + regs + b"\xb8" + struct.pack("<I", RETURN_MAGIC) + b"\xff\xe0")
     e.write(0x936268, struct.pack("<I", recorder(e)[0]))
     e.write(0x93626C, struct.pack("<I", code))
 

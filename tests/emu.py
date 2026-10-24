@@ -1,11 +1,13 @@
 """Run original IGI.exe code and our rewritten code side by side in an x86 emulator."""
+import bisect
 import os
 import re
 import struct
 import subprocess
 
 import pefile
-from unicorn import Uc, UcError, UC_ARCH_X86, UC_MODE_32, UC_HOOK_CODE, UC_HOOK_MEM_UNMAPPED, UC_PROT_ALL
+from unicorn import (Uc, UcError, UC_ARCH_X86, UC_MODE_32, UC_HOOK_CODE, UC_HOOK_MEM_UNMAPPED, UC_HOOK_MEM_WRITE_PROT,
+                     UC_PROT_ALL, UC_PROT_READ, UC_PROT_EXEC)
 from unicorn.x86_const import *
 
 STACK_BASE, STACK_SIZE = 0x00100000, 0x00100000
@@ -14,6 +16,10 @@ TRAP_BASE, TRAP_SIZE = 0x70000000, 0x00010000
 FAKE_BASE, FAKE_SIZE = 0x30000000, 0x00100000
 CALL_LOG = FAKE_BASE + 0x80000
 RETURN_MAGIC = TRAP_BASE + TRAP_SIZE - 0x10
+CHUNK = 0x10000
+CLEAN = UC_PROT_READ | UC_PROT_EXEC
+# what call() puts in the callee-saved registers
+SAVED = {"ebx": (UC_X86_REG_EBX, 0x0B0B0B0B), "esi": (UC_X86_REG_ESI, 0x05151515), "edi": (UC_X86_REG_EDI, 0x0D1D1D1D)}
 
 GAME_EXE = os.environ.get("IGI_EXE", "")
 OUR_DLL = os.environ.get("IGI_DLL", os.path.join(os.path.dirname(__file__), "..", "build", "dinput.dll"))
@@ -91,14 +97,15 @@ class Emu:
         self.heap_top = HEAP_BASE
         self.writable = []
         self.stubs = dict(DEFAULT_STUBS)
+        self.chunk_size, self.pristine, self.dirty = {}, {}, set()
         self.uc.mem_map(STACK_BASE, STACK_SIZE, UC_PROT_ALL)
-        self.uc.mem_map(HEAP_BASE, HEAP_SIZE, UC_PROT_ALL)
+        self._map_tracked(HEAP_BASE, HEAP_SIZE)
         self.uc.mem_map(TRAP_BASE, TRAP_SIZE, UC_PROT_ALL)
-        self.uc.mem_map(FAKE_BASE, FAKE_SIZE, UC_PROT_ALL)
+        self.uc.mem_map(FAKE_BASE, CALL_LOG - FAKE_BASE, UC_PROT_ALL)
+        self._map_tracked(CALL_LOG, FAKE_BASE + FAKE_SIZE - CALL_LOG)
         self.fake_top = FAKE_BASE + 0x10
         self.fake_ret_at = {}
         self.images = []
-        self.writable += [(HEAP_BASE, HEAP_SIZE), (CALL_LOG, FAKE_BASE + FAKE_SIZE - CALL_LOG)]
         self._load(exe)
         self.symbols = {}
         if dll and os.path.exists(dll):
@@ -107,6 +114,9 @@ class Emu:
         self.uc.hook_add(UC_HOOK_CODE, self._trap, begin=TRAP_BASE, end=TRAP_BASE + TRAP_SIZE - 1)
         self.uc.hook_add(UC_HOOK_MEM_UNMAPPED, self._unmapped)
         self.uc.hook_add(UC_HOOK_CODE, self._error_show, begin=ERROR_SHOW, end=ERROR_SHOW)
+        self.uc.hook_add(UC_HOOK_MEM_WRITE_PROT, self._write_prot)
+        self.chunk_starts = sorted(self.chunk_size)
+        self.tracked = len(self.writable)
         self.baseline = self.snapshot()
 
     def _load(self, path):
@@ -114,13 +124,19 @@ class Emu:
         base = pe.OPTIONAL_HEADER.ImageBase
         size = align(pe.OPTIONAL_HEADER.SizeOfImage)
         self.images.append((base, base + size))
-        self.uc.mem_map(base, size, UC_PROT_ALL)
+        p = base
+        for s in pe.sections:
+            if s.Characteristics & 0x80000000:
+                b = base + s.VirtualAddress
+                if b > p:
+                    self.uc.mem_map(p, b - p, UC_PROT_ALL)
+                p = b + align(max(s.Misc_VirtualSize, s.SizeOfRawData))
+                self._map_tracked(b, p - b)
+        self.uc.mem_map(p, base + size - p, UC_PROT_ALL)
         self.uc.mem_write(base, pe.header[: pe.OPTIONAL_HEADER.SizeOfHeaders])
         for s in pe.sections:
             data = s.get_data()[: max(s.Misc_VirtualSize, s.SizeOfRawData)]
             self.uc.mem_write(base + s.VirtualAddress, data)
-            if s.Characteristics & 0x80000000:
-                self.writable.append((base + s.VirtualAddress, align(max(s.Misc_VirtualSize, s.SizeOfRawData))))
         for entry in getattr(pe, "DIRECTORY_ENTRY_IMPORT", []):
             dll = entry.dll.decode().lower()
             for imp in entry.imports:
@@ -158,7 +174,7 @@ class Emu:
     def alloc(self, size):
         p = self.heap_top
         self.heap_top = align(p + max(size, 1), 16)
-        self.uc.mem_write(p, b"\0" * size)
+        self.write(p, b"\0" * size)
         return p
 
     def _trap(self, uc, addr, size, user):
@@ -203,15 +219,49 @@ class Emu:
         return struct.unpack("<I", self.read(p, 4))[0]
 
     def write(self, p, data):
+        self._touch(p, p + len(data))
         self.uc.mem_write(p, data)
 
+    # writable memory is mapped write-protected in chunks; the first write to a chunk
+    # unprotects it, so snapshots and diffs only look at the chunks written
+
+    def _map_tracked(self, base, size):
+        self.writable.append((base, size))
+        for c in range(base, base + size, CHUNK):
+            self.chunk_size[c] = min(CHUNK, base + size - c)
+            self.uc.mem_map(c, self.chunk_size[c], CLEAN)
+
+    def _touch(self, lo, hi):
+        i = max(bisect.bisect_right(self.chunk_starts, lo) - 1, 0)
+        for c in self.chunk_starts[i:]:
+            if c >= hi:
+                break
+            n = self.chunk_size[c]
+            if c + n > lo and c not in self.dirty:
+                self.pristine.setdefault(c, self.read(c, n))
+                self.uc.mem_protect(c, n, UC_PROT_ALL)
+                self.dirty.add(c)
+
+    def _write_prot(self, uc, access, addr, size, value, user):
+        self._touch(addr, addr + size)
+        # unicorn drops the store that faulted
+        uc.mem_write(addr, (value & ((1 << 8 * size) - 1)).to_bytes(size, "little"))
+        return True
+
     def snapshot(self):
-        regions = [(b, bytes(self.uc.mem_read(b, n))) for b, n in self.writable + [(STACK_BASE, STACK_SIZE)]]
-        return regions, self.heap_top
+        full = [(b, self.read(b, n)) for b, n in self.writable[self.tracked:] + [(STACK_BASE, STACK_SIZE)]]
+        return {c: self.read(c, self.chunk_size[c]) for c in self.dirty}, self.heap_top, full
 
     def restore(self, snap):
-        regions, self.heap_top = snap
-        for b, data in regions:
+        copies, self.heap_top, full = snap
+        for c in self.dirty | copies.keys():
+            if c in copies:
+                self.write(c, copies[c])
+            else:
+                self.uc.mem_write(c, self.pristine[c])
+                self.uc.mem_protect(c, self.chunk_size[c], CLEAN)
+                self.dirty.discard(c)
+        for b, data in full:
             self.uc.mem_write(b, data)
 
     def reset(self):
@@ -219,8 +269,9 @@ class Emu:
 
     # --- calls -------------------------------------------------------------
 
-    def call(self, fn, *args, ecx=0, edx=0, cc="cdecl", stack_fill=0xCC, limit=50_000_000):
-        """Call fn (address or our symbol name). Returns (eax, edx, st0)."""
+    def call(self, fn, *args, ecx=0, edx=0, cc="cdecl", stack_fill=0xCC, limit=50_000_000, check_saved=True):
+        """Call fn (address or our symbol name). Returns (eax, edx, st0).
+        check_saved=False for functions that do not keep ebx/esi/edi."""
         addr = self.symbols[fn] if isinstance(fn, str) else fn
         self.import_error = self.mem_error = None
         esp = STACK_BASE + STACK_SIZE - 0x1000
@@ -231,7 +282,7 @@ class Emu:
         esp -= 4
         self.uc.mem_write(esp, struct.pack("<I", RETURN_MAGIC))
         self.uc.mem_write(RETURN_MAGIC, b"\xc3")
-        for reg, v in ((UC_X86_REG_ESP, esp), (UC_X86_REG_EBP, 0), (UC_X86_REG_ECX, ecx), (UC_X86_REG_EDX, edx), (UC_X86_REG_EAX, 0)):
+        for reg, v in ((UC_X86_REG_ESP, esp), (UC_X86_REG_EBP, 0), (UC_X86_REG_ECX, ecx), (UC_X86_REG_EDX, edx), (UC_X86_REG_EAX, 0)) + tuple(SAVED.values()):
             self.uc.reg_write(reg, v)
         # start every call with an empty x87 stack: fninit; [fldcw self.cw;] jmp addr
         code = b"\xdb\xe3"
@@ -248,6 +299,9 @@ class Emu:
             raise self.import_error
         if self.uc.reg_read(UC_X86_REG_EIP) != RETURN_MAGIC:
             raise RuntimeError("did not return (eip 0x%x)" % self.uc.reg_read(UC_X86_REG_EIP))
+        bad = [n for n, (r, v) in SAVED.items() if self.uc.reg_read(r) != v]
+        if check_saved and bad:
+            raise RuntimeError("0x%x did not keep %s" % (addr, ", ".join(bad)))
         self.popped = self.uc.reg_read(UC_X86_REG_ESP) - esp - 4
         top = (self.uc.reg_read(UC_X86_REG_FPSW) >> 11) & 7
         st0 = self.uc.reg_read(UC_X86_REG_FP0 + top)
@@ -310,9 +364,11 @@ class Emu:
 
     def changes(self, before, ignore=()):
         """Bytes in writable memory (not stack) that differ from snapshot `before`."""
+        copies, _, full = before
+        chunks = [(c, copies.get(c) or self.pristine[c]) for c in sorted(self.dirty | copies.keys())]
         out = {}
-        for (b, old), _ in zip(before[0], range(len(self.writable))):
-            new = bytes(self.uc.mem_read(b, len(old)))
+        for b, old in chunks + full[:-1]:
+            new = self.read(b, len(old))
             if new == old:
                 continue
             for page in range(0, len(old), 0x1000):

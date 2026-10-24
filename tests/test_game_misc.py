@@ -26,7 +26,8 @@ WTYPES, WCOUNT, WEVENTS = 0x56E258, 0x57B18C, 0x5391AC
 IS_A, CUBE_TYPE, VIR_TYPE = 0x401CF0, 0x4C48C0, 0x4D9610
 COUNT, GET930, GET970, GETA50, VIR_FIND = 0x4D0D20, 0x4D0930, 0x4D0970, 0x4D0A50, 0x4CEC10
 
-F = fakes(emu, {0x4F1D80: 1, 0x4B0D10: 1, COUNT: (1, 3), GET930: 4, GET970: 3, GETA50: 3, VIR_FIND: (1, 0)})
+# Model_GetPoint pushes only 3 args for 0x4D0930, which reads none past out
+F = fakes(emu, {0x4F1D80: 1, 0x4B0D10: 1, COUNT: (1, 3), GET930: 3, GET970: 3, GETA50: 3, VIR_FIND: (1, 0)})
 PyFake(emu, 0x4018C0, log=(("b", 0),))
 PyFake(emu, CUBE_TYPE, ret=0x11)
 PyFake(emu, VIR_TYPE, ret=0x22)
