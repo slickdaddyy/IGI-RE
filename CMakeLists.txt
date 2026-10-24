@@ -15,9 +15,20 @@ else()
     file(GLOB_RECURSE IGI_SOURCES CONFIGURE_DEPENDS src/*.c)
 endif()
 
-add_library(dinput SHARED ${IGI_SOURCES} src/dinput.def)
-set_target_properties(dinput PROPERTIES PREFIX "")
-target_include_directories(dinput PRIVATE src)
-target_compile_options(dinput PRIVATE -Wall -O2 -fno-strict-aliasing -fno-math-errno -march=i686
+list(FILTER IGI_SOURCES EXCLUDE REGEX "/src/(exe/|dllmain\\.c)")
+
+add_library(igi OBJECT ${IGI_SOURCES})
+target_include_directories(igi PUBLIC src)
+target_compile_options(igi PUBLIC -Wall -O2 -fno-strict-aliasing -fno-math-errno -march=i686
     -fmacro-prefix-map=${CMAKE_SOURCE_DIR}/=)
+
+add_library(dinput SHARED $<TARGET_OBJECTS:igi> src/dllmain.c src/dinput.def)
+set_target_properties(dinput PROPERTIES PREFIX "")
+target_link_libraries(dinput PRIVATE igi)
 target_link_options(dinput PRIVATE -static -static-libgcc -Wl,--image-base,0x10000000)
+
+# standalone build: needs only the player's IGI.exe for its data (src/exe/main.c)
+add_executable(igidecomp WIN32 $<TARGET_OBJECTS:igi> src/exe/main.c)
+target_link_libraries(igidecomp PRIVATE igi)
+target_link_options(igidecomp PRIVATE -static -static-libgcc -Wl,--image-base,0x400000 -Wl,--disable-dynamicbase
+    -Wl,--section-start=.igi=0x401000 -Wl,--section-start=.text=0xC35000 -Wl,--wrap=crt_atof)

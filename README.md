@@ -27,6 +27,17 @@ Needs CMake, Ninja and the i686 MinGW toolchain.
 
 Copy `build/dinput.dll` next to `IGI.exe`.
 
+## Standalone build
+
+The same build also makes `igidecomp.exe`. Put it in the game folder next to
+`IGI.exe` and run it instead of the game. It reads the data sections of your
+`IGI.exe` (tables, strings, the import list) into memory at their original
+addresses but none of its code: every original function address holds a
+jump to the rewrite, and the C runtime comes from `msvcrt.dll`. Code that
+nothing rewrites stops the game with "No rewrite for IGI.exe code at ...".
+`igidecomp.ini` and `igidecomp.log` work like the DLL's files below. Don't
+leave `dinput.dll` from this project in the folder when you use it.
+
 ## Settings and log
 
 Without a `dinput.ini` next to the DLL every rewritten function is used.

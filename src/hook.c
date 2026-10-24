@@ -12,11 +12,15 @@
 #define EXE_TIME 0x3A1D74C6
 #define EXE_MARK 0x541ECC
 
+int hook_exe_mapped;
+
 int Hook_IsSupportedExe(void)
 {
     const IMAGE_DOS_HEADER *dos = (const IMAGE_DOS_HEADER *)GetModuleHandleA(NULL);
     const IMAGE_NT_HEADERS32 *nt;
 
+    if (hook_exe_mapped) /* the standalone exe checked the file's headers itself */
+        return memcmp((const void *)EXE_MARK, "IGIMUTEX", 9) == 0;
     if ((uintptr_t)dos != EXE_BASE || dos->e_magic != IMAGE_DOS_SIGNATURE)
         return 0;
     nt = (const IMAGE_NT_HEADERS32 *)((const char *)dos + dos->e_lfanew);

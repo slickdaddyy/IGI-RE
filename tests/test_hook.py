@@ -233,6 +233,20 @@ def test_unsupported_exe():
     assert h.messages == ["Unsupported IGI.exe version. The EU version is required."]
 
 
+def test_standalone_exe_checks_only_the_marker():
+    # igidecomp.exe checked the IGI.exe file itself; its own headers are the ones at 0x400000
+    h = Host({"log": "1"}, exe_ok=False)
+    h.e.write(h.e.symbols["hook_exe_mapped"], struct.pack("<i", 1))
+    h.install()
+    assert h.patched() == ALL
+
+    h = Host({"log": "1"}, exe_ok=False)
+    h.e.write(h.e.symbols["hook_exe_mapped"], struct.pack("<i", 1))
+    h.e.write(0x541ECC, b"IGIMUTEY\0")
+    assert h.install()[-1] == "unsupported IGI.exe, nothing installed"
+    assert h.patched() == []
+
+
 def test_crash_log():
     h = Host({"log": "1"})
     h.install()
