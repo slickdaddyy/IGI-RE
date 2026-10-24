@@ -6,22 +6,10 @@
 
 #include "igi.h"
 #include "types.h"
+#include "task/tasktypes.h"
 
 #define AMMO_TYPE_MAX 32
 #define AMMO_LIST_MAX 32
-
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    struct Task *tail;
-    struct Task *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
 
 typedef void (*TaskFn)(void *task, void *arg);
 

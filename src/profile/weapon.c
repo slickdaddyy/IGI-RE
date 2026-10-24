@@ -5,6 +5,7 @@
 #include "profile/param.h"
 #include "profile/profile.h"
 #include "core/pool.h"
+#include "task/tasktypes.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
@@ -20,7 +21,7 @@ ORIG(0x4D3710, void, Task_Nothing, (void *task, void *arg));
 
 /* the task loaded from weapons/weaponconfig.qsc */
 typedef struct WeaponConfigContainer {
-    TaskHeader task;
+    Task task;
     char unk20;
     char path[0x100];
     char unk121[3];
@@ -28,7 +29,7 @@ typedef struct WeaponConfigContainer {
 
 /* everything after the task header is copied into the weapon type */
 typedef struct WeaponConfig {
-    TaskHeader task;
+    Task task;
     int id;
     int unk24;
     int unk28;
@@ -93,23 +94,7 @@ typedef struct WeaponConfigApply {
 _Static_assert(sizeof(WeaponConfigContainer) == 0x124, "WeaponConfigContainer");
 _Static_assert(sizeof(WeaponConfig) == 0x708, "WeaponConfig");
 
-#define WEAPON_CONFIG_SIZE (sizeof(WeaponConfig) - sizeof(TaskHeader))
-
-typedef struct TaskType {
-    const char *name;
-    int size;
-    uint16_t parent;
-    uint16_t unk0A;
-    Pool pool;
-    char pooled;
-    char used;
-    char unk26[2];
-    uint16_t mask;
-    uint16_t unk2A;
-    uint32_t flags;
-} TaskType;
-
-_Static_assert(sizeof(TaskType) == 0x30, "TaskType");
+#define WEAPON_CONFIG_SIZE (sizeof(WeaponConfig) - sizeof(Task))
 
 extern uint16_t gWeaponConfigContainerType;
 extern uint16_t gWeaponConfigType;
@@ -138,7 +123,7 @@ HOOK(0x4071D0, WeaponConfig_GetEvent);
 /* runs the script, then sends every top level task it made the changed event */
 void *WeaponConfig_Read(void *parent, const char *path)
 {
-    TaskHeader *root, *t, *next;
+    Task *root, *t, *next;
 
     strcpy(gWeaponConfigPath, path);
     root = Task_RunScript(parent, path, 0);

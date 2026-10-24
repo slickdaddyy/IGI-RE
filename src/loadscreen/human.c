@@ -5,10 +5,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "types.h"
-
-typedef struct Task {
-    char unk0[0x20];
-} Task;
+#include "task/tasktypes.h"
 
 /* per hit zone: damage multiplier and the hit / death animations */
 typedef struct HitAnims {

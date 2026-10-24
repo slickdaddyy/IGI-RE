@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "task/tasktypes.h"
 
 #define PROFILE_MAX 16
 #define PROFILE_KEYS_MAX 64
@@ -65,24 +66,10 @@ typedef struct D3DDriver {
     int modeCount;
 } D3DDriver;
 
-/* the first 0x20 bytes of every task */
-typedef struct TaskHeader {
-    struct TaskHeader *next;
-    struct TaskHeader *prev;
-    struct TaskHeader *head;
-    void *tail;
-    void *tailpred;
-    struct TaskHeader *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} TaskHeader;
-
 typedef void (*TaskHandler)(void *task, void *arg);
 
 extern TaskHandler gTaskHandlers[][0x180];
-extern TaskHeader *gTaskStack[];
+extern Task *gTaskStack[];
 extern int gTaskStackTop;
 
 extern int gProfileCount;

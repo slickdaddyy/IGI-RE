@@ -4,15 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef struct Task {
-    void *node[2];
-    void *children[3];
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "task/tasktypes.h"
 
 typedef struct StateMachine StateMachine;
 typedef struct HumanPlayer HumanPlayer;

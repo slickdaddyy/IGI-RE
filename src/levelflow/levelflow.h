@@ -6,23 +6,10 @@
 
 #include "igi.h"
 #include "types.h"
+#include "task/tasktypes.h"
 
 FN_EXTERN(MagicObjContainer_Event);
 FN_EXTERN(Task_Nothing);
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
 
 typedef void (*TaskFn)();
 

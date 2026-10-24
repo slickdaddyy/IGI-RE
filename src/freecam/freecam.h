@@ -8,27 +8,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "types.h"
-
-typedef struct FcNode {
-    struct FcNode *next;
-    struct FcNode *prev;
-} FcNode;
-
-typedef struct FcList {
-    FcNode *head;
-    FcNode *tail;
-    FcNode *tailpred;
-} FcList;
-
-typedef struct Task {
-    FcNode node;
-    FcList children;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "task/tasktypes.h"
 
 typedef void (*TaskHandler)();
 

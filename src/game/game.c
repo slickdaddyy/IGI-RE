@@ -569,14 +569,14 @@ HOOK(0x4161D0, Game_LoadSprites);
    stack so a handler may delete the following task */
 static void RunChildren(Task *task)
 {
-    GameNode *n = task->head;
+    Task *n = task->head;
     TaskFn1 fn;
 
     if (!n->next)
         return;
     do {
         gTaskStack[gTaskStackTop++] = n->next && n->next->next ? n->next : NULL;
-        fn = gTaskHandlers1[1][((Task *)n)->type];
+        fn = gTaskHandlers1[1][n->type];
         if (fn)
             fn(n);
         n = gTaskStack[--gTaskStackTop];
@@ -1041,13 +1041,13 @@ HOOK(0x416D90, Game_ResetState);
 
 void Game_DeleteTasksOfType(Task *parent)
 {
-    GameNode *n = parent->head, *next;
+    Task *n = parent->head, *next;
 
     if (!n->next)
         return;
     while (n) {
         next = n->next && n->next->next ? n->next : NULL;
-        if (((Task *)n)->type == TerrainLightMap_GetType())
+        if (n->type == TerrainLightMap_GetType())
             Task_Delete(n);
         else
             Game_DeleteTasksOfType((Task *)n);

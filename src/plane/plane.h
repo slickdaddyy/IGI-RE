@@ -6,20 +6,7 @@
 
 #include "igi.h"
 #include "types.h"
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "task/tasktypes.h"
 
 /* script string that may hold an expression */
 typedef struct VarString {

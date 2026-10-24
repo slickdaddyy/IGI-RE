@@ -5,22 +5,9 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "task/tasktypes.h"
 
 FN_EXTERN(Task_Nothing);
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    struct Task *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
 
 typedef void (*TaskFn)(void *task, void *arg);
 

@@ -5,16 +5,7 @@
 
 #include "igi.h"
 #include "types.h"
-
-typedef struct Task {
-    Node node;
-    List children;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "task/tasktypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 

@@ -7,23 +7,17 @@
 #include "igi.h"
 #include "hook.h"
 #include "types.h"
+#include "task/tasktypes.h"
 
-typedef struct Task {
-    void *next;
-    void *prev;
-    void *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
+/* a task with a position */
+typedef struct DynCubeObj {
+    Task task;
     Vec3d pos;
-} Task;
+} DynCubeObj;
 
 typedef struct Human {
     Task task;
+    Vec3d pos;
     char unk38[0x4C4 - 0x38];
     Task *weapons[10];
     char unk4EC[0x7B4 - 0x4EC];
@@ -79,6 +73,7 @@ typedef struct AIMessage {
 
 typedef struct HumanAI {
     Task task;
+    Vec3d pos;
     Vec3d eye;
     float body[10];
     float view[10];
@@ -584,7 +579,7 @@ void AIPlaySound_Update(HumanAI *ai, AIAction *a)
     }
     s = Sound_Play(Level_GetDynamic(), p->name);
     if (s)
-        Sound_SetPos(s, &ai->task.pos);
+        Sound_SetPos(s, &ai->pos);
     HumanAI_EndAction(ai, a);
 }
 HOOK(0x48DF80, AIPlaySound_Update);
@@ -713,7 +708,7 @@ void AIRunPanicking_Start(HumanAI *ai, AIAction *a)
 
     a->update = AIRunPanicking_Update;
     p->panic.node = -1;
-    if (!(Vec3d_Distance(&p->pos, &ai->task.pos) <= p->panic.radius * kUnit))
+    if (!(Vec3d_Distance(&p->pos, &ai->pos) <= p->panic.radius * kUnit))
         return;
     if (ai->graph->unk5C >= 0x400) {
         Warning_Show("RunPanicking stack not large enough");
@@ -897,7 +892,7 @@ void AIActivate_Start(HumanAI *ai, AIAction *a)
         return;
     if (!TaskType_IsA(t->type, RigidDynCubeObj_GetType()))
         return;
-    AIGraph_FindNearest(&n, ai->graph, &t->pos);
+    AIGraph_FindNearest(&n, ai->graph, &((DynCubeObj *)t)->pos);
     if (!n)
         return;
     found = -1;
@@ -1211,7 +1206,7 @@ void AIFireAtTask_Update(HumanAI *ai, AIAction *a)
         HumanAI_EndAction(ai, a);
         return;
     }
-    memcpy(&ai->aimTarget, &t->pos, sizeof(Vec3d));
+    memcpy(&ai->aimTarget, &((DynCubeObj *)t)->pos, sizeof(Vec3d));
     fire_at(ai, p);
 }
 HOOK(0x48EE00, AIFireAtTask_Update);

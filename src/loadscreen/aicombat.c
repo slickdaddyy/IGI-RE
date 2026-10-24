@@ -10,6 +10,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "types.h"
+#include "task/tasktypes.h"
 
 FN_EXTERN(AICombat_End);
 FN_EXTERN(AICombat_KneelFire);
@@ -24,14 +25,6 @@ FN_EXTERN(AICombat_StandReload);
 FN_EXTERN(AICombat_StandRollLeft);
 FN_EXTERN(AICombat_StandRollRight);
 FN_EXTERN(AICombat_StandThrowGrenade);
-
-typedef struct Task {
-    char unk0[0x14];
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char unk1E[2];
-} Task;
 
 typedef struct Human {
     Task task;

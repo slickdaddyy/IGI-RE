@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "igi.h"
+#include "task/tasktypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x490370, int, Timer_GetMs, (void));
@@ -32,16 +33,6 @@ ORIG(0x4B6EC0, void *, Text_New, (void *font, float x, float y, const char *str)
 ORIG(0x4B6F30, void, Text_Free, (void *text));
 ORIG(0x4B6F50, void, Text_DrawAlt, (void *text));
 ORIG(0x4B72E0, void *, SortRender_Add, (void (*fn)(void *), int size, unsigned int key));
-
-typedef struct Task {
-    void *next, *prev;
-    void *head, *tail, *tailpred;
-    void *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
 
 /* static noise lines over the map computer screen */
 typedef struct LineFilter {

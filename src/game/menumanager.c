@@ -230,7 +230,7 @@ HOOK(0x417520, MenuManager_ApplyLanguage);
 
 void MenuManager_Refresh(MenuManager *mm, int all)
 {
-    GameNode *n;
+    Task *n;
     Task *w;
     TaskFn1 fn;
 
@@ -244,7 +244,7 @@ void MenuManager_Refresh(MenuManager *mm, int all)
         if (n->next && n) {
             do {
                 gTaskStack[gTaskStackTop++] = n->next && n->next->next ? n->next : NULL;
-                fn = gTaskHandlers1[MenuWindow_GetEvent91C()][((Task *)n)->type];
+                fn = gTaskHandlers1[MenuWindow_GetEvent91C()][n->type];
                 if (fn)
                     fn(n);
                 n = gTaskStack[--gTaskStackTop];

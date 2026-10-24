@@ -25,7 +25,7 @@ ORIG(0x4D3710, void, Task_Nothing, (void *task, void *arg));
 #define DIFFICULTY_COUNT 3
 
 typedef struct HumanAIConfigItem {
-    TaskHeader task;
+    Task task;
     int difficulty;
     int aiType;
     char difficultyExpr[0x100];
@@ -66,7 +66,7 @@ typedef struct HumanAIConfigItem {
 
 /* settings for every AI type and difficulty, from common/ai/settings.qsc */
 typedef struct HumanAIConfig {
-    TaskHeader task;
+    Task task;
     char unk20;
     char unk21[3];
     HumanAIConfigItem *items[AITYPE_COUNT][DIFFICULTY_COUNT];
@@ -80,7 +80,7 @@ typedef struct HumanAIConfigNames {
 
 /* only the fields HumanAIConfig_Apply touches */
 typedef struct HumanAI {
-    TaskHeader task;
+    Task task;
     char unk20[0x3D18];
     int aiType;
     char unk3D3C[8];
@@ -378,7 +378,7 @@ void HumanAIConfig_Apply(HumanAI *ai)
     ai->unk3DB8 = c->unk26C * k4096;
     ai->unk3DC8 = c->unk274;
     COPY(*(float *)(owner + 0x258), c->unk2A0);
-    if (((TaskHeader *)owner)->type == Soldier_GetType())
+    if (((Task *)owner)->type == Soldier_GetType())
         COPY(*(float *)(owner + 0xD04), c->unk2A4);
 }
 HOOK(0x406F70, HumanAIConfig_Apply);

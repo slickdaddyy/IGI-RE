@@ -6,23 +6,7 @@
 
 #include "igi.h"
 #include "types.h"
-
-typedef struct GameNode {
-    struct GameNode *next;
-    struct GameNode *prev;
-} GameNode;
-
-typedef struct Task {
-    GameNode node;
-    GameNode *head;
-    void *tail;
-    GameNode *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "task/tasktypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 typedef void (*TaskFn1)(void *task);
@@ -71,7 +55,7 @@ _Static_assert(sizeof(Game) == 0x158, "Game");
 extern Game *gGame;
 extern TaskFn gTaskHandlers[][0x180];
 extern TaskFn1 gTaskHandlers1[][0x180];
-extern GameNode *gTaskStack[];
+extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern const char gScriptEmptyString[];
 extern uint8_t gKeys[];

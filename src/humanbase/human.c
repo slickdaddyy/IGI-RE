@@ -627,7 +627,7 @@ void Human_AIEventHandler(Human *h, Human **msg)
 
     if (h == msg[5] && h == msg[6])
         return;
-    t = h->task.children;
+    t = h->task.head;
     if (!t->next)
         return;
     while (t) {
@@ -710,7 +710,7 @@ void WeaponGunPickup(Human *h, int *msg)
 
     if (h->dead)
         return;
-    t = h->task.children;
+    t = h->task.head;
     if (t->next) {
         for (;;) {
             type = Gun_GetType();

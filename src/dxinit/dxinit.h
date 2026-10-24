@@ -9,19 +9,7 @@
 
 #include "igi.h"
 #include "types.h"
-
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "task/tasktypes.h"
 
 /* the view the frame is drawn with (0xBCAAE0) */
 typedef struct View {

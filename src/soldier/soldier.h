@@ -5,20 +5,9 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "task/tasktypes.h"
 
 #pragma pack(push, 4)
-
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    struct Task *tail;
-    struct Task *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    uint16_t pooled;
-} Task;
 
 typedef void (*TaskHandler)(void *task, void *arg);
 typedef void (*TaskHandler1)(void *task);

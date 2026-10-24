@@ -6,6 +6,7 @@
 #include "hook.h"
 #include "glowmesh/glowmesh.h"
 #include "types.h"
+#include "task/tasktypes.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
@@ -17,13 +18,6 @@ ORIG(0x4D95E0, void, BoneDynCubeObj_Close, (void));
 ORIG(0x4D9610, uint16_t, BoneDynCubeObj_GetType, (void));
 ORIG(0x4DA180, void, Haze_GetVisible, (int *list, int *count));
 ORIG(0x4DAA20, int, Light_GetActive, (int *count));
-
-typedef struct Task {
-    Node node;
-    Node *children; /* list head */
-    char unkC[0x10];
-    uint16_t type;
-} Task;
 
 typedef void (*TaskHandler)(Task *task, void *arg);
 
@@ -75,7 +69,6 @@ typedef struct NearZArg {
     float minZ;
 } NearZArg;
 
-_Static_assert(sizeof(Task) == 0x20, "Task");
 _Static_assert(offsetof(BoneDynCubeObj, model) == 0x74, "model");
 _Static_assert(offsetof(BoneDynCubeObj, scale) == 0xA4, "scale");
 _Static_assert(offsetof(BoneDynCubeObj, unkD4) == 0xD4, "unkD4");
@@ -101,7 +94,7 @@ void BoneDynCubeObj_EnterHandler(BoneDynCubeObj *obj)
     gRenderFuncs[Mesh3D_GetDrawBoneMethod()](&d);
     memcpy(a.pos, obj->pos, sizeof(a.pos));
     memcpy(a.matrix, obj->matrix, sizeof(a.matrix));
-    c = (Task *)obj->task.children;
+    c = (Task *)obj->task.head;
     if (!c->node.next)
         return;
     while (c) {

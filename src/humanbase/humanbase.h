@@ -5,24 +5,12 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "task/tasktypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
 /* gTaskHandlers[slot][type] */
 extern TaskHandler gTaskHandlers[][0x180];
-
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *children;
-    void *unkC;
-    void *unk10;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
 
 typedef struct HumanText {
     void *grid;
