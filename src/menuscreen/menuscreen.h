@@ -8,6 +8,7 @@
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "qvertex/qvertextypes.h"
+#include "win/wintypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -45,12 +46,6 @@ typedef struct MenuWindow {
     char unk4E[2];
     int key;
 } MenuWindow;
-
-typedef struct Display {
-    int unk0;
-    int width;
-    int height;
-} Display;
 
 typedef struct Color {
     float r, g, b;
@@ -101,7 +96,7 @@ ORIG(0x4248A0, void, MenuWindow_HitTest, (void *w, int x, int y, int width, int 
 ORIG(0x424980, void, MenuWindow_DrawEnd, (void *w, float unk, float alpha, int focused));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 ORIG(0x4E7180, void, Sound_PlayName, (const char *name, int unk1, int unk2));
-ORIG(0x491CF0, Display *, Display_GetMode, (void));
+ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 ORIG(0x418D70, void, MenuManager_Free, (void *task));
 ORIG(0x418DE0, Sprite *, MenuManager_FindSprite, (void *mm, const char *name));
 ORIG(0x418E40, Sprite *, MenuManager_FindFont, (void *mm, const char *name));

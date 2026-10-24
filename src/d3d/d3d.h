@@ -6,19 +6,7 @@
 #include <d3d.h>
 
 #include "igi.h"
-
-/* A screen mode. The active one is at 0xC28B40, enumerated ones at 0xBCAE20. */
-typedef struct DisplayMode {
-    int unk0;
-    int width;
-    int height;
-    int backBuffers;
-    int depth;
-    char unk14[4];
-    int renderMode;
-    char device[0x80];
-    char desc[0x80];
-} DisplayMode;
+#include "win/wintypes.h"
 
 /* One DirectDraw driver, filled by the DirectDrawEnumerateEx callback at 0x491F10. */
 typedef struct DDDriver {
@@ -58,7 +46,6 @@ typedef struct D3DCallback {
     void (*fn)(void);
 } D3DCallback;
 
-_Static_assert(sizeof(DisplayMode) == 0x11C, "DisplayMode");
 _Static_assert(sizeof(DDDriver) == 0x4F8, "DDDriver");
 _Static_assert(sizeof(D3DDeviceEntry) == 0x668, "D3DDeviceEntry");
 _Static_assert(sizeof(DDEnumCtx) == 0x51C, "DDEnumCtx");

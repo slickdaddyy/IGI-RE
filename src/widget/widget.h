@@ -9,6 +9,7 @@
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "qvertex/qvertextypes.h"
+#include "win/wintypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -55,12 +56,6 @@ typedef struct MenuInput {
     int x, y;
 } MenuInput;
 
-typedef struct Display {
-    int unk0;
-    int width;
-    int height;
-} Display;
-
 typedef struct IntRange {
     int min, max;
 } IntRange;
@@ -96,7 +91,7 @@ ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F16C0, char, VarString_HasExpr, (VarString *v));
 ORIG(0x4F16E0, long double, VarString_EvalReal, (VarString *v, void *task));
-ORIG(0x491CF0, Display *, Display_GetMode, (void));
+ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 ORIG(0x419030, int, MenuManager_GetFade, (void *mm));
 ORIG(0x418FB0, MenuInput *, MenuManager_GetInput, (void *mm));
 ORIG(0x41A120, void, MenuWindow_ForwardEvent918, (void *task));

@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "menu/menu.h"
+#include "win/wintypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -76,21 +77,6 @@ ORIG(0x4F1050, int, Task_GetId, (void *task));
 typedef struct ResourceInfo {
     const char *name;
 } ResourceInfo;
-
-typedef struct DisplayMode {
-    int unk0;
-    int width;
-    int height;
-    int unkC;
-    int depth;
-    char unk14;
-    char unk15;
-    char unk16;
-    char unk17;
-    int renderMode;
-    char device[0x80];
-    char desc[0x80];
-} DisplayMode;
 
 typedef struct Profile {
     char unk0[0x1F];
@@ -757,7 +743,7 @@ MenuManager *MenuManager_New(Task *parent, const char *script, char ownsDisplay,
         mode.width = 640;
         mode.height = 480;
         mode.depth = 16;
-        mode.unkC = 1;
+        mode.backBuffers = 1;
         mode.renderMode = Direct3D_GetRenderMode();
         mode.unk16 = 1;
         mode.unk14 = 1;

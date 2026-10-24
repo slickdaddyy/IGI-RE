@@ -5,6 +5,7 @@
 #include "binocular/binocular.h"
 #include "qvertex/qvertextypes.h"
 #include "coll/colltypes.h"
+#include "win/wintypes.h"
 
 FN_EXTERN(BinocularHolder_Changed);
 FN_EXTERN(BinocularHolder_GetParams);
@@ -17,12 +18,6 @@ typedef struct Text {
     float x;
     float y;
 } Text;
-
-typedef struct Display {
-    int unk0;
-    int width;
-    int height;
-} Display;
 
 /* what the collision line tests skip */
 typedef struct CollFilter {
@@ -121,7 +116,7 @@ ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
 ORIG(0x48F2D0, int, AppContext_IsUSA, (void));
 ORIG(0x490370, int, Timer_GetMs, (void));
-ORIG(0x491CF0, Display *, Display_GetMode, (void));
+ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 ORIG(0x497D70, void, TransContext_Create, (void *ctx, Matrix *m, Vec3d *pos, float fov));
 ORIG(0x497E70, void, TransContext_Select, (void *ctx));
 ORIG(0x497ED0, void, TransContext_Invalidate, (void));

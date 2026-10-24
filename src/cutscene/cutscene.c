@@ -7,6 +7,7 @@
 #include "hook.h"
 #include "camera/camera.h"
 #include "param/paramtypes.h"
+#include "win/wintypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -75,12 +76,6 @@ typedef struct CutKey {
     EditCamera *key;
     float time;
 } CutKey;
-
-typedef struct DisplayMode {
-    int unk0;
-    int width;
-    int height;
-} DisplayMode;
 
 _Static_assert(offsetof(EditCamera, fov) == 0x88, "EditCamera.fov");
 _Static_assert(offsetof(EditCamera, unk98) == 0x98, "EditCamera.unk98");

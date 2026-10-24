@@ -9,6 +9,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "win/wintypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -250,11 +251,6 @@ ORIG(0x427D70, void, RocketPod_GetArgSize, (void *task, int *size));
 ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
-typedef struct DisplayMode {
-    int unk0;
-    int width;
-    int height;
-} DisplayMode;
 
 ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 

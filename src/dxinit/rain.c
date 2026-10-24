@@ -5,6 +5,7 @@
 
 #include "hook.h"
 #include "dxinit/dxinit.h"
+#include "win/wintypes.h"
 
 typedef struct MapHit {
     Task *task;
@@ -12,12 +13,6 @@ typedef struct MapHit {
     Vec3d pos;
     char unk20[0x50];
 } MapHit;
-
-typedef struct DisplayMode {
-    int unk0;
-    int width;
-    int height;
-} DisplayMode;
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401400, void, TaskType_SetHandler, (int type, uint8_t slot, void *fn));

@@ -7,6 +7,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "game/game.h"
+#include "win/wintypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A5234, int, crt_fclose, (void *f));
@@ -164,21 +165,6 @@ typedef struct GameSprite {
     char name[0x18];
     char sprite[0x18];
 } GameSprite;
-
-typedef struct DisplayMode {
-    int unk0;
-    int width;
-    int height;
-    int unkC;
-    int depth;
-    char unk14;
-    char unk15;
-    char unk16;
-    char unk17;
-    int renderMode;
-    char device[0x80];
-    char desc[0x80];
-} DisplayMode;
 
 /* only the fields read here */
 typedef struct QTaskList {
@@ -520,7 +506,7 @@ void Game_SetDisplayMode(void)
     m.width = *(int *)(p + 0xC);
     m.height = *(int *)(p + 0x10);
     m.unk14 = 1;
-    m.unkC = 1;
+    m.backBuffers = 1;
     m.depth = *(int *)(p + 0x14);
     m.renderMode = Direct3D_GetRenderMode();
     m.unk16 = 1;

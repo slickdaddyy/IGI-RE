@@ -2,16 +2,11 @@
 
 #include "hook.h"
 #include "viewport/viewport.h"
+#include "win/wintypes.h"
 
 /* "ViewportQTask": a rectangle of the screen drawn through a camera. Its
    draw handler sets up a scene and a TransContext, then sends the draw
    event to its children. */
-
-typedef struct DisplayMode {
-    int unk0;
-    int width;
-    int height;
-} DisplayMode;
 
 typedef void (*ViewportCallback)(Camera *camera);
 

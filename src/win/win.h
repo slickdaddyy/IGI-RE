@@ -4,6 +4,7 @@
 #include <windows.h>
 
 #include "igi.h"
+#include "win/wintypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -53,22 +54,6 @@ typedef struct AppContext {
 } AppContext;
 
 extern AppContext gApp;
-
-/* A screen mode. The active one is at 0xC28B40. */
-typedef struct DisplayMode {
-    int unk0;
-    int width;
-    int height;
-    int unkC;
-    int depth;
-    char unk14;
-    char unk15;
-    char unk16;
-    char unk17;
-    int renderMode;
-    char device[0x80];
-    char desc[0x80];
-} DisplayMode;
 
 void AppContext_Open(void);
 void AppContext_Close(void);

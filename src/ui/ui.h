@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "win/wintypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -50,12 +51,6 @@ typedef struct MenuInput {
     int wheel;
     int x, y;
 } MenuInput;
-
-typedef struct Display {
-    int unk0;
-    int width;
-    int height;
-} Display;
 
 _Static_assert(sizeof(MenuWindow) == 0x54, "MenuWindow");
 
@@ -101,7 +96,7 @@ ORIG(0x424B60, MenuWindow *, MenuWindow_New, (void *parent, void *menu));
 ORIG(0x41A120, void, MenuWindow_ForwardEvent918, (void *task));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 ORIG(0x4E7180, void, Sound_PlayName, (const char *name, int flags, void *params));
-ORIG(0x491CF0, Display *, Display_GetMode, (void));
+ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x402870, int, Flow_GetFps, (void));
 ORIG(0x48A910, int, Keys_GetCount, (void));

@@ -8,16 +8,11 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "win/wintypes.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Display {
-    int unk0;
-    int width;
-    int height;
-} Display;
 
 /* "RigidDynCubeObj" (0xF0 bytes), a moving object with a model */
 typedef struct RigidObj {

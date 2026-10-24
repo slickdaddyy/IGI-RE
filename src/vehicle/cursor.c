@@ -5,7 +5,7 @@
 #include "vehicle/vehicle.h"
 
 ORIG(0x48F130, int, AppContext_IsFullscreen, (void));
-ORIG(0x491CF0, Display *, Display_GetMode, (void));
+ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 
 /* the mouse pointer of the menus */
 typedef struct Cursor {

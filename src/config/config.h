@@ -4,18 +4,7 @@
 #include "igi.h"
 #include "script/scripttypes.h"
 #include "config/configtypes.h"
-
-/* A screen mode as the display driver lists it. */
-typedef struct DisplayMode {
-    int unk0;
-    int width;
-    int height;
-    int unkC;
-    int depth;
-    int unk14;
-    int unk18;
-    char device[0x100];
-} DisplayMode;
+#include "win/wintypes.h"
 
 /* name/value pairs registered as script constants */
 typedef struct ConfigConstant {

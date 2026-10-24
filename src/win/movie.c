@@ -361,7 +361,7 @@ char Movie_InitVideo(Movie *m)
     memset(&mode, 0, sizeof(mode));
     mode.width = m->format.biWidth * scale;
     mode.height = m->format.biHeight * scale;
-    mode.unkC = 1;
+    mode.backBuffers = 1;
     mode.depth = depth;
     mode.unk14 = 0;
     mode.unk15 = 0;

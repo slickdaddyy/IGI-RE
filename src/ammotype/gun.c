@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "ammotype/ammotype.h"
 #include "qvertex/qvertextypes.h"
+#include "win/wintypes.h"
 
 /* The "Gun" task (0x1B0 bytes, 0x5BE3C6), base of the hand weapons. These
    are its handlers from 0x479780 on; the type is registered by 0x477E30. */
@@ -126,12 +127,6 @@ typedef struct Text {
     float x, y;
 } Text;
 
-typedef struct Display {
-    int unk0;
-    int width;
-    int height;
-} Display;
-
 /* the HUD sprites and text the human render handler passes on */
 typedef struct Hud {
     char unk0[0x4E0];
@@ -175,7 +170,7 @@ ORIG(0x46C980, Task *, GunPickup_New, (Task *parent, Vec3d *pos, float *matrix, 
 ORIG(0x4785F0, void, Gun_Reset, (Gun *g));
 ORIG(0x4788D0, void, Gun_RemoveFromWorld, (Gun *g));
 ORIG(0x489F50, char, HumanPlayer_AnimDone, (Task *h));
-ORIG(0x491CF0, Display *, Display_GetMode, (void));
+ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 ORIG(0x4B4770, long double, Random_Float, (void *rng));
 ORIG(0x4B4E00, void, Draw_Sprite, (void *s, float x, float y, float r, float g, float b, int frame, int unk4,
                                    int unk8));
