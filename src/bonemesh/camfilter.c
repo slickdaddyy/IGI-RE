@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "bonemesh/bonemesh.h"
+#include "camfeed/camfeedtypes.h"
 
 FN_EXTERN(BandFilter_Draw);
 FN_EXTERN(BandFilter_DrawPrim);
@@ -44,60 +45,11 @@ ORIG(0x4B7030, void, Sprite_Delete, (void *sprite));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 
-/* horizontal scan lines in a colour, plus random noise streaks */
-typedef struct LineFilter {
-    Task task;
-    float color[3];
-    float depth;
-    float level;
-    int sorted;
-} LineFilter;
-
-/* black bars at the top and bottom of a clip window */
-typedef struct WideScreenFilter {
-    Task task;
-    float color[3];
-    int unk2C;
-    int clipW, clipH, clipX, clipY;
-    float barHeight;
-} WideScreenFilter;
-
-/* a 16x16 texture of colour bands */
-typedef struct BandFilter {
-    Task task;
-    float depth;
-    float level;
-    float maxLevel;
-    char tex[0x24];
-    int counter;
-    int period;
-    int timer;
-    int interval;
-    int camera;
-    float color[3];
-    void *font;
-} BandFilter;
-
-typedef struct HandiCamFilter {
-    Task task;
-    float color[3];
-    float depth;
-    void *font;
-    char battery[0x18];
-    int blink;
-    unsigned int lastTime;
-} HandiCamFilter;
-
 typedef struct FilterVertex {
     float x, y, z, rhw;
     uint32_t color;
     float u, v;
 } FilterVertex;
-
-_Static_assert(sizeof(LineFilter) == 0x38, "LineFilter");
-_Static_assert(sizeof(WideScreenFilter) == 0x44, "WideScreenFilter");
-_Static_assert(sizeof(BandFilter) == 0x74, "BandFilter");
-_Static_assert(sizeof(HandiCamFilter) == 0x54, "HandiCamFilter");
 
 extern uint16_t gLineFilterType;
 extern uint16_t gWideScreenFilterType;
@@ -166,8 +118,8 @@ LineFilter *LineFilter_New(void *parent, float r, float g, float b, float depth,
 }
 HOOK(0x4A23E0, LineFilter_New);
 
-WideScreenFilter *WideScreenFilter_New(void *parent, float r, float g, float b, int unk2C, int w, int h, int x, int y,
-                                       float barHeight)
+WideScreenFilter *WideScreenFilter_New(void *parent, float r, float g, float b, float unk2C, float w, float h, float x,
+                                       float y, float barHeight)
 {
     WideScreenFilter *t = (WideScreenFilter *)Task_New(parent, gWideScreenFilterType, NULL);
 
@@ -175,10 +127,10 @@ WideScreenFilter *WideScreenFilter_New(void *parent, float r, float g, float b, 
     t->color[1] = g;
     t->color[2] = b;
     t->unk2C = unk2C;
-    t->clipW = w;
-    t->clipH = h;
-    t->clipX = x;
-    t->clipY = y;
+    t->w = w;
+    t->h = h;
+    t->x = x;
+    t->y = y;
     t->barHeight = barHeight;
     return t;
 }
@@ -202,7 +154,7 @@ BandFilter *BandFilter_New(void *parent, float depth, float r, float g, float b,
     t->depth = depth;
     t->level = 0;
     t->maxLevel = maxLevel;
-    Texture_Alloc(t->tex, 0, 0x40, 0x10, 0x10, 3, 0, 0);
+    Texture_Alloc(&t->tex, 0, 0x40, 0x10, 0x10, 3, 0, 0);
     t->timer = interval;
     t->interval = interval;
     t->counter = 0;
@@ -225,7 +177,7 @@ HOOK(0x4A2490, BandFilter_New);
 void BandFilter_Delete(BandFilter *t)
 {
     Sprite_Delete(t->font);
-    Texture_Free(t->tex);
+    Texture_Free(&t->tex);
 }
 HOOK(0x4A25E0, BandFilter_Delete);
 
@@ -329,7 +281,7 @@ HandiCamFilter *HandiCamFilter_New(void *parent, float r, float g, float b, floa
     t->color[2] = b;
     t->depth = depth;
     t->blink = 0;
-    t->lastTime = Timer_GetMs();
+    t->lastMs = Timer_GetMs();
     t->font = NULL;
     t->font = Sprite_New(gTimecodeFont);
     Sprite_Load(t->battery, gBatterySprite);
