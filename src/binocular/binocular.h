@@ -45,7 +45,7 @@ _Static_assert(sizeof(WeaponUseArg) == 0x30, "WeaponUseArg");
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern TransCtx gView;
+extern TransContext gTransContext;
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 

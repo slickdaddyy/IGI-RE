@@ -8,6 +8,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "task/tasktypes.h"
+#include "transctx/transctxtypes.h"
 
 typedef void (*TaskHandler)();
 
@@ -17,7 +18,7 @@ extern void *gTaskHandlers[][0x180];
 #define TASK_HANDLER(slot, type) (((TaskHandler *)gTaskHandlers)[(slot) * 0x180 + (type)])
 extern void *gCurrentWorld;
 extern uint16_t gDynCubeObjType;
-extern Vec3d gCamPos;
+extern TransContext gTransContext;
 
 /* exe constants, read in place so the x87 code sees the same values */
 extern float kZero;

@@ -241,30 +241,30 @@ void TerrainMesh_UpdateNearZ(float *arg)
         n = m->vertCount & 0xFFFF;
         if (m->type != 0x10)
             continue;
-        c[0] = m->center[0] - gViewPos[0];
-        c[1] = m->center[1] - gViewPos[1];
-        c[2] = m->center[2] - gViewPos[2];
-        dist = gViewMatrix[8] * c[2] + gViewMatrix[7] * c[1] + gViewMatrix[6] * c[0] - kNearBias.d;
+        c[0] = m->center[0] - gTransContext.pos.x;
+        c[1] = m->center[1] - gTransContext.pos.y;
+        c[2] = m->center[2] - gTransContext.pos.z;
+        dist = gTransContext.matrix.m[8] * c[2] + gTransContext.matrix.m[7] * c[1] + gTransContext.matrix.m[6] * c[0] - kNearBias.d;
         if (!(arg[2] > dist))
             continue;
         p = m->verts;
         for (j = 0; j < n; j++, p++) {
-            long double vx = p->x - gViewPos[0];
-            long double vy = p->y - gViewPos[1];
-            long double vz = p->z - gViewPos[2];
+            long double vx = p->x - gTransContext.pos.x;
+            long double vy = p->y - gTransContext.pos.y;
+            long double vz = p->z - gTransContext.pos.z;
 
-            a = gViewMatrix[2] * vz + gViewMatrix[1] * vy + gViewMatrix[0] * vx;
-            b = gViewMatrix[5] * vz + gViewMatrix[4] * vy + gViewMatrix[3] * vx;
-            z = gViewMatrix[8] * vz + gViewMatrix[7] * vy + gViewMatrix[6] * vx;
+            a = gTransContext.matrix.m[2] * vz + gTransContext.matrix.m[1] * vy + gTransContext.matrix.m[0] * vx;
+            b = gTransContext.matrix.m[5] * vz + gTransContext.matrix.m[4] * vy + gTransContext.matrix.m[3] * vx;
+            z = gTransContext.matrix.m[8] * vz + gTransContext.matrix.m[7] * vy + gTransContext.matrix.m[6] * vx;
             if (!(z >= nearZ)) {
                 code = 0x10;
             } else {
                 long double r = kOne.f / z, px, py;
 
                 rhw = r;
-                px = r * a * gViewScaleX + gViewCenterX;
+                px = r * a * gTransContext.scaleX + gTransContext.centerX;
                 sx = px;
-                py = gViewScaleY * rhw * b + gViewCenterY;
+                py = gTransContext.scaleY * rhw * b + gTransContext.centerY;
                 sy = py;
                 code = (sy > gSceneMaxY) << 3 | (px > gSceneMaxX) << 2 | !(py >= gSceneMinY) << 1 |
                        !(px >= gSceneMinX);
@@ -396,26 +396,26 @@ static void setup_view(void)
 
     gTerrainRight = gSceneW + gSceneX;
     gTerrainLeft = gSceneX;
-    gTerrainScaleY = gViewScaleY;
+    gTerrainScaleY = gTransContext.scaleY;
     gTerrainBottom = gSceneH + gSceneY;
     gTerrainTop = gSceneY;
     gTerrainCenterX = gSceneHalfW + gSceneX;
-    gTerrainScaleX = gViewScaleX;
+    gTerrainScaleX = gTransContext.scaleX;
     gTerrainCenterY = gSceneHalfH + gSceneY;
     gTerrainInvSize = kOne.f / (long double)(gQCubeMinSize - 0x40);
     gMorphStart = x87_fistp((long double)(gQCubeMinSize + 0x40) * kThreeEighths.d);
     gMorphScale = gTerrainInvSize * k8Thirds.f;
     c = ViewSlot_GetCurrent();
-    nx = -(long double)gViewPos[0];
-    py = gViewPos[1];
-    pz = gViewPos[2];
+    nx = -(long double)gTransContext.pos.x;
+    py = gTransContext.pos.y;
+    pz = gTransContext.pos.z;
     gUnkC3108C = c;
     ny = -(long double)py;
     nz = -(long double)pz;
-    t0 = gViewMatrix[2] * nz + gViewMatrix[1] * ny + gViewMatrix[0] * nx;
-    t1 = gViewMatrix[5] * nz + gViewMatrix[4] * ny + gViewMatrix[3] * nx;
-    t2 = gViewMatrix[8] * nz + gViewMatrix[7] * ny + gViewMatrix[6] * nx;
-    memcpy(gTerrainView, gViewMatrix, 40);
+    t0 = gTransContext.matrix.m[2] * nz + gTransContext.matrix.m[1] * ny + gTransContext.matrix.m[0] * nx;
+    t1 = gTransContext.matrix.m[5] * nz + gTransContext.matrix.m[4] * ny + gTransContext.matrix.m[3] * nx;
+    t2 = gTransContext.matrix.m[8] * nz + gTransContext.matrix.m[7] * ny + gTransContext.matrix.m[6] * nx;
+    memcpy(gTerrainView, &gTransContext.matrix, 40);
     gTerrainView[10] = t0;
     gTerrainView[11] = t1;
     gTerrainView[12] = t2;
@@ -927,7 +927,7 @@ static long double clamp01(long double v)
    the original). */
 void TerrainMesh_DrawTriangle(TerrainPoly *t)
 {
-    double scaleX = gViewScaleX, scaleY = gViewScaleY, left = gSceneX, top = gSceneY;
+    double scaleX = gTransContext.scaleX, scaleY = gTransContext.scaleY, left = gSceneX, top = gSceneY;
     double right = (long double)gSceneW + gSceneX;
     double bottom = (long double)gSceneH + gSceneY;
     double centerX = (long double)gSceneHalfW + gSceneX;
@@ -973,16 +973,16 @@ void TerrainMesh_DrawTriangle(TerrainPoly *t)
             uv[i][1] = t->uv[i][1];
         }
     }
-    vx = c[0] - gViewPos[0];
-    vy = c[1] - gViewPos[1];
-    vz = c[2] - gViewPos[2];
-    t0 = gViewMatrix[2] * vz + gViewMatrix[1] * vy + gViewMatrix[0] * vx;
-    t1 = gViewMatrix[5] * vz + gViewMatrix[4] * vy + gViewMatrix[3] * vx;
-    t2 = gViewMatrix[8] * vz + gViewMatrix[7] * vy + gViewMatrix[6] * vx;
+    vx = c[0] - gTransContext.pos.x;
+    vy = c[1] - gTransContext.pos.y;
+    vz = c[2] - gTransContext.pos.z;
+    t0 = gTransContext.matrix.m[2] * vz + gTransContext.matrix.m[1] * vy + gTransContext.matrix.m[0] * vx;
+    t1 = gTransContext.matrix.m[5] * vz + gTransContext.matrix.m[4] * vy + gTransContext.matrix.m[3] * vx;
+    t2 = gTransContext.matrix.m[8] * vz + gTransContext.matrix.m[7] * vy + gTransContext.matrix.m[6] * vx;
     for (i = 0; i < 3; i++) {
-        double rx = gViewMatrix[2] * rel[i][2] + gViewMatrix[0] * rel[i][0] + gViewMatrix[1] * rel[i][1];
-        double ry = gViewMatrix[5] * rel[i][2] + gViewMatrix[3] * rel[i][0] + gViewMatrix[4] * rel[i][1];
-        double rz = gViewMatrix[8] * rel[i][2] + gViewMatrix[6] * rel[i][0] + gViewMatrix[7] * rel[i][1];
+        double rx = gTransContext.matrix.m[2] * rel[i][2] + gTransContext.matrix.m[0] * rel[i][0] + gTransContext.matrix.m[1] * rel[i][1];
+        double ry = gTransContext.matrix.m[5] * rel[i][2] + gTransContext.matrix.m[3] * rel[i][0] + gTransContext.matrix.m[4] * rel[i][1];
+        double rz = gTransContext.matrix.m[8] * rel[i][2] + gTransContext.matrix.m[6] * rel[i][0] + gTransContext.matrix.m[7] * rel[i][1];
 
         view[i][0] = t0 + rx;
         view[i][1] = t1 + ry;
@@ -1054,8 +1054,8 @@ void TerrainMesh_ClipEdge(int a, int b)
     c1 = ((double)vb->c[1] - (double)va->c[1]) * t + (double)va->c[1];
     c2 = ((double)vb->c[2] - (double)va->c[2]) * t + (double)va->c[2];
     c3 = ((long double)vb->c[3] - va->c[3]) * t + va->c[3];
-    sx = gViewScaleX * x * kInvClipZ.d + ((long double)gSceneHalfW + gSceneX);
-    syp = gViewScaleY * y * kInvClipZ.d;
+    sx = gTransContext.scaleX * x * kInvClipZ.d + ((long double)gSceneHalfW + gSceneX);
+    syp = gTransContext.scaleY * y * kInvClipZ.d;
     sy = ((long double)gSceneHalfH + gSceneY) + syp;
     va->u = u * kClipUVScale.d;
     va->v = v * kClipUVScale.d;

@@ -218,8 +218,8 @@ HOOK(0x498B80, Rain_Render);
 void Rain_UpdateGrid(Rain *r)
 {
     RainCell *c = r->cells;
-    int ix = (int)(long long)crt_floor((gViewPos.x - kGridOrigin) * kTileInv + kHalfD);
-    int iy = (int)(long long)crt_floor((gViewPos.y - kGridOrigin) * kTileInv + kHalfD);
+    int ix = (int)(long long)crt_floor((gTransContext.pos.x - kGridOrigin) * kTileInv + kHalfD);
+    int iy = (int)(long long)crt_floor((gTransContext.pos.y - kGridOrigin) * kTileInv + kHalfD);
     int mx = ix % 12, my = iy % 12;
     double x0, y0;
     int budget, i, j;
@@ -235,13 +235,13 @@ void Rain_UpdateGrid(Rain *r)
     if (!r->hasLast) {
         budget = 10000;
     } else {
-        long double dx = fabsl((long double)gViewPos.x - r->last.x);
-        float dy = fabsl((long double)gViewPos.y - r->last.y);
+        long double dx = fabsl((long double)gTransContext.pos.x - r->last.x);
+        float dy = fabsl((long double)gTransContext.pos.y - r->last.y);
 
         budget = (int)(long long)crt_ceil(dx * kTileInvF * kTwelve);
         budget += (int)(long long)crt_ceil(dy * kTileInvF * kTwelve);
     }
-    r->last = gViewPos;
+    r->last = gTransContext.pos;
     r->hasLast = 1;
     for (i = 0; i < 12; i++, x0 += kTile, c += 12) {
         double x = i < mx ? x0 + kTwoTiles : x0;
@@ -258,7 +258,7 @@ void Rain_UpdateGrid(Rain *r)
 
                 c->x = x;
                 c->y = cy;
-                c->z = gViewPos.z + r->height;
+                c->z = gTransContext.pos.z + r->height;
                 Coll_DropPointsMat(r->world, &hit, (Vec3d *)c, 1, &dz, 0xFF, 0, 0xC8000000);
                 c->z = hit.pos.z;
                 memcpy(&c[12], c, sizeof(Vec3d));
@@ -278,7 +278,7 @@ HOOK(0x498BD0, Rain_UpdateGrid);
 void Rain_Draw(Rain *r)
 {
     RainCell *c = &r->cells[(r->cellX + 1) * 24 + r->cellY + 1];
-    double z = crt_floor((gViewPos.z - kLayerOrigin) * kLayerInv + kHalfD) * kLayer;
+    double z = crt_floor((gTransContext.pos.z - kLayerOrigin) * kLayerInv + kHalfD) * kLayer;
     int i, j;
 
     Rain_FillVB(r);
@@ -333,9 +333,9 @@ void Rain_FillVB(Rain *r)
         RainList *l;
 
         if (r->snow == 1) {
-            float vx = gView.matrix.m[1] * d->y + gView.matrix.m[0] * d->x + gView.matrix.m[2] * d->z;
-            float vy = gView.matrix.m[4] * d->y + gView.matrix.m[3] * d->x + gView.matrix.m[5] * d->z;
-            float vz = gView.matrix.m[7] * d->y + gView.matrix.m[6] * d->x + gView.matrix.m[8] * d->z;
+            float vx = gTransContext.matrix.m[1] * d->y + gTransContext.matrix.m[0] * d->x + gTransContext.matrix.m[2] * d->z;
+            float vy = gTransContext.matrix.m[4] * d->y + gTransContext.matrix.m[3] * d->x + gTransContext.matrix.m[5] * d->z;
+            float vz = gTransContext.matrix.m[7] * d->y + gTransContext.matrix.m[6] * d->x + gTransContext.matrix.m[8] * d->z;
             float x0 = vx - size, x1 = vx + size;
             float y0 = vy - size, y1 = vy + size;
 
@@ -379,9 +379,9 @@ void Rain_FillVB(Rain *r)
     r->vb->lpVtbl->Unlock(r->vb);
     if (r->snow == 1) {
         for (i = 0; i < 3; i++) {
-            r->matrix[i * 4] = gView.matrix.m[i * 3] * gWorldScale;
-            r->matrix[i * 4 + 1] = gView.matrix.m[i * 3 + 1] * gWorldScale;
-            r->matrix[i * 4 + 2] = gView.matrix.m[i * 3 + 2] * gWorldScale;
+            r->matrix[i * 4] = gTransContext.matrix.m[i * 3] * gWorldScale;
+            r->matrix[i * 4 + 1] = gTransContext.matrix.m[i * 3 + 1] * gWorldScale;
+            r->matrix[i * 4 + 2] = gTransContext.matrix.m[i * 3 + 2] * gWorldScale;
             r->matrix[i * 4 + 3] = 0.0f;
         }
     } else {
@@ -456,10 +456,10 @@ void Rain_DrawCell(RainDrawItem *it)
         mult = 2;
     }
     SET_TSS(1, 1, 1);
-    r->matrix[12] = (c->x - gViewPos.x) * gWorldScale;
-    r->matrix[13] = (c->y - gViewPos.y) * gWorldScale;
+    r->matrix[12] = (c->x - gTransContext.pos.x) * gWorldScale;
+    r->matrix[13] = (c->y - gTransContext.pos.y) * gWorldScale;
     r->matrix[15] = 1.0f;
-    r->matrix[14] = (it->z - gViewPos.z + kTop) * gWorldScale;
+    r->matrix[14] = (it->z - gTransContext.pos.z + kTop) * gWorldScale;
     for (k = 3; k; k--) {
         long double hl;
 
@@ -485,7 +485,7 @@ HOOK(0x499430, Rain_DrawCell);
 
 static float Rain_View(int row, long double px, long double py, long double pz)
 {
-    return gView.matrix.m[row + 2] * pz + gView.matrix.m[row + 1] * py + gView.matrix.m[row] * px;
+    return gTransContext.matrix.m[row + 2] * pz + gTransContext.matrix.m[row + 1] * py + gTransContext.matrix.m[row] * px;
 }
 
 /* Outcodes of the cells around the camera: bit 5 set, bits 0-4 the outcodes shared by the
@@ -503,13 +503,13 @@ void Rain_ClipCells(Rain *r, double z)
 
             if (c->flags & 0x20) {
                 float v[3], u[3], s[2];
-                long double px = c->x - gViewPos.x, py = c->y - gViewPos.y, pz = z - gViewPos.z;
+                long double px = c->x - gTransContext.pos.x, py = c->y - gTransContext.pos.y, pz = z - gTransContext.pos.z;
                 long double depth;
                 double z2;
 
                 v[0] = Rain_View(0, px, py, pz);
                 v[1] = Rain_View(3, px, py, pz);
-                depth = gView.matrix.m[8] * pz + gView.matrix.m[7] * py + gView.matrix.m[6] * px;
+                depth = gTransContext.matrix.m[8] * pz + gTransContext.matrix.m[7] * py + gTransContext.matrix.m[6] * px;
                 v[2] = depth;
                 if (depth > kZero) {
                     TransContext_ProjectView(s, v);
@@ -524,12 +524,12 @@ void Rain_ClipCells(Rain *r, double z)
                     flags &= v[1] > kZero ? ~2u : ~8u;
                 }
                 z2 = z + kTop;
-                px = c->x - gViewPos.x;
-                py = c->y - gViewPos.y;
-                pz = z2 - gViewPos.z;
+                px = c->x - gTransContext.pos.x;
+                py = c->y - gTransContext.pos.y;
+                pz = z2 - gTransContext.pos.z;
                 u[0] = Rain_View(0, px, py, pz);
                 u[1] = Rain_View(3, px, py, pz);
-                depth = gView.matrix.m[8] * pz + gView.matrix.m[7] * py + gView.matrix.m[6] * px;
+                depth = gTransContext.matrix.m[8] * pz + gTransContext.matrix.m[7] * py + gTransContext.matrix.m[6] * px;
                 u[2] = depth;
                 if (depth > kZero) {
                     TransContext_ProjectView(s, u);

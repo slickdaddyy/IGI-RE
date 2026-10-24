@@ -3,6 +3,7 @@
 
 #include "sector/sector.h"
 #include "hook.h"
+#include "transctx/transctxtypes.h"
 
 ORIG(0x4DA180, void, Haze_GetVisible, (int **layers, int *count));
 ORIG(0x4DA300, void, Haze_GetFog, (float *color, float *amount, const Vec3d *from, const Vec3d *to, int *layers,
@@ -38,8 +39,7 @@ extern Pool gLightPool;
 extern int gLightStack[];
 extern int gSpotCount;
 extern int gPointCount;
-extern Vec3d gViewPos;
-extern float gViewFov;
+extern TransContext gTransContext;
 
 extern const float kFovScale;    /* 0.83 */
 extern const float kFovBase;     /* 0.17 */
@@ -60,8 +60,8 @@ void Fog_Compute(float *out, const Vec3d *pos, float depth, float scale, int *la
 
     if (!layers)
         Haze_GetVisible(&layers, &count);
-    Haze_GetFog(color, out, &gViewPos, pos, layers, count);
-    f = gViewFov * kFovScale + kFovBase;
+    Haze_GetFog(color, out, &gTransContext.pos, pos, layers, count);
+    f = gTransContext.fov * kFovScale + kFovBase;
     if (f < kOne)
         depth = f * depth;
     *out = *out * kFogScale;

@@ -50,7 +50,7 @@ typedef struct MeshLoadArg {
 _Static_assert(sizeof(MeshRender) == 0x38, "MeshRender");
 
 extern void *gD3DDevice;
-extern TransCtx gTransCtx;
+extern TransContext gTransContext;
 extern SceneArea gSceneArea;
 extern float gWorldScale;
 extern void (*gRenderFuncs[])(void *);

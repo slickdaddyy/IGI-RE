@@ -6,6 +6,7 @@
 
 #include "hook.h"
 #include "flatwater/flatwater.h"
+#include "transctx/transctxtypes.h"
 
 /* "FlatWater": a flat water plane at a fixed height, drawn with the
    "FlatWaterLayer" textures under it. */
@@ -48,7 +49,7 @@ extern void *gFlatWaterLayerParams;
 extern const float kRange01[];
 extern const float kRange11[];
 
-extern double gCamZ;
+extern TransContext gTransContext;
 extern float gTerrainFogScale;
 extern float k4096;
 extern float kNear; /* 409.6 */
@@ -162,13 +163,13 @@ void FlatWater_Render(FlatWater *w)
     int i, j, k, n, c;
 
     a = w->unk78 * k4096;
-    dh = w->height - gCamZ;
+    dh = w->height - gTransContext.pos.z;
     h = dh;
     if (!(dh >= kZero))
         dh = -dh;
     if (!(dh >= kNear))
         return;
-    memcpy(cam, gViewM, sizeof(cam));
+    memcpy(cam, gTransContext.matrix.m, sizeof(cam));
     if (!fne(cam[6], kZero) && !fne(cam[7], kZero))
         cam[6] = 1.0f;
     cam[8] = 0;
@@ -202,13 +203,13 @@ void FlatWater_Render(FlatWater *w)
             n1[0] = nega * right[0] + fa[0];
             n1[1] = nega * right[1] + fa[1];
             n1z = nega * right[2] + fa[2] + h;
-            va[0] = n1z * gViewM[2] + n1[1] * gViewM[1] + n1[0] * gViewM[0];
-            va[1] = n1z * gViewM[5] + n1[1] * gViewM[4] + n1[0] * gViewM[3];
-            va2 = n1z * gViewM[8] + n1[1] * gViewM[7] + n1[0] * gViewM[6];
+            va[0] = n1z * gTransContext.matrix.m[2] + n1[1] * gTransContext.matrix.m[1] + n1[0] * gTransContext.matrix.m[0];
+            va[1] = n1z * gTransContext.matrix.m[5] + n1[1] * gTransContext.matrix.m[4] + n1[0] * gTransContext.matrix.m[3];
+            va2 = n1z * gTransContext.matrix.m[8] + n1[1] * gTransContext.matrix.m[7] + n1[0] * gTransContext.matrix.m[6];
             va[2] = va2;
-            vb[0] = n0[2] * gViewM[2] + n0[1] * gViewM[1] + n0[0] * gViewM[0];
-            vb[1] = n0[2] * gViewM[5] + n0[1] * gViewM[4] + n0[0] * gViewM[3];
-            vb[2] = n0[2] * gViewM[8] + n0[1] * gViewM[7] + n0[0] * gViewM[6];
+            vb[0] = n0[2] * gTransContext.matrix.m[2] + n0[1] * gTransContext.matrix.m[1] + n0[0] * gTransContext.matrix.m[0];
+            vb[1] = n0[2] * gTransContext.matrix.m[5] + n0[1] * gTransContext.matrix.m[4] + n0[0] * gTransContext.matrix.m[3];
+            vb[2] = n0[2] * gTransContext.matrix.m[8] + n0[1] * gTransContext.matrix.m[7] + n0[0] * gTransContext.matrix.m[6];
             if (!(va2 > kZero) || !(vb[2] > kZero))
                 continue;
             TransContext_ProjectView(&sa.x, va);
@@ -372,15 +373,15 @@ void FlatWater_Render(FlatWater *w)
 
         /* texture coordinates and depth from where each point meets the plane */
         for (i = 0; i < n; i++) {
-            long double su = (pts[i].x - ox) / gViewScaleX;
-            long double sv = (pts[i].y - oy) / gViewScaleY;
+            long double su = (pts[i].x - ox) / gTransContext.scaleX;
+            long double sv = (pts[i].y - oy) / gTransContext.scaleY;
             float dir[3], p[3], nrm[3], hit[3];
             long double t1, z, f;
             double t2;
 
-            dir[0] = sv * gViewM[3] + su * gViewM[0] + gViewM[6];
-            dir[1] = sv * gViewM[4] + su * gViewM[1] + gViewM[7];
-            dir[2] = sv * gViewM[5] + su * gViewM[2] + gViewM[8];
+            dir[0] = sv * gTransContext.matrix.m[3] + su * gTransContext.matrix.m[0] + gTransContext.matrix.m[6];
+            dir[1] = sv * gTransContext.matrix.m[4] + su * gTransContext.matrix.m[1] + gTransContext.matrix.m[7];
+            dir[2] = sv * gTransContext.matrix.m[5] + su * gTransContext.matrix.m[2] + gTransContext.matrix.m[8];
             if (fne(dir[0], kZero) || fne(dir[1], kZero) || fne(dir[2], kZero)) {
                 inv = kOne64 / __builtin_sqrtl((long double)dir[0] * dir[0] + (long double)dir[1] * dir[1] +
                                                (long double)dir[2] * dir[2]);
@@ -404,13 +405,13 @@ void FlatWater_Render(FlatWater *w)
             hit[0] = hit[0] - p[0];
             hit[1] = hit[1] - p[1];
             hit[2] = hit[2] - p[2];
-            t1 = (gCamPos[0] + k2Pow30) * l->scale;
-            t2 = (gCamPos[1] + k2Pow30) * l->scale;
+            t1 = (gTransContext.pos.x + k2Pow30) * l->scale;
+            t2 = (gTransContext.pos.y + k2Pow30) * l->scale;
             t1 = t1 - (long double)x87_fistp(t1);
             t2 = t2 - (long double)x87_fistp(t2);
             uv[i].x = hit[0] * l->scale + t1 + l->offsetU;
             uv[i].y = hit[1] * l->scale + t2 + l->offsetV;
-            z = hit[2] * gViewM[8] + hit[1] * gViewM[7] + hit[0] * gViewM[6];
+            z = hit[2] * gTransContext.matrix.m[8] + hit[1] * gTransContext.matrix.m[7] + hit[0] * gTransContext.matrix.m[6];
             if (!(z > k4096))
                 z = k4096;
             depth[i] = z;

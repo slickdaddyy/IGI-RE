@@ -204,10 +204,10 @@ void QCube_Walk(WWorld *w)
     sy = kSlope.f / walk_cos_atan(fovy) * kFixedOne.f;
     for (i = 0; i < 64; i++)
         perm[i] = gCollChildTable[i];
-    cy = gTransContext.pos[1];
-    cz = gTransContext.pos[2];
-    memcpy(m, gTransContext.m, sizeof(m));
-    camx = walk_round(gTransContext.pos[0]);
+    cy = gTransContext.pos.y;
+    cz = gTransContext.pos.z;
+    memcpy(m, gTransContext.matrix.m, sizeof(m));
+    camx = walk_round(gTransContext.pos.x);
     ox = -(camx + gQCubeOrigin[0]);
     camy = walk_round(cy);
     oy = -(gQCubeOrigin[1] + camy);

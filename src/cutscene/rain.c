@@ -8,6 +8,7 @@
 #include "camera/camera.h"
 #include "param/paramtypes.h"
 #include "dxinit/dxinittypes.h"
+#include "transctx/transctxtypes.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -156,8 +157,7 @@ extern int gRainMemory;
 extern RainObj *gRainObjs[];
 extern RainCallback gRainCallback;
 extern void *gRainParams;
-extern Matrix gViewMatrix;
-extern Vec3d gViewPos;
+extern TransContext gTransContext;
 
 #define RAIN_CELLS (7 * 7 * 7)
 #define RAIN_DROPS 20
@@ -660,15 +660,15 @@ void RainObj_RenderHandler(RainObj *r)
 
     Level_IsRunning();
     if (!x87_eq(r->pos.x, kZeroD)) {
-        r->move.x = gViewPos.x - r->pos.x;
-        r->move.y = gViewPos.y - r->pos.y;
-        r->move.z = gViewPos.z - r->pos.z;
+        r->move.x = gTransContext.pos.x - r->pos.x;
+        r->move.y = gTransContext.pos.y - r->pos.y;
+        r->move.z = gTransContext.pos.z - r->pos.z;
         r->move.x = clamp_move(r->move.x) * kHalf;
         r->move.y = clamp_move(r->move.y) * kHalf;
         r->move.z = clamp_move(r->move.z) * kHalf;
     }
-    r->pos = gViewPos;
-    view = gViewMatrix;
+    r->pos = gTransContext.pos;
+    view = gTransContext.matrix;
     r->viewDir.x = view.m[6];
     r->viewDir.y = view.m[7];
     r->viewDir.z = view.m[8];

@@ -8,6 +8,7 @@
 #include "hook.h"
 #include "qvertex/qvertex.h"
 #include "res/restypes.h"
+#include "transctx/transctxtypes.h"
 
 /* The QVertex driver of the Direct3D render mode. */
 
@@ -70,7 +71,7 @@ extern float gLayer1MinZ;
 extern float gD3DMaxZ;
 extern float gNearPlane;
 extern float gWorldScale;
-extern float gProj33;
+extern TransContext gTransContext;
 extern float gSceneMinX;
 extern float gSceneMinY;
 extern float gSceneMaxX;
@@ -420,7 +421,7 @@ void D3DQVertex_Emit(QVertexStrip *s)
                     z = t;
                 rhw = kOne.f / z;
                 d->rhw = rhw;
-                d->z = ((long double)gLayer1MaxZ - gLayer1MinZ) * ((kOne.f - rhw * gD3DMinZ) * gProj33) + gLayer1MinZ;
+                d->z = ((long double)gLayer1MaxZ - gLayer1MinZ) * ((kOne.f - rhw * gD3DMinZ) * gTransContext.proj[10]) + gLayer1MinZ;
             } else {
                 d->z = kHalf.f;
                 d->rhw = kOne.f / (((long double)gD3DMaxZ - gD3DMinZ) * kHalf.f);

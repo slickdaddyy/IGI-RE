@@ -123,7 +123,7 @@ extern int gCollChildTable[];
 extern float gQCubeOutsideMin[];
 extern float gQCubeOutsideMax[];
 extern char gNearClipText[];
-extern int gQCubeActive;
+extern TransContext gTransContext;
 extern int gUnk543A64;
 extern uint16_t gQCubeUnkC30064;
 extern int gQCubeUnkB97DF0;
@@ -302,7 +302,7 @@ void QCube_DrawObjects(QWorld *w)
     } arg;
 
     TerrainMesh_SetUnusedTextures(w);
-    Coll_SendEventAll(w, 0x11, 0, gTransContext.pos, 0x20000000);
+    Coll_SendEventAll(w, 0x11, 0, &gTransContext.pos.x, 0x20000000);
     if (!gQCubeEnclosing) {
         for (i = 0; i < gQCubeCount; i++, e++)
             draw_entry(e);
@@ -333,7 +333,7 @@ void QCube_DrawObjects(QWorld *w)
             }
         }
     }
-    Coll_SendEventAll(w, 0x12, 0, gTransContext.pos, 0x20000000);
+    Coll_SendEventAll(w, 0x12, 0, &gTransContext.pos.x, 0x20000000);
     arg.list = gQCubeList;
     arg.count = gQCubeCount;
     QCube_RunCallbacks(gQCubeCallbacks, &arg);
@@ -403,7 +403,7 @@ void QCube_Render(QWorld *w, const char *flags, int full)
     QCube_UpdateViewScale();
     Light_ResetFrame();
     Haze_ResetFrame();
-    if (gQCubeActive) {
+    if (gTransContext.qcubeActive) {
         if (full)
             QCube_Begin(w);
         if (w->terrain && full) {
@@ -418,9 +418,9 @@ void QCube_Render(QWorld *w, const char *flags, int full)
 
             q.unk8 = 0;
             q.task = NULL;
-            q.pos = gTransContext.pos;
+            q.pos = &gTransContext.pos.x;
             q.unk4 = 0;
-            Coll_SendEvent(w, QCube_GetEnclosingEvent(), &q, gTransContext.pos, -1, 5);
+            Coll_SendEvent(w, QCube_GetEnclosingEvent(), &q, &gTransContext.pos.x, -1, 5);
             gViewSector = q.unk8;
             for (i = 0; i < 3; i++)
                 gQCubeEnclosingBox[i] = q.box[i];

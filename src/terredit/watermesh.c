@@ -7,6 +7,7 @@
 #include "hook.h"
 #include "terredit/terredit.h"
 #include "terredit/terredittypes.h"
+#include "transctx/transctxtypes.h"
 
 /* the WaterMesh primitive in the render queue */
 typedef struct WaterDrawNode {
@@ -38,8 +39,7 @@ extern const char gWaterName[];
 extern uint32_t gWaterSplits[];
 extern int gWaterUnk7C;
 extern int gWaterUnk80;
-extern Vec3d gCamPos;
-extern const float gCamDir[];
+extern TransContext gTransContext;
 
 extern float kZero;
 extern float kOne;
@@ -287,9 +287,9 @@ void WaterMesh_Draw(WaterDrawNode *node)
     gWaterUnk7C = 0;
     gWaterUnk80 = 0;
     WaterMesh_Light(w, w->lit, up);
-    w->cam = gCamPos;
+    w->cam = gTransContext.pos;
     h = (long double)w->cam.z - w->level;
-    memcpy(w->camDir, gCamDir, sizeof(w->camDir));
+    memcpy(w->camDir, &gTransContext.matrix.m[6], sizeof(w->camDir));
     if (!(h > kZeroD))
         h = kZeroD;
     w->camHeight = h;

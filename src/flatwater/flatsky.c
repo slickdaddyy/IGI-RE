@@ -129,7 +129,7 @@ void FlatSky_Render(FlatSky *s)
     d = kOne / (ce - a);
     SkyDome_Render(s->dome);
     for (i = 0; i < 10; i++)
-        ((uint32_t *)cam)[i] = ((uint32_t *)gViewM)[i];
+        ((uint32_t *)cam)[i] = ((uint32_t *)gTransContext.matrix.m)[i];
     if (!fne(cam[6], kZero) && !fne(cam[7], kZero))
         cam[6] = 1.0f;
 
@@ -139,15 +139,15 @@ void FlatSky_Render(FlatSky *s)
     n7 = inv * cam[7];
     p = kZero - n7;
     qq = -(kZero - cam[6]);
-    r0 = gViewM[2] * kZero + gViewM[1] * qq + gViewM[0] * p;
-    *(uint32_t *)&r1 = ((uint32_t *)gViewM)[2];
-    r2 = gViewM[1] * n7 + gViewM[0] * cam[6] + gViewM[2] * kZero;
-    r3 = gViewM[5] * kZero + gViewM[4] * qq + gViewM[3] * p;
-    *(uint32_t *)&r4 = ((uint32_t *)gViewM)[5];
-    r5 = gViewM[4] * n7 + gViewM[3] * cam[6] + gViewM[5] * kZero;
-    r6 = gViewM[8] * kZero + gViewM[7] * qq + gViewM[6] * p;
-    *(uint32_t *)&r7 = ((uint32_t *)gViewM)[8];
-    r8 = gViewM[7] * n7 + gViewM[6] * cam[6] + gViewM[8] * kZero;
+    r0 = gTransContext.matrix.m[2] * kZero + gTransContext.matrix.m[1] * qq + gTransContext.matrix.m[0] * p;
+    *(uint32_t *)&r1 = ((uint32_t *)gTransContext.matrix.m)[2];
+    r2 = gTransContext.matrix.m[1] * n7 + gTransContext.matrix.m[0] * cam[6] + gTransContext.matrix.m[2] * kZero;
+    r3 = gTransContext.matrix.m[5] * kZero + gTransContext.matrix.m[4] * qq + gTransContext.matrix.m[3] * p;
+    *(uint32_t *)&r4 = ((uint32_t *)gTransContext.matrix.m)[5];
+    r5 = gTransContext.matrix.m[4] * n7 + gTransContext.matrix.m[3] * cam[6] + gTransContext.matrix.m[5] * kZero;
+    r6 = gTransContext.matrix.m[8] * kZero + gTransContext.matrix.m[7] * qq + gTransContext.matrix.m[6] * p;
+    *(uint32_t *)&r7 = ((uint32_t *)gTransContext.matrix.m)[8];
+    r8 = gTransContext.matrix.m[7] * n7 + gTransContext.matrix.m[6] * cam[6] + gTransContext.matrix.m[8] * kZero;
 
     nega = -a;
     t0 = r2 * a + r1 * b;
@@ -223,24 +223,24 @@ void FlatSky_Render(FlatSky *s)
 
     for (l = (FlatLayer *)Task_FindChild(s, gFlatSkyLayerType); l;
          l = (FlatLayer *)Task_FindNext(l, gFlatSkyLayerType)) {
-        long double m6 = gViewM[6], m7 = gViewM[7], m8 = gViewM[8];
+        long double m6 = gTransContext.matrix.m[6], m7 = gTransContext.matrix.m[7], m8 = gTransContext.matrix.m[8];
 
         for (i = 0; i < SKY_ROWS * 2; i++) {
             QVertex *v = &verts[i];
-            long double su = (v->x - ox) / gViewScaleX;
-            long double sv = (v->y - oy) / gViewScaleY;
+            long double su = (v->x - ox) / gTransContext.scaleX;
+            long double sv = (v->y - oy) / gTransContext.scaleY;
             float w0, w1, w2, x, y, f;
             long double r;
 
-            w0 = sv * gViewM[3] + su * gViewM[0] + m6;
-            w1 = sv * gViewM[4] + su * gViewM[1] + m7;
-            w2 = sv * gViewM[5] + su * gViewM[2] + m8;
+            w0 = sv * gTransContext.matrix.m[3] + su * gTransContext.matrix.m[0] + m6;
+            w1 = sv * gTransContext.matrix.m[4] + su * gTransContext.matrix.m[1] + m7;
+            w2 = sv * gTransContext.matrix.m[5] + su * gTransContext.matrix.m[2] + m8;
             r = b / w2;
             x = r * w0;
             y = r * w1;
             v->u = x * l->scale + l->offsetU;
             v->v = y * l->scale + l->offsetV;
-            v->z = r * w2 * gViewM[8] + y * gViewM[7] + x * gViewM[6];
+            v->z = r * w2 * gTransContext.matrix.m[8] + y * gTransContext.matrix.m[7] + x * gTransContext.matrix.m[6];
             ((uint32_t *)&v->r)[0] = ((uint32_t *)l->color)[0];
             ((uint32_t *)&v->r)[1] = ((uint32_t *)l->color)[1];
             ((uint32_t *)&v->r)[2] = ((uint32_t *)l->color)[2];

@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "explosion/explosion.h"
+#include "transctx/transctxtypes.h"
 
 FN_EXTERN(Explosion_CreateHandler);
 FN_EXTERN(Explosion_RunHandler);
@@ -65,7 +66,7 @@ extern uint16_t gExplosionSmokeType;
 extern char *gSmoke2Sprite;
 extern char *gBurnTexture;
 extern uint16_t gFireBallType;
-extern Vec3d gViewPos;
+extern TransContext gTransContext;
 extern void (*gRenderFuncs[])(RenderArg *);
 
 #define Explosion_Create (FN(0x480F30, Explosion_CreateHandler))
@@ -568,9 +569,9 @@ void FireBall_Draw(FireBall *fb)
     fb->obj.scale[0] = fb->size;
     fb->obj.scale[1] = fb->size;
     fb->obj.scale[2] = z;
-    m[6] = gViewPos.x - fb->obj.pos.x;
-    m[7] = gViewPos.y - fb->obj.pos.y;
-    z = gViewPos.z - fb->obj.pos.z;
+    m[6] = gTransContext.pos.x - fb->obj.pos.x;
+    m[7] = gTransContext.pos.y - fb->obj.pos.y;
+    z = gTransContext.pos.z - fb->obj.pos.z;
     m[8] = z;
     if (m[6] == kZero && m[7] == kZero && z == kZero)
         m[6] = 1.0f;

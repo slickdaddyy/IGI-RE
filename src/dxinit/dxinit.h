@@ -12,8 +12,7 @@
 #include "res/restypes.h"
 #include "transctx/transctxtypes.h"
 
-extern TransCtx gView;
-extern Vec3d gViewPos;
+extern TransContext gTransContext;
 extern float gWorldScale;
 extern int gD3DTnL;
 extern int gD3DZEnable;

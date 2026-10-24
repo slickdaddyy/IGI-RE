@@ -168,7 +168,7 @@ _Static_assert(sizeof(SortedPrim) == 0x68, "SortedPrim");
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x491D40, long double, Display_GetAspect, (void));
 ORIG(0x4950F0, void, Direct3D_MakeMatrix, (D3DMATRIX *out, const float *rot, const float *pos));
-ORIG(0x497E70, void, TransContext_Select, (TransCtx *v));
+ORIG(0x497E70, void, TransContext_Select, (TransContext *v));
 ORIG(0x49B2D0, void, Fog_SetRange, (const double *pos, float radius));
 ORIG(0x49B4B0, void, MeshBatch_Flush, (int slot));
 ORIG(0x4A0340, void, Direct3DRender_ClipTriangleDepth, (ProjVert a, ProjVert b, ProjVert c, float *nearZ, float nearPlane));
@@ -208,7 +208,7 @@ extern DWORD gFogDensity;
 extern float gLayerFov[];
 extern float gLightColor[];
 extern float gFogColor[];
-extern TransCtx gView;
+extern TransContext gTransContext;
 extern Scene gScene;
 extern float gWorldScale;
 extern int gD3DClippingOnIndex;
@@ -279,21 +279,21 @@ static void scale_matrix(Matrix *rot, const Matrix *m, const float *scale)
 /* view space offset of p scaled to Direct3D units; the x difference stays unrounded */
 static void view_offset(float *pos, const double *p)
 {
-    long double dx = p[0] - gView.pos.x;
+    long double dx = p[0] - gTransContext.pos.x;
 
-    pos[1] = p[1] - gView.pos.y;
-    pos[2] = p[2] - gView.pos.z;
+    pos[1] = p[1] - gTransContext.pos.y;
+    pos[2] = p[2] - gTransContext.pos.z;
     pos[0] = gWorldScale * dx;
     pos[1] = gWorldScale * pos[1];
     pos[2] = gWorldScale * pos[2];
 }
 
 /* Layer 0 objects are drawn with the field of view of the main camera. */
-static void select_layer_view(TransCtx *saved, TransCtx *tc)
+static void select_layer_view(TransContext *saved, TransContext *tc)
 {
     float t;
 
-    *saved = gView;
+    *saved = gTransContext;
     *tc = *saved;
     tc->fov = gLayerFov[0];
     t = gLayerFov[0] * gScene.h;
@@ -396,7 +396,7 @@ HOOK(0x49BD30, Direct3DRender_RestoreVertexBuffers);
 void Direct3DRender_SplineNearZ(ModelObj *o, NearZQuery *q)
 {
     float nearPlane = gNearPlane;
-    const float *vm = gView.matrix.m;
+    const float *vm = gTransContext.matrix.m;
     const float *m;
     MeshHeader *h;
     RigidMesh *d;
@@ -413,9 +413,9 @@ void Direct3DRender_SplineNearZ(ModelObj *o, NearZQuery *q)
         return;
     h = (MeshHeader *)o->model->lods[0]->mesh->header;
     if (o->offset) {
-        float x = o->pos[0] - gView.pos.x;
-        float y = o->pos[1] - gView.pos.y;
-        float zf = o->pos[2] - gView.pos.z;
+        float x = o->pos[0] - gTransContext.pos.x;
+        float y = o->pos[1] - gTransContext.pos.y;
+        float zf = o->pos[2] - gTransContext.pos.z;
         long double z;
 
         x = x + o->offset[0];
@@ -426,9 +426,9 @@ void Direct3DRender_SplineNearZ(ModelObj *o, NearZQuery *q)
         c[2] = ((long double)vm[8] * z + (long double)vm[7] * y) + (long double)vm[6] * x;
         radius = o->offset[3];
     } else {
-        dx = o->pos[0] - gView.pos.x;
-        dy = o->pos[1] - gView.pos.y;
-        dz = o->pos[2] - gView.pos.z;
+        dx = o->pos[0] - gTransContext.pos.x;
+        dy = o->pos[1] - gTransContext.pos.y;
+        dz = o->pos[2] - gTransContext.pos.z;
         c[0] = (vm[2] * dz + vm[1] * dy) + vm[0] * dx;
         c[1] = (vm[5] * dz + vm[4] * dy) + vm[3] * dx;
         c[2] = (vm[8] * dz + vm[7] * dy) + vm[6] * dx;
@@ -463,9 +463,9 @@ void Direct3DRender_SplineNearZ(ModelObj *o, NearZQuery *q)
         sy = tmp[0];
         rhw = tmp[1];
     }
-    dx = o->pos[0] - gView.pos.x;
-    dy = o->pos[1] - gView.pos.y;
-    dz = o->pos[2] - gView.pos.z;
+    dx = o->pos[0] - gTransContext.pos.x;
+    dy = o->pos[1] - gTransContext.pos.y;
+    dz = o->pos[2] - gTransContext.pos.z;
     tx = (dz * vm[2] + dy * vm[1]) + dx * vm[0];
     ty = (dz * vm[5] + dy * vm[4]) + dx * vm[3];
     tz = (dz * vm[8] + dy * vm[7]) + dx * vm[6];
@@ -494,9 +494,9 @@ void Direct3DRender_SplineNearZ(ModelObj *o, NearZQuery *q)
             long double sxl, syl;
 
             rhw = inv;
-            sxl = inv * X * gView.scaleX + gView.centerX;
+            sxl = inv * X * gTransContext.scaleX + gTransContext.centerX;
             sx = sxl;
-            syl = (long double)gView.scaleY * rhw * Y + gView.centerY;
+            syl = (long double)gTransContext.scaleY * rhw * Y + gTransContext.centerY;
             sy = syl;
             clip = (sy > gScene.maxY) << 3 | (sxl > gScene.maxX) << 2 | (!(syl >= gScene.minY)) << 1
                    | (!(sxl >= gScene.minX));
@@ -595,9 +595,9 @@ void Direct3DRender_DrawSplineMesh(ModelObj **prim)
         return;
     ml = vm->lods[lod];
     h = (MeshHeader *)ml->mesh->header;
-    pos[0] = o->pos[0] - gView.pos.x;
-    pos[1] = o->pos[1] - gView.pos.y;
-    dz = o->pos[2] - gView.pos.z;
+    pos[0] = o->pos[0] - gTransContext.pos.x;
+    pos[1] = o->pos[1] - gTransContext.pos.y;
+    dz = o->pos[2] - gTransContext.pos.z;
     pos[0] = gWorldScale * pos[0];
     pos[1] = gWorldScale * pos[1];
     pos[2] = gWorldScale * dz;
@@ -622,10 +622,10 @@ void Direct3DRender_DrawSplineMesh(ModelObj **prim)
             Direct3DRender_SetObjectFog(o, h);
             draw_group(d, gVBNormal.vb, base, ml, g);
         } else {
-            long double x = o->pos[0] - gView.pos.x;
-            long double y = o->pos[1] - gView.pos.y;
-            long double z = o->pos[2] - gView.pos.z;
-            float key = (gView.matrix.m[8] * z + gView.matrix.m[7] * y) + gView.matrix.m[6] * x;
+            long double x = o->pos[0] - gTransContext.pos.x;
+            long double y = o->pos[1] - gTransContext.pos.y;
+            long double z = o->pos[2] - gTransContext.pos.z;
+            float key = (gTransContext.matrix.m[8] * z + gTransContext.matrix.m[7] * y) + gTransContext.matrix.m[6] * x;
             SplinePrim *p = SortRender_Add((void (*)(void *))Direct3DRender_DrawSortedFaceGroup_Spline,
                                            0x30, key);
 
@@ -974,7 +974,7 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
     int inside[4], lod, base;
     ModelLod *ml;
     MeshHeader *h;
-    TransCtx saved, tc;
+    TransContext saved, tc;
     float pos[3], vz[3], depth;
     long double dx, dy, dz;
     Matrix rot;
@@ -1001,25 +1001,25 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
     ModelLod_ApplyTexAnims(ml);
     if (!o->layer)
         select_layer_view(&saved, &tc);
-    pos[0] = o->pos[0] - gView.pos.x;
-    pos[1] = o->pos[1] - gView.pos.y;
-    dz = o->pos[2] - gView.pos.z;
+    pos[0] = o->pos[0] - gTransContext.pos.x;
+    pos[1] = o->pos[1] - gTransContext.pos.y;
+    dz = o->pos[2] - gTransContext.pos.z;
     pos[0] = gWorldScale * pos[0];
     pos[1] = gWorldScale * pos[1];
     pos[2] = gWorldScale * dz;
     scale_matrix(&rot, &o->matrix, o->scale);
     Direct3D_MakeMatrix(&mat, rot.m, pos);
     IDirect3DDevice7_SetTransform(DEV, D3DTRANSFORMSTATE_WORLD, &mat);
-    vz[0] = ((long double)gView.matrix.m[8] * o->matrix.m[6] + (long double)gView.matrix.m[7] * o->matrix.m[3])
-            + (long double)gView.matrix.m[6] * o->matrix.m[0];
-    vz[1] = ((long double)gView.matrix.m[8] * o->matrix.m[7] + (long double)gView.matrix.m[7] * o->matrix.m[4])
-            + (long double)gView.matrix.m[6] * o->matrix.m[1];
-    vz[2] = ((long double)gView.matrix.m[8] * o->matrix.m[8] + (long double)gView.matrix.m[7] * o->matrix.m[5])
-            + (long double)gView.matrix.m[6] * o->matrix.m[2];
-    dx = o->pos[0] - gView.pos.x;
-    dy = o->pos[1] - gView.pos.y;
-    dz = o->pos[2] - gView.pos.z;
-    depth = (dz * gView.matrix.m[8] + dy * gView.matrix.m[7]) + dx * gView.matrix.m[6];
+    vz[0] = ((long double)gTransContext.matrix.m[8] * o->matrix.m[6] + (long double)gTransContext.matrix.m[7] * o->matrix.m[3])
+            + (long double)gTransContext.matrix.m[6] * o->matrix.m[0];
+    vz[1] = ((long double)gTransContext.matrix.m[8] * o->matrix.m[7] + (long double)gTransContext.matrix.m[7] * o->matrix.m[4])
+            + (long double)gTransContext.matrix.m[6] * o->matrix.m[1];
+    vz[2] = ((long double)gTransContext.matrix.m[8] * o->matrix.m[8] + (long double)gTransContext.matrix.m[7] * o->matrix.m[5])
+            + (long double)gTransContext.matrix.m[6] * o->matrix.m[2];
+    dx = o->pos[0] - gTransContext.pos.x;
+    dy = o->pos[1] - gTransContext.pos.y;
+    dz = o->pos[2] - gTransContext.pos.z;
+    depth = (dz * gTransContext.matrix.m[8] + dy * gTransContext.matrix.m[7]) + dx * gTransContext.matrix.m[6];
     if (h->format == 0) {
         RigidMesh *d = h->data;
         MeshGroup *g = d->groups;
@@ -1171,7 +1171,7 @@ void Direct3DRender_DrawSortedFaceGroup_Rigid(SortedPrim *p)
     ModelLod *ml = p->lod;
     RigidMesh *d;
     MeshGroup *g = p->group;
-    TransCtx saved, tc;
+    TransContext saved, tc;
     float pos[3];
     Matrix rot;
     D3DMATRIX mat;
@@ -1206,7 +1206,7 @@ void Direct3DRender_DrawSortedFaceGroup_Lightmap(SortedPrim *p)
 {
     LmMesh *d = p->mesh;
     LmGroup *g = p->group;
-    TransCtx saved, tc;
+    TransContext saved, tc;
     float pos[3];
     Matrix rot;
     D3DMATRIX mat;
@@ -1277,28 +1277,6 @@ ALIAS(gMeshVBs, pad_7AC0A0, 0);
 BSS(723504) int gUnlitIdx;
 STORE(igb, B818EC, 4) float store_B818EC[13];
 ALIAS(gFogColor, store_B818EC, 0);
-BSS(BCAAE0) TransCtx gView;
-ALIAS(gCamDir, gView, 24);
-ALIAS(gCamMatrix, gView, 0);
-ALIAS(gCamPos, gView, 40);
-ALIAS(gCamTanX, gView, 64);
-ALIAS(gCamTanY, gView, 68);
-ALIAS(gCamZ, gView, 56);
-ALIAS(gProj33, gView, 140);
-ALIAS(gQCubeActive, gView, 88);
-ALIAS(gTransContext, gView, 0);
-ALIAS(gTransCtx, gView, 0);
-ALIAS(gViewCenterX, gView, 80);
-ALIAS(gViewCenterY, gView, 84);
-ALIAS(gViewDir, gView, 24);
-ALIAS(gViewFov, gView, 64);
-ALIAS(gViewFovY, gView, 68);
-ALIAS(gViewM, gView, 0);
-ALIAS(gViewMatrix, gView, 0);
-ALIAS(gViewPos, gView, 40);
-ALIAS(gViewScaleX, gView, 72);
-ALIAS(gViewScaleY, gView, 76);
-ALIAS(gViewUnkBCAAF8, gView, 24);
 BSS(BCABEC) float gWorldScale;
 BSS(BCACEC) int gD3DClippingOnIndex;
 BSS(BCAD78) DWORD gD3DZEnable;

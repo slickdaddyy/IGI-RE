@@ -67,20 +67,21 @@ typedef struct BlitPrim {
     int unk24;
 } BlitPrim;
 
-/* the view the frame is drawn with (0xBCAAE0) */
-typedef struct TransCtx {
-    Matrix matrix;
+/* Camera for one view. gTransContext (0xBCAAE0) is the active one. */
+typedef struct TransContext {
+    Matrix matrix; /* world to view, transposed from the camera matrix */
     Vec3d pos;
-    float fov;
+    float fov; /* tangent of half the horizontal field of view */
     float fovY;
     float scaleX, scaleY;
     float centerX, centerY;
-    int unk58;
+    int qcubeActive;
     float unk5C;
-    int layer;
+    int layer; /* 0..2, picks the viewport depth range and near plane */
     float proj[16];
     int unkA4;
-} TransCtx;
+} TransContext;
+_Static_assert(sizeof(TransContext) == 0xA8, "TransContext");
 
 typedef struct Scene {
     struct Scene *next;

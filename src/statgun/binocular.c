@@ -3,12 +3,12 @@
 #include "hook.h"
 #include "statgun/statgun.h"
 #include "binocular/binoculartypes.h"
+#include "transctx/transctxtypes.h"
 
 extern uint16_t gBinocularOverlayType;
 extern uint16_t gBinocularHolderType;
 extern void *gBinocularHolderParams;
-extern Vec3d gViewPos;
-extern Vec3f gViewUnkBCAAF8;
+extern TransContext gTransContext;
 
 ORIG(0x4F1400, void, VarString_Bind, (VarString *v, void *task));
 ORIG(0x471480, void, BinocularOverlay_Draw, (BinocularOverlay *o));
@@ -28,8 +28,8 @@ HOOK(0x4723E0, BinocularHolder_Changed);
 
 void BinocularOverlay_DrawHandler(BinocularOverlay *o)
 {
-    o->pos = gViewPos;
-    o->dir = gViewUnkBCAAF8;
+    o->pos = gTransContext.pos;
+    o->dir = *(Vec3f *)&gTransContext.matrix.m[6];
     BinocularOverlay_Draw(o);
 }
 HOOK(0x472400, BinocularOverlay_DrawHandler);

@@ -1,6 +1,7 @@
 #pragma GCC optimize("excess-precision=standard")
 
 #include "freecam/freecam.h"
+#include "transctx/transctxtypes.h"
 
 /* Particle systems that fill a cube of cells around the camera (rain, snow,
    dust); spawn() is called for every visible cell corner each frame. */
@@ -37,9 +38,7 @@ extern uint16_t gParticleSystemType;
 extern uint16_t gSpriteParticleSystemType;
 extern int gSpriteParticleSystemReady;
 extern char gParticleRandom[];
-extern const float gCamMatrix[];
-extern float gCamTanX;
-extern float gCamTanY;
+extern TransContext gTransContext;
 
 void ParticleSystem_Draw(ParticleSystem *ps);
 void ParticleSystem_Delete(ParticleSystem *ps);
@@ -61,20 +60,20 @@ void ParticleSystem_Draw(ParticleSystem *ps)
     int ix, iy, iz, cell, count, off, x, y, z, a, b, c;
 
     if (ps->reset) {
-        memcpy(&ps->lastCam, &gCamPos, sizeof(Vec3d));
+        memcpy(&ps->lastCam, &gTransContext.pos, sizeof(Vec3d));
         ps->reset = 0;
     }
-    ps->move[0] = gCamPos.x - ps->lastCam.x;
+    ps->move[0] = gTransContext.pos.x - ps->lastCam.x;
     onMove = ps->onMove;
-    ps->move[1] = gCamPos.y - ps->lastCam.y;
-    ps->move[2] = gCamPos.z - ps->lastCam.z;
-    memcpy(&ps->lastCam, &gCamPos, sizeof(Vec3d));
+    ps->move[1] = gTransContext.pos.y - ps->lastCam.y;
+    ps->move[2] = gTransContext.pos.z - ps->lastCam.z;
+    memcpy(&ps->lastCam, &gTransContext.pos, sizeof(Vec3d));
     if (onMove)
         onMove(ps);
     mask = ~ps->cellMask;
-    ix = fc_fistp(gCamPos.x) & mask;
-    iy = fc_fistp(gCamPos.y) & mask;
-    iz = fc_fistp(gCamPos.z) & mask;
+    ix = fc_fistp(gTransContext.pos.x) & mask;
+    iy = fc_fistp(gTransContext.pos.y) & mask;
+    iz = fc_fistp(gTransContext.pos.z) & mask;
     cell = ps->cellSize;
     count = ps->radius * 2 - 1;
     if (count <= 0)
@@ -113,10 +112,10 @@ HOOK(0x530CD0, ParticleSystem_Draw);
 /* the sphere at p against the camera view pyramid */
 int ParticleSystem_IsVisible(const Vec3d *p, float radius)
 {
-    const float *m = gCamMatrix;
-    long double dx = p->x - gCamPos.x, ax, cz;
-    double dy = p->y - gCamPos.y;
-    double dz = p->z - gCamPos.z;
+    const float *m = gTransContext.matrix.m;
+    long double dx = p->x - gTransContext.pos.x, ax, cz;
+    double dy = p->y - gTransContext.pos.y;
+    double dz = p->z - gTransContext.pos.z;
     float sx, sy, sz, by;
 
     sx = m[2] * dz + m[1] * dy + m[0] * dx;
@@ -128,9 +127,9 @@ int ParticleSystem_IsVisible(const Vec3d *p, float radius)
     sz = cz;
     if (!(cz >= kZero))
         return 0;
-    if (ax >= kZero && ax > gCamTanX * sz)
+    if (ax >= kZero && ax > gTransContext.fov * sz)
         return 0;
-    if (by >= kZero && !(gCamTanY * sz >= by))
+    if (by >= kZero && !(gTransContext.fovY * sz >= by))
         return 0;
     return 1;
 }

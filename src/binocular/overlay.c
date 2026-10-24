@@ -79,8 +79,8 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 
-void View_Project(TransCtx *v, float *out, float *depth, const Vec3d *p);
-void View_ScaleSize(TransCtx *v, float *out, const float *size, float depth);
+void View_Project(TransContext *v, float *out, float *depth, const Vec3d *p);
+void View_ScaleSize(TransContext *v, float *out, const float *size, float depth);
 
 #define BINOCULAROVERLAY_DRAWHANDLER (FN(0x472400, BinocularOverlay_DrawHandler))
 #define BINOCULAROVERLAY_USEHANDLER (FN(0x472440, BinocularOverlay_UseHandler))
@@ -448,13 +448,13 @@ void BinocularOverlay_TrackMovement(BinocularOverlay *ov)
             continue;
         HumanView_GetEye(&eye, *(void **)(hm + 0x4EC));
         pos = *(Vec3d *)(hm + 0x20);
-        dx = pos.x - gView.pos.x;
-        dy = pos.y - gView.pos.y;
-        dz = pos.z - gView.pos.z;
+        dx = pos.x - gTransContext.pos.x;
+        dy = pos.y - gTransContext.pos.y;
+        dz = pos.z - gTransContext.pos.z;
         radius = *(float *)(hm + 0xA0);
-        v[0] = gView.matrix.m[2] * dz + gView.matrix.m[1] * dy + gView.matrix.m[0] * dx;
-        v[1] = gView.matrix.m[5] * dz + gView.matrix.m[4] * dy + gView.matrix.m[3] * dx;
-        v[2] = gView.matrix.m[8] * dz + gView.matrix.m[7] * dy + gView.matrix.m[6] * dx;
+        v[0] = gTransContext.matrix.m[2] * dz + gTransContext.matrix.m[1] * dy + gTransContext.matrix.m[0] * dx;
+        v[1] = gTransContext.matrix.m[5] * dz + gTransContext.matrix.m[4] * dy + gTransContext.matrix.m[3] * dx;
+        v[2] = gTransContext.matrix.m[8] * dz + gTransContext.matrix.m[7] * dy + gTransContext.matrix.m[6] * dx;
         if (Mesh3D_Exclude(v, radius, NULL))
             continue;
         filter.task = player;
@@ -464,8 +464,8 @@ void BinocularOverlay_TrackMovement(BinocularOverlay *ov)
         visibility = 0;
         event = AIDetection_GetEvent0();
         world = Game_GetWorld();
-        Coll_LineOfSight(world, &gView.pos, &eye, event, &filter, -1, -1, &visibility);
-        View_Project(&gView, scr, &depth, &pos);
+        Coll_LineOfSight(world, &gTransContext.pos, &eye, event, &filter, -1, -1, &visibility);
+        View_Project(&gTransContext, scr, &depth, &pos);
         if (!(depth > kZero.f))
             continue;
         BinocularOverlay_AddTarget(ov, hm, depth, radius, scr, visibility == kZero.f, *(int *)(hm + 0xFC) != 1,
@@ -509,7 +509,7 @@ void BinocularOverlay_TrackMovement(BinocularOverlay *ov)
         scale = (kOne.f - grow) * kTen.f + kOne.f;
         size[0] = t->radius;
         size[1] = t->radius;
-        View_ScaleSize(&gView, out, size, t->depth);
+        View_ScaleSize(&gTransContext, out, size, t->depth);
         QVertex_DrawPolyline(gTargetShape, 5, t->sx, t->sy, 1.0f, r, g, b, 0.5f, angle, out[0] * scale,
                              out[1] * scale, 0, 0);
     }

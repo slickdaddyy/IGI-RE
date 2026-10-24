@@ -27,7 +27,7 @@ extern int gSetActiveTransContextMethod;
 extern int gSetNearClippingPlaneMethod;
 extern int gTransContextValid;
 extern int gTransContextSelects;
-extern double gViewPos[];
+extern TransContext gTransContext;
 extern float gWorldScale;
 extern float gLayer0MinZ;
 extern float gLayer0MaxZ;
@@ -195,14 +195,14 @@ void TransContext_Create(TransContext *ctx, const float *rot, const double *pos,
     volatile float t;
     int i;
 
-    memcpy(ctx->m, rot, 40);
-    memcpy(r, ctx->m, sizeof(r));
+    memcpy(&ctx->matrix, rot, 40);
+    memcpy(r, ctx->matrix.m, sizeof(r));
     for (i = 0; i < 3; i++) {
-        ctx->m[i * 3 + 0] = r[i];
-        ctx->m[i * 3 + 1] = r[i + 3];
-        ctx->m[i * 3 + 2] = r[i + 6];
+        ctx->matrix.m[i * 3 + 0] = r[i];
+        ctx->matrix.m[i * 3 + 1] = r[i + 3];
+        ctx->matrix.m[i * 3 + 2] = r[i + 6];
     }
-    memcpy(ctx->pos, pos, sizeof(ctx->pos));
+    memcpy(&ctx->pos, pos, sizeof(ctx->pos));
     ctx->fov = fov;
     t = gScene.h * fov;
     ctx->fovY = t / (Display_GetAspect() * gScene.w);
@@ -210,7 +210,7 @@ void TransContext_Create(TransContext *ctx, const float *rot, const double *pos,
     ctx->scaleY = Display_GetAspect() * ctx->scaleX;
     ctx->centerX = gScene.x + gScene.halfW;
     ctx->centerY = gScene.y + gScene.halfH;
-    ctx->unk58 = 1;
+    ctx->qcubeActive = 1;
     ctx->layer = 1;
 }
 HOOK(0x497D70, TransContext_Create);
@@ -262,12 +262,12 @@ HOOK(0x497EE0, TransContext_Queue);
 void TransContext_Project(float *out, float *depth, const double *p)
 {
     TransContext *t = &gTransContext;
-    long double dx = p[0] - gViewPos[0];
-    long double dy = p[1] - gViewPos[1];
-    long double dz = p[2] - gViewPos[2];
-    volatile float a = t->m[2] * dz + t->m[1] * dy + t->m[0] * dx;
-    volatile float b = t->m[5] * dz + t->m[4] * dy + t->m[3] * dx;
-    long double c = t->m[8] * dz + t->m[7] * dy + t->m[6] * dx;
+    long double dx = p[0] - gTransContext.pos.x;
+    long double dy = p[1] - gTransContext.pos.y;
+    long double dz = p[2] - gTransContext.pos.z;
+    volatile float a = t->matrix.m[2] * dz + t->matrix.m[1] * dy + t->matrix.m[0] * dx;
+    volatile float b = t->matrix.m[5] * dz + t->matrix.m[4] * dy + t->matrix.m[3] * dx;
+    long double c = t->matrix.m[8] * dz + t->matrix.m[7] * dy + t->matrix.m[6] * dx;
     long double k;
 
     *depth = c;

@@ -186,7 +186,7 @@ def rmatrix(rng):
 
 
 def setup_view(e, rng):
-    """gView (0xBCAAE0), gScene clip rectangle, near plane and world scale."""
+    """gTransContext (0xBCAAE0), gScene clip rectangle, near plane and world scale."""
     m = rmatrix(rng)
     pos = [rng.uniform(-5000, 5000) for _ in range(3)]
     e.write(VIEW, f32(*m) + struct.pack("<I", rng.randrange(100)) + f64(*pos))

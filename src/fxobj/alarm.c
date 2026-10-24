@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "fxobj/fxobj.h"
 #include "elevator/elevatortypes.h"
+#include "transctx/transctxtypes.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -66,7 +67,7 @@ extern void *gAlarmLightParams;
 extern uint16_t gAlarmLightReflectorType;
 extern uint16_t gAlarmLightType;
 extern char *gAlarmSprite;
-extern Vec3d gViewPos;
+extern TransContext gTransContext;
 
 static const float kTurn = 0x1.aceeap-4f;
 static const double kZero = 0.0;
@@ -219,9 +220,9 @@ void AlarmLightReflector_DrawFlare(Reflector *t, int point)
     p.z = p.z + t->obj.pos.z;
     {
         float m1 = l->placeMatrix.m[1], m4 = l->placeMatrix.m[4], m7 = l->placeMatrix.m[7];
-        long double dx = gViewPos.x - l->obj.pos.x;
-        long double dy = gViewPos.y - l->obj.pos.y;
-        long double dz = gViewPos.z - l->obj.pos.z;
+        long double dx = gTransContext.pos.x - l->obj.pos.x;
+        long double dy = gTransContext.pos.y - l->obj.pos.y;
+        long double dz = gTransContext.pos.z - l->obj.pos.z;
 
         if (!(dz * m7 + dy * m4 + dx * m1 > kZero))
             return;

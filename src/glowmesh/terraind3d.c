@@ -376,9 +376,9 @@ void TerrainMesh_DrawD3D(void)
     count = gTerrainMeshCount;
     gTerrMeshTotal += count;
     fC = gMorphStart;
-    memcpy(vp, gViewPos, sizeof(vp));
+    memcpy(vp, &gTransContext.pos, sizeof(vp));
     gUnkC28FB8 = 0;
-    memcpy(m, gViewMatrix, sizeof(m));
+    memcpy(m, &gTransContext.matrix, sizeof(m));
     morphK = gMorphScale;
     vpx = vp[0];
     vpy = vp[1];

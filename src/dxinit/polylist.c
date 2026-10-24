@@ -135,8 +135,8 @@ HOOK(0x49A390, PolyList_DrawItem);
 void PolyList_Render(PolyList *p)
 {
     if (p->count) {
-        long double px = p->pos.x - gViewPos.x, py = p->pos.y - gViewPos.y, pz = p->pos.z - gViewPos.z;
-        float depth = gView.matrix.m[8] * pz + gView.matrix.m[7] * py + gView.matrix.m[6] * px;
+        long double px = p->pos.x - gTransContext.pos.x, py = p->pos.y - gTransContext.pos.y, pz = p->pos.z - gTransContext.pos.z;
+        float depth = gTransContext.matrix.m[8] * pz + gTransContext.matrix.m[7] * py + gTransContext.matrix.m[6] * px;
 
         *(PolyList **)SortRender_Add((void (*)(void *))PolyList_DrawItem, 4, f2u(depth)) = p;
     }
@@ -348,9 +348,9 @@ void PolyList_Draw(void **msg)
     {
         long double rz;
 
-        rel[0] = p->pos.x - gViewPos.x;
-        rel[1] = p->pos.y - gViewPos.y;
-        rz = p->pos.z - gViewPos.z;
+        rel[0] = p->pos.x - gTransContext.pos.x;
+        rel[1] = p->pos.y - gTransContext.pos.y;
+        rz = p->pos.z - gTransContext.pos.z;
         rel[0] = gWorldScale * rel[0];
         rel[1] = rel[1] * gWorldScale;
         rel[2] = rz * gWorldScale;

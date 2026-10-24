@@ -233,10 +233,10 @@ int ModelObj_GetLOD(RigidMeshObj *o)
     if (!vm)
         return 0;
     h = lod_header(vm->lods[0]);
-    x = (long double)o->pos[0] - c->pos[0] + h->center.x;
-    y = o->pos[1] - c->pos[1];
-    z = o->pos[2] - c->pos[2];
-    dist = c->m[8] * ((long double)z + h->center.z) + c->m[7] * ((long double)y + h->center.y) + c->m[6] * x;
+    x = (long double)o->pos[0] - c->pos.x + h->center.x;
+    y = o->pos[1] - c->pos.y;
+    z = o->pos[2] - c->pos.z;
+    dist = c->matrix.m[8] * ((long double)z + h->center.z) + c->matrix.m[7] * ((long double)y + h->center.y) + c->matrix.m[6] * x;
     return lod_select(vm, dist, (long double)max_scale(o->scale) * h->sphere, gLodScale, gLodRigidDetail,
                       gLodRigidCull, 1);
 }
@@ -253,10 +253,10 @@ int Mesh3D_GetBoneMeshLOD(BoneMeshObj *o)
     if (!vm)
         return 0;
     h = lod_header(vm->lods[0]);
-    x = (long double)o->pos[0] - c->pos[0] + h->center.x;
-    y = o->pos[1] - c->pos[1];
-    z = o->pos[2] - c->pos[2];
-    dist = c->m[8] * ((long double)z + h->center.z) + c->m[7] * ((long double)y + h->center.y) + c->m[6] * x;
+    x = (long double)o->pos[0] - c->pos.x + h->center.x;
+    y = o->pos[1] - c->pos.y;
+    z = o->pos[2] - c->pos.z;
+    dist = c->matrix.m[8] * ((long double)z + h->center.z) + c->matrix.m[7] * ((long double)y + h->center.y) + c->matrix.m[6] * x;
     return lod_select(vm, dist, o->radius, 1.0L, gLodBoneDetail, gLodBoneCull, 0);
 }
 HOOK(0x4CFF70, Mesh3D_GetBoneMeshLOD);
@@ -271,18 +271,18 @@ int Mesh3D_GetSplineMeshLOD(SplineMeshObj *o)
 
     if (!vm)
         return 0;
-    x = (long double)o->pos[0] - c->pos[0];
+    x = (long double)o->pos[0] - c->pos.x;
     if (b) {
-        float y = o->pos[1] - c->pos[1];
-        float z = o->pos[2] - c->pos[2];
+        float y = o->pos[1] - c->pos.y;
+        float z = o->pos[2] - c->pos.z;
 
-        dist = c->m[8] * ((long double)z + b[2]) + c->m[7] * ((long double)y + b[1]) + c->m[6] * (x + b[0]);
+        dist = c->matrix.m[8] * ((long double)z + b[2]) + c->matrix.m[7] * ((long double)y + b[1]) + c->matrix.m[6] * (x + b[0]);
         r = b[3];
     } else {
-        long double y = (long double)o->pos[1] - c->pos[1];
-        long double z = (long double)o->pos[2] - c->pos[2];
+        long double y = (long double)o->pos[1] - c->pos.y;
+        long double z = (long double)o->pos[2] - c->pos.z;
 
-        dist = c->m[8] * z + c->m[7] * y + c->m[6] * x;
+        dist = c->matrix.m[8] * z + c->matrix.m[7] * y + c->matrix.m[6] * x;
         r = o->radius;
     }
     return lod_select(vm, dist, r, 1.0L, gLodSplineDetail, gLodSplineCull, 0);
@@ -327,7 +327,7 @@ HOOK(0x4D03D0, Mesh3D_Exclude);
 
 static void view_point(float *out, long double x, long double y, long double z)
 {
-    const float *m = gTransContext.m;
+    const float *m = gTransContext.matrix.m;
 
     out[0] = m[2] * z + m[1] * y + m[0] * x;
     out[1] = m[5] * z + m[4] * y + m[3] * x;
@@ -339,9 +339,9 @@ int Mesh3D_ExcludeRigid(RigidMeshObj *o, void *clip)
     const TransContext *c = &gTransContext;
     const MeshHeader *h = lod_header(o->model->lods[0]);
     const float *m = o->m;
-    float dx = o->pos[0] - c->pos[0];
-    float dy = o->pos[1] - c->pos[1];
-    float dz = o->pos[2] - c->pos[2];
+    float dx = o->pos[0] - c->pos.x;
+    float dy = o->pos[1] - c->pos.y;
+    float dz = o->pos[2] - c->pos.z;
     long double x = m[2] * h->center.z + m[1] * h->center.y + m[0] * h->center.x;
     float y = m[5] * h->center.z + m[4] * h->center.y + m[3] * h->center.x;
     float z = m[8] * h->center.z + m[7] * h->center.y + m[6] * h->center.x;
@@ -357,8 +357,8 @@ int Mesh3D_ExcludeBone(BoneMeshObj *o, void *clip)
     const TransContext *c = &gTransContext;
     float v[3];
 
-    view_point(v, (long double)o->pos[0] - c->pos[0], (long double)o->pos[1] - c->pos[1],
-               (long double)o->pos[2] - c->pos[2]);
+    view_point(v, (long double)o->pos[0] - c->pos.x, (long double)o->pos[1] - c->pos.y,
+               (long double)o->pos[2] - c->pos.z);
     return Mesh3D_Exclude(v, lod_header(o->model->lods[0])->sphere * kBoneSphere, clip);
 }
 HOOK(0x4D06C0, Mesh3D_ExcludeBone);
@@ -367,18 +367,18 @@ int Mesh3D_ExcludeSpline(SplineMeshObj *o, void *clip)
 {
     const TransContext *c = &gTransContext;
     const float *b = o->bound;
-    long double dx = (long double)o->pos[0] - c->pos[0];
+    long double dx = (long double)o->pos[0] - c->pos.x;
     float v[3], r;
 
     if (b) {
         float x = (float)dx + b[0];
-        float y = (float)(o->pos[1] - c->pos[1]) + b[1];
-        float z = o->pos[2] - c->pos[2];
+        float y = (float)(o->pos[1] - c->pos.y) + b[1];
+        float z = o->pos[2] - c->pos.z;
 
         view_point(v, x, y, (long double)z + b[2]);
         r = b[3];
     } else {
-        view_point(v, dx, (long double)o->pos[1] - c->pos[1], (long double)o->pos[2] - c->pos[2]);
+        view_point(v, dx, (long double)o->pos[1] - c->pos.y, (long double)o->pos[2] - c->pos.z);
         r = o->radius;
     }
     return Mesh3D_Exclude(v, r, clip);

@@ -5,9 +5,9 @@
 #include "hook.h"
 #include "igi.h"
 #include "sound/sound.h"
+#include "transctx/transctxtypes.h"
 
-extern float gViewFov;
-extern float gViewFovY;
+extern TransContext gTransContext;
 extern double gQCubeUnkA5E410;
 extern double gQCubeUnkA5E418;
 extern uint8_t gQCubeUnkA5E424[];
@@ -34,10 +34,10 @@ void QCube_UpdateViewScale(void)
     double mx, my;
     int i;
 
-    gQCubeScaleX = kOne / (gViewFov * k1_2) * k32;
+    gQCubeScaleX = kOne / (gTransContext.fov * k1_2) * k32;
     memset(gQCubeUnkA5E464, 0, 0x60 * 4);
     gQCubeUnkA5E410 = gQCubeCorners[0].x;
-    gQCubeScaleY = kOne / (gViewFovY * k1_2) * k24;
+    gQCubeScaleY = kOne / (gTransContext.fovY * k1_2) * k24;
     my = gQCubeCorners[0].y;
     for (i = 0; i < 8; i++) {
         if (gQCubeCorners[i].x > gQCubeUnkA5E410)

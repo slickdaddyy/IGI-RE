@@ -157,7 +157,7 @@ void Glow_InstanceHandler(GlowInstancePrim *p)
     float fy, c[3];
     int i, j, k = 0, x, y;
 
-    if (!gQCubeActive) {
+    if (!gTransContext.qcubeActive) {
         pool_release(&gGlowPool, g->buffer);
         return;
     }

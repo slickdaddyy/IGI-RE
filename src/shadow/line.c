@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "shadow/shadow.h"
 #include "qvertex/qvertextypes.h"
+#include "transctx/transctxtypes.h"
 
 ORIG(0x497F20, void, TransContext_Project, (float *screen, float *depth, Vec3d *pos));
 
@@ -10,8 +11,7 @@ extern void (*gRenderFuncs[])(QVertexStrip *);
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
 extern void *gQVertexPalette;
-extern float gViewDir[];
-extern Vec3d gViewPos;
+extern TransContext gTransContext;
 extern float kNearPlane;
 
 static inline int is_zero(float f)
@@ -26,11 +26,11 @@ static inline int is_one(float f)
 
 static inline float view_depth(const Vec3d *p)
 {
-    long double dx = (long double)p->x - gViewPos.x;
-    long double dy = (long double)p->y - gViewPos.y;
-    long double dz = (long double)p->z - gViewPos.z;
+    long double dx = (long double)p->x - gTransContext.pos.x;
+    long double dy = (long double)p->y - gTransContext.pos.y;
+    long double dz = (long double)p->z - gTransContext.pos.z;
 
-    return gViewDir[2] * dz + gViewDir[1] * dy + gViewDir[0] * dx;
+    return gTransContext.matrix.m[8] * dz + gTransContext.matrix.m[7] * dy + gTransContext.matrix.m[6] * dx;
 }
 
 static void line_draw(const Vec3d *pa, const Vec3d *pb, const float *ca, float aa, const float *cb, float ab, int unk8)

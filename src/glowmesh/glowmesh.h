@@ -4,18 +4,14 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "transctx/transctxtypes.h"
 
 /* exe constants, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }
 #define F64(name, bits) static const union { uint64_t u; double d; } name = { bits }
 
 /* the active TransContext (0xBCAAE0) and scene (0xBCABA0), only the fields used here */
-extern float gViewMatrix[];
-extern double gViewPos[];
-extern float gViewScaleX;
-extern float gViewScaleY;
-extern float gViewCenterX;
-extern float gViewCenterY;
+extern TransContext gTransContext;
 extern float gSceneX;
 extern float gSceneY;
 extern float gSceneW;
@@ -27,7 +23,6 @@ extern float gSceneMinY;
 extern float gSceneMaxX;
 extern float gSceneMaxY;
 extern float gNearPlane;
-extern int gQCubeActive;
 extern int gQCubeMinSize;
 extern void (*gRenderFuncs[])(void *);
 

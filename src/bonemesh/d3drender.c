@@ -12,7 +12,7 @@
 
 ORIG(0x491D40, long double, Display_GetAspect, (void));
 ORIG(0x4950F0, void, Direct3D_MakeMatrix, (void *out, const Matrix *rot, const Vec3f *pos));
-ORIG(0x497E70, void, TransContext_Select, (TransCtx *ctx));
+ORIG(0x497E70, void, TransContext_Select, (TransContext *ctx));
 ORIG(0x49B2D0, void, Fog_SetRange, (Vec3d *pos, float radius));
 ORIG(0x49B430, void, MeshBatch_Add, (int kind, MeshHeader *h, void *data));
 ORIG(0x49B700, int, BoneMesh_Skin, (MeshRender *r, VirModel *model, void *anim, int lod));
@@ -122,7 +122,7 @@ void Direct3DRender_DrawBoneMesh(MeshDrawArg *arg)
 {
     BoneDynCubeObj *obj = arg->obj;
     VirModel *model = (VirModel *)obj->model;
-    TransCtx saved, view;
+    TransContext saved, view;
     ModelLod *lod;
     MeshHeader *h;
     MeshRender *r;
@@ -141,7 +141,7 @@ void Direct3DRender_DrawBoneMesh(MeshDrawArg *arg)
     else if (n == -1)
         return;
     if (obj->layer == 0) {
-        saved = gTransCtx;
+        saved = gTransContext;
         view = saved;
         view.fov = gLayerFov[0];
         fovH = gSceneArea.h * gLayerFov[0];
@@ -153,11 +153,11 @@ void Direct3DRender_DrawBoneMesh(MeshDrawArg *arg)
     }
     lod = model->lods[n];
     h = (MeshHeader *)lod->mesh->header;
-    pos.x = (float)(obj->pos.x - gTransCtx.pos.x);
-    pos.y = (float)(obj->pos.y - gTransCtx.pos.y);
+    pos.x = (float)(obj->pos.x - gTransContext.pos.x);
+    pos.y = (float)(obj->pos.y - gTransContext.pos.y);
     pos.x = gWorldScale * pos.x;
     pos.y = gWorldScale * pos.y;
-    pos.z = gWorldScale * (obj->pos.z - gTransCtx.pos.z);
+    pos.z = gWorldScale * (obj->pos.z - gTransContext.pos.z);
     rot.m[0] = gWorldScale;
     rot.m[1] = kZero.f;
     rot.m[2] = kZero.f;
@@ -432,8 +432,8 @@ void Direct3DRender_ClipTriangleDepth(ClipVertex a, ClipVertex b, ClipVertex c, 
             o->z = z;
             r = kOne.f / z;
             o->rhw = r;
-            o->sx = r * gTransCtx.scaleX * o->x + gTransCtx.centerX;
-            o->sy = o->rhw * o->y * gTransCtx.scaleY + gTransCtx.centerY;
+            o->sx = r * gTransContext.scaleX * o->x + gTransContext.centerX;
+            o->sy = o->rhw * o->y * gTransContext.scaleY + gTransContext.centerY;
             o->code = outcode(o->sx, o->sy);
             t = (nearZ - in->z) / (p->z - in->z);
             p->x = (p->x - in->x) * t + in->x;
@@ -442,8 +442,8 @@ void Direct3DRender_ClipTriangleDepth(ClipVertex a, ClipVertex b, ClipVertex c, 
             p->z = z;
             r = kOne.f / z;
             p->rhw = r;
-            p->sx = r * p->x * gTransCtx.scaleX + gTransCtx.centerX;
-            p->sy = gTransCtx.scaleY * p->rhw * p->y + gTransCtx.centerY;
+            p->sx = r * p->x * gTransContext.scaleX + gTransContext.centerX;
+            p->sy = gTransContext.scaleY * p->rhw * p->y + gTransContext.centerY;
             p->code = outcode(p->sx, p->sy);
         } else {
             pick_one(v, ma, mb, &o, &p, &q);
@@ -455,8 +455,8 @@ void Direct3DRender_ClipTriangleDepth(ClipVertex a, ClipVertex b, ClipVertex c, 
             o->z = z;
             r = kOne.f / z;
             o->rhw = r;
-            o->sx = r * o->x * gTransCtx.scaleX + gTransCtx.centerX;
-            o->sy = gTransCtx.scaleY * o->y * o->rhw + gTransCtx.centerY;
+            o->sx = r * o->x * gTransContext.scaleX + gTransContext.centerX;
+            o->sy = gTransContext.scaleY * o->y * o->rhw + gTransContext.centerY;
             o->code = outcode(o->sx, o->sy);
             d = tmp.z - q->z;
             t = (nearZ - q->z) / d;
@@ -465,9 +465,9 @@ void Direct3DRender_ClipTriangleDepth(ClipVertex a, ClipVertex b, ClipVertex c, 
             tmp.z = d * t + q->z;
             r = kOne.f / tmp.z;
             tmp.rhw = r;
-            sx = r * tmp.x * gTransCtx.scaleX + gTransCtx.centerX;
+            sx = r * tmp.x * gTransContext.scaleX + gTransContext.centerX;
             tmp.sx = sx;
-            sy = tmp.rhw * tmp.y * gTransCtx.scaleY + gTransCtx.centerY;
+            sy = tmp.rhw * tmp.y * gTransContext.scaleY + gTransContext.centerY;
             tmp.sy = sy;
             tmp.code = (tmp.sy > gSceneArea.maxY) << 3 | (sx > gSceneArea.maxX) << 2 |
                        (sy < gSceneArea.minY) << 1 | (sx < gSceneArea.minX);
@@ -708,12 +708,12 @@ static int project(ClipVertex *out, float x, float y, long double z, float nearZ
     } else {
         r = kOne.f / out->z;
         *rhw = r;
-        px = r * x * gTransCtx.scaleX + gTransCtx.centerX;
+        px = r * x * gTransContext.scaleX + gTransContext.centerX;
         *sx = px;
         if (lightmap)
-            py = *rhw * y * gTransCtx.scaleY + gTransCtx.centerY;
+            py = *rhw * y * gTransContext.scaleY + gTransContext.centerY;
         else
-            py = gTransCtx.scaleY * *rhw * y + gTransCtx.centerY;
+            py = gTransContext.scaleY * *rhw * y + gTransContext.centerY;
         *sy = py;
         code = (*sy > gSceneArea.maxY) << 3 | (px > gSceneArea.maxX) << 2 | (py < gSceneArea.minY) << 1 |
                (px < gSceneArea.minX);
@@ -758,18 +758,18 @@ void RigidDynCubeObj_NearZHandler(RigidDynCubeObj *obj, NearZArg *arg)
     if (obj->hidden != 1 || !obj->model || !((VirModel *)obj->model)->lods[0])
         return;
     h = (MeshHeader *)((VirModel *)obj->model)->lods[0]->mesh->header;
-    pos.x = (float)(obj->pos.x - gTransCtx.pos.x);
-    pos.y = (float)(obj->pos.y - gTransCtx.pos.y);
-    pos.z = (float)(obj->pos.z - gTransCtx.pos.z);
+    pos.x = (float)(obj->pos.x - gTransContext.pos.x);
+    pos.y = (float)(obj->pos.y - gTransContext.pos.y);
+    pos.z = (float)(obj->pos.z - gTransContext.pos.z);
     x = h->center.z * obj->matrix.m[2] + h->center.y * obj->matrix.m[1] + obj->matrix.m[0] * h->center.x;
     y = obj->matrix.m[5] * h->center.z + obj->matrix.m[3] * h->center.x + h->center.y * obj->matrix.m[4];
     z = h->center.y * obj->matrix.m[7] + obj->matrix.m[6] * h->center.x + h->center.z * obj->matrix.m[8];
     wx = x + pos.x;
     wy = y + pos.y;
     wz = z + pos.z;
-    pos.x = gTransCtx.matrix.m[2] * wz + gTransCtx.matrix.m[1] * wy + gTransCtx.matrix.m[0] * wx;
-    pos.y = gTransCtx.matrix.m[5] * wz + gTransCtx.matrix.m[4] * wy + gTransCtx.matrix.m[3] * wx;
-    pos.z = gTransCtx.matrix.m[8] * wz + gTransCtx.matrix.m[7] * wy + gTransCtx.matrix.m[6] * wx;
+    pos.x = gTransContext.matrix.m[2] * wz + gTransContext.matrix.m[1] * wy + gTransContext.matrix.m[0] * wx;
+    pos.y = gTransContext.matrix.m[5] * wz + gTransContext.matrix.m[4] * wy + gTransContext.matrix.m[3] * wx;
+    pos.z = gTransContext.matrix.m[8] * wz + gTransContext.matrix.m[7] * wy + gTransContext.matrix.m[6] * wx;
     s = obj->scale[1] < obj->scale[0] ? obj->scale[0] : obj->scale[1];
     if (s > obj->scale[2])
         s = obj->scale[1] < obj->scale[0] ? obj->scale[0] : obj->scale[1];
@@ -782,33 +782,33 @@ void RigidDynCubeObj_NearZHandler(RigidDynCubeObj *obj, NearZArg *arg)
     if (near > arg->minZ)
         return;
     if (h->format == 0 || h->format == 3) {
-        wx = obj->pos.x - gTransCtx.pos.x;
-        wy = obj->pos.y - gTransCtx.pos.y;
-        wz = obj->pos.z - gTransCtx.pos.z;
-        o.x = gTransCtx.matrix.m[2] * wz + gTransCtx.matrix.m[1] * wy + gTransCtx.matrix.m[0] * wx;
-        o.y = gTransCtx.matrix.m[5] * wz + gTransCtx.matrix.m[4] * wy + gTransCtx.matrix.m[3] * wx;
-        o.z = wz * gTransCtx.matrix.m[8] + wy * gTransCtx.matrix.m[7] + wx * gTransCtx.matrix.m[6];
+        wx = obj->pos.x - gTransContext.pos.x;
+        wy = obj->pos.y - gTransContext.pos.y;
+        wz = obj->pos.z - gTransContext.pos.z;
+        o.x = gTransContext.matrix.m[2] * wz + gTransContext.matrix.m[1] * wy + gTransContext.matrix.m[0] * wx;
+        o.y = gTransContext.matrix.m[5] * wz + gTransContext.matrix.m[4] * wy + gTransContext.matrix.m[3] * wx;
+        o.z = wz * gTransContext.matrix.m[8] + wy * gTransContext.matrix.m[7] + wx * gTransContext.matrix.m[6];
         r = h->data;
         minZ = arg->minZ;
-        rot.m[0] = gTransCtx.matrix.m[1] * obj->matrix.m[3] + gTransCtx.matrix.m[0] * obj->matrix.m[0] +
-                   gTransCtx.matrix.m[2] * obj->matrix.m[6];
-        rot.m[1] = gTransCtx.matrix.m[1] * obj->matrix.m[4] + gTransCtx.matrix.m[2] * obj->matrix.m[7] +
-                   gTransCtx.matrix.m[0] * obj->matrix.m[1];
-        rot.m[2] = gTransCtx.matrix.m[1] * obj->matrix.m[5] + gTransCtx.matrix.m[2] * obj->matrix.m[8] +
-                   gTransCtx.matrix.m[0] * obj->matrix.m[2];
-        rot.m[3] = gTransCtx.matrix.m[4] * obj->matrix.m[3] + gTransCtx.matrix.m[3] * obj->matrix.m[0] +
-                   gTransCtx.matrix.m[5] * obj->matrix.m[6];
-        rot.m[4] = gTransCtx.matrix.m[4] * obj->matrix.m[4] + gTransCtx.matrix.m[5] * obj->matrix.m[7] +
-                   gTransCtx.matrix.m[3] * obj->matrix.m[1];
-        rot.m[5] = gTransCtx.matrix.m[4] * obj->matrix.m[5] + gTransCtx.matrix.m[5] * obj->matrix.m[8] +
-                   gTransCtx.matrix.m[3] * obj->matrix.m[2];
-        rot.m[6] = gTransCtx.matrix.m[7] * obj->matrix.m[3] + gTransCtx.matrix.m[6] * obj->matrix.m[0] +
-                   gTransCtx.matrix.m[8] * obj->matrix.m[6];
-        rot.m[7] = gTransCtx.matrix.m[7] * obj->matrix.m[4] + gTransCtx.matrix.m[8] * obj->matrix.m[7] +
-                   gTransCtx.matrix.m[6] * obj->matrix.m[1];
-        rot.m[8] = gTransCtx.matrix.m[7] * obj->matrix.m[5] + gTransCtx.matrix.m[8] * obj->matrix.m[8] +
-                   gTransCtx.matrix.m[6] * obj->matrix.m[2];
-        rot.count = obj->matrix.count + gTransCtx.matrix.count + 1;
+        rot.m[0] = gTransContext.matrix.m[1] * obj->matrix.m[3] + gTransContext.matrix.m[0] * obj->matrix.m[0] +
+                   gTransContext.matrix.m[2] * obj->matrix.m[6];
+        rot.m[1] = gTransContext.matrix.m[1] * obj->matrix.m[4] + gTransContext.matrix.m[2] * obj->matrix.m[7] +
+                   gTransContext.matrix.m[0] * obj->matrix.m[1];
+        rot.m[2] = gTransContext.matrix.m[1] * obj->matrix.m[5] + gTransContext.matrix.m[2] * obj->matrix.m[8] +
+                   gTransContext.matrix.m[0] * obj->matrix.m[2];
+        rot.m[3] = gTransContext.matrix.m[4] * obj->matrix.m[3] + gTransContext.matrix.m[3] * obj->matrix.m[0] +
+                   gTransContext.matrix.m[5] * obj->matrix.m[6];
+        rot.m[4] = gTransContext.matrix.m[4] * obj->matrix.m[4] + gTransContext.matrix.m[5] * obj->matrix.m[7] +
+                   gTransContext.matrix.m[3] * obj->matrix.m[1];
+        rot.m[5] = gTransContext.matrix.m[4] * obj->matrix.m[5] + gTransContext.matrix.m[5] * obj->matrix.m[8] +
+                   gTransContext.matrix.m[3] * obj->matrix.m[2];
+        rot.m[6] = gTransContext.matrix.m[7] * obj->matrix.m[3] + gTransContext.matrix.m[6] * obj->matrix.m[0] +
+                   gTransContext.matrix.m[8] * obj->matrix.m[6];
+        rot.m[7] = gTransContext.matrix.m[7] * obj->matrix.m[4] + gTransContext.matrix.m[8] * obj->matrix.m[7] +
+                   gTransContext.matrix.m[6] * obj->matrix.m[1];
+        rot.m[8] = gTransContext.matrix.m[7] * obj->matrix.m[5] + gTransContext.matrix.m[8] * obj->matrix.m[8] +
+                   gTransContext.matrix.m[6] * obj->matrix.m[2];
+        rot.count = obj->matrix.count + gTransContext.matrix.count + 1;
         if (h->format == 0) {
             for (i = 0; i < 9; i++)
                 rot.m[i] = rot.m[i] * obj->scale[i % 3];
@@ -876,3 +876,4 @@ PAD(igb, 7AF1E0, 7AF1E8, 0xFDE80);
 ALIAS(gRigidClipVerts, pad_7AF1E8, 0);
 PAD(igb, 7AF1E0, 8AD068, 0x88B88);
 ALIAS(gLightmapClipVerts, pad_8AD068, 0);
+BSS(BCAAE0) TransContext gTransContext;

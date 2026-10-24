@@ -83,18 +83,18 @@ void BoneDynCubeObj_NearZHandler(BoneDynCubeObj *obj, NearZArg *arg)
     if (obj->layer != 1 || !obj->model)
         return;
     h = HEADER(obj);
-    px = obj->pos.x - gViewPos[0];
-    py = obj->pos.y - gViewPos[1];
-    pz = obj->pos.z - gViewPos[2];
+    px = obj->pos.x - gTransContext.pos.x;
+    py = obj->pos.y - gTransContext.pos.y;
+    pz = obj->pos.z - gTransContext.pos.z;
     x0 = obj->matrix.m[2] * h->center.z + obj->matrix.m[1] * h->center.y + obj->matrix.m[0] * h->center.x;
     y0 = obj->matrix.m[5] * h->center.z + obj->matrix.m[4] * h->center.y + obj->matrix.m[3] * h->center.x;
     z0 = obj->matrix.m[8] * h->center.z + obj->matrix.m[7] * h->center.y + obj->matrix.m[6] * h->center.x;
     wx = x0 + px;
     wy = y0 + py;
     wz = z0 + pz;
-    v[0] = gViewMatrix[2] * wz + gViewMatrix[1] * wy + gViewMatrix[0] * wx;
-    v[1] = gViewMatrix[5] * wz + gViewMatrix[4] * wy + gViewMatrix[3] * wx;
-    v[2] = gViewMatrix[8] * wz + gViewMatrix[7] * wy + gViewMatrix[6] * wx;
+    v[0] = gTransContext.matrix.m[2] * wz + gTransContext.matrix.m[1] * wy + gTransContext.matrix.m[0] * wx;
+    v[1] = gTransContext.matrix.m[5] * wz + gTransContext.matrix.m[4] * wy + gTransContext.matrix.m[3] * wx;
+    v[2] = gTransContext.matrix.m[8] * wz + gTransContext.matrix.m[7] * wy + gTransContext.matrix.m[6] * wx;
     s = !(obj->scale[1] >= obj->scale[0]) ? obj->scale[0] : obj->scale[1];
     if (s > obj->scale[2])
         s = !(obj->scale[1] >= obj->scale[0]) ? obj->scale[0] : obj->scale[1];

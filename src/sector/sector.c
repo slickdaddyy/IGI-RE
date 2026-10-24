@@ -140,7 +140,7 @@ extern uint16_t gSectorObjectType;
 extern uint16_t gSectorInteriorObjectType;
 extern float gQCubeOutsideMin[];
 extern float gQCubeOutsideMax[];
-extern TransCtx gView;
+extern TransContext gTransContext;
 extern char gScene[];
 extern SceneArea gSceneArea;
 
@@ -216,8 +216,8 @@ void Portal_ClipTriangle(ClipVertex a, ClipVertex b, ClipVertex c, float **rect,
             o->z = z;
             r = kOne / z;
             o->rhw = r;
-            o->sx = r * gView.scaleX * o->x + gView.centerX;
-            o->sy = o->rhw * o->y * gView.scaleY + gView.centerY;
+            o->sx = r * gTransContext.scaleX * o->x + gTransContext.centerX;
+            o->sy = o->rhw * o->y * gTransContext.scaleY + gTransContext.centerY;
             o->code = outcode(o->sx, o->sy);
             t = (nearZ - in->z) / (p->z - in->z);
             p->x = (p->x - in->x) * t + in->x;
@@ -226,8 +226,8 @@ void Portal_ClipTriangle(ClipVertex a, ClipVertex b, ClipVertex c, float **rect,
             p->z = z;
             r = kOne / z;
             p->rhw = r;
-            p->sx = r * p->x * gView.scaleX + gView.centerX;
-            p->sy = gView.scaleY * p->rhw * p->y + gView.centerY;
+            p->sx = r * p->x * gTransContext.scaleX + gTransContext.centerX;
+            p->sy = gTransContext.scaleY * p->rhw * p->y + gTransContext.centerY;
             p->code = outcode(p->sx, p->sy);
         } else {
             pick_one(v, ma, mb, &o, &p, &q);
@@ -239,8 +239,8 @@ void Portal_ClipTriangle(ClipVertex a, ClipVertex b, ClipVertex c, float **rect,
             o->z = z;
             r = kOne / z;
             o->rhw = r;
-            o->sx = r * o->x * gView.scaleX + gView.centerX;
-            o->sy = gView.scaleY * o->y * o->rhw + gView.centerY;
+            o->sx = r * o->x * gTransContext.scaleX + gTransContext.centerX;
+            o->sy = gTransContext.scaleY * o->y * o->rhw + gTransContext.centerY;
             o->code = outcode(o->sx, o->sy);
             d = tmp.z - q->z;
             t = (nearZ - q->z) / d;
@@ -249,9 +249,9 @@ void Portal_ClipTriangle(ClipVertex a, ClipVertex b, ClipVertex c, float **rect,
             tmp.z = d * t + q->z;
             r = kOne / tmp.z;
             tmp.rhw = r;
-            sx = r * tmp.x * gView.scaleX + gView.centerX;
+            sx = r * tmp.x * gTransContext.scaleX + gTransContext.centerX;
             tmp.sx = sx;
-            sy = tmp.rhw * tmp.y * gView.scaleY + gView.centerY;
+            sy = tmp.rhw * tmp.y * gTransContext.scaleY + gTransContext.centerY;
             tmp.sy = sy;
             tmp.code = (tmp.sy > gSceneArea.maxY) << 3 | (sx > gSceneArea.maxX) << 2 |
                        (sy < gSceneArea.minY) << 1 | (sx < gSceneArea.minX);
@@ -1161,11 +1161,11 @@ int Portal_GetScreenRect(Sector *s, int lod, int k, float *clipMin, float *clipM
     px = px + s->o.pos.x;
     wpy = py + s->o.pos.y;
     wpz = pz + s->o.pos.z;
-    dx = px - gView.pos.x;
+    dx = px - gTransContext.pos.x;
     dxf = dx;
-    dy = wpy - gView.pos.y;
+    dy = wpy - gTransContext.pos.y;
     dyf = dy;
-    dz = wpz - gView.pos.z;
+    dz = wpz - gTransContext.pos.z;
     dzf = dz;
     if (!feq0(dx) || !feq0(dy) || !feq0(dz)) {
         float len = x87_sqrt(dx * dx + dy * dy + dz * dz);
@@ -1194,9 +1194,9 @@ int Portal_GetScreenRect(Sector *s, int lod, int k, float *clipMin, float *clipM
         if (ex * ex + ey * ey + ez * ez > kPortalDist2)
             return 0;
     }
-    cx = s->o.pos.x - gView.pos.x;
-    cy = s->o.pos.y - gView.pos.y;
-    cz = s->o.pos.z - gView.pos.z;
+    cx = s->o.pos.x - gTransContext.pos.x;
+    cy = s->o.pos.y - gTransContext.pos.y;
+    cz = s->o.pos.z - gTransContext.pos.z;
     if (p->vertCount <= 0)
         return 0;
     for (i = 0; i < p->vertCount; i++) {
@@ -1207,9 +1207,9 @@ int Portal_GetScreenRect(Sector *s, int lod, int k, float *clipMin, float *clipM
         float rz = v->y * mx[7] + mx[8] * v->z + mx[6] * v->x;
         long double X = (long double)rx + cx, Y = (long double)ry + cy, Z = (long double)rz + cz;
 
-        c->x = Z * gView.matrix.m[2] + Y * gView.matrix.m[1] + X * gView.matrix.m[0];
-        c->y = Z * gView.matrix.m[5] + Y * gView.matrix.m[4] + X * gView.matrix.m[3];
-        c->z = Z * gView.matrix.m[8] + Y * gView.matrix.m[7] + X * gView.matrix.m[6];
+        c->x = Z * gTransContext.matrix.m[2] + Y * gTransContext.matrix.m[1] + X * gTransContext.matrix.m[0];
+        c->y = Z * gTransContext.matrix.m[5] + Y * gTransContext.matrix.m[4] + X * gTransContext.matrix.m[3];
+        c->z = Z * gTransContext.matrix.m[8] + Y * gTransContext.matrix.m[7] + X * gTransContext.matrix.m[6];
         if (!(c->z >= kNearZ)) {
             c->code = 0x10;
         } else {
@@ -1218,9 +1218,9 @@ int Portal_GetScreenRect(Sector *s, int lod, int k, float *clipMin, float *clipM
 
             c->rhw = rhw;
             any = 1;
-            sx = rhw * c->x * gView.scaleX + gView.centerX;
+            sx = rhw * c->x * gTransContext.scaleX + gTransContext.centerX;
             c->sx = sx;
-            sy = rhw * c->y * gView.scaleY + gView.centerY;
+            sy = rhw * c->y * gTransContext.scaleY + gTransContext.centerY;
             syf = sy;
             c->sy = syf;
             c->code = (syf > gSceneArea.maxY) << 3 | (sx > gSceneArea.maxX) << 2 |

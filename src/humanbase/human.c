@@ -9,6 +9,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "humanbase/humanbase.h"
+#include "transctx/transctxtypes.h"
 
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
@@ -134,8 +135,7 @@ ORIG(0x462BA0, void, Human_AvoidHumans, (Human *h, double *pos, double *to, floa
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern float gViewMatrix[];
-extern double gViewPos[];
+extern TransContext gTransContext;
 extern uint8_t gHumanEvent0;
 extern uint8_t gHumanEvent1;
 extern uint8_t gHumanGunshotEvent;
@@ -276,12 +276,12 @@ void Human_WakeIfVisible(Human *h)
     if (!h->frozen)
         return;
     Viewport_GetCurrentCamera();
-    dx = h->pos[0] - gViewPos[0];
-    dy = h->pos[1] - gViewPos[1];
-    dz = h->pos[2] - gViewPos[2];
-    v[0] = gViewMatrix[2] * dz + gViewMatrix[1] * dy + gViewMatrix[0] * dx;
-    v[1] = gViewMatrix[5] * dz + gViewMatrix[4] * dy + gViewMatrix[3] * dx;
-    v[2] = gViewMatrix[8] * dz + gViewMatrix[7] * dy + gViewMatrix[6] * dx;
+    dx = h->pos[0] - gTransContext.pos.x;
+    dy = h->pos[1] - gTransContext.pos.y;
+    dz = h->pos[2] - gTransContext.pos.z;
+    v[0] = gTransContext.matrix.m[2] * dz + gTransContext.matrix.m[1] * dy + gTransContext.matrix.m[0] * dx;
+    v[1] = gTransContext.matrix.m[5] * dz + gTransContext.matrix.m[4] * dy + gTransContext.matrix.m[3] * dx;
+    v[2] = gTransContext.matrix.m[8] * dz + gTransContext.matrix.m[7] * dy + gTransContext.matrix.m[6] * dx;
     c[0] = v[0];
     c[1] = v[1];
     c[2] = v[2];

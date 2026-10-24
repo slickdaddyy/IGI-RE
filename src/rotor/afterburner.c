@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "rotor/rotor.h"
+#include "transctx/transctxtypes.h"
 
 FN_EXTERN(EditorMagicObj_Delete);
 
@@ -40,8 +41,7 @@ ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 extern uint16_t gAfterburnerType;
 extern char gAfterburnerRandom[];
 extern int gAfterburnerPrim;
-extern float gViewDir[];
-extern Vec3d gViewPos;
+extern TransContext gTransContext;
 
 F32(kColor, 0x437F0000);        /* 255 */
 F32(kGlowStart, 0x3F4F5C29);    /* 0.81 */
@@ -93,9 +93,9 @@ void Afterburner_Draw(Part *o)
     p->color[2] = (float)(o->value * kColor.f);
     p->unk14 = Light_GetActive(&p->unk18);
     Haze_GetVisible(&p->unk20, &p->unk1C);
-    depth = (float)((long double)gViewDir[2] * ((long double)o->obj.pos.z - gViewPos.z)
-                    + (long double)gViewDir[1] * ((long double)o->obj.pos.y - gViewPos.y)
-                    + (long double)gViewDir[0] * ((long double)o->obj.pos.x - gViewPos.x));
+    depth = (float)((long double)gTransContext.matrix.m[8] * ((long double)o->obj.pos.z - gTransContext.pos.z)
+                    + (long double)gTransContext.matrix.m[7] * ((long double)o->obj.pos.y - gTransContext.pos.y)
+                    + (long double)gTransContext.matrix.m[6] * ((long double)o->obj.pos.x - gTransContext.pos.x));
     if (Float_Log2(depth) < 1)
         queue = 1;
     else

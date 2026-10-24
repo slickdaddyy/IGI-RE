@@ -300,7 +300,7 @@ void Binocular_Close(void)
 HOOK(0x470EB0, Binocular_Close);
 
 /* screen position and depth of a world point */
-void View_Project(TransCtx *v, float *out, float *depth, const Vec3d *p)
+void View_Project(TransContext *v, float *out, float *depth, const Vec3d *p)
 {
     long double dx = p->x - v->pos.x;
     long double dy = p->y - v->pos.y;
@@ -320,7 +320,7 @@ void View_Project(TransCtx *v, float *out, float *depth, const Vec3d *p)
 HOOK(0x470EC0, View_Project);
 
 /* screen size of something of the given size at a depth */
-void View_ScaleSize(TransCtx *v, float *out, const float *size, float depth)
+void View_ScaleSize(TransContext *v, float *out, const float *size, float depth)
 {
     long double k = kOne / depth;
 
