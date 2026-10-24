@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "comprun/comprun.h"
+#include "vehicle/vehicletypes.h"
 
 FN_EXTERN(GunCABarrel_Follow);
 FN_EXTERN(Human_ClearResult);
@@ -24,17 +25,6 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 #define Gunx2_Handler472880 (FN(0x472880, GunCABarrel_Follow))
 #define Gunx2_Handler45E3D0 (FN(0x45E3D0, Human_ClearResult))
 
-/* the argument of the create handler of the vehicle parts */
-typedef struct PartCreateArg {
-    const char *model;
-    void *world;
-    Vec3d pos;
-    Vec3d offset;
-    Matrix matrix;
-    Matrix local;
-    Task *owner;
-} PartCreateArg;
-
 /* "Gunx2" (0x138 bytes), a twin gun mounted on a vehicle */
 typedef struct Gunx2 {
     RigidDynCubeObj obj;
@@ -44,7 +34,6 @@ typedef struct Gunx2 {
     int unk134;
 } Gunx2;
 
-_Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 _Static_assert(sizeof(Gunx2) == 0x138, "Gunx2");
 
 extern uint16_t gGunx2Type;

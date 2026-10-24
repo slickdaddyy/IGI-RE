@@ -150,10 +150,10 @@ void CarDoor_Create(VehiclePart *p, PartCreateArg *arg)
     }
     p->offset = arg->offset;
     p->local = arg->local;
-    RigidDynCubeObj_Init(arg->unk4, p, model);
-    DynCube_Add(arg->unk4, p, &arg->pos, part_radius(p), 2);
+    RigidDynCubeObj_Init(arg->world, p, model);
+    DynCube_Add(arg->world, p, &arg->pos, part_radius(p), 2);
     p->obj.matrix = arg->matrix;
-    p->params = arg->params;
+    p->params = arg->def;
     p->owner = arg->owner;
     p->open = 0;
     p->angle = 0;
@@ -162,7 +162,7 @@ HOOK(0x426740, CarDoor_Create);
 
 void VehiclePart_Delete(VehiclePart *p)
 {
-    DynCube_Remove((int)p->obj.world, p);
+    DynCube_Remove(p->obj.world, p);
 }
 HOOK(0x426860, VehiclePart_Delete);
 
@@ -274,11 +274,11 @@ void HeliWheel_Create(VehiclePart *p, PartCreateArg *arg)
     }
     p->offset = arg->offset;
     p->local = arg->local;
-    RigidDynCubeObj_Init(arg->unk4, p, model);
-    DynCube_Add(arg->unk4, p, &arg->pos, part_radius(p), 2);
+    RigidDynCubeObj_Init(arg->world, p, model);
+    DynCube_Add(arg->world, p, &arg->pos, part_radius(p), 2);
     p->obj.matrix = arg->matrix;
     p->owner = arg->owner;
-    p->params = arg->params;
+    p->params = arg->def;
 }
 HOOK(0x426E90, HeliWheel_Create);
 
@@ -453,10 +453,10 @@ void RocketPod_Create(VehiclePart *p, PartCreateArg *arg)
     }
     p->offset = arg->offset;
     p->local = arg->local;
-    RigidDynCubeObj_Init(arg->unk4, p, model);
-    DynCube_Add(arg->unk4, p, &arg->pos, part_radius(p), 2);
+    RigidDynCubeObj_Init(arg->world, p, model);
+    DynCube_Add(arg->world, p, &arg->pos, part_radius(p), 2);
     p->obj.matrix = arg->matrix;
-    p->params = arg->params;
+    p->params = arg->def;
     p->owner = arg->owner;
     p->cooldown = Random_Int(Game_GetRandom(), *(int *)p->params);
 }

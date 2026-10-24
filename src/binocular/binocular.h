@@ -9,22 +9,11 @@
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "vehicle/vehicletypes.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* argument of the create handler of vehicle parts */
-typedef struct PartCreateArg {
-    const char *model;
-    void *world;
-    Vec3d pos;
-    Vec3d offset;
-    Matrix matrix;
-    Matrix local;
-    RigidDynCubeObj *owner;
-    void *def;
-} PartCreateArg;
 
 /* argument of the script argument parsers */
 typedef struct ScriptArg {
@@ -79,7 +68,6 @@ typedef struct View {
     float centerY;
 } View;
 
-_Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 _Static_assert(offsetof(RefNode, active) == 0x29, "RefNode");
 _Static_assert(sizeof(WeaponUseArg) == 0x30, "WeaponUseArg");
 _Static_assert(offsetof(View, centerY) == 0x54, "View");

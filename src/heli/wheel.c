@@ -23,9 +23,9 @@ ORIG(0x4B33A0, void, Matrix_RotateEuler, (Matrix *out, const Matrix *m, float ax
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
 ORIG(0x4B8A80, char *, Script_GetArgString, (void *args, int i, char *buf, int size));
-ORIG(0x4C5710, void, RigidDynCubeObj_Init, (int unk, void *obj, void **model));
+ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, float radius));
-ORIG(0x4C7140, void, DynCube_Add, (int unk, void *obj, Vec3d *pos, float radius, int category));
+ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int category));
 ORIG(0x4C7560, void, DynCube_Remove, (int unk, void *obj));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
@@ -128,8 +128,8 @@ void Wheel_Create(Wheel *w, PartCreateArg *a)
     }
     w->offset = a->offset;
     w->local = a->local;
-    RigidDynCubeObj_Init(a->unk4, w, model);
-    DynCube_Add(a->unk4, w, &a->pos, radius(w), 2);
+    RigidDynCubeObj_Init(a->world, w, model);
+    DynCube_Add(a->world, w, &a->pos, radius(w), 2);
     w->matrix = a->matrix;
     w->phys = PhysicsObjType_Find(a->model);
     w->lift = 0;

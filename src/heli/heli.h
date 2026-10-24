@@ -10,6 +10,7 @@
 #include "param/paramtypes.h"
 #include "coll/colltypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "vehicle/vehicletypes.h"
 
 /* a physics object type (DefinePhysicsObjType); data is its parsed arguments */
 typedef struct PhysType {
@@ -216,18 +217,6 @@ typedef struct Heli {
     char unk2CFC[4];
 } Heli;
 
-/* the argument of the create handler of the vehicle parts */
-typedef struct PartCreateArg {
-    const char *model;
-    int unk4;
-    Vec3d pos;
-    Vec3d offset;
-    Matrix matrix;
-    Matrix local;
-    Task *owner;
-    void *params;
-} PartCreateArg;
-
 /* the argument of the physics type argument parsers */
 typedef struct ParseArg {
     void *out;
@@ -270,7 +259,6 @@ _Static_assert(sizeof(WheelConfig) == 0x2F0, "WheelConfig");
 _Static_assert(offsetof(Heli, light_matrix) == 0x860, "Heli");
 _Static_assert(offsetof(Heli, light) == 0x8C0, "Heli");
 _Static_assert(sizeof(Heli) == 0x2D00, "Heli");
-_Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;

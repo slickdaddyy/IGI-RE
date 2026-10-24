@@ -9,6 +9,7 @@
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "vehicle/vehicletypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -31,19 +32,6 @@ typedef struct ParseArg {
     int index;
     int used;
 } ParseArg;
-
-/* the argument of the create handler of the vehicle parts */
-typedef struct PartCreateArg {
-    const char *model;
-    int unk4;
-    Vec3d pos;
-    Vec3d offset;
-    Matrix matrix;
-    Matrix local;
-    Task *owner;
-} PartCreateArg;
-
-_Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

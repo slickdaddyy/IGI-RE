@@ -9,6 +9,7 @@
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "vehicle/vehicletypes.h"
 
 /* per type data of a vehicle physics type, parsed by 0x5031F0 */
 typedef struct VehicleConfig {
@@ -132,18 +133,6 @@ typedef struct PlaneControlArg {
     PlaneInput *input;
 } PlaneControlArg;
 
-/* create argument of the vehicle parts */
-typedef struct PartCreateArg {
-    const char *model;
-    void *world;
-    Vec3d pos;
-    Vec3d offset;
-    Matrix matrix;
-    Matrix local;
-    Plane *owner;
-    void *def;
-} PartCreateArg;
-
 /* argument of the MagicObj definition parsers */
 typedef struct DefParseArg {
     void *out;
@@ -192,7 +181,6 @@ _Static_assert(offsetof(PhysType, data) == 0x2D4, "PhysType");
 _Static_assert(offsetof(Plane, sound_params) == 0x828, "sound_params");
 _Static_assert(sizeof(Plane) == 0x888, "Plane");
 _Static_assert(offsetof(Heli, unk8C0) == 0x8C0, "Heli");
-_Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 _Static_assert(sizeof(GearDef) == 0x14, "GearDef");
 _Static_assert(offsetof(Part, offset) == 0xF0, "offset");
 _Static_assert(sizeof(Part) == 0x140, "Part");

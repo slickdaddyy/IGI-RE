@@ -10,22 +10,11 @@
 #include "param/paramtypes.h"
 #include "win/wintypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "vehicle/vehicletypes.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* the argument of the create handler of the vehicle parts */
-typedef struct PartCreateArg {
-    const char *model;
-    int unk4;
-    Vec3d pos;
-    Vec3d offset;
-    Matrix matrix;
-    Matrix local;
-    Task *owner;
-    void *params;
-} PartCreateArg;
 
 /* the argument of the script argument handlers */
 typedef struct PartScriptArg {
@@ -43,7 +32,6 @@ typedef struct RefNode {
     char active;
 } RefNode;
 
-_Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 _Static_assert(offsetof(RefNode, active) == 0x29, "RefNode");
 
 extern TaskFn gTaskHandlers[][0x180];
@@ -85,10 +73,10 @@ ORIG(0x4C3440, Vec3d *, DynCubeObj_GetPosition, (void *obj));
 ORIG(0x4C56D0, uint8_t, RigidDynCubeObj_GetEvent0, (void));
 ORIG(0x4C56E0, uint8_t, RigidDynCubeObj_GetEvent1, (void));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
-ORIG(0x4C5710, void, RigidDynCubeObj_Init, (int unk68, void *o, void **model));
+ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *o, void **model));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *o, Vec3d *pos, float radius));
-ORIG(0x4C7140, void, DynCube_Add, (int unk, void *o, Vec3d *pos, float radius, int unk2));
-ORIG(0x4C7560, void, DynCube_Remove, (int unk68, void *o));
+ORIG(0x4C7140, void, DynCube_Add, (void *world, void *o, Vec3d *pos, float radius, int unk2));
+ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *o));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));

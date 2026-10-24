@@ -35,8 +35,8 @@ void Gear_Create(Part *o, PartCreateArg *arg)
 
     PlanePart_Init(o, arg);
     def = o->def;
-    o->angle = arg->owner->gear ? kZero : def->angle * kDegToRad;
-    Gear_SetMatrix(o, &arg->owner->v.matrix);
+    o->angle = ((Plane *)arg->owner)->gear ? kZero : def->angle * kDegToRad;
+    Gear_SetMatrix(o, &((Plane *)arg->owner)->v.matrix);
 }
 HOOK(0x435460, Gear_Create);
 

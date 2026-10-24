@@ -33,8 +33,8 @@ void CockpitShield_Create(Part *o, PartCreateArg *arg)
 
     PlanePart_Init(o, arg);
     def = o->def;
-    o->angle = arg->owner->cockpit ? def[0] * kDegToRad : kZero;
-    CockpitShield_SetMatrix(o, &arg->owner->v.matrix);
+    o->angle = ((Plane *)arg->owner)->cockpit ? def[0] * kDegToRad : kZero;
+    CockpitShield_SetMatrix(o, &((Plane *)arg->owner)->v.matrix);
 }
 HOOK(0x434E10, CockpitShield_Create);
 

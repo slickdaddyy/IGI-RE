@@ -153,13 +153,13 @@ void AlarmLightReflector_Create(Reflector *t, PartCreateArg *a)
         for (;;)
             ;
     }
-    RigidDynCubeObj_Init((void *)(intptr_t)a->unk4, t, model);
+    RigidDynCubeObj_Init((void *)(intptr_t)a->world, t, model);
     {
         float s = max_scale(&t->obj);
 
         r = VirModel_GetRadius(t->obj.model) * s;
     }
-    DynCube_Add((void *)(intptr_t)a->unk4, t, &a->pos, r, 1);
+    DynCube_Add((void *)(intptr_t)a->world, t, &a->pos, r, 1);
     t->obj.matrix = a->matrix;
     t->light = (AlarmLight *)a->owner;
     RigidDynCubeObj_CreateMagicObjs(t, t, a->owner);

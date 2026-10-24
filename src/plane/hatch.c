@@ -31,8 +31,8 @@ void Hatch_Create(Part *o, PartCreateArg *arg)
 
     PlanePart_Init(o, arg);
     def = o->def;
-    o->angle = arg->owner->gear ? kZero : def[0] * kDegToRad;
-    CockpitShield_SetMatrix(o, &arg->owner->v.matrix);
+    o->angle = ((Plane *)arg->owner)->gear ? kZero : def[0] * kDegToRad;
+    CockpitShield_SetMatrix(o, &((Plane *)arg->owner)->v.matrix);
 }
 HOOK(0x435C50, Hatch_Create);
 

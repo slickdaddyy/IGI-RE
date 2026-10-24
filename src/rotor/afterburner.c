@@ -24,9 +24,9 @@ ORIG(0x4B4770, long double, Random_Float, (void *r));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4C1780, void, Debug_Log, (void *obj, int a, int b, int c, int d, int e, int f, float *color));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
-ORIG(0x4C5710, void, RigidDynCubeObj_Init, (int unk, void *o, void **model));
+ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *o, void **model));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *o, Vec3d *pos, float radius));
-ORIG(0x4C7140, void, DynCube_Add, (int unk, void *o, Vec3d *pos, float radius, int category));
+ORIG(0x4C7140, void, DynCube_Add, (void *world, void *o, Vec3d *pos, float radius, int category));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
@@ -71,8 +71,8 @@ void Afterburner_Create(Part *o, PartCreateArg *arg)
     }
     o->offset = arg->offset;
     o->local = arg->local;
-    RigidDynCubeObj_Init(arg->unk4, o, model);
-    DynCube_Add(arg->unk4, o, &arg->pos, part_radius(o), 2);
+    RigidDynCubeObj_Init(arg->world, o, model);
+    DynCube_Add(arg->world, o, &arg->pos, part_radius(o), 2);
     o->obj.matrix = arg->matrix;
     o->owner = arg->owner;
     Random_Init(gAfterburnerRandom);

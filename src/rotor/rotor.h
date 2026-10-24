@@ -9,6 +9,7 @@
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "vehicle/vehicletypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -19,18 +20,6 @@ typedef struct MagicDef {
     char unkC[0x2D4 - 0xC];
     void *data;
 } MagicDef;
-
-/* create argument of the vehicle parts */
-typedef struct PartCreateArg {
-    const char *model;
-    int unk4;
-    Vec3d pos;
-    Vec3d offset;
-    Matrix matrix;
-    Matrix local;
-    struct Car *owner;
-    void *params;
-} PartCreateArg;
 
 /* the same with the vehicle itself */
 typedef struct CarMoveArg {
@@ -189,7 +178,6 @@ typedef struct Car {
     char pad2ED6[2];
 } Car;
 
-_Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 _Static_assert(sizeof(Part) == 0x140, "Part");
 _Static_assert(offsetof(Prim, color) == 0x24, "Prim");
 _Static_assert(sizeof(CarData) == 0x2C0, "CarData");
