@@ -4,33 +4,10 @@
 #include "hook.h"
 #include "igi.h"
 #include "animtrig/animtrig.h"
+#include "graphtask/graphtasktypes.h"
 
 ORIG(0x4B2A10, long double, Vec3_FastLength, (const float *v));
 ORIG(0x4B3C20, void, Matrix_SetScale, (float *m, float x, float y, float z));
-
-/* a force (object space) and the point it acts at */
-typedef struct BodyForce {
-    float force[3];
-    float point[3];
-} BodyForce;
-
-/* Rigid body of vehicles and physics objects. Forces are collected with
-   Body_AddForce and applied by Body_Integrate. */
-typedef struct Body {
-    float mass;
-    float invMass;
-    float speed;
-    float invInertia[3];
-    float vel[3];
-    float dir[3];
-    float angMom[3];
-    float force[3];
-    float angVel[3];
-    BodyForce *forces;
-    int maxForces;
-    int forceCount;
-    int lastForceCount;
-} Body;
 
 /* a lifting surface: area, normal, position */
 typedef struct AeroPart {
@@ -39,7 +16,6 @@ typedef struct AeroPart {
     float pos[3];
 } AeroPart;
 
-_Static_assert(sizeof(Body) == 0x64, "Body");
 _Static_assert(sizeof(AeroPart) == 0x1C, "AeroPart");
 
 static const float kZero = 0.0f;
@@ -153,11 +129,11 @@ HOOK(0x4EC630, Body_Free);
 
 void Body_Reset(Body *b)
 {
-    memset(b->vel, 0, sizeof(b->vel));
-    memset(b->dir, 0, sizeof(b->dir));
-    memset(b->angMom, 0, sizeof(b->angMom));
-    memset(b->force, 0, sizeof(b->force));
-    memset(b->angVel, 0, sizeof(b->angVel));
+    memset(&b->vel, 0, sizeof(b->vel));
+    memset(&b->dir, 0, sizeof(b->dir));
+    memset(&b->angMom, 0, sizeof(b->angMom));
+    memset(&b->force, 0, sizeof(b->force));
+    memset(&b->angVel, 0, sizeof(b->angVel));
     b->speed = 0;
     b->forceCount = 0;
     b->lastForceCount = 0;
@@ -231,45 +207,45 @@ int Body_Integrate(Body *b, float *m)
                 tz += t2;
             }
         }
-        b->force[0] = fx;
-        b->force[1] = fy;
-        b->force[2] = fz;
+        b->force.x = fx;
+        b->force.y = fy;
+        b->force.z = fz;
         sty = ty;
         stz = tz;
-        ax = (long double)b->invMass * b->force[0];
-        ay = (long double)b->invMass * b->force[1];
+        ax = (long double)b->invMass * b->force.x;
+        ay = (long double)b->invMass * b->force.y;
         az = (long double)b->invMass * fz;
         dvx = (az * m[2] + (long double)ay * m[1]) + (long double)ax * m[0];
         dvy = (az * m[5] + (long double)ax * m[3]) + (long double)ay * m[4];
         dvz = ((long double)ay * m[7] + (long double)ax * m[6]) + az * m[8];
         b->forceCount = 0;
-        b->vel[0] = dvx + b->vel[0];
-        b->vel[1] = dvy + b->vel[1];
-        b->vel[2] = dvz + b->vel[2];
-        b->angMom[0] = tx + b->angMom[0];
-        b->angMom[1] = sty + b->angMom[1];
-        b->angMom[2] = stz + b->angMom[2];
+        b->vel.x = dvx + b->vel.x;
+        b->vel.y = dvy + b->vel.y;
+        b->vel.z = dvz + b->vel.z;
+        b->angMom.x = tx + b->angMom.x;
+        b->angMom.y = sty + b->angMom.y;
+        b->angMom.z = stz + b->angMom.z;
     }
 
-    if (b->angMom[0] != kZero || b->angMom[1] != kZero || b->angMom[2] != kZero) {
+    if (b->angMom.x != kZero || b->angMom.y != kZero || b->angMom.z != kZero) {
         float s[10], w[3];
-        const float *L = b->angMom;
+        const float *L = &b->angMom.x;
         long double A, B, C, E, F, J, K, W, U, V, inv;
         float cf, t24, t28, t30, t34, t38, t4c, t50, t54, t58, t5c, t6c;
 
         Matrix_SetScale(s, b->invInertia[0], b->invInertia[1], b->invInertia[2]);
-        b->angVel[0] = ((long double)s[2] * L[2] + (long double)s[1] * L[1]) + (long double)s[0] * L[0];
-        b->angVel[1] = ((long double)s[5] * L[2] + (long double)s[4] * L[1]) + (long double)s[3] * L[0];
-        b->angVel[2] = ((long double)s[8] * L[2] + (long double)s[7] * L[1]) + (long double)s[6] * L[0];
-        memcpy(w, b->angVel, sizeof(w));
-        b->angVel[0] = ((long double)w[1] * m[1] + (long double)m[0] * w[0]) + (long double)w[2] * m[2];
-        b->angVel[1] = ((long double)m[3] * w[0] + (long double)w[2] * m[5]) + (long double)w[1] * m[4];
-        b->angVel[2] = ((long double)m[7] * w[1] + (long double)w[2] * m[8]) + (long double)w[0] * m[6];
+        b->angVel.x = ((long double)s[2] * L[2] + (long double)s[1] * L[1]) + (long double)s[0] * L[0];
+        b->angVel.y = ((long double)s[5] * L[2] + (long double)s[4] * L[1]) + (long double)s[3] * L[0];
+        b->angVel.z = ((long double)s[8] * L[2] + (long double)s[7] * L[1]) + (long double)s[6] * L[0];
+        memcpy(w, &b->angVel, sizeof(w));
+        b->angVel.x = ((long double)w[1] * m[1] + (long double)m[0] * w[0]) + (long double)w[2] * m[2];
+        b->angVel.y = ((long double)m[3] * w[0] + (long double)w[2] * m[5]) + (long double)w[1] * m[4];
+        b->angVel.z = ((long double)m[7] * w[1] + (long double)w[2] * m[8]) + (long double)w[0] * m[6];
 
         /* q += 0.5 * (0, w) * q, then normalized twice */
-        A = (long double)b->angVel[0] * kHalf;
-        B = (long double)b->angVel[1] * kHalf;
-        C = (long double)b->angVel[2] * kHalf;
+        A = (long double)b->angVel.x * kHalf;
+        B = (long double)b->angVel.y * kHalf;
+        C = (long double)b->angVel.z * kHalf;
         cf = C;
         t58 = (C - B) * ((long double)q[1] - q[2]);
         t28 = ((long double)q[2] + q[1]) * -A;
@@ -335,15 +311,15 @@ void Body_Update(Body *b)
     float v[3];
     long double len;
 
-    memcpy(v, b->vel, sizeof(v));
+    memcpy(v, &b->vel, sizeof(v));
     len = Vec3_FastLength(v);
     b->speed = len;
     if (len > kZero) {
-        normalize(b->dir, v[0], v[1], v[2]);
+        normalize(&b->dir.x, v[0], v[1], v[2]);
     } else {
-        b->dir[0] = 0;
-        b->dir[1] = 0;
-        b->dir[2] = 0;
+        b->dir.x = 0;
+        b->dir.y = 0;
+        b->dir.z = 0;
     }
 }
 HOOK(0x4ECDB0, Body_Update);
@@ -383,14 +359,14 @@ void Body_GetPointVelocity(float *out, Body *b, const float *p)
 {
     float r[3];
 
-    r[0] = (long double)p[2] * b->angVel[1] - (long double)b->angVel[2] * p[1];
-    r[1] = -((long double)p[2] * b->angVel[0] - (long double)b->angVel[2] * p[0]);
-    r[2] = (long double)b->angVel[0] * p[1] - (long double)p[0] * b->angVel[1];
+    r[0] = (long double)p[2] * b->angVel.y - (long double)b->angVel.z * p[1];
+    r[1] = -((long double)p[2] * b->angVel.x - (long double)b->angVel.z * p[0]);
+    r[2] = (long double)b->angVel.x * p[1] - (long double)p[0] * b->angVel.y;
     out[0] = r[0];
     out[1] = r[1];
     out[2] = r[2];
-    out[0] = (long double)b->vel[0] + out[0];
-    out[1] = (long double)b->vel[1] + out[1];
-    out[2] = (long double)b->vel[2] + out[2];
+    out[0] = (long double)b->vel.x + out[0];
+    out[1] = (long double)b->vel.y + out[1];
+    out[2] = (long double)b->vel.z + out[2];
 }
 HOOK(0x4ECF80, Body_GetPointVelocity);

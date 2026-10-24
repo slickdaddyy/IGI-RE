@@ -197,14 +197,14 @@ void PhysicsObj_SetPhysType(PhysObj *o, PhysType *phys)
             float p[3];
 
             c->unk4 = j->unk8;
-            c->unk0 = j->unk4;
+            c->side = j->unk4;
             c->bounce = j->bounce;
             c->active = 1;
             c->enabled = 1;
             c->touching = 0;
             c->unk1C = j->unk10;
             c->friction = j->friction;
-            c->unk34 = 0;
+            c->height = 0;
             Mesh3D_GetModelVertex(p, o, o->phys->joints[i].point, phys->model);
             c->point.x = p[0];
             c->point.y = p[1];

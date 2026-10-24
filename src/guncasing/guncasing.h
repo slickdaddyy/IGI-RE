@@ -105,13 +105,6 @@ typedef struct M203 {
     float power;        /* 0x124 */
 } M203;
 
-/* the physics part of a PhysicsObj (0x4ECDB0) */
-typedef struct Body {
-    char unk0[0x18];
-    Vec3f vel;          /* 0x108 */
-    char unk24[0xA0];
-} Body;
-
 /* per type data read by Grenade_ParseArgs */
 typedef struct GrenadeType {
     float fuse;         /* seconds */
@@ -122,6 +115,7 @@ typedef struct GrenadeType {
 typedef struct Grenade {
     RigidDynCubeObj o;
     Body body;          /* 0xF0 */
+    char unk154[0x60];
     PhysType *phys;     /* 0x1B4 */
     int hit;            /* 0x1B8 */
     char unk1BC[0x564];

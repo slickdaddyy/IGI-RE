@@ -16,26 +16,6 @@ FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)();
 
-/* "PhysicsObj" (0x720 bytes), a RigidDynCubeObj moved by a rigid body */
-typedef struct PhysObj {
-    RigidDynCubeObj obj;
-    struct {
-        char unk0[0x18];
-        Vec3f velocity; /* 0x108 */
-        char unk24[0x30];
-    } body;             /* 0xF0, see 0x4ECDB0 */
-    char unk144[0x10];
-    char name[0x14];    /* 0x154 */
-    Vec3d start_pos;    /* 0x168 */
-    Vec3f start_velocity; /* 0x180 */
-    Matrix start_matrix; /* 0x18C */
-    PhysType *phys;     /* 0x1B4 */
-    char unk1B8[0x6D8 - 0x1B8];
-    char unk6D8;        /* two Bool8 script parameters */
-    char unk6D9;
-    char unk6DA[0x720 - 0x6DA];
-} PhysObj;
-
 /* the search used to pick what a human can use (see 0x416AD0) */
 typedef struct UseQuery {
     Task *human;
@@ -55,10 +35,6 @@ typedef struct CollMsg {
     void *obj;
 } CollMsg;
 
-_Static_assert(offsetof(PhysObj, body.velocity) == 0x108, "velocity");
-_Static_assert(offsetof(PhysObj, name) == 0x154, "name");
-_Static_assert(offsetof(PhysObj, phys) == 0x1B4, "phys");
-_Static_assert(sizeof(PhysObj) == 0x720, "PhysObj");
 _Static_assert(offsetof(UseQuery, range) == 0x78, "UseQuery");
 
 extern TaskFn gTaskHandlers[][0x180];

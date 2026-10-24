@@ -17,72 +17,7 @@ extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 
-/* the rigid body of a PhysicsObj (0x64 bytes, see the animtrig notes) */
-typedef struct Body {
-    float mass;
-    float invMass;
-    float speed;
-    float invInertia[3];
-    Vec3f vel;          /* 0x18 */
-    Vec3f dir;          /* 0x24 */
-    Vec3f angMom;       /* 0x30 */
-    Vec3f force;        /* 0x3C */
-    Vec3f angVel;       /* 0x48 */
-    void *forces;       /* 0x54 */
-    int maxForces;
-    int forceCount;     /* 0x5C */
-    int lastForceCount;
-} Body;
-
-/* a model point the physics object stands on */
-typedef struct Contact {
-    int unk0;
-    int unk4;
-    float bounce;       /* 0x08 */
-    Vec3f point;        /* 0x0C, object space */
-    char active;        /* 0x18 */
-    char enabled;       /* 0x19 */
-    char touching;      /* 0x1A */
-    char unk1B;
-    float unk1C;
-    float friction;     /* 0x20 */
-    Vec3f normal;       /* 0x24 */
-    float dist;         /* 0x30 */
-    int unk34;
-} Contact;
-
 #define PHYS_CONTACTS 22
-
-/* "PhysicsObj" (0x720 bytes): a RigidDynCubeObj moved by a rigid body */
-typedef struct PhysObj {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x34];
-    void **model;       /* 0x6C */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0x4C];
-    Body body;          /* 0xF0 */
-    char name[0x14];    /* 0x154 */
-    Vec3d startPos;     /* 0x168 */
-    Vec3f startVel;     /* 0x180 */
-    Matrix startMatrix; /* 0x18C */
-    PhysType *phys;     /* 0x1B4 */
-    int touching;       /* 0x1B8 */
-    Contact contacts[PHYS_CONTACTS]; /* 0x1BC */
-    int contactCount;   /* 0x68C */
-    char unk690;
-    char unk691[3];
-    Matrix lastMatrix;  /* 0x694 */
-    int unk6BC;
-    Vec3d lastPos;      /* 0x6C0 */
-    char collide;       /* 0x6D8 */
-    char upright;       /* 0x6D9 */
-    char unk6DA[2];
-    Matrix turn;        /* 0x6DC */
-    int unk704;
-    Vec3d move;         /* 0x708 */
-} PhysObj;
 
 /* sent to a task the physics object ran into, result 1 ignores the hit */
 typedef struct PhysHitMsg {
@@ -98,14 +33,6 @@ typedef struct PhysPointMsg {
     Matrix turn;
 } PhysPointMsg;
 
-_Static_assert(sizeof(Body) == 0x64, "Body");
-_Static_assert(sizeof(Contact) == 0x38, "Contact");
-_Static_assert(offsetof(PhysObj, body) == 0xF0, "PhysObj.body");
-_Static_assert(offsetof(PhysObj, contacts) == 0x1BC, "PhysObj.contacts");
-_Static_assert(offsetof(PhysObj, contactCount) == 0x68C, "PhysObj.contactCount");
-_Static_assert(offsetof(PhysObj, lastPos) == 0x6C0, "PhysObj.lastPos");
-_Static_assert(offsetof(PhysObj, turn) == 0x6DC, "PhysObj.turn");
-_Static_assert(sizeof(PhysObj) == 0x720, "PhysObj");
 _Static_assert(offsetof(PhysPointMsg, turn) == 0x20, "PhysPointMsg");
 
 /* x87 compare results: NaN counts as equal, as with fcomp + test ah,0x40 */
