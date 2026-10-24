@@ -98,11 +98,11 @@ void DiscardTerrain_MaskVisible(void *task, int *out)
 }
 HOOK(0x52BFE0, DiscardTerrain_MaskVisible);
 
-int sub_52BFF0(void)
+int DiscardTerrain_Draw(void)
 {
     return Level_IsRunning();
 }
-HOOK(0x52BFF0, sub_52BFF0);
+HOOK(0x52BFF0, DiscardTerrain_Draw);
 
 void DiscardTerrain_Create(DiscardTerrain *dt)
 {
@@ -136,7 +136,7 @@ void DiscardTerrain_Init(void)
     type = TaskType_New("DiscardTerrain", sizeof(DiscardTerrain), EditorRigidObj_GetType(), 0, 0);
     gDiscardTerrainType = type;
     TaskType_SetHandler(type, 0, DiscardTerrain_Create);
-    TaskType_SetHandler(gDiscardTerrainType, 4, sub_52BFF0);
+    TaskType_SetHandler(gDiscardTerrainType, 4, DiscardTerrain_Draw);
     TaskType_SetHandler(gDiscardTerrainType, 15, DiscardTerrain_Visit);
     TaskType_SetHandler(gDiscardTerrainType, 7, DiscardTerrain_GetInfo);
     TaskType_SetHandler2(gDiscardTerrainType, 2, VehiclePart_Delete);

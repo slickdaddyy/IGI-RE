@@ -148,11 +148,11 @@ void Coll_SendEventAll(Terrain *t, uint8_t slot, void *arg, const Vec3d *p, unsi
 }
 HOOK(0x4CE390, Coll_SendEventAll);
 
-void sub_4CE3D0(Terrain *t)
+void Terrain_InvalidateLighting(Terrain *t)
 {
     t->unkDC8 = 0;
 }
-HOOK(0x4CE3D0, sub_4CE3D0);
+HOOK(0x4CE3D0, Terrain_InvalidateLighting);
 
 void Terrain_SetMaterial(Terrain *t, int i, void *m)
 {
@@ -344,11 +344,11 @@ uint8_t World_GetEvent1(void)
 }
 HOOK(0x4CEA20, World_GetEvent1);
 
-void sub_4CEA30(Terrain *t)
+void Terrain_UpdateLighting(Terrain *t)
 {
     if (!t->unkDC8) {
         TerrainMesh_SetupLighting(t, 0);
         t->unkDC8 = 1;
     }
 }
-HOOK(0x4CEA30, sub_4CEA30);
+HOOK(0x4CEA30, Terrain_UpdateLighting);

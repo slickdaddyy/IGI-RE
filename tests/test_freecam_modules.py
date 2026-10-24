@@ -7,11 +7,11 @@ from emu import GAME_EXE, source_hooks
 from test_freecam_util import LOG, logfake, logger, new_emu, pyfake, run
 
 CHAINS = {
-    0x530270: "sub_530270", 0x5302A0: "sub_5302A0", 0x5309C0: "sub_5309C0", 0x530A20: "sub_530A20",
-    0x5311E0: "sub_5311E0", 0x5311F0: "sub_5311F0", 0x531540: "sub_531540", 0x5315B0: "sub_5315B0",
-    0x531D30: "sub_531D30", 0x531D70: "sub_531D70", 0x531DB0: "sub_531DB0", 0x531DC0: "sub_531DC0",
-    0x531DD0: "sub_531DD0", 0x531DF0: "sub_531DF0", 0x5323C0: "sub_5323C0", 0x5323D0: "sub_5323D0",
-    0x5323E0: "sub_5323E0", 0x5323F0: "sub_5323F0", 0x532400: "Core_Init", 0x532490: "Core_Shutdown",
+    0x530270: "Engine_Init", 0x5302A0: "Engine_Shutdown", 0x5309C0: "ViewModules_Init", 0x530A20: "ViewModules_Shutdown",
+    0x5311E0: "EngineModules_Init", 0x5311F0: "EngineModules_Shutdown", 0x531540: "RenderModules_Init", 0x5315B0: "RenderModules_Shutdown",
+    0x531D30: "TerrainModules_Init", 0x531D70: "TerrainModules_Shutdown", 0x531DB0: "WorldModules_Init", 0x531DC0: "WorldModules_Shutdown",
+    0x531DD0: "ObjModules_Init", 0x531DF0: "ObjModules_Shutdown", 0x5323C0: "CoreTask_Init", 0x5323D0: "CoreTask_Shutdown",
+    0x5323E0: "CoreScript_Init", 0x5323F0: "CoreScript_Shutdown", 0x532400: "Core_Init", 0x532490: "Core_Shutdown",
     0x530960: "sub_530960", 0x530980: "sub_530980",
 }
 NARGS = {0x4AF8B0: 1, 0x4017C0: 1, 0x4018C0: 1}

@@ -20,7 +20,7 @@ ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t par
 ORIG(0x401BE0, Task *, Task_FindChild, (Task *task, uint16_t type));
 ORIG(0x401C40, Task *, Task_FindNext, (Task *task, uint16_t type));
 ORIG(0x4028B0, int, Flow_GetFrames, (void));
-ORIG(0x414ED0, void, sub_414ED0, (Vec3f *out, void *obj, int i));
+ORIG(0x414ED0, void, Model_GetLocalPoint, (Vec3f *out, void *obj, int i));
 ORIG(0x416890, uint8_t, Game_GetEvent14, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x4B3360, char, Vec3d_Equal, (const Vec3d *a, const Vec3d *b));
@@ -151,8 +151,8 @@ void Train_ParamsChanged(Train *t, char *arg)
 
     t->dist = t->start_dist;
     RigidDynCubeObj_SetModel(t, VirModel_Find(t->model));
-    sub_414ED0(&a, t, 0);
-    sub_414ED0(&b, t, 1);
+    Model_GetLocalPoint(&a, t, 0);
+    Model_GetLocalPoint(&b, t, 1);
     len = (long double)a.x - b.x;
     if (!(len >= kZero))
         len = -len;

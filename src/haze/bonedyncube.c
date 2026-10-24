@@ -18,7 +18,7 @@ ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, float radius));
 ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int unk));
-ORIG(0x4C7760, void, sub_4C7760, (void *obj));
+ORIG(0x4C7760, void, DynCubeObj_ClearRenderData, (void *obj));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0_, (void *unused));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
@@ -35,8 +35,8 @@ ORIG(0x4D2E40, void, BoneObj_Free, (BoneObj *obj));
 #define gDynCubeObjType VAR(uint16_t, 0x54875C)
 
 void BoneDynCubeObj_GetInfo(BoneDynCubeObj *o, ObjInfo *info);
-void sub_4D94F0(BoneDynCubeObj *o, int *arg);
-void sub_4D95A0(BoneDynCubeObj *o, char *arg);
+void BoneDynCubeObj_ActivateHandler(BoneDynCubeObj *o, int *arg);
+void BoneDynCubeObj_MoveHandler(BoneDynCubeObj *o, char *arg);
 
 void BoneDynCubeObj_Open(void)
 {
@@ -47,8 +47,8 @@ void BoneDynCubeObj_Open(void)
     TaskType_SetHandler(gBoneType, 9, BONE_HANDLER_4D7620);
     TaskType_SetHandler(gBoneType, 8, BONE_HANDLER_4D88D0);
     TaskType_SetHandler(gBoneType, gBoneEvent, BONE_HANDLER_4F4390);
-    TaskType_SetHandler(gBoneType, World_GetEvent0_(sub_4D94F0), sub_4D94F0);
-    TaskType_SetHandler(gBoneType, 6, sub_4D95A0);
+    TaskType_SetHandler(gBoneType, World_GetEvent0_(BoneDynCubeObj_ActivateHandler), BoneDynCubeObj_ActivateHandler);
+    TaskType_SetHandler(gBoneType, 6, BoneDynCubeObj_MoveHandler);
 }
 HOOK(0x4D7550, BoneDynCubeObj_Open);
 
@@ -65,7 +65,7 @@ void BoneDynCubeObj_GetInfo(BoneDynCubeObj *o, ObjInfo *info)
 }
 HOOK(0x4D9480, BoneDynCubeObj_GetInfo);
 
-void sub_4D94F0(BoneDynCubeObj *o, int *arg)
+void BoneDynCubeObj_ActivateHandler(BoneDynCubeObj *o, int *arg)
 {
     HzNode *n;
     HzHandler h;
@@ -83,14 +83,14 @@ void sub_4D94F0(BoneDynCubeObj *o, int *arg)
         n = gTaskStack[--gTaskStackTop];
     }
 }
-HOOK(0x4D94F0, sub_4D94F0);
+HOOK(0x4D94F0, BoneDynCubeObj_ActivateHandler);
 
-void sub_4D95A0(BoneDynCubeObj *o, char *arg)
+void BoneDynCubeObj_MoveHandler(BoneDynCubeObj *o, char *arg)
 {
     DynCube_Move(gWorld, o, (Vec3d *)arg, o->radius);
     o->matrix = *(Matrix *)(arg + 0x18);
 }
-HOOK(0x4D95A0, sub_4D95A0);
+HOOK(0x4D95A0, BoneDynCubeObj_MoveHandler);
 
 void BoneDynCubeObj_Close(void)
 {
@@ -110,7 +110,7 @@ HOOK(0x4D9610, BoneDynCubeObj_GetType);
 void BoneDynCubeObj_Init(void *world, BoneDynCubeObj *o, short skel, void **model)
 {
     (void)world;
-    sub_4C7760(o);
+    DynCubeObj_ClearRenderData(o);
     BoneObj_Create(&o->bones, skel);
     o->model = model;
     o->matrix = (Matrix){ { 1.0f, 0, 0, 0, 1.0f, 0, 0, 0, 1.0f }, 0 };

@@ -19,7 +19,7 @@ ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void 
 ORIG(0x4B8920, void, Script_UnregisterSymbol, (const char *name));
 ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
-ORIG(0x4CE3D0, void, sub_4CE3D0, (Terrain *t));
+ORIG(0x4CE3D0, void, Terrain_InvalidateLighting, (Terrain *t));
 ORIG(0x4D11C0, void, QCube_Reset, (void));
 
 #define gScriptEmptyString ((const char *)0x567C74)
@@ -157,7 +157,7 @@ void Terrain_Load(Terrain *t, const char *path)
             t->unkDC4[i + j] = 0;
     for (i = 0; i < 0x1000; i += 0x10)
         t->unkDC0[i / 4] = 0;
-    sub_4CE3D0(t);
+    Terrain_InvalidateLighting(t);
 }
 HOOK(0x4C6240, Terrain_Load);
 

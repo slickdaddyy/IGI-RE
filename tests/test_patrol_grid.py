@@ -91,7 +91,7 @@ def test_aitype_name(t):
 
 
 def test_plus8():
-    run(e, 0x452920, "sub_452920", lambda e: (0x12345678,), check_eax=True)
+    run(e, 0x452920, "MoveItem_GetPos", lambda e: (0x12345678,), check_eax=True)
 
 
 @pytest.mark.parametrize("seed", range(12))
@@ -182,7 +182,7 @@ def test_view(seed, cw):
         out = e.alloc(64)
         scale = rng.uniform(0.5, 9.0)
         return (out, out + 40, obj, frm, struct.unpack("<I", struct.pack("<f", scale))[0])
-    run(e, 0x452930, "sub_452930", setup, cw=cw)
+    run(e, 0x452930, "AI_AimThrow", setup, cw=cw)
 
 
 # --- HumanMonitor ------------------------------------------------------------

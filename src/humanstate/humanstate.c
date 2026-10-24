@@ -11,11 +11,11 @@ ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x4388A0, int, PlaceExplosiveTBA_GetTargetId, (void *obj));
 ORIG(0x4137E0, void, HumanPlayer_SetWeaponAnim, (Human *h, int a));
 ORIG(0x413A60, void, HumanPlayer_RequestWeaponAnim, (Human *h, int a));
-ORIG(0x42FDD0, void *, sub_42FDD0, (void *obj));
-ORIG(0x42FDF0, void, sub_42FDF0, (void *obj, double *pos, float *mat));
+ORIG(0x42FDD0, void *, Car_GetMountedGun, (void *obj));
+ORIG(0x42FDF0, void, Car_GetGunnerPos, (void *obj, double *pos, float *mat));
 ORIG(0x43E4E0, uint16_t, Elevator_GetType, (void));
 ORIG(0x43F8A0, char, Wire_IsSloped, (void *obj));
-ORIG(0x440270, long double, sub_440270, (void));
+ORIG(0x440270, long double, Fence_GetClimbTime, (void));
 ORIG(0x443EA0, void, Terminal_SetHacked, (void *obj));
 ORIG(0x444B30, void, Obj_GetUsePoint, (void *obj, double *pos, float *mat));
 ORIG(0x444B80, long double, Cabinet_GetSearchTime, (void *obj));
@@ -31,21 +31,21 @@ ORIG(0x448570, void, GenericTBA_GetUsePos, (void *obj, double *pos, float *mat))
 ORIG(0x4485C0, long double, GenericTBA_GetUseTime, (void *obj));
 ORIG(0x4485D0, short, GenericTBA_GetAnim, (void *obj, int a, int b));
 ORIG(0x450CE0, void, HumanAI_Broadcast, (void *noise));
-ORIG(0x460CE0, void, sub_460CE0, (void *obj));
+ORIG(0x460CE0, void, Human_MarkDelete, (void *obj));
 ORIG(0x4631A0, void, Human_SetPosition, (Human *h, double *pos));
 ORIG(0x463220, void, Human_SetYaw, (Human *h, float yaw));
-ORIG(0x463260, void, sub_463260, (Human *h));
+ORIG(0x463260, void, Human_SnapToGround, (Human *h));
 ORIG(0x4632D0, void, Human_LeaveGround, (Human *h));
 ORIG(0x463310, void, Human_SetPlatform, (Human *h, void *obj));
 ORIG(0x463550, void, Human_ClearPlatform, (Human *h));
-ORIG(0x463570, void, sub_463570, (Human *h));
-ORIG(0x463580, void, sub_463580, (Human *h));
-ORIG(0x463590, void, sub_463590, (Human *h));
-ORIG(0x4635A0, void, sub_4635A0, (Human *h));
-ORIG(0x4635F0, void, sub_4635F0, (Human *h));
-ORIG(0x463600, void, sub_463600, (Human *h));
-ORIG(0x463610, void, sub_463610, (Human *h));
-ORIG(0x463620, void, sub_463620, (Human *h));
+ORIG(0x463570, void, Human_DisableCollision, (Human *h));
+ORIG(0x463580, void, Human_EnableCollision, (Human *h));
+ORIG(0x463590, void, Human_SetExactMotion, (Human *h));
+ORIG(0x4635A0, void, Human_ClearExactMotion, (Human *h));
+ORIG(0x4635F0, void, Human_FreezeView, (Human *h));
+ORIG(0x463600, void, Human_UnfreezeView, (Human *h));
+ORIG(0x463610, void, Human_BeginUse, (Human *h));
+ORIG(0x463620, void, Human_EndUse, (Human *h));
 ORIG(0x4636A0, void, Human_SetClimbObject, (Human *h, int a));
 ORIG(0x4636E0, void *, Human_GetClimbObject, (Human *h));
 ORIG(0x463700, void, Human_SetAttached, (Human *h, void *a));
@@ -578,10 +578,10 @@ static void Action_Begin(Human *h)
 {
     HumanViewCam(h, 3);
     HumanPlayer_SetFlagD68(h);
-    sub_463590(h);
+    Human_SetExactMotion(h);
     HumanView_ClearAngles(h->view);
     HumanView_LockPitch(h->view);
-    sub_4635F0(h);
+    Human_FreezeView(h);
 }
 
 /* 0 while the action runs, 1 when it completed, 2 when it was cancelled
@@ -603,12 +603,12 @@ static void Action_End(Human *h)
 {
     HumanPlayer_ClearFlagD44(h);
     HumanView_UnlockPitch(h->view);
-    sub_463600(h);
-    sub_463620(h);
+    Human_UnfreezeView(h);
+    Human_EndUse(h);
     Human_SetClimbObject(h, 0);
     HumanViewCam(h, 1);
     HumanPlayer_ClearFlagD68(h);
-    sub_4635A0(h);
+    Human_ClearExactMotion(h);
 }
 
 static void Action_Done(HumanState *sm, Human *h)
@@ -645,7 +645,7 @@ void HumanPlayer_PicklockEnter(HumanState *sm, Human *h)
     pos[1] = (double)((long double)y + pos[1]);
     pos[2] = (double)(z + pos[2]);
     Human_SetPosition(h, pos);
-    sub_463260(h);
+    Human_SnapToGround(h);
     Human_FaceObject(h, mat, PI_F);
     h->actionFrame = 0;
     h->actionFrames = FRAMES(Door_GetPickTime(obj));
@@ -729,7 +729,7 @@ void HumanPlayer_Use31Enter(HumanState *sm, Human *h)
     pos[1] = (double)((long double)pos[1] + y);
     pos[2] = (double)((long double)pos[2] + z);
     Human_SetPosition(h, pos);
-    sub_463260(h);
+    Human_SnapToGround(h);
     Human_FaceObject(h, mat, PI_F);
     HumanPlayer_SetFlagD44(h);
     h->actionFrame = 0;
@@ -792,7 +792,7 @@ void HumanPlayer_TypeComputerEnter(HumanState *sm, Human *h)
     pos[1] = (double)((long double)pos[1] + y);
     pos[2] = (double)((long double)pos[2] + z);
     Human_SetPosition(h, pos);
-    sub_463260(h);
+    Human_SnapToGround(h);
     Human_FaceObject(h, mat, PI_F);
     HumanPlayer_SetFlagD44(h);
     h->actionFrame = 0;
@@ -847,9 +847,9 @@ void HumanPlayer_Use33Enter(HumanState *sm, Human *h)
     Human_PlayAnim(h, 0xC6, 0, 0.0f);
     HumanView_ClearAngles(h->view);
     HumanView_LockPitch(h->view);
-    sub_4635F0(h);
+    Human_FreezeView(h);
     Human_SetPlatform(h, obj);
-    sub_463590(h);
+    Human_SetExactMotion(h);
     h->unk4D0 = 0;
     sm->update = HumanPlayer_Use33Update;
 }
@@ -865,12 +865,12 @@ void HumanPlayer_Use33Update(HumanState *sm, Human *h)
     h->unk4D0 = 1;
     HumanPlayer_ClearFlagD44(h);
     HumanView_UnlockPitch(h->view);
-    sub_463600(h);
+    Human_UnfreezeView(h);
     StationaryGun_Release(obj);
-    sub_463620(h);
+    Human_EndUse(h);
     Human_SetClimbObject(h, 0);
     Human_ClearPlatform(h);
-    sub_4635A0(h);
+    Human_ClearExactMotion(h);
     State_Change(sm, h, HSTATE_STAND);
 }
 HOOK(0x40CAE0, HumanPlayer_Use33Update);
@@ -886,7 +886,7 @@ void HumanPlayer_Use34Enter(HumanState *sm, Human *h)
     long double x;
     double y, z;
 
-    sub_42FDF0(obj, pos, mat);
+    Car_GetGunnerPos(obj, pos, mat);
     x = mat[1] * (long double)kUse34Side - mat[2] * (long double)kUse34Up;
     y = x87_double(mat[4] * (long double)kUse34Side - mat[5] * (long double)kUse34Up);
     z = x87_double(mat[7] * (long double)kUse34Side - mat[8] * (long double)kUse34Up);
@@ -901,10 +901,10 @@ void HumanPlayer_Use34Enter(HumanState *sm, Human *h)
     HumanViewCam(h, 3);
     HumanView_ClearAngles(h->view);
     HumanView_LockPitch(h->view);
-    sub_4635F0(h);
-    sub_463570(h);
+    Human_FreezeView(h);
+    Human_DisableCollision(h);
     Human_LeaveGround(h);
-    sub_463590(h);
+    Human_SetExactMotion(h);
     sm->update = HumanPlayer_Use34Update;
 }
 HOOK(0x40CB90, HumanPlayer_Use34Enter);
@@ -915,15 +915,15 @@ void HumanPlayer_Use34Update(HumanState *sm, Human *h)
 
     if (!(sm->input & HUMAN_ANIM_DONE))
         return;
-    sub_463580(h);
-    sub_4635A0(h);
+    Human_EnableCollision(h);
+    Human_ClearExactMotion(h);
     HumanView_UnlockPitch(h->view);
-    sub_463600(h);
-    sub_463620(h);
+    Human_UnfreezeView(h);
+    Human_EndUse(h);
     Human_SetClimbObject(h, 0);
     HumanViewCam(h, 1);
-    sub_463260(h);
-    Human_SetAttached(h, sub_42FDD0(obj));
+    Human_SnapToGround(h);
+    Human_SetAttached(h, Car_GetMountedGun(obj));
     HumanPlayer_StartAction(h, 6);
 }
 HOOK(0x40CCC0, HumanPlayer_Use34Update);
@@ -934,11 +934,11 @@ void HumanPlayer_StartAction(Human *h, int action)
     void *obj;
 
     Human_SetClimbObject(h, Human_GetAttached(h));
-    sub_463610(h);
+    Human_BeginUse(h);
     h->unk7BC = 0;
     switch (action) {
     case 1:
-        sub_460CE0(Human_GetClimbObject(h));
+        Human_MarkDelete(Human_GetClimbObject(h));
         break;
     case 2:
         Switch_Press(Human_GetClimbObject(h));
@@ -986,7 +986,7 @@ void HumanPlayer_StartAction(Human *h, int action)
     default:
         return;
     }
-    sub_463620(h);
+    Human_EndUse(h);
     Human_SetClimbObject(h, 0);
 }
 HOOK(0x40CD30, HumanPlayer_StartAction);
@@ -1013,7 +1013,7 @@ void HumanPlayer_Use35Enter(HumanState *sm, Human *h)
     pos[1] = (double)((long double)pos[1] + y);
     pos[2] = (double)((long double)pos[2] + z);
     Human_SetPosition(h, pos);
-    sub_463260(h);
+    Human_SnapToGround(h);
     Human_FaceObject(h, mat, PI_F);
     HumanPlayer_SetFlagD44(h);
     h->actionFrame = 0;
@@ -1120,7 +1120,7 @@ void HumanPlayer_Use36Enter(HumanState *sm, Human *h)
     pos[1] = (double)((long double)pos[1] - d[1]);
     pos[2] = (double)((long double)pos[2] - d[2]);
     Human_SetPosition(h, pos);
-    sub_463260(h);
+    Human_SnapToGround(h);
     Human_SetYaw(h, yaw);
     HumanPlayer_SetFlagD44(h);
     h->actionFrame = 0;
@@ -1279,7 +1279,7 @@ void HumanPlayer_LadderSlideEnter(HumanState *sm, Human *h)
     h->unk33D = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
     HumanPlayer_SetWeaponAnim(h, 0);
-    sub_463580(h);
+    Human_EnableCollision(h);
     h->wireSlideSound = Sound_Play(h, "wire_slide_1");
     sm->update = HumanPlayer_LadderSlideUpdate;
 }
@@ -1315,7 +1315,7 @@ void HumanPlayer_State41Enter(HumanState *sm, Human *h)
     Human_PlayAnimSlot(h, sm->state, 0.0f);
     HumanPlayer_SetWeaponAnim(h, 0);
     h->actionFrame = 0;
-    h->actionFrames = FRAMES(sub_440270());
+    h->actionFrames = FRAMES(Fence_GetClimbTime());
     sm->update = HumanPlayer_State41Update;
 }
 HOOK(0x40DCA0, HumanPlayer_State41Enter);

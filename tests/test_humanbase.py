@@ -293,7 +293,7 @@ HBONE = FK.handler(2, deref={1: 4}, act=bone_act)
     (0, 0, 1, 1, -1, 0), (0, 0, 1, 1, 1, 1)])
 @CWS
 def test_draw2(viewer, mode, weapon, frozen, lod, cull, cw):
-    go(0x45F050, "sub_45F050",
+    go(0x45F050, "Human_NearClipHandler",
        draw_setup(viewer, mode, weapon, frozen, lod=lod, cull=cull, hdraw=HDRAW, hbone=HBONE), cw=cw)
 
 
@@ -853,7 +853,7 @@ def test_pass_ai_event(kids, who):
         w32(e, m + 0x18, h if who & 2 else 6)
         w32(e, 0xAFA7E0, 3)
         return h, m
-    go(0x45FDA0, "sub_45FDA0", setup)
+    go(0x45FDA0, "Human_AIEventHandler", setup)
 
 
 @pytest.mark.parametrize("dead,active", [(0, 1), (1, 0)])
@@ -867,7 +867,7 @@ def test_detect_info(dead, active):
         m = e.alloc(0x28)
         e.write(m, b"\xEE" * 0x28)
         return h, m
-    go(0x45FE30, "sub_45FE30", setup)
+    go(0x45FE30, "Human_DetectInfoHandler", setup)
 
 
 @pytest.mark.parametrize("same,team,best,pos", [
@@ -892,7 +892,7 @@ def test_nearest_mate(same, team, best, pos, cw):
         wd(e, m + 0x10, best)
         w32(e, m + 0x30, team)
         return h, m
-    go(0x45FE70, "sub_45FE70", setup, cw=cw)
+    go(0x45FE70, "Human_NearestAllyHandler", setup, cw=cw)
 
 
 @pytest.mark.parametrize("dead", [0, 1])
@@ -952,7 +952,7 @@ def test_first_person(arg, fp):
         m = e.alloc(4)
         w32(e, m, arg)
         return h, m
-    go(0x460090, "sub_460090", setup)
+    go(0x460090, "Human_FirstPersonHandler", setup)
 
 
 def bone_setup(arg, fp):
@@ -980,8 +980,8 @@ def bone_setup(arg, fp):
 @CWS
 def test_weapon_bone(arg, fp, cw):
     go(0x4600C0, "Human_GetWeaponBoneHandler", bone_setup(arg, fp), cw=cw)
-    go(0x4601A0, "sub_4601A0", bone_setup(arg, fp), cw=cw)
-    go(0x460210, "sub_460210", bone_setup(arg, fp), cw=cw)
+    go(0x4601A0, "Human_GetViewBarrelHandler", bone_setup(arg, fp), cw=cw)
+    go(0x460210, "Human_GetViewPartHandler", bone_setup(arg, fp), cw=cw)
 
 
 @pytest.mark.parametrize("mode46,team,active,cull,vis", [
@@ -1004,7 +1004,7 @@ def test_see_query(mode46, team, active, cull, vis, cw):
         w32(e, q, p)
         w32(e, q + 4, mt)
         return h, q
-    go(0x460280, "sub_460280", setup, cw=cw)
+    go(0x460280, "Human_MapMarkerHandler", setup, cw=cw)
 
 
 # --- HUD -------------------------------------------------------------------------------
@@ -1132,7 +1132,7 @@ def test_is_team1(team):
         out = e.alloc(4)
         w32(e, out, 0x77777777)
         return h, out
-    go(0x4609F0, "sub_4609F0", setup)
+    go(0x4609F0, "Human_MapSelectHandler", setup)
 
 
 def list_setup(n, mask):
@@ -1197,7 +1197,7 @@ def test_setters():
         reset()
         return human(e), 0xABCD
     go(0x460C70, "Human_SetAI", setup)
-    go(0x460CE0, "sub_460CE0", setup)
+    go(0x460CE0, "Human_MarkDelete", setup)
 
 
 @pytest.mark.parametrize("player,cheat,last,debug", [(0, 1, 0, 1), (1, 0, 0, 0), (1, 0, 0, 1), (1, 1, 100, 0),
@@ -1249,7 +1249,7 @@ def test_carrier_move(attach, carrier, handler, cpos, cw):
         if handler:
             set_handler(e, EV14, T_OTHER, HCARRY)
         return (h,)
-    go(0x460CF0, "sub_460CF0", setup, cw=cw)
+    go(0x460CF0, "Human_UpdatePlatformMove", setup, cw=cw)
 
 
 def use_act(e, a):
@@ -1296,7 +1296,7 @@ def test_use_and_control(bits, u7b8, player, ntasks, ctrl):
                 w32(e, r, t)
                 set_handler(e, EV4, T_OTHER, HCTRL)
         return (h,)
-    go(0x460EE0, "sub_460EE0", setup)
+    go(0x460EE0, "Human_UpdateUse", setup)
 
 
 @pytest.mark.parametrize("attach,inp,prev,frozen,fov", [
@@ -1339,7 +1339,7 @@ def test_anim_sound(sound, cw):
         wd(e, h + 0x20, 1000.1, 2000.2, -3000.3)
         wf(e, h + 0x78, 0.36, 0.48, -0.8, -0.8, 0.6, 0.0, 0.48, 0.64, 0.6)
         return (h,)
-    go(0x4613D0, "sub_4613D0", setup, cw=cw)
+    go(0x4613D0, "Human_FireAnimTrigger", setup, cw=cw)
 
 
 @pytest.mark.parametrize("ground,bits,normal,flags,coll_bits", [

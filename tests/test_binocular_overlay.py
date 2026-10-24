@@ -166,7 +166,7 @@ def test_create():
 
 
 def test_grid_and_meter_init():
-    check(e, fk, 0x471280, "sub_471280", lambda em: (em.alloc(0x2A10), 0x18))
+    check(e, fk, 0x471280, "BinocularOverlay_InitGrid", lambda em: (em.alloc(0x2A10), 0x18))
     check(e, fk, 0x4712E0, "VUMeter_Init", lambda em: (em.alloc(0x14), 30, 0x3CA3D70A))
 
 

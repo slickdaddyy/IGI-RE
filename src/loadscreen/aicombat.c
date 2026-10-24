@@ -418,7 +418,7 @@ ORIG(0x475310, void, StationaryGun_GetMuzzle, (void *gun, Vec3d *eye, float *mat
 ORIG(0x4526E0, uint8_t, HumanAI_CheckSides, (HumanAI *ai));
 ORIG(0x4522A0, char, HumanAI_RunTo, (HumanAI *ai, int node, const Vec3d *pos, char replan));
 ORIG(0x4525B0, char, HumanAI_FaceTo, (HumanAI *ai, const Vec3d *pos, float tol, char flat));
-ORIG(0x452660, void, sub_452660, (HumanAI *ai));
+ORIG(0x452660, void, HumanAI_SetRun, (HumanAI *ai));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
 ORIG(0x4F1030, StatGun *, Task_FindById, (int id));
 
@@ -1337,7 +1337,7 @@ void AICombat_Follow(HumanAI *ai, AIAction *a)
         AIAction_SetStep(ai, a, a->resume, NULL);
         return;
     }
-    sub_452660(ai);
+    HumanAI_SetRun(ai);
     Debug_Log(ai, -1, "Tracking target at node #%d", ai->destNode);
     if (ai->targetMoved) {
         GraphNode *node = NULL;

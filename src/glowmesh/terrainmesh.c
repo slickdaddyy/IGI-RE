@@ -163,7 +163,7 @@ typedef struct TerrainMatRec {
     int tileA;
 } TerrainMatRec;
 
-/* argument of sub_5116D0 */
+/* argument of TerrainMesh_DrawTriangle */
 typedef struct TerrainPoly {
     double pos[3][3];
     float color[3][3];
@@ -964,7 +964,7 @@ static long double clamp01(long double v)
    when it crosses the near plane. Mode 0 maps the texture by world x/y, mode
    1 takes the triangle's own uv; other modes leave uv unset (stack garbage in
    the original). */
-void sub_5116D0(TerrainPoly *t)
+void TerrainMesh_DrawTriangle(TerrainPoly *t)
 {
     double scaleX = gViewScaleX, scaleY = gViewScaleY, left = gSceneX, top = gSceneY;
     double right = (long double)gSceneW + gSceneX;
@@ -1073,7 +1073,7 @@ void sub_5116D0(TerrainPoly *t)
         TerrainMesh_ClipTriangle(&v[0], &v[1], &v[2], view[0], view[1], view[2], uv[0], uv[1], uv[2], code[0],
                                  code[1], code[2]);
 }
-HOOK(0x5116D0, sub_5116D0);
+HOOK(0x5116D0, TerrainMesh_DrawTriangle);
 
 /* Moves vertex a of the clip slots onto the near plane along the edge to b. */
 void TerrainMesh_ClipEdge(int a, int b)

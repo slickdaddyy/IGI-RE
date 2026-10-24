@@ -31,8 +31,8 @@ ORIG(0x4F1CB0, void *, Param_Range0100, (void));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F17C0, void *, Level_Get, (void));
-ORIG(0x4CE3D0, void, sub_4CE3D0, (void *world));
-ORIG(0x4CEA30, void, sub_4CEA30, (void *world));
+ORIG(0x4CE3D0, void, Terrain_InvalidateLighting, (void *world));
+ORIG(0x4CEA30, void, Terrain_UpdateLighting, (void *world));
 ORIG(0x4DAA60, Light *, Light_Add, (const Vec3f *dir, const Vec3f *color, const Vec3f *ambient, char unk24,
                                     char on));
 ORIG(0x4DAAF0, void, Light_Remove, (Light *l));
@@ -62,7 +62,7 @@ void Dirlight_Update(Dirlight *dl)
 {
     DirlightKeyframe *k, *lo, *hi, *src;
 
-    sub_4CE3D0(dl->world);
+    Terrain_InvalidateLighting(dl->world);
     if (!FIRST_KEY(dl)) {
         dl->color.x = dl->color.y = dl->color.z = 0;
         dl->ambient.x = dl->ambient.y = dl->ambient.z = 0;
@@ -128,7 +128,7 @@ set_light:
         dl->light->unk24 = dl->unk4C;
         dl->light->on = dl->on;
     }
-    sub_4CEA30(dl->world);
+    Terrain_UpdateLighting(dl->world);
 }
 HOOK(0x5269C0, Dirlight_Update);
 

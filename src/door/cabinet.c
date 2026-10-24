@@ -118,11 +118,11 @@ void Cabinet_Use(Cabinet *c, CabinetUseArg *arg)
 }
 HOOK(0x444940, Cabinet_Use);
 
-void sub_4449A0(void *task, char **arg)
+void Cabinet_DrawIcon(void *task, char **arg)
 {
     StatusScreen_DrawActionIcon(*arg, *arg + 0x3EC);
 }
-HOOK(0x4449A0, sub_4449A0);
+HOOK(0x4449A0, Cabinet_DrawIcon);
 
 void Cabinet_AddSymbols(Cabinet *c)
 {

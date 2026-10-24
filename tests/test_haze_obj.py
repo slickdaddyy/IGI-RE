@@ -89,7 +89,7 @@ def test_bone_world_event(first, kids):
         arg = em.alloc(12)
         em.write(arg, struct.pack("<III", first, 0x5555, 9))
         return o, arg
-    check(fe, fk, 0x4D94F0, "sub_4D94F0", setup=setup, check_eax=False)
+    check(fe, fk, 0x4D94F0, "BoneDynCubeObj_ActivateHandler", setup=setup, check_eax=False)
 
 
 def test_bone_move():
@@ -99,7 +99,7 @@ def test_bone_move():
         em.write(arg, f64(1.5, 2.5, -3.5) + rmatrix(random.Random(1)))
         em.write(0xA44344, struct.pack("<I", 0x777))
         return o, arg
-    check(fe, fk, 0x4D95A0, "sub_4D95A0", setup=setup, check_eax=False)
+    check(fe, fk, 0x4D95A0, "BoneDynCubeObj_MoveHandler", setup=setup, check_eax=False)
 
 
 @pytest.mark.parametrize("skel", [3, -2])
@@ -199,7 +199,7 @@ def test_magic_rigid_enter():
         em.write(RIGID_TYPE, struct.pack("<H", 0x44))
         set_handler(em, 4, 0x44, LOG2RAW)
         return (new_task(em, 0x40, 0x138),)
-    check(fe, fk, 0x4D99E0, "sub_4D99E0", setup=setup, check_eax=False)
+    check(fe, fk, 0x4D99E0, "MagicObj_EnterHandler", setup=setup, check_eax=False)
 
 
 def magic_types(em):

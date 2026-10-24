@@ -271,7 +271,7 @@ void BinocularOverlay_Open(void)
 HOOK(0x470FA0, BinocularOverlay_Open);
 
 void VUMeter_Init(VUMeter *m, int period, float decay);
-void sub_471280(char *grid, int n);
+void BinocularOverlay_InitGrid(char *grid, int n);
 
 void BinocularOverlay_Create(BinocularOverlay *ov)
 {
@@ -294,7 +294,7 @@ void BinocularOverlay_Create(BinocularOverlay *ov)
     ov->dir[1] = 0;
     ov->dir[2] = 0;
     Random_Init(ov->rng);
-    sub_471280(ov->grid, 0x18);
+    BinocularOverlay_InitGrid(ov->grid, 0x18);
     ov->unk148 = 0;
     ov->unk144 = 0;
     for (i = 0; i < 10; i++)
@@ -303,7 +303,7 @@ void BinocularOverlay_Create(BinocularOverlay *ov)
 HOOK(0x471120, BinocularOverlay_Create);
 
 /* three tables of 64 entries of 14 words, each filled from one template */
-void sub_471280(char *grid, int n)
+void BinocularOverlay_InitGrid(char *grid, int n)
 {
     int i;
 
@@ -314,7 +314,7 @@ void sub_471280(char *grid, int n)
     }
     *(int *)(grid + 0x2A00) = n;
 }
-HOOK(0x471280, sub_471280);
+HOOK(0x471280, BinocularOverlay_InitGrid);
 
 void VUMeter_Init(VUMeter *m, int period, float decay)
 {

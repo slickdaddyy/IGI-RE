@@ -281,4 +281,4 @@ def test_get_root():
 
 
 def test_sub_4c7760():
-    compare(emu, 0x4C7760, "sub_4C7760", setup=lambda e: (obj(e, 1),), check_eax=False)
+    compare(emu, 0x4C7760, "DynCubeObj_ClearRenderData", setup=lambda e: (obj(e, 1),), check_eax=False)

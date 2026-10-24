@@ -437,11 +437,11 @@ DynCubeNode *DynCube_GetRoot(Terrain *t, int tree)
 }
 HOOK(0x4C7750, DynCube_GetRoot);
 
-void sub_4C7760(DynCubeObj *obj)
+void DynCubeObj_ClearRenderData(DynCubeObj *obj)
 {
     QObj_SetRenderData(obj, 0);
 }
-HOOK(0x4C7760, sub_4C7760);
+HOOK(0x4C7760, DynCubeObj_ClearRenderData);
 
 /* Lowest set bit, 7 for none. */
 static inline int first_child(unsigned int m)

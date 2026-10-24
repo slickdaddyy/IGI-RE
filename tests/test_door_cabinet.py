@@ -115,7 +115,7 @@ def test_sub_4449a0():
         h = e.alloc(4)
         u32(e, h, 0x5000)
         return 0, h
-    check(e, fk, 0x4449A0, "sub_4449A0", setup)
+    check(e, fk, 0x4449A0, "Cabinet_DrawIcon", setup)
 
 
 @pytest.mark.parametrize("registered", [0, 1])

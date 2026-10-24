@@ -304,12 +304,12 @@ ORIG(0x489560, void, AIDetection_Init, (void));
 ORIG(0x4895D0, void, AIDetection_Shutdown, (void));
 ORIG(0x4C1780, void, Debug_Log, (void));
 ORIG(0x4CEF30, void, VirModel_SaveCount, (void));
-ORIG(0x508F80, void, sub_508F80, (void));
-ORIG(0x508F90, void, sub_508F90, (void));
+ORIG(0x508F80, void, AllTaskTypes_Open, (void));
+ORIG(0x508F90, void, AllTaskTypes_Close, (void));
 
 void Modules_Open(void)
 {
-    sub_508F80();
+    AllTaskTypes_Open();
     AIDetection_Init();
     Material_Init();
     LevelFlow_Init();
@@ -624,7 +624,7 @@ void Modules_Close(void)
     LevelFlow_Close();
     GameMaterial_Close();
     AIDetection_Shutdown();
-    sub_508F90();
+    AllTaskTypes_Close();
 }
 HOOK(0x402C40, Modules_Close);
 ORIG(0x48F100, void, AppContext_SetName, (void *table));

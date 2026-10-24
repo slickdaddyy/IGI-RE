@@ -88,7 +88,7 @@ ORIG(0x4F9210, uint16_t, Graph_GetType, (void));
 ORIG(0x4F9220, uint8_t, Graph_GetLoadEvent, (void));
 ORIG(0x4F9230, uint8_t, Graph_GetSaveEvent, (void));
 ORIG(0x4F9240, uint8_t, Graph_GetNodeLoadEvent, (void));
-ORIG(0x4F9250, uint8_t, sub_4F9250, (void));
+ORIG(0x4F9250, uint8_t, Graph_GetEvent36E, (void));
 ORIG(0x4F9260, uint8_t, Graph_GetNodeAddEvent, (void));
 ORIG(0x4F9280, uint8_t, Graph_GetAllocEvent, (void));
 ORIG(0x4F9460, void, Graph_SetNodeSize, (uint16_t type, int size));
@@ -140,12 +140,12 @@ void AIGraph_Create(AIGraph *g, void *arg);
 void AIGraph_Delete(AIGraph *g);
 int AIGraph_GetViewCriteria(void);
 
-void sub_508F90(void)
+void AllTaskTypes_Close(void)
 {
     AIGraph_Shutdown();
     TaskTypes_Close();
 }
-HOOK(0x508F90, sub_508F90);
+HOOK(0x508F90, AllTaskTypes_Close);
 
 void AIGraph_Init(void)
 {
@@ -159,7 +159,7 @@ void AIGraph_Init(void)
     TaskType_SetHandler2(gAIGraphType, 2, AIGraph_Delete);
     TaskType_SetHandler(gAIGraphType, Graph_GetAllocEvent(), AIGraph_OnAlloc);
     TaskType_SetHandler(gAIGraphType, Graph_GetSaveEvent(), AIGraph_SaveRoutes);
-    TaskType_SetHandler(gAIGraphType, sub_4F9250(), Task_Nothing);
+    TaskType_SetHandler(gAIGraphType, Graph_GetEvent36E(), Task_Nothing);
     TaskType_SetHandler(gAIGraphType, Graph_GetNodeAddEvent(), Task_Nothing);
     TaskType_SetHandler(gAIGraphType, Graph_GetLoadEvent(), AIGraph_LoadRoutes);
     TaskType_SetHandler(gAIGraphType, Graph_GetNodeLoadEvent(), AIGraph_ReadNode);

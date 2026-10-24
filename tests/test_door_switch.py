@@ -161,7 +161,7 @@ def test_sub_445820():
         h = e.alloc(4)
         u32(e, h, 0x5000)
         return 0, h
-    check(e, fk, 0x445820, "sub_445820", setup)
+    check(e, fk, 0x445820, "Switch_DrawIcon", setup)
 
 
 @pytest.mark.parametrize("destroyable", [0, 1])

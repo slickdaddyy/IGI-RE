@@ -323,7 +323,7 @@ def test_ladder(flags, dead):
 @pytest.mark.parametrize("pos", [(130.0, 10.0, 5.0), (600.0, -2000.0, 3.0)])
 @pytest.mark.parametrize("dead", [0, 0x20000])
 def test_unk41_attach(flags, pos, dead):
-    run(0x411770, "sub_411770", fields={0xD90: ("<3B", flags), 0x20: ("<3d", pos), 0x2F4: ("<I", dead)})
+    run(0x411770, "HumanPlayer_UpdateFenceClimb", fields={0xD90: ("<3B", flags), 0x20: ("<3d", pos), 0x2F4: ("<I", dead)})
 
 
 WIRE_FENDS = [struct.pack("<3f", 1.0, -9000.0, 2.0), struct.pack("<3f", -1.0, 7000.0, 3.0)]
@@ -570,7 +570,7 @@ def test_shape_query():
         q = e.alloc(0x24)
         e.write(q, b"\x11" * 0x24)
         return h, q
-    run(0x413730, "sub_413730", args=args)
+    run(0x413730, "HumanPlayer_MapMarkerHandler", args=args)
 
 
 def test_close():

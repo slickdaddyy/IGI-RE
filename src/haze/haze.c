@@ -31,10 +31,10 @@ static const double kZeroD = 0.0;
 static const float kOne = 1.0f;
 static const float kFade = 0x1.333334p-2f; /* 0.3 */
 
-void sub_4DA240(HazeLayer *t);
-void sub_4DA270(HazeLayer *t);
-void sub_4DA2A0(HazeLayer *t);
-void sub_4DA2C0(HazeLayer *t);
+void HazeLayer_Push(HazeLayer *t);
+void HazeLayer_Enter(HazeLayer *t);
+void HazeLayer_Pop(HazeLayer *t);
+void HazeLayer_Leave(HazeLayer *t);
 
 static void set_fields(HazeLayer *t, const float *color, float density, double bottom, double top)
 {
@@ -105,40 +105,40 @@ HOOK(0x4DA180, Haze_GetVisible);
 void HazeLayer_Open(void)
 {
     gHazeType = TaskType_New("Hazinglayers", sizeof(HazeLayer), gQObjType, 0, 0);
-    TaskType_SetHandler(gHazeType, 0x11, sub_4DA240);
-    TaskType_SetHandler(gHazeType, 0x12, sub_4DA2A0);
-    TaskType_SetHandler(gHazeType, 4, sub_4DA270);
-    TaskType_SetHandler(gHazeType, 5, sub_4DA2C0);
+    TaskType_SetHandler(gHazeType, 0x11, HazeLayer_Push);
+    TaskType_SetHandler(gHazeType, 0x12, HazeLayer_Pop);
+    TaskType_SetHandler(gHazeType, 4, HazeLayer_Enter);
+    TaskType_SetHandler(gHazeType, 5, HazeLayer_Leave);
 }
 HOOK(0x4DA1D0, HazeLayer_Open);
 
-void sub_4DA240(HazeLayer *t)
+void HazeLayer_Push(HazeLayer *t)
 {
     gHazeVisible[gHazeVisibleCount++] = t;
     t->visible = 1;
 }
-HOOK(0x4DA240, sub_4DA240);
+HOOK(0x4DA240, HazeLayer_Push);
 
-void sub_4DA270(HazeLayer *t)
+void HazeLayer_Enter(HazeLayer *t)
 {
     if (!t->visible)
         gHazeVisible[gHazeVisibleCount++] = t;
 }
-HOOK(0x4DA270, sub_4DA270);
+HOOK(0x4DA270, HazeLayer_Enter);
 
-void sub_4DA2A0(HazeLayer *t)
+void HazeLayer_Pop(HazeLayer *t)
 {
     gHazeVisibleCount--;
     t->visible = 0;
 }
-HOOK(0x4DA2A0, sub_4DA2A0);
+HOOK(0x4DA2A0, HazeLayer_Pop);
 
-void sub_4DA2C0(HazeLayer *t)
+void HazeLayer_Leave(HazeLayer *t)
 {
     if (!t->visible)
         gHazeVisibleCount--;
 }
-HOOK(0x4DA2C0, sub_4DA2C0);
+HOOK(0x4DA2C0, HazeLayer_Leave);
 
 void HazeLayer_Close(void)
 {

@@ -50,11 +50,11 @@ F32(kOne, 0x3F800000);
 F32(kMinusOne, 0xBF800000);
 static const double kOneD = 1.0;
 
-void sub_497940(int v)
+void TransContext_SetAutoNear(int v)
 {
     gUnk543A64 = v;
 }
-HOOK(0x497940, sub_497940);
+HOOK(0x497940, TransContext_SetAutoNear);
 
 void TransContext_DrawPrim(RenderNode *n);
 
@@ -83,7 +83,7 @@ void TransContext_Init(void)
     RenderMode_ForEach(TransContext_RegisterModeCB, NULL);
     gSetActiveTransContextMethod = RenderMode_CreateMethod("SetActiveTransContext");
     gSetNearClippingPlaneMethod = RenderMode_CreateMethod("SetNearClippingPlane");
-    sub_497940(1);
+    TransContext_SetAutoNear(1);
     RenderMode_SetMethod(Direct3D_GetRenderMode(), gSetActiveTransContextMethod, Direct3D_SetActiveTransContext);
     RenderMode_SetMethod(Direct3D_GetRenderMode(), gSetNearClippingPlaneMethod, Direct3D_SetNearClippingPlane);
 }

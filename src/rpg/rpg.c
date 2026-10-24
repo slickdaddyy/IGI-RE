@@ -30,17 +30,17 @@ ORIG(0x460BE0, uint16_t, Human_GetType, (void));
 ORIG(0x460C40, uint8_t, Human_GetPunchEvent, (void));
 ORIG(0x460C50, void *, Human_GetParamTable, (void));
 ORIG(0x460C80, void, Human_printf, (Soldier *h, const char *fmt, ...));
-ORIG(0x460CF0, void, sub_460CF0, (Soldier *h));
+ORIG(0x460CF0, void, Human_UpdatePlatformMove, (Soldier *h));
 ORIG(0x4610C0, void, Human_UpdateBody, (Soldier *h));
-ORIG(0x4613D0, void, sub_4613D0, (Soldier *h));
+ORIG(0x4613D0, void, Human_FireAnimTrigger, (Soldier *h));
 ORIG(0x4614B0, void, Human_UpdateMove, (Soldier *h));
 ORIG(0x462CF0, void, Human_MoveOnPlatform, (Soldier *h));
 ORIG(0x462E50, void, Human_UpdateWeapon, (Soldier *h));
 ORIG(0x463080, void, Human_SendPosition, (Soldier *h));
 ORIG(0x463680, int, Human_GetGround, (Soldier *h));
 ORIG(0x463760, void, HumanViewCam, (Soldier *h, int mode));
-ORIG(0x463770, void, sub_463770, (Soldier *h));
-ORIG(0x4635F0, void, sub_4635F0, (Soldier *h));
+ORIG(0x463770, void, Human_ApplyGravity, (Soldier *h));
+ORIG(0x4635F0, void, Human_FreezeView, (Soldier *h));
 ORIG(0x4637C0, void, Human_SayTimed, (Soldier *h, const char *sound, int count));
 ORIG(0x4638A0, void, Human_Say, (Soldier *h, const char *sound, int count));
 ORIG(0x463920, void, Human_Footstep, (Soldier *h));
@@ -456,7 +456,7 @@ void SoldierRPG_FallUpdate(SoldierSM *sm, Soldier *h)
 {
     uint32_t b;
 
-    sub_463770(h);
+    Human_ApplyGravity(h);
     b = sm->bits;
     if (!(b & SB_ON_GROUND)) {
         sm_go(sm, h, RPG_FALL);
@@ -527,7 +527,7 @@ void SoldierRPG_DieEnter(SoldierSM *sm, Soldier *h)
     Soldier_GetDeathVelocity(s->deathVel, h, h->model, anim);
     HumanViewCam(h, 3);
     HumanView_LockPitch(h->view);
-    sub_4635F0(h);
+    Human_FreezeView(h);
     Human_Say(h, "ai_death_", 4);
     sm->run = SoldierRPG_DieUpdate;
 }
@@ -707,7 +707,7 @@ void SoldierRPG_Update(Soldier *h)
     long double speed;
 
     Soldier_EnsureWeapon(h);
-    sub_460CF0(h);
+    Human_UpdatePlatformMove(h);
     StateMachine_Update(&h->sm, h);
     if (!is_zero(h->input[20]))
         h->run ^= 1;
@@ -722,7 +722,7 @@ void SoldierRPG_Update(Soldier *h)
     d[0] = x;
     d[1] = y;
     d[2] = z;
-    sub_4613D0(h);
+    Human_FireAnimTrigger(h);
     if (!h->attach)
         Human_UpdateMove(h);
     else

@@ -383,9 +383,9 @@ seen:
 run:
     HumanAI_ProcessEvents(ai);
     HumanAI_RunAction(ai);
-    if (sub_463190(&h->task))
+    if (Human_IsActive(&h->task))
         HumanAI_SendControl(ai);
-    if (HumanAI_IsDead(ai) && sub_463190(&h->task) && h->unk33C) {
+    if (HumanAI_IsDead(ai) && Human_IsActive(&h->task) && h->unk33C) {
         HumanAI_ClearMove(ai);
         if (ai->unk3AB0) {
             AIClaim_Release(ai->unk3AB0);
@@ -640,7 +640,7 @@ void HumanAI_OnEvent(HumanAI *ai, AIMessage *m)
     List *list;
     AIEvent *e;
 
-    if (ai->deadDone || !sub_463190(h) || !ai->script)
+    if (ai->deadDone || !Human_IsActive(h) || !ai->script)
         return;
     if (h == m->about || h == m->from)
         return;

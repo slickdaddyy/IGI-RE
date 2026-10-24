@@ -77,7 +77,7 @@ def test_init_shutdown():
     run(0x4E41B0, "SplineObjSegment_Init", init, em=ei)
     run(0x4E43B0, "SplineObjSegment_Shutdown", lambda e: init(e) or e.call(0x4E41B0) and None, em=ei)
     run(0x4E5350, "SplineObjSegment_GetType", lambda e: u16(e, 0xA5E3F4, 0x77), check_eax=True, eax_mask=0xFFFF)
-    run(0x4E4280, "sub_4E4280", lambda e: (0, e.alloc(4)))
+    run(0x4E4280, "Task_YesHandler", lambda e: (0, e.alloc(4)))
 
 
 @pytest.mark.parametrize("bufs", [(0, 0), (0x5000, 0), (0x5000, 0x6000)])

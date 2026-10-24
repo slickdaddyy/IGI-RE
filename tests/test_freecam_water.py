@@ -142,7 +142,7 @@ def test_close():
     run(fe, 0x530210, "WaterMesh_Close", setup)
 
 
-# WaterMesh_DrawSplitTri with sub_52DAE0, sub_52E180 and sub_5116D0 faked
+# WaterMesh_DrawSplitTri with sub_52DAE0, sub_52E180 and TerrainMesh_DrawTriangle faked
 
 
 def vertex(e, args):

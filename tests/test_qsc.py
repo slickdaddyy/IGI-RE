@@ -237,7 +237,7 @@ def test_qvm_op_name(op):
 
 
 def test_qvm_handler_thunk():
-    compare(emu, 0x4C0250, "sub_4C0250", check_eax=False)
+    compare(emu, 0x4C0250, "QvmDis_Init", check_eax=False)
 
 
 # --- reader ------------------------------------------------------------------

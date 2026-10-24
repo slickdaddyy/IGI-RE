@@ -153,13 +153,13 @@ typedef struct Lightmap {
 
 void RigidDynCubeObj_CreateHandler(RigidDynCubeObj *o, RigidCreateArg *arg);
 void RigidDynCubeObj_GetInfo(RigidDynCubeObj *o, RigidInfo *info);
-void sub_4C31F0(RigidDynCubeObj *o, RigidDrawView *view);
+void RigidDynCubeObj_DrawCellMask(RigidDynCubeObj *o, RigidDrawView *view);
 double *DynCubeObj_GetPosition(RigidDynCubeObj *o);
 void RigidDynCubeObj_Open(void);
-void sub_4C35D0(RigidDynCubeObj *o, char *arg);
+void RigidDynCubeObj_CollFilter(RigidDynCubeObj *o, char *arg);
 MagicScriptValue *DefineMagicObj(MagicScriptValue *ret, void *data, void *args);
-void sub_4C4660(RigidDynCubeObj *o, int *arg);
-void sub_4C4780(RigidDynCubeObj *o, char *arg);
+void RigidDynCubeObj_ActivateHandler(RigidDynCubeObj *o, int *arg);
+void RigidDynCubeObj_MoveHandler(RigidDynCubeObj *o, char *arg);
 void RigidDynCubeObj_Close(void);
 uint16_t RigidDynCubeObj_GetType(void);
 void RigidDynCubeObj_SetModel(RigidDynCubeObj *o, void **model);
@@ -176,12 +176,12 @@ void Coll_ResetMods(void);
 void Coll_SaveMods(void);
 void Coll_RestoreMods(void);
 int DynCubeTree_GetChildCount(int kind);
-void sub_4C5900(void);
-void sub_4C5A10(MagicTask *t, void **arg);
-void sub_4C5AA0(void);
+void World_Init(void);
+void DynCubeObj_DeactivateHandler(MagicTask *t, void **arg);
+void World_Shutdown(void);
 World *World_New(int rooms);
 void DynCubeNode_Init(World *w, WorldRoom *r, int unk04, int unk00, int index);
 void World_Free(World *w);
-void sub_4C5F00(World *w, const char *name);
+void World_LoadTextures(World *w, const char *name);
 
 #endif

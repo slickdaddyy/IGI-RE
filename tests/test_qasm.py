@@ -423,4 +423,4 @@ def test_scan_file(name, flag, is_dir):
         ent = e.alloc(12)
         e.write(ent, u32(cstr(e, name)) + u32(0) + bytes([is_dir, 0, 0, 0]))
         return (ent,)
-    compare(scan_emu, 0x4C2F90, "sub_4C2F90", setup=setup, check_eax=False, normalized=True)
+    compare(scan_emu, 0x4C2F90, "MagicObj_LoadDirEntry", setup=setup, check_eax=False, normalized=True)

@@ -112,7 +112,7 @@ ORIG(0x4C1800, void *, QTaskList_New, (int max));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4C5B20, void *, World_New, (int size));
 ORIG(0x4C5CE0, void, World_Free, (void *world));
-ORIG(0x4C5F00, void, sub_4C5F00, (void *world, const char *path));
+ORIG(0x4C5F00, void, World_LoadTextures, (void *world, const char *path));
 ORIG(0x4C6240, void, Terrain_Load, (void *world, const char *path));
 ORIG(0x4CE830, void, DynCube_BuildMasks, (void *world, int i));
 ORIG(0x4CEA60, int, Model_GetInitMethod, (void));
@@ -192,7 +192,7 @@ typedef struct WeaponGive {
     int ammo;
 } WeaponGive;
 
-/* query for sub_416AD0: keeps the item closest to straight ahead */
+/* query for UseQuery_Consider: keeps the item closest to straight ahead */
 typedef struct ViewQuery {
     char unk0[8];
     Vec3d origin;
@@ -421,7 +421,7 @@ void LevelStart(Game *g)
     gCurrentWorld = gGame->world;
     Debug_Log(gGame->world);
     crt_sprintf(terrain, "%sterrain/terrain", gMissionPath);
-    sub_4C5F00(gGame->world, terrain);
+    World_LoadTextures(gGame->world, terrain);
     Terrain_Load(gGame->world, terrain);
     Texture_SetActiveTMU(0);
     Texture_BeginList(1.0f, 0xDB840);
@@ -890,19 +890,19 @@ __attribute__((noinline)) Task *Game_GetPlayer(int i)
 HOOK(0x416A70, Game_GetPlayer);
 
 /* search filters: true when item is none of the excluded ones */
-void sub_416A90(void *item, char *ctx)
+void Game_CollFilterSkip3(void *item, char *ctx)
 {
     void **ex = (void **)(ctx + 4);
 
     *ctx = item != ex[0] && item != ex[1] && item != ex[2];
 }
-HOOK(0x416A90, sub_416A90);
+HOOK(0x416A90, Game_CollFilterSkip3);
 
-void sub_416AB0(void *item, char *ctx)
+void Game_CollFilterSkip(void *item, char *ctx)
 {
     *ctx = item != *(void **)(ctx + 4);
 }
-HOOK(0x416AB0, sub_416AB0);
+HOOK(0x416AB0, Game_CollFilterSkip);
 
 /* fchs on the x87 value, so gcc cannot move the negation after a rounding */
 static inline long double x87_neg(long double x)
@@ -911,7 +911,7 @@ static inline long double x87_neg(long double x)
     return x;
 }
 
-char sub_416AD0(ViewQuery *q, void *item, const Vec3d *pos)
+char UseQuery_Consider(ViewQuery *q, void *item, const Vec3d *pos)
 {
     Vec3d d, l;
     long double y, yaw;
@@ -943,7 +943,7 @@ char sub_416AD0(ViewQuery *q, void *item, const Vec3d *pos)
     q->best = item;
     return 1;
 }
-HOOK(0x416AD0, sub_416AD0);
+HOOK(0x416AD0, UseQuery_Consider);
 
 /* full value inside the offset, fading to 0 over range */
 long double Game_BlastFalloff(Falloff *s, void *unused, const Vec3d *pos, float radius)

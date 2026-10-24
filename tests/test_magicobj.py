@@ -153,7 +153,7 @@ def test_is_other(same):
         arg = e.alloc(8)
         e.write(arg, struct.pack("<II", 0xAAAAAAAA, o if same else o + 4))
         return o, arg
-    compare(emu, 0x4C35D0, "sub_4C35D0", setup=setup, check_eax=False)
+    compare(emu, 0x4C35D0, "RigidDynCubeObj_CollFilter", setup=setup, check_eax=False)
 
 
 # --- create, info, init ------------------------------------------------------
@@ -223,7 +223,7 @@ def test_handler_4C4780(scale):
         arg = e.alloc(0x40)
         e.write(arg, rbytes(0x40, arg))
         return o, arg
-    compare(fk, 0x4C4780, "sub_4C4780", setup=setup, check_eax=False, normalized=True)
+    compare(fk, 0x4C4780, "RigidDynCubeObj_MoveHandler", setup=setup, check_eax=False, normalized=True)
 
 
 # --- children broadcast ------------------------------------------------------
@@ -241,7 +241,7 @@ def test_handler_4C4660(flag, kids):
         arg = e.alloc(12)
         e.write(arg, struct.pack("<III", flag, 0x99, 1))
         return o, arg
-    compare(fk, 0x4C4660, "sub_4C4660", setup=setup, check_eax=False, normalized=True)
+    compare(fk, 0x4C4660, "RigidDynCubeObj_ActivateHandler", setup=setup, check_eax=False, normalized=True)
 
 
 # --- 2D draw -------------------------------------------------------------------
@@ -268,7 +268,7 @@ def test_draw(case):
         view = e.alloc(16)
         e.write(view, struct.pack("<iiIf", 0x700, 256, center, 40.0))
         return o, view
-    compare(fk, 0x4C31F0, "sub_4C31F0", setup=setup, check_eax=False, normalized=True)
+    compare(fk, 0x4C31F0, "RigidDynCubeObj_DrawCellMask", setup=setup, check_eax=False, normalized=True)
 
 
 # --- script side ---------------------------------------------------------------

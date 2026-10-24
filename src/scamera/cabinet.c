@@ -14,7 +14,7 @@ FN_EXTERN(Cabinet_Use);
 FN_EXTERN(RocketPod_GetArgSize);
 FN_EXTERN(Task_Nothing);
 FN_EXTERN(VehiclePart_Delete);
-FN_EXTERN(sub_4449A0);
+FN_EXTERN(Cabinet_DrawIcon);
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -63,7 +63,7 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 #define Cabinet_CheckUse (FN(0x444860, Cabinet_CheckUse))
 #define RocketPod_GetArgSize (FN(0x427D70, RocketPod_GetArgSize)) /* writes 4 */
 #define Cabinet_Use (FN(0x444940, Cabinet_Use))
-#define sub_4449A0 (FN(0x4449A0, sub_4449A0))
+#define Cabinet_DrawIcon (FN(0x4449A0, Cabinet_DrawIcon))
 #define Task_Nothing (FN(0x4D3710, Task_Nothing))
 #define Cabinet_AddSymbols (FN(0x4449C0, Cabinet_AddSymbols))
 #define Cabinet_RemoveSymbols (FN(0x444A70, Cabinet_RemoveSymbols))
@@ -91,7 +91,7 @@ void Cabinet_Open(void)
     TaskType_SetHandler(gCabinetType, Game_GetEvent2(), Cabinet_CheckUse);
     TaskType_SetHandler(gCabinetType, Game_GetEvent3(), RocketPod_GetArgSize);
     TaskType_SetHandler(gCabinetType, Game_GetEvent4(), Cabinet_Use);
-    TaskType_SetHandler(gCabinetType, Game_GetEvent6(), sub_4449A0);
+    TaskType_SetHandler(gCabinetType, Game_GetEvent6(), Cabinet_DrawIcon);
     TaskType_SetHandler(gCabinetType, Game_GetEvent9(), Task_Nothing);
     TaskType_SetHandler2(gCabinetType, Level_GetEventDA8(), Cabinet_AddSymbols);
     TaskType_SetHandler2(gCabinetType, Level_GetEventDAC(), Cabinet_RemoveSymbols);

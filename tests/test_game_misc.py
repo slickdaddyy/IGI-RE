@@ -123,7 +123,7 @@ CASES = [(0x11, 0x900, 0, 1), (0x11, 0x900, 0, 3), (0x11, 0x900, 0, -1), (0x11, 
 
 
 @pytest.mark.parametrize("type_,model,model2,i", CASES)
-@pytest.mark.parametrize("addr,name,size", [(0x414E20, "Model_GetPoint", 24), (0x414ED0, "sub_414ED0", 12)])
+@pytest.mark.parametrize("addr,name,size", [(0x414E20, "Model_GetPoint", 24), (0x414ED0, "Model_GetLocalPoint", 12)])
 def test_model_points(addr, name, size, type_, model, model2, i):
     def setup(e):
         out = e.alloc(24)
@@ -148,7 +148,7 @@ def test_model_points_by_name(type_, i, found):
             found_ptr = 0
         F[VIR_FIND].ret = found_ptr
         return out, model_task(e, type_, 0x900, 0x901), i, name
-    compare(emu, 0x414F40, "sub_414F40", setup=setup, check_eax=False, normalized=True)
+    compare(emu, 0x414F40, "Model_GetBonePoint", setup=setup, check_eax=False, normalized=True)
 
 
 @pytest.mark.parametrize("key,down,prev,ctrl,shift,profile,level,cheats", [

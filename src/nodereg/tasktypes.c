@@ -116,12 +116,12 @@ ORIG(0x52CA70, void, PushButton_Init, (void));
 ORIG(0x52CB20, void, PushButton_Shutdown, (void));
 ORIG(0x530220, void, CamTask_Init, (void));
 ORIG(0x530250, void, CamTask_Shutdown, (void));
-ORIG(0x530270, void, sub_530270, (void));
-ORIG(0x5302A0, void, sub_5302A0, (void));
+ORIG(0x530270, void, Engine_Init, (void));
+ORIG(0x5302A0, void, Engine_Shutdown, (void));
 
 void TaskTypes_Open(void)
 {
-    sub_530270();
+    Engine_Init();
     Particle2D_Open();
     CamTask_Init();
     Controller_Init();
@@ -272,6 +272,6 @@ void TaskTypes_Close(void)
     Controller_Shutdown();
     CamTask_Shutdown();
     Particle2D_Close();
-    sub_5302A0();
+    Engine_Shutdown();
 }
 HOOK(0x518550, TaskTypes_Close);

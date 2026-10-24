@@ -224,7 +224,7 @@ def test_find_child():
         RET.clear()
         RET[0x401BE0] = 0x8888
         return (car(e),)
-    run(e, 0x42FDD0, "sub_42FDD0", setup, check_eax=True)
+    run(e, 0x42FDD0, "Car_GetMountedGun", setup, check_eax=True)
 
 
 def test_get_point8():
@@ -232,4 +232,4 @@ def test_get_point8():
         c = car(e)
         f32(e, c + 0x70, *[0.5 * i for i in range(9)])
         return c, e.alloc(24), e.alloc(40)
-    run(e, 0x42FDF0, "sub_42FDF0", setup)
+    run(e, 0x42FDF0, "Car_GetGunnerPos", setup)

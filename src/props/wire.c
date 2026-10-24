@@ -14,14 +14,14 @@ ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t par
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x414A60, void, Matrix_SetYAxis, (Matrix *m, const Vec3f *dir));
 ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int i));
-ORIG(0x414ED0, void, sub_414ED0, (Vec3f *out, void *obj, int i));
+ORIG(0x414ED0, void, Model_GetLocalPoint, (Vec3f *out, void *obj, int i));
 ORIG(0x4167F0, uint8_t, Game_GetEvent2, (void));
 ORIG(0x416800, uint8_t, Game_GetEvent4, (void));
 ORIG(0x416810, uint8_t, Game_GetEvent3, (void));
 ORIG(0x416820, uint8_t, Game_GetEvent6, (void));
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
 ORIG(0x4168A0, void *, Game_GetTaskList0, (void));
-ORIG(0x416AD0, char, sub_416AD0, (UseQuery *q, void *obj, const Vec3d *pos));
+ORIG(0x416AD0, char, UseQuery_Consider, (UseQuery *q, void *obj, const Vec3d *pos));
 ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
 ORIG(0x4871C0, void, StatusScreen_DrawActionIcon, (Task *human, void *sprite));
 ORIG(0x4B3100, void, Vec3d_Normalize, (Vec3d *v));
@@ -209,8 +209,8 @@ void Wire_Use(Wire *w, UseQuery *q)
     dy = q->pos.y - w->obj.pos.y;
     dz = q->pos.z - w->obj.pos.z;
     ly = (r[7] * dz + r[4] * dy) + r[1] * dx;
-    sub_414ED0(&a, w, 0);
-    sub_414ED0(&b, w, 1);
+    Model_GetLocalPoint(&a, w, 0);
+    Model_GetLocalPoint(&b, w, 1);
     if (a.y > ly)
         t = a.y;
     else if (b.y >= ly)
@@ -223,7 +223,7 @@ void Wire_Use(Wire *w, UseQuery *q)
     p.x = wx + w->obj.pos.x;
     p.y = wy + w->obj.pos.y;
     p.z = wz + w->obj.pos.z;
-    sub_416AD0(q, w, &p);
+    UseQuery_Consider(q, w, &p);
 }
 HOOK(0x43F560, Wire_Use);
 

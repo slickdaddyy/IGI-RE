@@ -4,7 +4,7 @@
 #include "hook.h"
 
 FN_EXTERN(Terminal_MapHandler);
-FN_EXTERN(sub_416AB0);
+FN_EXTERN(Game_CollFilterSkip);
 
 ORIG(0x416880, uint8_t, Game_GetEvent13, (void));
 ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
@@ -33,7 +33,7 @@ _Static_assert(sizeof(Building) == 0x1F0, "Building");
 #define gBuildingType VAR(uint16_t, 0x57C200)
 #define gBuildingParams VAR(void *, 0x57C204)
 
-#define sub_416AB0 (FN(0x416AB0, sub_416AB0))
+#define Game_CollFilterSkip (FN(0x416AB0, Game_CollFilterSkip))
 #define Terminal_MapHandler (FN(0x443DC0, Terminal_MapHandler))
 
 void Building_Create(Building *b, void *arg);
@@ -52,7 +52,7 @@ void Building_Open(void)
     TaskType_SetHandler2(gBuildingType, 2, Building_Delete);
     TaskType_SetHandler(gBuildingType, Param_GetTableEvent(), Building_GetParamsHandler);
     TaskType_SetHandler(gBuildingType, Param_GetChangedEvent(), Building_ParamsChanged);
-    TaskType_SetHandler(gBuildingType, Game_GetEvent13(), sub_416AB0);
+    TaskType_SetHandler(gBuildingType, Game_GetEvent13(), Game_CollFilterSkip);
     TaskType_SetHandler(gBuildingType, ComputerObject_GetEvent0(), Terminal_MapHandler);
     TaskType_SetHandler(gBuildingType, World_GetEvent1(), Building_WorldRemove);
     TaskType_SetHandler(gBuildingType, World_GetEvent0(), Building_WorldAdd);

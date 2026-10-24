@@ -116,13 +116,13 @@ const char *AIType_GetName(int type)
 }
 HOOK(0x452910, AIType_GetName);
 
-void *sub_452920(char *p)
+void *MoveItem_GetPos(char *p)
 {
     return p + 8;
 }
-HOOK(0x452920, sub_452920);
+HOOK(0x452920, MoveItem_GetPos);
 
-void sub_452930(Matrix *outMatrix, float *outVec, ViewObj *obj, const double *from, float scale)
+void AI_AimThrow(Matrix *outMatrix, float *outVec, ViewObj *obj, const double *from, float scale)
 {
     const float *m = obj->matrix.m;
     const float *r;
@@ -163,7 +163,7 @@ void sub_452930(Matrix *outMatrix, float *outVec, ViewObj *obj, const double *fr
     outVec[1] = py / s;
     outVec[2] = pz / s + s * kLift;
 }
-HOOK(0x452930, sub_452930);
+HOOK(0x452930, AI_AimThrow);
 
 void NodeGrid_Stamp(NodeGrid *g, int x, int y, char add)
 {

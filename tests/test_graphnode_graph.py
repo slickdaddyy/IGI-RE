@@ -162,7 +162,7 @@ def test_params_changed(isa, attached, seed, cw):
 @pytest.mark.parametrize("addr,name,mask", [
     (0x4F9200, "Graph_GetParamTable", 0xFFFFFFFF), (0x4F9210, "Graph_GetType", 0xFFFF),
     (0x4F9220, "Graph_GetLoadEvent", 0xFF), (0x4F9230, "Graph_GetSaveEvent", 0xFF),
-    (0x4F9240, "Graph_GetNodeLoadEvent", 0xFF), (0x4F9250, "sub_4F9250", 0xFF),
+    (0x4F9240, "Graph_GetNodeLoadEvent", 0xFF), (0x4F9250, "Graph_GetEvent36E", 0xFF),
     (0x4F9260, "Graph_GetNodeAddEvent", 0xFF), (0x4F9270, "Graph_GetEvent371", 0xFF),
     (0x4F9280, "Graph_GetAllocEvent", 0xFF)])
 def test_getters(addr, name, mask):

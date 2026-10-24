@@ -5,7 +5,7 @@
 
 ORIG(0x401E30, void, Task_BroadcastChildren, (void *task, uint8_t slot, void *arg));
 ORIG(0x463170, char, Human_IsDead, (Task *human));
-ORIG(0x463190, char, sub_463190, (Task *human));
+ORIG(0x463190, char, Human_IsActive, (Task *human));
 ORIG(0x4AF8F0, void, List_AddTail, (void *list, void *node));
 ORIG(0x4AF9B0, int, List_Count, (void *list));
 ORIG(0x4B0C60, void *, Mem_Alloc, (int size, int align));
@@ -126,7 +126,7 @@ void GuardGenerator_Run(GuardGenerator *g)
             GuardGenerator_Spawn(g);
             g->isSpawned = 1;
             g->nSpawns++;
-        } else if (Human_IsDead(guard) && !sub_463190(guard)) {
+        } else if (Human_IsDead(guard) && !Human_IsActive(guard)) {
             Task_Delete(FIRST_CHILD(&g->task));
             GuardGenerator_Spawn(g);
             g->isSpawned = 1;

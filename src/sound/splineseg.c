@@ -186,7 +186,7 @@ void SplineObjSegment_DrawMask(SplineObjSegment *o, CellMaskDrawArg *view)
 HOOK(0x4E3FC0, SplineObjSegment_DrawMask);
 
 void SplineObjSegment_Render(SplineObjSegment *o);
-void sub_4E4280(void *o, char *out);
+void Task_YesHandler(void *o, char *out);
 
 void SplineObjSegment_Init(void)
 {
@@ -196,19 +196,19 @@ void SplineObjSegment_Init(void)
     TaskType_SetHandler(gSplineObjSegmentType, 10, SplineObjSegment_Hit);
     TaskType_SetHandler(gSplineObjSegmentType, 11, TASK_NOTHING);
     TaskType_SetHandler(gSplineObjSegmentType, 9, SplineObjSegment_Hit);
-    TaskType_SetHandler(gSplineObjSegmentType, 12, sub_4E4280);
+    TaskType_SetHandler(gSplineObjSegmentType, 12, Task_YesHandler);
     TaskType_SetHandler(gSplineObjSegmentType, CellMask_GetDrawEvent(), SplineObjSegment_DrawMask);
     Task_SetGlobalFlags(0x10000000);
     TaskType_SetFlags(gSplineObjSegmentType, 0x10000000);
 }
 HOOK(0x4E41B0, SplineObjSegment_Init);
 
-void sub_4E4280(void *o, char *out)
+void Task_YesHandler(void *o, char *out)
 {
     (void)o;
     *out = 1;
 }
-HOOK(0x4E4280, sub_4E4280);
+HOOK(0x4E4280, Task_YesHandler);
 
 /* queues the bent mesh with the active lights, then moves the children
    along with the identity rotation */

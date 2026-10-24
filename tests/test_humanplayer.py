@@ -753,12 +753,12 @@ def test_small_handlers():
         out = e.alloc(4)
         i32(e, 0x56E09C, 0x9C9C)
         return 0x1000, out
-    check(0x4108B0, "sub_4108B0", setup)
+    check(0x4108B0, "HumanPlayer_GetParamTableHandler", setup)
 
     def setup2(e):
         set_handler(e, 0x0B, HUMAN_TYPE, SLOT_HANDLER)
         return 0x1000, 0x2000
-    check(0x4108C0, "sub_4108C0", setup2)
+    check(0x4108C0, "HumanPlayer_ParamChangedHandler", setup2)
 
 
 @pytest.mark.parametrize("computer,cf6", [(0, 0), (0x46C0, 1), (0, 1)])
@@ -768,7 +768,7 @@ def test_sub_410900(computer, cf6):
         R[0x46C060] = computer
         set_handler(e, 0x09, 0x11, SLOT_HANDLER)
         return p.h, 0x2000
-    check(0x410900, "sub_410900", setup)
+    check(0x410900, "HumanPlayer_DeactivateHandler", setup)
 
 
 POSITION_HANDLER = logger(2, (1, 8))

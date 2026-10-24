@@ -228,7 +228,7 @@ def test_update_978(has, value, was, cw):
         e.expr[0x978] = (has, value)
         e.write(c + 0x91D, bytes([was]))
         return (c,)
-    check(e0, fk, 0x42E870, "sub_42E870", setup=setup, check_eax=False, cw=cw)
+    check(e0, fk, 0x42E870, "Car_UpdateDetector", setup=setup, check_eax=False, cw=cw)
 
 
 @pytest.mark.parametrize("wrecked,params,id_,handler", [(0, 1, 3, 1), (1, 0, 3, 1), (0, 1, -1, 1), (0, 1, 0, 0)])

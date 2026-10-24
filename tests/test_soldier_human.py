@@ -171,4 +171,4 @@ def test_target(which, special, rnd, chance, skip2, t1, t2, cw):
         RET[("team", skip2)] = t1
         RET[("team", h)] = t2
         return h, q
-    run(r, 0x45E3E0, "sub_45E3E0", setup, cw=cw)
+    run(r, 0x45E3E0, "Human_CollFilterHandler", setup, cw=cw)

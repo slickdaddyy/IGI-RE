@@ -61,9 +61,9 @@ ORIG(0x460BE0, uint16_t, Human_GetType, (void));
 ORIG(0x460C40, uint8_t, Human_GetPunchEvent, (void));
 ORIG(0x460C50, void *, Human_GetParamTable, (void));
 ORIG(0x460C80, void, Human_printf, (Human *h, const char *fmt, ...));
-ORIG(0x460CF0, void, sub_460CF0, (Human *h));
+ORIG(0x460CF0, void, Human_UpdatePlatformMove, (Human *h));
 ORIG(0x4610C0, void, Human_UpdateBody, (Human *h));
-ORIG(0x4613D0, void, sub_4613D0, (Human *h));
+ORIG(0x4613D0, void, Human_FireAnimTrigger, (Human *h));
 ORIG(0x4614B0, void, Human_UpdateMove, (Human *h));
 ORIG(0x462CF0, void, Human_MoveOnPlatform, (Human *h));
 ORIG(0x462E50, void, Human_UpdateWeapon, (Human *h));
@@ -73,14 +73,14 @@ ORIG(0x4631A0, void, Human_SetPosition, (Human *h, double *pos));
 ORIG(0x463220, void, Human_SetYaw, (Human *h, float yaw));
 ORIG(0x463310, void, Human_SetPlatform, (Human *h, void *obj));
 ORIG(0x463550, void, Human_ClearPlatform, (Human *h));
-ORIG(0x4635F0, void, sub_4635F0, (Human *h));
-ORIG(0x463600, void, sub_463600, (Human *h));
-ORIG(0x463620, void, sub_463620, (Human *h));
+ORIG(0x4635F0, void, Human_FreezeView, (Human *h));
+ORIG(0x463600, void, Human_UnfreezeView, (Human *h));
+ORIG(0x463620, void, Human_EndUse, (Human *h));
 ORIG(0x463680, int, Human_GetGround, (Human *h));
 ORIG(0x4636A0, void, Human_SetClimbObject, (Human *h, void *obj));
 ORIG(0x4636E0, void *, Human_GetClimbObject, (Human *h));
 ORIG(0x463760, void, HumanViewCam, (Human *h, int mode));
-ORIG(0x463770, void, sub_463770, (Human *h));
+ORIG(0x463770, void, Human_ApplyGravity, (Human *h));
 ORIG(0x4637C0, void, Human_SayTimed, (Human *h, const char *sound, int count));
 ORIG(0x4638A0, void, Human_Say, (Human *h, const char *sound, int count));
 ORIG(0x463AD0, void, Human_Bleed, (Human *h, float *dir, int unk));
@@ -478,7 +478,7 @@ void Soldier_FallRun(HumanSM *sm, Human *h)
 {
     uint32_t bits;
 
-    sub_463770(h);
+    Human_ApplyGravity(h);
     bits = sm->bits;
     if (bits & SB_HIT) {
         sm_go(sm, h, S_HIT);
@@ -565,7 +565,7 @@ static void die_end(HumanSM *sm, Human *h, int anim)
     Soldier_GetDeathVelocity(((Soldier *)h)->deathVel, h, ((Soldier *)h)->model, anim);
     HumanViewCam(h, 3);
     HumanView_LockPitch(h->view);
-    sub_4635F0(h);
+    Human_FreezeView(h);
     Human_Say(h, "ai_death_", 4);
     Human_DisableLook(h);
     sm->run = Soldier_DieRun;
@@ -684,7 +684,7 @@ void Soldier_MountEnter(HumanSM *sm, Human *h)
     Human_PlayAnim(h, 0x1F, 0, 0.0f);
     HumanView_ClearAngles(h->view);
     HumanView_LockPitch(h->view);
-    sub_4635F0(h);
+    Human_FreezeView(h);
     Human_SetPlatform(h, obj);
     sm->run = Soldier_MountRun;
 }
@@ -697,9 +697,9 @@ void Soldier_MountRun(HumanSM *sm, Human *h)
 
     if ((!is_zero(h->input[24]) && is_zero(h->prevInput[24])) || (sm->bits & SB_DEAD)) {
         HumanView_UnlockPitch(h->view);
-        sub_463600(h);
+        Human_UnfreezeView(h);
         StationaryGun_Release(obj);
-        sub_463620(h);
+        Human_EndUse(h);
         Human_SetClimbObject(h, NULL);
         Human_ClearPlatform(h);
         sm_go(sm, h, S_STAND);
@@ -879,7 +879,7 @@ void Soldier_Update(Human *h)
     long double speed;
 
     Soldier_EnsureWeapon(h);
-    sub_460CF0(h);
+    Human_UpdatePlatformMove(h);
     StateMachine_Update(&h->sm, h);
     if (!is_zero(h->input[20]))
         ((Soldier *)h)->run ^= 1;
@@ -894,7 +894,7 @@ void Soldier_Update(Human *h)
     d[0] = x;
     d[1] = y;
     d[2] = z;
-    sub_4613D0(h);
+    Human_FireAnimTrigger(h);
     if (!h->attach)
         Human_UpdateMove(h);
     else

@@ -213,7 +213,7 @@ void Model_GetPoint(int *out, ModelTask *t, int i)
 }
 HOOK(0x414E20, Model_GetPoint);
 
-void sub_414ED0(int *out, ModelTask *t, int i)
+void Model_GetLocalPoint(int *out, ModelTask *t, int i)
 {
     if (TaskType_IsA(t->task.type, RigidDynCubeObj_GetType()) && t->model && i < ModelLod_GetVertexCount(*t->model)) {
         Mesh3D_GetVertex(out, &t->task, i);
@@ -221,9 +221,9 @@ void sub_414ED0(int *out, ModelTask *t, int i)
     }
     memset(out, 0, 3 * sizeof(int));
 }
-HOOK(0x414ED0, sub_414ED0);
+HOOK(0x414ED0, Model_GetLocalPoint);
 
-void sub_414F40(int *out, ModelTask *t, int i, const char *name)
+void Model_GetBonePoint(int *out, ModelTask *t, int i, const char *name)
 {
     void **model;
 
@@ -236,7 +236,7 @@ void sub_414F40(int *out, ModelTask *t, int i, const char *name)
     }
     memset(out, 0, 6 * sizeof(int));
 }
-HOOK(0x414F40, sub_414F40);
+HOOK(0x414F40, Model_GetBonePoint);
 
 /* key held with left ctrl and shift, once the player has unlocked cheats */
 int Game_CheatKeyDown(int key)

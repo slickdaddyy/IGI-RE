@@ -59,7 +59,7 @@ typedef struct WaterMesh {
     void *hazeCount;        /* 0x4AD0 */
 } WaterMesh;
 
-/* one triangle for sub_5116D0 / WaterMesh_DrawSplitTri */
+/* one triangle for TerrainMesh_DrawTriangle / WaterMesh_DrawSplitTri */
 typedef struct WaterTri {
     Vec3d pos[3];
     float color[3][3];
@@ -118,7 +118,7 @@ ORIG(0x52FBA0, void, WaterMesh_SetEdgeFlags, (WaterMesh *w, int level, int x, in
 ORIG(0x52F630, void, WaterMesh_DrawSplitTri, (WaterMesh *w, WaterNode *node, WaterTri *t, int base, int count,
                                               int recalc));
 ORIG(0x52F3D0, void, WaterMesh_CalcEnvUV, (WaterMesh *w, float *uv, const Vec3d *pos, const float *normal));
-ORIG(0x5116D0, void, sub_5116D0, (WaterTri *t));
+ORIG(0x5116D0, void, TerrainMesh_DrawTriangle, (WaterTri *t));
 
 #define gWaterPrimitive VAR(int, 0xA84578)
 #define gLightData VAR(char *, 0xB041E0)
@@ -559,11 +559,11 @@ static void draw_tri(WaterMesh *w, WaterNode *node, WaterTri *t, uint32_t flags,
     } else {
         t->env = 0;
         t->texture = w->texture[0];
-        sub_5116D0(t);
+        TerrainMesh_DrawTriangle(t);
         if (w->envMap && fine) {
             t->env = 1;
             t->texture = w->texture[1];
-            sub_5116D0(t);
+            TerrainMesh_DrawTriangle(t);
         }
     }
 }

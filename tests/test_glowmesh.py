@@ -462,7 +462,7 @@ def test_glow_queue_all(count):
     run(emu, 0x512BA0, "Glow_QueueAll", setup)
 
 
-# --- sub_5116D0 ----------------------------------------------------------------------------------
+# --- TerrainMesh_DrawTriangle ----------------------------------------------------------------------------------
 
 # ClipTriangle copies three words of each vertex that nobody sets
 POLY_IGNORE = [(0xA7DB10 + 48 * i + o, 0xA7DB10 + 48 * i + o + 4) for i in range(4) for o in (0x1C, 0x28, 0x2C)]
@@ -488,7 +488,7 @@ def poly_setup(e, seed, mode=None, near=None):
 @pytest.mark.parametrize("cw", CWS_INT)
 @pytest.mark.parametrize("seed", range(16))
 def test_poly(seed, cw):
-    run(emu, with_cw(emu, 0x5116D0, cw), with_cw(emu, "sub_5116D0", cw), lambda e: poly_setup(e, seed),
+    run(emu, with_cw(emu, 0x5116D0, cw), with_cw(emu, "TerrainMesh_DrawTriangle", cw), lambda e: poly_setup(e, seed),
         ignore=POLY_IGNORE)
 
 
@@ -497,7 +497,7 @@ def test_poly(seed, cw):
                                   (1000, 2000, 100), (100, 200, 2000), (100, 2000, 200), (2000, 100, 200),
                                   (-10, 500, 600), (0, 0, 0), (2e6, 500, 100)])
 def test_poly_paths(mode, near):
-    run(emu, 0x5116D0, "sub_5116D0", lambda e: poly_setup(e, 5, mode, near), ignore=POLY_IGNORE)
+    run(emu, 0x5116D0, "TerrainMesh_DrawTriangle", lambda e: poly_setup(e, 5, mode, near), ignore=POLY_IGNORE)
 
 
 # --- TerrainMesh_Build ----------------------------------------------------------------------------

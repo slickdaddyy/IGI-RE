@@ -39,7 +39,7 @@ def ladder(e, scale=(1.0, 2.0, 1.5), m=None):
 
 
 def test_climb_time():
-    run(emu, 0x440270, "sub_440270", lambda e: (), check_st0=True)
+    run(emu, 0x440270, "Fence_GetClimbTime", lambda e: (), check_st0=True)
 
 
 def create_arg(e):

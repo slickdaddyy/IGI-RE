@@ -332,13 +332,13 @@ void SkyDome_Restore(void)
 }
 HOOK(0x52D370, SkyDome_Restore);
 
-void sub_52D400(const uint32_t *v)
+void Sky_SetTint(const uint32_t *v)
 {
     gSkyUnk54F720[0] = v[0];
     gSkyUnk54F720[1] = v[1];
     gSkyUnk54F720[2] = v[2];
 }
-HOOK(0x52D400, sub_52D400);
+HOOK(0x52D400, Sky_SetTint);
 
 void Sky_Init(void)
 {

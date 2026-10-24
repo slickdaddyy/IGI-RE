@@ -111,7 +111,7 @@ ORIG(0x465910, void, HumanView_ClearCamOverride, (HumanView *v));
 ORIG(0x4B8770, int, Script_EvalExpr, (const char *text));
 ORIG(0x413BD0, void *, WeaponType_Find, (int id));
 ORIG(0x477C50, Task *, Gun_New, (void *h, int a, int id, int ammo, char b));
-ORIG(0x416AD0, void, sub_416AD0, (UseQuery *q, void *obj, Vec3d *pos));
+ORIG(0x416AD0, void, UseQuery_Consider, (UseQuery *q, void *obj, Vec3d *pos));
 ORIG(0x4871C0, void, StatusScreen_DrawActionIcon, (void *h, void *p));
 
 void StationaryGun_RunHandler(StatGun *o);
@@ -447,7 +447,7 @@ void StationaryGun_UseQuery(StatGun *o, UseQuery *q)
     dz = q->pos.z - p.z;
     if (o->obj.matrix.m[7] * dz + o->obj.matrix.m[4] * dy + o->obj.matrix.m[1] * dx < kZeroD)
         return;
-    sub_416AD0(q, o, &p);
+    UseQuery_Consider(q, o, &p);
 }
 HOOK(0x474E30, StationaryGun_UseQuery);
 

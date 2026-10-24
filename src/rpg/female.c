@@ -14,9 +14,9 @@ ORIG(0x450D50, void, HumanAI_Send, (SoldierAI *ai, SoldierAIMsg *msg));
 ORIG(0x4538F0, void, SoldierFemale_Footstep, (Soldier *h));
 ORIG(0x45D360, void, Soldier_EnsureWeapon, (Soldier *h));
 ORIG(0x460C80, void, Human_printf, (Soldier *h, const char *fmt, ...));
-ORIG(0x460CF0, void, sub_460CF0, (Soldier *h));
+ORIG(0x460CF0, void, Human_UpdatePlatformMove, (Soldier *h));
 ORIG(0x4610C0, void, Human_UpdateBody, (Soldier *h));
-ORIG(0x4613D0, void, sub_4613D0, (Soldier *h));
+ORIG(0x4613D0, void, Human_FireAnimTrigger, (Soldier *h));
 ORIG(0x4614B0, void, Human_UpdateMove, (Soldier *h));
 ORIG(0x462CF0, void, Human_MoveOnPlatform, (Soldier *h));
 ORIG(0x462E50, void, Human_UpdateWeapon, (Soldier *h));
@@ -108,7 +108,7 @@ void SoldierFemale_Update(Soldier *h)
     float *d = h->delta, x, y, z;
 
     Soldier_EnsureWeapon(h);
-    sub_460CF0(h);
+    Human_UpdatePlatformMove(h);
     StateMachine_Update(&h->sm, h);
     if (!is_zero(h->input[20]))
         h->run ^= 1;
@@ -132,7 +132,7 @@ void SoldierFemale_Update(Soldier *h)
     d[0] = x;
     d[1] = y;
     d[2] = z;
-    sub_4613D0(h);
+    Human_FireAnimTrigger(h);
     if (!h->attach)
         Human_UpdateMove(h);
     else

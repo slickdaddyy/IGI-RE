@@ -13,7 +13,7 @@ FN_EXTERN(Heli_ParseArgs);
 FN_EXTERN(Heli_RemoveFromWorld);
 FN_EXTERN(Heli_SaveState);
 FN_EXTERN(Task_Nothing);
-FN_EXTERN(sub_4E4280);
+FN_EXTERN(Task_YesHandler);
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -122,7 +122,7 @@ void Car_CollFilter(Task *t, char *msg);
 #define HELI_GET_DEF_SIZE (FN(0x432F80, Heli_GetConfigSize))
 #define HELI_ON_WORLD_EVENT1 (FN(0x432F90, Heli_RemoveFromWorld))
 #define HELI_HANDLER_433000 (FN(0x433000, Heli_GetSoundInfo))
-#define TASK_HANDLER_4E4280 (FN(0x4E4280, sub_4E4280))
+#define TASK_HANDLER_4E4280 (FN(0x4E4280, Task_YesHandler))
 
 #define kAccelSpeed VAR(double, 0x533758)  /* 0.8 */
 #define kMaxThrottle VAR(double, 0x533770) /* 1.25 */

@@ -10,7 +10,7 @@ AITarget *AITarget_Add(HumanAI *ai, Task *target)
     int i;
 
     for (next = t->node.next; next; next = next->next) {
-        if (t->used && target && *t->ref == target && sub_463120(*t->ref) == sub_463120(target)) {
+        if (t->used && target && *t->ref == target && Human_GetIndex(*t->ref) == Human_GetIndex(target)) {
             t->states[t->count] = -1;
             t->humans[t->count] = ai->task.parent;
             t->count++;

@@ -10,7 +10,7 @@ ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401BE0, Task *, Task_FindChild, (Task *task, uint16_t type));
 ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int point));
-ORIG(0x414ED0, void, sub_414ED0, (Vec3f *out, void *obj, int point));
+ORIG(0x414ED0, void, Model_GetLocalPoint, (Vec3f *out, void *obj, int point));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416C90, long double, Game_BlastFalloff, (void *blast, void *obj, Vec3d *pos, float radius, int unk));
 ORIG(0x42EC30, void, Car_ApplyWheelDrop, (Car *c));
@@ -307,16 +307,16 @@ uint16_t Car_GetType(void)
 }
 HOOK(0x42FDC0, Car_GetType);
 
-Task *sub_42FDD0(Car *c)
+Task *Car_GetMountedGun(Car *c)
 {
     Task *coll = c->v.coll;
 
     return Task_FindChild(coll, StationaryGun_GetType());
 }
-HOOK(0x42FDD0, sub_42FDD0);
+HOOK(0x42FDD0, Car_GetMountedGun);
 
 /* position of model point 8 in the world, and the car's matrix */
-void sub_42FDF0(Car *c, Vec3d *pos, Matrix *m)
+void Car_GetGunnerPos(Car *c, Vec3d *pos, Matrix *m)
 {
     *m = c->v.matrix;
     Model_GetPoint(pos, c, 8);
@@ -324,7 +324,7 @@ void sub_42FDF0(Car *c, Vec3d *pos, Matrix *m)
     pos->y = c->v.pos.y + pos->y;
     pos->z = c->v.pos.z + pos->z;
 }
-HOOK(0x42FDF0, sub_42FDF0);
+HOOK(0x42FDF0, Car_GetGunnerPos);
 
 /* tracks: when steering the inner side slows down */
 long double Car_GetTrackFactor(Car *c, int joint)
@@ -357,7 +357,7 @@ void Car_LiftJoint(Car *c, int joint, float amount, float max)
     float pm, lim;
     Vec3f p;
 
-    sub_414ED0(&p, c, c->v.phys->joints[joint].point);
+    Model_GetLocalPoint(&p, c, c->v.phys->joints[joint].point);
     d = p.z - *z;
     if (!(d >= kZero))
         d = -d;

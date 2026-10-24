@@ -12,7 +12,7 @@ ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
-ORIG(0x414ED0, void, sub_414ED0, (Vec3f *out, void *obj, int i));
+ORIG(0x414ED0, void, Model_GetLocalPoint, (Vec3f *out, void *obj, int i));
 ORIG(0x4167D0, uint8_t, Game_GetEvent0, (void));
 ORIG(0x4167F0, uint8_t, Game_GetEvent2, (void));
 ORIG(0x416800, uint8_t, Game_GetEvent4, (void));
@@ -158,8 +158,8 @@ void Fence_Run(Fence *f)
             TaskFn fn;
 
             f->spark = AmbientArea_New(f);
-            sub_414ED0(&a, f, 0);
-            sub_414ED0(&b, f, 1);
+            Model_GetLocalPoint(&a, f, 0);
+            Model_GetLocalPoint(&b, f, 1);
             c = (b.x + a.x) * kHalf;
             p.x = m[0] * c + m[2] * kSparkUp;
             p.y = m[3] * c + m[5] * kSparkUp;
@@ -231,8 +231,8 @@ void Fence_Touch(Fence *f, TouchMsg *msg)
     lx = (m[6] * dz + m[3] * dy) + m[0] * dx;
     ly = (m[7] * dz + m[4] * dy) + m[1] * dx;
     lz = (m[8] * dz + m[5] * dy) + m[2] * dx;
-    sub_414ED0(&a, f, 0);
-    sub_414ED0(&b, f, 1);
+    Model_GetLocalPoint(&a, f, 0);
+    Model_GetLocalPoint(&b, f, 1);
     if (a.x - kShockSide >= lx)
         return;
     if (!(b.x + kShockSide > lx))
@@ -263,8 +263,8 @@ void Fence_Use(Fence *f, UseQuery *q)
     dz = q->pos.z - f->obj.pos.z;
     lx = (m[6] * dz + m[3] * dy) + m[0] * dx;
     ly = (m[4] * dy + m[7] * dz) + m[1] * dx;
-    sub_414ED0(&a, f, 0);
-    sub_414ED0(&b, f, 1);
+    Model_GetLocalPoint(&a, f, 0);
+    Model_GetLocalPoint(&b, f, 1);
     y = ly;
     if (!(y >= kZeroD))
         y = -y;

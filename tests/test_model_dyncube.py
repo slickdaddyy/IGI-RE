@@ -303,7 +303,7 @@ def test_small_ones():
         t = e.alloc(0xF00)
         u32(e, t + 0xDC8, 5)
         return (t,)
-    cmp(emu, 0x4CE3D0, "sub_4CE3D0", setup=setup, check_eax=False)
+    cmp(emu, 0x4CE3D0, "Terrain_InvalidateLighting", setup=setup, check_eax=False)
     cmp(emu, 0x4CE3E0, "Terrain_SetMaterial", setup=lambda e: (e.alloc(0xF00), 7, 0x1234), check_eax=False)
 
     def setup_get(e):
@@ -321,4 +321,4 @@ def test_sub_4cea30(done):
         t = e.alloc(0xF00)
         u32(e, t + 0xDC8, done)
         return (t,)
-    cmp(emu, 0x4CEA30, "sub_4CEA30", setup=setup, check_eax=False)
+    cmp(emu, 0x4CEA30, "Terrain_UpdateLighting", setup=setup, check_eax=False)

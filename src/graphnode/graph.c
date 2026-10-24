@@ -148,11 +148,11 @@ uint8_t Graph_GetNodeLoadEvent(void)
 }
 HOOK(0x4F9240, Graph_GetNodeLoadEvent);
 
-uint8_t sub_4F9250(void)
+uint8_t Graph_GetEvent36E(void)
 {
     return gGraphEvent36E;
 }
-HOOK(0x4F9250, sub_4F9250);
+HOOK(0x4F9250, Graph_GetEvent36E);
 
 uint8_t Graph_GetNodeAddEvent(void)
 {

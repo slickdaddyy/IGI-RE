@@ -15,7 +15,7 @@ ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401CC0, void *, Task_FindAncestor, (void *task, uint16_t type));
-ORIG(0x414ED0, void, sub_414ED0, (Vec3f *out, void *obj, int i));
+ORIG(0x414ED0, void, Model_GetLocalPoint, (Vec3f *out, void *obj, int i));
 ORIG(0x4167F0, uint8_t, Game_GetEvent2, (void));
 ORIG(0x416800, uint8_t, Game_GetEvent4, (void));
 ORIG(0x416810, uint8_t, Game_GetEvent3, (void));
@@ -131,7 +131,7 @@ void Door_DeleteHandler(Door *d);
 void Door_GetParams(void *task, void **out);
 void Door_ParamsChanged(Door *d, char *arg);
 void Door_CheckUse(Door *d, UseQuery *q);
-void sub_446CE0(Door *d, char **arg);
+void Door_DrawIcon(Door *d, char **arg);
 void Door_AddSymbols(Door *d);
 void Door_RemoveSymbols(Door *d);
 void Door_UpdateLocal(Door *d);
@@ -264,7 +264,7 @@ void Door_Open(void)
     TaskType_SetHandler(gDoorType, Game_GetEvent2(), Door_CheckUse);
     TaskType_SetHandler(gDoorType, Game_GetEvent3(), sub_4EFB00);
     TaskType_SetHandler(gDoorType, Game_GetEvent4(), TASK_NOTHING);
-    TaskType_SetHandler(gDoorType, Game_GetEvent6(), sub_446CE0);
+    TaskType_SetHandler(gDoorType, Game_GetEvent6(), Door_DrawIcon);
     TaskType_SetHandler2(gDoorType, Level_GetEventDA8(), Door_AddSymbols);
     TaskType_SetHandler2(gDoorType, Level_GetEventDAC(), Door_RemoveSymbols);
     TaskType_SetHandler(gDoorType, RigidDynCubeObj_GetEvent4(), Door_MoveHandler);
@@ -377,24 +377,24 @@ void Door_CheckUse(Door *d, UseQuery *q)
     b = m[5] * dy + m[8] * dz + m[2] * dx;
     if (!(a > kUseMin) || !(a < kUseMaxX) || !(b > kUseMin) || !(b < kUseMaxY))
         return;
-    sub_416AD0(q, d, &p);
+    UseQuery_Consider(q, d, &p);
     x2 = m[2] * b + m[0] * a;
     y2 = m[5] * b + m[3] * a;
     z2 = m[8] * b + m[6] * a;
     p.x = x2 + p.x;
     p.y = y2 + p.y;
     p.z = z2 + p.z;
-    sub_416AD0(q, d, &p);
+    UseQuery_Consider(q, d, &p);
 }
 HOOK(0x446B50, Door_CheckUse);
 
-void sub_446CE0(Door *d, char **arg)
+void Door_DrawIcon(Door *d, char **arg)
 {
     char *h = *arg;
 
     StatusScreen_DrawActionIcon(h, h + (d->isLocked ? 0x41C : 0x464));
 }
-HOOK(0x446CE0, sub_446CE0);
+HOOK(0x446CE0, Door_DrawIcon);
 
 /* a model point of the door where it was last frame */
 static void last_point(Door *d, Vec3d *out, int i)
@@ -403,7 +403,7 @@ static void last_point(Door *d, Vec3d *out, int i)
     Vec3f p;
     float x, y, z;
 
-    sub_414ED0(&p, d, i);
+    Model_GetLocalPoint(&p, d, i);
     x = p.z * l[2] + p.x * l[0] + p.y * l[1];
     y = p.z * l[5] + p.x * l[3] + p.y * l[4];
     z = p.z * l[8] + p.x * l[6] + p.y * l[7];

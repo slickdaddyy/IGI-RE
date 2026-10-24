@@ -227,7 +227,7 @@ def test_sub_446ce0(locked):
         h = e.alloc(4)
         u32(e, h, 0x5000)
         return door(e, flags=(locked, 0, 0, 0, 0, 0, 0)), h
-    check(e, fk, 0x446CE0, "sub_446CE0", setup)
+    check(e, fk, 0x446CE0, "Door_DrawIcon", setup)
 
 
 def run_setup(seed):

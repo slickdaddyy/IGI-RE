@@ -82,14 +82,14 @@ def test_child_count_invalid(kind):
 
 
 def test_open_events():
-    compare(emu, 0x4C5900, "sub_4C5900", setup=task_system, check_eax=False, normalized=True)
+    compare(emu, 0x4C5900, "World_Init", setup=task_system, check_eax=False, normalized=True)
 
 
 def test_close_events():
     def setup(e):
         task_system(e)
         e.call(0x4C5900)
-    compare(emu, 0x4C5AA0, "sub_4C5AA0", setup=setup, check_eax=False, normalized=True)
+    compare(emu, 0x4C5AA0, "World_Shutdown", setup=setup, check_eax=False, normalized=True)
 
 
 @pytest.mark.parametrize("kids", [[], [0x41], [0x41, 0x42, 0x41, 0x43]])
@@ -105,7 +105,7 @@ def test_handler_4C5A10(kids):
         arg = e.alloc(4)
         e.write(arg, struct.pack("<I", 0x2000A000))
         return t, arg
-    compare(wk, 0x4C5A10, "sub_4C5A10", setup=setup, check_eax=False, normalized=True)
+    compare(wk, 0x4C5A10, "DynCubeObj_DeactivateHandler", setup=setup, check_eax=False, normalized=True)
 
 
 def test_room_init():
@@ -185,7 +185,7 @@ def test_world_load(tmus, case):
         wk.set_fake_ret(0x4B2670, tmus)
         wk.set_fake_ret(0x48F250, case != "nolmp")
         return w, e.alloc(32) and _name(e)
-    compare(wk, 0x4C5F00, "sub_4C5F00", setup=setup, check_eax=False, normalized=True)
+    compare(wk, 0x4C5F00, "World_LoadTextures", setup=setup, check_eax=False, normalized=True)
 
 
 def _name(e):

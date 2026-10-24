@@ -19,7 +19,7 @@ FN_EXTERN(Car_RegisterSymbols);
 FN_EXTERN(Car_RemoveSymbols);
 FN_EXTERN(Car_SaveState);
 FN_EXTERN(Heli_GetStateSize);
-FN_EXTERN(sub_4E4280);
+FN_EXTERN(Task_YesHandler);
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -128,7 +128,7 @@ ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (Car *o));
 #define CAR_HANDLER_42FCE0 (FN(0x42FCE0, Car_RegisterSymbols))
 #define CAR_HANDLER_42FD40 (FN(0x42FD40, Car_RemoveSymbols))
 #define CAR_HANDLER_432BD0 (FN(0x432BD0, Heli_GetStateSize))
-#define TASK_HANDLER_4E4280 (FN(0x4E4280, sub_4E4280))
+#define TASK_HANDLER_4E4280 (FN(0x4E4280, Task_YesHandler))
 
 #define gCarType VAR(uint16_t, 0x53BDA8)
 #define gCarRange ((float *)0x57BD20)
@@ -336,7 +336,7 @@ void Car_Reset(Car *o)
 HOOK(0x42E180, Car_Reset);
 
 void Car_UpdateDoors(Car *o);
-void sub_42E870(Car *o);
+void Car_UpdateDetector(Car *o);
 void Car_UpdateExplosion(Car *o);
 
 void Car_Run(Car *o)
@@ -358,7 +358,7 @@ void Car_Run(Car *o)
             o->engineSound = s;
     }
     Car_UpdateDoors(o);
-    sub_42E870(o);
+    Car_UpdateDetector(o);
     RUN_CHILDREN(&o->task);
     if (o->parts)
         RUN_CHILDREN(o->parts);
@@ -447,7 +447,7 @@ void Car_UpdateDoors(Car *o)
 }
 HOOK(0x42E810, Car_UpdateDoors);
 
-void sub_42E870(Car *o)
+void Car_UpdateDetector(Car *o)
 {
     if (VarString_HasExpr(&o->unk978)) {
         char was = o->unk91D;
@@ -466,7 +466,7 @@ void sub_42E870(Car *o)
         }
     }
 }
-HOOK(0x42E870, sub_42E870);
+HOOK(0x42E870, Car_UpdateDetector);
 
 void Car_Delete(Car *o)
 {

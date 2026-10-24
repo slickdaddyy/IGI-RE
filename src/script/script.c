@@ -39,7 +39,7 @@ ORIG(0x4BF8F0, void, Block_Free, (void *stmt));
 ORIG(0x4BD430, void, Qvm_Init, (void));
 ORIG(0x4BC920, void, QscGen_Init, (void));
 ORIG(0x4BBC80, void, QvmAsm_Init, (void));
-ORIG(0x4C0250, void, sub_4C0250, (void));
+ORIG(0x4C0250, void, QvmDis_Init, (void));
 ORIG(0x4C1780, void, Debug_Log, (void));
 
 #define gScriptWarningSp VAR(int, 0xA9659C)
@@ -377,7 +377,7 @@ void Script_Init(void)
     Qvm_Init();
     QscGen_Init();
     QvmAsm_Init();
-    sub_4C0250();
+    QvmDis_Init();
 }
 HOOK(0x4B8B20, Script_Init);
 

@@ -15,7 +15,7 @@ typedef struct DirEntry {
 
 /* Directory scan callback: loads every .qvm file, or .qsc when the flag
    read by AppContext_GetQvmOnly is clear. */
-void sub_4C2F90(DirEntry *e)
+void MagicObj_LoadDirEntry(DirEntry *e)
 {
     const char *ext;
     size_t len;
@@ -27,4 +27,4 @@ void sub_4C2F90(DirEntry *e)
     if (len > strlen(ext) && crt_stricmp(e->name + len - strlen(ext), ext) == 0)
         RigidDynCubeObj_ParseConfigFile(e->name);
 }
-HOOK(0x4C2F90, sub_4C2F90);
+HOOK(0x4C2F90, MagicObj_LoadDirEntry);

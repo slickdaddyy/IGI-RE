@@ -17,7 +17,7 @@ ORIG(0x413BD0, void *, WeaponType_Find, (const char *name));
 ORIG(0x413C80, void *, Weapon_GetType, (void *weapon));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x416FB0, int, Game_IsRaining, (void));
-ORIG(0x452930, void, sub_452930, (void *out, float *dir, SoldierAI *ai, double *pos, float speed));
+ORIG(0x452930, void, AI_AimThrow, (void *out, float *dir, SoldierAI *ai, double *pos, float speed));
 ORIG(0x4528F0, int, AI_HasTarget, (SoldierAI *ai));
 ORIG(0x460C40, uint8_t, Human_GetPunchEvent, (void));
 ORIG(0x463180, char, Human_IsCrouching, (Soldier *h));
@@ -312,7 +312,7 @@ void Soldier_ThrowUpdate(SoldierSM *sm, Soldier *h)
         pos[0] = at[0] + h->pos[0];
         pos[1] = at[1] + h->pos[1];
         pos[2] = at[2] + h->pos[2];
-        sub_452930(path, dir, ai, pos, speed);
+        AI_AimThrow(path, dir, ai, pos, speed);
         type = WeaponType_Find(ai->grenade);
         owner = Level_GetDynamic();
         Grenade_Throw(owner, h, pos, path, dir, type, count);

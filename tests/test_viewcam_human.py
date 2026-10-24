@@ -137,7 +137,7 @@ def test_avoid_others(case, cw):
         i32(e, lst, 4 if case else 0, 0, *hs)
         fk.rets[HUMANLIST] = lst
         return human(e), frm, to, out
-    check(emu, fk, 0x462BA0, "sub_462BA0", setup, cw=cw, check_eax=False)
+    check(emu, fk, 0x462BA0, "Human_AvoidHumans", setup, cw=cw, check_eax=False)
 
 
 # --- platform ------------------------------------------------------------------
@@ -259,9 +259,9 @@ HANDLER_POS = fk.add(None, 2, fn=pos_handler, logged=False)
 # --- getters and setters ----------------------------------------------------------
 
 @pytest.mark.parametrize("addr,name,off,size", [
-    (0x463110, "Human_GetState", 0x2FC, 4), (0x463120, "sub_463120", 0x7C0, 4), (0x463130, "Human_GetTeam", 0xFC, 4),
+    (0x463110, "Human_GetState", 0x2FC, 4), (0x463120, "Human_GetIndex", 0x7C0, 4), (0x463130, "Human_GetTeam", 0xFC, 4),
     (0x463170, "Human_IsDead", 0xCF5, 1), (0x463180, "Human_IsCrouching", 0x33D, 1),
-    (0x463190, "sub_463190", 0xCF6, 1)])
+    (0x463190, "Human_IsActive", 0xCF6, 1)])
 def test_getters(addr, name, off, size):
     def setup(e):
         h = human(e)
@@ -284,10 +284,10 @@ def test_is_player(player):
 
 
 @pytest.mark.parametrize("addr,name", [
-    (0x463570, "sub_463570"), (0x463580, "sub_463580"), (0x463590, "sub_463590"), (0x4635A0, "sub_4635A0"),
-    (0x4635B0, "Human_LockInput"), (0x4635E0, "Human_UnlockInput"), (0x4635F0, "sub_4635F0"),
-    (0x463600, "sub_463600"), (0x463610, "sub_463610"), (0x463620, "sub_463620"), (0x464230, "sub_464230"),
-    (0x464240, "sub_464240")])
+    (0x463570, "Human_DisableCollision"), (0x463580, "Human_EnableCollision"), (0x463590, "Human_SetExactMotion"), (0x4635A0, "Human_ClearExactMotion"),
+    (0x4635B0, "Human_LockInput"), (0x4635E0, "Human_UnlockInput"), (0x4635F0, "Human_FreezeView"),
+    (0x463600, "Human_UnfreezeView"), (0x463610, "Human_BeginUse"), (0x463620, "Human_EndUse"), (0x464230, "Human_HideShadow"),
+    (0x464240, "Human_ShowShadow")])
 def test_flags(addr, name):
     def setup(e):
         h = human(e)
@@ -336,7 +336,7 @@ def test_damp(cw):
         f32(e, h + 0x668, -1.3)
         f32(e, h + 0x66C, 911.2)
         return (h,)
-    check(emu, fk, 0x463770, "sub_463770", setup, cw=cw, check_eax=False)
+    check(emu, fk, 0x463770, "Human_ApplyGravity", setup, cw=cw, check_eax=False)
 
 
 # --- position ------------------------------------------------------------------
@@ -374,7 +374,7 @@ def test_snap():
         i32(e, h + 0x4EC, v)
         i32(e, h + 0x2F4, 0x1234)
         return (h,)
-    check(emu, fk, 0x463260, "sub_463260", setup, check_eax=False)
+    check(emu, fk, 0x463260, "Human_SnapToGround", setup, check_eax=False)
 
 
 @pytest.mark.parametrize("ground", [0, 1])

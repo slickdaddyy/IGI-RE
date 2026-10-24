@@ -31,7 +31,7 @@ ORIG(0x450C80, uint8_t, HumanAI_GetEventSlot, (void));
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
 ORIG(0x416880, uint8_t, Game_GetEvent13, (void));
 ORIG(0x450CE0, void, HumanAI_Broadcast, (void *noise));
-ORIG(0x452920, double *, sub_452920, (Task *node));
+ORIG(0x452920, double *, MoveItem_GetPos, (Task *node));
 ORIG(0x463130, int, Human_GetTeam, (Task *h));
 ORIG(0x463150, char, Human_IsPlayer, (Human *h));
 ORIG(0x463310, void, Human_SetPlatform, (Human *h, void *obj));
@@ -130,7 +130,7 @@ ORIG(0x4F9770, void, Graph_GetNodePos, (double *out, void *node));
 ORIG(0x5042B0, char, AreaActivate_Contains, (void *criteria, double *pos));
 ORIG(0x504A90, void, AreaActivate_RemoveCriteria, (void *criteria));
 ORIG(0x504AC0, unsigned int, AreaActivate_GetMask, (void *criteria));
-ORIG(0x462BA0, void, sub_462BA0, (Human *h, double *pos, double *to, float *vel));
+ORIG(0x462BA0, void, Human_AvoidHumans, (Human *h, double *pos, double *to, float *vel));
 
 #define gTaskStack ((Task **)0xAFA6E0)
 #define gTaskStackTop VAR(int, 0xAFA7E0)
@@ -242,7 +242,7 @@ static int Human_IsViewer(Human *h, char *view, char *cam)
 
 /* Draws the human (and the weapon in its hand) unless the camera looks
    through its own eyes. */
-void sub_45F050(Human *h, void *arg)
+void Human_NearClipHandler(Human *h, void *arg)
 {
     char *view = *(char **)(Game_Get() + 0x5C);
     char *cam = Viewport_GetCurrentCamera();
@@ -264,7 +264,7 @@ void sub_45F050(Human *h, void *arg)
     ev = QCube_GetNearClipEvent();
     Handler(ev, RigidDynCubeObj_GetType())(w, arg);
 }
-HOOK(0x45F050, sub_45F050);
+HOOK(0x45F050, Human_NearClipHandler);
 
 void Human_WakeIfVisible(Human *h)
 {
@@ -620,7 +620,7 @@ void Human_GetHumanCameraInfoHandler(Human *h, HumanCameraInfo *info)
 HOOK(0x45FCD0, Human_GetHumanCameraInfoHandler);
 
 /* Passes the AI event on to the children, unless this human sent it. */
-void sub_45FDA0(Human *h, Human **msg)
+void Human_AIEventHandler(Human *h, Human **msg)
 {
     Task *t, *n;
     TaskHandler f;
@@ -639,9 +639,9 @@ void sub_45FDA0(Human *h, Human **msg)
         t = gTaskStack[--gTaskStackTop];
     }
 }
-HOOK(0x45FDA0, sub_45FDA0);
+HOOK(0x45FDA0, Human_AIEventHandler);
 
-void sub_45FE30(Human *h, int *msg)
+void Human_DetectInfoHandler(Human *h, int *msg)
 {
     msg[0] = Human_GetMaskType();
     msg[8] = h->team;
@@ -649,7 +649,7 @@ void sub_45FE30(Human *h, int *msg)
     ((char *)msg)[0x25] = h->active;
     Human_GetEyePos(msg + 2, h);
 }
-HOOK(0x45FE30, sub_45FE30);
+HOOK(0x45FE30, Human_DetectInfoHandler);
 
 /* Keeps the nearest team mate in front of msg->pos (distance ignores height). */
 typedef struct HumanNearMsg {
@@ -662,7 +662,7 @@ typedef struct HumanNearMsg {
     int team;
 } HumanNearMsg;
 
-void sub_45FE70(Human *h, HumanNearMsg *msg)
+void Human_NearestAllyHandler(Human *h, HumanNearMsg *msg)
 {
     long double dx, dy, dz, len;
     double l[3], v[3];
@@ -688,7 +688,7 @@ void sub_45FE70(Human *h, HumanNearMsg *msg)
         msg->local[2] = l[2];
     }
 }
-HOOK(0x45FE70, sub_45FE70);
+HOOK(0x45FE70, Human_NearestAllyHandler);
 
 /* msg: {ammo id, count} */
 void WeaponAmmoPickup(Human *h, int *msg)
@@ -740,7 +740,7 @@ Task *Human_GetWeaponHandler(Human *h)
 }
 HOOK(0x460070, Human_GetWeaponHandler);
 
-void sub_460090(Human *h, int *msg)
+void Human_FirstPersonHandler(Human *h, int *msg)
 {
     if (*msg && h->view->firstPerson) {
         *msg = 1;
@@ -748,7 +748,7 @@ void sub_460090(Human *h, int *msg)
     }
     *msg = 0;
 }
-HOOK(0x460090, sub_460090);
+HOOK(0x460090, Human_FirstPersonHandler);
 
 /* Weapon position: the hand of the view model in first person, else the
    hand bone of the body (then firstPerson is cleared). */
@@ -799,17 +799,17 @@ static void Human_GetViewBone(Human *h, double *out, int bone)
     memcpy(out + 3, v->model + bone + 0xC, 40);
 }
 
-void sub_4601A0(Human *h, double *out)
+void Human_GetViewBarrelHandler(Human *h, double *out)
 {
     Human_GetViewBone(h, out, 0x1AE8);
 }
-HOOK(0x4601A0, sub_4601A0);
+HOOK(0x4601A0, Human_GetViewBarrelHandler);
 
-void sub_460210(Human *h, double *out)
+void Human_GetViewPartHandler(Human *h, double *out)
 {
     Human_GetViewBone(h, out, 0x1C74);
 }
-HOOK(0x460210, sub_460210);
+HOOK(0x460210, Human_GetViewPartHandler);
 
 typedef struct HumanSeeQuery {
     double *pos;
@@ -824,7 +824,7 @@ typedef struct HumanSeeQuery {
 } HumanSeeQuery;
 
 /* A watcher at q->pos asks whether it sees this human. */
-void sub_460280(Human *h, HumanSeeQuery *q)
+void Human_MapMarkerHandler(Human *h, HumanSeeQuery *q)
 {
     struct {
         float unk0;
@@ -866,7 +866,7 @@ void sub_460280(Human *h, HumanSeeQuery *q)
     if (!is_zero(vis))
         ComputerObject_DrawMarker(q);
 }
-HOOK(0x460280, sub_460280);
+HOOK(0x460280, Human_MapMarkerHandler);
 
 /* HUD: the weapon's and the attached object's overlays, then the health bar. */
 void Human_RenderHandler(Human *h, void **msg)
@@ -1037,11 +1037,11 @@ void Human_DeactivateHandler(Human *h, void *arg)
 }
 HOOK(0x4609A0, Human_DeactivateHandler);
 
-void sub_4609F0(Human *h, char *out)
+void Human_MapSelectHandler(Human *h, char *out)
 {
     *out = h->team == 1;
 }
-HOOK(0x4609F0, sub_4609F0);
+HOOK(0x4609F0, Human_MapSelectHandler);
 
 static Human *Human_ListItem(int i)
 {
@@ -1186,11 +1186,11 @@ void Human_printf(Human *h, const char *fmt, ...)
 }
 HOOK(0x460C80, Human_printf);
 
-void sub_460CE0(Human *h)
+void Human_MarkDelete(Human *h)
 {
     h->unk7C8 = 1;
 }
-HOOK(0x460CE0, sub_460CE0);
+HOOK(0x460CE0, Human_MarkDelete);
 
 typedef struct HumanCarrierMsg {
     double *pos;
@@ -1200,7 +1200,7 @@ typedef struct HumanCarrierMsg {
 
 /* Works out how far the object the human stands on moved it this frame:
    movePos, moveMatrix and moveAngle. */
-void sub_460CF0(Human *h)
+void Human_UpdatePlatformMove(Human *h)
 {
     HumanCarrierMsg q;
     Task *obj = h->attach;
@@ -1242,7 +1242,7 @@ void sub_460CF0(Human *h)
     memcpy(h->moveMatrix, m, sizeof(h->moveMatrix));
     Matrix_GetEuler(m, &h->moveAngle[0], &h->moveAngle[1], &h->moveAngle[2]);
 }
-HOOK(0x460CF0, sub_460CF0);
+HOOK(0x460CF0, Human_UpdatePlatformMove);
 
 typedef struct HumanUseQuery {
     Human *h;
@@ -1273,7 +1273,7 @@ static Task *Game_TaskListItem(int *list, int i)
     return ((Task **)(list + 2))[i];
 }
 
-void sub_460EE0(Human *h)
+void Human_UpdateUse(Human *h)
 {
     HumanUseQuery q;
     HumanControlMsg c;
@@ -1316,7 +1316,7 @@ void sub_460EE0(Human *h)
     Handler(Game_GetEvent4(), t->type)(t, &c);
     h->unk7BC++;
 }
-HOOK(0x460EE0, sub_460EE0);
+HOOK(0x460EE0, Human_UpdateUse);
 
 /* Turns the body: follows the object it is attached to, else turns by the
    turn input (scaled down near zero) plus the carrier's turn. */
@@ -1372,7 +1372,7 @@ void Human_UpdateBody(Human *h)
 HOOK(0x4610C0, Human_UpdateBody);
 
 /* Plays the sound an animation event asks for at its point on the body. */
-void sub_4613D0(Human *h)
+void Human_FireAnimTrigger(Human *h)
 {
     HumanAnimEvent *e = &h->animEvent;
     long double x;
@@ -1391,7 +1391,7 @@ void sub_4613D0(Human *h)
     p[2] = z + h->pos[2];
     AnimTrigger_Fire(e->sound, h, p);
 }
-HOOK(0x4613D0, sub_4613D0);
+HOOK(0x4613D0, Human_FireAnimTrigger);
 
 void Human_CollideWalls(Human *h, double *from, double *to, float *vel, uint32_t *bits);
 void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t *bits, float reach);
@@ -1495,7 +1495,7 @@ still:
             Human_ProbeGround(h, pos, to, v, &bits, dist);
         }
         if (h->unk698)
-            sub_462BA0(h, pos, to, v);
+            Human_AvoidHumans(h, pos, to, v);
     }
     if (bits & HUMAN_ROOF) {
         Human_printf(h, "Roof!\n");
@@ -1728,9 +1728,9 @@ void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t 
                 memcpy(h->pathPrev, hits[0].pos, sizeof(h->pathPrev));
                 memcpy(h->pathCur, hits[0].pos, sizeof(h->pathCur));
             }
-            if (Vec3d_Distance(sub_452920(n0), h->pathCur) > kPathJump) {
+            if (Vec3d_Distance(MoveItem_GetPos(n0), h->pathCur) > kPathJump) {
                 memcpy(h->pathPrev, h->pathCur, sizeof(h->pathPrev));
-                memcpy(h->pathCur, sub_452920(n0), sizeof(h->pathCur));
+                memcpy(h->pathCur, MoveItem_GetPos(n0), sizeof(h->pathCur));
             }
             d[0] = h->pathCur[0] - hits[0].pos[0];
             d[1] = h->pathCur[1] - hits[0].pos[1];

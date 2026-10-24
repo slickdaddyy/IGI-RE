@@ -105,7 +105,7 @@ int DynCubeTree_GetChildCount(int kind)
 }
 HOOK(0x4C58B0, DynCubeTree_GetChildCount);
 
-void sub_4C5900(void)
+void World_Init(void)
 {
     int i;
 
@@ -120,12 +120,12 @@ void sub_4C5900(void)
     TaskEvent_MapSlot(13, 2);
     gWorldEvents[0] = TaskEvent_Alloc(0x181);
     gWorldEvents[1] = TaskEvent_Alloc(0x181);
-    TaskType_SetHandler(gDynCubeObjType, gWorldEvents[1], sub_4C5A10);
+    TaskType_SetHandler(gDynCubeObjType, gWorldEvents[1], DynCubeObj_DeactivateHandler);
     memset(gWorldUnkA44348, 0, 17 * sizeof(int));
 }
-HOOK(0x4C5900, sub_4C5900);
+HOOK(0x4C5900, World_Init);
 
-void sub_4C5A10(MagicTask *t, void **arg)
+void DynCubeObj_DeactivateHandler(MagicTask *t, void **arg)
 {
     MagicNode *n = t->head;
     MagicHandler h;
@@ -141,9 +141,9 @@ void sub_4C5A10(MagicTask *t, void **arg)
     }
     DynCube_Remove(*arg, t);
 }
-HOOK(0x4C5A10, sub_4C5A10);
+HOOK(0x4C5A10, DynCubeObj_DeactivateHandler);
 
-void sub_4C5AA0(void)
+void World_Shutdown(void)
 {
     TaskEvent_UnmapSlot(4);
     TaskEvent_UnmapSlot(5);
@@ -161,7 +161,7 @@ void sub_4C5AA0(void)
     TaskEvent_Free(gWorldEvents[0]);
     TaskEvent_Free(gWorldEvents[1]);
 }
-HOOK(0x4C5AA0, sub_4C5AA0);
+HOOK(0x4C5AA0, World_Shutdown);
 
 World *World_New(int rooms)
 {
@@ -302,7 +302,7 @@ void World_Free(World *w)
 HOOK(0x4C5CE0, World_Free);
 
 /* loads <name>.tex and, when enabled, the <name>.lmp lightmaps */
-void sub_4C5F00(World *w, const char *name)
+void World_LoadTextures(World *w, const char *name)
 {
     char path[128];
     int colors[256];
@@ -351,4 +351,4 @@ void sub_4C5F00(World *w, const char *name)
     }
     Resource_Unload(path);
 }
-HOOK(0x4C5F00, sub_4C5F00);
+HOOK(0x4C5F00, World_LoadTextures);

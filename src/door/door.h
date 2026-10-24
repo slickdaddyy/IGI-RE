@@ -216,7 +216,7 @@ static inline long long round_ll(long double f)
 }
 
 ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int i));
-ORIG(0x416AD0, char, sub_416AD0, (UseQuery *q, void *obj, const Vec3d *pos));
+ORIG(0x416AD0, char, UseQuery_Consider, (UseQuery *q, void *obj, const Vec3d *pos));
 
 #define kUseWidth VAR(double, 0x533890)
 
@@ -243,7 +243,7 @@ static inline void check_use(Obj *o, UseQuery *q)
     if (!(a >= kZeroD))
         a = -a;
     if (!(a >= kUseWidth))
-        sub_416AD0(q, o, &p);
+        UseQuery_Consider(q, o, &p);
 }
 
 /* the largest of the three scale factors, compared like the original */

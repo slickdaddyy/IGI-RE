@@ -13,7 +13,7 @@ ORIG(0x416800, uint8_t, Game_GetEvent4, (void));
 ORIG(0x416810, uint8_t, Game_GetEvent3, (void));
 ORIG(0x416820, uint8_t, Game_GetEvent6, (void));
 ORIG(0x4168A0, void *, Game_GetTaskList0, (void));
-ORIG(0x416AD0, void, sub_416AD0, (void *user, void *obj, Vec3d *pos));
+ORIG(0x416AD0, void, UseQuery_Consider, (void *user, void *obj, Vec3d *pos));
 ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
 ORIG(0x467DF0, void, ComputerObject_DrawSprite, (char *arg));
 ORIG(0x467F30, void, ComputerObject_DrawMarker, (char *arg));
@@ -62,7 +62,7 @@ void Terminal_RemoveSymbols(Terminal *t);
 void Terminal_CheckUse(Terminal *t, char *user);
 void Terminal_GetUseKind(Terminal *t, int *out);
 void Terminal_Use(Terminal *t);
-void sub_443DA0(Terminal *t, char **arg);
+void Terminal_DrawIcon(Terminal *t, char **arg);
 
 void Terminal_Open(void)
 {
@@ -77,7 +77,7 @@ void Terminal_Open(void)
     TaskType_SetHandler(gTerminalType, Game_GetEvent2(), Terminal_CheckUse);
     TaskType_SetHandler(gTerminalType, Game_GetEvent3(), Terminal_GetUseKind);
     TaskType_SetHandler(gTerminalType, Game_GetEvent4(), Terminal_Use);
-    TaskType_SetHandler(gTerminalType, Game_GetEvent6(), sub_443DA0);
+    TaskType_SetHandler(gTerminalType, Game_GetEvent6(), Terminal_DrawIcon);
     TaskType_SetHandler(gTerminalType, ComputerObject_GetEvent0(), Terminal_MapHandler);
     gTerminalParams = ParamTable_Extend(ExplodeObject_GetParams(), 2);
     ParamTable_Add(gTerminalParams, NULL, (void *)offsetof(Terminal, script), Param_VarString(), 7, NULL);
@@ -220,7 +220,7 @@ void Terminal_CheckUse(Terminal *t, char *user)
     if (side < kZeroD)
         side = -side;
     if (side < kUseRange)
-        sub_416AD0(user, t, &p);
+        UseQuery_Consider(user, t, &p);
 }
 HOOK(0x443C80, Terminal_CheckUse);
 
@@ -237,11 +237,11 @@ void Terminal_Use(Terminal *t)
 }
 HOOK(0x443D80, Terminal_Use);
 
-void sub_443DA0(Terminal *t, char **arg)
+void Terminal_DrawIcon(Terminal *t, char **arg)
 {
     StatusScreen_DrawActionIcon(*arg, *arg + 0x404);
 }
-HOOK(0x443DA0, sub_443DA0);
+HOOK(0x443DA0, Terminal_DrawIcon);
 
 /* fills the position, orientation and radius of a map marker */
 void Terminal_MapHandler(SObj *o, char *arg)

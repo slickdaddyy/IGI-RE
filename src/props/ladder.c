@@ -11,13 +11,13 @@ ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int i));
-ORIG(0x414ED0, void, sub_414ED0, (Vec3f *out, void *obj, int i));
+ORIG(0x414ED0, void, Model_GetLocalPoint, (Vec3f *out, void *obj, int i));
 ORIG(0x4167F0, uint8_t, Game_GetEvent2, (void));
 ORIG(0x416800, uint8_t, Game_GetEvent4, (void));
 ORIG(0x416810, uint8_t, Game_GetEvent3, (void));
 ORIG(0x416820, uint8_t, Game_GetEvent6, (void));
 ORIG(0x4168A0, void *, Game_GetTaskList0, (void));
-ORIG(0x416AD0, char, sub_416AD0, (UseQuery *q, void *obj, const Vec3d *pos));
+ORIG(0x416AD0, char, UseQuery_Consider, (UseQuery *q, void *obj, const Vec3d *pos));
 ORIG(0x4871C0, void, StatusScreen_DrawActionIcon, (Task *human, void *sprite));
 ORIG(0x491CF0, void *, Display_GetMode, (void));
 ORIG(0x4B2B30, long double, Vec3_Angle, (const Vec3f *a, const Vec3f *b));
@@ -68,11 +68,11 @@ _Static_assert(offsetof(MagicCreateArg, unk88) == 0x88, "MagicCreateArg");
 
 #define HUMAN_LADDER_TOP(h) (((char *)(h))[0xD7B])
 
-float sub_440270(void)
+float Fence_GetClimbTime(void)
 {
     return kClimbTime;
 }
-HOOK(0x440270, sub_440270);
+HOOK(0x440270, Fence_GetClimbTime);
 
 void Ladder_Create(Ladder *l, MagicCreateArg *arg)
 {
@@ -95,8 +95,8 @@ void Ladder_Create(Ladder *l, MagicCreateArg *arg)
     l->obj.matrix = arg->matrix;
     l->unk130 = arg->unk88;
     RigidDynCubeObj_CreateMagicObjs(l, l, arg->unk88);
-    sub_414ED0(&p2, l, 2);
-    sub_414ED0(&p3, l, 3);
+    Model_GetLocalPoint(&p2, l, 2);
+    Model_GetLocalPoint(&p3, l, 3);
     h = p2.z - p3.z;
     if (!(h >= kZero))
         h = -h;
@@ -181,7 +181,7 @@ void Ladder_Use(Ladder *l, UseQuery *q)
     dx = q->pos.x - tx;
     dy = q->pos.y - t.y;
     dz = q->pos.z - t.z;
-    if (!((m[7] * dz + m[1] * dx) + m[4] * dy >= kZeroD) && sub_416AD0(q, l, &t))
+    if (!((m[7] * dz + m[1] * dx) + m[4] * dy >= kZeroD) && UseQuery_Consider(q, l, &t))
         HUMAN_LADDER_TOP(human) = 1;
 }
 HOOK(0x4404C0, Ladder_Use);

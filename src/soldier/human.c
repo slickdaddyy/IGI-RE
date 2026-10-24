@@ -36,16 +36,16 @@ FN_EXTERN(Task_Nothing);
 FN_EXTERN(Task_ReturnZero);
 FN_EXTERN(WeaponAmmoPickup);
 FN_EXTERN(WeaponGunPickup);
-FN_EXTERN(sub_416AB0);
-FN_EXTERN(sub_45F050);
-FN_EXTERN(sub_45FDA0);
-FN_EXTERN(sub_45FE30);
-FN_EXTERN(sub_45FE70);
-FN_EXTERN(sub_460090);
-FN_EXTERN(sub_4601A0);
-FN_EXTERN(sub_460210);
-FN_EXTERN(sub_460280);
-FN_EXTERN(sub_4609F0);
+FN_EXTERN(Game_CollFilterSkip);
+FN_EXTERN(Human_NearClipHandler);
+FN_EXTERN(Human_AIEventHandler);
+FN_EXTERN(Human_DetectInfoHandler);
+FN_EXTERN(Human_NearestAllyHandler);
+FN_EXTERN(Human_FirstPersonHandler);
+FN_EXTERN(Human_GetViewBarrelHandler);
+FN_EXTERN(Human_GetViewPartHandler);
+FN_EXTERN(Human_MapMarkerHandler);
+FN_EXTERN(Human_MapSelectHandler);
 
 typedef struct ScriptValue {
     int i;
@@ -84,7 +84,7 @@ ORIG(0x450C80, uint8_t, HumanAI_GetEventSlot, (void));
 ORIG(0x450CC0, uint8_t, HumanAI_GetEvent3Slot, (void));
 ORIG(0x463130, int, Human_GetTeam, (Human *h));
 ORIG(0x463150, char, Human_IsPlayer, (Human *h));
-ORIG(0x463580, void, sub_463580, (Human *h));
+ORIG(0x463580, void, Human_EnableCollision, (Human *h));
 ORIG(0x464610, void *, HumanView_New, (Human *h));
 ORIG(0x466230, uint8_t, DeathZone_GetEvent, (void));
 ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
@@ -166,7 +166,7 @@ ORIG(0x5096A0, uint8_t, AIGraph_GetEvent, (void));
 
 /* handlers of the Human type that live after this file */
 #define Human_Handler45F280 (FN(0x45F280, Human_DrawHandler))
-#define Human_Handler45F050 (FN(0x45F050, sub_45F050))
+#define Human_Handler45F050 (FN(0x45F050, Human_NearClipHandler))
 #define Human_Handler45F500 (FN(0x45F500, Human_CollLinesHandler))
 #define Human_Handler45F800 (FN(0x45F800, Human_CollLineHandler))
 #define Human_GetParams (FN(0x45F880, Human_GetParamTableHandler))
@@ -177,21 +177,21 @@ ORIG(0x5096A0, uint8_t, AIGraph_GetEvent, (void));
 #define Human_Handler45F920 (FN(0x45F920, Task_FalseHandler))
 #define Human_Handler45F9D0 (FN(0x45F9D0, Human_BlastHandler))
 #define Human_Handler45FA80 (FN(0x45FA80, Human_CrushHandler))
-#define Human_Handler416AB0 (FN(0x416AB0, sub_416AB0))
+#define Human_Handler416AB0 (FN(0x416AB0, Game_CollFilterSkip))
 #define Human_GetHumanCameraInfoHandler (FN(0x45FCD0, Human_GetHumanCameraInfoHandler))
-#define Human_Handler45FDA0 (FN(0x45FDA0, sub_45FDA0))
-#define Human_Handler45FE30 (FN(0x45FE30, sub_45FE30))
+#define Human_Handler45FDA0 (FN(0x45FDA0, Human_AIEventHandler))
+#define Human_Handler45FE30 (FN(0x45FE30, Human_DetectInfoHandler))
 #define Human_Handler42FC50 (FN(0x42FC50, Car_CollFilter))
-#define Human_Handler45FE70 (FN(0x45FE70, sub_45FE70))
+#define Human_Handler45FE70 (FN(0x45FE70, Human_NearestAllyHandler))
 #define WeaponAmmoPickup (FN(0x45FF80, WeaponAmmoPickup))
 #define WeaponGunPickup (FN(0x45FFC0, WeaponGunPickup))
 #define Human_Handler460070 (FN(0x460070, Human_GetWeaponHandler))
-#define Human_Handler460090 (FN(0x460090, sub_460090))
+#define Human_Handler460090 (FN(0x460090, Human_FirstPersonHandler))
 #define Human_gun_event_related_3 (FN(0x4600C0, Human_GetWeaponBoneHandler))
-#define Human_gun_event_related_4 (FN(0x4601A0, sub_4601A0))
-#define Human_gun_event_related_5 (FN(0x460210, sub_460210))
+#define Human_gun_event_related_4 (FN(0x4601A0, Human_GetViewBarrelHandler))
+#define Human_gun_event_related_5 (FN(0x460210, Human_GetViewPartHandler))
 #define Human_Handler4D3710 (FN(0x4D3710, Task_Nothing))
-#define Human_Handler460280 (FN(0x460280, sub_460280))
+#define Human_Handler460280 (FN(0x460280, Human_MapMarkerHandler))
 #define Human_Handler460400 (FN(0x460400, Human_RenderHandler))
 #define Human_Handler4606D0 (FN(0x4606D0, Human_GetSoundInfoHandler))
 #define Human_Handler4606F0 (FN(0x4606F0, Human_GunshotHandler))
@@ -200,7 +200,7 @@ ORIG(0x5096A0, uint8_t, AIGraph_GetEvent, (void));
 #define Human_Handler4608D0 (FN(0x4608D0, Human_UnregisterVarsHandler))
 #define Human_Handler460950 (FN(0x460950, Human_ActivateHandler))
 #define Human_Handler4609A0 (FN(0x4609A0, Human_DeactivateHandler))
-#define Human_Handler4609F0 (FN(0x4609F0, sub_4609F0))
+#define Human_Handler4609F0 (FN(0x4609F0, Human_MapSelectHandler))
 #define Human_Handler460AC0 (FN(0x460AC0, Human_PreDeleteHandler))
 #define Human_Criteria (FN(0x460A70, Human_CountCriteria))
 #define Human_CriteriaN (FN(0x460A10, Human_CountTeamCriteria))
@@ -228,7 +228,7 @@ HOOK(0x45E3D0, Human_ClearResult);
 /* Whether h can be picked from the query: not one of the three skipped, then
    by chance for some humans, otherwise when not on the third skipped one's
    team. */
-void sub_45E3E0(Human *h, TargetQuery *q)
+void Human_CollFilterHandler(Human *h, TargetQuery *q)
 {
     if (h != q->skip[0] && h != q->skip[1] && h != q->skip[2]) {
         if (Human_IsPlayer(h)) {
@@ -250,7 +250,7 @@ void sub_45E3E0(Human *h, TargetQuery *q)
 no:
     q->result = 0;
 }
-HOOK(0x45E3E0, sub_45E3E0);
+HOOK(0x45E3E0, Human_CollFilterHandler);
 
 void Human_CreateHandler(Human *h);
 void Human_RunHandler(Human *h);
@@ -279,7 +279,7 @@ void Human_Open(void)
     TaskType_SetHandler(gHumanType, Param_GetChangedEvent(), Human_ParamsChanged);
     TaskType_SetHandler(gHumanType, Weapon_GetSlotsEvent(), Human_Handler45F900);
     TaskType_SetHandler(gHumanType, AmmoList_GetEvent(), Human_Handler45F910);
-    TaskType_SetHandler(gHumanType, Game_GetEvent7(), sub_45E3E0);
+    TaskType_SetHandler(gHumanType, Game_GetEvent7(), Human_CollFilterHandler);
     TaskType_SetHandler(gHumanType, Game_GetEvent9(), Human_Handler45F930);
     TaskType_SetHandler(gHumanType, Game_GetEvent8(), Human_Handler45F920);
     TaskType_SetHandler(gHumanType, Particle2D_GetCollideEvent(), Human_Handler45F920);
@@ -421,7 +421,7 @@ void Human_Reset(Human *h)
     h->unk697 = 0;
     h->unk698 = 0;
     memset(h->unk6A0, 0, 0x70);
-    sub_463580(h);
+    Human_EnableCollision(h);
     h->groundDistance = 1073741824.0;
     h->groundAngle = 0;
     h->unk720 = 1073741824.0;

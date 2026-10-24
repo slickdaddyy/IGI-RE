@@ -107,7 +107,7 @@ ORIG(0x4B53B0, void, QVertex_DrawQuadEx, (Sprite *s, float x0, float y0, float x
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, float radius));
 ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int category));
 ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *obj));
-ORIG(0x4C7760, void, sub_4C7760, (void *obj));
+ORIG(0x4C7760, void, DynCubeObj_ClearRenderData, (void *obj));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, Vec3d *starts, Vec3d *ends, int count, int event,
                                   void *msg, int flags));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
@@ -564,7 +564,7 @@ Particle2DTask *Particle2D_New(void *parent, void *world, Sprite *sprite, const 
     Particle2DTask *t = (Particle2DTask *)Task_New(parent, gParticle2DType, NULL);
     int i;
 
-    sub_4C7760(t);
+    DynCubeObj_ClearRenderData(t);
     DynCube_Add(world, t, &zero, kMeter.f, 2);
     t->capacity = capacity;
     t->world = world;

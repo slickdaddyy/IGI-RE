@@ -99,11 +99,11 @@ uint8_t Weapon_GetTypeEvent(void)
 }
 HOOK(0x413B50, Weapon_GetTypeEvent);
 
-uint8_t sub_413B60(void)
+uint8_t Weapon_GetEventB2(void)
 {
     return gWeaponEventB2;
 }
-HOOK(0x413B60, sub_413B60);
+HOOK(0x413B60, Weapon_GetEventB2);
 
 void WeaponType_LoadAll(void)
 {

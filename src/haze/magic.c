@@ -37,7 +37,7 @@ ORIG(0x4D0950, long double, VirModel_GetRadius_, (void **model, int unk));
 #define gMagicEvent1 VAR(uint8_t, 0x54864B)
 
 void MagicObj_RunHandler(MagicObj *o);
-void sub_4D99E0(MagicObj *o);
+void MagicObj_EnterHandler(MagicObj *o);
 void MagicObj_CreateHandler(MagicObj *o, MagicCreateArg *arg);
 void MagicObj_MoveHandler(MagicObj *o, MagicMoveArg *arg);
 
@@ -67,11 +67,11 @@ void MagicObj_RunHandler(MagicObj *o)
 }
 HOOK(0x4D9970, MagicObj_RunHandler);
 
-void sub_4D99E0(MagicObj *o)
+void MagicObj_EnterHandler(MagicObj *o)
 {
     gTaskHandlers[4][RigidDynCubeObj_GetType()](o, NULL);
 }
-HOOK(0x4D99E0, sub_4D99E0);
+HOOK(0x4D99E0, MagicObj_EnterHandler);
 
 void MagicObj_Open(void)
 {
@@ -79,7 +79,7 @@ void MagicObj_Open(void)
     gMagicMoveEvent = TaskEvent_Alloc(0);
     gMagicEvent1 = TaskEvent_Alloc(0);
     TaskType_SetHandler(gMagicType, 4, NULL);
-    TaskType_SetHandler(gMagicType, RigidDynCubeObj_GetEvent2(sub_4D99E0), sub_4D99E0);
+    TaskType_SetHandler(gMagicType, RigidDynCubeObj_GetEvent2(MagicObj_EnterHandler), MagicObj_EnterHandler);
     TaskType_SetHandler2(gMagicType, 1, MagicObj_RunHandler);
     TaskType_SetHandler(gMagicType, 0, MagicObj_CreateHandler);
     TaskType_SetHandler(gMagicType, MagicObj_GetMoveEvent(), MagicObj_MoveHandler);

@@ -52,7 +52,7 @@ def test_sync_init_shutdown():
     run(emu, 0x508F30, "Sync_Shutdown", setup)
     run(emu, 0x508F60, "Sync_GetEvent0", setup, check_eax=True, eax_mask=0xFF)
     run(emu, 0x508F70, "Sync_GetEvent1", setup, check_eax=True, eax_mask=0xFF)
-    run(emu, 0x508F80, "sub_508F80", setup)
+    run(emu, 0x508F80, "AllTaskTypes_Open", setup)
 
 
 def test_sync_create_delete():

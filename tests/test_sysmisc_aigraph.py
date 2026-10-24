@@ -267,7 +267,7 @@ def test_find_nearest_order(cw):
 def test_shutdown_modules():
     def setup(em):
         em.write(EVENT, bytes([3]))
-    check(e, fk, 0x508F90, "sub_508F90", setup=setup, check_eax=False)
+    check(e, fk, 0x508F90, "AllTaskTypes_Close", setup=setup, check_eax=False)
 
 
 @pytest.mark.parametrize("dists", [[5e7, 6e7], [5e7, 100.0, 4.1e7]])

@@ -66,11 +66,11 @@ ORIG(0x401BE0, void *, Task_FindChild, (void *task, uint16_t type));
 ORIG(0x401C40, void *, Task_FindNext, (void *task, uint16_t type));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B26C0, void, Texture_ReloadAll, (void));
-ORIG(0x4B2720, void, sub_4B2720, (const float *p));
-ORIG(0x4B2740, void, sub_4B2740, (float *p));
+ORIG(0x4B2720, void, Texture_SetColorParams, (const float *p));
+ORIG(0x4B2740, void, Texture_ResetColorParams, (float *p));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
-ORIG(0x4CE3D0, void, sub_4CE3D0, (void *world));
-ORIG(0x4CEA30, void, sub_4CEA30, (void *world));
+ORIG(0x4CE3D0, void, Terrain_InvalidateLighting, (void *world));
+ORIG(0x4CEA30, void, Terrain_UpdateLighting, (void *world));
 ORIG(0x4E8290, void, Viewport_AddCallback, (void *fn));
 ORIG(0x4F0EF0, void *, Param_PushButton, (void));
 ORIG(0x4F0F40, void *, Param_RGB, (void));
@@ -83,7 +83,7 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 ORIG(0x50FD20, void, TerrainMesh_SetFog, (Vec3f *color, float density));
 ORIG(0x50FE40, void, TerrainMesh_SetAmbient, (Vec3f *color));
 ORIG(0x5196D0, void, Water_SetTint, (Vec3f *colors));
-ORIG(0x52D400, void, sub_52D400, (Vec3f *colors));
+ORIG(0x52D400, void, Sky_SetTint, (Vec3f *colors));
 
 #define gGlobalLightType VAR(uint16_t, 0xA8408C)
 #define gGlobalLightParams VAR(void *, 0xA84088)
@@ -135,9 +135,9 @@ static void publish(GlobalLight *g, int matrix)
             gColorMatrix2[i] = s->matrix[2];
         }
     }
-    sub_52D400(g->unk24);
+    Sky_SetTint(g->unk24);
     Water_SetTint(g->unk24);
-    sub_4CEA30(g->world);
+    Terrain_UpdateLighting(g->world);
 }
 
 static void copy_key(GlobalLight *g, const GlobalLightKeyframe *k, int matrix)
@@ -167,7 +167,7 @@ void GlobalLight_Apply(GlobalLight *g)
     long double t;
     int i, j;
 
-    sub_4CE3D0(g->world);
+    Terrain_InvalidateLighting(g->world);
     if (!Task_FindChild(g, gKeyframeType)) {
         for (i = 0; i < 5; i++)
             memset(&g->sets[i].color, 0, sizeof(LightColor));
@@ -303,7 +303,7 @@ void GlobalLight_Create(GlobalLight *g)
         s->matrix[2].x = s->matrix[2].y = 0.0f;
         s->matrix[2].z = 1.0f;
     }
-    sub_4B2740(g->texParams);
+    Texture_ResetColorParams(g->texParams);
     g->applyTex = 1;
     g->resetTex = 0;
     gCurrentGlobalLight = g;
@@ -327,12 +327,12 @@ void GlobalLight_ParamsChanged(GlobalLight *g)
     GlobalLightKeyframe *k;
 
     if (g->resetTex) {
-        sub_4B2740(g->texParams);
+        Texture_ResetColorParams(g->texParams);
         g->applyTex = 1;
         g->resetTex = 0;
     }
     if (g->applyTex) {
-        sub_4B2720(g->texParams);
+        Texture_SetColorParams(g->texParams);
         Texture_ReloadAll();
         g->applyTex = 0;
     }

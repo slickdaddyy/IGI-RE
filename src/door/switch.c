@@ -80,7 +80,7 @@ void Switch_DeleteHandler(Switch *s);
 void Switch_GetParams(void *task, void **out);
 void Switch_ParamsChanged(Switch *s);
 void Switch_CheckUse(Switch *s, UseQuery *q);
-void sub_445820(void *task, char **arg);
+void Switch_DrawIcon(void *task, char **arg);
 void Switch_Destroy(Switch *s);
 void Switch_AddSymbols(Switch *s);
 void Switch_RemoveSymbols(Switch *s);
@@ -110,7 +110,7 @@ void Switch_Open(void)
     TaskType_SetHandler(gSwitchType, Game_GetEvent2(), Switch_CheckUse);
     TaskType_SetHandler(gSwitchType, Game_GetEvent3(), sub_4F01B0);
     TaskType_SetHandler(gSwitchType, Game_GetEvent4(), TASK_NOTHING);
-    TaskType_SetHandler(gSwitchType, Game_GetEvent6(), sub_445820);
+    TaskType_SetHandler(gSwitchType, Game_GetEvent6(), Switch_DrawIcon);
     TaskType_SetHandler(gSwitchType, Game_GetEvent9(), Switch_Destroy);
     TaskType_SetHandler2(gSwitchType, Level_GetEventDA8(), Switch_AddSymbols);
     TaskType_SetHandler2(gSwitchType, Level_GetEventDAC(), Switch_RemoveSymbols);
@@ -249,11 +249,11 @@ void Switch_CheckUse(Switch *s, UseQuery *q)
 }
 HOOK(0x445730, Switch_CheckUse);
 
-void sub_445820(void *task, char **arg)
+void Switch_DrawIcon(void *task, char **arg)
 {
     StatusScreen_DrawActionIcon(*arg, *arg + 0x44C);
 }
-HOOK(0x445820, sub_445820);
+HOOK(0x445820, Switch_DrawIcon);
 
 void Switch_Destroy(Switch *s)
 {

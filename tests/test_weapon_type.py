@@ -67,7 +67,7 @@ def add_weapons(e, ids, keys=None):
     (0x413B00, "WeaponType_GetSizeEvent", 0), (0x413B10, "WeaponType_GetInitEvent", 1),
     (0x413B20, "Weapon_GetFireEvent", 2), (0x413B30, "WeaponType_GetSizeEvent2", 3),
     (0x413B40, "WeaponType_GetInitEvent2", 4), (0x413B50, "Weapon_GetTypeEvent", 5),
-    (0x413B60, "sub_413B60", 6)])
+    (0x413B60, "Weapon_GetEventB2", 6)])
 def test_event_getters(addr, name, off):
     compare(emu, addr, name, setup=lambda e: set_events(e, (0x81, 0x92, 0xA3, 0xB4, 0xC5, 0xD6, 0xE7)),
             eax_mask=0xFF)

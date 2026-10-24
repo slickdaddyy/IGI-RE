@@ -198,10 +198,10 @@ ORIG(0x460BE0, uint16_t, Human_GetType, (void));
 ORIG(0x460C40, uint8_t, Human_GetPunchEvent, (void));
 ORIG(0x460C50, void *, Human_GetParamTable, (void));
 ORIG(0x463180, char, Human_IsCrouching, (Soldier *h));
-ORIG(0x4635F0, void, sub_4635F0, (Soldier *h));
+ORIG(0x4635F0, void, Human_FreezeView, (Soldier *h));
 ORIG(0x4636A0, void, Human_SetClimbObject, (Soldier *h, void *task));
 ORIG(0x463760, void, HumanViewCam, (Soldier *h, int mode));
-ORIG(0x463770, void, sub_463770, (Soldier *h));
+ORIG(0x463770, void, Human_ApplyGravity, (Soldier *h));
 ORIG(0x4638A0, void, Human_Say, (Soldier *h, const char *name, int n));
 ORIG(0x464700, void, HumanView_LockPitch, (void *view));
 ORIG(0x47E990, uint8_t, FlashBang_GetEvent, (void));
@@ -589,7 +589,7 @@ void SoldierFemale_FallUpdate(SoldierSM *sm, Soldier *h)
 {
     uint32_t bits;
 
-    sub_463770(h);
+    Human_ApplyGravity(h);
     bits = sm->bits;
     if (bits & SB_HIT) {
         SM_Set(sm, h, SF_HIT);
@@ -671,7 +671,7 @@ void SoldierFemale_DieEnter(SoldierSM *sm, Soldier *h)
     Soldier_GetDeathVelocity(h->deathVel, h, h->model, anim);
     HumanViewCam(h, 3);
     HumanView_LockPitch(h->view);
-    sub_4635F0(h);
+    Human_FreezeView(h);
     Human_Say(h, "ai_death_", 4);
     Human_DisableLook(h);
     sm->run = SoldierFemale_DieUpdate;

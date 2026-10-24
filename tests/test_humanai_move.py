@@ -147,7 +147,7 @@ def test_target_getters(dead, crouch, seen):
         e.write(ai + 0x3AA8, p32(target(e, 0, enemy, [1])))
         e.write(ai + 0x1514, p32(9))
         return (ai,)
-    check(M, MF, 0x451320, "sub_451320", setup=setup)
+    check(M, MF, 0x451320, "HumanAI_PopRoute", setup=setup)
     check(M, MF, 0x451330, "HumanAI_IsDead", setup=setup, check_eax=True, eax_mask=0xFF)
     check(M, MF, 0x451350, "HumanAI_CanSeeTarget", setup=setup, check_eax=True)
     check(M, MF, 0x4513E0, "HumanAI_GetTarget", setup=setup, check_eax=True)
@@ -262,8 +262,8 @@ def test_channel(which, flag):
         h = new_human(e, type_=0x90 + which if which < 4 else 0x61)
         e.write(h + 0xD00, bytes([flag]))
         return (new_ai(e, h),)
-    check(M, MF, 0x4525E0, "sub_4525E0", setup=setup)
-    check(M, MF, 0x452660, "sub_452660", setup=setup)
+    check(M, MF, 0x4525E0, "HumanAI_SetWalk", setup=setup)
+    check(M, MF, 0x452660, "HumanAI_SetRun", setup=setup)
 
 
 @pytest.mark.parametrize("cw", [0x37F, 0x7F])

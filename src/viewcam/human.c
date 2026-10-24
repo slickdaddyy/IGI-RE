@@ -167,7 +167,7 @@ static __attribute__((noinline)) long double crt_pow(long double x, long double 
 }
 
 /* keeps `to` away from other humans standing near it; out = to - from */
-void sub_462BA0(Human *h, double *from, double *to, float *out)
+void Human_AvoidHumans(Human *h, double *from, double *to, float *out)
 {
     TaskArray *list = Human_GetList();
     int i;
@@ -203,7 +203,7 @@ void sub_462BA0(Human *h, double *from, double *to, float *out)
     out[1] = to[1] - from[1];
     out[2] = to[2] - from[2];
 }
-HOOK(0x462BA0, sub_462BA0);
+HOOK(0x462BA0, Human_AvoidHumans);
 
 /* moves the human by its animation's root motion, in platform space */
 void Human_MoveOnPlatform(Human *h)
@@ -320,11 +320,11 @@ int Human_GetState(Human *h)
 }
 HOOK(0x463110, Human_GetState);
 
-int sub_463120(Human *h)
+int Human_GetIndex(Human *h)
 {
     return h->unk7C0;
 }
-HOOK(0x463120, sub_463120);
+HOOK(0x463120, Human_GetIndex);
 
 int Human_GetTeam(Human *h)
 {
@@ -356,11 +356,11 @@ char Human_IsCrouching(Human *h)
 }
 HOOK(0x463180, Human_IsCrouching);
 
-char sub_463190(Human *h)
+char Human_IsActive(Human *h)
 {
     return h->unkCF6;
 }
-HOOK(0x463190, sub_463190);
+HOOK(0x463190, Human_IsActive);
 
 void Human_SetPosition(Human *h, double *pos)
 {
@@ -385,7 +385,7 @@ void Human_SetYaw(Human *h, float yaw)
 }
 HOOK(0x463220, Human_SetYaw);
 
-void sub_463260(Human *h)
+void Human_SnapToGround(Human *h)
 {
     float zero[3];
     double pos[3];
@@ -397,7 +397,7 @@ void sub_463260(Human *h)
     Human_ProbeGround(h, pos, pos, zero, &h->stateInput, 0x1.f4p+21f);
     Human_SetPosition(h, pos);
 }
-HOOK(0x463260, sub_463260);
+HOOK(0x463260, Human_SnapToGround);
 
 void Human_LeaveGround(Human *h)
 {
@@ -439,40 +439,40 @@ void Human_SetPlatform(Human *h, Task *t)
     rel.m[8] = (r[7] * m[7] + r[8] * m[8]) + r[6] * m[6];
     rel.serial = h->rot.serial + 1 + p->rot.serial;
     h->platformRot = rel;
-    sub_464230(h);
+    Human_HideShadow(h);
 }
 HOOK(0x463310, Human_SetPlatform);
 
 void Human_ClearPlatform(Human *h)
 {
     h->platform = NULL;
-    sub_464240(h);
+    Human_ShowShadow(h);
 }
 HOOK(0x463550, Human_ClearPlatform);
 
-void sub_463570(Human *h)
+void Human_DisableCollision(Human *h)
 {
     h->unk694 = 1;
 }
-HOOK(0x463570, sub_463570);
+HOOK(0x463570, Human_DisableCollision);
 
-void sub_463580(Human *h)
+void Human_EnableCollision(Human *h)
 {
     h->unk694 = 0;
 }
-HOOK(0x463580, sub_463580);
+HOOK(0x463580, Human_EnableCollision);
 
-void sub_463590(Human *h)
+void Human_SetExactMotion(Human *h)
 {
     h->unk52C = 1;
 }
-HOOK(0x463590, sub_463590);
+HOOK(0x463590, Human_SetExactMotion);
 
-void sub_4635A0(Human *h)
+void Human_ClearExactMotion(Human *h)
 {
     h->unk52C = 0;
 }
-HOOK(0x4635A0, sub_4635A0);
+HOOK(0x4635A0, Human_ClearExactMotion);
 
 void Human_LockInput(Human *h)
 {
@@ -488,30 +488,30 @@ void Human_UnlockInput(Human *h)
 }
 HOOK(0x4635E0, Human_UnlockInput);
 
-void sub_4635F0(Human *h)
+void Human_FreezeView(Human *h)
 {
     h->unk510 = 1;
 }
-HOOK(0x4635F0, sub_4635F0);
+HOOK(0x4635F0, Human_FreezeView);
 
-void sub_463600(Human *h)
+void Human_UnfreezeView(Human *h)
 {
     h->unk510 = 0;
 }
-HOOK(0x463600, sub_463600);
+HOOK(0x463600, Human_UnfreezeView);
 
-void sub_463610(Human *h)
+void Human_BeginUse(Human *h)
 {
     h->unk7B8 = 1;
 }
-HOOK(0x463610, sub_463610);
+HOOK(0x463610, Human_BeginUse);
 
-void sub_463620(Human *h)
+void Human_EndUse(Human *h)
 {
     h->unk7B8 = 0;
     h->unk7B9 = 1;
 }
-HOOK(0x463620, sub_463620);
+HOOK(0x463620, Human_EndUse);
 
 void Human_SetGround(Human *h, Task *t)
 {
@@ -572,7 +572,7 @@ void HumanViewCam(Human *h, int mode)
 }
 HOOK(0x463760, HumanViewCam);
 
-void sub_463770(Human *h)
+void Human_ApplyGravity(Human *h)
 {
     static const float kDamp = 0x1.fae148p-1f;   /* 0.99 */
     static const float kGravity = 0x1.52f77ep+6f; /* 84.74 */
@@ -581,7 +581,7 @@ void sub_463770(Human *h)
     h->vel[1] = h->vel[1] * kDamp;
     h->vel[2] = (h->vel[2] - kGravity) * kDamp;
 }
-HOOK(0x463770, sub_463770);
+HOOK(0x463770, Human_ApplyGravity);
 
 /* plays name + 1..n through the view, at most once per 30 to 60 ticks */
 void Human_SayTimed(Human *h, const char *name, int n)
@@ -830,14 +830,14 @@ void Human_BloodDrop(void *arg)
 }
 HOOK(0x4640B0, Human_BloodDrop);
 
-void sub_464230(Human *h)
+void Human_HideShadow(Human *h)
 {
     h->unk7E8 = 0;
 }
-HOOK(0x464230, sub_464230);
+HOOK(0x464230, Human_HideShadow);
 
-void sub_464240(Human *h)
+void Human_ShowShadow(Human *h)
 {
     h->unk7E8 = 1;
 }
-HOOK(0x464240, sub_464240);
+HOOK(0x464240, Human_ShowShadow);

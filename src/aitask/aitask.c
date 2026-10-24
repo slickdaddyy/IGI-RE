@@ -297,14 +297,14 @@ ORIG(0x450D50, void, HumanAI_Send, (void *task, AIMessage *m));
 ORIG(0x450FF0, void, HumanAI_EndAction, (HumanAI *ai, AIAction *a));
 ORIG(0x4511F0, void, AITarget_SetState, (void *t, HumanAI *ai, int state));
 ORIG(0x4512A0, void, AITarget_Remove, (void *t, HumanAI *ai, char count));
-ORIG(0x451320, void, sub_451320, (HumanAI *ai));
+ORIG(0x451320, void, HumanAI_PopRoute, (HumanAI *ai));
 ORIG(0x451380, void, HumanAI_GetTargetPos, (Vec3d *out, HumanAI *ai));
 ORIG(0x4513F0, void, HumanAI_LevelAim, (HumanAI *ai));
 ORIG(0x4522A0, char, HumanAI_RunTo, (HumanAI *ai, int dest, const Vec3d *pos, char replan));
 ORIG(0x452580, char, HumanAI_AimAt, (HumanAI *ai, const Vec3d *pos, float tol, char flat));
 ORIG(0x4525B0, char, HumanAI_FaceTo, (HumanAI *ai, const Vec3d *pos, float tol, char flat));
-ORIG(0x4525E0, void, sub_4525E0, (HumanAI *ai));
-ORIG(0x452660, void, sub_452660, (HumanAI *ai));
+ORIG(0x4525E0, void, HumanAI_SetWalk, (HumanAI *ai));
+ORIG(0x452660, void, HumanAI_SetRun, (HumanAI *ai));
 ORIG(0x4532D0, char, AIClaim_IsClaimed, (Task *task));
 ORIG(0x453300, void *, AIClaim_Set, (Task *task, char on));
 ORIG(0x453390, void, AIClaim_Release, (void *claim));
@@ -610,9 +610,9 @@ void AIMoveToEvent_Update(HumanAI *ai, AIAction *a)
     PosParam *p = a->param;
 
     if (p->move.run)
-        sub_452660(ai);
+        HumanAI_SetRun(ai);
     else
-        sub_4525E0(ai);
+        HumanAI_SetWalk(ai);
     Debug_Log(ai, -1, "Move to event %d", p->move.node);
     if (HumanAI_RunTo(ai, p->move.node, &p->pos, 1))
         HumanAI_EndAction(ai, a);
@@ -933,9 +933,9 @@ void AIActivate_Update(HumanAI *ai, AIAction *a)
     NodeParam *p = a->param;
 
     if (p->run)
-        sub_452660(ai);
+        HumanAI_SetRun(ai);
     else
-        sub_4525E0(ai);
+        HumanAI_SetWalk(ai);
     if (p->node1 != -1) {
         if (HumanAI_RunTo(ai, p->node1, NULL, 0)) {
             HumanAI_SetChannel(ai, 4, p->id);
@@ -972,7 +972,7 @@ void AIPatrol_Start(HumanAI *ai, AIAction *a)
 {
     NodeParam *p = a->param;
 
-    sub_4525E0(ai);
+    HumanAI_SetWalk(ai);
     a->update = AIPatrol_Update;
     a->end = AIPatrol_End;
     PatrolRoute_Init(&ai->routes[ai->routeCount++], p->id, p->node1);
@@ -990,9 +990,9 @@ void AIPatrol_Update(HumanAI *ai, AIAction *a)
     if (r->crouch)
         HumanAI_SetChannel(ai, 1, 1.0f);
     if (r->walk)
-        sub_4525E0(ai);
+        HumanAI_SetWalk(ai);
     else
-        sub_452660(ai);
+        HumanAI_SetRun(ai);
     if (!cmd)
         return;
     type = PatrolPathCommand_GetType(cmd);
@@ -1051,7 +1051,7 @@ HOOK(0x48E920, AIPatrol_Update);
 
 void AIPatrol_End(HumanAI *ai, AIAction *a)
 {
-    sub_451320(ai);
+    HumanAI_PopRoute(ai);
 }
 HOOK(0x48EB30, AIPatrol_End);
 
@@ -1090,7 +1090,7 @@ void AIWalkToNode_Update(HumanAI *ai, AIAction *a)
     NodeParam *p = a->param;
 
     Debug_Log(ai, -1, "Walk To Node - %d", p->id);
-    sub_4525E0(ai);
+    HumanAI_SetWalk(ai);
     ai->destNode = p->id;
     if (HumanAI_RunTo(ai, p->id, NULL, 1))
         HumanAI_EndAction(ai, a);
@@ -1110,7 +1110,7 @@ void AIRunToNode_Update(HumanAI *ai, AIAction *a)
     NodeParam *p = a->param;
 
     Debug_Log(ai, -1, "Run To Node - %d", p->id);
-    sub_452660(ai);
+    HumanAI_SetRun(ai);
     ai->destNode = p->id;
     if (HumanAI_RunTo(ai, p->id, NULL, 1))
         HumanAI_EndAction(ai, a);

@@ -144,12 +144,12 @@ int TexRes_Load(void *file, Texture *tex, int max, int a4)
 }
 HOOK(0x4B2070, TexRes_Load);
 
-void sub_4B2740(float *p);
+void Texture_ResetColorParams(float *p);
 void Texture_EndFileLoad(void);
 
 void Texture_Init(void)
 {
-    sub_4B2740(gTexParams);
+    Texture_ResetColorParams(gTexParams);
     Texture_EndFileLoad();
     gAllocTextureId = RenderMode_CreateMethod("AllocTexture");
     gDeAllocTextureId = RenderMode_CreateMethod("DeAllocTexture");
@@ -365,13 +365,13 @@ int Texture_GetSetLODId(void)
 }
 HOOK(0x4B2710, Texture_GetSetLODId);
 
-void sub_4B2720(const float *p)
+void Texture_SetColorParams(const float *p)
 {
     memcpy(gTexParams, p, 7 * sizeof(float));
 }
-HOOK(0x4B2720, sub_4B2720);
+HOOK(0x4B2720, Texture_SetColorParams);
 
-void sub_4B2740(float *p)
+void Texture_ResetColorParams(float *p)
 {
     p[0] = 0.0f;
     p[1] = 0.0f;
@@ -381,4 +381,4 @@ void sub_4B2740(float *p)
     p[5] = 1.0f;
     p[6] = 1.0f;
 }
-HOOK(0x4B2740, sub_4B2740);
+HOOK(0x4B2740, Texture_ResetColorParams);

@@ -19,7 +19,7 @@ FN_EXTERN(HumanPlayer_ReadInputHandler);
 FN_EXTERN(HumanPlayer_RenderHandler);
 FN_EXTERN(Human_DeadRun);
 FN_EXTERN(Human_RunBase);
-FN_EXTERN(sub_413730);
+FN_EXTERN(HumanPlayer_MapMarkerHandler);
 
 typedef void (*TaskHandler)(void *task, void *arg);
 typedef void (*TaskHandler1)(void *task);
@@ -80,7 +80,7 @@ ORIG(0x411300, void, HumanPlayer_FadeHitFlash, (HumanPlayer *h));
 ORIG(0x411350, void, HumanPlayer_FadeFlash, (HumanPlayer *h));
 ORIG(0x4113C0, void, HumanPlayer_UpdateFenceTimer, (HumanPlayer *h));
 ORIG(0x4113E0, void, HumanPlayer_UpdateLadder, (HumanPlayer *h));
-ORIG(0x411770, void, sub_411770, (HumanPlayer *h));
+ORIG(0x411770, void, HumanPlayer_UpdateFenceClimb, (HumanPlayer *h));
 ORIG(0x411AE0, void, HumanPlayer_UpdateWire, (HumanPlayer *h));
 ORIG(0x411F20, void, HumanPlayer_UpdateZipline, (HumanPlayer *h));
 ORIG(0x4137E0, void, HumanPlayer_SetWeaponAnim, (HumanPlayer *h, int anim));
@@ -97,20 +97,20 @@ ORIG(0x416D40, Game *, Game_Get, (void));
 ORIG(0x460BE0, uint16_t, Human_GetType, (void));
 ORIG(0x460C10, uint8_t, Human_GetEvent1, (void));
 ORIG(0x460C80, void, Human_printf, (HumanPlayer *h, const char *fmt, ...));
-ORIG(0x460CF0, void, sub_460CF0, (HumanPlayer *h));
-ORIG(0x460EE0, void, sub_460EE0, (HumanPlayer *h));
+ORIG(0x460CF0, void, Human_UpdatePlatformMove, (HumanPlayer *h));
+ORIG(0x460EE0, void, Human_UpdateUse, (HumanPlayer *h));
 ORIG(0x4610C0, void, Human_UpdateBody, (HumanPlayer *h));
-ORIG(0x4613D0, void, sub_4613D0, (HumanPlayer *h));
+ORIG(0x4613D0, void, Human_FireAnimTrigger, (HumanPlayer *h));
 ORIG(0x4614B0, void, Human_UpdateMove, (HumanPlayer *h));
 ORIG(0x462CF0, void, Human_MoveOnPlatform, (HumanPlayer *h));
 ORIG(0x462E50, void, Human_UpdateWeapon, (HumanPlayer *h));
 ORIG(0x463080, void, Human_SendPosition, (HumanPlayer *h));
 ORIG(0x463170, char, Human_IsDead, (HumanPlayer *h));
 ORIG(0x4632D0, void, Human_LeaveGround, (HumanPlayer *h));
-ORIG(0x4635F0, void, sub_4635F0, (HumanPlayer *h));
-ORIG(0x463600, void, sub_463600, (HumanPlayer *h));
-ORIG(0x463610, void, sub_463610, (HumanPlayer *h));
-ORIG(0x463620, void, sub_463620, (HumanPlayer *h));
+ORIG(0x4635F0, void, Human_FreezeView, (HumanPlayer *h));
+ORIG(0x463600, void, Human_UnfreezeView, (HumanPlayer *h));
+ORIG(0x463610, void, Human_BeginUse, (HumanPlayer *h));
+ORIG(0x463620, void, Human_EndUse, (HumanPlayer *h));
 ORIG(0x463680, int, Human_GetGround, (HumanPlayer *h));
 ORIG(0x463740, Task *, Human_GetAttached, (HumanPlayer *h));
 ORIG(0x463760, void, HumanViewCam, (HumanPlayer *h, int mode));
@@ -195,7 +195,7 @@ ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 #define sub_412F80 (FN(0x412F80, HumanPlayer_FenceHandler))
 #define sub_413090 (FN(0x413090, HumanPlayer_FlashbangHandler))
 #define sub_413120 (FN(0x413120, HumanPlayer_RenderHandler))
-#define sub_413730 (FN(0x413730, sub_413730))
+#define HumanPlayer_MapMarkerHandler (FN(0x413730, HumanPlayer_MapMarkerHandler))
 #define HumanPlayer_DeadRun ((StateFn)FN(0x45C740, Human_DeadRun))
 
 #define gTaskHandlers ((void **(*)[0x180])0xA96AE0)
@@ -324,9 +324,9 @@ void HumanPlayer_CreateHandler(HumanPlayer *h, void *arg);
 void HumanPlayer_UpdateBodyInput(StateMachine *sm, HumanPlayer *h);
 void HumanPlayer_UpdateWeaponInput(StateMachine *sm, HumanPlayer *h);
 void HumanPlayer_DeleteHandler(HumanPlayer *h);
-void sub_4108B0(HumanPlayer *h, void **out);
-void sub_4108C0(HumanPlayer *h, void *arg);
-void sub_410900(HumanPlayer *h, void *arg);
+void HumanPlayer_GetParamTableHandler(HumanPlayer *h, void **out);
+void HumanPlayer_ParamChangedHandler(HumanPlayer *h, void *arg);
+void HumanPlayer_DeactivateHandler(HumanPlayer *h, void *arg);
 void HumanPlayer_InputHandler(HumanPlayer *h, float **msg);
 void HumanPlayer_Update(HumanPlayer *h);
 void HumanPlayer_SendPosition(HumanPlayer *h);
@@ -399,7 +399,7 @@ void HumanPlayer_BodyComputerEnter(StateMachine *sm, HumanPlayer *h)
     Human_PlayAnimSlot(h, sm->state, BLEND);
     HumanPlayer_RequestWeaponAnim(h, 4);
     HumanView_LockPitch(h->view);
-    sub_4635F0(h);
+    Human_FreezeView(h);
     Computer_New(h);
     sm->run = HumanPlayer_BodyComputerRun;
 }
@@ -413,7 +413,7 @@ void HumanPlayer_BodyComputerRun(StateMachine *sm, HumanPlayer *h)
         return;
     Computer_Delete();
     HumanView_UnlockPitch(h->view);
-    sub_463600(h);
+    Human_UnfreezeView(h);
     h->unk670[0] = 0;
     h->unk670[1] = 0;
     h->unk670[2] = 0;
@@ -466,7 +466,7 @@ void HumanPlayer_BodyDeathEnter(StateMachine *sm, HumanPlayer *h)
     HumanPlayer_SetFlagD44(h);
     HumanViewCam(h, 5);
     HumanView_LockPitch(h->view);
-    sub_4635F0(h);
+    Human_FreezeView(h);
     Human_Say(h, "player_death_", 3);
     memcpy(h->unk664, h->unk688, sizeof(h->unk664));
     sm->run = HumanPlayer_BodyDeathRun;
@@ -819,7 +819,7 @@ HOOK(0x40F300, HumanPlayer_WeaponRaiseRun);
 void HumanPlayer_WeaponLeanEnter(StateMachine *sm, HumanPlayer *h)
 {
     HumanPlayer_SetWeaponAnim(h, 1);
-    sub_463610(h);
+    Human_BeginUse(h);
     sm_set(&h->body, BODY_LEAN, h);
     HumanView_SetWeaponTarget(h->view, WEAPON_DOWN_X, WEAPON_DOWN_Y, WEAPON_SPEED_X, WEAPON_SPEED_Y);
     sm->run = HumanPlayer_WeaponLeanRun;
@@ -832,7 +832,7 @@ void HumanPlayer_WeaponLeanRun(StateMachine *sm, HumanPlayer *h)
 
     if (h->input[INPUT_LEAN] != 0 && !(sm->input & SM_DEAD))
         return;
-    sub_463620(h);
+    Human_EndUse(h);
     v->lean[0] = 0;
     v->lean[1] = 0;
     v->lean[2] = 0;
@@ -1129,9 +1129,9 @@ void HumanPlayer_Open(void)
     TaskType_SetHandler(gHumanPlayerType, 0, HumanPlayer_CreateHandler);
     TaskType_SetHandler2(gHumanPlayerType, 1, Human_RunBase);
     TaskType_SetHandler2(gHumanPlayerType, 2, HumanPlayer_DeleteHandler);
-    TaskType_SetHandler(gHumanPlayerType, Param_GetTableEvent(), sub_4108B0);
-    TaskType_SetHandler(gHumanPlayerType, Param_GetChangedEvent(), sub_4108C0);
-    TaskType_SetHandler(gHumanPlayerType, World_GetEvent1(), sub_410900);
+    TaskType_SetHandler(gHumanPlayerType, Param_GetTableEvent(), HumanPlayer_GetParamTableHandler);
+    TaskType_SetHandler(gHumanPlayerType, Param_GetChangedEvent(), HumanPlayer_ParamChangedHandler);
+    TaskType_SetHandler(gHumanPlayerType, World_GetEvent1(), HumanPlayer_DeactivateHandler);
     TaskType_SetHandler(gHumanPlayerType, Vehicle_GetControlEvent(), HumanPlayer_InputHandler);
     TaskType_SetHandler(gHumanPlayerType, Vehicle_GetInputInfoEvent(), sub_4123F0);
     TaskType_SetHandler(gHumanPlayerType, Vehicle_GetKeysEvent(), sub_412420);
@@ -1141,7 +1141,7 @@ void HumanPlayer_Open(void)
     TaskType_SetHandler(gHumanPlayerType, Game_GetEvent12(), sub_412F80);
     TaskType_SetHandler(gHumanPlayerType, FlashBang_GetEvent(), sub_413090);
     TaskType_SetHandler(gHumanPlayerType, StatusScreen_GetEvent(), sub_413120);
-    TaskType_SetHandler(gHumanPlayerType, ComputerObject_GetEvent0(), sub_413730);
+    TaskType_SetHandler(gHumanPlayerType, ComputerObject_GetEvent0(), HumanPlayer_MapMarkerHandler);
     gUnk56E09C = ParamTable_Extend(Human_GetParamTable(), 1);
     Script_RegisterFunction("DefineHumanPlayerGeneral", DefineHumanPlayerGeneral, NULL, -1);
     Script_RegisterFunction("DefineHumanPlayerWeaponCycle", DefineHumanPlayerWeaponCycle, NULL, -1);
@@ -1351,22 +1351,22 @@ void HumanPlayer_DeleteHandler(HumanPlayer *h)
 }
 HOOK(0x410840, HumanPlayer_DeleteHandler);
 
-void sub_4108B0(HumanPlayer *h, void **out)
+void HumanPlayer_GetParamTableHandler(HumanPlayer *h, void **out)
 {
     (void)h;
     *out = gUnk56E09C;
 }
-HOOK(0x4108B0, sub_4108B0);
+HOOK(0x4108B0, HumanPlayer_GetParamTableHandler);
 
-void sub_4108C0(HumanPlayer *h, void *arg)
+void HumanPlayer_ParamChangedHandler(HumanPlayer *h, void *arg)
 {
     uint8_t slot = Param_GetChangedEvent();
 
     ((TaskHandler)TASK_HANDLER(slot, Human_GetType()))(h, arg);
 }
-HOOK(0x4108C0, sub_4108C0);
+HOOK(0x4108C0, HumanPlayer_ParamChangedHandler);
 
-void sub_410900(HumanPlayer *h, void *arg)
+void HumanPlayer_DeactivateHandler(HumanPlayer *h, void *arg)
 {
     uint8_t slot;
 
@@ -1378,7 +1378,7 @@ void sub_410900(HumanPlayer *h, void *arg)
         ((TaskHandler)TASK_HANDLER(slot, BoneDynCubeObj_GetType()))(h, arg);
     }
 }
-HOOK(0x410900, sub_410900);
+HOOK(0x410900, HumanPlayer_DeactivateHandler);
 
 void HumanPlayer_InputHandler(HumanPlayer *h, float **msg)
 {
@@ -1398,8 +1398,8 @@ void HumanPlayer_Update(HumanPlayer *h)
     Camera *cam;
 
     HumanPlayer_CheckDeath(h);
-    sub_460CF0(h);
-    sub_460EE0(h);
+    Human_UpdatePlatformMove(h);
+    Human_UpdateUse(h);
     if (!Computer_Get()) {
         HumanPlayer_SelectWeaponCategory(h);
         HumanPlayer_CycleWeapon(h, 0);
@@ -1420,7 +1420,7 @@ void HumanPlayer_Update(HumanPlayer *h)
     if (h->unkD78 || h->unkD79)
         HumanPlayer_UpdateLadder(h);
     if (h->unkD90 || h->unkD91)
-        sub_411770(h);
+        HumanPlayer_UpdateFenceClimb(h);
     if (h->unkD93 || h->unkD94)
         HumanPlayer_UpdateWire(h);
     if (h->unkDA0 || h->unkDA1)
@@ -1441,7 +1441,7 @@ void HumanPlayer_Update(HumanPlayer *h)
     d[0] = x;
     d[1] = y;
     d[2] = z;
-    sub_4613D0(h);
+    Human_FireAnimTrigger(h);
     if (h->body.state != BODY_FLY) {
         if (!h->attach)
             Human_UpdateMove(h);

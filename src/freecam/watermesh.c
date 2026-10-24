@@ -38,7 +38,7 @@ typedef struct WaterMesh {
     int debugColors;
 } WaterMesh;
 
-/* argument of sub_5116D0 */
+/* argument of TerrainMesh_DrawTriangle */
 typedef struct WaterTri {
     Vec3d pos[3];
     float color[3][3];
@@ -76,7 +76,7 @@ ORIG(0x4B2760, long double, Math_ACosF, (float x));
 ORIG(0x4B2B30, long double, Vec3_Angle, (const float *a, const float *b));
 ORIG(0x52DAE0, void, WaterMesh_GetVertex, (WaterMesh *w, WaterVertex *out, const Vec3d *pos));
 ORIG(0x52E180, void, WaterMesh_Light, (WaterMesh *w, float *color, const float *normal));
-ORIG(0x5116D0, void, sub_5116D0, (WaterTri *t));
+ORIG(0x5116D0, void, TerrainMesh_DrawTriangle, (WaterTri *t));
 ORIG(0x4978E0, void, Primitive_Unregister, (int id));
 
 #define gWaterSplits ((uint32_t *)0xA84584)
@@ -241,7 +241,7 @@ void WaterMesh_DrawSplitTri(WaterMesh *w, WaterNode *node, WaterTri *t, int base
                 t->color[k][2] = i % 2 ? 1.0f : 0;
             }
         }
-        sub_5116D0(t);
+        TerrainMesh_DrawTriangle(t);
     }
 }
 HOOK(0x52F630, WaterMesh_DrawSplitTri);

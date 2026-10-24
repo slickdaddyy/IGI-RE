@@ -147,7 +147,7 @@ ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x4CE410, char, Coll_LineOfSight, (void *world, const Vec3d *from, const Vec3d *to, int event, void *filter,
                                         int flags, int trees, float *visibility));
-ORIG(0x414F40, void, sub_414F40, (Vec3d *out, Human *h, int i, const char *name));
+ORIG(0x414F40, void, Model_GetBonePoint, (Vec3d *out, Human *h, int i, const char *name));
 ORIG(0x4B3130, long double, Vec3d_Length, (const Vec3d *v));
 ORIG(0x4D61D0, void, Anim_Play, (void *anim, int track, int id, int loop, float blend));
 ORIG(0x4D6130, void, Anim_PlayOriented, (void *anim, int track, int a, void *b, int id, int loop, float blend));
@@ -244,7 +244,7 @@ int Human_GetHitZone(Human *h, HumanHit *hit)
 head:
     if (front < kZero)
         return zone;
-    sub_414F40(&head, h, 4, "000_01_1");
+    Model_GetBonePoint(&head, h, 4, "000_01_1");
     hx = head.x + h->pos.x;
     head.x = hx;
     head.y = head.y + h->pos.y;

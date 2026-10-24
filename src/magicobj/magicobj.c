@@ -8,7 +8,7 @@ FN_EXTERN(RigidDynCubeObj_CollLine);
 FN_EXTERN(RigidDynCubeObj_EnterHandler);
 FN_EXTERN(RigidDynCubeObj_LineHit);
 FN_EXTERN(Task_Nothing);
-FN_EXTERN(sub_4C2F90);
+FN_EXTERN(MagicObj_LoadDirEntry);
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A5BB0, char *, crt_strstr, (const char *s, const char *find));
@@ -32,7 +32,7 @@ ORIG(0x4B8A80, char *, Script_GetArgString, (void *args, int i, char *buf, int s
 ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (RigidDynCubeObj *a, RigidDynCubeObj *b, RigidDynCubeObj *c));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, RigidDynCubeObj *o, void *arg, float radius));
 ORIG(0x4C7140, void, DynCube_Add, (int unk, RigidDynCubeObj *o, double *pos, float radius, int unkD4));
-ORIG(0x4C7760, void, sub_4C7760, (RigidDynCubeObj *o));
+ORIG(0x4C7760, void, DynCubeObj_ClearRenderData, (RigidDynCubeObj *o));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, float, VirModel_GetRadius, (void **model));
@@ -44,7 +44,7 @@ ORIG(0x4E5610, void, CellMask_FillTriangle, (int target, float ax, float ay, flo
 #define RIGID_HANDLER_4C1840 (FN(0x4C1840, RigidDynCubeObj_LineHit))
 #define RIGID_HANDLER_4D3710 (FN(0x4D3710, Task_Nothing))
 #define RIGID_HANDLER_4C35F0 (FN(0x4C35F0, RigidDynCubeObj_CollLine))
-#define DIR_CALLBACK_4C2F90 (FN(0x4C2F90, sub_4C2F90))
+#define DIR_CALLBACK_4C2F90 (FN(0x4C2F90, MagicObj_LoadDirEntry))
 
 #define gTaskHandlers ((MagicHandler (*)[0x180])0xA96AE0)
 #define gTaskStack ((MagicNode **)0xAFA6E0)
@@ -114,7 +114,7 @@ typedef struct MeshPart {
 } MeshPart;
 
 /* draws both collision meshes from above as 2D triangles */
-void sub_4C31F0(RigidDynCubeObj *o, RigidDrawView *view)
+void RigidDynCubeObj_DrawCellMask(RigidDynCubeObj *o, RigidDrawView *view)
 {
     float pts[20000][2];
     int visible = 1;
@@ -160,7 +160,7 @@ void sub_4C31F0(RigidDynCubeObj *o, RigidDrawView *view)
         }
     }
 }
-HOOK(0x4C31F0, sub_4C31F0);
+HOOK(0x4C31F0, RigidDynCubeObj_DrawCellMask);
 
 double *DynCubeObj_GetPosition(RigidDynCubeObj *o)
 {
@@ -182,22 +182,22 @@ void RigidDynCubeObj_Open(void)
     TaskType_SetHandler(gRigidType, 11, RIGID_HANDLER_4D3710);
     TaskType_SetHandler(gRigidType, 9, RIGID_HANDLER_4C1840);
     TaskType_SetHandler(gRigidType, 8, RIGID_HANDLER_4C35F0);
-    TaskType_SetHandler(gRigidType, 12, sub_4C35D0);
+    TaskType_SetHandler(gRigidType, 12, RigidDynCubeObj_CollFilter);
     TaskType_SetHandler(gRigidType, 0, RigidDynCubeObj_CreateHandler);
-    TaskType_SetHandler(gRigidType, CellMask_GetDrawEvent(), sub_4C31F0);
-    TaskType_SetHandler(gRigidType, World_GetEvent0(), sub_4C4660);
-    TaskType_SetHandler(gRigidType, 6, sub_4C4780);
+    TaskType_SetHandler(gRigidType, CellMask_GetDrawEvent(), RigidDynCubeObj_DrawCellMask);
+    TaskType_SetHandler(gRigidType, World_GetEvent0(), RigidDynCubeObj_ActivateHandler);
+    TaskType_SetHandler(gRigidType, 6, RigidDynCubeObj_MoveHandler);
     Script_RegisterFunction("DefineMagicObj", DefineMagicObj, NULL, -1);
     Task_SetGlobalFlags(0x8000000);
     TaskType_SetFlags(gRigidType, 0x8000000);
 }
 HOOK(0x4C3450, RigidDynCubeObj_Open);
 
-void sub_4C35D0(RigidDynCubeObj *o, char *arg)
+void RigidDynCubeObj_CollFilter(RigidDynCubeObj *o, char *arg)
 {
     *arg = o != *(RigidDynCubeObj **)(arg + 4);
 }
-HOOK(0x4C35D0, sub_4C35D0);
+HOOK(0x4C35D0, RigidDynCubeObj_CollFilter);
 
 /* DefineMagicObj(name, model, type) */
 MagicScriptValue *DefineMagicObj(MagicScriptValue *ret, void *data, void *args)
@@ -233,7 +233,7 @@ MagicScriptValue *DefineMagicObj(MagicScriptValue *ret, void *data, void *args)
 }
 HOOK(0x4C4520, DefineMagicObj);
 
-void sub_4C4660(RigidDynCubeObj *o, int *arg)
+void RigidDynCubeObj_ActivateHandler(RigidDynCubeObj *o, int *arg)
 {
     MagicNode *n;
     MagicHandler h;
@@ -252,14 +252,14 @@ void sub_4C4660(RigidDynCubeObj *o, int *arg)
         n = gTaskStack[--gTaskStackTop];
     }
 }
-HOOK(0x4C4660, sub_4C4660);
+HOOK(0x4C4660, RigidDynCubeObj_ActivateHandler);
 
-void sub_4C4780(RigidDynCubeObj *o, char *arg)
+void RigidDynCubeObj_MoveHandler(RigidDynCubeObj *o, char *arg)
 {
     DynCube_Move(gWorld, o, arg, radius(o));
     o->matrix = *(MagicMatrix *)(arg + 0x18);
 }
-HOOK(0x4C4780, sub_4C4780);
+HOOK(0x4C4780, RigidDynCubeObj_MoveHandler);
 
 void RigidDynCubeObj_Close(void)
 {
@@ -344,7 +344,7 @@ HOOK(0x4C5700, RigidDynCubeObj_GetEvent3);
 
 void RigidDynCubeObj_Init(int unk68, RigidDynCubeObj *o, void **model)
 {
-    sub_4C7760(o);
+    DynCubeObj_ClearRenderData(o);
     o->unk68 = unk68;
     o->model = model;
     memset(&o->matrix, 0, sizeof(o->matrix));

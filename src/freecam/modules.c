@@ -87,10 +87,10 @@ ORIG(0x4DA1D0, void, HazeLayer_Open, (void));
 ORIG(0x4DA2E0, void, HazeLayer_Close, (void));
 ORIG(0x4D1260, void, QCube_Shutdown, (void));
 ORIG(0x4E5EA0, void, QCube_FreeTables, (void));
-ORIG(0x4C5900, void, sub_4C5900, (void));
+ORIG(0x4C5900, void, World_Init, (void));
 ORIG(0x4E55C0, void, CellMask_Init, (void));
 ORIG(0x4E55F0, void, CellMask_Shutdown, (void));
-ORIG(0x4C5AA0, void, sub_4C5AA0, (void));
+ORIG(0x4C5AA0, void, World_Shutdown, (void));
 ORIG(0x4D9730, void, QObj_Open, (void));
 ORIG(0x4D9810, void, Camera_Open, (void));
 ORIG(0x4E5370, void, DynCubeObj_Init, (void));
@@ -162,30 +162,30 @@ void WaterMesh_Close(void);
 #define gEventA845E0 VAR(uint8_t, 0xA845E0)
 #define gEventA845E1 VAR(uint8_t, 0xA845E1)
 
-void sub_5309C0(void);
-void sub_530A20(void);
+void ViewModules_Init(void);
+void ViewModules_Shutdown(void);
 void sub_530960(void);
 void sub_530980(void);
-void sub_5311E0(void);
-void sub_5311F0(void);
-void sub_531540(void);
-void sub_5315B0(void);
-void sub_531D30(void);
-void sub_531D70(void);
-void sub_531DB0(void);
-void sub_531DC0(void);
-void sub_531DD0(void);
-void sub_531DF0(void);
-void sub_5323C0(void);
-void sub_5323D0(void);
-void sub_5323E0(void);
-void sub_5323F0(void);
+void EngineModules_Init(void);
+void EngineModules_Shutdown(void);
+void RenderModules_Init(void);
+void RenderModules_Shutdown(void);
+void TerrainModules_Init(void);
+void TerrainModules_Shutdown(void);
+void WorldModules_Init(void);
+void WorldModules_Shutdown(void);
+void ObjModules_Init(void);
+void ObjModules_Shutdown(void);
+void CoreTask_Init(void);
+void CoreTask_Shutdown(void);
+void CoreScript_Init(void);
+void CoreScript_Shutdown(void);
 void Core_Init(void);
 void Core_Shutdown(void);
 
-void sub_530270(void)
+void Engine_Init(void)
 {
-    sub_5309C0();
+    ViewModules_Init();
     sub_530960();
     sub_4EC160();
     AnimTrigger_Init();
@@ -193,9 +193,9 @@ void sub_530270(void)
     Lzss_Register();
     sub_4ED000();
 }
-HOOK(0x530270, sub_530270);
+HOOK(0x530270, Engine_Init);
 
-void sub_5302A0(void)
+void Engine_Shutdown(void)
 {
     Debug_Log();
     Debug_Log();
@@ -203,9 +203,9 @@ void sub_5302A0(void)
     AnimTrigger_Shutdown();
     sub_4EC180();
     sub_530980();
-    sub_530A20();
+    ViewModules_Shutdown();
 }
-HOOK(0x5302A0, sub_5302A0);
+HOOK(0x5302A0, Engine_Shutdown);
 
 void sub_530960(void)
 {
@@ -221,9 +221,9 @@ void sub_530980(void)
 }
 HOOK(0x530980, sub_530980);
 
-void sub_5309C0(void)
+void ViewModules_Init(void)
 {
-    sub_5311E0();
+    EngineModules_Init();
     SoundSys_Init();
     SoundSysMicrophone_Init();
     SoundDefGroup_Init();
@@ -243,9 +243,9 @@ void sub_5309C0(void)
     FlashTask_Init();
     CameraFilter_Init();
 }
-HOOK(0x5309C0, sub_5309C0);
+HOOK(0x5309C0, ViewModules_Init);
 
-void sub_530A20(void)
+void ViewModules_Shutdown(void)
 {
     CameraFilter_Close();
     FlashTask_Shutdown();
@@ -265,27 +265,27 @@ void sub_530A20(void)
     SoundDefGroup_Shutdown();
     SoundSysMicrophone_Shutdown();
     SoundSys_Shutdown();
-    sub_5311F0();
+    EngineModules_Shutdown();
 }
-HOOK(0x530A20, sub_530A20);
+HOOK(0x530A20, ViewModules_Shutdown);
 
-void sub_5311E0(void)
+void EngineModules_Init(void)
 {
-    sub_5323C0();
-    sub_531540();
+    CoreTask_Init();
+    RenderModules_Init();
 }
-HOOK(0x5311E0, sub_5311E0);
+HOOK(0x5311E0, EngineModules_Init);
 
-void sub_5311F0(void)
+void EngineModules_Shutdown(void)
 {
-    sub_5315B0();
-    sub_5323D0();
+    RenderModules_Shutdown();
+    CoreTask_Shutdown();
 }
-HOOK(0x5311F0, sub_5311F0);
+HOOK(0x5311F0, EngineModules_Shutdown);
 
-void sub_531540(void)
+void RenderModules_Init(void)
 {
-    sub_531D30();
+    TerrainModules_Init();
     Model_Init();
     LightObj_Init();
     Sky_Init();
@@ -306,9 +306,9 @@ void sub_531540(void)
     SkyDome_Init();
     Direct3DRender_Init();
 }
-HOOK(0x531540, sub_531540);
+HOOK(0x531540, RenderModules_Init);
 
-void sub_5315B0(void)
+void RenderModules_Shutdown(void)
 {
     Direct3DRender_Shutdown();
     Debug_Log();
@@ -330,13 +330,13 @@ void sub_5315B0(void)
     Debug_Log();
     LightObj_Shutdown();
     Model_Shutdown();
-    sub_531D70();
+    TerrainModules_Shutdown();
 }
-HOOK(0x5315B0, sub_5315B0);
+HOOK(0x5315B0, RenderModules_Shutdown);
 
-void sub_531D30(void)
+void TerrainModules_Init(void)
 {
-    sub_531DB0();
+    WorldModules_Init();
     QCube_InitTables();
     Debug_Log();
     QCube_Init();
@@ -347,9 +347,9 @@ void sub_531D30(void)
     HazeLayer_Open();
     TransparencyList_Init();
 }
-HOOK(0x531D30, sub_531D30);
+HOOK(0x531D30, TerrainModules_Init);
 
-void sub_531D70(void)
+void TerrainModules_Shutdown(void)
 {
     TransparencyList_Shutdown();
     HazeLayer_Close();
@@ -360,27 +360,27 @@ void sub_531D70(void)
     QCube_Shutdown();
     Debug_Log();
     QCube_FreeTables();
-    sub_531DC0();
+    WorldModules_Shutdown();
 }
-HOOK(0x531D70, sub_531D70);
+HOOK(0x531D70, TerrainModules_Shutdown);
 
-void sub_531DB0(void)
+void WorldModules_Init(void)
 {
-    sub_531DD0();
-    sub_4C5900();
+    ObjModules_Init();
+    World_Init();
     CellMask_Init();
 }
-HOOK(0x531DB0, sub_531DB0);
+HOOK(0x531DB0, WorldModules_Init);
 
-void sub_531DC0(void)
+void WorldModules_Shutdown(void)
 {
     CellMask_Shutdown();
-    sub_4C5AA0();
-    sub_531DF0();
+    World_Shutdown();
+    ObjModules_Shutdown();
 }
-HOOK(0x531DC0, sub_531DC0);
+HOOK(0x531DC0, WorldModules_Shutdown);
 
-void sub_531DD0(void)
+void ObjModules_Init(void)
 {
     QObj_Open();
     Camera_Open();
@@ -388,9 +388,9 @@ void sub_531DD0(void)
     BoneObj_Init();
     Light_Open();
 }
-HOOK(0x531DD0, sub_531DD0);
+HOOK(0x531DD0, ObjModules_Init);
 
-void sub_531DF0(void)
+void ObjModules_Shutdown(void)
 {
     Light_Close();
     BoneObj_Shutdown();
@@ -398,37 +398,37 @@ void sub_531DF0(void)
     Camera_Close();
     QObj_Close();
 }
-HOOK(0x531DF0, sub_531DF0);
+HOOK(0x531DF0, ObjModules_Shutdown);
 
-void sub_5323C0(void)
+void CoreTask_Init(void)
 {
-    sub_5323E0();
+    CoreScript_Init();
     Task_InitSystem();
     Debug_Log();
 }
-HOOK(0x5323C0, sub_5323C0);
+HOOK(0x5323C0, CoreTask_Init);
 
-void sub_5323D0(void)
+void CoreTask_Shutdown(void)
 {
     Debug_Log();
     Task_ShutdownSystem();
-    sub_5323F0();
+    CoreScript_Shutdown();
 }
-HOOK(0x5323D0, sub_5323D0);
+HOOK(0x5323D0, CoreTask_Shutdown);
 
-void sub_5323E0(void)
+void CoreScript_Init(void)
 {
     Core_Init();
     Script_Init();
 }
-HOOK(0x5323E0, sub_5323E0);
+HOOK(0x5323E0, CoreScript_Init);
 
-void sub_5323F0(void)
+void CoreScript_Shutdown(void)
 {
     Script_Shutdown();
     Core_Shutdown();
 }
-HOOK(0x5323F0, sub_5323F0);
+HOOK(0x5323F0, CoreScript_Shutdown);
 
 void Core_Init(void)
 {

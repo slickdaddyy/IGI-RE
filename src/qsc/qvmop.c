@@ -551,8 +551,8 @@ void Qvm_OpName(char *out, Qvm *vm, unsigned int op)
 }
 HOOK(0x4BECB0, Qvm_OpName);
 
-void sub_4C0250(void)
+void QvmDis_Init(void)
 {
     QvmDis_RegisterOps();
 }
-HOOK(0x4C0250, sub_4C0250);
+HOOK(0x4C0250, QvmDis_Init);

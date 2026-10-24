@@ -176,7 +176,7 @@ ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
 ORIG(0x4137E0, void, HumanPlayer_SetWeaponAnim, (Task *h, int anim));
 ORIG(0x413C80, WeaponType *, Weapon_GetType, (Task *weapon));
-ORIG(0x414ED0, void, sub_414ED0, (Vec3f *out, void *obj, int i));
+ORIG(0x414ED0, void, Model_GetLocalPoint, (Vec3f *out, void *obj, int i));
 ORIG(0x4168C0, TaskList *, Game_GetTaskList2, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
@@ -437,11 +437,11 @@ void Gun_Handler479CA0(void *obj, float *out)
 {
     Vec3f v;
 
-    sub_414ED0(&v, obj, 0);
+    Model_GetLocalPoint(&v, obj, 0);
     out[0] = v.x + kOff0X;
     out[1] = v.y - kOff0Y;
     out[2] = v.z - kOff0Z;
-    sub_414ED0(&v, obj, 1);
+    Model_GetLocalPoint(&v, obj, 1);
     out[3] = v.x - kOff1X;
     memcpy(&out[4], &v.y, 4);
     out[5] = v.z + kOff1Z;

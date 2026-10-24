@@ -26,7 +26,7 @@ ORIG(0x413B20, uint8_t, Weapon_GetFireEvent, (void));
 ORIG(0x4148F0, long double, Vec3d_PitchAngle, (Vec3d v));
 ORIG(0x414950, long double, Vec3d_YawAngle, (Vec3d v));
 ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int i));
-ORIG(0x414ED0, void, sub_414ED0, (Vec3f *out, void *obj, int i));
+ORIG(0x414ED0, void, Model_GetLocalPoint, (Vec3f *out, void *obj, int i));
 ORIG(0x416830, uint8_t, Game_GetEvent7, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x4169D0, void *, Game_AddSprite, (const char *name));
@@ -299,7 +299,7 @@ void Missile_EmitSmoke(Missile *m)
     case 1: {
         long double y, z;
 
-        sub_414ED0(&d, m, 0);
+        Model_GetLocalPoint(&d, m, 0);
         y = -d.y;
         pos = m->v.pos;
         fx = d.x * m->v.matrix.m[0] + d.z * m->v.matrix.m[2] + y * m->v.matrix.m[1];

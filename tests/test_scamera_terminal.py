@@ -237,7 +237,7 @@ def test_terminal_small():
         p = em.alloc(4)
         i32(em, p, 0x7000)
         return 0, p
-    check(e, fk, 0x443DA0, "sub_443DA0", setup2)
+    check(e, fk, 0x443DA0, "Terminal_DrawIcon", setup2)
 
     def setup3(em):
         base(em)

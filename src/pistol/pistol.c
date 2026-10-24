@@ -45,9 +45,9 @@ ORIG(0x460BE0, uint16_t, Human_GetType, (void));
 ORIG(0x460C40, uint8_t, Human_GetPunchEvent, (void));
 ORIG(0x460C50, void *, Human_GetParamTable, (void));
 ORIG(0x460C80, void, Human_printf, (Soldier *h, const char *fmt, ...));
-ORIG(0x460CF0, void, sub_460CF0, (Soldier *h));
+ORIG(0x460CF0, void, Human_UpdatePlatformMove, (Soldier *h));
 ORIG(0x4610C0, void, Human_UpdateBody, (Soldier *h));
-ORIG(0x4613D0, void, sub_4613D0, (Soldier *h));
+ORIG(0x4613D0, void, Human_FireAnimTrigger, (Soldier *h));
 ORIG(0x4614B0, void, Human_UpdateMove, (Soldier *h));
 ORIG(0x462CF0, void, Human_MoveOnPlatform, (Soldier *h));
 ORIG(0x462E50, void, Human_UpdateWeapon, (Soldier *h));
@@ -56,7 +56,7 @@ ORIG(0x463110, int, Human_GetState, (Soldier *h));
 ORIG(0x4631A0, void, Human_SetPosition, (Soldier *h, double *pos));
 ORIG(0x463220, void, Human_SetYaw, (Soldier *h, float angle));
 ORIG(0x463310, void, Human_SetPlatform, (Soldier *h, void *obj));
-ORIG(0x4635F0, void, sub_4635F0, (Soldier *h));
+ORIG(0x4635F0, void, Human_FreezeView, (Soldier *h));
 ORIG(0x463680, int, Human_GetGround, (Soldier *h));
 ORIG(0x4636A0, void, Human_SetClimbObject, (Soldier *h, void *t));
 ORIG(0x4636E0, void *, Human_GetClimbObject, (Soldier *h));
@@ -412,7 +412,7 @@ static void ps_die(SoldierSM *sm, Soldier *h, int anim)
     Soldier_GetDeathVelocity(((SoldierP *)h)->deathVel, h, h->model, anim);
     HumanViewCam(h, 3);
     HumanView_LockPitch(h->view);
-    sub_4635F0(h);
+    Human_FreezeView(h);
     Human_Say(h, "ai_death_", 4);
     Human_DisableLook(h);
     sm->run = SoldierPistol_DieUpdate;
@@ -522,7 +522,7 @@ void SoldierPistol_UseEnter(SoldierSM *sm, Soldier *h)
     Human_PlayAnim(h, 0x27, 0, 0);
     HumanView_ClearAngles(h->view);
     HumanView_LockPitch(h->view);
-    sub_4635F0(h);
+    Human_FreezeView(h);
     Human_SetPlatform(h, obj);
     sm->run = Soldier_UseUpdate;
 }
@@ -723,7 +723,7 @@ void SoldierPistol_Update(Soldier *h)
     long double speed;
 
     Soldier_EnsureWeapon(h);
-    sub_460CF0(h);
+    Human_UpdatePlatformMove(h);
     StateMachine_Update(&h->sm, h);
     if (!is_zero(h->input[20]))
         h->run ^= 1;
@@ -738,7 +738,7 @@ void SoldierPistol_Update(Soldier *h)
     d[0] = x;
     d[1] = y;
     d[2] = z;
-    sub_4613D0(h);
+    Human_FireAnimTrigger(h);
     if (!h->attach)
         Human_UpdateMove(h);
     else

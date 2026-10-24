@@ -465,8 +465,8 @@ def test_filters(item):
         ctx = e.alloc(16)
         e.write(ctx, u32(0x55) + u32(1) + u32(2) + u32(3))
         return item, ctx
-    compare(emu, 0x416A90, "sub_416A90", setup=setup, check_eax=False)
-    compare(emu, 0x416AB0, "sub_416AB0", setup=setup, check_eax=False)
+    compare(emu, 0x416A90, "Game_CollFilterSkip3", setup=setup, check_eax=False)
+    compare(emu, 0x416AB0, "Game_CollFilterSkip", setup=setup, check_eax=False)
 
 
 def view_query(e, best=(1.0, 1.0), rng=5000.0):
@@ -489,7 +489,7 @@ def test_view_query(pos, best):
         p = e.alloc(24)
         e.write(p, struct.pack("<3d", *pos))
         return view_query(e, best), 0x9999, p
-    compare(emu, 0x416AD0, "sub_416AD0", setup=setup, eax_mask=0xFF)
+    compare(emu, 0x416AD0, "UseQuery_Consider", setup=setup, eax_mask=0xFF)
 
 
 @pytest.mark.parametrize("pos", [(0, 0, 0), (3, 4, 0), (30, 40, 0), (60, 80, 0), (100, 200, 300), (5, 0, 0)])

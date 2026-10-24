@@ -145,9 +145,9 @@ uint8_t Sync_GetEvent1(void)
 }
 HOOK(0x508F70, Sync_GetEvent1);
 
-void sub_508F80(void)
+void AllTaskTypes_Open(void)
 {
     TaskTypes_Open();
     AIGraph_Init();
 }
-HOOK(0x508F80, sub_508F80);
+HOOK(0x508F80, AllTaskTypes_Open);

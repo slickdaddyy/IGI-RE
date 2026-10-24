@@ -75,11 +75,11 @@ char AIView_CanSee(AIView *v, const Vec3d *pos, char alarm)
 }
 HOOK(0x4502F0, AIView_CanSee);
 
-void sub_451320(HumanAI *ai)
+void HumanAI_PopRoute(HumanAI *ai)
 {
     ai->unk1514--;
 }
-HOOK(0x451320, sub_451320);
+HOOK(0x451320, HumanAI_PopRoute);
 
 char HumanAI_IsDead(HumanAI *ai)
 {
@@ -638,21 +638,21 @@ static char HumanAI_GetD00(HumanAI *ai)
     return (char)(uintptr_t)ai;
 }
 
-void sub_4525E0(HumanAI *ai)
+void HumanAI_SetWalk(HumanAI *ai)
 {
     char c = HumanAI_GetD00(ai);
 
     HumanAI_SetChannel(ai, 0, c == 0);
 }
-HOOK(0x4525E0, sub_4525E0);
+HOOK(0x4525E0, HumanAI_SetWalk);
 
-void sub_452660(HumanAI *ai)
+void HumanAI_SetRun(HumanAI *ai)
 {
     char c = HumanAI_GetD00(ai);
 
     HumanAI_SetChannel(ai, 0, c);
 }
-HOOK(0x452660, sub_452660);
+HOOK(0x452660, HumanAI_SetRun);
 
 /* bit 0: a point 12288 to the human's left is in the current node, bit 1: one to the right */
 int HumanAI_CheckSides(HumanAI *ai)

@@ -188,7 +188,7 @@ def test_mask_visible_visit():
 def test_sub_52bff0(flags):
     def setup(e):
         u8(e, 0xA758BD, *flags)
-    run(emu, 0x52BFF0, "sub_52BFF0", setup, check_eax=True)
+    run(emu, 0x52BFF0, "DiscardTerrain_Draw", setup, check_eax=True)
 
 
 def test_create():

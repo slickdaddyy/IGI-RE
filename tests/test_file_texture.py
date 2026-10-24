@@ -271,5 +271,5 @@ def test_params():
         p = e.alloc(28)
         e.write(p, bytes(range(1, 29)))
         return (p,)
-    check(0x4B2720, "sub_4B2720", setup=setup, check_eax=False)
-    check(0x4B2740, "sub_4B2740", setup=lambda e: (e.alloc(28),), check_eax=False)
+    check(0x4B2720, "Texture_SetColorParams", setup=setup, check_eax=False)
+    check(0x4B2740, "Texture_ResetColorParams", setup=lambda e: (e.alloc(28),), check_eax=False)

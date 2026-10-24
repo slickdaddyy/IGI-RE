@@ -155,5 +155,5 @@ def test_small():
         u32(e, MODEL, 0x1234)
         return (v,)
     rig.check(0x52D360, "SkyDome_Init", setup)
-    rig.check(0x52D400, "sub_52D400", setup)
+    rig.check(0x52D400, "Sky_SetTint", setup)
     rig.check(0x52D420, "Sky_Init", setup)
