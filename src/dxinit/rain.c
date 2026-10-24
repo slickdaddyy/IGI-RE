@@ -6,13 +6,7 @@
 #include "hook.h"
 #include "dxinit/dxinit.h"
 #include "win/wintypes.h"
-
-typedef struct MapHit {
-    Task *task;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x50];
-} MapHit;
+#include "coll/colltypes.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401400, void, TaskType_SetHandler, (int type, uint8_t slot, void *fn));
@@ -32,7 +26,7 @@ ORIG(0x4B47C0, int, Random_Int, (void *r, int n));
 ORIG(0x4B72E0, void *, SortRender_Add, (void (*fn)(void *), int size, uint32_t key));
 ORIG(0x4C6840, void, DynCube_ListRemove, (void *world, void *obj, int list));
 ORIG(0x4C6890, void, DynCube_ListAdd, (void *world, void *obj, int list));
-ORIG(0x4CB9F0, void, Coll_DropPointsMat, (void *world, MapHit *results, Vec3d *points, int count, const double *dz,
+ORIG(0x4CB9F0, void, Coll_DropPointsMat, (void *world, CollHit *results, Vec3d *points, int count, const double *dz,
                                           int unk, int unk2, unsigned int flags));
 
 /* one falling drop or flake, positions inside a 10895.36 square tile */
@@ -266,7 +260,7 @@ void Rain_UpdateGrid(Rain *r)
             c->flags &= mask;
             if (!c->flags && budget-- > 0) {
                 double dz = -r->fallDist;
-                MapHit hit;
+                CollHit hit;
 
                 c->x = x;
                 c->y = cy;

@@ -34,13 +34,6 @@ typedef struct ExplodeCreateArg {
     ExplodeParams *params;
 } ExplodeCreateArg;
 
-/* the argument of the script argument handler */
-typedef struct ScriptArg {
-    ExplodeParams *out;
-    void *args;
-    int index;
-} ScriptArg;
-
 /* a magic object that swaps its model and explodes once it took enough damage */
 typedef struct ExplodeMagicObj {
     RigidDynCubeObj obj;

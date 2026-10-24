@@ -15,13 +15,6 @@ FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-/* argument of the script argument parsers */
-typedef struct ScriptArg {
-    void *out;
-    void *args;
-    int index;
-} ScriptArg;
-
 /* argument of the weapon config handlers */
 typedef struct ConfigArg {
     void *config;

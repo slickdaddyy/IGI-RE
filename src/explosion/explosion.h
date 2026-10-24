@@ -9,6 +9,7 @@
 #include "task/tasktypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "qasm/qasmtypes.h"
+#include "explosion/explosiontypes.h"
 
 FN_EXTERN(Task_FalseHandler);
 FN_EXTERN(Task_Nothing);
@@ -87,27 +88,6 @@ typedef struct FlashBang {
     float radius;
     int unk44;
 } FlashBang;
-
-/* "Explosion0" (0x88 bytes), a burst of fireballs, smoke and fragments */
-typedef struct Explosion {
-    Task task;
-    Vec3d pos;
-    int bursts;   /* 0x38 */
-    int interval; /* 0x3C */
-    int timer;    /* 0x40 */
-    Vec3f dir;    /* 0x44 */
-    float blast;  /* 0x50 */
-    float size;   /* 0x54 */
-    float unk58;
-    float spread;   /* 0x5C */
-    float minSpeed; /* 0x60 */
-    float maxSpeed; /* 0x64 */
-    int fragments;  /* 0x68 */
-    int fireballs;  /* 0x6C */
-    char sound[16]; /* 0x70 */
-    void *group;    /* 0x80, the fragments */
-    int unk84;
-} Explosion;
 
 /* "ExplosionSmoke" (0x48 bytes) */
 typedef struct ExplosionSmoke {
@@ -196,7 +176,6 @@ _Static_assert(offsetof(BulletHole, last) == 0x44E0, "BulletHole");
 _Static_assert(offsetof(BulletHole, mesh) == 0xE12C, "BulletHole");
 _Static_assert(sizeof(BulletHole) == 0xE148, "BulletHole");
 _Static_assert(sizeof(FlashBang) == 0x48, "FlashBang");
-_Static_assert(sizeof(Explosion) == 0x88, "Explosion");
 _Static_assert(sizeof(ExplosionSmoke) == 0x48, "ExplosionSmoke");
 _Static_assert(sizeof(FireBall) == 0x118, "FireBall");
 _Static_assert(sizeof(Fragment) == 0x118, "Fragment");

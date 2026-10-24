@@ -45,4 +45,11 @@ typedef struct TaskNote {
     char text[0x41];
 } TaskNote;
 
+/* argument of a script parse callback */
+typedef struct ScriptArg {
+    void *out;
+    void *args;
+    int index;
+} ScriptArg;
+
 #endif

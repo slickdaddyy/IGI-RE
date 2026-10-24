@@ -6,27 +6,8 @@
 
 #include "hook.h"
 #include "camera/camera.h"
-
-/* "Explosion0" task (0x88 bytes): explodes count times, a random delay apart */
-struct Explosion {
-    Task task;
-    Vec3d pos;
-    int count;
-    int delay;
-    int timer;
-    float dir[3];
-    float unk50;
-    float radius;
-    float unk58;
-    float angle;
-    float speedMin;
-    float speedMax;
-    int unk68;
-    int unk6C;
-    char sound[16];
-    void *smoke;
-    int unk84;
-};
+#include "humanai/humanaitypes.h"
+#include "explosion/explosiontypes.h"
 
 /* sent to the object an explosion burns a mark on */
 typedef struct BurnMsg {
@@ -36,26 +17,12 @@ typedef struct BurnMsg {
     float unkC;
 } BurnMsg;
 
-/* what the AI hears */
-typedef struct Noise {
-    int type;
-    int unk4;
-    int unk8;
-    float radius;
-    Vec3d *pos;
-    void *unk14;
-    Task *source;
-} Noise;
-
-_Static_assert(offsetof(Explosion, smoke) == 0x80, "Explosion.smoke");
-_Static_assert(sizeof(Explosion) == 0x88, "Explosion");
-
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
-ORIG(0x450CE0, void, HumanAI_Broadcast, (Noise *noise));
+ORIG(0x450CE0, void, HumanAI_Broadcast, (AIMessage *noise));
 ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
 ORIG(0x47F200, void, Explosion_Burst, (Explosion *e));
 ORIG(0x4B4770, long double, Random_Float, (void *rng));
@@ -96,14 +63,14 @@ void Explosion_RunHandler(Explosion *e)
 {
     if (e->timer)
         e->timer--;
-    if (e->timer || !e->count)
+    if (e->timer || !e->bursts)
         return;
     Explosion_Burst(e);
-    if (--e->count == 0) {
+    if (--e->bursts == 0) {
         Task_Delete(e);
         return;
     }
-    e->timer = Random_Int(Game_GetRandom(), e->delay);
+    e->timer = Random_Int(Game_GetRandom(), e->interval);
 }
 HOOK(0x480F40, Explosion_RunHandler);
 
@@ -145,27 +112,27 @@ Explosion *Explosion_New(Vec3d *pos, int count, int delay, float unk50, float ra
     float v[3];
 
     e->pos = *pos;
-    e->delay = delay;
-    e->count = count;
+    e->interval = delay;
+    e->bursts = count;
     e->timer = delay;
-    e->unk50 = unk50;
+    e->blast = unk50;
     e->unk58 = unk58;
-    e->radius = radius;
-    e->dir[0] = dir[0];
-    e->dir[1] = dir[1];
-    e->dir[2] = dir[2];
-    if (!x87_eq(e->dir[0], 0) || !x87_eq(e->dir[1], 0) || !x87_eq(e->dir[2], 0)) {
-        long double inv = kOne / x87_sqrt(e->dir[0] * e->dir[0] + e->dir[1] * e->dir[1] + e->dir[2] * e->dir[2]);
+    e->size = radius;
+    e->dir.x = dir[0];
+    e->dir.y = dir[1];
+    e->dir.z = dir[2];
+    if (!x87_eq(e->dir.x, 0) || !x87_eq(e->dir.y, 0) || !x87_eq(e->dir.z, 0)) {
+        long double inv = kOne / x87_sqrt(e->dir.x * e->dir.x + e->dir.y * e->dir.y + e->dir.z * e->dir.z);
 
-        e->dir[0] = e->dir[0] * inv;
-        e->dir[1] = e->dir[1] * inv;
-        e->dir[2] = e->dir[2] * inv;
+        e->dir.x = e->dir.x * inv;
+        e->dir.y = e->dir.y * inv;
+        e->dir.z = e->dir.z * inv;
     }
-    e->angle = angle;
-    e->speedMin = speedMin;
-    e->speedMax = speedMax;
-    e->unk68 = unk68;
-    e->unk6C = unk6C;
+    e->spread = angle;
+    e->minSpeed = speedMin;
+    e->maxSpeed = speedMax;
+    e->fragments = unk68;
+    e->fireballs = unk6C;
     if (burn && *burn && gTaskHandlers[BulletHole_GetEvent()][(*burn)->type]) {
         BurnMsg msg;
         Task *t = *burn;
@@ -180,18 +147,18 @@ Explosion *Explosion_New(Vec3d *pos, int count, int delay, float unk50, float ra
     v[0] = Random_Float(Game_GetRandom()) * kSpin;
     v[1] = Random_Float(Game_GetRandom()) * kSpin;
     v[2] = Random_Float(Game_GetRandom()) * kSpin;
-    e->smoke = SimpointObjContainer_New(0x2D, sprite, NULL, 0x1.f5c29p-1f, 0x1.333334p-1f, 0x1.64ce9ep+5f,
-                                    e->radius * kSmokeScale, v, 0);
+    e->group = SimpointObjContainer_New(0x2D, sprite, NULL, 0x1.f5c29p-1f, 0x1.333334p-1f, 0x1.64ce9ep+5f,
+                                    e->size * kSmokeScale, v, 0);
     if (noiseType != -1) {
-        Noise n;
+        AIMessage n;
 
         n.type = noiseType;
-        n.unk4 = 1;
-        n.unk8 = noiseUnk8;
+        n.team = 1;
+        n.flags = noiseUnk8;
         n.radius = noiseRadius;
         n.pos = pos;
-        n.unk14 = e;
-        n.source = NULL;
+        n.from = (Task *)e;
+        n.about = NULL;
         HumanAI_Broadcast(&n);
     }
     e->unk84 = unk84;

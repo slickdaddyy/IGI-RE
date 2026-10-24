@@ -2,6 +2,7 @@
 
 #include "igi.h"
 #include "hook.h"
+#include "humanai/humanaitypes.h"
 
 typedef struct HumanStateMachine HumanStateMachine;
 typedef struct HumanPlayer HumanPlayer;
@@ -59,17 +60,6 @@ _Static_assert(offsetof(HumanPlayer, unk4EC) == 0x4EC, "4EC");
 _Static_assert(offsetof(HumanPlayer, vel) == 0x664, "vel");
 _Static_assert(offsetof(HumanPlayer, unkDC0) == 0xDC0, "DC0");
 
-/* Noise event heard by the AI. */
-typedef struct HumanNoise {
-    int kind;
-    int unk04;
-    int unk08;
-    float radius;
-    int unk10;
-    HumanPlayer *src;
-    HumanPlayer *unk18;
-} HumanNoise;
-
 ORIG(0x416D80, char, PlayerXPHit, (void));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4C1780, void, Debug_Log, (HumanPlayer *p));
@@ -84,7 +74,7 @@ ORIG(0x4D65B0, void, Anim_SetTime, (void *model, int track, float time));
 ORIG(0x4659B0, void, HumanView_SetDip, (void *obj, float v));
 ORIG(0x4E6B00, void, Sound_Play, (void *obj, const char *sound));
 ORIG(0x4C3440, int, DynCubeObj_GetPosition, (HumanPlayer *p));
-ORIG(0x450CE0, void, HumanAI_Broadcast, (HumanNoise *e));
+ORIG(0x450CE0, void, HumanAI_Broadcast, (AIMessage *e));
 ORIG(0x40AEF0, void, HumanPlayer_RunForwardLeftUpdate, (HumanStateMachine *sm, HumanPlayer *p));
 
 extern float gHumanAirSpeed;
@@ -104,7 +94,7 @@ void HumanPlayer_UpdateFall(HumanPlayer *p)
     long double vz, side, t, a, b;
     const char *sound;
     char buf[32];
-    HumanNoise e;
+    AIMessage e;
 
     vz = (long double)p->vel[2] - 84.74169158935547f;
     p->vel[2] = vz;
@@ -158,12 +148,12 @@ void HumanPlayer_UpdateFall(HumanPlayer *p)
             e.radius = 40960.0f;
         }
     }
-    e.kind = 11;
-    e.unk04 = p->unkFC;
-    e.unk08 = 0x46;
-    e.unk10 = DynCubeObj_GetPosition(p);
-    e.src = p;
-    e.unk18 = p;
+    e.type = 11;
+    e.team = p->unkFC;
+    e.flags = 0x46;
+    e.pos = (Vec3d *)(DynCubeObj_GetPosition(p));
+    e.from = (Task *)p;
+    e.about = (Task *)p;
     HumanAI_Broadcast(&e);
 }
 HOOK(0x408460, HumanPlayer_UpdateFall);

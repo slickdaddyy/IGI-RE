@@ -11,6 +11,7 @@
 #include "weapon/weapon.h"
 #include "qvertex/qvertextypes.h"
 #include "coll/colltypes.h"
+#include "humanai/humanaitypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401AE0, void *, TaskRef_Add, (void *task));
@@ -106,17 +107,6 @@ extern int gQVertexStrip;
 extern WeaponCategory gWeaponCategories[];
 
 extern void (*gRenderFuncs[])(QVertexStrip *);
-
-/* 0x1C byte message for 0x450CE0, probably a noise enemies can hear */
-typedef struct HumanNoise {
-    int type;
-    int unk4;
-    int unk8;
-    float radius;
-    void *pos;
-    void *unk14;
-    void *unk18;
-} HumanNoise;
 
 typedef struct HumanHit {
     int unk00;
@@ -423,15 +413,15 @@ void HumanPlayer_UpdateFenceClimb(HumanPlayer *h)
         if (h->state.input & HUMAN_DEAD)
             State_Set(h, HSTATE_DIE);
     } else {
-        HumanNoise n;
+        AIMessage n;
 
         n.type = 0xD;
-        n.unk4 = h->unk0FC;
-        n.unk8 = 0x46;
+        n.team = h->unk0FC;
+        n.flags = 0x46;
         n.radius = 20480.0f;
-        n.pos = DynCubeObj_GetPosition(h);
-        n.unk14 = h;
-        n.unk18 = h;
+        n.pos = (Vec3d *)(DynCubeObj_GetPosition(h));
+        n.from = (Task *)h;
+        n.about = (Task *)h;
         HumanAI_Broadcast(&n);
     }
 }

@@ -10,6 +10,7 @@
 #include "viewcam/viewcam.h"
 #include "coll/colltypes.h"
 #include "material/materialtypes.h"
+#include "humanai/humanaitypes.h"
 
 FN_EXTERN(crt_CIpow);
 
@@ -47,17 +48,6 @@ typedef struct HumanPosMsg {
     float radius;
 } HumanPosMsg;
 
-/* the 0x1C byte message passed to HumanAI_Broadcast, a noise AI can hear */
-typedef struct HumanNoise {
-    int type;
-    int team;
-    int unk8;
-    float radius;
-    double *pos;
-    Human *from;
-    Human *from2;
-} HumanNoise;
-
 /* asks the hit task to put a decal on itself */
 typedef struct DecalMsg {
     void *hit;
@@ -91,7 +81,7 @@ ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416A70, Task *, Game_GetPlayer, (int i));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x416FB0, int, Game_IsRaining, (void));
-ORIG(0x450CE0, void, HumanAI_Broadcast, (HumanNoise *noise));
+ORIG(0x450CE0, void, HumanAI_Broadcast, (AIMessage *noise));
 ORIG(0x460BF0, uint8_t, Human_GetEvent0, (void));
 ORIG(0x460C60, QTaskList *, Human_GetList, (void));
 ORIG(0x462390, void, Human_ProbeGround, (Human *h, double *pos, double *to, float *vel, unsigned *bits, float dist));
@@ -644,15 +634,15 @@ void Human_Footstep(Human *h)
         }
     }
     if (!Human_IsCrouching(h)) {
-        HumanNoise noise;
+        AIMessage noise;
 
         noise.radius = *(float *)(ground + 0x50) * 4096.0f;
         noise.team = h->team;
-        noise.pos = h->soundPos;
+        noise.pos = (Vec3d *)h->soundPos;
         noise.type = 10;
-        noise.unk8 = 0x46;
-        noise.from = h;
-        noise.from2 = h;
+        noise.flags = 0x46;
+        noise.from = (Task *)h;
+        noise.about = (Task *)h;
         HumanAI_Broadcast(&noise);
     }
 }

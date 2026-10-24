@@ -1,6 +1,8 @@
 #ifndef QVERTEX_QVERTEXTYPES_H
 #define QVERTEX_QVERTEXTYPES_H
 
+#include <stdint.h>
+
 /* What the QVertex drawing functions hand to the render driver. */
 typedef struct QVertex {
     float x, y, z;
@@ -15,5 +17,11 @@ typedef struct QVertexStrip {
     int count;
     QVertex *verts;
 } QVertexStrip;
+
+typedef struct TLVertex {
+    float x, y, z, rhw;
+    uint32_t color;
+    float u, v;
+} TLVertex;
 
 #endif

@@ -1,8 +1,38 @@
 #ifndef COLL_COLLTYPES_H
 #define COLL_COLLTYPES_H
 
+#include <stdint.h>
+
 #include "types.h"
 #include "task/tasktypes.h"
+
+typedef struct CollFilter {
+    int unk0;
+    Task *task;
+    Task *owner;
+    Task *other;
+    float unk10;
+} CollFilter;
+
+/* the filter of a collision query: the task to leave out */
+typedef struct CollIgnore {
+    int unk0;
+    Task *task;
+} CollIgnore;
+
+/* a terrain box whose bit map marks material holes */
+typedef struct CollHole {
+    int material;
+    int texShift;
+    int unk8;
+    int sizeShift;
+    float scale;
+    int unk14;
+    double x, y;
+    const uint8_t *bits;
+    int unk2C;
+} CollHole;
+_Static_assert(sizeof(CollHole) == 0x30, "CollHole");
 
 /* a hit of the collision queries, 0x70 bytes */
 typedef struct CollHit {
@@ -22,19 +52,5 @@ typedef struct CollHit {
     char unk68[8];
 } CollHit;
 _Static_assert(sizeof(CollHit) == 0x70, "CollHit");
-
-typedef struct CollFilter {
-    int unk0;
-    Task *task;
-    Task *owner;
-    Task *other;
-    float unk10;
-} CollFilter;
-
-/* the filter of a collision query: the task to leave out */
-typedef struct CollIgnore {
-    int unk0;
-    Task *task;
-} CollIgnore;
 
 #endif

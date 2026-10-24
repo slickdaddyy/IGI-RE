@@ -85,17 +85,6 @@ typedef struct AIDetectView {
     char unk71[7];
 } AIDetectView;
 
-/* a message sent to AI tasks (noise, alarm, detection, ...) */
-typedef struct AIMessage {
-    int type;
-    int team;
-    unsigned flags;
-    float radius;
-    Vec3d *pos;
-    Task *from;
-    Task *about;
-} AIMessage;
-
 /* AIMessage.flags */
 #define AIMSG_IN_VIEW    0x1
 #define AIMSG_IN_RADIUS  0x2

@@ -6,6 +6,7 @@
 #include "res/restypes.h"
 #include "d3d/d3dtypes.h"
 #include "camfeed/camfeedtypes.h"
+#include "qvertex/qvertextypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x490370, int, Timer_GetMs, (void));
@@ -52,12 +53,6 @@ typedef struct ClipPrim {
     float x, y, w, h;
     int unk1C, unk20;
 } ClipPrim;
-
-typedef struct Vertex {
-    float x, y, z, rhw;
-    uint32_t color;
-    float u, v;
-} Vertex;
 
 extern uint16_t gBandFilterType;
 extern uint16_t gHandiCamFilterType;
@@ -288,9 +283,9 @@ void BandFilter_Run(BandFilter *t)
 HOOK(0x4A38A0, BandFilter_Run);
 
 /* NULL when the lock failed */
-static Vertex *vb_lock(int n, int *start)
+static TLVertex *vb_lock(int n, int *start)
 {
-    Vertex *p = NULL;
+    TLVertex *p = NULL;
     long hr;
 
     if (gVBTL.used + n > gVBTL.size) {
@@ -334,7 +329,7 @@ static void overlay_states(void)
     DEV_SetRenderState(gDevice, 0x0E, 0);
 }
 
-static void vertex(Vertex *v, float x, float y, float z, float rhw)
+static void vertex(TLVertex *v, float x, float y, float z, float rhw)
 {
     v->x = x;
     v->y = y;
@@ -342,14 +337,14 @@ static void vertex(Vertex *v, float x, float y, float z, float rhw)
     v->rhw = rhw;
 }
 
-static void uv(Vertex *v, float u, float tv)
+static void uv(TLVertex *v, float u, float tv)
 {
     v->u = u;
     v->v = tv;
 }
 
 /* one textured quad across the screen per pair of band edges */
-static Vertex *band_quads(Vertex *p, const float *ys, int pairs, float vz, float rhw, float h)
+static TLVertex *band_quads(TLVertex *p, const float *ys, int pairs, float vz, float rhw, float h)
 {
     int left = (int)round_ll(gViewX);
     float right = (long double)left + gScreenW;
@@ -396,7 +391,7 @@ void BandFilter_Render(BandFilter *t)
     float ys[100];
     float z, vz, rhw, h, top, bottom;
     long double y;
-    Vertex *p;
+    TLVertex *p;
     int n, start;
 
     z = t->depth > gNearPlane ? t->depth : gNearPlane;
@@ -457,7 +452,7 @@ void HandiCamFilter_Render(HandiCamFilter *t)
     float z, vz, rhw, y;
     long double next, limit, a, b, jx, jy;
     uint32_t color;
-    Vertex *p;
+    TLVertex *p;
     int n, start, i, j, x0, x1, iy, cx, cy;
 
     z = t->depth > gNearPlane ? t->depth : gNearPlane;

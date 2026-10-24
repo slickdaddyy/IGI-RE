@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "task/tasktypes.h"
 #include "coll/colltypes.h"
+#include "humanai/humanaitypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
@@ -279,16 +280,6 @@ typedef struct HumanCameraInfo {
     int unk6C;
     int mode;
 } HumanCameraInfo;
-
-typedef struct HumanNoise {
-    int type;
-    int team;
-    int unk8;
-    float radius;
-    double *pos;
-    void *unk14;
-    Task *source;
-} HumanNoise;
 
 void Human_WakeIfVisible(Human *h);
 void Human_Wake(Human *h);

@@ -32,4 +32,16 @@ typedef struct AIDetection {
 } AIDetection;
 _Static_assert(sizeof(AIDetection) == 0x2430, "AIDetection");
 
+/* a message to the AI around: a noise, a shot, a call */
+typedef struct AIMessage {
+    int type;
+    int team;
+    unsigned flags;
+    float radius;
+    Vec3d *pos;
+    Task *from;
+    Task *about;
+} AIMessage;
+_Static_assert(sizeof(AIMessage) == 0x1C, "AIMessage");
+
 #endif

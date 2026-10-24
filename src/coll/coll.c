@@ -49,17 +49,6 @@ typedef struct CollBump {
     int unk2C;
 } CollBump;
 
-typedef struct CollHole {
-    uint8_t material;
-    char unk1[0xB];
-    int shift;
-    float scale;
-    int unk14;
-    double x, y;
-    const uint8_t *bits;
-    int unk2C;
-} CollHole;
-
 extern const int gCollChildTable[];
 extern TaskHandler gTaskEnterHandlers[];
 extern TaskHandler gTaskLeaveHandlers[];
@@ -821,8 +810,8 @@ unsigned int Coll_GetHitMaterial(Terrain *t, const Vec3d *p)
         int iy = Coll_Fistp(fy);
         long double tx = fx - ix;
         long double ty = fy - (long double)iy;
-        const uint8_t *r0 = h->bits + (iy << (h->shift & 31));
-        const uint8_t *r1 = h->bits + ((iy + 1) << (h->shift & 31));
+        const uint8_t *r0 = h->bits + (iy << (h->sizeShift & 31));
+        const uint8_t *r1 = h->bits + ((iy + 1) << (h->sizeShift & 31));
         int b00 = (r0[ix >> 3] >> (ix & 7)) & 1;
         int b01 = (r0[(ix + 1) >> 3] >> ((ix + 1) & 7)) & 1;
         int b11 = (r1[(ix + 1) >> 3] >> ((ix + 1) & 7)) & 1;
@@ -831,7 +820,7 @@ unsigned int Coll_GetHitMaterial(Terrain *t, const Vec3d *p)
         long double bottom = (b11 - b10) * tx + b10;
 
         if ((bottom - top) * ty + top >= kStepUp) {
-            idx = h->material;
+            idx = (uint8_t)h->material;
             break;
         }
     }

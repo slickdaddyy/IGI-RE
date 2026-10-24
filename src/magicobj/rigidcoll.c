@@ -25,7 +25,7 @@ extern double kZeroD;
 extern double kOneD;
 
 /* event 8 query, see Coll_LineOfSight */
-typedef struct CollLineQuery {
+typedef struct RigidLineQuery {
     double *from;
     double *to;
     uint8_t filterEvent;    /* 0xFF = no filter */
@@ -33,17 +33,17 @@ typedef struct CollLineQuery {
     char *world;            /* +0xD3C: float * per material, how much it lets through */
     char blocked;
     float visibility;
-} CollLineQuery;
+} RigidLineQuery;
 
 /* sphere tree node */
-typedef struct CollNode {
+typedef struct RigidCollNode {
     float center[3];
     float radius;
     uint16_t firstTri;
     uint16_t triCount;
     uint16_t child;
     uint16_t next;
-} CollNode;
+} RigidCollNode;
 
 typedef struct CollTri {
     uint16_t v[3];
@@ -65,7 +65,7 @@ typedef struct CollMesh {
     CollTri *tris;
     float (*verts)[4];
     CollSurface *surfaces;
-    CollNode *nodes;
+    RigidCollNode *nodes;
 } CollMesh;
 
 /* the segment in model space and its bounding box */
@@ -84,7 +84,7 @@ static float coll_max_scale(const RigidDynCubeObj *o)
     return o->scale[0] > m ? o->scale[0] : m;
 }
 
-static int coll_sphere_hit(const CollSeg *s, const CollNode *n)
+static int coll_sphere_hit(const CollSeg *s, const RigidCollNode *n)
 {
     float cx = n->center[0] - s->a[0];
     float cy = n->center[1] - s->a[1];
@@ -116,8 +116,8 @@ static float coll_abs(float v)
 }
 
 /* 0 = keep going, 1 = stop */
-static int coll_node_tris(RigidDynCubeObj *o, CollLineQuery *q, CollMesh *mesh, float (*verts)[4], void *lod,
-                          const CollSeg *s, const CollNode *n)
+static int coll_node_tris(RigidDynCubeObj *o, RigidLineQuery *q, CollMesh *mesh, float (*verts)[4], void *lod,
+                          const CollSeg *s, const RigidCollNode *n)
 {
     CollTri *t = &mesh->tris[n->firstTri];
     int j;
@@ -252,12 +252,12 @@ static int coll_node_tris(RigidDynCubeObj *o, CollLineQuery *q, CollMesh *mesh, 
 }
 
 /* slot 8: lowers q->visibility for every mesh triangle the segment crosses */
-void RigidDynCubeObj_CollLine(RigidDynCubeObj *o, CollLineQuery *q)
+void RigidDynCubeObj_CollLine(RigidDynCubeObj *o, RigidLineQuery *q)
 {
     double *p0 = q->from;
     double *p1 = q->to;
-    CollNode *stack[100];
-    CollNode *nodes, *n;
+    RigidCollNode *stack[100];
+    RigidCollNode *nodes, *n;
     CollMesh *mesh;
     CollSeg s;
     void *lod;

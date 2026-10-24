@@ -9,6 +9,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "terrain/terraintypes.h"
+#include "humanai/humanaitypes.h"
 
 typedef struct Human {
     Task task;
@@ -55,16 +56,6 @@ typedef struct PatrolRoute {
     char unk16[2];
     int timer;
 } PatrolRoute;
-
-typedef struct AIMessage {
-    int type;
-    int team;
-    unsigned flags;
-    float radius;
-    Vec3d *pos;
-    Task *from;
-    Task *about;
-} AIMessage;
 
 typedef struct HumanAI {
     Task task;

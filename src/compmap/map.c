@@ -37,9 +37,9 @@ ORIG(0x460C60, QTaskList *, Human_GetList, (void));
 ORIG(0x476030, QTaskList *, Mine_GetList, (void));
 ORIG(0x443660, QTaskList *, SCameraLens_GetList, (void));
 ORIG(0x4C3440, Vec3d *, DynCubeObj_GetPosition, (Task *obj));
-ORIG(0x4CC2A0, void, Coll_Lines, (void *world, MapHit *results, Vec3d *starts, Vec3d *ends, int count, int unk,
+ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *results, Vec3d *starts, Vec3d *ends, int count, int unk,
                                   void *query, unsigned int flags));
-ORIG(0x4CB9F0, void, Coll_DropPointsMat, (void *world, MapHit *results, Vec3d *points, int count, const double *dz,
+ORIG(0x4CB9F0, void, Coll_DropPointsMat, (void *world, CollHit *results, Vec3d *points, int count, const double *dz,
                                           int unk, int unk2, unsigned int flags));
 ORIG(0x466F60, MapLimit *, ComputerLimit_Get, (void));
 ORIG(0x467D70, char *, ComputerObject_New, (void *parent));
@@ -417,7 +417,7 @@ HOOK(0x46A200, ComputerMap_ClampCamera);
 void ComputerMap_DropCamera(ComputerMap *map)
 {
     double dz = kDrop;
-    MapHit hit;
+    CollHit hit;
 
     Coll_DropPointsMat(Game_GetWorld(), &hit, &gMapPos, 1, &dz, 0xFF, 0, 0x80000000);
     if (hit.found)
@@ -483,7 +483,7 @@ void ComputerMap_Trace(ComputerMap *map)
         double sx, sy, t;
         long double fx;
         Vec3d start, dir, n, end, tmp;
-        MapHit hit;
+        CollHit hit;
         int i, count, found1 = 0, found2 = 0, found3 = 0;
         Task *h = NULL;
 

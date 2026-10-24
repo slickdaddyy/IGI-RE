@@ -32,12 +32,6 @@ typedef void (*ClipFn)(ClipVert **v, QVertexStrip *s);
 
 void QVertex_ClipTriangle(ClipVert a, ClipVert b, ClipVert c, float nearZ, ClipFn fn, QVertexStrip *s);
 
-typedef struct TLVertex {
-    float x, y, z, rhw;
-    uint32_t color;
-    float u, v;
-} TLVertex;
-
 typedef struct StripNode {
     void *next;
     int method;

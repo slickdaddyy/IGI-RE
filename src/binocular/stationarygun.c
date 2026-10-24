@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "binocular/binocular.h"
+#include "binocular/binoculartypes.h"
 
 FN_EXTERN(VehiclePart_Delete);
 
@@ -95,14 +96,6 @@ typedef struct Detection {
     char unk0[0x18];
     RefNode *targets;
 } Detection;
-
-/* AIDetection event 0: may the detector see this pair of tasks */
-typedef struct DetectQuery {
-    char result;
-    char pad[7];
-    Task *a;
-    Task *b;
-} DetectQuery;
 
 _Static_assert(sizeof(GunDef) == 0x60, "GunDef");
 _Static_assert(offsetof(AIStationaryGun, def) == 0x1B8, "AIStationaryGun");

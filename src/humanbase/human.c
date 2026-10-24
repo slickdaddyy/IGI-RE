@@ -938,7 +938,7 @@ typedef struct GunshotMsg {
 void Human_GunshotHandler(Human *h, GunshotMsg *msg)
 {
     double pos[3], pts[32][3];
-    HumanNoise noise;
+    AIMessage noise;
     Task *a;
     void *snd;
     int team, n, i;
@@ -967,16 +967,16 @@ void Human_GunshotHandler(Human *h, GunshotMsg *msg)
         }
         noise.type = 0x14;
         noise.team = 1;
-        noise.unk8 = 0x46;
+        noise.flags = 0x46;
         noise.radius = kNoiseRadius;
-        noise.pos = pts[i];
-        noise.unk14 = msg->shot;
+        noise.pos = (Vec3d *)pts[i];
+        noise.from = msg->shot;
         if (!msg->shooter) {
-            noise.source = 0;
+            noise.about = 0;
         } else {
-            noise.source = *msg->shooter;
-            if (noise.source)
-                noise.team = Human_GetTeam(noise.source);
+            noise.about = *msg->shooter;
+            if (noise.about)
+                noise.team = Human_GetTeam(noise.about);
         }
         HumanAI_Broadcast(&noise);
     }

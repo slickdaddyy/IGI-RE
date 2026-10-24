@@ -71,22 +71,8 @@ typedef struct TextureModifier {
     int unkEC;
 } TextureModifier;
 
-/* what Coll reads while walking the terrain */
-typedef struct CollHole {
-    int material;
-    int texShift;
-    int unk8;
-    int sizeShift;
-    float scale;
-    int unk14;
-    double x, y;
-    void *bits;
-    int unk2C;
-} CollHole;
-
 _Static_assert(sizeof(TextureModifier) == 0xF0, "TextureModifier");
 _Static_assert(offsetof(TextureModifier, slot) == 0xE4, "TextureModifier.slot");
-_Static_assert(sizeof(CollHole) == 0x30, "CollHole");
 
 extern void *gTexModParams;
 extern uint16_t gTexModType;

@@ -104,16 +104,6 @@ typedef struct AIEvent {
     Task **about;
 } AIEvent;
 
-typedef struct AIMessage {
-    int type;
-    int team;
-    unsigned flags;
-    float radius;
-    Vec3d *pos;
-    Task *from;
-    Task *about;
-} AIMessage;
-
 /* the AIAction_Combat parameter block, after its list node */
 typedef struct CombatData {
     List *events;

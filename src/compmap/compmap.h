@@ -7,6 +7,7 @@
 #include "ui/ui.h"
 #include "types.h"
 #include "qasm/qasmtypes.h"
+#include "coll/colltypes.h"
 
 /* the storage of a loaded sprite */
 typedef struct SpriteSlot {
@@ -113,15 +114,6 @@ typedef struct MapCamera {
     float fov;           /* 0x40 */
 } MapCamera;
 
-typedef struct MapHit {
-    Task *task;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x38];
-    int found;           /* 0x58 */
-    char unk5C[0x14];
-} MapHit;
-
 typedef struct Computer {
     char unk0[0x14];
     char *input;         /* 0x14, mouse moves at 0x1B0 / 0x1B4 */
@@ -133,7 +125,6 @@ _Static_assert(sizeof(ComputerTextItem) == 0x90, "ComputerTextItem");
 _Static_assert(sizeof(ComputerMenu) == 0x3C, "ComputerMenu");
 _Static_assert(sizeof(ComputerObjectives) == 0x38, "ComputerObjectives");
 _Static_assert(sizeof(ComputerMap) == 0xAC, "ComputerMap");
-_Static_assert(sizeof(MapHit) == 0x70, "MapHit");
 
 extern uint16_t gComputerLogType;
 extern const char *gLogLines[];

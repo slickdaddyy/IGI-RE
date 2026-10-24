@@ -6,6 +6,7 @@
 #include "qvertex/qvertextypes.h"
 #include "win/wintypes.h"
 #include "res/restypes.h"
+#include "humanai/humanaitypes.h"
 
 /* The "Gun" task (0x1B0 bytes, 0x5BE3C6), base of the hand weapons. These
    are its handlers from 0x479780 on; the type is registered by 0x477E30. */
@@ -111,17 +112,6 @@ typedef struct ReloadMsg {
     char done;
     char unlimited;
 } ReloadMsg;
-
-/* the 0x1C byte message HumanAI_Broadcast sends, a noise the AI can hear */
-typedef struct AIMessage {
-    int type;
-    int team;
-    int flags;
-    float radius;
-    Vec3d *pos;
-    void *from;
-    void *about;
-} AIMessage;
 
 /* the HUD sprites and text the human render handler passes on */
 typedef struct Hud {
@@ -261,7 +251,7 @@ void Gun_ShootHandler(Gun *g, FireMsg *m)
     noise.flags = 0x46;
     memcpy(&noise.radius, &w->detectRange, 4);
     noise.pos = &g->muzzle;
-    noise.from = g;
+    noise.from = (Task *)g;
     if (m->h) {
         noise.team = Human_GetTeam(m->h);
         noise.about = m->h;

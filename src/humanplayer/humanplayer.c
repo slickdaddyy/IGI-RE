@@ -146,9 +146,9 @@ ORIG(0x4D96F0, void, BoneDynCubeObj_Deinit, (HumanPlayer *h));
 ORIG(0x4E6B00, int, Sound_Play, (HumanView *v, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (int sound));
 ORIG(0x4E7BD0, void, Debug_printf, (const char *fmt, ...));
-ORIG(0x4EC190, void, StateMachine_Init, (StateMachine *sm, StateFn update, StateFn *states, int state,
+ORIG(0x4EC190, void, StateMachine_Init, (HumanPlayerSM *sm, StateFn update, StateFn *states, int state,
                                          int combo_count, void *combos));
-ORIG(0x4EC1E0, void, StateMachine_Update, (StateMachine *sm, HumanPlayer *h));
+ORIG(0x4EC1E0, void, StateMachine_Update, (HumanPlayerSM *sm, HumanPlayer *h));
 ORIG(0x4EE140, char *, PhysicsObjType_Find, (void *p));
 ORIG(0x4F1980, void *, ParamTable_Extend, (void *p, int n));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
@@ -267,7 +267,7 @@ static inline int pressed(HumanPlayer *h, int i)
     return h->input[i] != 0 && h->prev_input[i] == 0;
 }
 
-static inline void sm_set(StateMachine *sm, int state, HumanPlayer *h)
+static inline void sm_set(HumanPlayerSM *sm, int state, HumanPlayer *h)
 {
     sm->prev = sm->state;
     sm->state = state;
@@ -280,37 +280,37 @@ static inline Task *current_weapon(HumanPlayer *h)
     return WeaponSlots_Get(h->weapons, 0);
 }
 
-void HumanPlayer_BodyLeanRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_BodyComputerRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_BodyHitRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_BodyDeathRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_BodyFlyRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponDisabledRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponIdleRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponFireRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponDryFireRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponReloadRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponLowerRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponRaiseRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponLeanRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponThrowRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponReleaseRun(StateMachine *sm, HumanPlayer *h);
+void HumanPlayer_BodyLeanRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_BodyComputerRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_BodyHitRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_BodyDeathRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_BodyFlyRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponDisabledRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponIdleRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponFireRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponDryFireRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponReloadRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponLowerRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponRaiseRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponLeanRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponThrowRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponReleaseRun(HumanPlayerSM *sm, HumanPlayer *h);
 void HumanPlayer_CycleWeapon(HumanPlayer *h, int force);
-void HumanPlayer_WeaponPlaceRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponRecoverRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponMeleeRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponMedipackStartRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponMedipackRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponWaitRun(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_WeaponComputerRun(StateMachine *sm, HumanPlayer *h);
+void HumanPlayer_WeaponPlaceRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponRecoverRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponMeleeRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponMedipackStartRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponMedipackRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponWaitRun(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_WeaponComputerRun(HumanPlayerSM *sm, HumanPlayer *h);
 ScriptValue *DefineHumanPlayerGeneral(ScriptValue *ret, void *unused, void *args);
 ScriptValue *DefineHumanPlayerWeaponCycle(ScriptValue *ret, void *unused, int *args);
 ScriptValue *DefineHumanPlayerWeaponCategory(ScriptValue *ret, void *unused, void *args);
 ScriptValue *DefineHumanPlayerAmmoLimit(ScriptValue *ret, void *unused, int *args);
 void HumanPlayer_SetUnlimitedAmmo(void);
 void HumanPlayer_CreateHandler(HumanPlayer *h, void *arg);
-void HumanPlayer_UpdateBodyInput(StateMachine *sm, HumanPlayer *h);
-void HumanPlayer_UpdateWeaponInput(StateMachine *sm, HumanPlayer *h);
+void HumanPlayer_UpdateBodyInput(HumanPlayerSM *sm, HumanPlayer *h);
+void HumanPlayer_UpdateWeaponInput(HumanPlayerSM *sm, HumanPlayer *h);
 void HumanPlayer_DeleteHandler(HumanPlayer *h);
 void HumanPlayer_GetParamTableHandler(HumanPlayer *h, void **out);
 void HumanPlayer_ParamChangedHandler(HumanPlayer *h, void *arg);
@@ -337,7 +337,7 @@ static void lean_towards(float *pos, float speed, float target)
     }
 }
 
-void HumanPlayer_BodyLeanEnter(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_BodyLeanEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     if (h->crouch)
         Human_PlayAnimSlot(h, 0x13, BLEND);
@@ -347,7 +347,7 @@ void HumanPlayer_BodyLeanEnter(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40DF70, HumanPlayer_BodyLeanEnter);
 
-void HumanPlayer_BodyLeanRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_BodyLeanRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
 
@@ -381,7 +381,7 @@ void HumanPlayer_BodyLeanRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40DFC0, HumanPlayer_BodyLeanRun);
 
-void HumanPlayer_BodyComputerEnter(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_BodyComputerEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     h->crouch = 1;
     Human_PlayAnimSlot(h, sm->state, BLEND);
@@ -393,7 +393,7 @@ void HumanPlayer_BodyComputerEnter(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40E370, HumanPlayer_BodyComputerEnter);
 
-void HumanPlayer_BodyComputerRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_BodyComputerRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     uint32_t in = sm->input;
 
@@ -412,7 +412,7 @@ void HumanPlayer_BodyComputerRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40E3C0, HumanPlayer_BodyComputerRun);
 
-void HumanPlayer_BodyHitEnter(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_BodyHitEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HitAnims *a;
 
@@ -425,7 +425,7 @@ void HumanPlayer_BodyHitEnter(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40E470, HumanPlayer_BodyHitEnter);
 
-void HumanPlayer_BodyHitRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_BodyHitRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     uint32_t in = sm->input;
 
@@ -440,7 +440,7 @@ void HumanPlayer_BodyHitRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40E4D0, HumanPlayer_BodyHitRun);
 
-void HumanPlayer_BodyDeathEnter(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_BodyDeathEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HitAnims *a;
     unsigned int r;
@@ -461,7 +461,7 @@ void HumanPlayer_BodyDeathEnter(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40E560, HumanPlayer_BodyDeathEnter);
 
-void HumanPlayer_BodyDeathRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_BodyDeathRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     uint32_t in;
     Task *w;
@@ -485,7 +485,7 @@ void HumanPlayer_BodyDeathRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40E620, HumanPlayer_BodyDeathRun);
 
-void HumanPlayer_BodyFlyEnter(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_BodyFlyEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     h->crouch = 0;
     Human_PlayAnimSlot(h, sm->state, BLEND);
@@ -496,7 +496,7 @@ void HumanPlayer_BodyFlyEnter(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40E6E0, HumanPlayer_BodyFlyEnter);
 
-void HumanPlayer_BodyFlyRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_BodyFlyRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     float m[9];
     double pos[3];
@@ -547,27 +547,27 @@ void HumanPlayer_BodyFlyRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40E740, HumanPlayer_BodyFlyRun);
 
-void HumanPlayer_WeaponDisabledEnter(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponDisabledEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanPlayer_SetWeaponAnim(h, 0);
     sm->run = HumanPlayer_WeaponDisabledRun;
 }
 HOOK(0x40E960, HumanPlayer_WeaponDisabledEnter);
 
-void HumanPlayer_WeaponDisabledRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponDisabledRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     if (!h->weapon_lock)
         sm_set(sm, WEAPON_IDLE, h);
 }
 HOOK(0x40E980, HumanPlayer_WeaponDisabledRun);
 
-void HumanPlayer_WeaponIdleEnter(StateMachine *sm)
+void HumanPlayer_WeaponIdleEnter(HumanPlayerSM *sm)
 {
     sm->run = HumanPlayer_WeaponIdleRun;
 }
 HOOK(0x40E9B0, HumanPlayer_WeaponIdleEnter);
 
-void HumanPlayer_WeaponIdleRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponIdleRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     Task *w, *cur, *b, *att;
     WeaponInfo *info;
@@ -688,13 +688,13 @@ no_action:
 }
 HOOK(0x40E9C0, HumanPlayer_WeaponIdleRun);
 
-void HumanPlayer_WeaponFireEnter(StateMachine *sm)
+void HumanPlayer_WeaponFireEnter(HumanPlayerSM *sm)
 {
     sm->run = HumanPlayer_WeaponFireRun;
 }
 HOOK(0x40EF60, HumanPlayer_WeaponFireEnter);
 
-void HumanPlayer_WeaponFireRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponFireRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     Task *w = WeaponSlots_Get(h->weapons, 0);
     WeaponInfo *info = Weapon_GetType(w);
@@ -725,7 +725,7 @@ void HumanPlayer_WeaponFireRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40EF70, HumanPlayer_WeaponFireRun);
 
-void HumanPlayer_WeaponDryFireEnter(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponDryFireEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanPlayer_SetWeaponAnim(h, 1);
     Sound_Play(h->view, "guns_dry_1");
@@ -733,7 +733,7 @@ void HumanPlayer_WeaponDryFireEnter(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40F0D0, HumanPlayer_WeaponDryFireEnter);
 
-void HumanPlayer_WeaponDryFireRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponDryFireRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     if (h->weapon_lock)
         sm_set(sm, WEAPON_DISABLED, h);
@@ -742,13 +742,13 @@ void HumanPlayer_WeaponDryFireRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40F100, HumanPlayer_WeaponDryFireRun);
 
-void HumanPlayer_WeaponReloadEnter(StateMachine *sm)
+void HumanPlayer_WeaponReloadEnter(HumanPlayerSM *sm)
 {
     sm->run = HumanPlayer_WeaponReloadRun;
 }
 HOOK(0x40F170, HumanPlayer_WeaponReloadEnter);
 
-void HumanPlayer_WeaponReloadRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponReloadRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
     Task *w = WeaponSlots_Get(h->weapons, 0);
@@ -768,7 +768,7 @@ void HumanPlayer_WeaponReloadRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40F180, HumanPlayer_WeaponReloadRun);
 
-void HumanPlayer_WeaponSwitchEnter(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponSwitchEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanPlayer_SetWeaponAnim(h, 9);
     HumanView_SetWeaponTarget(h->view, WEAPON_DOWN_X, WEAPON_DOWN_Y, WEAPON_SPEED_X, WEAPON_SPEED_Y);
@@ -777,7 +777,7 @@ void HumanPlayer_WeaponSwitchEnter(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40F230, HumanPlayer_WeaponSwitchEnter);
 
-void HumanPlayer_WeaponLowerRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponLowerRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     Task *w;
 
@@ -793,7 +793,7 @@ void HumanPlayer_WeaponLowerRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40F280, HumanPlayer_WeaponLowerRun);
 
-void HumanPlayer_WeaponRaiseRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponRaiseRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     if (h->next_weapon != -1) {
         sm_set(sm, WEAPON_SWITCH, h);
@@ -804,7 +804,7 @@ void HumanPlayer_WeaponRaiseRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40F300, HumanPlayer_WeaponRaiseRun);
 
-void HumanPlayer_WeaponLeanEnter(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponLeanEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanPlayer_SetWeaponAnim(h, 1);
     Human_BeginUse(h);
@@ -814,7 +814,7 @@ void HumanPlayer_WeaponLeanEnter(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40F370, HumanPlayer_WeaponLeanEnter);
 
-void HumanPlayer_WeaponLeanRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponLeanRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
 
@@ -830,7 +830,7 @@ void HumanPlayer_WeaponLeanRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40F3F0, HumanPlayer_WeaponLeanRun);
 
-void HumanPlayer_WeaponAltFireEnter(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponAltFireEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
     WeaponInfo *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
@@ -841,7 +841,7 @@ void HumanPlayer_WeaponAltFireEnter(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40F4A0, HumanPlayer_WeaponAltFireEnter);
 
-void HumanPlayer_WeaponThrowEnter(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponThrowEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
     WeaponInfo *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
@@ -859,7 +859,7 @@ void HumanPlayer_WeaponThrowEnter(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40F4F0, HumanPlayer_WeaponThrowEnter);
 
-void HumanPlayer_WeaponThrowRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponThrowRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
     WeaponInfo *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
@@ -877,7 +877,7 @@ void HumanPlayer_WeaponThrowRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40F590, HumanPlayer_WeaponThrowRun);
 
-void HumanPlayer_WeaponReleaseRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponReleaseRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
     Task *w = WeaponSlots_Get(h->weapons, 0);
@@ -963,14 +963,14 @@ done:
 }
 HOOK(0x40F760, HumanPlayer_CycleWeapon);
 
-void HumanPlayer_WeaponPlaceEnter(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponPlaceEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     h->fire = 1;
     sm->run = HumanPlayer_WeaponPlaceRun;
 }
 HOOK(0x40F930, HumanPlayer_WeaponPlaceEnter);
 
-void HumanPlayer_WeaponPlaceRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponPlaceRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     Task *w;
     WeaponAmmo ammo;
@@ -993,21 +993,21 @@ void HumanPlayer_WeaponPlaceRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40F950, HumanPlayer_WeaponPlaceRun);
 
-void HumanPlayer_WeaponRecoverRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponRecoverRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     if (HumanView_WeaponAtTarget(h->view))
         sm_set(sm, WEAPON_IDLE, h);
 }
 HOOK(0x40FA20, HumanPlayer_WeaponRecoverRun);
 
-void HumanPlayer_WeaponMeleeEnter(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponMeleeEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     h->melee_count = 0;
     sm->run = HumanPlayer_WeaponMeleeRun;
 }
 HOOK(0x40FA60, HumanPlayer_WeaponMeleeEnter);
 
-void HumanPlayer_WeaponMeleeRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponMeleeRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     Task *w = WeaponSlots_Get(h->weapons, 0);
     WeaponAmmo ammo;
@@ -1027,7 +1027,7 @@ void HumanPlayer_WeaponMeleeRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40FA80, HumanPlayer_WeaponMeleeRun);
 
-void HumanPlayer_WeaponMedipackEnter(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponMedipackEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
     WeaponInfo *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
@@ -1038,7 +1038,7 @@ void HumanPlayer_WeaponMedipackEnter(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40FB30, HumanPlayer_WeaponMedipackEnter);
 
-void HumanPlayer_WeaponMedipackStartRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponMedipackStartRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
     WeaponInfo *info;
@@ -1051,7 +1051,7 @@ void HumanPlayer_WeaponMedipackStartRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40FB90, HumanPlayer_WeaponMedipackStartRun);
 
-void HumanPlayer_WeaponMedipackRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponMedipackRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
     WeaponInfo *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
@@ -1085,14 +1085,14 @@ void HumanPlayer_WeaponMedipackRun(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40FBE0, HumanPlayer_WeaponMedipackRun);
 
-void HumanPlayer_WeaponWaitRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponWaitRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     if (sm->input & SM_ANIM_DONE)
         sm_set(sm, WEAPON_IDLE, h);
 }
 HOOK(0x40FD70, HumanPlayer_WeaponWaitRun);
 
-void HumanPlayer_WeaponComputerEnter(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponComputerEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     sm_set(&h->body, BODY_COMPUTER, h);
     h->unk4D0 = 0;
@@ -1100,7 +1100,7 @@ void HumanPlayer_WeaponComputerEnter(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x40FDA0, HumanPlayer_WeaponComputerEnter);
 
-void HumanPlayer_WeaponComputerRun(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_WeaponComputerRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     if (h->body.state != BODY_COMPUTER) {
         h->unk4D0 = 1;
@@ -1286,7 +1286,7 @@ static uint32_t common_input(HumanPlayer *h, uint32_t in)
     return in;
 }
 
-void HumanPlayer_UpdateBodyInput(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_UpdateBodyInput(HumanPlayerSM *sm, HumanPlayer *h)
 {
     uint32_t flags = h->motion->flags;
     uint32_t in = sm->input & 0xFFF7001C;
@@ -1306,7 +1306,7 @@ void HumanPlayer_UpdateBodyInput(StateMachine *sm, HumanPlayer *h)
 }
 HOOK(0x4105C0, HumanPlayer_UpdateBodyInput);
 
-void HumanPlayer_UpdateWeaponInput(StateMachine *sm, HumanPlayer *h)
+void HumanPlayer_UpdateWeaponInput(HumanPlayerSM *sm, HumanPlayer *h)
 {
     uint32_t flags = h->view->motion->flags;
     uint32_t in = sm->input & 0xFFF7001C;

@@ -4,18 +4,6 @@
 #include "statgun/statgun.h"
 #include "binocular/binoculartypes.h"
 
-/* the binocular view drawn over the screen ("BinocularOverlay", 0x2E00 bytes) */
-typedef struct BinocularOverlay {
-    Task task;
-    char unk20[0x18];
-    Matrix matrix;      /* 0x38 */
-    Vec3d pos;          /* 0x60 */
-    float fov;          /* 0x78 */
-    Vec3f unk7C;
-} BinocularOverlay;
-
-_Static_assert(offsetof(BinocularOverlay, unk7C) == 0x7C, "BinocularOverlay");
-
 extern uint16_t gBinocularOverlayType;
 extern uint16_t gBinocularHolderType;
 extern void *gBinocularHolderParams;
@@ -41,7 +29,7 @@ HOOK(0x4723E0, BinocularHolder_Changed);
 void BinocularOverlay_DrawHandler(BinocularOverlay *o)
 {
     o->pos = gViewPos;
-    o->unk7C = gViewUnkBCAAF8;
+    o->dir = gViewUnkBCAAF8;
     BinocularOverlay_Draw(o);
 }
 HOOK(0x472400, BinocularOverlay_DrawHandler);
@@ -94,7 +82,7 @@ HOOK(0x472630, BinocularOverlay_SetPos);
 
 void BinocularOverlay_SetUnk7C(BinocularOverlay *o, const Vec3f *v)
 {
-    o->unk7C = *v;
+    o->dir = *v;
 }
 HOOK(0x472650, BinocularOverlay_SetUnk7C);
 

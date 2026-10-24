@@ -14,61 +14,6 @@ FN_EXTERN(BinocularHolder_GetParams);
 FN_EXTERN(BinocularOverlay_DrawHandler);
 FN_EXTERN(BinocularOverlay_UseHandler);
 
-/* a bar that jumps to random levels and falls back */
-typedef struct VUMeter {
-    float level;
-    float unk4;
-    float decay;
-    int timer;
-    int period;
-} VUMeter;
-
-/* a human marked in the binocular view (0x2C bytes) */
-typedef struct Target {
-    char *human;
-    int unk4;           /* the human's 0xCF5 flag */
-    int unk8;           /* the human's 0xFC field is not 1 */
-    int occluded;
-    int seen;           /* seen this frame */
-    float radius;
-    float depth;
-    int time;           /* last seen */
-    int firstTime;
-    float sx;
-    float sy;
-} Target;
-
-/* "BinocularOverlay" (0x2E00 bytes), the view through the binoculars */
-typedef struct BinocularOverlay {
-    Task task;
-    Text *text;             /* 0x20, the range */
-    Text *letters[4];       /* 0x24, W N E S */
-    Text *unk34;
-    Matrix matrix;          /* 0x38 */
-    Vec3d pos;              /* 0x60 */
-    float fov;              /* 0x78 */
-    float dir[3];           /* 0x7C */
-    char ctx[0xA8];         /* 0x88, the view used for drawing */
-    int visible;            /* 0x130, humans inside the view */
-    int shown;              /* 0x134, humans marked */
-    char rng[0xC];          /* 0x138 */
-    int unk144;
-    int unk148;
-    char grid[0x2A04];      /* 0x14C */
-    int unk2B50;
-    VUMeter meters[12];     /* 0x2B54 */
-    Target targets[10];     /* 0x2C44 */
-    int unk2DFC;
-} BinocularOverlay;
-
-_Static_assert(sizeof(VUMeter) == 0x14, "VUMeter");
-_Static_assert(sizeof(Target) == 0x2C, "Target");
-_Static_assert(offsetof(BinocularOverlay, ctx) == 0x88, "BinocularOverlay");
-_Static_assert(offsetof(BinocularOverlay, grid) == 0x14C, "BinocularOverlay");
-_Static_assert(offsetof(BinocularOverlay, meters) == 0x2B54, "BinocularOverlay");
-_Static_assert(offsetof(BinocularOverlay, targets) == 0x2C44, "BinocularOverlay");
-_Static_assert(sizeof(BinocularOverlay) == 0x2E00, "BinocularOverlay");
-
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x4015F0, void, Task_Delete, (void *task));
@@ -240,9 +185,9 @@ void BinocularOverlay_Create(BinocularOverlay *ov)
     ov->pos.x = 0;
     ov->pos.y = 0;
     ov->pos.z = 0;
-    ov->dir[0] = 1.0f;
-    ov->dir[1] = 0;
-    ov->dir[2] = 0;
+    ov->dir.x = 1.0f;
+    ov->dir.y = 0;
+    ov->dir.z = 0;
     Random_Init(ov->rng);
     BinocularOverlay_InitGrid(ov->grid, 0x18);
     ov->unk148 = 0;
@@ -356,14 +301,14 @@ void BinocularOverlay_Draw(BinocularOverlay *ov)
     filter.task = (Task *)ov;
     filter.owner = ov->task.parent;
     from = ov->pos;
-    to.x = ov->dir[0];
-    to.y = ov->dir[1];
+    to.x = ov->dir.x;
+    to.y = ov->dir.y;
     filter.other = ov->task.parent->parent;
     filter.unk10 = 1.0f;
     to.x = (AppContext_IsUSA() ? kImperial : kMetric) * to.x * kWorldUnit;
     to.y = (AppContext_IsUSA() ? kImperial : kMetric) * to.y * kWorldUnit;
     {
-        long double dz = (AppContext_IsUSA() ? kImperial : kMetric) * (double)ov->dir[2] * kWorldUnit;
+        long double dz = (AppContext_IsUSA() ? kImperial : kMetric) * (double)ov->dir.z * kWorldUnit;
 
         to.x = from.x + to.x;
         to.y = from.y + to.y;
@@ -394,7 +339,7 @@ void BinocularOverlay_Draw(BinocularOverlay *ov)
     ty = h * kTextY.f;
     ov->text->y = ty - (long double)Text_GetHeight(ov->text);
     Text_DrawAlt(ov->text);
-    Vec3_ToAngles(ov->dir, &pitch, &yaw);
+    Vec3_ToAngles(&ov->dir.x, &pitch, &yaw);
     BinocularOverlay_DrawCompass(ov);
 
     x = w * kEighth.f;
@@ -626,7 +571,7 @@ void BinocularOverlay_DrawCompass(BinocularOverlay *ov)
     long double bottom;
     int i;
 
-    Vec3_ToAngles(ov->dir, &pitch, &yaw);
+    Vec3_ToAngles(&ov->dir.x, &pitch, &yaw);
     x0 = sw * kCompassX.f;
     y0 = sh * kCompassY.f;
     width = sw * kCompassW.f;

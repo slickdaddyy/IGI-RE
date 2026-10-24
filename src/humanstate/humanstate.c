@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "humanstate/humanstate.h"
+#include "humanai/humanaitypes.h"
 
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
 ORIG(0x408460, void, HumanPlayer_UpdateFall, (Human *h));
@@ -89,17 +90,6 @@ extern const int gWireDragSounds[];
 #define HALF_PI_F 0x1.921fb6p+0f
 #define FPS 30.0f
 
-/* the 0x1C byte message passed to 0x450CE0, probably a noise AI can hear */
-typedef struct HumanNoise {
-    int type;
-    int unk4;
-    int unk8;
-    float radius;
-    void *unk10;
-    void *unk14;
-    void *unk18;
-} HumanNoise;
-
 /* fcomp: equal also when unordered */
 static int x87_eq(long double a, long double b)
 {
@@ -148,15 +138,15 @@ static void State_Change(HumanState *sm, Human *h, int state)
 
 static void Human_Noise(Human *h, int type, void *a, void *b)
 {
-    HumanNoise n;
+    AIMessage n;
 
     n.type = type;
-    n.unk4 = h->unkFC;
-    n.unk8 = 0x46;
+    n.team = h->unkFC;
+    n.flags = 0x46;
     n.radius = 20480.0f;
-    n.unk10 = DynCubeObj_GetPosition(h);
-    n.unk14 = a;
-    n.unk18 = b;
+    n.pos = DynCubeObj_GetPosition(h);
+    n.from = a;
+    n.about = b;
     HumanAI_Broadcast(&n);
 }
 

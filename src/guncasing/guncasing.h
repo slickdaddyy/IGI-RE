@@ -10,19 +10,9 @@
 #include "coll/colltypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "graphtask/graphtasktypes.h"
+#include "humanai/humanaitypes.h"
 
 typedef void (*TaskFn)();
-
-/* noise for HumanAI_Broadcast */
-typedef struct Noise {
-    int kind;
-    int unk4;
-    int unk8;
-    float radius;
-    Vec3d *pos;
-    Task *source;
-    int unk18;
-} Noise;
 
 /* the weapon type record of DefineWeaponType (0x6E8 bytes) */
 typedef struct GrenadeConfig {

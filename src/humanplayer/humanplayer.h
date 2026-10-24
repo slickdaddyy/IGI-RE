@@ -8,13 +8,13 @@
 #include "script/scripttypes.h"
 #include "loadscreen/loadscreentypes.h"
 
-typedef struct StateMachine StateMachine;
+typedef struct HumanPlayerSM HumanPlayerSM;
 typedef struct HumanPlayer HumanPlayer;
-typedef void (*StateFn)(StateMachine *sm, HumanPlayer *h);
+typedef void (*StateFn)(HumanPlayerSM *sm, HumanPlayer *h);
 
 /* State machine used for the player's body and weapon. update() turns the
    controls into input bits, then the current state's run function is called. */
-struct StateMachine {
+struct HumanPlayerSM {
     StateFn update;
     StateFn *states;
     uint32_t input;
@@ -126,7 +126,7 @@ struct HumanPlayer {
     float max_damage;
     char unk25C[0x8C];
     int hit_zone;
-    StateMachine body;
+    HumanPlayerSM body;
     void *anim_slots;
     char unk33C;
     char crouch;
@@ -174,7 +174,7 @@ struct HumanPlayer {
     char unk7BA[0x53C];
     char unkCF6;
     char unkCF7;
-    StateMachine weapon;
+    HumanPlayerSM weapon;
     char weapon_lock;
     char unkD45;
     char unkD46[2];
