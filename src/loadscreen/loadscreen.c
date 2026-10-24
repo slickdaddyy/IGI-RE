@@ -5,24 +5,13 @@
 #include "igi.h"
 #include "win/wintypes.h"
 #include "res/restypes.h"
+#include "transctx/transctxtypes.h"
 
 typedef struct Bitmap {
     int w;
     int h;
     uint32_t *pixels;
 } Bitmap;
-
-/* a pixel block handed to Display_DrawPrimitive */
-typedef struct BlitPrim {
-    int unk0;
-    int prim;
-    int unk8;
-    int pitch;
-    int x, y;
-    int w, h;
-    uint32_t *pixels;
-    int unk24;
-} BlitPrim;
 
 /* the green progress bar under the loading picture */
 typedef struct LoadingScreen {
@@ -62,7 +51,7 @@ static void blit(Bitmap *b, int x, int y)
 {
     BlitPrim p = {0};
 
-    p.prim = Display_GetBlitPrim();
+    p.node.type = Display_GetBlitPrim();
     p.pixels = b->pixels;
     p.w = b->w;
     p.x = x;

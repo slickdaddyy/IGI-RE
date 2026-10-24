@@ -35,7 +35,7 @@ typedef struct AIDetectInfo {
 } AIDetectInfo;
 
 /* the eye of a detector: two view cones, the second optional */
-typedef struct AIView {
+typedef struct DetectView {
     Vec3d pos;
     float m[9];
     int unk3C;
@@ -46,7 +46,7 @@ typedef struct AIView {
     double maxYaw2;
     double range2;
     char hasSecond;
-} AIView;
+} DetectView;
 
 /* one per task on the detection list, on the friends or enemies list
    while active */
@@ -79,7 +79,7 @@ typedef struct AIDetector {
 } AIDetector;
 
 _Static_assert(sizeof(AIDetectInfo) == 0x28, "AIDetectInfo");
-_Static_assert(offsetof(AIView, hasSecond) == 0x70, "AIView");
+_Static_assert(offsetof(DetectView, hasSecond) == 0x70, "DetectView");
 _Static_assert(sizeof(AIDetectSlot) == 0x30, "AIDetectSlot");
 _Static_assert(offsetof(AIDetector, slots) == 0x30, "AIDetector");
 
@@ -217,10 +217,10 @@ void AIDetector_Init(AIDetector *d, void *unk0, uint32_t flags, uint32_t mask, i
 }
 HOOK(0x4896C0, AIDetector_Init);
 
-void AIDetector_UpdateSlot(AIDetector *d, AIDetectSlot *s, Vec3d *pos, AIView *view, Task *self);
+void AIDetector_UpdateSlot(AIDetector *d, AIDetectSlot *s, Vec3d *pos, DetectView *view, Task *self);
 
 /* flags: bits 0/1 see alive/dead team mates, bits 2/3 alive/dead enemies */
-void AIDetector_Update(AIDetector *d, AIView *view, Task *self, int team)
+void AIDetector_Update(AIDetector *d, DetectView *view, Task *self, int team)
 {
     int n = gAIDetectList->count;
     int i;
@@ -266,9 +266,9 @@ void AIDetector_Update(AIDetector *d, AIView *view, Task *self, int team)
 }
 HOOK(0x489750, AIDetector_Update);
 
-char AIView_Contains(AIView *v, Vec3d *p);
+char AIView_Contains(DetectView *v, Vec3d *p);
 
-void AIDetector_UpdateSlot(AIDetector *d, AIDetectSlot *s, Vec3d *pos, AIView *view, Task *self)
+void AIDetector_UpdateSlot(AIDetector *d, AIDetectSlot *s, Vec3d *pos, DetectView *view, Task *self)
 {
     if (!s->viewTimer) {
         if (AIView_Contains(view, pos)) {
@@ -291,7 +291,7 @@ void AIDetector_UpdateSlot(AIDetector *d, AIDetectSlot *s, Vec3d *pos, AIView *v
 }
 HOOK(0x4898D0, AIDetector_UpdateSlot);
 
-char AIView_Contains(AIView *v, Vec3d *p)
+char AIView_Contains(DetectView *v, Vec3d *p)
 {
     long double dx = p->x - v->pos.x;
     long double dy = p->y - v->pos.y;

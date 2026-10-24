@@ -227,17 +227,7 @@ typedef struct EventData {
     Task **ref;         /* 0x28 */
 } EventData;
 
-typedef struct CombatData {
-    Node node;
-    List *events;
-    char unkC[0x18];
-    int unk24;
-    char unk28;
-    char unk29;
-} CombatData;
-
 _Static_assert(offsetof(EventData, ref) == 0x28, "EventData");
-_Static_assert(offsetof(CombatData, unk28) == 0x28, "CombatData");
 
 /* the static pools HumanAI_Init sets up; other areas take items from their free lists */
 typedef struct MonitorGraph {
@@ -543,14 +533,14 @@ HOOK(0x44D0E0, AIAction_Patrol);
 /* each AI type fights its own way, civilians not at all */
 ScriptValue *AIAction_Combat(ScriptValue *out, void *data, void *args)
 {
-    CombatData *d = HumanAI_AllocParam(gAICurrent);
+    AIParam *d = HumanAI_AllocParam(gAICurrent);
     int flags = Script_GetArgInt(args, 0);
     void *fn;
 
-    d->unk28 = 1;
-    d->events = gAIEventList;
-    d->unk29 = 0;
-    d->unk24 = 0;
+    d->d.first = 1;
+    d->d.events = gAIEventList;
+    d->d.spoke = 0;
+    d->d.frame = 0;
     switch (gAICurrent->aiType) {
     case 0:
         fn = AI_COMBAT_RPG;

@@ -13,6 +13,7 @@
 #include "task/tasktypes.h"
 #include "sysmisc/sysmisctypes.h"
 #include "humanai/humanaitypes.h"
+#include "statgun/statguntypes.h"
 
 FN_EXTERN(AICombat_End);
 FN_EXTERN(AICombat_KneelFire);
@@ -36,20 +37,6 @@ typedef struct Human {
     char unk4D8[0x7B4 - 0x4D8];
     Task **statGun;
 } Human;
-
-typedef struct StatGun {
-    char unk0[0xF0];
-    Vec3d pos;
-    float matrix[9];
-    char unk12C[0x1E0 - 0x12C];
-    float maxPitch;
-    float minPitch;
-    float maxYaw;
-    char unk1EC[0x208 - 0x1EC];
-    Task *user;
-    Task *weapons[4];
-    char busy;
-} StatGun;
 
 typedef struct WeaponType {
     char unk0[0x610];
@@ -103,24 +90,6 @@ typedef struct AIEvent {
     char unk8[0x24];
     Task **about;
 } AIEvent;
-
-/* the AIAction_Combat parameter block, after its list node */
-typedef struct CombatData {
-    List *events;
-    int unk4;
-    double dist;
-    int unk10;
-    int timer;
-    int count;
-    int frame;
-    char first;
-    char spoke;
-} CombatData;
-
-typedef struct AIParam {
-    Node node;
-    CombatData d;
-} AIParam;
 
 typedef struct HumanAI HumanAI;
 typedef struct AIAction AIAction;
@@ -227,9 +196,6 @@ struct HumanAI {
 _Static_assert(offsetof(Human, weapons) == 0x4C4, "weapons");
 _Static_assert(offsetof(Human, aimError) == 0x4D4, "aimError");
 _Static_assert(offsetof(Human, statGun) == 0x7B4, "statGun");
-_Static_assert(offsetof(StatGun, maxPitch) == 0x1E0, "maxPitch");
-_Static_assert(offsetof(StatGun, weapons) == 0x20C, "gun weapons");
-_Static_assert(offsetof(StatGun, busy) == 0x21C, "busy");
 _Static_assert(offsetof(WeaponType, clip) == 0x648, "clip");
 _Static_assert(offsetof(Graph, eyeHeight) == 0x80, "eyeHeight");
 _Static_assert(offsetof(GraphNode, radius) == 0x24, "radius");
@@ -237,7 +203,6 @@ _Static_assert(offsetof(GraphNode, graph) == 0x134, "graph");
 _Static_assert(offsetof(GraphNode, links) == 0x13C, "links");
 _Static_assert(offsetof(NodeGrid, cells) == 0x20, "cells");
 _Static_assert(offsetof(AIEvent, about) == 0x2C, "about");
-_Static_assert(offsetof(CombatData, first) == 0x20, "first");
 _Static_assert(offsetof(AIAction, param) == 0x28, "param");
 _Static_assert(offsetof(HumanAI, viewLength) == 0xB0, "viewLength");
 _Static_assert(offsetof(HumanAI, eventCounts) == 0x87C, "eventCounts");
@@ -953,7 +918,7 @@ void AICombat_StartBurst(HumanAI *ai, char half)
         StatGun *gun = (StatGun *)*h->statGun;
 
         StationaryGun_GetMuzzle(gun, &ai->eye, ai->view);
-        w = WeaponSlots_Get(gun->weapons, 0);
+        w = WeaponSlots_Get(gun->slots, 0);
     } else {
         w = WeaponSlots_Get(h->weapons, 0);
     }
@@ -1617,7 +1582,7 @@ void AICombatGunner_Stand(HumanAI *ai, AIAction *a)
 
         if (!gun)
             Warning_Show("Stationary gun ID #%d not found", ai->statGunId);
-        else if (gun->busy && gun->user != &h->task)
+        else if (gun->used && (Task *)gun->user != &h->task)
             goto pose;
         if (gun) {
             Vec3d t, l;
@@ -1626,13 +1591,13 @@ void AICombatGunner_Stand(HumanAI *ai, AIAction *a)
 
             HumanAI_GetTargetPos(&t, ai);
             {
-                long double dx = t.x - gun->pos.x;
-                long double dy = t.y - gun->pos.y;
-                long double dz = t.z - gun->pos.z;
+                long double dx = t.x - gun->basePos.x;
+                long double dy = t.y - gun->basePos.y;
+                long double dz = t.z - gun->basePos.z;
 
-                l.x = gun->matrix[6] * dz + gun->matrix[3] * dy + gun->matrix[0] * dx;
-                l.y = gun->matrix[7] * dz + gun->matrix[4] * dy + gun->matrix[1] * dx;
-                l.z = gun->matrix[8] * dz + gun->matrix[5] * dy + gun->matrix[2] * dx;
+                l.x = gun->baseMatrix.m[6] * dz + gun->baseMatrix.m[3] * dy + gun->baseMatrix.m[0] * dx;
+                l.y = gun->baseMatrix.m[7] * dz + gun->baseMatrix.m[4] * dy + gun->baseMatrix.m[1] * dx;
+                l.z = gun->baseMatrix.m[8] * dz + gun->baseMatrix.m[5] * dy + gun->baseMatrix.m[2] * dx;
             }
             l.x = -l.x;
             l.y = -l.y;
@@ -1642,9 +1607,9 @@ void AICombatGunner_Stand(HumanAI *ai, AIAction *a)
             yaw = yawRaw;
             Debug_Log(ai, -1, "Gun->Tgt: A:%1.3f, G:%1.3f", (double)pitch, (double)yawRaw);
             Debug_Log(ai, -1, "Gun params:");
-            Debug_Log(ai, -1, "MG:%1.3f, A-:%1.3f, A+:%1.3f", (double)(gun->maxYaw * kDegToRad),
+            Debug_Log(ai, -1, "MG:%1.3f, A-:%1.3f, A+:%1.3f", (double)(gun->yawRange * kDegToRad),
                       (double)(gun->minPitch * kDegToRad), (double)(gun->maxPitch * kDegToRad));
-            if ((yaw < kZero ? -yaw : yaw) < gun->maxYaw * kDegToRad && gun->minPitch * kDegToRad < pitch &&
+            if ((yaw < kZero ? -yaw : yaw) < gun->yawRange * kDegToRad && gun->minPitch * kDegToRad < pitch &&
                 gun->maxPitch * kDegToRad > pitch) {
                 Debug_Log(ai, -1, "Target is in guncone");
                 inCone = 1;

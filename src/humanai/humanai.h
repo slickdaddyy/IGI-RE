@@ -22,12 +22,6 @@ typedef struct GraphNode {
     unsigned flags;
 } GraphNode;
 
-typedef struct HumanModel {
-    char unk0[0x2AC];
-    float eye[3];
-    float matrix[10];
-} HumanModel;
-
 /* the parts of a human task the AI reads */
 typedef struct Human {
     Task task;
@@ -125,11 +119,6 @@ struct AIAction {
     char used;
     char unk2D[3];
 };
-
-typedef struct AIParam {
-    Node node;
-    char data[0x28];
-} AIParam;
 
 /* a task several AIs are after, with what each of them is doing about it */
 typedef struct AITarget {

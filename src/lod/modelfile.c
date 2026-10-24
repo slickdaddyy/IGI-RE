@@ -69,7 +69,7 @@ void ModelFile_LoadAnims(ModelFile *f)
 }
 HOOK(0x4CF910, ModelFile_LoadAnims);
 
-void CollMesh_Free(CollMesh *m);
+void CollMesh_Free(CollMeshRes *m);
 void Mesh_Free(Mesh *m);
 
 void ModelFile_Free(ModelFile *f)
@@ -99,7 +99,7 @@ void ModelFile_Free(ModelFile *f)
     }
     n = f->coll.tailpred;
     for (prev = n->prev; prev; prev = prev->prev) {
-        CollMesh_Free((CollMesh *)n);
+        CollMesh_Free((CollMeshRes *)n);
         n = prev;
     }
     n = f->meshes.tailpred;
@@ -142,7 +142,7 @@ void Mesh_Free(Mesh *m)
 }
 HOOK(0x4CFB30, Mesh_Free);
 
-void CollMesh_Free(CollMesh *m)
+void CollMesh_Free(CollMeshRes *m)
 {
     Resource_Flush(m->res);
     List_Remove_(&m->node);

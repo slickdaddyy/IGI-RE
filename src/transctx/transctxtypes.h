@@ -1,6 +1,8 @@
 #ifndef TRANSCTX_TRANSCTXTYPES_H
 #define TRANSCTX_TRANSCTXTYPES_H
 
+#include <stdint.h>
+
 #include "types.h"
 
 typedef struct SoundParams {
@@ -72,5 +74,13 @@ typedef struct Sound {
     char *name;
     void *data;
 } Sound;
+
+typedef struct BlitPrim {
+    RenderNode node;
+    int pitch; /* bytes */
+    int x, y, w, h;
+    uint32_t *pixels;
+    int unk24;
+} BlitPrim;
 
 #endif

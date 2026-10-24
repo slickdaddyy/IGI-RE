@@ -8,6 +8,7 @@
 #include "task/tasktypes.h"
 #include "coll/colltypes.h"
 #include "humanai/humanaitypes.h"
+#include "soldier/soldiertypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
@@ -70,16 +71,6 @@ typedef struct HumanDamage {
     } part[17];
     int hitZone;
 } HumanDamage;
-
-typedef struct HumanSM {
-    void *update;
-    void *states;
-    uint32_t bits;
-    int prev;
-    int state;
-    void *run;
-    char unk18[0x34];
-} HumanSM;
 
 #define HUMAN_ON_GROUND 0x4
 #define HUMAN_ROOF      0x10

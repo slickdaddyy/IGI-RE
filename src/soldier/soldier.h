@@ -8,6 +8,7 @@
 #include "task/tasktypes.h"
 #include "loadscreen/loadscreentypes.h"
 #include "soldier/soldiertypes.h"
+#include "humanplayer/humanplayertypes.h"
 
 #pragma pack(push, 4)
 
@@ -21,18 +22,6 @@ typedef struct Human Human;
 typedef struct HumanSM HumanSM;
 typedef void (*HumanStateFn)(HumanSM *sm, Human *h);
 
-/* Movement state machine, same layout as the player's. input() turns the
-   controls into bits, then run() is called. */
-struct HumanSM {
-    HumanStateFn input;
-    HumanStateFn *states;
-    uint32_t bits;
-    int prev;
-    int state;
-    HumanStateFn run;
-    char unk18[0x34];
-};
-
 /* HumanSM.bits of a HumanSoldier */
 enum {
     SB_ANIM_DONE = 0x1,
@@ -45,11 +34,6 @@ enum {
     SB_AIM = 0x100000,
     SB_CROUCH_AIM = 0x2000000,
 };
-
-typedef struct HumanMotion {
-    int unk0;
-    uint32_t flags;
-} HumanMotion;
 
 /* Damage per body part. Hits add mult * damage to a part and to total. */
 typedef struct HumanDamage {

@@ -9,17 +9,7 @@
 #include "param/paramtypes.h"
 #include "script/scripttypes.h"
 #include "physobj/physobjtypes.h"
-
-/* the "Level" task, root of everything a level script creates */
-typedef struct Level {
-    Task task;
-    int unk20;
-    int time;
-    int tick;
-    int fps;
-    int msPerTick;
-    int unk34;
-} Level;
+#include "level/leveltypes.h"
 
 /* where a parameter parser is in the arguments of a script Task_New call */
 typedef struct ParamCursor {

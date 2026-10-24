@@ -4,20 +4,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "humanstate/humanstatetypes.h"
+
 typedef struct Human Human;
 typedef struct HumanState HumanState;
 typedef void (*HumanStateFn)(HumanState *sm, Human *h);
-
-/* Movement state machine of the player. enter[n] starts state n and sets
-   update, which then runs every frame. */
-struct HumanState {
-    int unk0;
-    HumanStateFn *enter;
-    unsigned input;
-    int prev;
-    int state;
-    HumanStateFn update;
-};
 
 /* HumanState.input */
 #define HUMAN_ANIM_DONE 0x1

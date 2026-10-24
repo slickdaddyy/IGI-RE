@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "vehicle/vehicle.h"
 #include "heli/helitypes.h"
+#include "loadscreen/loadscreentypes.h"
 
 FN_EXTERN(EditorMagicObj_GetArgSize);
 FN_EXTERN(Rotor_ForwardEvent9);
@@ -40,15 +41,6 @@ typedef struct DoorParams {
     float speed;
     float open;
 } DoorParams;
-
-/* the vehicle a rocket pod is on */
-/* passed to the line of sight filter */
-typedef struct SightFilter {
-    char visible;
-    Task *unk4;
-    Task *self;
-    Task *target;
-} SightFilter;
 
 _Static_assert(offsetof(VehiclePart, owner) == 0x130, "VehiclePart");
 _Static_assert(offsetof(VehiclePart, open) == 0x140, "VehiclePart");
@@ -211,7 +203,7 @@ HOOK(0x426CD0, CarDoor_ParseArgs);
 /* line of sight filter: skips the shooter, the target and the shooter's parts */
 void VehiclePart_CollFilter(Task *t, SightFilter *f)
 {
-    if (f->self != t && f->target != t && ((VehiclePart *)t)->owner != f->self)
+    if (f->self2 != t && f->target != t && ((VehiclePart *)t)->owner != f->self2)
         f->visible = 1;
     else
         f->visible = 0;
@@ -491,8 +483,8 @@ void RocketPod_Run(VehiclePart *p)
                 a = Vec3d_YawAngle(l);
             if (a >= kRocketCone)
                 continue;
-            filter.unk4 = &p->obj.task;
             filter.self = &p->obj.task;
+            filter.self2 = &p->obj.task;
             filter.target = *n->ref;
             event = AIDetection_GetEvent0();
             to = DynCubeObj_GetPosition(*n->ref);

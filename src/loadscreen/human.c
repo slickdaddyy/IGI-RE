@@ -25,13 +25,6 @@ typedef struct AnimSlot {
     int loop;
 } AnimSlot;
 
-typedef struct HumanModel {
-    char unk0[4];
-    unsigned flags;
-    char unk8[0x10];
-    Vec3f bones[1]; /* 0x84 bytes apart */
-} HumanModel;
-
 #define BONE(m, i) ((Vec3f *)((char *)(m)->bones + (i) * 0x84))
 
 typedef struct HumanView {
@@ -84,20 +77,6 @@ typedef struct Shot {
     char unk20[0x24];
     int kind;
 } Shot;
-
-typedef struct HumanHit {
-    Shot *shot;
-    float damage;
-    float dir[3];
-} HumanHit;
-
-/* the filter handed to Coll_LineOfSight: who looks and who is looked at */
-typedef struct SightFilter {
-    int unk0;
-    Task *self;
-    Task *self2;
-    Task *target;
-} SightFilter;
 
 extern const int gHitZones[];
 

@@ -48,12 +48,12 @@ typedef struct Mesh {
 } Mesh;
 
 /* A collision mesh from <dir>models/<name>.mef */
-typedef struct CollMesh {
+typedef struct CollMeshRes {
     Node node;
     int count;
     int *parts;       /* 0x1C bytes each, the first three words become pointers */
     void *res;
-} CollMesh;
+} CollMeshRes;
 
 /* A named mesh instance with its textures. VirModel LODs point at these. */
 typedef struct ModelLod {
@@ -71,7 +71,7 @@ typedef struct ModelFile {
     void *mtp;
     void *res;
     List meshes;      /* Mesh */
-    List coll;        /* CollMesh */
+    List coll;        /* CollMeshRes */
     List lods;        /* ModelLod */
     char *textures;   /* 0x24 bytes each */
     char *texinfo;    /* 0xC bytes each */
@@ -112,7 +112,7 @@ Node *List_GetNth(List *list, int n);
 void ModelFile_LoadMeshes(ModelFile *f);
 Mesh *Mesh_Load(const char *name);
 void ModelFile_LoadCollMeshes(ModelFile *f);
-CollMesh *CollMesh_Load(const char *name);
+CollMeshRes *CollMesh_Load(const char *name);
 void ModelFile_LoadTextures(ModelFile *f);
 
 #endif

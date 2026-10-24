@@ -8,13 +8,7 @@
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "script/scripttypes.h"
-
-typedef struct Level {
-    Task task;
-    int unk20;
-    int time;
-    int tick;
-} Level;
+#include "level/leveltypes.h"
 
 #define PARAM_MAX_TYPES 64
 #define PARAM_MAX_OPS 16

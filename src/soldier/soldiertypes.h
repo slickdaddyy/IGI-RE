@@ -78,4 +78,17 @@ typedef struct UseMsg {
     int unk44;
 } UseMsg;
 
+/* same layout as the player's state machine */
+struct Human;
+
+typedef struct HumanSM {
+    void (*input)(struct HumanSM *sm, struct Human *h);
+    void (**states)(struct HumanSM *sm, struct Human *h);
+    uint32_t bits;
+    int prev;
+    int state;
+    void (*run)(struct HumanSM *sm, struct Human *h);
+    char unk18[0x34];
+} HumanSM;
+
 #endif

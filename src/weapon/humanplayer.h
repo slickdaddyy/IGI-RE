@@ -5,6 +5,7 @@
 
 #include "igi.h"
 #include "types.h"
+#include "humanstate/humanstatetypes.h"
 
 typedef struct HumanPlayer HumanPlayer;
 
@@ -19,17 +20,6 @@ typedef struct HumanDamage {
     } part[17];
     int hitZone;
 } HumanDamage;
-
-/* The player's movement state machine. Changing state sets prev = state,
-   state = n, update = enter[n] and calls it. */
-typedef struct HumanState {
-    int unk00;
-    void (**enter)(struct HumanState *s, HumanPlayer *h);
-    uint32_t input;
-    int prev;
-    int state;
-    void (*update)(struct HumanState *s, HumanPlayer *h);
-} HumanState;
 
 #define HUMAN_DEAD 0x20000
 

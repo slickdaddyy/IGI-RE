@@ -12,6 +12,7 @@
 #include "qvertex/qvertextypes.h"
 #include "coll/colltypes.h"
 #include "humanai/humanaitypes.h"
+#include "loadscreen/loadscreentypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401AE0, void *, TaskRef_Add, (void *task));
@@ -108,13 +109,6 @@ extern WeaponCategory gWeaponCategories[];
 
 extern void (*gRenderFuncs[])(QVertexStrip *);
 
-typedef struct HumanHit {
-    int unk00;
-    float damage;
-    float dir[3];
-    void *attacker;
-} HumanHit;
-
 typedef struct HumanBlast {
     int unk00;
     double *pos;
@@ -187,7 +181,7 @@ static void State_Set(HumanPlayer *h, int n)
     h->state.prev = h->state.state;
     h->state.state = n;
     h->state.update = h->state.enter[n];
-    h->state.update(&h->state, h);
+    h->state.update(&h->state, (struct Human *)h);
 }
 
 /* weapon category keys: pick the next weapon of that category the player has */
@@ -717,7 +711,7 @@ void HumanPlayer_HitHandler(HumanPlayer *h, HumanHit *hit)
     if (d->total >= d->max && !h->attacker && hit->attacker &&
         TaskType_IsA(*(uint16_t *)((char *)hit->attacker + 0x1C), gTaskType548638))
         h->attacker = TaskRef_Add(hit->attacker);
-    Human_Bleed(h, dir, hit->unk00);
+    Human_Bleed(h, dir, (int)hit->shot);
     if (!h->quiet)
         Human_SayTimed(h, "player_hit_", 4);
     Shake_Random(h);

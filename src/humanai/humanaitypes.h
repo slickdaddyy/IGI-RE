@@ -50,4 +50,33 @@ typedef struct NearQuery {
     Task *found;
 } NearQuery;
 
+typedef struct HumanModel {
+    char unk0[4];
+    unsigned flags;
+    char unk8[0x10];
+    Vec3f bones[1];     /* 0x84 bytes apart */
+    char unk24[0x288];
+    float eye[3];
+    float matrix[10];
+} HumanModel;
+_Static_assert(sizeof(HumanModel) == 0x2E0, "HumanModel");
+
+/* the AIAction_Combat parameter block, after its list node */
+typedef struct CombatData {
+    List *events;
+    int unk4;
+    double dist;
+    int unk10;
+    int timer;
+    int count;
+    int frame;
+    char first;
+    char spoke;
+} CombatData;
+
+typedef struct AIParam {
+    Node node;
+    CombatData d;
+} AIParam;
+
 #endif

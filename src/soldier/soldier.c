@@ -191,7 +191,7 @@ static void sm_go(HumanSM *sm, Human *h, int state)
 {
     sm->prev = sm->state;
     sm->state = state;
-    sm->run = sm->states[state];
+    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))sm->states[state])));
     sm->run(sm, h);
 }
 
@@ -218,7 +218,7 @@ static void enter_anim(HumanSM *sm, Human *h, int crouch, HumanStateFn run)
     h->crouch = crouch;
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    sm->run = run;
+    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))run)));
 }
 
 void Soldier_ToCrouchRun(HumanSM *sm, Human *h);
@@ -331,7 +331,7 @@ void Soldier_CrouchFireEnter(HumanSM *sm, Human *h)
 {
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    sm->run = Soldier_CrouchFireRun;
+    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_CrouchFireRun)));
 }
 HOOK(0x45BC60, Soldier_CrouchFireEnter);
 
@@ -339,7 +339,7 @@ void Soldier_CrouchReloadEnter(HumanSM *sm, Human *h)
 {
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    sm->run = Soldier_CrouchReloadRun;
+    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_CrouchReloadRun)));
 }
 HOOK(0x45BC90, Soldier_CrouchReloadEnter);
 
@@ -361,7 +361,7 @@ void Soldier_CrouchAimEnter(HumanSM *sm, Human *h)
 {
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    sm->run = Soldier_CrouchAimRun;
+    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_CrouchAimRun)));
 }
 HOOK(0x45BD90, Soldier_CrouchAimEnter);
 
@@ -420,7 +420,7 @@ void Soldier_FireEnter(HumanSM *sm, Human *h)
 {
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    sm->run = Soldier_FireRun;
+    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_FireRun)));
 }
 HOOK(0x45C090, Soldier_FireEnter);
 
@@ -441,7 +441,7 @@ void Soldier_ReloadEnter(HumanSM *sm, Human *h)
 {
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    sm->run = Soldier_ReloadRun;
+    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_ReloadRun)));
 }
 HOOK(0x45C190, Soldier_ReloadEnter);
 
@@ -451,7 +451,7 @@ void Soldier_FallEnter(HumanSM *sm, Human *h)
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
     memcpy(h->vel, h->unk688, sizeof(h->vel));
-    sm->run = Soldier_FallRun;
+    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_FallRun)));
 }
 HOOK(0x45C1C0, Soldier_FallEnter);
 
@@ -491,7 +491,7 @@ void Soldier_HitEnter(HumanSM *sm, Human *h)
     a = HumanDamage_GetZone(&h->damage, h->damage.hitZone);
     Anim_Play(h->anim, 0, a->hit, 0, 0.0f);
     Human_DisableLook(h);
-    sm->run = Soldier_HitRun;
+    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_HitRun)));
 }
 HOOK(0x45C2E0, Soldier_HitEnter);
 
@@ -502,7 +502,7 @@ void Soldier_AimHitEnter(HumanSM *sm, Human *h)
     ((Soldier *)h)->hitFrames = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
     Human_DisableLook(h);
-    sm->run = Soldier_AimHitRun;
+    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_AimHitRun)));
 }
 HOOK(0x45C330, Soldier_AimHitEnter);
 
@@ -549,7 +549,7 @@ static void die_end(HumanSM *sm, Human *h, int anim)
     Human_FreezeView(h);
     Human_Say(h, "ai_death_", 4);
     Human_DisableLook(h);
-    sm->run = Soldier_DieRun;
+    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_DieRun)));
 }
 
 /* death after a hit or a fall: the AI's own animation, a fall towards or
@@ -601,7 +601,7 @@ void Soldier_DieRun(HumanSM *sm, Human *h)
     h->pos[1] = s->deathVel[1] + h->pos[1];
     h->pos[2] = s->deathVel[2] + h->pos[2];
     if (sm->bits & SB_ANIM_DONE)
-        sm->run = Human_DeadRun;
+        sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Human_DeadRun)));
 }
 HOOK(0x45C700, Soldier_DieRun);
 
@@ -628,7 +628,7 @@ void Soldier_AnimEnter(HumanSM *sm, Human *h)
     }
     s->scriptAnim = 0;
     Human_DisableLook(h);
-    sm->run = Soldier_AnimRun;
+    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_AnimRun)));
 }
 HOOK(0x45C750, Soldier_AnimEnter);
 
@@ -667,7 +667,7 @@ void Soldier_MountEnter(HumanSM *sm, Human *h)
     HumanView_LockPitch(h->view);
     Human_FreezeView(h);
     Human_SetPlatform(h, obj);
-    sm->run = Soldier_MountRun;
+    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_MountRun)));
 }
 HOOK(0x45C8B0, Soldier_MountEnter);
 
@@ -692,7 +692,7 @@ void Soldier_UseEnter(HumanSM *sm, Human *h)
 {
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    sm->run = Human_UseRun;
+    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Human_UseRun)));
 }
 HOOK(0x45CA50, Soldier_UseEnter);
 

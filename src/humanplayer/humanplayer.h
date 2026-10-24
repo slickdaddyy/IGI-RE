@@ -7,6 +7,7 @@
 #include "task/tasktypes.h"
 #include "script/scripttypes.h"
 #include "loadscreen/loadscreentypes.h"
+#include "humanplayer/humanplayertypes.h"
 
 typedef struct HumanPlayerSM HumanPlayerSM;
 typedef struct HumanPlayer HumanPlayer;
@@ -54,13 +55,6 @@ enum {
     INPUT_BINOCULARS = 34,
     INPUT_COUNT = 40,
 };
-
-typedef struct HumanMotion {
-    int unk0;
-    uint32_t flags;
-    char unk8[0x44];
-    int unk4C[5];
-} HumanMotion;
 
 typedef struct HumanView {
     char unk0[0x68];

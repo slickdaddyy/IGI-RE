@@ -2,34 +2,7 @@
 
 #include "hook.h"
 #include "statgun/statgun.h"
-
-/* "StationaryGun" (0x220 bytes): a mounted M2HB a human can take over */
-typedef struct StatGun {
-    RigidDynCubeObj obj;
-    Vec3d basePos;          /* 0xF0, script parameter */
-    Matrix baseMatrix;      /* 0x108, script parameter */
-    Vec3d relPos;           /* 0x130, base in the frame of the carrier */
-    Matrix relMatrix;       /* 0x148 */
-    Vec3d muzzlePos;        /* 0x170 */
-    Matrix muzzleMatrix;    /* 0x188 */
-    char model[0x10];       /* 0x1B0 */
-    char weapon[0x20];      /* 0x1C0, weapon id expression */
-    float maxPitch;         /* 0x1E0, degrees */
-    float minPitch;
-    float yawRange;
-    int ammo;
-    float recoilPitch;      /* 0x1F0 */
-    float recoilYaw;
-    float pitch;            /* 0x1F8, radians */
-    float yaw;
-    float outPitch;         /* 0x200, pitch and yaw with recoil */
-    float outYaw;
-    Human *user;            /* 0x208 */
-    Task *slots[3];         /* 0x20C */
-    int lastTick;           /* 0x218 */
-    char used;              /* 0x21C */
-    char pad21D[3];
-} StatGun;
+#include "statgun/statguntypes.h"
 
 /* the search used to pick what a human can use (see 0x416AD0) */
 typedef struct UseQuery {
@@ -52,10 +25,6 @@ typedef struct DetectMsg {
     void *a;
     void *b;
 } DetectMsg;
-
-_Static_assert(offsetof(StatGun, model) == 0x1B0, "StatGun");
-_Static_assert(offsetof(StatGun, user) == 0x208, "StatGun");
-_Static_assert(sizeof(StatGun) == 0x220, "StatGun");
 
 extern uint16_t gStatGunType;
 extern void *gStatGunParams;

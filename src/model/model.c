@@ -422,9 +422,9 @@ void ModelFile_LoadCollMeshes(ModelFile *f)
 }
 HOOK(0x4CF630, ModelFile_LoadCollMeshes);
 
-CollMesh *CollMesh_Load(const char *name)
+CollMeshRes *CollMesh_Load(const char *name)
 {
-    CollMesh *m = Mem_Alloc(sizeof(CollMesh), 4);
+    CollMeshRes *m = Mem_Alloc(sizeof(CollMeshRes), 4);
     unsigned int size;
     char *faces, *verts, *edges;
     int i;
