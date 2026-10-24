@@ -112,7 +112,7 @@ _Static_assert(offsetof(HumanAI, unk3DC8) == 0x3DC8, "HumanAI");
 #define gHumanAIConfigItemParams VAR(ParamTable *, 0x5690C8)
 #define gHumanAIConfig VAR(HumanAIConfig *, 0x5690D0)
 #define gFramesPerSecond VAR(float, 0x5333BC)
-#define gWorldScale VAR(float, 0x5333B8)
+#define k4096 VAR(float, 0x5333B8)
 
 void HumanAIConfig_GetParams(void *task, ParamTable **out);
 void HumanAIConfigItem_Create(HumanAIConfigItem *item, HumanAIConfigNames *names);
@@ -370,12 +370,12 @@ void HumanAIConfig_Apply(HumanAI *ai)
         COPY(ai->unk3D54[i], (&c->unk234)[i]);
     COPY(ai->unk3D88, c->unk278);
     COPY(ai->unk3D8C, c->unk27C);
-    ai->unk3D90 = c->unk280 * gWorldScale;
-    ai->unk3D94 = c->unk284 * gWorldScale;
+    ai->unk3D90 = c->unk280 * k4096;
+    ai->unk3D94 = c->unk284 * k4096;
     for (i = 0; i < 6; i++)
         COPY(ai->unk3D98[i], (&c->unk288)[i]);
-    ai->unk3DC0 = c->unk270 * gWorldScale;
-    ai->unk3DB8 = c->unk26C * gWorldScale;
+    ai->unk3DC0 = c->unk270 * k4096;
+    ai->unk3DB8 = c->unk26C * k4096;
     ai->unk3DC8 = c->unk274;
     COPY(*(float *)(owner + 0x258), c->unk2A0);
     if (((TaskHeader *)owner)->type == Soldier_GetType())

@@ -98,7 +98,8 @@ _Static_assert(sizeof(CollBump) == 0x30, "CollBump");
 #define gCollBumpList ((int *)0xB97D40)
 #define gCollBumpDepth VAR(int, 0xB97DF4)
 #define gCollBumpCount VAR(int, 0xBA2058)
-#define gCollBumps ((CollBump *)0xBA2060)
+#define gCollBumps ((CollBump *)0xBA2030)
+#define gSlotBumps (gCollBumps + 1) /* slots count from 1 */
 
 static const double kLiftZ = 268435456.0;
 static const double kHalf = 0.5;
@@ -288,7 +289,7 @@ void HeightMap_Changed(HeightMap *hm)
             }
         }
     }
-    gCollBumps[hm->slot].heights = NULL;
+    gSlotBumps[hm->slot].heights = NULL;
     p = hm->place;
     if (!hm->isChild) {
         Vec3d q = hm->place;
@@ -462,7 +463,7 @@ void HeightMap_Changed(HeightMap *hm)
         if (!mode)
             Mem_ClearMode();
     }
-    bump = &gCollBumps[hm->slot];
+    bump = &gSlotBumps[hm->slot];
     maps = hm->obj.world->hmp;
     bump->sizeShift = hm->sizeShift;
     bump->scale = kOne;
@@ -480,7 +481,7 @@ HOOK(0x507410, HeightMap_Changed);
 
 void HeightMap_Collect(HeightMap *hm)
 {
-    if (hm->hmpIndex >= 0 && gCollBumps[hm->slot].heights)
+    if (hm->hmpIndex >= 0 && gSlotBumps[hm->slot].heights)
         gCollBumpList[gCollBumpDepth++] = hm->slot;
 }
 HOOK(0x507D00, HeightMap_Collect);

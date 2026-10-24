@@ -197,7 +197,7 @@ ORIG(0x4A0340, void, Direct3DRender_ClipTriangleDepth, (ClipVertex a, ClipVertex
 #define gTerrainPool0 VAR(Pool, 0xB12B60)
 #define gTerrainPool1 VAR(Pool, 0xB12C40)
 #define gTerrainPool2 VAR(Pool, 0xB16CC0)
-#define gQCubeOrigin ((double *)0xB12BA0)
+#define gQCubeOriginD ((double *)0xB12BA0)
 #define gTerrainLightMaps ((TerrainLightMapInfo *)0xBA80B0)
 #define gTerrainHeightMaps ((TerrainHeightMapInfo *)0xBA2030)
 #define gTerrainMaterialMaps ((TerrainMaterialMapInfo *)0xBA5050)
@@ -739,9 +739,9 @@ void TerrainMesh_Build(void)
             mask |= 1u << (mat & 31);
             v++;
         } while (++j < n);
-        px = pos[0] + gQCubeOrigin[0];
-        py = pos[1] + gQCubeOrigin[1];
-        pz = pos[2] + gQCubeOrigin[2];
+        px = pos[0] + gQCubeOriginD[0];
+        py = pos[1] + gQCubeOriginD[1];
+        pz = pos[2] + gQCubeOriginD[2];
         list[0] = 0;
         cnt = 0;
         for (i = 0; mask; mask = (int)mask >> 1, i++)

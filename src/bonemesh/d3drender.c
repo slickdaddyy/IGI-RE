@@ -119,7 +119,7 @@ typedef struct ExcludeArg {
 } ExcludeArg;
 
 #define gLayerFov ((float *)0xB81700)
-#define gClipDepth VAR(int, 0x7AF1E0)
+#define gBoneClipDepth VAR(int, 0x7AF1E0)
 #define gRigidClipVerts ((ClipVertex *)0x7AF1E8)
 #define gLightmapClipVerts ((ClipVertex *)0x8AD068)
 #define gNearPlane VAR(float, 0xBCADC0)
@@ -467,7 +467,7 @@ void Direct3DRender_ClipTriangleDepth(ClipVertex a, ClipVertex b, ClipVertex c, 
     float tf;
     int any, all, ma, mb, mc;
 
-    gClipDepth++;
+    gBoneClipDepth++;
     any = a.code | b.code | c.code;
     all = a.code & b.code & c.code;
     if (all)
@@ -704,7 +704,7 @@ void Direct3DRender_ClipTriangleDepth(ClipVertex a, ClipVertex b, ClipVertex c, 
     if (c.rhw < *minZ)
         *minZ = c.rhw;
 done:
-    gClipDepth--;
+    gBoneClipDepth--;
 }
 HOOK(0x4A0340, Direct3DRender_ClipTriangleDepth);
 

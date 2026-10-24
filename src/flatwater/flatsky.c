@@ -42,8 +42,8 @@ _Static_assert(sizeof(FlatSky) == 0xD0, "FlatSky");
 #define gFlatSkyLayerParams VAR(void *, 0xBA1FE0)
 #define gFlatSkyParams VAR(void *, 0xBA1FE4)
 
-#define kRange01 ((const float *)0x54EEB0)
-#define kRange11 ((const float *)0x54EEB8)
+#define kSkyRange01 ((const float *)0x54EEB0)
+#define kSkyRange11 ((const float *)0x54EEB8)
 #define kRange90 ((const float *)0x54EEC0)
 #define k255 VAR(float, 0x5336D4)
 #define kPi VAR(float, 0x533400)
@@ -85,7 +85,7 @@ void FlatSky_Open(void)
     TaskType_SetHandler(gFlatSkyLayerType, Param_GetChangedEvent(), FlatLayer_ParamsChanged);
     TaskType_SetHandler2(gFlatSkyLayerType, 1, FlatLayer_Run);
     gFlatSkyParams = ParamTable_New(11);
-    ParamTable_Add(gFlatSkyParams, &s, &s.unk74, Param_Real32(), 7, kRange01);
+    ParamTable_Add(gFlatSkyParams, &s, &s.unk74, Param_Real32(), 7, kSkyRange01);
     ParamTable_Add(gFlatSkyParams, &s, &s.unk6C, Param_Real32(), 7, NULL);
     ParamTable_Add(gFlatSkyParams, &s, &s.unk70, Param_Real32(), 7, NULL);
     ParamTable_Add(gFlatSkyParams, &s, &s.clear, Param_RGB(), 7, NULL);
@@ -99,9 +99,9 @@ void FlatSky_Open(void)
     gFlatSkyLayerParams = ParamTable_New(6);
     ParamTable_Add(gFlatSkyLayerParams, &l, &l.name, Param_String256(), 7, NULL);
     ParamTable_Add(gFlatSkyLayerParams, &l, &l.scale, Param_Real32(), 7, NULL);
-    ParamTable_Add(gFlatSkyLayerParams, &l, &l.speedU, Param_Real32(), 7, kRange11);
-    ParamTable_Add(gFlatSkyLayerParams, &l, &l.speedV, Param_Real32(), 7, kRange11);
-    ParamTable_Add(gFlatSkyLayerParams, &l, &l.alpha, Param_Real32(), 7, kRange01);
+    ParamTable_Add(gFlatSkyLayerParams, &l, &l.speedU, Param_Real32(), 7, kSkyRange11);
+    ParamTable_Add(gFlatSkyLayerParams, &l, &l.speedV, Param_Real32(), 7, kSkyRange11);
+    ParamTable_Add(gFlatSkyLayerParams, &l, &l.alpha, Param_Real32(), 7, kSkyRange01);
     ParamTable_Add(gFlatSkyLayerParams, &l, &l.color, Param_RGB(), 7, NULL);
 }
 HOOK(0x51DDF0, FlatSky_Open);

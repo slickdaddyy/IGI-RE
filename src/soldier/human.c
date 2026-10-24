@@ -143,8 +143,8 @@ ORIG(0x504A30, int, AreaActivate_AddCriteria, (const char *name, void *fn));
 ORIG(0x5096A0, uint8_t, AIGraph_GetEvent, (void));
 
 #define gHumanType VAR(uint16_t, 0x5BDAF8)
-#define gHumanEvent0 VAR(uint8_t, 0x53F316)
-#define gHumanEvent1 VAR(uint8_t, 0x53F317)
+#define gHumanGunshotEvent VAR(uint8_t, 0x53F316)
+#define gHumanPunchEvent VAR(uint8_t, 0x53F317)
 #define gHumanList VAR(void *, 0x5BDC24)
 #define gHumanParams VAR(void *, 0x5BDC18)
 #define gHumanCriteria VAR(int, 0x5BDB00)
@@ -265,8 +265,8 @@ void Human_Open(void)
     Task_SetGlobalFlags(1);
     gHumanType = TaskType_New("Human", sizeof(Human), BoneDynCubeObj_GetType(), 0);
     TaskType_SetFlags(gHumanType, 1);
-    gHumanEvent0 = TaskEvent_Alloc(0);
-    gHumanEvent1 = TaskEvent_Alloc(0);
+    gHumanGunshotEvent = TaskEvent_Alloc(0);
+    gHumanPunchEvent = TaskEvent_Alloc(0);
     gHumanList = QTaskList_New(0x80);
     TaskType_SetHandler(gHumanType, 0, Human_CreateHandler);
     TaskType_SetHandler2(gHumanType, 1, Human_RunHandler);
@@ -302,7 +302,7 @@ void Human_Open(void)
     TaskType_SetHandler(gHumanType, ComputerObject_GetEvent0(), Human_Handler460280);
     TaskType_SetHandler(gHumanType, StatusScreen_GetEvent(), Human_Handler460400);
     TaskType_SetHandler(gHumanType, Sound_GetInfoEvent(), Human_Handler4606D0);
-    TaskType_SetHandler(gHumanType, gHumanEvent0, Human_Handler4606F0);
+    TaskType_SetHandler(gHumanType, gHumanGunshotEvent, Human_Handler4606F0);
     TaskType_SetHandler(gHumanType, Grenade_GetEvent(), Human_Handler4F64E0);
     TaskType_SetHandler(gHumanType, 0xC, Human_Handler45F920);
     TaskType_SetHandler(gHumanType, AIGraph_GetEvent(), Human_ClearResult);

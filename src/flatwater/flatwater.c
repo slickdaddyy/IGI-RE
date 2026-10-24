@@ -53,7 +53,7 @@ typedef struct WaterState {
 #define k4096 VAR(float, 0x5333B8)
 #define kNear VAR(float, 0x5338D0) /* 409.6 */
 #define kHalf VAR(float, 0x533504)
-#define kTenth VAR(float, 0x534B5C)
+#define kFlatTenth VAR(float, 0x534B5C)
 #define kFltMax VAR(float, 0x534B3C)
 #define kFltMaxNeg VAR(float, 0x534B38)
 #define kFogBias VAR(float, 0x534B1C) /* 130 */
@@ -217,7 +217,7 @@ void FlatWater_Render(FlatWater *w)
             edge.side = side;
             dx = sb.x - sa.x;
             dxf = dx;
-            k01 = (long double)k * kTenth;
+            k01 = (long double)k * kFlatTenth;
             t = oy - dx * kHalf;
             t = t - (sa.y + sb.y) * kHalf;
             delta = t * (k01 * k01);

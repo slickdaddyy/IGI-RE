@@ -149,7 +149,7 @@ ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 #define kZero VAR(const float, 0x5333EC)
 #define kOne VAR(const float, 0x5333E0)
 #define kHalf VAR(const float, 0x533504)
-#define kSpeedScale VAR(const float, 0x5333B8)    /* 4096 */
+#define k4096 VAR(const float, 0x5333B8)    /* 4096 */
 #define kNearPad VAR(const double, 0x534170)      /* 2^28 */
 #define kNearDist VAR(const double, 0x534168)     /* 16384 */
 #define kOneD VAR(const double, 0x5333F8)
@@ -302,7 +302,7 @@ void GunShot_AddBullet(GunShot *s, Vec3d *pos, Vec3f *dir, char *type, int a5, i
     b->dir = *dir;
     b->unk40 = 0;
     memcpy(&b->unk38, type + 0x654, 4);
-    b->speed = *(float *)(type + 0x650) * kSpeedScale;
+    b->speed = *(float *)(type + 0x650) * k4096;
     memcpy(&b->unk3C, type + 0x658, 4);
     b->unk44 = a6;
     b->unk41 = 0;

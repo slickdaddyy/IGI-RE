@@ -111,7 +111,7 @@ _Static_assert(sizeof(Rain) == 0x56D0, "Rain");
 #define gRain VAR(Rain *, 0x6E5BD0)
 #define gRainEnabled VAR(int, 0x543C58)
 
-#define kHalf VAR(const double, 0x5335C0)
+#define kHalfD VAR(const double, 0x5335C0)
 #define kZero VAR(const float, 0x5333EC)
 #define kOne VAR(const float, 0x5333E0)
 #define kHalfF VAR(const float, 0x533504)
@@ -235,8 +235,8 @@ HOOK(0x498B80, Rain_Render);
 void Rain_UpdateGrid(Rain *r)
 {
     RainCell *c = r->cells;
-    int ix = (int)(long long)crt_floor((gViewPos.x - kGridOrigin) * kTileInv + kHalf);
-    int iy = (int)(long long)crt_floor((gViewPos.y - kGridOrigin) * kTileInv + kHalf);
+    int ix = (int)(long long)crt_floor((gViewPos.x - kGridOrigin) * kTileInv + kHalfD);
+    int iy = (int)(long long)crt_floor((gViewPos.y - kGridOrigin) * kTileInv + kHalfD);
     int mx = ix % 12, my = iy % 12;
     double x0, y0;
     int budget, i, j;
@@ -295,7 +295,7 @@ HOOK(0x498BD0, Rain_UpdateGrid);
 void Rain_Draw(Rain *r)
 {
     RainCell *c = &r->cells[(r->cellX + 1) * 24 + r->cellY + 1];
-    double z = crt_floor((gViewPos.z - kLayerOrigin) * kLayerInv + kHalf) * kLayer;
+    double z = crt_floor((gViewPos.z - kLayerOrigin) * kLayerInv + kHalfD) * kLayer;
     int i, j;
 
     Rain_FillVB(r);

@@ -45,7 +45,7 @@ _Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 #define gProxMineType VAR(uint16_t, 0x5BE394)
 
 #define kZero VAR(float, 0x5333EC)
-#define kOne VAR(double, 0x5333F8)
+#define kOneD VAR(double, 0x5333F8)
 #define kRangeScale VAR(float, 0x5333B8)
 #define kTicksPerSecond VAR(float, 0x5333BC)
 
@@ -157,7 +157,7 @@ void ProxMine_Use(Gun *g, WeaponUseMsg *msg)
                                    TaskType_IsA(hit.task->type, Vehicle_GetType()));
             if (!onHuman && !onHumanPart && !blocked) {
                 if (hit.normal.x != kZero || hit.normal.y != kZero || hit.normal.z != kZero) {
-                    inv = kOne / x87_sqrt(hit.normal.x * hit.normal.x + hit.normal.y * hit.normal.y +
+                    inv = kOneD / x87_sqrt(hit.normal.x * hit.normal.x + hit.normal.y * hit.normal.y +
                                         hit.normal.z * hit.normal.z);
                     hit.normal.x = hit.normal.x * inv;
                     hit.normal.y = hit.normal.y * inv;

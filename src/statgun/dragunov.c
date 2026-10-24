@@ -13,8 +13,8 @@
 #define kAngle45 VAR(double, 0x5335E8)
 #define kAngle30 VAR(double, 0x5339C0)
 #define kRecoilScale VAR(float, 0x5335AC)
-#define kZoomOut VAR(float, 0x533A80)
-#define kZoomIn VAR(float, 0x5339CC)
+#define kDragunovZoomOut VAR(float, 0x533A80)
+#define kDragunovZoomIn VAR(float, 0x5339CC)
 #define kHalf VAR(float, 0x533504)
 #define kDegToRad VAR(float, 0x53367C)
 
@@ -82,16 +82,16 @@ void Dragunov_Use(ZoomGun *g, WeaponUseMsg *msg)
             return;
         t = x87_tan(kAngle45);
         if (t > v->fov) {
-            v->fov = v->fov * kZoomOut;
-            v->unk1E8 = v->unk1E8 * kZoomOut;
+            v->fov = v->fov * kDragunovZoomOut;
+            v->unk1E8 = v->unk1E8 * kDragunovZoomOut;
         }
         if (t < v->fov) {
             v->fov = t;
             v->unk1E8 = x87_tan(kAngle30);
         }
     } else if (v->fov > *minFov) {
-        v->fov = v->fov * kZoomIn;
-        v->unk1E8 = v->unk1E8 * kZoomIn;
+        v->fov = v->fov * kDragunovZoomIn;
+        v->unk1E8 = v->unk1E8 * kDragunovZoomIn;
     }
 }
 HOOK(0x472E50, Dragunov_Use);

@@ -337,7 +337,7 @@ _Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 #define kThrustScale VAR(float, 0x53346C) /* 44.6 */
 #define kHalf VAR(float, 0x533504)
 #define kQuarter VAR(float, 0x533518)
-#define kDamp VAR(float, 0x533574)       /* 0.95 */
+#define kHeliDamp VAR(float, 0x533574)       /* 0.95 */
 #define kTwo VAR(float, 0x533588)
 #define kTwentieth VAR(float, 0x5335AC)
 #define kFour VAR(float, 0x5335C8)

@@ -100,7 +100,7 @@ _Static_assert(offsetof(PlaceExplosive, active) == 0x240, "PlaceExplosive");
 _Static_assert(sizeof(PlaceExplosive) == 0x2B0, "PlaceExplosive");
 _Static_assert(offsetof(AimArg, found) == 0x80, "AimArg");
 
-#define gGunShotType VAR(uint16_t, 0x57BE78)
+#define gGunShotEffectType VAR(uint16_t, 0x57BE78)
 #define gGunShotDust VAR(char *, 0x57BE7C)
 #define gGunShotDust2 VAR(char *, 0x57BE80)
 #define gPlaceExplosiveType VAR(uint16_t, 0x53C1DC)
@@ -129,11 +129,11 @@ void GunShotEffect_ParseArgs(void *t, ParseArg *a);
 
 void GunShotEffect_Init(void)
 {
-    gGunShotType = TaskType_New("GunShotEffect", 0x20, Task_GetRootType(), 0);
-    TaskType_SetHandler(gGunShotType, GameMaterial_GetImpactEvent(), GunShotEffect_Impact);
-    TaskType_SetHandler(gGunShotType, GameMaterial_GetParseEvent(), GunShotEffect_ParseArgs);
-    TaskType_SetHandler(gGunShotType, GameMaterial_GetSizeEvent(), GameMaterial_GetSize);
-    Script_RegisterConstant("TASKTYPE_GUNSHOTEFFECT", gGunShotType);
+    gGunShotEffectType = TaskType_New("GunShotEffect", 0x20, Task_GetRootType(), 0);
+    TaskType_SetHandler(gGunShotEffectType, GameMaterial_GetImpactEvent(), GunShotEffect_Impact);
+    TaskType_SetHandler(gGunShotEffectType, GameMaterial_GetParseEvent(), GunShotEffect_ParseArgs);
+    TaskType_SetHandler(gGunShotEffectType, GameMaterial_GetSizeEvent(), GameMaterial_GetSize);
+    Script_RegisterConstant("TASKTYPE_GUNSHOTEFFECT", gGunShotEffectType);
     gGunShotDust = Game_AddSprite("concrete1.spr");
     gGunShotDust2 = Game_AddSprite("concrete2.spr");
 }
@@ -245,7 +245,7 @@ HOOK(0x4387B0, GunShotEffect_ParseArgs);
 
 void GunShotEffect_Close(void)
 {
-    TaskType_Free(gGunShotType);
+    TaskType_Free(gGunShotEffectType);
 }
 HOOK(0x438890, GunShotEffect_Close);
 

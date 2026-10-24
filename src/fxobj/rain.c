@@ -31,8 +31,8 @@ typedef struct RudderDef {
 
 #define gRudderType VAR(uint16_t, 0x57BD74)
 #define gRainTexture VAR(char *, 0x57BD80)
-#define gRainType VAR(uint16_t, 0x57BD84)
-#define gRainParams VAR(void *, 0x57BD88)
+#define gRainEffectType VAR(uint16_t, 0x57BD84)
+#define gRainEffectParams VAR(void *, 0x57BD88)
 #define gRainLevelRange ((void *)0x57BD90)
 #define gRainSizeRange ((void *)0x57BD98)
 
@@ -69,20 +69,20 @@ void RainEffect_Init(void)
     VAR(float, 0x57BD9C) = 150.0f;
     VAR(float, 0x57BD90) = 0.0f;
     VAR(float, 0x57BD94) = 1.0f;
-    gRainType = TaskType_New("RainEffect", sizeof(RainEffect), Task_GetRootType(), 0);
-    TaskType_SetHandler(gRainType, 0, RainEffect_Create);
-    TaskType_SetHandler2(gRainType, 2, RainEffect_Delete);
-    TaskType_SetHandler(gRainType, Param_GetTableEvent(), RainEffect_GetParams);
-    TaskType_SetHandler(gRainType, Param_GetChangedEvent(), RainEffect_Changed);
-    TaskType_SetHandler2(gRainType, 1, RainEffect_Run);
-    TaskType_SetHandler2(gRainType, Level_GetEventDA8(), TASK_NOTHING);
-    TaskType_SetHandler2(gRainType, Level_GetEventDAC(), TASK_NOTHING);
-    gRainParams = ParamTable_New(5);
-    ParamTable_Add(gRainParams, &r, &r.unk24, Param_Bool8(), 7, NULL);
-    ParamTable_Add(gRainParams, &r, &r.unk28, Param_Real32(), 7, gRainSizeRange);
-    ParamTable_Add(gRainParams, &r, &r.unk2C, Param_Real32(), 7, gRainSizeRange);
-    ParamTable_Add(gRainParams, &r, &r.expr, Param_VarString(), 7, NULL);
-    ParamTable_Add(gRainParams, &r, &r.level, Param_Real32(), 7, gRainLevelRange);
+    gRainEffectType = TaskType_New("RainEffect", sizeof(RainEffect), Task_GetRootType(), 0);
+    TaskType_SetHandler(gRainEffectType, 0, RainEffect_Create);
+    TaskType_SetHandler2(gRainEffectType, 2, RainEffect_Delete);
+    TaskType_SetHandler(gRainEffectType, Param_GetTableEvent(), RainEffect_GetParams);
+    TaskType_SetHandler(gRainEffectType, Param_GetChangedEvent(), RainEffect_Changed);
+    TaskType_SetHandler2(gRainEffectType, 1, RainEffect_Run);
+    TaskType_SetHandler2(gRainEffectType, Level_GetEventDA8(), TASK_NOTHING);
+    TaskType_SetHandler2(gRainEffectType, Level_GetEventDAC(), TASK_NOTHING);
+    gRainEffectParams = ParamTable_New(5);
+    ParamTable_Add(gRainEffectParams, &r, &r.unk24, Param_Bool8(), 7, NULL);
+    ParamTable_Add(gRainEffectParams, &r, &r.unk28, Param_Real32(), 7, gRainSizeRange);
+    ParamTable_Add(gRainEffectParams, &r, &r.unk2C, Param_Real32(), 7, gRainSizeRange);
+    ParamTable_Add(gRainEffectParams, &r, &r.expr, Param_VarString(), 7, NULL);
+    ParamTable_Add(gRainEffectParams, &r, &r.level, Param_Real32(), 7, gRainLevelRange);
     gRainTexture = Game_AddTexture("snow.tex");
 }
 HOOK(0x436780, RainEffect_Init);
@@ -127,7 +127,7 @@ HOOK(0x4369E0, RainEffect_Delete);
 void RainEffect_GetParams(void *t, void **out)
 {
     (void)t;
-    *out = gRainParams;
+    *out = gRainEffectParams;
 }
 HOOK(0x436A40, RainEffect_GetParams);
 
@@ -152,7 +152,7 @@ HOOK(0x436A50, RainEffect_Changed);
 
 void RainEffect_Close(void)
 {
-    QTaskList_Free(gRainParams);
-    TaskType_Free(gRainType);
+    QTaskList_Free(gRainEffectParams);
+    TaskType_Free(gRainEffectType);
 }
 HOOK(0x436AF0, RainEffect_Close);

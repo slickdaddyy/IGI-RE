@@ -230,7 +230,7 @@ ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 
 #define kKmhToUnits VAR(float, 0x5334A4)
 #define kPerFrameHour VAR(float, 0x5334A0)
-#define kFlySpeed VAR(double, 0x533478)
+#define kFlySpeedD VAR(double, 0x533478)
 #define kTwoPi VAR(float, 0x5334A8)
 #define kRadToDeg VAR(float, 0x5334AC)
 #define kUnitsToMeters VAR(double, 0x5334B0)
@@ -548,7 +548,7 @@ void HumanPlayer_BodyFlyRun(StateMachine *sm, HumanPlayer *h)
         y = y * k;
         z = z * k;
     }
-    speed = speed * kFlySpeed;
+    speed = speed * kFlySpeedD;
     fspeed = speed;
     pos[0] = x * speed + pos[0];
     y = fspeed * y;

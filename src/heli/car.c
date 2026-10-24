@@ -504,7 +504,7 @@ void Car_UpdateWheel(Car *c, int i, int joint)
         float gy = c->v.joints[joint].unk20;
 
         if (c->v.brake) {
-            c->v.speed = c->v.speed * kDamp;
+            c->v.speed = c->v.speed * kHeliDamp;
             gy = gx;
         }
         Car_WheelForce(body, &c->v.matrix, &ct->pos, &ct->normal, steer, gx, gy, 0x1.47ae14p+6f);

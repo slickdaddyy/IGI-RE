@@ -599,8 +599,8 @@ void Heli_UpdateWheels(Heli *h)
         force[5] = offs[i].z;
         Body_AddForce(&h->v.body, force);
         h->v.contacts++;
-        h->v.body.velocity.x = h->v.body.velocity.x * kDamp;
-        h->v.body.velocity.y = h->v.body.velocity.y * kDamp;
+        h->v.body.velocity.x = h->v.body.velocity.x * kHeliDamp;
+        h->v.body.velocity.y = h->v.body.velocity.y * kHeliDamp;
         h->v.body.velocity.z = h->v.body.velocity.z * kDampZ;
         h->v.body.spin.x = h->v.body.spin.x * kDamp98;
         h->v.body.spin.y = h->v.body.spin.y * kDamp98;

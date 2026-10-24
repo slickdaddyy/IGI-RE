@@ -106,7 +106,7 @@ _Static_assert(sizeof(SoundParams) == 0x58, "SoundParams");
 #define gMasterVolume VAR(float, 0x543908)
 #define gSfxVolume VAR(float, 0x54390C)
 #define gSoundSwapPan VAR(int, 0x543914)
-#define gSoundUpdateRate VAR(int, 0x54391C)
+#define gVoiceUpdateRate VAR(int, 0x54391C)
 #define gAdpcmIndexTable ((const signed char *)0x543920)
 #define gAdpcmStepTable ((const short *)0x543930)
 #define gListenerVel ((double *)0x676AB8)
@@ -508,7 +508,7 @@ void Voice_Fill(Voice *v, int frames)
                 Adpcm_Init(&v->adpcm, v->sound->channels);
             } else if (!ending) {
                 ending = 1;
-                end = gSoundUpdateRate * 4000 / 1000 + gTimeMs;
+                end = gVoiceUpdateRate * 4000 / 1000 + gTimeMs;
                 v->endTime = end;
                 d = (int)((unsigned)v->playPos - (unsigned)end);
                 v->unk30 = d < 0 ? end - v->playPos : d;
@@ -672,7 +672,7 @@ HOOK(0x496E60, Voice_SetParams);
 /* Tops up a streamed voice's ring buffer. Returns 0 once it has stopped. */
 char Voice_Update(Voice *v)
 {
-    int step = v->sound->rate / gSoundUpdateRate;
+    int step = v->sound->rate / gVoiceUpdateRate;
     DWORD play;
     int pos, ahead, n;
 

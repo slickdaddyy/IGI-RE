@@ -139,12 +139,12 @@ ORIG(0x5116D0, void, TerrainMesh_DrawTriangle, (WaterTri *t));
 #define kOneHalf VAR(float, 0x53353C)
 #define kTenth VAR(float, 0x5333C8)
 #define kTwoPiF VAR(float, 0x5334A8)
-#define kTwoPi VAR(double, 0x534CC0)
+#define kWaterTwoPi VAR(double, 0x534CC0)
 #define kPeriodScale VAR(float, 0x534CC8)
 #define kGridMin VAR(double, 0x534170)
 #define kGridScale VAR(double, 0x534CB8)
 #define kZeroD VAR(double, 0x5333B0)
-#define kMinusTwo VAR(double, 0x534CD0)
+#define kMinusTwoD VAR(double, 0x534CD0)
 #define kFinestSize VAR(double, 0x534CD8)
 #define kHalfD VAR(double, 0x5335C0)
 
@@ -177,8 +177,8 @@ uint32_t WaterMesh_UpdateWaves(WaterMesh *w)
             t = w->time;
             q1 = (long double)(uint64_t)((t + 0xBD) % p2) / fp2;
             q2 = (long double)(uint64_t)(t % period) / fperiod;
-            w->waves[(i - 1) * 5 + j][0] = x87_sin(q2 * kTwoPi + half) * w->cell;
-            w->waves[(i - 1) * 5 + j][1] = x87_sin(q1 * kTwoPi + half) * w->cell;
+            w->waves[(i - 1) * 5 + j][0] = x87_sin(q2 * kWaterTwoPi + half) * w->cell;
+            w->waves[(i - 1) * 5 + j][1] = x87_sin(q1 * kWaterTwoPi + half) * w->cell;
             k += i;
         }
     }
@@ -400,8 +400,8 @@ void WaterMesh_Draw(WaterDrawNode *node)
         iy = w->n - 1;
     c = &w->top[ix][iy];
     cs = (long double)(uint64_t)c->size;
-    sx = -1 - 2 * x87_fistp(((long double)w->cam.x - c->x) / cs * kMinusTwo);
-    sy = -1 - 2 * x87_fistp(((long double)w->cam.y - c->y) / cs * kMinusTwo);
+    sx = -1 - 2 * x87_fistp(((long double)w->cam.x - c->x) / cs * kMinusTwoD);
+    sy = -1 - 2 * x87_fistp(((long double)w->cam.y - c->y) / cs * kMinusTwoD);
     nx = (int)ix + (sx >= 0 ? 0 : sx);
     ny = (int)iy + (sy >= 0 ? 0 : sy);
     c = &w->top[nx <= 0 ? 0 : nx][ny <= 0 ? 0 : ny];

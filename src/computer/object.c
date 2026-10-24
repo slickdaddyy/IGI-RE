@@ -90,7 +90,7 @@ typedef struct MarkerShape {
 #define gObjectEvent2 VAR(uint8_t, 0x53F584)
 #define gMarkerShapes ((const MarkerShape *)0x53F5F0)
 #define gMarkerColors ((const float (*)[3])0x53F608)
-#define gGame VAR(char *, 0xBC2360)
+#define gLevelFlow VAR(char *, 0xBC2360)
 
 static const float kHalf = 0.5f;
 static const float kTen = 10.0f;
@@ -406,7 +406,7 @@ static void draw_label(float *pos, const char *name)
         crt_sprintf(buf, "RM: %s", name);
         s = buf;
     }
-    font = MenuManager_FindFont(*(void **)(gGame + 0x120), "font4.fnt");
+    font = MenuManager_FindFont(*(void **)(gLevelFlow + 0x120), "font4.fnt");
     y = (int)round_ll(pos[1]);
     x = (int)round_ll(pos[0]);
     Computer_DrawWrapped(x, y, 0x1.0a3d7p+9f, 0x80, 0x80, s, font, 0);

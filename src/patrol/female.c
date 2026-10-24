@@ -255,7 +255,7 @@ ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 #define Human_DeadRun ((SoldierStateFn)FN(0x45C740, Human_DeadRun))
 #define Human_UseRun ((SoldierStateFn)FN(0x45CA80, Human_UseRun))
 
-#define gFootstepSounds ((const int *)0x53E470)
+#define gFemaleFootstepSounds ((const int *)0x53E470)
 #define gSoldierFemaleStates ((SoldierStateFn *)0x53E400)
 #define gSoldierFemaleCombos ((void *)0x53E468)
 #define gSoldierFemaleAnimSlots ((void *)0x53E4A0)
@@ -318,7 +318,7 @@ void SoldierFemale_Footstep(Soldier *h)
     if (h->unk534[2] != Anim_GetId(h->anim, 0))
         return;
     ground = h->ground;
-    foot = gFootstepSounds[h->footstep];
+    foot = gFemaleFootstepSounds[h->footstep];
     h->footstep = (h->footstep + 1) % 12;
     if (!ground)
         return;

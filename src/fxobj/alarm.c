@@ -82,7 +82,7 @@ _Static_assert(sizeof(Reflector) == 0x140, "Reflector");
 #define gAlarmLightParams VAR(void *, 0x57BE9C)
 #define gAlarmLightReflectorType VAR(uint16_t, 0x57BEA0)
 #define gAlarmLightType VAR(uint16_t, 0x57BEA2)
-#define gAlarmLightSprite VAR(char *, 0x57BEA4)
+#define gAlarmSprite VAR(char *, 0x57BEA4)
 #define gViewPos VAR(Vec3d, 0xBCAB08)
 
 static const float kTurn = 0x1.aceeap-4f;
@@ -136,7 +136,7 @@ void AlarmLight_Init(void)
     TaskType_SetHandler2(gAlarmLightReflectorType, 2, VehiclePart_Delete);
     TaskType_SetHandler(gAlarmLightReflectorType, 4, AlarmLightReflector_Draw);
     Script_RegisterConstant("TASKTYPE_ALARMLIGHTREFLECTOR", gAlarmLightReflectorType);
-    gAlarmLightSprite = Game_AddSprite("alarmlight.spr");
+    gAlarmSprite = Game_AddSprite("alarmlight.spr");
 }
 HOOK(0x4397C0, AlarmLight_Init);
 
@@ -256,7 +256,7 @@ void AlarmLightReflector_DrawFlare(Reflector *t, int point)
     y0 = scr[1] - size[1];
     x1 = scr[0] + size[0];
     y1 = scr[1] + size[1];
-    QVertex_DrawQuadEx(gAlarmLightSprite + 0x18, x0, y0, x1, y0, x0, y1, x1, y1, (k + k) * kFlareScale, 0.0f, 0.0f,
+    QVertex_DrawQuadEx(gAlarmSprite + 0x18, x0, y0, x1, y0, x0, y1, x1, y1, (k + k) * kFlareScale, 0.0f, 0.0f,
                        w, 0.5f, 0, 0x1040008, 0);
 }
 HOOK(0x439F10, AlarmLightReflector_DrawFlare);

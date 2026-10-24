@@ -323,7 +323,7 @@ HOOK(0x44A630, GlassShatter_PlaySound);
 #define kSpeed VAR(float, 0x5333B8)     /* 4096 */
 #define kHalfSpeed VAR(float, 0x533688) /* 2048 */
 #define kPerFrame VAR(float, 0x5338C8)  /* 1/30 */
-#define kNear VAR(float, 0x5338D8)      /* 1/5120 */
+#define kShatterNear VAR(float, 0x5338D8)      /* 1/5120 */
 #define kSizeScale VAR(float, 0x5338D4) /* 4505.6 */
 #define kSizeMin VAR(float, 0x5338D0)   /* 409.6 */
 #define kOneD VAR(double, 0x5333F8)
@@ -353,7 +353,7 @@ static long double edge_proj(const float *d, float *e, float *len)
 /* 0 at the hit, 1 from 5120 units away */
 static float nearness(float d2)
 {
-    float m = x87_sqrt(d2) * kNear;
+    float m = x87_sqrt(d2) * kShatterNear;
 
     if (kZero > m)
         m = 0;

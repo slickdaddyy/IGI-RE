@@ -3,8 +3,8 @@
 #include "hook.h"
 #include "litmap/litmap.h"
 
-#define kNear VAR(float, 0x534BB8)
-#define kAlmostOne VAR(float, 0x534C98)
+#define kHemiNear VAR(float, 0x534BB8)
+#define kHemiAlmostOne VAR(float, 0x534C98)
 #define kAlmostOneD VAR(double, 0x534C90)
 #define kOneD VAR(double, 0x5333F8)
 
@@ -152,8 +152,8 @@ void Hemicube_DrawTriangle(int *color, float *depth, int pitch, int *ids, int id
     ras.maxX = maxX;
     ras.affine = affine;
 
-    y0 = top[1] >= kZero ? round_int((long double)top[1] + kAlmostOne) : round_int(top[1]);
-    y1 = (mid[1] >= kZero ? round_int(mid[1]) : round_int((long double)mid[1] - kAlmostOne)) + 1;
+    y0 = top[1] >= kZero ? round_int((long double)top[1] + kHemiAlmostOne) : round_int(top[1]);
+    y1 = (mid[1] >= kZero ? round_int(mid[1]) : round_int((long double)mid[1] - kHemiAlmostOne)) + 1;
     if (y0 < minY)
         y0 = minY;
     if (y1 > maxY)
@@ -187,8 +187,8 @@ void Hemicube_DrawTriangle(int *color, float *depth, int pitch, int *ids, int id
         savedXr = e.xr;
     }
 
-    y0 = mid[1] >= kZero ? round_int((long double)mid[1] + kAlmostOne) : round_int(mid[1]);
-    y1 = (bot[1] >= kZero ? round_int(bot[1]) : round_int((long double)bot[1] - kAlmostOne)) + 1;
+    y0 = mid[1] >= kZero ? round_int((long double)mid[1] + kHemiAlmostOne) : round_int(mid[1]);
+    y1 = (bot[1] >= kZero ? round_int(bot[1]) : round_int((long double)bot[1] - kHemiAlmostOne)) + 1;
     if (y0 < minY)
         y0 = minY;
     if (y1 > maxY)
@@ -233,14 +233,14 @@ static void clip_vertex(float *v, float *uv, const float *to, const float *touv,
     long double s, t;
 
     if (round) {
-        float z = v[2] + kNear;
+        float z = v[2] + kHemiNear;
 
         s = z;
     } else {
-        s = (long double)v[2] + kNear;
+        s = (long double)v[2] + kHemiNear;
     }
-    t = ((long double)kNear - to[2]) / (s - to[2]);
-    v[2] = kNear;
+    t = ((long double)kHemiNear - to[2]) / (s - to[2]);
+    v[2] = kHemiNear;
     v[0] = ((long double)v[0] - to[0]) * t + to[0];
     v[1] = ((long double)v[1] - to[1]) * t + to[1];
     uv[0] = ((long double)uv[0] - touv[0]) * t + touv[0];

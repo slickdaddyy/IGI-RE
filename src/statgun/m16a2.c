@@ -20,7 +20,7 @@ _Static_assert(sizeof(M203Data) == 0x1C, "M203Data");
 
 #define gM16A2Type VAR(uint16_t, 0x5BE36C)
 
-#define kSpeedScale VAR(float, 0x5334A4)
+#define kKmh VAR(float, 0x5334A4)
 #define kVelScale VAR(float, 0x5334A0)
 #define kIconGap VAR(float, 0x534114)
 
@@ -77,7 +77,7 @@ void M16A2_Use(Gun *g, WeaponUseMsg *msg)
     if (!msg->alt)
         return;
     Matrix_SetYAxis(&m, &g->dir);
-    s = d->speed * kSpeedScale;
+    s = d->speed * kKmh;
     vel.x = s * g->dir.x * kVelScale;
     vel.y = s * g->dir.y * kVelScale;
     vel.z = s * g->dir.z * kVelScale;

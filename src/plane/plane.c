@@ -89,7 +89,7 @@ ORIG(0x435C40, uint16_t, Gear_GetType, (void));
 #define gKeys ((uint8_t *)0xC28C62)
 #define gKeysPrev ((uint8_t *)0xC28D62)
 
-#define kSpeedScale VAR(float, 0x5336C8)
+#define kKmhToFrame VAR(float, 0x5336C8)
 #define kSlow VAR(float, 0x5336CC)          /* 0.8 */
 #define kGroundThrust VAR(float, 0x53369C)  /* 0.6 */
 #define kMilli VAR(float, 0x5336C0)
@@ -378,7 +378,7 @@ void Plane_Fly(Plane *p)
     long double t2;
     int i;
 
-    ratio = p->v.body.unk8 / (cfg->thrust * kSpeedScale);
+    ratio = p->v.body.unk8 / (cfg->thrust * kKmhToFrame);
     if (!(ratio >= kZero))
         ratio = kZero;
     else if (ratio > kOne)

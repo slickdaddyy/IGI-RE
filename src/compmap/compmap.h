@@ -168,10 +168,10 @@ _Static_assert(sizeof(MapHit) == 0x70, "MapHit");
 #define gMapSelectEvent VAR(uint8_t, 0x53F760)
 #define gMapZoomAngle ((const float *)0x53F750)
 #define gItemColor ((const float (*)[3])0x53F7D0)
-#define gGame VAR(char *, 0xBC2360)
+#define gLevelFlow VAR(char *, 0xBC2360)
 #define gMouseButtons VAR(unsigned int, 0xC28F8C)
 
-#define MENU_MANAGER() (*(void **)(gGame + 0x120))
+#define MENU_MANAGER() (*(void **)(gLevelFlow + 0x120))
 #define RUN_SLOT() 1
 
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));

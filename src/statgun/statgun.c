@@ -73,7 +73,7 @@ _Static_assert(sizeof(StatGun) == 0x220, "StatGun");
 #define kDegToRad VAR(float, 0x53367C)
 #define kTurnStep VAR(float, 0x53387C)
 #define kRecoilFade VAR(float, 0x5335A8)
-#define kTwoPi VAR(double, 0x533728)
+#define kTwoPiD VAR(double, 0x533728)
 #define kEyeUp VAR(float, 0x534134)
 #define kEyeBack VAR(float, 0x533688)
 
@@ -335,7 +335,7 @@ void StationaryGun_Clamp(StatGun *o)
     }
     y = o->yawRange * kDegToRad;
     yf = y;
-    if (!(y < kTwoPi))
+    if (!(y < kTwoPiD))
         return;
     lim = -o->yawRange * kDegToRad;
     if (o->yaw < lim) {

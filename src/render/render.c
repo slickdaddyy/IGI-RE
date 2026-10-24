@@ -301,7 +301,7 @@ ORIG(0x4D0EA0, void, ModelLod_LoadTexAnimState, (ModelLod *l, const int *in));
 #define gLightStride VAR(int, 0xB041F0)
 #define gFogDensity VAR(DWORD, 0xB46D04)
 #define gLayerFov ((float *)0xB81700)
-#define gAmbient ((float *)0xB818AC)
+#define gLightColor ((float *)0xB818AC)
 #define gFogColor ((float *)0xB818EC)
 #define gView VAR(View, 0xBCAAE0)
 #define gScene VAR(Scene, 0xBCABA0)
@@ -922,9 +922,9 @@ static void set_fog(void)
 
 static void set_ambient(void)
 {
-    uint32_t r = x87_fistp((long double)gAmbient[0] * k255.f);
-    uint32_t g = x87_fistp((long double)gAmbient[1] * k255.f);
-    uint32_t b = x87_fistp((long double)gAmbient[2] * k255.f);
+    uint32_t r = x87_fistp((long double)gLightColor[0] * k255.f);
+    uint32_t g = x87_fistp((long double)gLightColor[1] * k255.f);
+    uint32_t b = x87_fistp((long double)gLightColor[2] * k255.f);
 
     SRS(D3DRENDERSTATE_AMBIENT, (r << 8 | g) << 8 | b);
 }

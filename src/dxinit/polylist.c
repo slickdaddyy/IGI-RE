@@ -110,7 +110,7 @@ ORIG(0x4D97E0, uint8_t, QObj_GetEvent, (void));
 #define gLightIndex VAR(int *, 0xB041E4)
 #define gLightCount VAR(int, 0xB041E8)
 #define gLightStride VAR(int, 0xB041F0)
-#define gAmbient ((float *)0xB818AC)
+#define gLightColor ((float *)0xB818AC)
 #define gFogColor ((float *)0xB818EC)
 #define gFogDensity VAR(float, 0xB46D04)
 #define gFogEnable VAR(int, 0x5470B4)
@@ -266,8 +266,8 @@ void PolyList_SetLightsCB(void)
     SET_RS(0x8C, 3);
     SET_RS(0x1C, gFogEnable);
     SET_RS(0x1D, 0);
-    SET_RS(0x8B, ((unsigned)x87_fistp(gAmbient[0] * k255) << 8 | (unsigned)x87_fistp(gAmbient[1] * k255)) << 8 |
-                     (unsigned)x87_fistp(gAmbient[2] * k255));
+    SET_RS(0x8B, ((unsigned)x87_fistp(gLightColor[0] * k255) << 8 | (unsigned)x87_fistp(gLightColor[1] * k255)) << 8 |
+                     (unsigned)x87_fistp(gLightColor[2] * k255));
     SET_RS(0x1B, 0);
     SET_RS(0x16, 2);
     SET_RS(0x8D, 0);
@@ -336,9 +336,9 @@ void PolyList_Draw(void **msg)
         light[1] = g;
         light[2] = b;
         light[0] = r * kHalfF;
-        amb[0] = gAmbient[0];
-        amb[1] = gAmbient[1];
-        amb[2] = gAmbient[2];
+        amb[0] = gLightColor[0];
+        amb[1] = gLightColor[1];
+        amb[2] = gLightColor[2];
         light[1] = light[1] * kHalfF;
         light[2] = light[2] * kHalfF;
         for (k = 0; k < 3; k++)
