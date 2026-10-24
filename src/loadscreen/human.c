@@ -336,7 +336,7 @@ void Human_ApplyLook(Human *h)
 {
     float yaw, pitch, a;
     Vec3f axis;
-    float q[4];
+    float q[5]; /* a Quat: Quat_SetAxisAngle also clears the int after w */
     HumanModel *m;
 
     if (!h->look)
