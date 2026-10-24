@@ -35,16 +35,6 @@ typedef struct RigidLineQuery {
     float visibility;
 } RigidLineQuery;
 
-/* sphere tree node */
-typedef struct RigidCollNode {
-    float center[3];
-    float radius;
-    uint16_t firstTri;
-    uint16_t triCount;
-    uint16_t child;
-    uint16_t next;
-} RigidCollNode;
-
 typedef struct CollTri {
     uint16_t v[3];
     uint16_t surface;

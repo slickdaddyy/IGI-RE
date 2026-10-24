@@ -84,4 +84,14 @@ typedef struct MagicCreateArg {
 } MagicCreateArg;
 _Static_assert(sizeof(MagicCreateArg) == 0x90, "MagicCreateArg");
 
+typedef struct RigidCollNode {
+    float center[3];
+    float radius;
+    uint16_t firstTri;
+    uint16_t triCount;
+    uint16_t child;
+    uint16_t next;
+} RigidCollNode;
+_Static_assert(sizeof(RigidCollNode) == 0x18, "RigidCollNode");
+
 #endif

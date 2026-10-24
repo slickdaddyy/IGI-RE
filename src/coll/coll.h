@@ -69,18 +69,6 @@ typedef struct CollQuery {
     int unk94;
 } CollQuery;
 
-typedef struct CollLineQuery {
-    const Vec3d *starts;
-    const Vec3d *ends;
-    int count;
-    char unkC;
-    int unk10;
-    int unk14;
-    int unk18;
-    int magic; /* 'ABCD' */
-    CollHit *results;
-} CollLineQuery;
-
 void Coll_GetPointMaterials(Terrain *t, void **results, const Vec3d *points, int count, char unk, int unk2,
                             unsigned int flags);
 int Coll_Descend(Terrain *t, CollCursor *c, CollCursor *unused, const Vec3d *p, int depth);

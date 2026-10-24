@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "levelflow/levelflow.h"
+#include "levelflow/levelflowtypes.h"
 
 ORIG(0x4017C0, int, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
@@ -34,20 +35,6 @@ typedef struct AIDetectInfo {
     char unk26[2];
 } AIDetectInfo;
 
-/* the eye of a detector: two view cones, the second optional */
-typedef struct DetectView {
-    Vec3d pos;
-    float m[9];
-    int unk3C;
-    double maxPitch;
-    double maxYaw;
-    double range;
-    double maxPitch2;
-    double maxYaw2;
-    double range2;
-    char hasSecond;
-} DetectView;
-
 /* one per task on the detection list, on the friends or enemies list
    while active */
 typedef struct AIDetectSlot {
@@ -79,7 +66,6 @@ typedef struct AIDetector {
 } AIDetector;
 
 _Static_assert(sizeof(AIDetectInfo) == 0x28, "AIDetectInfo");
-_Static_assert(offsetof(DetectView, hasSecond) == 0x70, "DetectView");
 _Static_assert(sizeof(AIDetectSlot) == 0x30, "AIDetectSlot");
 _Static_assert(offsetof(AIDetector, slots) == 0x30, "AIDetector");
 
@@ -301,9 +287,9 @@ char AIView_Contains(DetectView *v, Vec3d *p)
     float pitch;
     long double yaw;
 
-    l.x = v->m[6] * dz + v->m[3] * dy + v->m[0] * dx;
-    l.y = v->m[7] * dz + v->m[4] * dy + v->m[1] * dx;
-    l.z = v->m[8] * dz + v->m[5] * dy + v->m[2] * dx;
+    l.x = v->matrix.m[6] * dz + v->matrix.m[3] * dy + v->matrix.m[0] * dx;
+    l.y = v->matrix.m[7] * dz + v->matrix.m[4] * dy + v->matrix.m[1] * dx;
+    l.z = v->matrix.m[8] * dz + v->matrix.m[5] * dy + v->matrix.m[2] * dx;
     len = Vec3d_Length(&l);
     if (!(Vec3d_PitchAngle(l) >= kZero))
         pitch = -Vec3d_PitchAngle(l);

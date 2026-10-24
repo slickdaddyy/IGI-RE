@@ -606,7 +606,7 @@ static void follow(HumanCamera *c)
         Coll_Lines(Game_GetWorld(), &hit, &start, &end, 1, ev, &filter, -1);
         if (!hit.found)
             break;
-        if (hit.unk54 && hit.material && hit.material->unk00 > 0) {
+        if (hit.close && hit.material && hit.material->unk00 > 0) {
             d.x = hit.pos.x - start.x;
             d.y = hit.pos.y - start.y;
             d.z = hit.pos.z - start.z;
@@ -672,7 +672,7 @@ char HumanCamera_IsBlocked(HumanCamera *c, Task *h, Vec3d *to, Vec3d *from)
         Coll_Lines(Game_GetWorld(), &hit, pt, to, 1, ev, &filter, -1);
         if (!hit.found)
             return 0;
-        if (hit.unk54 && hit.material && hit.material->unk00 > 0) {
+        if (hit.close && hit.material && hit.material->unk00 > 0) {
             d.x = hit.pos.x - pt->x;
             d.y = hit.pos.y - pt->y;
             d.z = hit.pos.z - pt->z;

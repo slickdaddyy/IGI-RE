@@ -905,10 +905,10 @@ void Coll_Lines(Terrain *t, CollHit *results, const Vec3d *starts, const Vec3d *
     q.starts = starts;
     q.ends = ends;
     q.count = count;
-    q.unkC = unk;
-    q.unk10 = unk2;
-    q.unk14 = 0;
-    q.unk18 = 0;
+    q.slot = unk;
+    q.slotArg = (char *)unk2;
+    q.mesh = 0;
+    q.allFaces = 0;
     q.magic = 0x41424344;
     q.results = results;
     if (flags & 0x7FFFFFFF) {

@@ -616,7 +616,7 @@ void SCameraLens_DrawViewCone(SCameraLens *l, void *arg)
             Coll_Lines(Game_GetWorld(), &hit, &start, &end, 1, ev, &ignore, 0xFFFFFFFF);
             if (!hit.found)
                 break;
-            if (!hit.unk54 || !hit.material || !(hit.material->unk00 > kZero)) {
+            if (!hit.close || !hit.material || !(hit.material->unk00 > kZero)) {
                 end = hit.pos;
                 break;
             }

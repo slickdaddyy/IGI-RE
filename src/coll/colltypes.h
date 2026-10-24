@@ -39,18 +39,32 @@ typedef struct CollHit {
     Task *task;
     int unk4;
     Vec3d pos;
-    char unk20[0x18];
+    Vec3f local;        /* object space */
+    Vec3f localNormal;
     Vec3f normal;
     int unk44;
-    int unk48;
+    int tri;
     struct GameMaterial *material;  /* front side */
     struct GameMaterial *back;      /* back side */
-    int unk54;
+    int close;          /* within 0.1 of an earlier hit */
     int found;
     int unk5C;
     double dist;
-    char unk68[8];
+    float u, v;
 } CollHit;
 _Static_assert(sizeof(CollHit) == 0x70, "CollHit");
+
+typedef struct CollLineQuery {
+    const Vec3d *starts;
+    const Vec3d *ends;
+    int count;
+    uint8_t slot;       /* 0xFF: none, else a handler that must set *slotArg */
+    char *slotArg;
+    int mesh;
+    int allFaces;
+    int magic;          /* 'ABCD' */
+    CollHit *results;
+} CollLineQuery;
+_Static_assert(offsetof(CollLineQuery, results) == 0x20, "CollLineQuery");
 
 #endif
