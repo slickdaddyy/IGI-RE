@@ -170,9 +170,9 @@ void Direct3DRender_DrawBoneMesh(MeshDrawArg *arg)
     rot.count = 0;
     Direct3D_MakeMatrix(d3dm, &rot, &pos);
     DEV_SetTransform(gDevice, 1, d3dm);
-    Fog_SetRange(&obj->pos, h->radius);
+    Fog_SetRange(&obj->pos, h->sphere);
     if (h->format == 1) {
-        r = h->render;
+        r = h->data;
         g = r->unk1C;
         base = BoneMesh_Skin(r, model, &obj->bones, n);
         STATE_SELECT(gStateListA, gStateA0);
@@ -222,21 +222,21 @@ void Direct3DRender_LoadModel(MeshLoadArg *arg)
 
     switch (arg->header->format) {
     case 0:
-        arg->header->render = find_data(arg->res, ID_RD3D);
-        r = arg->header->render;
+        arg->header->data = find_data(arg->res, ID_RD3D);
+        r = arg->header->data;
         r->unk10 = find_data(arg->res, ID_VRTX);
         r->unk14 = find_data(arg->res, ID_REND);
         MeshBatch_Add(0, arg->header, r->unkC);
         break;
     case 1:
-        arg->header->render = find_data(arg->res, ID_RD3D);
-        r = arg->header->render;
+        arg->header->data = find_data(arg->res, ID_RD3D);
+        r = arg->header->data;
         r->unk18 = find_data(arg->res, ID_VRTX);
         r->unk1C = find_data(arg->res, ID_REND);
         break;
     case 3:
-        arg->header->render = find_data(arg->res, ID_RD3D);
-        r = arg->header->render;
+        arg->header->data = find_data(arg->res, ID_RD3D);
+        r = arg->header->data;
         r->unk14 = find_data(arg->res, ID_VRTX);
         r->unk1C = find_data(arg->res, ID_REND);
         r->unk18 = find_data(arg->res, ID_LTMP);
@@ -280,12 +280,12 @@ void Direct3DRender_UnloadModel(MeshLoadArg *arg)
 
     switch (h->format) {
     case 0:
-        memset((char *)h->render + 0x18, 0, 6 * 4);
+        memset((char *)h->data + 0x18, 0, 6 * 4);
         break;
     case 1:
         break;
     case 3:
-        memset((char *)h->render + 0x20, 0, 6 * 4);
+        memset((char *)h->data + 0x20, 0, 6 * 4);
         break;
     default:
         Error_Show("Mesh format not supported");
@@ -689,7 +689,7 @@ void RigidDynCubeObj_GetSphereHandler(RigidDynCubeObj *obj, SphereArg *out)
     out->pos.x = x + obj->pos.x;
     out->pos.y = y + obj->pos.y;
     out->pos.z = z + obj->pos.z;
-    out->radius = h->radius;
+    out->radius = h->sphere;
 }
 HOOK(0x4A14B0, RigidDynCubeObj_GetSphereHandler);
 
@@ -775,7 +775,7 @@ void RigidDynCubeObj_NearZHandler(RigidDynCubeObj *obj, NearZArg *arg)
         s = obj->scale[1] < obj->scale[0] ? obj->scale[0] : obj->scale[1];
     else
         s = obj->scale[2];
-    radius = s * h->radius;
+    radius = s * h->sphere;
     if (Mesh3D_Exclude(&pos, radius, NULL))
         return;
     near = pos.z - radius;
@@ -788,7 +788,7 @@ void RigidDynCubeObj_NearZHandler(RigidDynCubeObj *obj, NearZArg *arg)
         o.x = gTransCtx.matrix.m[2] * wz + gTransCtx.matrix.m[1] * wy + gTransCtx.matrix.m[0] * wx;
         o.y = gTransCtx.matrix.m[5] * wz + gTransCtx.matrix.m[4] * wy + gTransCtx.matrix.m[3] * wx;
         o.z = wz * gTransCtx.matrix.m[8] + wy * gTransCtx.matrix.m[7] + wx * gTransCtx.matrix.m[6];
-        r = h->render;
+        r = h->data;
         minZ = arg->minZ;
         rot.m[0] = gTransCtx.matrix.m[1] * obj->matrix.m[3] + gTransCtx.matrix.m[0] * obj->matrix.m[0] +
                    gTransCtx.matrix.m[2] * obj->matrix.m[6];

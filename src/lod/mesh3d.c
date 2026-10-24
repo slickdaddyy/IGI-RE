@@ -25,23 +25,6 @@ ORIG(0x4B0E70, int, RenderMode_CreateMethod, (const char *name));
 ORIG(0x4B0EB0, void, RenderMode_DeleteMethod, (int method));
 ORIG(0x4CEC10, VirModel *, VirModel_Find_, (const char *name));
 
-/* The MESH chunk of a .mef file */
-typedef struct MeshHeader {
-    float version;
-    char unk4[0x2C];
-    float center[3];
-    float sphere; /* radius around center */
-    char unk40[0x20];
-    int complexity;
-    char unk64[0x14];
-    float radius;
-    int16_t vertex_count;
-    int16_t attach_count;
-    char unk80[8];
-    float (*verts)[4]; /* MVTX */
-    char *attach;      /* ATTA, 0x44 bytes each */
-} MeshHeader;
-
 /* What the three kinds of mesh objects have in common, at their own offsets */
 typedef struct RigidMeshObj {
     char unk0[0x20];
@@ -73,7 +56,6 @@ typedef struct SplineMeshObj {
     float *bound; /* center and radius */
 } SplineMeshObj;
 
-_Static_assert(sizeof(MeshHeader) == 0x90, "MeshHeader");
 _Static_assert(offsetof(RigidMeshObj, scale) == 0x98, "RigidMeshObj");
 _Static_assert(offsetof(BoneMeshObj, radius) == 0xA0, "BoneMeshObj");
 _Static_assert(offsetof(SplineMeshObj, bound) == 0x5A0, "SplineMeshObj");
@@ -251,10 +233,10 @@ int ModelObj_GetLOD(RigidMeshObj *o)
     if (!vm)
         return 0;
     h = lod_header(vm->lods[0]);
-    x = (long double)o->pos[0] - c->pos[0] + h->center[0];
+    x = (long double)o->pos[0] - c->pos[0] + h->center.x;
     y = o->pos[1] - c->pos[1];
     z = o->pos[2] - c->pos[2];
-    dist = c->m[8] * ((long double)z + h->center[2]) + c->m[7] * ((long double)y + h->center[1]) + c->m[6] * x;
+    dist = c->m[8] * ((long double)z + h->center.z) + c->m[7] * ((long double)y + h->center.y) + c->m[6] * x;
     return lod_select(vm, dist, (long double)max_scale(o->scale) * h->sphere, gLodScale, gLodRigidDetail,
                       gLodRigidCull, 1);
 }
@@ -271,10 +253,10 @@ int Mesh3D_GetBoneMeshLOD(BoneMeshObj *o)
     if (!vm)
         return 0;
     h = lod_header(vm->lods[0]);
-    x = (long double)o->pos[0] - c->pos[0] + h->center[0];
+    x = (long double)o->pos[0] - c->pos[0] + h->center.x;
     y = o->pos[1] - c->pos[1];
     z = o->pos[2] - c->pos[2];
-    dist = c->m[8] * ((long double)z + h->center[2]) + c->m[7] * ((long double)y + h->center[1]) + c->m[6] * x;
+    dist = c->m[8] * ((long double)z + h->center.z) + c->m[7] * ((long double)y + h->center.y) + c->m[6] * x;
     return lod_select(vm, dist, o->radius, 1.0L, gLodBoneDetail, gLodBoneCull, 0);
 }
 HOOK(0x4CFF70, Mesh3D_GetBoneMeshLOD);
@@ -360,9 +342,9 @@ int Mesh3D_ExcludeRigid(RigidMeshObj *o, void *clip)
     float dx = o->pos[0] - c->pos[0];
     float dy = o->pos[1] - c->pos[1];
     float dz = o->pos[2] - c->pos[2];
-    long double x = m[2] * h->center[2] + m[1] * h->center[1] + m[0] * h->center[0];
-    float y = m[5] * h->center[2] + m[4] * h->center[1] + m[3] * h->center[0];
-    float z = m[8] * h->center[2] + m[7] * h->center[1] + m[6] * h->center[0];
+    long double x = m[2] * h->center.z + m[1] * h->center.y + m[0] * h->center.x;
+    float y = m[5] * h->center.z + m[4] * h->center.y + m[3] * h->center.x;
+    float z = m[8] * h->center.z + m[7] * h->center.y + m[6] * h->center.x;
     float v[3];
 
     view_point(v, x + dx, (long double)y + dy, (long double)z + dz);

@@ -5,6 +5,7 @@
 
 #include "igi.h"
 #include "core/list.h"
+#include "model/modeltypes.h"
 
 #define VIRMODEL_MAX 600
 #define VIRMODEL_LODS 5
@@ -38,15 +39,6 @@ typedef struct MeshAnim {
     void *data;
 } MeshAnim;
 
-/* A mesh from LOCAL:models/<name>.mef */
-typedef struct Mesh {
-    Node node;
-    void *res;
-    float *header;    /* MESH chunk, version 0.1 */
-    int anim_count;
-    MeshAnim *anims;
-} Mesh;
-
 /* A collision mesh from <dir>models/<name>.mef */
 typedef struct CollMeshRes {
     Node node;
@@ -54,16 +46,6 @@ typedef struct CollMeshRes {
     int *parts;       /* 0x1C bytes each, the first three words become pointers */
     void *res;
 } CollMeshRes;
-
-/* A named mesh instance with its textures. VirModel LODs point at these. */
-typedef struct ModelLod {
-    Node node;
-    const char *name;
-    Mesh *mesh;
-    void **textures;
-    void **texinfo;
-    int count;
-} ModelLod;
 
 /* One loaded <dir><name>.mtp file */
 typedef struct ModelFile {
@@ -80,16 +62,6 @@ typedef struct ModelFile {
     int unk44;
     int unk48;
 } ModelFile;
-
-/* Up to five LODs named <name>, then the last letter counted up */
-typedef struct VirModel {
-    ModelLod *lods[VIRMODEL_LODS];
-    char name[16];
-    int unk24;
-    char unk28[0x14];
-    uint16_t lod_count;
-    uint16_t lod_dist[VIRMODEL_LODS];
-} VirModel;
 
 int Model_GetInitMethod(void);
 int Model_GetDeinitMethod(void);

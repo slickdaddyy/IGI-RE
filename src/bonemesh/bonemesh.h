@@ -12,6 +12,7 @@
 #include "glowmesh/glowmeshtypes.h"
 #include "transctx/transctxtypes.h"
 #include "res/restypes.h"
+#include "model/modeltypes.h"
 
 typedef void (*TaskHandler)(Task *task, void *arg);
 
@@ -42,17 +43,6 @@ typedef struct MeshColl {
     } part[2];
 } MeshColl;
 
-/* MESH chunk of a .mef mesh (Mesh.header) */
-typedef struct MeshHeader {
-    char unk0[0x20];
-    int format; /* 0 rigid, 1 bone, 3 lightmap */
-    MeshRender *render;
-    int unk28;
-    MeshColl *coll;
-    Vec3f center;
-    float radius;
-} MeshHeader;
-
 /* argument of the LoadModel / UnloadModel methods */
 typedef struct MeshLoadArg {
     MeshHeader *header;
@@ -60,7 +50,6 @@ typedef struct MeshLoadArg {
 } MeshLoadArg;
 
 _Static_assert(sizeof(MeshRender) == 0x38, "MeshRender");
-_Static_assert(offsetof(MeshHeader, radius) == 0x3C, "MeshHeader");
 
 extern void *gDevice;
 extern TransCtx gTransCtx;

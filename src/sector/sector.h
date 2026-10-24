@@ -9,6 +9,7 @@
 #include "task/tasktypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "sector/sectortypes.h"
+#include "model/modeltypes.h"
 
 typedef void (*TaskFn)();
 
@@ -38,14 +39,9 @@ typedef struct SectorMesh {
     Portal *portals;    /* 0x98 */
 } SectorMesh;
 
-typedef struct VirModel {
-    void *lod[15];
-    short lodCount;     /* 0x3C */
-} VirModel;
-
 static inline SectorMesh *lod_mesh(VirModel *m, int i)
 {
-    return *(SectorMesh **)(*(char **)((char *)m->lod[i] + 0xC) + 0xC);
+    return *(SectorMesh **)(*(char **)((char *)m->lods[i] + 0xC) + 0xC);
 }
 
 _Static_assert(offsetof(SectorMesh, portals) == 0x98, "SectorMesh");

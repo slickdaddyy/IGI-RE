@@ -49,16 +49,6 @@ typedef struct ModelSlot {
     int used;
 } ModelSlot;
 
-/* MESH chunk of a .mef file */
-typedef struct MeshHeader {
-    char unk0[0x20];
-    int type;       /* 0 rigid, 3 lightmapped */
-    void *data;
-    char unk28[8];
-    float center[3];
-    float radius;
-} MeshHeader;
-
 typedef struct LmGroup {
     float center[3];
     uint16_t indexCount;
@@ -173,7 +163,6 @@ typedef struct SortedPrim {
 _Static_assert(offsetof(Scene, minX) == 0x30, "Scene");
 _Static_assert(sizeof(ModelVB) == 0x24, "ModelVB");
 _Static_assert(sizeof(ModelSlot) == 0xFA8, "ModelSlot");
-_Static_assert(offsetof(MeshHeader, radius) == 0x3C, "MeshHeader");
 _Static_assert(offsetof(LmGroup, indices) == 0x20, "LmGroup");
 _Static_assert(offsetof(RigidMesh, vb) == 0x28, "RigidMesh");
 _Static_assert(offsetof(LmMesh, vb) == 0x30, "LmMesh");
@@ -329,17 +318,17 @@ static void select_layer_view(TransCtx *saved, TransCtx *tc)
 static void set_fog_at(const Matrix *m, const double *pos, MeshHeader *h)
 {
     double p[3];
-    long double x = ((long double)m->m[2] * h->center[2] + (long double)m->m[1] * h->center[1])
-                    + (long double)m->m[0] * h->center[0];
-    float y = ((long double)m->m[5] * h->center[2] + (long double)m->m[4] * h->center[1])
-              + (long double)m->m[3] * h->center[0];
-    float z = ((long double)m->m[8] * h->center[2] + (long double)m->m[7] * h->center[1])
-              + (long double)m->m[6] * h->center[0];
+    long double x = ((long double)m->m[2] * h->center.z + (long double)m->m[1] * h->center.y)
+                    + (long double)m->m[0] * h->center.x;
+    float y = ((long double)m->m[5] * h->center.z + (long double)m->m[4] * h->center.y)
+              + (long double)m->m[3] * h->center.x;
+    float z = ((long double)m->m[8] * h->center.z + (long double)m->m[7] * h->center.y)
+              + (long double)m->m[6] * h->center.x;
 
     p[0] = x + pos[0];
     p[1] = y + pos[1];
     p[2] = z + pos[2];
-    Fog_SetRange(p, h->radius);
+    Fog_SetRange(p, h->sphere);
 }
 
 /* Bends v along the spline of o; returns the segment. tmp gets the last two
@@ -458,7 +447,7 @@ void Direct3DRender_SplineNearZ(ModelObj *o, NearZQuery *q)
     if (Mesh3D_Exclude(c, radius, NULL))
         return;
     zmin = (long double)c[2] - radius;
-    if (zmin > q->z || h->type)
+    if (zmin > q->z || h->format)
         return;
     best = q->z;
     d = h->data;
@@ -629,7 +618,7 @@ void Direct3DRender_DrawSplineMesh(ModelObj **prim)
     rot.m[8] = gWorldScale;
     Direct3D_MakeMatrix(&mat, rot.m, pos);
     IDirect3DDevice7_SetTransform(DEV, D3DTRANSFORMSTATE_WORLD, &mat);
-    if (h->type)
+    if (h->format)
         return;
     d = h->data;
     g = d->groups;
@@ -776,10 +765,10 @@ void Direct3DRender_DrawSortedFaceGroup_Spline(SplinePrim *p)
     if (!(g->flags & 1)) {
         double c[3];
 
-        c[0] = ((MeshHeader *)p->lod->mesh->header)->center[0] + p->pos[0];
-        c[1] = ((MeshHeader *)p->lod->mesh->header)->center[1] + p->pos[1];
-        c[2] = ((MeshHeader *)p->lod->mesh->header)->center[2] + p->pos[2];
-        Fog_SetRange(c, ((MeshHeader *)p->lod->mesh->header)->radius);
+        c[0] = ((MeshHeader *)p->lod->mesh->header)->center.x + p->pos[0];
+        c[1] = ((MeshHeader *)p->lod->mesh->header)->center.y + p->pos[1];
+        c[2] = ((MeshHeader *)p->lod->mesh->header)->center.z + p->pos[2];
+        Fog_SetRange(c, ((MeshHeader *)p->lod->mesh->header)->sphere);
     }
     set_alpha_test(g->alpha);
     view_offset(pos, p->pos);
@@ -1041,7 +1030,7 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
     dy = o->pos[1] - gView.pos.y;
     dz = o->pos[2] - gView.pos.z;
     depth = (dz * gView.matrix.m[8] + dy * gView.matrix.m[7]) + dx * gView.matrix.m[6];
-    if (h->type == 0) {
+    if (h->format == 0) {
         RigidMesh *d = h->data;
         MeshGroup *g = d->groups;
 
@@ -1072,7 +1061,7 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
                 g = (MeshGroup *)((char *)g + g->next + 0x1C);
             }
         }
-    } else if (h->type == 3) {
+    } else if (h->format == 3) {
         Lightmaps *set;
         LmMesh *d = h->data;
         LmGroup *g;

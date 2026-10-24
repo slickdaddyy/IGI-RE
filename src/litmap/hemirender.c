@@ -9,14 +9,6 @@
 #include "types.h"
 #include "litmap/litmaptypes.h"
 
-typedef struct MeshLod {
-    char unk0[0xC];
-    struct {
-        char unk0[0xC];
-        LightmapMeshHeader *header;
-    } *data;
-} MeshLod;
-
 ORIG(0x521110, void, Hemicube_DrawTriangle, (int *color, float *depth, int pitch, int *ids, int idW, int idH,
                                              int minX, int minY, int maxX, int maxY, float *a, float *b, float *c,
                                              float *ta, float *tb, float *tc, int affine));
@@ -87,7 +79,7 @@ void Hemicube_DrawLightmapSet(LightmapInfo *info, const Vec3d *origin, const Mat
     for (i = 0; i < set->count; i++) {
         LightmapRef *ref = &set->refs[i];
         int last = ref->lodCount <= lod && ref->lodIndex == ref->lodCount - 1;
-        LightmapMeshHeader *mh;
+        MeshHeader *mh;
         LightmapMesh *mesh;
         LightmapChunk *chunk;
         const float *M = cam->m, *R;
@@ -96,10 +88,10 @@ void Hemicube_DrawLightmapSet(LightmapInfo *info, const Vec3d *origin, const Mat
 
         if (ref->lodIndex != lod && !last)
             continue;
-        mh = ref->lod->data->header;
+        mh = ref->lod->mesh->header;
         if (mh->format != 3)
             continue;
-        mesh = mh->mesh;
+        mesh = (LightmapMesh *)mh->data;
         if (!mesh->unk8 || !mesh)
             continue;
 

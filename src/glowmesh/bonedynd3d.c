@@ -11,6 +11,7 @@
 #include "glowmesh/glowmeshtypes.h"
 #include "haze/hazetypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "model/modeltypes.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
@@ -25,27 +26,11 @@ ORIG(0x4DAA20, int, Light_GetActive, (int *count));
 
 typedef void (*TaskHandler)(Task *task, void *arg);
 
-typedef struct MeshHeader {
-    char unk0[0x30];
-    float center[3];
-    float radius;
-} MeshHeader;
-
-typedef struct MeshLod {
-    char unk0[0xC];
-    MeshHeader *header;
-} MeshLod;
-
-typedef struct VirModel {
-    char unk0[0xC];
-    MeshLod *lod;
-} VirModel;
-
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern TaskHandler gTaskHandlers[][0x180];
 
-#define HEADER(obj) (((VirModel *)*(obj)->model)->lod->header)
+#define HEADER(obj) (((ModelLod *)*(obj)->model)->mesh->header)
 
 void BoneDynCubeObj_NearZHandler(BoneDynCubeObj *obj, NearZArg *arg);
 
@@ -103,9 +88,9 @@ void BoneDynCubeObj_NearZHandler(BoneDynCubeObj *obj, NearZArg *arg)
     px = obj->pos.x - gViewPos[0];
     py = obj->pos.y - gViewPos[1];
     pz = obj->pos.z - gViewPos[2];
-    x0 = obj->matrix.m[2] * h->center[2] + obj->matrix.m[1] * h->center[1] + obj->matrix.m[0] * h->center[0];
-    y0 = obj->matrix.m[5] * h->center[2] + obj->matrix.m[4] * h->center[1] + obj->matrix.m[3] * h->center[0];
-    z0 = obj->matrix.m[8] * h->center[2] + obj->matrix.m[7] * h->center[1] + obj->matrix.m[6] * h->center[0];
+    x0 = obj->matrix.m[2] * h->center.z + obj->matrix.m[1] * h->center.y + obj->matrix.m[0] * h->center.x;
+    y0 = obj->matrix.m[5] * h->center.z + obj->matrix.m[4] * h->center.y + obj->matrix.m[3] * h->center.x;
+    z0 = obj->matrix.m[8] * h->center.z + obj->matrix.m[7] * h->center.y + obj->matrix.m[6] * h->center.x;
     wx = x0 + px;
     wy = y0 + py;
     wz = z0 + pz;
@@ -117,10 +102,10 @@ void BoneDynCubeObj_NearZHandler(BoneDynCubeObj *obj, NearZArg *arg)
         s = !(obj->scale[1] >= obj->scale[0]) ? obj->scale[0] : obj->scale[1];
     else
         s = obj->scale[2];
-    radius = s * HEADER(obj)->radius;
+    radius = s * HEADER(obj)->sphere;
     if (Mesh3D_Exclude(v, radius, NULL))
         return;
-    n = v[2] - h->radius;
+    n = v[2] - h->sphere;
     if (n > arg->minZ)
         return;
     if (nearZ > n)

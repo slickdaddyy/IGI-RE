@@ -520,7 +520,7 @@ void SectorObject_CountMagicLods(int *count, Task *t)
     for (; t; t = t->next) {
         if (TaskType_IsA(t->type, MagicObj_GetType())) {
             if (lightmapped((RigidDynCubeObj *)t))
-                *count += ((VirModel *)((RigidDynCubeObj *)t)->model)->lodCount;
+                *count += ((VirModel *)((RigidDynCubeObj *)t)->model)->lod_count;
             SectorObject_CountMagicLods(count, first_child(t));
         }
         if (!t->next || !t->next->next)
@@ -539,7 +539,7 @@ void SectorObject_CountRigidLods(int *count, Task *t)
                 RigidDynCubeObj *o = (RigidDynCubeObj *)t;
 
                 if (lightmapped(o))
-                    *count += ((VirModel *)o->model)->lodCount;
+                    *count += ((VirModel *)o->model)->lod_count;
                 if (o->attached)
                     SectorObject_CountRigidLods(count, first_child(o->attached));
             }
@@ -556,7 +556,7 @@ static void fill_refs(int *n, LightmapSet *set, RigidDynCubeObj *o)
     int i;
 
     o->lightmapRefs = &set->refs[*n];
-    for (i = 0; i < ((VirModel *)o->model)->lodCount; i++) {
+    for (i = 0; i < ((VirModel *)o->model)->lod_count; i++) {
         LightmapRef *r = &set->refs[*n];
 
         r->lightmaps = NULL;
@@ -565,8 +565,8 @@ static void fill_refs(int *n, LightmapSet *set, RigidDynCubeObj *o)
         r->pos = &o->pos;
         r->unk14 = o->unkD8;
         r->lodIndex = i;
-        r->lodCount = ((VirModel *)o->model)->lodCount;
-        r->lod = ((VirModel *)o->model)->lod[i];
+        r->lodCount = ((VirModel *)o->model)->lod_count;
+        r->lod = ((VirModel *)o->model)->lods[i];
         r->uploaded = 0;
         (*n)++;
     }
@@ -665,7 +665,7 @@ void SectorObject_LoadLightmaps(SectorObject *so, LightmapSet **arg)
     if (so->sectors) {
         for (o = &so->s.o; o; o = next_part(so, o)) {
             if (o->model) {
-                count += ((VirModel *)o->model)->lodCount;
+                count += ((VirModel *)o->model)->lod_count;
                 SectorObject_CountMagicLods(&count, first_child(o->attached));
             }
         }

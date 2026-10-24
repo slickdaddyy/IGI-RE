@@ -6,6 +6,7 @@
 #include "res/restypes.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "model/modeltypes.h"
 
 /* one lightmap texture of a LOD */
 typedef struct LightmapTex {
@@ -50,7 +51,7 @@ _Static_assert(sizeof(Lightmaps) == 0x3C, "Lightmaps");
 /* one LOD of an object in a lightmap set (0x24 bytes) */
 typedef struct LightmapRef {
     Lightmaps *lightmaps;
-    struct MeshLod *lod;
+    struct ModelLod *lod;
     struct RigidDynCubeObj *obj;
     Matrix *matrix;
     Vec3d *pos;
@@ -148,13 +149,6 @@ typedef struct LightmapMesh {
     int unk28;
 } LightmapMesh;
 _Static_assert(sizeof(LightmapMesh) == 0x2C, "LightmapMesh");
-
-typedef struct LightmapMeshHeader {
-    float version;
-    int time[7];
-    int format;
-    LightmapMesh *mesh;
-} LightmapMeshHeader;
 
 typedef struct Lightmap {
     int size;

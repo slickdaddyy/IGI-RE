@@ -28,14 +28,6 @@ extern int gLightmapBuilt;
 
 #define LIGHTMAP_MAGIC 0x3DF5C28F
 
-typedef struct MeshLod {
-    char unk0[0xC];
-    struct {
-        char unk0[0xC];
-        LightmapMeshHeader *header;
-    } *data;
-} MeshLod;
-
 static const float kHalf = 0.5f;
 static const float kZero = 0.0f;
 static const double kOneD = 1.0;
@@ -55,7 +47,7 @@ static inline long double heron(long double a, long double b, long double c)
 Lightmaps *Lightmap_BuildLod(void *lodp, int lodIndex, float scale, const char *name, int index, int full, int flags,
                              int unk)
 {
-    LightmapMeshHeader *mh = ((MeshLod *)lodp)->data->header;
+    MeshHeader *mh = ((ModelLod *)lodp)->mesh->header;
     LightmapMesh *mesh;
     Lightmaps *lm;
     char path[0x200];
@@ -63,7 +55,7 @@ Lightmaps *Lightmap_BuildLod(void *lodp, int lodIndex, float scale, const char *
 
     if (mh->format != 3)
         return NULL;
-    mesh = mh->mesh;
+    mesh = (LightmapMesh *)mh->data;
     if (!mesh->unk8 || !mesh)
         return NULL;
     mesh->unk28 = 0;

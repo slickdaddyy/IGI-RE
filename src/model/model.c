@@ -369,7 +369,7 @@ Mesh *Mesh_Load(const char *name)
     if (*(uint32_t *)m->header != 0x3DCCCCCD) {
         Error_Show("Mesh \"%s\" and source code are incompatible. (Mesh \"%s\" is version %0.2f, source code is "
                    "version %0.2f.)",
-                   name, name, (double)*m->header, (double)0.1f);
+                   name, name, (double)m->header->version, (double)0.1f);
         for (;;)
             ;
     }
@@ -398,7 +398,7 @@ Mesh *Mesh_Load(const char *name)
                 c = Chunk_Find(c, MEF_NAXT);
         }
     }
-    arg.header = m->header;
+    arg.header = (float *)m->header;
     arg.res = m->res;
     if (gRenderFuncs[Model_GetLoadMethod()])
         gRenderFuncs[Model_GetLoadMethod()](&arg);

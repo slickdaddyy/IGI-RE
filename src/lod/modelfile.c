@@ -132,7 +132,7 @@ void Mesh_Free(Mesh *m)
         Mem_Free(m->anims);
         m->anims = NULL;
     }
-    arg.header = m->header;
+    arg.header = (float *)m->header;
     arg.res = m->res;
     if (gRenderFuncs[Model_GetUnloadMethod_()])
         gRenderFuncs[Model_GetUnloadMethod_()](&arg);
