@@ -15,11 +15,11 @@ ORIG(0x4011F0, void, Task_ShutdownSystem, (void));
 ORIG(0x4B8B20, void, Script_Init, (void));
 ORIG(0x4B8CC0, void, Script_Shutdown, (void));
 
-ORIG(0x4EC160, void, sub_4EC160, (void));
+ORIG(0x4EC160, void, AnimTriggerEvent_Init, (void));
 ORIG(0x4EBE70, void, AnimTrigger_Init, (void));
-ORIG(0x4ED000, void, sub_4ED000, (void));
+ORIG(0x4ED000, void, InputPort_ResetUnused, (void));
 ORIG(0x4EBFC0, void, AnimTrigger_Shutdown, (void));
-ORIG(0x4EC180, void, sub_4EC180, (void));
+ORIG(0x4EC180, void, AnimTriggerEvent_Shutdown, (void));
 
 ORIG(0x4E6070, void, SoundSys_Init, (void));
 ORIG(0x4EBC60, void, SoundSysMicrophone_Init, (void));
@@ -103,7 +103,7 @@ ORIG(0x4D9830, void, Camera_Close, (void));
 ORIG(0x4D9790, void, QObj_Close, (void));
 
 ORIG(0x498950, void, App_ResetErrorHandlers, (void));
-ORIG(0x4AF8B0, void, sub_4AF8B0, (int v));
+ORIG(0x4AF8B0, void, Error_SetUnusedFlag, (int v));
 ORIG(0x48F020, void, AppContext_Open, (void));
 ORIG(0x4B46A0, void, Math_InitTables, (void));
 ORIG(0x4B0BA0, void, Mem_Init, (void));
@@ -159,13 +159,13 @@ void TransparencyList_Init(void);
 void TransparencyList_Shutdown(void);
 void WaterMesh_Close(void);
 
-extern uint8_t gEventA845E0;
-extern uint8_t gEventA845E1;
+extern uint8_t gEngineUnusedEvent0;
+extern uint8_t gEngineUnusedEvent1;
 
 void ViewModules_Init(void);
 void ViewModules_Shutdown(void);
-void sub_530960(void);
-void sub_530980(void);
+void EngineEvents_Init(void);
+void EngineEvents_Shutdown(void);
 void EngineModules_Init(void);
 void EngineModules_Shutdown(void);
 void RenderModules_Init(void);
@@ -186,12 +186,12 @@ void Core_Shutdown(void);
 void Engine_Init(void)
 {
     ViewModules_Init();
-    sub_530960();
-    sub_4EC160();
+    EngineEvents_Init();
+    AnimTriggerEvent_Init();
     AnimTrigger_Init();
     Debug_Log();
     Lzss_Register();
-    sub_4ED000();
+    InputPort_ResetUnused();
 }
 HOOK(0x530270, Engine_Init);
 
@@ -201,25 +201,25 @@ void Engine_Shutdown(void)
     Debug_Log();
     Debug_Log();
     AnimTrigger_Shutdown();
-    sub_4EC180();
-    sub_530980();
+    AnimTriggerEvent_Shutdown();
+    EngineEvents_Shutdown();
     ViewModules_Shutdown();
 }
 HOOK(0x5302A0, Engine_Shutdown);
 
-void sub_530960(void)
+void EngineEvents_Init(void)
 {
-    gEventA845E1 = TaskEvent_Alloc(0);
-    gEventA845E0 = TaskEvent_Alloc(0);
+    gEngineUnusedEvent1 = TaskEvent_Alloc(0);
+    gEngineUnusedEvent0 = TaskEvent_Alloc(0);
 }
-HOOK(0x530960, sub_530960);
+HOOK(0x530960, EngineEvents_Init);
 
-void sub_530980(void)
+void EngineEvents_Shutdown(void)
 {
-    TaskEvent_Free(gEventA845E0);
-    TaskEvent_Free(gEventA845E1);
+    TaskEvent_Free(gEngineUnusedEvent0);
+    TaskEvent_Free(gEngineUnusedEvent1);
 }
-HOOK(0x530980, sub_530980);
+HOOK(0x530980, EngineEvents_Shutdown);
 
 void ViewModules_Init(void)
 {
@@ -434,7 +434,7 @@ void Core_Init(void)
 {
     Debug_Log();
     App_ResetErrorHandlers();
-    sub_4AF8B0(1);
+    Error_SetUnusedFlag(1);
     AppContext_Open();
     Debug_Log();
     Math_InitTables();
@@ -490,6 +490,6 @@ void Core_Shutdown(void)
 HOOK(0x532490, Core_Shutdown);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-BSS(A845E0) uint8_t gEventA845E0;
-BSS(A845E0) uint8_t gEventA845E1;
+BSS(A845E0) uint8_t gEngineUnusedEvent0;
+BSS(A845E0) uint8_t gEngineUnusedEvent1;
 PAD(igb, A845E0, A845E2, 0x2);

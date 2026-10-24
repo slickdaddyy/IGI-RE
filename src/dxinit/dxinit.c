@@ -14,7 +14,7 @@ ORIG(0x48F1B0, int, AppContext_IsDebugged, (void));
 ORIG(0x4A5AD5, void, crt_exit, (int code));
 ORIG(0x4AF860, void, Error_SetHandler, (ErrorHandler fn));
 ORIG(0x4AF880, void, Warning_SetHandler, (ErrorHandler fn));
-ORIG(0x4AF890, void, sub_4AF890, (ErrorHandler fn));
+ORIG(0x4AF890, void, Error_SetMessageBoxHandler, (ErrorHandler fn));
 ORIG(0x4AF8A0, void, Error_SetExitHandler, (ErrorHandler fn));
 ORIG(0x4AF8C0, void, Error_ResetHandlers, (void));
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
@@ -258,7 +258,7 @@ void App_SetErrorHandlers(void)
     Error_SetExitHandler(App_ErrorExit);
     Error_SetHandler(App_MessageBox);
     Warning_SetHandler(App_MessageBox);
-    sub_4AF890(App_MessageBox);
+    Error_SetMessageBoxHandler(App_MessageBox);
 }
 HOOK(0x498900, App_SetErrorHandlers);
 

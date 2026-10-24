@@ -40,7 +40,7 @@ ORIG(0x496E60, void, Voice_SetParams, (void *voice, void *params));
 ORIG(0x497390, void, Sound_GetName, (char *out, const char *path));
 ORIG(0x497410, int, Sound_HashName, (const char *name));
 ORIG(0x497510, int, Sound_GetVoiceCount, (void));
-ORIG(0x4E7350, void, sub_4E7350, (int unk));
+ORIG(0x4E7350, void, Sound_SetUnusedOff, (int unk));
 
 /* script functions of the sound definitions, not rewritten yet */
 #define DefineGroup (FN(0x4EBA90, DefineGroup))
@@ -104,7 +104,7 @@ extern SoundInst *gSoundActive;
 extern int gSoundNextId;
 extern int gSoundUpdateRate;
 extern SoundInst *gSoundInsts;
-extern char gUnkA5E608;
+extern char gSoundUnusedByte;
 extern char gSoundDisabled;
 extern QTaskList *gSoundTasks;
 extern QTaskList *gSoundDefs;
@@ -182,11 +182,11 @@ int Sound_GetRate(void)
 }
 HOOK(0x4E6050, Sound_GetRate);
 
-void sub_4E6060(char v)
+void Sound_SetUnusedByte(char v)
 {
-    gUnkA5E608 = v;
+    gSoundUnusedByte = v;
 }
-HOOK(0x4E6060, sub_4E6060);
+HOOK(0x4E6060, Sound_SetUnusedByte);
 
 void SoundSysController_Run(void);
 void SoundSysDefParent_Create(SoundSysDef *d, const char *path);
@@ -196,7 +196,7 @@ void SoundSys_Init(void)
     SoundInst *s;
     int i;
 
-    sub_4E7350(0);
+    Sound_SetUnusedOff(0);
     gSoundTasks = QTaskList_New(0x100);
     gSoundDefs = QTaskList_New(8);
     gSoundSysControllerType = TaskType_New("SoundSysController", 0x20, Task_GetRootType(), 0);

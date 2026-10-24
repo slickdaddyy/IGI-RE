@@ -245,11 +245,11 @@ void Door_FindNearest(Door *d, NearQuery *q)
 }
 HOOK(0x446470, Door_FindNearest);
 
-void sub_4464B0(void *task, char *arg)
+void Door_AIGraphHandler(void *task, char *arg)
 {
     arg[0] = arg[8] == 0;
 }
-HOOK(0x4464B0, sub_4464B0);
+HOOK(0x4464B0, Door_AIGraphHandler);
 
 void Door_Open(void)
 {
@@ -269,7 +269,7 @@ void Door_Open(void)
     TaskType_SetHandler2(gDoorType, Level_GetEventDAC(), Door_RemoveSymbols);
     TaskType_SetHandler(gDoorType, RigidDynCubeObj_GetEvent4(), Door_MoveHandler);
     TaskType_SetHandler(gDoorType, HumanAI_GetDoorSlot(), Door_FindNearest);
-    TaskType_SetHandler(gDoorType, AIGraph_GetEvent(), sub_4464B0);
+    TaskType_SetHandler(gDoorType, AIGraph_GetEvent(), Door_AIGraphHandler);
     TaskType_SetHandler(gDoorType, ComputerObject_GetEvent0(), Terminal_MapHandler);
     gDoorParams = ParamTable_New(16);
     gDoorSlideRange.min = -10.0f;
@@ -729,12 +729,6 @@ int Door_GetState(Door *d)
 HOOK(0x447D70, Door_GetState);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-DATA(5333B8) float kSlideScale INIT(4096.0f);
-ALIAS(k4096, kSlideScale, 0);
-ALIAS(kFixed, kSlideScale, 0);
-ALIAS(kMeter, kSlideScale, 0);
-ALIAS(kRangeScale, kSlideScale, 0);
-ALIAS(kSpeed, kSlideScale, 0);
 DATA(533498) double kUseMaxY INIT(4096.0);
 ALIAS(kUnit, kUseMaxY, 0);
 DATA(5338A8) double kUseMaxX INIT(1843.2);

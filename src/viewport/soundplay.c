@@ -53,7 +53,7 @@ typedef void (*TaskFn2)(Task *task, void *arg);
 _Static_assert(sizeof(SoundParams) == 0x58, "SoundParams");
 _Static_assert(sizeof(SoundInst) == 0x78, "SoundInst");
 
-extern int gUnkA5E5E8;
+extern int gSoundUnusedOff;
 extern SoundInst *gSoundFree;
 extern SoundInst *gSoundActive;
 extern int gSoundNextId;
@@ -320,18 +320,18 @@ void Sound_SetSilent(char on)
 }
 HOOK(0x4E7340, Sound_SetSilent);
 
-void sub_4E7350(int v)
+void Sound_SetUnusedOff(int v)
 {
-    gUnkA5E5E8 = v == 0;
+    gSoundUnusedOff = v == 0;
 }
-HOOK(0x4E7350, sub_4E7350);
+HOOK(0x4E7350, Sound_SetUnusedOff);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-BSS(A5E5E8) int gUnkA5E5E8;
+BSS(A5E5E8) int gSoundUnusedOff;
 BSS(A5E5E8) SoundInst *gSoundFree;
 BSS(A5E5F4) SoundInst *gSoundActive;
 BSS(A5E5F4) int gSoundNextId;
-BSS(A5E608) char gUnkA5E608;
+BSS(A5E608) char gSoundUnusedByte;
 PAD(igb, A5E608, A5E609, 0x1);
 BSS(A5E608) char gSoundDisabled;
 BSS(A5E608) char gSoundSilent;

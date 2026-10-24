@@ -64,7 +64,7 @@ _Static_assert(sizeof(Joypad) == 0x28, "Joypad");
 extern InputPort gInputPorts[];
 extern int gInputPortIndex;
 extern uint16_t gInputPortType;
-extern int gUnkA5EF98;
+extern int gInputPortUnused;
 extern Joypad gJoypads[];
 extern uint8_t gKeys[];
 extern float gMouseX;
@@ -75,11 +75,11 @@ static const float kZero = 0.0f;
 static const float kOne = 1.0f;
 static const float kMinusOne = -1.0f;
 
-void sub_4ED000(void)
+void InputPort_ResetUnused(void)
 {
-    gUnkA5EF98 = 0;
+    gInputPortUnused = 0;
 }
-HOOK(0x4ED000, sub_4ED000);
+HOOK(0x4ED000, InputPort_ResetUnused);
 
 /* key driven axis: up while plus is held, down while minus is held, back
    to 0 otherwise */
@@ -263,7 +263,7 @@ void InputPort_Setup(int port, int count, InputBinding *bindings, int analog, fl
 HOOK(0x4ED5E0, InputPort_Setup);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-BSS(A5EF98) int gUnkA5EF98;
+BSS(A5EF98) int gInputPortUnused;
 BSS(A5EF98) int gInputPortIndex;
 BSS(A5EF98) uint16_t gInputPortType;
 PAD(igb, A5EF98, A5EFA2, 0x2);

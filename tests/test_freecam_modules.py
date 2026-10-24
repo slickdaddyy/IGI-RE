@@ -12,7 +12,7 @@ CHAINS = {
     0x531D30: "TerrainModules_Init", 0x531D70: "TerrainModules_Shutdown", 0x531DB0: "WorldModules_Init", 0x531DC0: "WorldModules_Shutdown",
     0x531DD0: "ObjModules_Init", 0x531DF0: "ObjModules_Shutdown", 0x5323C0: "CoreTask_Init", 0x5323D0: "CoreTask_Shutdown",
     0x5323E0: "CoreScript_Init", 0x5323F0: "CoreScript_Shutdown", 0x532400: "Core_Init", 0x532490: "Core_Shutdown",
-    0x530960: "sub_530960", 0x530980: "sub_530980",
+    0x530960: "EngineEvents_Init", 0x530980: "EngineEvents_Shutdown",
 }
 NARGS = {0x4AF8B0: 1, 0x4017C0: 1, 0x4018C0: 1}
 OURS = {a: n for a, n in source_hooks()}

@@ -1316,11 +1316,6 @@ int Portal_GetScreenRect(Sector *s, int lod, int k, float *clipMin, float *clipM
 HOOK(0x4DD7F0, Portal_GetScreenRect);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-DATA(5338D0) const float kRaise INIT(409.6f);
-ALIAS(kNear, kRaise, 0);
-ALIAS(kNearPlane, kRaise, 0);
-ALIAS(kOff1X, kRaise, 0);
-ALIAS(kSizeMin, kRaise, 0);
 DATA(534B2C) const float kNearZ INIT(0.04096f);
 DATA(534B2C) const float kPortalDist2 INIT(167772.17f);
 DATA(548694) uint16_t gSectorType INIT(385);

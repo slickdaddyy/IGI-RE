@@ -125,7 +125,7 @@ ORIG(0x4CFC00, void, Model_SetAnimDir, (const char *path));
 ORIG(0x4D2D30, void, BoneObj_SetFrameRate, (float unk));
 ORIG(0x4D65D0, void, BoneObj_FreeAll, (void));
 ORIG(0x4D9950, void, Camera_Init, (void *p));
-ORIG(0x4E6060, void, sub_4E6060, (int unk));
+ORIG(0x4E6060, void, Sound_SetUnusedByte, (int unk));
 ORIG(0x4E6550, void, SoundSys_LoadDefs, (Game *game, const char *path));
 ORIG(0x4E68D0, void, SoundLoad, (const char *path));
 ORIG(0x4E69C0, void, SoundFree, (const char *path));
@@ -455,7 +455,7 @@ void LevelStart(Game *g)
     gGame->unk44 = GameScreen_New(Flow_GetUnk20());
     gGame->unk4C = Level_New(Game_Get());
     LoadingScreen_Step(loading, 1);
-    sub_4E6060(0);
+    Sound_SetUnusedByte(0);
     SoundSys_LoadDefs(g, "LOCAL:common/sounds/");
     SoundSys_LoadDefs(g, "MISSION:sounds/");
     world = Game_GetWorld();

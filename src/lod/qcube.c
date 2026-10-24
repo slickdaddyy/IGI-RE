@@ -36,7 +36,7 @@ ORIG(0x50FAE0, void, TerrainMesh_SetupLighting, (void *world, int unk));
 ORIG(0x50FD00, void, TerrainMesh_SetTextures, (void *world));
 ORIG(0x50FE60, void, TerrainMesh_Update, (void));
 ORIG(0x511500, void, TerrainMesh_Render, (void));
-ORIG(0x5116B0, void, sub_5116B0, (void *world));
+ORIG(0x5116B0, void, TerrainMesh_SetUnusedTextures, (void *world));
 
 /* The parts of a task the walk uses */
 typedef struct QTask {
@@ -309,7 +309,7 @@ void QCube_DrawObjects(QWorld *w)
         int count;
     } arg;
 
-    sub_5116B0(w);
+    TerrainMesh_SetUnusedTextures(w);
     Coll_SendEventAll(w, 0x11, 0, gTransContext.pos, 0x20000000);
     if (!gQCubeEnclosing) {
         for (i = 0; i < gQCubeCount; i++, e++)

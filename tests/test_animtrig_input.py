@@ -45,7 +45,7 @@ def check(orig, ours, setup=None, cw=None, **kw):
 
 
 def test_unk():
-    check(0x4ED000, "sub_4ED000", lambda em: u32(em, 0xA5EF98, 5))
+    check(0x4ED000, "InputPort_ResetUnused", lambda em: u32(em, 0xA5EF98, 5))
 
 
 def port_setup(em, rng, port, analog, axes, bind_bits):

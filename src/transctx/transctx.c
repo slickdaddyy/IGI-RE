@@ -215,11 +215,11 @@ void TransContext_Create(TransContext *ctx, const float *rot, const double *pos,
 }
 HOOK(0x497D70, TransContext_Create);
 
-void sub_497E60(TransContext *ctx, float v)
+void TransContext_SetUnk5C(TransContext *ctx, float v)
 {
     ctx->unk5C = v;
 }
-HOOK(0x497E60, sub_497E60);
+HOOK(0x497E60, TransContext_SetUnk5C);
 
 /* Makes ctx the active camera and tells the render mode. */
 void TransContext_Select(TransContext *ctx)

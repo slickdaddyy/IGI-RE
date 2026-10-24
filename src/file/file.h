@@ -35,7 +35,7 @@ typedef struct Device {
     void *unk28;
     int (*unk2C)(int dev, File *f);
     int (*error)(int dev, File *f);
-    int (*unk34)(int dev, File *f, int arg);
+    int (*control)(int dev, File *f, int arg);
     void *(*load)(int dev, File *f, int *size, LoadedFile *lf);
     void (*enumdir)(int dev, const char *path, void *fn, void *data);
     int (*gettime)(int dev, void *filetime, const char *path);
@@ -53,7 +53,7 @@ void File_Close(File *f);
 int File_Read(File *f, void *buf, int size);
 int File_GetSize(File *f);
 int File_GetError(File *f);
-int sub_4B17F0(File *f, int arg);
+int File_Control(File *f, int arg);
 const char *Device_GetName(int dev);
 
 #endif

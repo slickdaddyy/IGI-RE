@@ -130,8 +130,8 @@ def test_fire_empty():
 
 
 def test_unk_event():
-    check(e, 0x4EC160, "sub_4EC160", lambda em: u32(em, 0xA5EF90, 9))
-    check(e, 0x4EC180, "sub_4EC180", lambda em: em.write(0xA5EF88, b"\x31"))
+    check(e, 0x4EC160, "AnimTriggerEvent_Init", lambda em: u32(em, 0xA5EF90, 9))
+    check(e, 0x4EC180, "AnimTriggerEvent_Shutdown", lambda em: em.write(0xA5EF88, b"\x31"))
 
 
 # --- state machine ---

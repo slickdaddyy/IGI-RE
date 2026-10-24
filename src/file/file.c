@@ -132,15 +132,15 @@ HOOK(0x4B17A0, File_GetError);
 
 int File_Flush(File *f)
 {
-    return gDevices[f->device].unk34(f->device, f, 0);
+    return gDevices[f->device].control(f->device, f, 0);
 }
 HOOK(0x4B17C0, File_Flush);
 
-int sub_4B17F0(File *f, int arg)
+int File_Control(File *f, int arg)
 {
-    return gDevices[f->device].unk34(f->device, f, arg);
+    return gDevices[f->device].control(f->device, f, arg);
 }
-HOOK(0x4B17F0, sub_4B17F0);
+HOOK(0x4B17F0, File_Control);
 
 int File_GetTime(void *filetime, const char *path)
 {
@@ -186,7 +186,7 @@ void *File_Load(const char *path, int *size_out)
     lf->data = data;
     lf->size = size;
     File_Read(f, data, size);
-    sub_4B17F0(f, 0);
+    File_Control(f, 0);
     if (!File_GetError(f)) {
         if (size_out)
             *size_out = size;
@@ -348,11 +348,11 @@ void Device_SetEof(int dev, void *fn)
 }
 HOOK(0x4B1D40, Device_SetEof);
 
-void Device_SetUnk34(int dev, void *fn)
+void Device_SetControl(int dev, void *fn)
 {
-    *(void **)&gDevices[dev].unk34 = fn;
+    *(void **)&gDevices[dev].control = fn;
 }
-HOOK(0x4B1D60, Device_SetUnk34);
+HOOK(0x4B1D60, Device_SetControl);
 
 void Device_SetDelete(int dev, void *fn)
 {

@@ -64,11 +64,11 @@ def test_warning_show(handler):
 
 @pytest.mark.parametrize("orig,ours", [
     (0x4AF860, "Error_SetHandler"),
-    (0x4AF870, "sub_4AF870"),
+    (0x4AF870, "Error_SetUnusedHandler"),
     (0x4AF880, "Warning_SetHandler"),
-    (0x4AF890, "sub_4AF890"),
+    (0x4AF890, "Error_SetMessageBoxHandler"),
     (0x4AF8A0, "Error_SetExitHandler"),
-    (0x4AF8B0, "sub_4AF8B0"),
+    (0x4AF8B0, "Error_SetUnusedFlag"),
 ])
 def test_setters(orig, ours):
     compare(emu, orig, ours, args=(0x12345678,), check_eax=False)

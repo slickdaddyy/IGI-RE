@@ -35,7 +35,7 @@ ORIG(0x497620, void, Scene_Select, (Scene *s, int add));
 ORIG(0x497680, void, Scene_SetRect, (Scene *s, const float *rect));
 ORIG(0x497700, void, Scene_DrawAll, (void));
 ORIG(0x497D70, void, TransContext_Create, (TransContext *ctx, const float *rot, const double *pos, float fov));
-ORIG(0x497E60, void, sub_497E60, (TransContext *ctx, float v));
+ORIG(0x497E60, void, TransContext_SetUnk5C, (TransContext *ctx, float v));
 ORIG(0x497E70, void, TransContext_Select, (TransContext *ctx));
 ORIG(0x497EE0, void, TransContext_Queue, (const TransContext *ctx));
 ORIG(0x4B7330, void *, SortRender_NewList, (int capacity));
@@ -101,7 +101,7 @@ void ViewportQTask_DrawHandler(Viewport *v)
     memcpy(rot, cam, sizeof(rot));
     memcpy(pos, cam->pos, sizeof(pos));
     TransContext_Create(&ctx, rot, pos, cam->fov * v->fovScale);
-    sub_497E60(&ctx, 1.0f);
+    TransContext_SetUnk5C(&ctx, 1.0f);
     TransContext_Select(&ctx);
     gFogEnable = v->fog;
     for (i = 0; i < VIEWPORT_CALLBACKS; i++) {

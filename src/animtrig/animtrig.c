@@ -40,8 +40,8 @@ extern int gAnimTriggerCount;
 extern uint8_t gAnimTriggerFireEvent;
 extern uint8_t gAnimTriggerSizeEvent;
 extern uint8_t gAnimTriggerParseEvent;
-extern uint8_t gUnkA5EF88;
-extern int gUnkA5EF90;
+extern uint8_t gAnimTriggerUnusedEvent;
+extern int gAnimTriggerUnusedCount;
 
 void AnimTrigger_ParseConfigFile(const char *path);
 
@@ -181,18 +181,18 @@ void AnimTrigger_Fire(int id, void *obj, void *pos)
 }
 HOOK(0x4EC0E0, AnimTrigger_Fire);
 
-void sub_4EC160(void)
+void AnimTriggerEvent_Init(void)
 {
-    gUnkA5EF88 = TaskEvent_Alloc(0);
-    gUnkA5EF90 = 0;
+    gAnimTriggerUnusedEvent = TaskEvent_Alloc(0);
+    gAnimTriggerUnusedCount = 0;
 }
-HOOK(0x4EC160, sub_4EC160);
+HOOK(0x4EC160, AnimTriggerEvent_Init);
 
-void sub_4EC180(void)
+void AnimTriggerEvent_Shutdown(void)
 {
-    TaskEvent_Free(gUnkA5EF88);
+    TaskEvent_Free(gAnimTriggerUnusedEvent);
 }
-HOOK(0x4EC180, sub_4EC180);
+HOOK(0x4EC180, AnimTriggerEvent_Shutdown);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(54DB80) uint8_t gAnimTriggerFireEvent INIT(255);
@@ -202,6 +202,6 @@ PAD(igd, 54DB80, 54DB83, 0x1);
 PAD(igb, A5EC80, A5EC80, 0x304);
 ALIAS(gAnimTriggers, pad_A5EC80, 0);
 BSS(A5EC80) int gAnimTriggerCount;
-BSS(A5EC80) uint8_t gUnkA5EF88;
+BSS(A5EC80) uint8_t gAnimTriggerUnusedEvent;
 PAD(igb, A5EC80, A5EF89, 0x7);
-BSS(A5EC80) int gUnkA5EF90;
+BSS(A5EC80) int gAnimTriggerUnusedCount;

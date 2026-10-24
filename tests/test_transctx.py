@@ -47,7 +47,7 @@ def ctx(e, rng, layer=1):
 
 def test_small():
     compare(emu, 0x497940, "TransContext_SetAutoNear", args=(0x1234,), check_eax=False)
-    compare(emu, 0x497E60, "sub_497E60", setup=lambda e: (e.alloc(0xA8), 0x3F400000), check_eax=False)
+    compare(emu, 0x497E60, "TransContext_SetUnk5C", setup=lambda e: (e.alloc(0xA8), 0x3F400000), check_eax=False)
     compare(emu, 0x497EC0, "TransContext_GetSelectCount", setup=lambda e: u32(e, 0x6E5BB4, 77))
     compare(emu, 0x497ED0, "TransContext_Invalidate", setup=lambda e: u32(e, 0x6E5BB0, 1), check_eax=False)
     compare(emu, 0x498070, "TransContext_GetNearClipMethod", setup=lambda e: u32(e, SET_NEAR, 9))

@@ -311,7 +311,7 @@ def test_close_null_file():
     (0x4B1780, "File_GetSize", ()),
     (0x4B17A0, "File_GetError", ()),
     (0x4B17C0, "File_Flush", ()),
-    (0x4B17F0, "sub_4B17F0", (5,)),
+    (0x4B17F0, "File_Control", (5,)),
 ])
 def test_dispatch_fake(orig, ours, extra):
     def setup(e):
@@ -476,7 +476,7 @@ def test_device_shutdown():
     (0x4B1C40, "Device_SetClose"), (0x4B1C60, "Device_SetRead"), (0x4B1C80, "Device_SetWrite"),
     (0x4B1CA0, "Device_SetSeek"), (0x4B1CC0, "Device_SetTell"), (0x4B1CE0, "Device_SetSize"),
     (0x4B1D00, "Device_SetError"), (0x4B1D20, "Device_SetUnk2C"), (0x4B1D40, "Device_SetEof"),
-    (0x4B1D60, "Device_SetUnk34"), (0x4B1D80, "Device_SetDelete"), (0x4B1DA0, "Device_SetEnumDir"),
+    (0x4B1D60, "Device_SetControl"), (0x4B1D80, "Device_SetDelete"), (0x4B1DA0, "Device_SetEnumDir"),
     (0x4B1DC0, "Device_SetGetTime"),
 ])
 def test_device_setters(addr, name):

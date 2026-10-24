@@ -139,7 +139,7 @@ def test_small():
     run(0x4E6000, "SoundSysDefParent_Create", lambda e: (task(e, 0xA0), cstr(e, b"abc/def")))
     run(0x4E6030, "Sound_SetRate", args=(30,))
     run(0x4E6050, "Sound_GetRate", lambda e: u32(e, RATE, 25), check_eax=True)
-    run(0x4E6060, "sub_4E6060", args=(0x101,))
+    run(0x4E6060, "Sound_SetUnusedByte", args=(0x101,))
     run(0x4E6530, "SoundSys_NewController", lambda e: u16(e, 0x548808, 0x44), args=(0x1000,))
     run(0x4E65D0, "SoundSys_NewDef", lambda e: (u16(e, 0x54880C, 0x45), (0x1000, cstr(e, b"x")))[1])
     run(0x4E6D20, "Sound_AddTask", lambda e: u32(e, TASKS, 0x6666), args=(0x1234,))

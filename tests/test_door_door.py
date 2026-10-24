@@ -180,7 +180,7 @@ def test_sub_4464b0(v):
         a = e.alloc(12)
         e.write(a, bytes([0x55] * 8 + [v]))
         return 0, a
-    check(e, fk, 0x4464B0, "sub_4464B0", setup)
+    check(e, fk, 0x4464B0, "Door_AIGraphHandler", setup)
 
 
 def test_open():

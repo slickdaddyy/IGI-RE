@@ -256,7 +256,7 @@ def test_sound_small():
     run(0x4E7330, "Sound_GetTasks", lambda e: u32(e, TASKS, 0x4321), check_eax=True)
     for v in (0, 1, 0x100):
         run(0x4E7340, "Sound_SetSilent", lambda e: (v,))
-        run(0x4E7350, "sub_4E7350", lambda e: (v,))
+        run(0x4E7350, "Sound_SetUnusedOff", lambda e: (v,))
 
 
 # --- screen ------------------------------------------------------------------

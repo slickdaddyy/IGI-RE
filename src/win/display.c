@@ -14,7 +14,7 @@ typedef struct RenderModeInfo {
 
 ORIG(0x4AF860, void, Error_SetHandler, (ErrorHandler fn));
 ORIG(0x4AF880, void, Warning_SetHandler, (ErrorHandler fn));
-ORIG(0x4AF890, void, sub_4AF890, (ErrorHandler fn));
+ORIG(0x4AF890, void, Error_SetMessageBoxHandler, (ErrorHandler fn));
 ORIG(0x4B0E70, int, RenderMode_CreateMethod, (const char *name));
 ORIG(0x4B0EE0, void, RenderMode_ForEach, (void (*fn)(RenderModeInfo *info, void *user), void *user));
 ORIG(0x4B0F30, void, RenderMode_Select, (int mode));
@@ -203,7 +203,7 @@ void Display_Open(void)
     RenderMode_ForEach((void (*)(RenderModeInfo *, void *))Display_CallMethodCB, args);
     Error_SetHandler(Display_ErrorHandler);
     Warning_SetHandler(Display_WarningHandler);
-    sub_4AF890(Display_WarningHandler);
+    Error_SetMessageBoxHandler(Display_WarningHandler);
     gDisplayOpen = 1;
 }
 HOOK(0x491700, Display_Open);

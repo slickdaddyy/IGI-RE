@@ -203,7 +203,7 @@ def test_set_unk_dbc():
         u32(e, t + 0xDBC, 0x12345678)
         return (t,)
     run(emu, 0x50FD00, "TerrainMesh_SetTextures", setup)
-    run(emu, 0x5116B0, "sub_5116B0", setup)
+    run(emu, 0x5116B0, "TerrainMesh_SetUnusedTextures", setup)
 
 
 @pytest.mark.parametrize("vals", [(0.5, 0.25, 0.75, 100.0), (-1.0, 1.5, 1.0, -3.0), (0.0, float("nan"), 2.0, 16384.0),

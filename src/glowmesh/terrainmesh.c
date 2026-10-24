@@ -216,7 +216,7 @@ extern int gLightStride;
 extern float gTerrainFogScale;
 extern float gTerrainAmbient[];
 extern float gTerrainFogColor[];
-extern int gUnkA7DA40;
+extern int gTerrainMeshUnusedTextures;
 extern TerrainFog gTerrainFog[];
 extern int gTerrainTextures;
 extern float gTerrainBottom;
@@ -938,11 +938,11 @@ void TerrainMesh_Render(void)
 }
 HOOK(0x511500, TerrainMesh_Render);
 
-void sub_5116B0(Terrain *t)
+void TerrainMesh_SetUnusedTextures(Terrain *t)
 {
-    gUnkA7DA40 = t->textures;
+    gTerrainMeshUnusedTextures = t->textures;
 }
-HOOK(0x5116B0, sub_5116B0);
+HOOK(0x5116B0, TerrainMesh_SetUnusedTextures);
 
 void TerrainMesh_ClipTriangle(const TerrainClipVertex *v0, const TerrainClipVertex *v1, const TerrainClipVertex *v2,
                               const double *p0, const double *p1, const double *p2, const double *uv0,
@@ -1175,7 +1175,7 @@ STORE(igb, A7DA10, 4) float store_A7DA20[4];
 ALIAS(gTerrainAmbient, store_A7DA20, 0);
 STORE(igb, A7DA10, 4) float store_A7DA30[4];
 ALIAS(gTerrainFogColor, store_A7DA30, 0);
-BSS(A7DA10) int gUnkA7DA40;
+BSS(A7DA10) int gTerrainMeshUnusedTextures;
 PAD(igb, A7DA10, A7DA44, 0x2C);
 STORE(igb, A7DA10, 8) double store_A7DA70[4][2];
 ALIAS(gTerrainClipUV, store_A7DA70, 0);

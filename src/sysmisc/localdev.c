@@ -57,7 +57,7 @@ ORIG(0x4B1CE0, void, Device_SetSize, (int dev, void *fn));
 ORIG(0x4B1D00, void, Device_SetError, (int dev, void *fn));
 ORIG(0x4B1D20, void, Device_SetUnk2C, (int dev, void *fn));
 ORIG(0x4B1D40, void, Device_SetEof, (int dev, void *fn));
-ORIG(0x4B1D60, void, Device_SetUnk34, (int dev, void *fn));
+ORIG(0x4B1D60, void, Device_SetControl, (int dev, void *fn));
 ORIG(0x4B1D80, void, Device_SetDelete, (int dev, void *fn));
 ORIG(0x4B1DA0, void, Device_SetEnumDir, (int dev, void *fn));
 ORIG(0x4B1DC0, void, Device_SetGetTime, (int dev, void *fn));
@@ -78,7 +78,7 @@ int LocalDevice_Tell(int dev, LocalFile *f);
 int LocalDevice_Eof(int dev, LocalFile *f);
 int LocalDevice_GetUnk2C(int dev, LocalFile *f);
 int LocalDevice_GetError(int dev, LocalFile *f);
-int LocalDevice_Unk34(int dev, LocalFile *f, int arg);
+int LocalDevice_Control(int dev, LocalFile *f, int arg);
 int LocalDevice_GetTime(int dev, FILETIME *time, const char *path);
 
 void LocalDevice_Register(void)
@@ -116,7 +116,7 @@ int LocalDevice_Init(const char *name)
     Device_SetEof(dev, LocalDevice_Eof);
     Device_SetUnk2C(dev, LocalDevice_GetUnk2C);
     Device_SetError(dev, LocalDevice_GetError);
-    Device_SetUnk34(dev, LocalDevice_Unk34);
+    Device_SetControl(dev, LocalDevice_Control);
     Device_SetEnumDir(dev, LocalDevice_EnumDir);
     Device_SetGetTime(dev, LocalDevice_GetTime);
     Device_SetDelete(dev, LocalDevice_Delete);
@@ -302,11 +302,11 @@ int LocalDevice_GetError(int dev, LocalFile *f)
 }
 HOOK(0x50A5B0, LocalDevice_GetError);
 
-int LocalDevice_Unk34(int dev, LocalFile *f, int arg)
+int LocalDevice_Control(int dev, LocalFile *f, int arg)
 {
     return 0;
 }
-HOOK(0x50A5C0, LocalDevice_Unk34);
+HOOK(0x50A5C0, LocalDevice_Control);
 
 int LocalDevice_GetTime(int dev, FILETIME *time, const char *path)
 {
