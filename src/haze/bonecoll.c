@@ -513,8 +513,8 @@ void BoneDynCubeObj_LineHit(BoneDynCubeObj *obj, BoneLineQuery *q)
         {
             const float *va = sk[hit_tri->v[0]], *vb = sk[hit_tri->v[1]], *vc = sk[hit_tri->v[2]];
             uint16_t mi = cm->faces[hit_tri->face].material;
-            void *mat = mi == 0xFFFF ? *(void **)((char *)gWorld + 0xD40)
-                                     : ((void **)((char *)gWorld + 0xD3C))[mi];
+            void *mat = mi == 0xFFFF ? *(void **)((char *)gCurrentWorld + 0xD40)
+                                     : ((void **)((char *)gCurrentWorld + 0xD3C))[mi];
             long double cx = vc[0] - va[0], cy = vc[1] - va[1], cz = vc[2] - va[2];
             float bx = vb[0] - va[0], by = vb[1] - va[1];
             long double bz = vb[2] - va[2];

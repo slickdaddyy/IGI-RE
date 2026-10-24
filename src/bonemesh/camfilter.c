@@ -68,22 +68,22 @@ extern int gLineFilterPrim;
 extern int gWideScreenPrim;
 extern const char *gBatterySprite;
 extern const char *gTimecodeFont;
-extern int gHandiCamSpriteX;
-extern int gHandiCamSpriteY;
-extern int gHandiCamFontX;
-extern int gHandiCamFontY;
+extern int gBatteryX;
+extern int gBatteryY;
+extern int gTimecodeX;
+extern int gTimecodeY;
 extern float gTimecode;
-extern float gBandFontA;
-extern float gBandFontB;
-extern float gBandFontC;
-extern int gBandFontD;
+extern float gBandTextX;
+extern float gBandTextY;
+extern float gBandTextDX;
+extern int gBandTextDY;
 
 extern void *gFilterVB;
 extern int gFilterVBSize;
 extern int gFilterVBUsed;
 extern float gD3DMinZ;
-extern float gD3DViewMinZ;
-extern float gD3DViewMaxZ;
+extern float gLayer1MinZ;
+extern float gLayer1MaxZ;
 extern float gNearPlane;
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
@@ -251,10 +251,10 @@ HOOK(0x4A2800, BandFilter_SetColor);
 void BandFilter_SetFont(const char *font, float a, float b, float c, int d)
 {
     gBandFont = font;
-    gBandFontA = a;
-    gBandFontB = b;
-    gBandFontC = c;
-    gBandFontD = d;
+    gBandTextX = a;
+    gBandTextY = b;
+    gBandTextDX = c;
+    gBandTextDY = d;
 }
 HOOK(0x4A28B0, BandFilter_SetFont);
 
@@ -301,16 +301,16 @@ HOOK(0x4A29A0, HandiCamFilter_Delete);
 void HandiCamFilter_SetSprite(const char *name, int x, int y)
 {
     gBatterySprite = name;
-    gHandiCamSpriteX = x;
-    gHandiCamSpriteY = y;
+    gBatteryX = x;
+    gBatteryY = y;
 }
 HOOK(0x4A29C0, HandiCamFilter_SetSprite);
 
 void HandiCamFilter_SetFont(const char *name, int x, int y)
 {
     gTimecodeFont = name;
-    gHandiCamFontX = x;
-    gHandiCamFontY = y;
+    gTimecodeX = x;
+    gTimecodeY = y;
 }
 HOOK(0x4A29E0, HandiCamFilter_SetFont);
 
@@ -386,34 +386,34 @@ void LineFilter_Render(LineFilter *t)
     int first, count, n, k;
 
     depth = t->depth > gNearPlane ? t->depth : gNearPlane;
-    DEV_GetTransform(gDevice, 3, m);
-    rhw = kOne.f / (gNearPlaneScale * depth);
-    z = (kOne.f - gD3DMinZ * rhw) * m[10] * (gD3DViewMaxZ - gD3DViewMinZ) + gD3DViewMinZ;
-    gStateListA->current = -1;
-    gStateListB->current = -1;
-    gStateListC->current = -1;
-    gStateListD->current = -1;
-    DEV_SetRenderState(gDevice, 0x2F, 0);
-    DEV_SetRenderState(gDevice, 0x1C, 0);
-    DEV_SetRenderState(gDevice, 0x1D, 0);
-    DEV_SetRenderState(gDevice, 0x16, 1);
-    DEV_SetRenderState(gDevice, 0x89, 0);
-    DEV_SetRenderState(gDevice, 0x1A, 1);
-    DEV_SetRenderState(gDevice, 0x0F, 0);
-    DEV_SetRenderState(gDevice, 0x17, 4);
-    DEV_SetRenderState(gDevice, 0x07, 1);
-    DEV_SetRenderState(gDevice, 0x0E, 0);
-    DEV_SetTextureStageState(gDevice, 0, 4, 3);
-    DEV_SetTextureStageState(gDevice, 0, 5, 2);
-    DEV_SetTextureStageState(gDevice, 0, 6, 0);
-    DEV_SetTextureStageState(gDevice, 0, 1, 3);
-    DEV_SetTextureStageState(gDevice, 0, 2, 2);
-    DEV_SetTextureStageState(gDevice, 0, 3, 0);
-    DEV_SetTextureStageState(gDevice, 1, 1, 1);
-    DEV_SetTexture(gDevice, 0, NULL);
-    DEV_SetRenderState(gDevice, 0x1B, 1);
-    DEV_SetRenderState(gDevice, 0x13, 5);
-    DEV_SetRenderState(gDevice, 0x14, 6);
+    DEV_GetTransform(gD3DDevice, 3, m);
+    rhw = kOne.f / (gWorldScale * depth);
+    z = (kOne.f - gD3DMinZ * rhw) * m[10] * (gLayer1MaxZ - gLayer1MinZ) + gLayer1MinZ;
+    gD3DTextureStates->current = -1;
+    gD3DBlendStates->current = -1;
+    gD3DRenderStates->current = -1;
+    gD3DClipStates->current = -1;
+    DEV_SetRenderState(gD3DDevice, 0x2F, 0);
+    DEV_SetRenderState(gD3DDevice, 0x1C, 0);
+    DEV_SetRenderState(gD3DDevice, 0x1D, 0);
+    DEV_SetRenderState(gD3DDevice, 0x16, 1);
+    DEV_SetRenderState(gD3DDevice, 0x89, 0);
+    DEV_SetRenderState(gD3DDevice, 0x1A, 1);
+    DEV_SetRenderState(gD3DDevice, 0x0F, 0);
+    DEV_SetRenderState(gD3DDevice, 0x17, 4);
+    DEV_SetRenderState(gD3DDevice, 0x07, 1);
+    DEV_SetRenderState(gD3DDevice, 0x0E, 0);
+    DEV_SetTextureStageState(gD3DDevice, 0, 4, 3);
+    DEV_SetTextureStageState(gD3DDevice, 0, 5, 2);
+    DEV_SetTextureStageState(gD3DDevice, 0, 6, 0);
+    DEV_SetTextureStageState(gD3DDevice, 0, 1, 3);
+    DEV_SetTextureStageState(gD3DDevice, 0, 2, 2);
+    DEV_SetTextureStageState(gD3DDevice, 0, 3, 0);
+    DEV_SetTextureStageState(gD3DDevice, 1, 1, 1);
+    DEV_SetTexture(gD3DDevice, 0, NULL);
+    DEV_SetRenderState(gD3DDevice, 0x1B, 1);
+    DEV_SetRenderState(gD3DDevice, 0x13, 5);
+    DEV_SetRenderState(gD3DDevice, 0x14, 6);
     level = t->level;
     if (!LOCK_BATCH(v, first))
         return;
@@ -437,7 +437,7 @@ void LineFilter_Render(LineFilter *t)
             count += 2;
         } else {
             VB_Unlock(gFilterVB);
-            DEV_DrawPrimitiveVB(gDevice, 2, gFilterVB, first, count, 0);
+            DEV_DrawPrimitiveVB(gD3DDevice, 2, gFilterVB, first, count, 0);
             if (!LOCK_BATCH(v, first))
                 return;
             y = y - kLineStep.f;
@@ -447,7 +447,7 @@ void LineFilter_Render(LineFilter *t)
     }
     VB_Unlock(gFilterVB);
     if (count > 0)
-        DEV_DrawPrimitiveVB(gDevice, 2, gFilterVB, first, count, 0);
+        DEV_DrawPrimitiveVB(gD3DDevice, 2, gFilterVB, first, count, 0);
     if (!(level > kZero.f))
         return;
     s = level * kNoiseScale.f;
@@ -488,7 +488,7 @@ void LineFilter_Render(LineFilter *t)
                 count++;
             } else {
                 VB_Unlock(gFilterVB);
-                DEV_DrawPrimitiveVB(gDevice, 2, gFilterVB, first, count, 0);
+                DEV_DrawPrimitiveVB(gD3DDevice, 2, gFilterVB, first, count, 0);
                 if (!LOCK_BATCH(v, first))
                     return;
                 count = 0;
@@ -499,7 +499,7 @@ void LineFilter_Render(LineFilter *t)
     }
     VB_Unlock(gFilterVB);
     if (count > 0)
-        DEV_DrawPrimitiveVB(gDevice, 2, gFilterVB, first, count, 0);
+        DEV_DrawPrimitiveVB(gD3DDevice, 2, gFilterVB, first, count, 0);
 }
 HOOK(0x4A2CD0, LineFilter_Render);
 
@@ -556,7 +556,3 @@ STORE(igb, 935C10, 4) int store_935C10[256];
 ALIAS(gBandPixels, store_935C10, 0);
 BSS(936020) const char *gBatterySprite;
 BSS(936020) const char *gTimecodeFont;
-BSS(936020) int gHandiCamSpriteX;
-BSS(936020) int gHandiCamSpriteY;
-ALIAS(gBatteryX, gHandiCamSpriteX, 0);
-ALIAS(gBatteryY, gHandiCamSpriteY, 0);

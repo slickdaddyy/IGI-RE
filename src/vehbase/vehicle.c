@@ -31,7 +31,7 @@ ORIG(0x504A90, void, AreaActivate_RemoveCriteria, (void *criteria));
 
 extern uint16_t gVehicleType;
 extern uint8_t gVehicleExplodeEvent;
-extern uint8_t gVehicleEvent203;
+extern uint8_t gVehicleClearHitEvent;
 extern void *gVehicleCriteria;
 
 /* every vehicle, kept by 0x4F4870 */
@@ -106,7 +106,7 @@ void Vehicle_Open(void)
     TaskType_SetHandler(gVehicleType, World_GetEvent1(), Vehicle_Deactivate);
     gVehicleCriteria = AreaActivate_AddCriteria("CRITERIA_VEHICLE", Vehicle_CountInCriteria);
     gVehicleExplodeEvent = TaskEvent_Alloc(0);
-    gVehicleEvent203 = TaskEvent_Alloc(0);
+    gVehicleClearHitEvent = TaskEvent_Alloc(0);
 }
 HOOK(0x4F4190, Vehicle_Open);
 
@@ -177,7 +177,7 @@ void Vehicle_Close(void)
     TaskType_Free(gVehicleType);
     AreaActivate_RemoveCriteria(gVehicleCriteria);
     TaskEvent_Free(gVehicleExplodeEvent);
-    TaskEvent_Free(gVehicleEvent203);
+    TaskEvent_Free(gVehicleClearHitEvent);
 }
 HOOK(0x4F45B0, Vehicle_Close);
 
@@ -274,8 +274,7 @@ HOOK(0x4F4850, Vehicle_GetExplodeEvent);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(54E200) uint16_t gVehicleType INIT(385);
 DATA(54E200) uint8_t gVehicleExplodeEvent INIT(255);
-DATA(54E200) uint8_t gVehicleEvent203 INIT(255);
-ALIAS(gVehicleClearHitEvent, gVehicleEvent203, 0);
+DATA(54E200) uint8_t gVehicleClearHitEvent INIT(255);
 BSS(A76C40) VehicleList *gVehicles;
 PAD(igb, A76C40, A76C44, 0x4);
 BSS(A76C40) void *gVehicleCriteria;

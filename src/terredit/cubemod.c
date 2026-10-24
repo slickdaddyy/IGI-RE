@@ -39,7 +39,7 @@ _Static_assert(sizeof(CubeModifier) == 0x178, "CubeModifier");
 extern void *gCubeModifierParams;
 extern uint16_t gCubeModifierType;
 extern CubeModifier *gCubeModifiers[];
-extern const char gScriptEmptyString[];
+extern const char gEmptyString[];
 
 static const float kRadiusScale = 4.0f;
 
@@ -52,7 +52,7 @@ void CubeModifier_Create(CubeModifier *cm)
     cm->max.x = cm->max.y = cm->max.z = 0;
     cm->world = gCurrentWorld;
     cm->shift = 10;
-    crt_sprintf(cm->name, gScriptEmptyString);
+    crt_sprintf(cm->name, gEmptyString);
     while (gCubeModifiers[i])
         i++;
     gCubeModifiers[i] = cm;

@@ -105,18 +105,18 @@ extern int gMorphStart;
 extern float gMorphScale;
 extern int gUnkC28FB8;
 extern int gTerrMeshTotal;
-extern float gFogZScale;
+extern float gWorldScale;
 extern float gClipRhwScale;
-extern DWORD gUnkBCAD78;
-extern float gZFar;
-extern float gUnkBCADA0;
-extern float gZNear;
-extern float gUnkBCADC8;
-extern float gFarPlane;
-extern char *gStateCache0;
-extern char *gStateCache1;
-extern char *gStateCache2;
-extern char *gStateCache3;
+extern DWORD gD3DZEnable;
+extern float gLayer1MaxZ;
+extern float gD3DMinZ;
+extern float gLayer1MinZ;
+extern float gD3DMaxZ;
+extern float gFarZ;
+extern char *gD3DTextureStates;
+extern char *gD3DBlendStates;
+extern char *gD3DRenderStates;
+extern char *gD3DClipStates;
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);
@@ -205,7 +205,7 @@ static int td_project(TdTLVertex *tl, uint8_t *code, const TdScreen *scr, float 
     tl->sy = syf;
     tl->rhw = qf * gClipRhwScale;
     tl->sz = qf * gClipZScale + gClipZBias;
-    r = kOne.f / x87_exp(vz * gFogZScale * gTerrainFogScale);
+    r = kOne.f / x87_exp(vz * gWorldScale * gTerrainFogScale);
     if (!(r >= kZero.f))
         r = kZero.f;
     tl->specular = (uint32_t)x87_fistp(r * k255.f) << 24;
@@ -255,7 +255,7 @@ static void td_fill_slot(uint8_t *F, uint8_t *s, int v)
     memcpy(s, TL(F, v), sizeof(TdTLVertex));
     c->code = code;
     if (!(code & 0x10)) {
-        long double w = gFogZScale * c->rhw;
+        long double w = gWorldScale * c->rhw;
         float wf = w;
 
         c->q = wf;
@@ -319,20 +319,20 @@ void TerrainMesh_DrawD3D(void)
     scr.minY = gSceneMinY;
     scr.maxX = gSceneMaxX;
     scr.maxY = gSceneMaxY;
-    zr = kOne.f / (kOne.f - gUnkBCADA0 / gUnkBCADC8);
-    range = gZFar - gZNear;
-    gClipZScale = x87_neg(range * gClipRhwScale * gUnkBCADA0 * zr);
-    gClipZBias = range * zr + gZNear;
-    *(int *)(gStateCache0 + 4) = -1;
-    *(int *)(gStateCache1 + 4) = -1;
-    *(int *)(gStateCache2 + 4) = -1;
-    *(int *)(gStateCache3 + 4) = -1;
+    zr = kOne.f / (kOne.f - gD3DMinZ / gD3DMaxZ);
+    range = gLayer1MaxZ - gLayer1MinZ;
+    gClipZScale = x87_neg(range * gClipRhwScale * gD3DMinZ * zr);
+    gClipZBias = range * zr + gLayer1MinZ;
+    *(int *)(gD3DTextureStates + 4) = -1;
+    *(int *)(gD3DBlendStates + 4) = -1;
+    *(int *)(gD3DRenderStates + 4) = -1;
+    *(int *)(gD3DClipStates + 4) = -1;
     gTerrViewport.dwX = 0;
     gTerrViewport.dwY = 0;
     gTerrViewport.dwWidth = Display_GetMode()[1];
     gTerrViewport.dwHeight = Display_GetMode()[2];
-    gTerrViewport.dvMinZ = gZNear;
-    gTerrViewport.dvMaxZ = gZFar;
+    gTerrViewport.dvMinZ = gLayer1MinZ;
+    gTerrViewport.dvMaxZ = gLayer1MaxZ;
     r = x87_fistp(gTerrainFogColor[0] * kMinus255.f);
     g = x87_fistp(gTerrainFogColor[1] * kMinus255.f);
     b = x87_fistp(gTerrainFogColor[2] * k255.f);
@@ -356,7 +356,7 @@ void TerrainMesh_DrawD3D(void)
     IDirect3DDevice7_SetRenderState(gD3DDevice, 0x8D, 1);
     IDirect3DDevice7_SetRenderState(gD3DDevice, 0x1A, 1);
     IDirect3DDevice7_SetRenderState(gD3DDevice, 0x0F, 0);
-    IDirect3DDevice7_SetRenderState(gD3DDevice, 0x07, gUnkBCAD78);
+    IDirect3DDevice7_SetRenderState(gD3DDevice, 0x07, gD3DZEnable);
     IDirect3DDevice7_SetRenderState(gD3DDevice, 0x0E, 1);
     IDirect3DDevice7_SetRenderState(gD3DDevice, 0x1D, 0);
     IDirect3DDevice7_SetTextureStageState(gD3DDevice, 0, 0x11, 2);
@@ -404,7 +404,7 @@ void TerrainMesh_DrawD3D(void)
         dx = mesh->center[0] - vp[0];
         dy = mesh->center[1] - vp[1];
         dz = mesh->center[2] - vp[2];
-        if (!((long double)size * kSizeRadius.f + ((m[8] * dz + m[7] * dy) + m[6] * dx) < gFarPlane))
+        if (!((long double)size * kSizeRadius.f + ((m[8] * dz + m[7] * dy) + m[6] * dx) < gFarZ))
             continue;
 
         /* first-kind vertices: morph factor from the distance, colours, projection */
@@ -650,17 +650,8 @@ BSS(A7F860) TdPool gTerrainChunkPool;
 BSS(A7F894) float gClipZScale;
 PAD(igb, A7F894, A7F898, 0x4);
 BSS(A7F894) TdTLVertex *gTerrVBData;
-BSS(BCAD78) DWORD gUnkBCAD78;
-ALIAS(gD3DUnkBCAD78, gUnkBCAD78, 0);
-ALIAS(gD3DZEnable, gUnkBCAD78, 0);
-BSS(BCAD8C) float gZFar;
-ALIAS(gD3DViewMaxZ, gZFar, 0);
-ALIAS(gLayer1MaxZ, gZFar, 0);
-BSS(BCADA0) float gUnkBCADA0;
-ALIAS(gD3DMinZ, gUnkBCADA0, 0);
-BSS(BCADB4) float gZNear;
-ALIAS(gD3DViewMinZ, gZNear, 0);
-ALIAS(gLayer1MinZ, gZNear, 0);
-BSS(BCADC8) float gUnkBCADC8;
-ALIAS(gD3DMaxZ, gUnkBCADC8, 0);
+BSS(BCAD70) float gClipRhwScale;
+BSS(BCAD8C) float gLayer1MaxZ;
+BSS(BCADB4) float gLayer1MinZ;
+BSS(BCADCC) float gFarZ;
 BSS(C28FB8) int gUnkC28FB8;

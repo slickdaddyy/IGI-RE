@@ -36,9 +36,9 @@ ORIG(0x4F1030, Task *, Task_FindById, (int id));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x501D70, void, SplineObjWaypoint_UpdateAttach, (SplineObjWaypoint *w));
 
-extern uint16_t gWaypointType;
-extern void *gWorld;
-extern char gScriptEmptyString;
+extern uint16_t gSplineObjWaypointType;
+extern void *gCurrentWorld;
+extern char gEmptyString;
 extern TaskFn gTaskHandlers[][0x180];
 
 extern const float kDefaultSegLength;
@@ -68,12 +68,12 @@ static int IsZeroL(long double x)
 
 static Waypoint *Waypoint_Next(Waypoint *w)
 {
-    return (Waypoint *)Task_FindNext(&w->obj.task, gWaypointType);
+    return (Waypoint *)Task_FindNext(&w->obj.task, gSplineObjWaypointType);
 }
 
 static Waypoint *Waypoint_Prev(Waypoint *w)
 {
-    return (Waypoint *)Task_FindPrev(&w->obj.task, gWaypointType);
+    return (Waypoint *)Task_FindPrev(&w->obj.task, gSplineObjWaypointType);
 }
 
 /* the segment of w runs from its previous waypoint to w */
@@ -235,7 +235,7 @@ void SplineObj_GetPoints(int id, Matrix *m, Vec3d *out, char *found, float dist,
         *found = 0;
         return;
     }
-    cur = (Waypoint *)Task_FindChild(&obj->task, gWaypointType);
+    cur = (Waypoint *)Task_FindChild(&obj->task, gSplineObjWaypointType);
     if (!cur) {
         *found = 0;
         return;
@@ -539,9 +539,9 @@ void SplineObjWaypoint_Create(Waypoint *w)
     } else {
         static const Matrix identity = {{1.0f, 0, 0, 0, 1.0f, 0, 0, 0, 1.0f}, 0};
 
-        w->modelName[0] = gScriptEmptyString;
+        w->modelName[0] = gEmptyString;
         memset(&w->point, 0, sizeof(Vec3d));
-        w->segModel[0] = gScriptEmptyString;
+        w->segModel[0] = gEmptyString;
         memcpy(&w->rot, &identity, sizeof(Matrix));
         w->straight = 0;
         w->autoOrient = 0;
@@ -551,8 +551,8 @@ void SplineObjWaypoint_Create(Waypoint *w)
     w->segments = obj->maxSegments;
     w->reversed = 0;
     w->inTree = 0;
-    RigidDynCubeObj_Init(gWorld, w, VirModel_Find(w->modelName));
-    w->tree = gWorld;
+    RigidDynCubeObj_Init(gCurrentWorld, w, VirModel_Find(w->modelName));
+    w->tree = gCurrentWorld;
     if (notify) {
         uint16_t type = Waypoint_Next(w)->obj.task.type;
         TaskFn fn = gTaskHandlers[Param_GetChangedEvent()][type];
@@ -569,7 +569,7 @@ void SplineObjWaypoint_Delete(Waypoint *w)
     Waypoint *prev = Waypoint_Prev(w);
 
     /* looks for a waypoint below this one, so it finds none */
-    w->seg = (SplineObjSegment *)Task_FindChild(&w->obj.task, gWaypointType);
+    w->seg = (SplineObjSegment *)Task_FindChild(&w->obj.task, gSplineObjWaypointType);
     if (w->seg)
         MenuManager_Free(w->seg);
     if (prev) {
@@ -795,7 +795,7 @@ void SplineObjWaypoint_Changed(Waypoint *w)
     } else if (obj->collide) {
         float scale = Waypoint_MaxScale(w);
 
-        DynCube_Add(gWorld, w, &w->point, VirModel_GetRadius(w->obj.model) * scale, 1);
+        DynCube_Add(gCurrentWorld, w, &w->point, VirModel_GetRadius(w->obj.model) * scale, 1);
         w->inTree = 1;
     }
 
@@ -832,7 +832,7 @@ void SplineObjWaypoint_Changed(Waypoint *w)
     if (w->straight || (next && next->straight))
         Waypoint_Straighten(w, next, obj);
 
-    p = (Waypoint *)Task_FindChild(&obj->task, gWaypointType);
+    p = (Waypoint *)Task_FindChild(&obj->task, gSplineObjWaypointType);
     obj->length = 0;
     if (p) {
         for (p = Waypoint_Next(p); p; p = Waypoint_Next(p))
@@ -855,6 +855,3 @@ DATA(534BA0) const double kTiny INIT(0.001);
 DATA(534BA0) const float kMinusTwo INIT(-2.0f);
 PAD_CONST(igd, 534BA0, 534BAC, 0x4);
 DATA(54E5D4) const float kDefaultSegLength INIT(141314.9f);
-BSS(A7A620) uint16_t gWaypointType;
-PAD(igb, A7A620, A7A622, 0x2);
-ALIAS(gSplineObjWaypointType, gWaypointType, 0);

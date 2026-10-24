@@ -176,7 +176,6 @@ extern int gWaterDepth;
 extern float gAmbient[];
 extern float gWaterTint[];
 extern double gWaterLevel;
-extern WaterWorld *gWorld;
 
 static const double kZero = 0.0;
 static const double kHalf = 0.5;
@@ -201,7 +200,7 @@ HOOK(0x518930, Water_DrawCellMask);
 static void push_level(Water *w)
 {
     gWaterLevel = w->drawLevel;
-    gWorld->waterLevel = &gWaterLevel;
+    ((WaterWorld *)gCurrentWorld)->waterLevel = &gWaterLevel;
     gWaterStack[++gWaterDepth] = w;
 }
 
@@ -209,10 +208,10 @@ static void pop_level(void)
 {
     if (--gWaterDepth) {
         gWaterLevel = gWaterStack[gWaterDepth]->drawLevel;
-        gWorld->waterLevel = &gWaterLevel;
+        ((WaterWorld *)gCurrentWorld)->waterLevel = &gWaterLevel;
         return;
     }
-    gWorld->waterLevel = NULL;
+    ((WaterWorld *)gCurrentWorld)->waterLevel = NULL;
 }
 
 void Water_PreDraw(Water *w)
@@ -253,7 +252,7 @@ void Water_Create(Water *w)
 {
     int i;
 
-    w->world = gWorld;
+    w->world = gCurrentWorld;
     w->min.x = w->min.y = w->min.z = 0;
     w->max.x = w->max.y = w->max.z = 0;
     w->shift = 10;
@@ -298,8 +297,8 @@ void Water_TestLines(Water *w, WaterLineQuery *q)
         rec.normal.x = 0;
         rec.normal.y = 0;
         rec.normal.z = 1;
-        rec.unk50 = gWorld->unkD3C;
-        rec.unk4C = gWorld->unkD64;
+        rec.unk50 = ((WaterWorld *)gCurrentWorld)->unkD3C;
+        rec.unk4C = ((WaterWorld *)gCurrentWorld)->unkD64;
         rec.pos.x = p->x;
         rec.pos.y = p->y;
         rec.pos.z = lvl;
@@ -333,7 +332,7 @@ void Water_TestPoints(Water *w, WaterPointQuery *q)
         if (!(p->x >= w->min.x) || p->x > w->max.x || !(p->y >= w->min.y) || p->y > w->max.y)
             continue;
         if (w->height * kHalfF + w->top > p->z)
-            *out = gWorld->unkD64;
+            *out = ((WaterWorld *)gCurrentWorld)->unkD64;
     }
 }
 HOOK(0x518E50, Water_TestPoints);
@@ -541,11 +540,7 @@ void Water_SetTint(const float *c)
 HOOK(0x5196D0, Water_SetTint);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-BSS(A44344) WaterWorld *gWorld;
-ALIAS(gCurrentWorld, gWorld, 0);
-ALIAS(gRoom, gWorld, 0);
-ALIAS(gTerrain, gWorld, 0);
-ALIAS(gWalkWorld, gWorld, 0);
+BSS(A44344) void *gCurrentWorld;
 STORE(igb, A80200, 4) __typeof__(gWaters[0]) store_A80200[64];
 ALIAS(gWaters, store_A80200, 0);
 BSS(A80200) int gWaterLevelType;
@@ -560,5 +555,4 @@ BSS(A80200) int gWaterCount;
 BSS(A80200) int gWaterDepth;
 STORE(igb, B818A0, 4) float store_B818A0[3];
 ALIAS(gAmbient, store_B818A0, 0);
-ALIAS(gAmbientColors, store_B818A0, 0);
 BSS(BA2040) double gWaterLevel;

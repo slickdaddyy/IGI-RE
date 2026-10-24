@@ -85,7 +85,7 @@ HOOK(0x4D94F0, BoneDynCubeObj_ActivateHandler);
 
 void BoneDynCubeObj_MoveHandler(BoneDynCubeObj *o, char *arg)
 {
-    DynCube_Move(gWorld, o, (Vec3d *)arg, o->radius);
+    DynCube_Move(gCurrentWorld, o, (Vec3d *)arg, o->radius);
     o->matrix = *(Matrix *)(arg + 0x18);
 }
 HOOK(0x4D95A0, BoneDynCubeObj_MoveHandler);

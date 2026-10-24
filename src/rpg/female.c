@@ -37,7 +37,7 @@ ORIG(0x4C3440, double *, DynCubeObj_GetPosition, (void *obj));
 ORIG(0x4D2FB0, void, BoneObj_GetRootMotion, (void *a, float *delta, void *anim));
 ORIG(0x4EC1E0, void, StateMachine_Update, (SoldierSM *sm, Soldier *h));
 
-extern void *gSoldierFemaleList;
+extern void *gSoldierFemaleParams;
 extern uint16_t gSoldierFemaleType;
 
 static const float kShakeAmount = 0x1.99999ap+7f;
@@ -294,7 +294,7 @@ HOOK(0x455780, SoldierFemale_PunchHandler);
 
 void SoldierFemale_Close(void)
 {
-    QTaskList_Free(gSoldierFemaleList);
+    QTaskList_Free(gSoldierFemaleParams);
     TaskType_Free(gSoldierFemaleType);
 }
 HOOK(0x455960, SoldierFemale_Close);

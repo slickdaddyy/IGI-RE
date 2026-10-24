@@ -212,14 +212,14 @@ extern TransCtx gView;
 extern Scene gScene;
 extern float gWorldScale;
 extern int gD3DClippingOnIndex;
-extern PtrList *gD3DListB;
+extern PtrList *gD3DBlendStates;
 extern DWORD gD3DZEnable;
 extern DynVB gVBNormal;
-extern PtrList *gD3DListC;
+extern PtrList *gD3DRenderStates;
 extern float gNearPlane;
-extern PtrList *gD3DStateList;
+extern PtrList *gD3DClipStates;
 extern int gD3DClippingOffIndex;
-extern PtrList *gD3DListA;
+extern PtrList *gD3DTextureStates;
 extern DWORD gFogEnable;
 
 /* a float constant from the exe, bit exact */
@@ -613,10 +613,10 @@ void Direct3DRender_DrawSplineMesh(ModelObj **prim)
     d = h->data;
     g = d->groups;
     base = Direct3DRender_FillSplineVB(d, o);
-    use_state(gD3DListA, gTexStageIdx);
-    use_state(gD3DListB, gOpaqueBlendIdx);
-    use_state(gD3DListC, gLitIdx);
-    use_state(gD3DStateList, inside[0] ? gD3DClippingOffIndex : gD3DClippingOnIndex);
+    use_state(gD3DTextureStates, gTexStageIdx);
+    use_state(gD3DBlendStates, gOpaqueBlendIdx);
+    use_state(gD3DRenderStates, gLitIdx);
+    use_state(gD3DClipStates, inside[0] ? gD3DClippingOffIndex : gD3DClippingOnIndex);
     for (;;) {
         if (!g->sorted) {
             Direct3DRender_SetObjectFog(o, h);
@@ -745,12 +745,12 @@ void Direct3DRender_DrawSortedFaceGroup_Spline(SplinePrim *p)
     D3DMATRIX mat;
     int base;
 
-    use_state(gD3DListA, gTexStageIdx);
-    use_state(gD3DListB, gOpaqueBlendIdx);
-    use_state(gD3DListC, gLitIdx);
-    use_state(gD3DStateList, gD3DClippingOnIndex);
-    gD3DListB->current = -1;
-    gD3DListC->current = -1;
+    use_state(gD3DTextureStates, gTexStageIdx);
+    use_state(gD3DBlendStates, gOpaqueBlendIdx);
+    use_state(gD3DRenderStates, gLitIdx);
+    use_state(gD3DClipStates, gD3DClippingOnIndex);
+    gD3DBlendStates->current = -1;
+    gD3DRenderStates->current = -1;
     set_alpha_states(g->flags & 1);
     if (!(g->flags & 1)) {
         double c[3];
@@ -1025,10 +1025,10 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
         MeshGroup *g = d->groups;
 
         base = d->vbBase;
-        use_state(gD3DListA, gTexStageIdx);
-        use_state(gD3DListB, gOpaqueBlendIdx);
-        use_state(gD3DListC, gLitIdx);
-        use_state(gD3DStateList, inside[0] ? gD3DClippingOffIndex : gD3DClippingOnIndex);
+        use_state(gD3DTextureStates, gTexStageIdx);
+        use_state(gD3DBlendStates, gOpaqueBlendIdx);
+        use_state(gD3DRenderStates, gLitIdx);
+        use_state(gD3DClipStates, inside[0] ? gD3DClippingOffIndex : gD3DClippingOnIndex);
         if (g) {
             for (;;) {
                 if (!g->sorted) {
@@ -1061,10 +1061,10 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
             base = d->vbBase;
             gTaskHandlers[Mesh3D_GetEvent4()][o->type](o, NULL);
             Direct3DRender_UploadLightmapMesh(d, &o->lightmaps[lod]);
-            use_state(gD3DListA, gLmStageIdx);
-            use_state(gD3DListB, gOpaqueBlendIdx);
-            use_state(gD3DListC, gUnlitIdx);
-            use_state(gD3DStateList, inside[0] ? gD3DClippingOffIndex : gD3DClippingOnIndex);
+            use_state(gD3DTextureStates, gLmStageIdx);
+            use_state(gD3DBlendStates, gOpaqueBlendIdx);
+            use_state(gD3DRenderStates, gUnlitIdx);
+            use_state(gD3DClipStates, inside[0] ? gD3DClippingOffIndex : gD3DClippingOnIndex);
             for (;;) {
                 if (g->texture != 0xFFFF) {
                     if (!g->sorted) {
@@ -1090,10 +1090,10 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
             g = d->groups;
             base = d->vbBase;
             Direct3DRender_UploadLightmapMesh(d, NULL);
-            use_state(gD3DListA, gTexStageIdx);
-            use_state(gD3DListB, gOpaqueBlendIdx);
-            use_state(gD3DListC, gLitIdx);
-            use_state(gD3DStateList, inside[0] ? gD3DClippingOffIndex : gD3DClippingOnIndex);
+            use_state(gD3DTextureStates, gTexStageIdx);
+            use_state(gD3DBlendStates, gOpaqueBlendIdx);
+            use_state(gD3DRenderStates, gLitIdx);
+            use_state(gD3DClipStates, inside[0] ? gD3DClippingOffIndex : gD3DClippingOnIndex);
             if (g) {
                 for (;;) {
                     if (!g->sorted) {
@@ -1179,12 +1179,12 @@ void Direct3DRender_DrawSortedFaceGroup_Rigid(SortedPrim *p)
     ModelLod_LoadTexAnimState(ml, p->anim);
     ModelLod_ApplyTexAnims(ml);
     d = p->mesh;
-    use_state(gD3DListA, gTexStageIdx);
-    use_state(gD3DListB, gOpaqueBlendIdx);
-    use_state(gD3DListC, gLitIdx);
-    use_state(gD3DStateList, gD3DClippingOnIndex);
-    gD3DListB->current = -1;
-    gD3DListC->current = -1;
+    use_state(gD3DTextureStates, gTexStageIdx);
+    use_state(gD3DBlendStates, gOpaqueBlendIdx);
+    use_state(gD3DRenderStates, gLitIdx);
+    use_state(gD3DClipStates, gD3DClippingOnIndex);
+    gD3DBlendStates->current = -1;
+    gD3DRenderStates->current = -1;
     set_alpha_states(g->flags & 1);
     if (!(g->flags & 1))
         set_fog_at(&p->matrix, p->pos, (MeshHeader *)p->lod->mesh->header);
@@ -1212,15 +1212,15 @@ void Direct3DRender_DrawSortedFaceGroup_Lightmap(SortedPrim *p)
     D3DMATRIX mat;
 
     if (p->lightmap) {
-        use_state(gD3DListA, gLmStageIdx);
-        use_state(gD3DListB, gAlphaBlendIdx);
-        use_state(gD3DListC, gUnlitAlphaIdx);
+        use_state(gD3DTextureStates, gLmStageIdx);
+        use_state(gD3DBlendStates, gAlphaBlendIdx);
+        use_state(gD3DRenderStates, gUnlitAlphaIdx);
     } else {
-        use_state(gD3DListA, gTexStageIdx);
-        use_state(gD3DListB, gAlphaBlendIdx);
-        use_state(gD3DListC, gLitAlphaIdx);
+        use_state(gD3DTextureStates, gTexStageIdx);
+        use_state(gD3DBlendStates, gAlphaBlendIdx);
+        use_state(gD3DRenderStates, gLitAlphaIdx);
     }
-    use_state(gD3DStateList, gD3DClippingOnIndex);
+    use_state(gD3DClipStates, gD3DClippingOnIndex);
     set_fog_at(&p->matrix, p->pos, (MeshHeader *)p->lod->mesh->header);
     if (g->flags & 1) {
         SRS(D3DRENDERSTATE_LIGHTING, 0);
@@ -1261,17 +1261,20 @@ HOOK(0x49F1C0, Direct3DRender_DrawSortedFaceGroup_Lightmap);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(7205B0) int gTexStageIdx;
-ALIAS(gStateA0, gTexStageIdx, 0);
-BSS(723508) int gUnlitAlphaIdx;
-BSS(723508) int gMeshVBCount;
-PAD(igb, 723508, 723510, 0x8);
-PAD(igb, 723508, 723518, 0x88B84);
+PAD(igb, 7205B0, 7205B4, 0x4);
+BSS(7205B0) int gAlphaBlendIdx;
+BSS(7205B0) int gLitAlphaIdx;
+BSS(7234B8) int gLitIdx;
+BSS(723504) int gLmStageIdx;
+BSS(723504) int gUnlitAlphaIdx;
+BSS(723504) int gMeshVBCount;
+PAD(igb, 723504, 723510, 0x8);
+PAD(igb, 723504, 723518, 0x88B84);
 ALIAS(gProjVerts, pad_723518, 0);
-ALIAS(gStateC3, gUnlitAlphaIdx, 0);
-PAD(igb, 7AC0A0, 7AC0A0, 0x1D34);
+BSS(723504) int gOpaqueBlendIdx;
+PAD(igb, 723504, 7AC0A0, 0x1D34);
 ALIAS(gMeshVBs, pad_7AC0A0, 0);
-BSS(7AC0A0) int gUnlitIdx;
-ALIAS(gStateC1, gUnlitIdx, 0);
+BSS(723504) int gUnlitIdx;
 STORE(igb, B818EC, 4) float store_B818EC[13];
 ALIAS(gFogColor, store_B818EC, 0);
 BSS(BCAAE0) TransCtx gView;
@@ -1297,12 +1300,12 @@ ALIAS(gViewScaleX, gView, 72);
 ALIAS(gViewScaleY, gView, 76);
 ALIAS(gViewUnkBCAAF8, gView, 24);
 BSS(BCABEC) float gWorldScale;
-ALIAS(gD3DUnkBCABEC, gWorldScale, 0);
-ALIAS(gFogZScale, gWorldScale, 0);
-ALIAS(gNearPlaneScale, gWorldScale, 0);
 BSS(BCACEC) int gD3DClippingOnIndex;
-ALIAS(gClipOnIndex, gD3DClippingOnIndex, 0);
+BSS(BCAD78) DWORD gD3DZEnable;
+BSS(BCAD78) PtrList *gD3DBlendStates;
 BSS(BCAD90) DynVB gVBNormal;
 ALIAS(gVertexBuffer, gVBNormal, 0);
+BSS(BCADAC) PtrList *gD3DRenderStates;
+BSS(BCADC4) PtrList *gD3DClipStates;
 BSS(BCADE0) int gD3DClippingOffIndex;
-ALIAS(gClipOffIndex, gD3DClippingOffIndex, 0);
+BSS(BCADE8) PtrList *gD3DTextureStates;

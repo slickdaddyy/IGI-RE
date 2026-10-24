@@ -60,16 +60,16 @@ extern int gVBTLSize;
 extern int gVBTLUsed;
 extern DWORD gD3DZEnable;
 extern int gD3DClippingOnIndex;
-extern PtrList *gD3DStatesA;
-extern PtrList *gD3DStatesB;
-extern PtrList *gD3DStatesC;
-extern PtrList *gD3DStatesD;
-extern float gD3DViewMaxZ;
+extern PtrList *gD3DTextureStates;
+extern PtrList *gD3DBlendStates;
+extern PtrList *gD3DRenderStates;
+extern PtrList *gD3DClipStates;
+extern float gLayer1MaxZ;
 extern float gD3DMinZ;
-extern float gD3DViewMinZ;
+extern float gLayer1MinZ;
 extern float gD3DMaxZ;
 extern float gNearPlane;
-extern float gNearPlaneScale;
+extern float gWorldScale;
 extern float gProj33;
 extern float gSceneMinX;
 extern float gSceneMinY;
@@ -410,7 +410,7 @@ void D3DQVertex_Emit(QVertexStrip *s)
             d->y = v->y - kHalf.f;
             if (v->z > kZero.f && gTransContextValid) {
                 long double lo = (long double)gD3DMinZ * kNearMul.f, z, rhw;
-                float t = gNearPlaneScale * v->z;
+                float t = gWorldScale * v->z;
 
                 if (lo > t)
                     z = lo;
@@ -420,7 +420,7 @@ void D3DQVertex_Emit(QVertexStrip *s)
                     z = t;
                 rhw = kOne.f / z;
                 d->rhw = rhw;
-                d->z = ((long double)gD3DViewMaxZ - gD3DViewMinZ) * ((kOne.f - rhw * gD3DMinZ) * gProj33) + gD3DViewMinZ;
+                d->z = ((long double)gLayer1MaxZ - gLayer1MinZ) * ((kOne.f - rhw * gD3DMinZ) * gProj33) + gLayer1MinZ;
             } else {
                 d->z = kHalf.f;
                 d->rhw = kOne.f / (((long double)gD3DMaxZ - gD3DMinZ) * kHalf.f);
@@ -496,17 +496,17 @@ void D3DQVertex_DrawStrip(StripNode *n)
     st.flags = n->flags;
     st.texture = n->texture;
     if (((gQVLastFlags & 0x8000003C) == 0) != ((st.flags & 0x8000003C) == 0) || ((gQVLastFlags ^ st.flags) & 0x60000))
-        gD3DStatesC->current = -1;
+        gD3DRenderStates->current = -1;
     if ((gQVLastFlags ^ st.flags) & 0x8000003C)
-        gD3DStatesB->current = -1;
+        gD3DBlendStates->current = -1;
     if ((gQVLastTexture == NULL) != (st.texture == NULL) || ((gQVLastFlags ^ st.flags) & 0x1400000))
-        gD3DStatesA->current = -1;
+        gD3DTextureStates->current = -1;
     gQVLastTexture = st.texture;
     gQVLastFlags = st.flags;
-    RunState(gD3DStatesA, gQVTextureStatesIndex, &st);
-    RunState(gD3DStatesB, gQVBlendStatesIndex, &st);
-    RunState(gD3DStatesC, gQVRenderStatesIndex, &st);
-    RunState(gD3DStatesD, gD3DClippingOnIndex, &st);
+    RunState(gD3DTextureStates, gQVTextureStatesIndex, &st);
+    RunState(gD3DBlendStates, gQVBlendStatesIndex, &st);
+    RunState(gD3DRenderStates, gQVRenderStatesIndex, &st);
+    RunState(gD3DClipStates, gD3DClippingOnIndex, &st);
     if (st.texture)
         gD3DDevice->lpVtbl->SetTexture(gD3DDevice, 0, n->texture->surface);
 
@@ -548,9 +548,9 @@ void D3DQVertex_Init(void)
     RenderMode_SetMethod(Direct3D_GetRenderMode(), gQVertexDrawStrip, D3DQVertex_DrawStrip);
     gQVLastFlags = 0xFFFFFFFF;
     gQVLastTexture = NULL;
-    gQVTextureStatesIndex = PtrList_Add(gD3DStatesA, D3DQVertex_SetTextureStates);
-    gQVBlendStatesIndex = PtrList_Add(gD3DStatesB, D3DQVertex_SetBlendStates);
-    gQVRenderStatesIndex = PtrList_Add(gD3DStatesC, D3DQVertex_SetRenderStates);
+    gQVTextureStatesIndex = PtrList_Add(gD3DTextureStates, D3DQVertex_SetTextureStates);
+    gQVBlendStatesIndex = PtrList_Add(gD3DBlendStates, D3DQVertex_SetBlendStates);
+    gQVRenderStatesIndex = PtrList_Add(gD3DRenderStates, D3DQVertex_SetRenderStates);
 }
 HOOK(0x50DC30, D3DQVertex_Init);
 
@@ -878,3 +878,5 @@ PAD(igb, A7CED8, A7D9FC, 0x4);
 BSS(A7CED8) unsigned int gQVLastFlags;
 BSS(A7CED8) QTexture *gQVLastTexture;
 BSS(A7CED8) int gClipDepth;
+BSS(BCADA0) float gD3DMinZ;
+BSS(BCADC8) float gD3DMaxZ;

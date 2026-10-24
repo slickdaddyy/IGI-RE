@@ -69,7 +69,7 @@ extern int gGraphLinkB;
 extern int gGraphLinkA;
 extern GraphNode gGraphNodeTemp;
 extern List gStreamHandlers;
-extern void *gTerrain;
+extern void *gCurrentWorld;
 
 /* the next byte of the file, which stays unread. When nothing is read
    the result is the low byte of the stream pointer. */
@@ -265,7 +265,7 @@ void Graph_ReadNodeMaterial(GraphStreamValue *v)
     int id = -1;
 
     GraphStream_ReadValue(v, &id, 0);
-    gGraphNodeTemp.material = id != -1 ? Terrain_GetMaterial(gTerrain, id) : NULL;
+    gGraphNodeTemp.material = id != -1 ? Terrain_GetMaterial(gCurrentWorld, id) : NULL;
 }
 HOOK(0x4FAFE0, Graph_ReadNodeMaterial);
 

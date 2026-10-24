@@ -64,7 +64,7 @@ HazeLayer *HazeLayer_New(const Vec3d *min, const Vec3d *max, const float *color,
     Vec3d c;
 
     set_fields(t, color, density, bottom, top);
-    t->world = gWorld;
+    t->world = gCurrentWorld;
     t->visible = 0;
     center(&c, min, max);
     DynCube_AddBox(t->world, t, &c, min, max, 4);

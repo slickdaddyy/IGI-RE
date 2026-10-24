@@ -105,7 +105,7 @@ extern char gScaleBNames[][32];
 extern char gLinkNames[][32];
 
 /* what the renderer uses, one per light set */
-extern Vec3f gAmbientColors[];
+extern Vec3f gAmbient[];
 extern Vec3f gFogColors[];
 extern float gFogDensities[];
 extern Vec3f gColorMatrix0[];
@@ -126,7 +126,7 @@ static void publish(GlobalLight *g, int matrix)
     for (i = 0; i < 5; i++) {
         LightSet *s = &g->sets[i];
 
-        gAmbientColors[i] = s->color.ambient;
+        gAmbient[i] = s->color.ambient;
         gFogColors[i] = s->color.fog;
         gFogDensities[i] = s->color.fogDensity * kFogScale;
         if (matrix) {

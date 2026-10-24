@@ -120,7 +120,7 @@ void StatusScreen_Create(StatusScreen *s)
     for (i = 0; i < 10; i++)
         Sprite_Load(&s->actions[i], gStatusActionNames[i]);
     s->testText = Text_New(*(void **)(ComputerRes_Get() + 0x10), 320.0f, 240.0f, "Test");
-    t = Text_New(*(void **)(ComputerRes_Get() + 0x10), 0.0f, 0.0f, gScriptEmptyString);
+    t = Text_New(*(void **)(ComputerRes_Get() + 0x10), 0.0f, 0.0f, gEmptyString);
     s->timeText = t;
     t->flags |= 0x80;
     s->messages = StatusMessageScreen_New(s);

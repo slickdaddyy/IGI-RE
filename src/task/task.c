@@ -628,6 +628,7 @@ void TaskType_SetFlags(uint16_t type, uint32_t flags)
 HOOK(0x401FA0, TaskType_SetFlags);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(536148) int gTaskHandlerChanges INIT(-1);
 PAD(igd, 544954, 544954, 0x1);
 DATA(544954) char str_544955[1] INIT("");
 PAD(igd, 544954, 544956, 0x2);
@@ -652,8 +653,6 @@ STORE(igb, A969E0, 1) uint8_t store_A969E0[256];
 ALIAS(gTaskSlotEvent, store_A969E0, 0);
 STORE(igb, A969E0, 4) __typeof__(gTaskHandlers[0]) store_A96AE0[1];
 ALIAS(gTaskHandlers, store_A96AE0, 0);
-ALIAS(gTaskHandlers1, store_A96AE0, 0);
-ALIAS(gWalkHandlers, store_A96AE0, 0);
 STORE(igb, AF5EE0, 4) __typeof__(gTaskTypes[0]) store_AF5EE0[384];
 ALIAS(gTaskTypes, store_AF5EE0, 0);
 STORE(igb, AF5EE0, 4) __typeof__(gTaskStack[0]) store_AFA6E0[64];

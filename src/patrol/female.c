@@ -794,4 +794,3 @@ BSS(5BDA84) void *gSoldierFemaleParams;
 BSS(5BDA84) uint16_t gSoldierFemaleType;
 PAD(igb, 5BDA84, 5BDA8A, 0x6);
 BSS(5BDA84) int gSoldierFemaleUnk5BDA90;
-ALIAS(gSoldierFemaleList, gSoldierFemaleParams, 0);

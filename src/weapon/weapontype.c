@@ -34,7 +34,7 @@ extern char gWeaponCategoryEnum[];
 extern char gWeaponSightEnum[];
 extern char gWeaponAmmoEnum[];
 extern char gWeaponIdEnum[];
-extern const char gScriptEmptyString[];
+extern const char gEmptyString[];
 
 ScriptValue *DefineWeaponType(ScriptValue *out, void *data, void *args);
 
@@ -362,7 +362,7 @@ ScriptValue *DefineWeaponType(ScriptValue *out, void *data, void *args)
     gWeaponTypeCount++;
     out->i = 1;
     out->d = 1.0;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x413F90, DefineWeaponType);

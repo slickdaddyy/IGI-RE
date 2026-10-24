@@ -449,5 +449,3 @@ HOOK(0x523D40, Lightmap_BuildLod);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(A83B4C) int gLightmapCountA83B4C;
-BSS(A83D28) int gLightmapBuilt;
-ALIAS(gLightmapBufCount2, gLightmapBuilt, 0);

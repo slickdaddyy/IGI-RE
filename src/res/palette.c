@@ -66,3 +66,8 @@ void Palette_Load(Palette *p, const char *name)
         ;
 }
 HOOK(0x4B7D50, Palette_Load);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A84A40) int gDeAllocPalette;
+BSS(A84A40) int gDownloadPalette;
+BSS(A84A40) int gAllocPalette;

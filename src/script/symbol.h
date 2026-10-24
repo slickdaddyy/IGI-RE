@@ -14,7 +14,7 @@ enum { SCRIPT_VARIABLE, SCRIPT_FUNCTION, SCRIPT_CONSTANT };
 enum { SCRIPT_VOID, SCRIPT_INT, SCRIPT_REAL, SCRIPT_STRING };
 
 extern SymbolTable *gScriptSymbols;
-extern const char gScriptEmptyString[];
+extern const char gEmptyString[];
 
 /* fistp with the current rounding mode, low 32 bits of the 64 bit result */
 static inline int Script_Round(long double d)

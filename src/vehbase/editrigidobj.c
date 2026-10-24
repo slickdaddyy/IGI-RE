@@ -44,7 +44,7 @@ ORIG(0x4F1C90, void *, Param_Range02, (void));
 
 extern uint16_t gEditRigidObjType;
 extern void *gEditRigidObjParams;
-extern void *gWorld;
+extern void *gCurrentWorld;
 
 /* out = a * b. Each element sums a[i][k] * b[k][j] for k = 0..2; last[i] is
    the k whose product row i adds last. */
@@ -134,9 +134,9 @@ void EditRigidObj_Create(EditRigidObj *o)
 {
     Vec3d zero = {0, 0, 0};
 
-    RigidDynCubeObj_Init(gWorld, o, NULL);
-    DynCube_Add(gWorld, o, &zero, radius(o), 2);
-    Sector_AddObject(gWorld, o, DynCubeObj_GetPosition(o));
+    RigidDynCubeObj_Init(gCurrentWorld, o, NULL);
+    DynCube_Add(gCurrentWorld, o, &zero, radius(o), 2);
+    Sector_AddObject(gCurrentWorld, o, DynCubeObj_GetPosition(o));
     memset(&o->pos, 0, sizeof(o->pos));
     memset(&o->matrix, 0, sizeof(o->matrix));
     o->matrix.m[0] = o->matrix.m[4] = o->matrix.m[8] = 1.0f;

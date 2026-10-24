@@ -38,7 +38,7 @@ extern uint16_t gStaticType;
 extern uint16_t gDynamicType;
 extern uint16_t gIdleType;
 extern uint16_t gCameraBaseType;
-extern uint8_t gLevelEvent0;
+extern uint8_t gLevelEventDA4;
 extern uint8_t gLevelNameEvent;
 extern int gLevelEventDA8;
 extern int gLevelEventDAC;

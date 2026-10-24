@@ -117,7 +117,7 @@ ScriptValue *DefinePhysicsObjType(ScriptValue *ret, void *data, void *args)
     gPhysicsObjTypeCount++;
     ret->i = 1;
     ret->d = 1.0;
-    ret->s = gScriptNumberType;
+    ret->s = gEmptyString;
     return ret;
 }
 HOOK(0x4EDD20, DefinePhysicsObjType);

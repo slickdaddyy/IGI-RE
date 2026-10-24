@@ -189,8 +189,8 @@ extern int gTaskStackTop;
 /* exe constants, read in place */
 #define K(type, addr) VAR(const type, addr)
 
-extern uint8_t gHoleEvent;
-extern uint16_t gHoleType;
+extern uint8_t gBulletHoleEvent;
+extern uint16_t gBulletHoleType;
 extern Pool gHolePool;
 extern Pool gHolePolyPool;
 extern uint8_t gFlashEvent;

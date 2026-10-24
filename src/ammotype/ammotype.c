@@ -52,9 +52,9 @@ extern uint8_t gAmmoListEvent;
 extern char gAmmoIdEnum[];
 extern uint8_t gBulletHoleEvent;
 extern uint16_t gBulletHoleType;
-extern char gBulletHolePool[];
-extern char gBulletHolePool2[];
-extern const char gScriptEmptyString[];
+extern char gHolePool[];
+extern char gHolePolyPool[];
+extern const char gEmptyString[];
 
 ScriptValue *DefineAmmoType(ScriptValue *out, void *data, void *args);
 void AmmoType_LoadAll(void);
@@ -111,7 +111,7 @@ ScriptValue *DefineAmmoType(ScriptValue *out, void *data, void *args)
     gAmmoTypeCount++;
     out->i = 1;
     out->d = 1.0;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x47CAD0, DefineAmmoType);
@@ -289,8 +289,8 @@ void BulletHole_Init(void)
     TaskType_SetHandler2(gBulletHoleType, 2, BulletHole_Delete);
     TaskType_SetHandler2(gBulletHoleType, Mesh3D_GetEvent5(), BulletHole_Handler5188C0);
     TaskType_SetHandler(gBulletHoleType, QObj_GetEvent(), BulletHole_Forward);
-    Pool_Init(gBulletHolePool, 4, 100, 4);
-    Pool_Init(gBulletHolePool2, 0x40, 100, 4);
+    Pool_Init(gHolePool, 4, 100, 4);
+    Pool_Init(gHolePolyPool, 0x40, 100, 4);
 }
 HOOK(0x47CF70, BulletHole_Init);
 
@@ -309,6 +309,8 @@ void BulletHole_Forward(void *t, void *arg)
 HOOK(0x47D060, BulletHole_Forward);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(540904) uint8_t gBulletHoleEvent INIT(255);
+PAD(igd, 540904, 540905, 0x3);
 PAD(igb, 5BE3E0, 5BE3E0, 0x2D04);
 ALIAS(gAmmoTypes, pad_5BE3E0, 0);
 BSS(5BE3E0) int gAmmoTypeCount;
@@ -316,3 +318,5 @@ BSS(5BE3E0) uint8_t gAmmoListEvent;
 PAD(igb, 5BE3E0, 5C10E9, 0x7);
 STORE(igb, 5BE3E0, 1) char store_5C10F0[24];
 ALIAS(gAmmoIdEnum, store_5C10F0, 0);
+BSS(5C1138) uint16_t gBulletHoleType;
+PAD(igb, 5C1138, 5C113A, 0x2);

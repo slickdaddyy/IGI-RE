@@ -191,10 +191,10 @@ void PolyList_Init(void)
     TaskType_SetHandler2(gPolyListType, 2, PolyList_Delete);
     gPolyListPrim = Primitive_Register("PolyListDynCubeObjPrimitive");
     RenderMode_SetMethod(Direct3D_GetRenderMode(), gPolyListPrim, PolyList_Draw);
-    gPolyListStageState = PtrList_Add(gD3DListA, PolyList_SetStagesCB);
-    gPolyListNothingB = PtrList_Add(gD3DListB, Direct3D_Nothing);
-    gPolyListLightState = PtrList_Add(gD3DListC, PolyList_SetLightsCB);
-    gPolyListNothingD = PtrList_Add(gD3DStateList, Direct3D_Nothing);
+    gPolyListStageState = PtrList_Add(gD3DTextureStates, PolyList_SetStagesCB);
+    gPolyListNothingB = PtrList_Add(gD3DBlendStates, Direct3D_Nothing);
+    gPolyListLightState = PtrList_Add(gD3DRenderStates, PolyList_SetLightsCB);
+    gPolyListNothingD = PtrList_Add(gD3DClipStates, Direct3D_Nothing);
 }
 HOOK(0x49A520, PolyList_Init);
 
@@ -229,9 +229,9 @@ void PolyList_SetLightsCB(void)
         Light *l = Light_Get(i);
 
         light.dltType = D3DLIGHT_DIRECTIONAL;
-        light.dcvDiffuse.r = gNearPlaneScale * l->color.x;
-        light.dcvDiffuse.g = gNearPlaneScale * l->color.y;
-        light.dcvDiffuse.b = gNearPlaneScale * l->color.z;
+        light.dcvDiffuse.r = gWorldScale * l->color.x;
+        light.dcvDiffuse.g = gWorldScale * l->color.y;
+        light.dcvDiffuse.b = gWorldScale * l->color.z;
         light.dvDirection.x = -l->dir.x;
         light.dvDirection.y = -l->dir.y;
         light.dvDirection.z = -l->dir.z;
@@ -329,9 +329,9 @@ void PolyList_Draw(void **msg)
             if (amb[k] + light[k] > kOne)
                 light[k] = kOne - amb[k];
     }
-    PolyList_UseState(gD3DListA, gPolyListStageState);
-    PolyList_UseState(gD3DListB, gPolyListNothingB);
-    PolyList_UseState(gD3DListC, gPolyListLightState);
+    PolyList_UseState(gD3DTextureStates, gPolyListStageState);
+    PolyList_UseState(gD3DBlendStates, gPolyListNothingB);
+    PolyList_UseState(gD3DRenderStates, gPolyListLightState);
     pos = p->pos;
     pos.x = p->tris[0].v[0]->x + pos.x;
     pos.y = p->tris[0].v[0]->y + pos.y;
@@ -351,13 +351,13 @@ void PolyList_Draw(void **msg)
         rel[0] = p->pos.x - gViewPos.x;
         rel[1] = p->pos.y - gViewPos.y;
         rz = p->pos.z - gViewPos.z;
-        rel[0] = gNearPlaneScale * rel[0];
-        rel[1] = rel[1] * gNearPlaneScale;
-        rel[2] = rz * gNearPlaneScale;
+        rel[0] = gWorldScale * rel[0];
+        rel[1] = rel[1] * gWorldScale;
+        rel[2] = rz * gWorldScale;
     }
     memcpy(rot, p->rot, sizeof(rot));
     for (k = 0; k < 9; k++)
-        rot[k] = rot[k] * gNearPlaneScale;
+        rot[k] = rot[k] * gWorldScale;
     Direct3D_MakeMatrix(&world, rot, rel);
     gD3DDevice->lpVtbl->SetTransform(gD3DDevice, D3DTRANSFORMSTATE_WORLD, &world);
     if (p->flags & 8) {
@@ -422,10 +422,10 @@ HOOK(0x49A9B0, PolyList_Draw);
 
 void PolyList_Close(void)
 {
-    PtrList_Clear(gD3DListA, gPolyListStageState);
-    PtrList_Clear(gD3DListB, gPolyListNothingB);
-    PtrList_Clear(gD3DListC, gPolyListLightState);
-    PtrList_Clear(gD3DStateList, gPolyListNothingD);
+    PtrList_Clear(gD3DTextureStates, gPolyListStageState);
+    PtrList_Clear(gD3DBlendStates, gPolyListNothingB);
+    PtrList_Clear(gD3DRenderStates, gPolyListLightState);
+    PtrList_Clear(gD3DClipStates, gPolyListNothingD);
     TaskType_Free(gPolyListType);
     Primitive_Unregister(gPolyListPrim);
 }

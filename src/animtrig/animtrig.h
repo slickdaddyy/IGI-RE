@@ -53,7 +53,7 @@ extern int gTaskStackTop;
         } while (c_);                                                   \
     } while (0)
 
-extern const char gScriptEmptyString[];
+extern const char gEmptyString[];
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4B0C60, void *, Mem_Alloc, (int size, int align));

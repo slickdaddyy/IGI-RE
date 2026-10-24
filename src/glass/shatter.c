@@ -27,7 +27,7 @@ _Static_assert(offsetof(HitInfo, normal) == 0x38, "HitInfo");
 
 extern const float *gShatterColor;
 extern char gShatterRandom[];
-extern float gShatterTen;
+extern float gShatterSpeed;
 extern uint16_t gShatterType;
 extern int gShatter244;
 extern float gShatterAlpha;
@@ -35,7 +35,7 @@ extern Vec3f gShatterHitA;
 extern GlassShatter *gShatterTask;
 extern Vec3f gShatterNormal;
 extern ShardPoly *gShatterPolys;
-extern Vec3f gShatterHitB;
+extern Vec3f gShatterHit;
 extern Shard *gShatterShards;
 extern Matrix gShardSpin[];
 
@@ -215,7 +215,7 @@ void GlassShatter_Spawn(void **model, Vec3f *dir, Vec3d *pos, Matrix *matrix, vo
     g->matrix = *matrix;
     g->model = model;
     g->frames = 30;
-    to_local(&gShatterHitB, hit, pos, m);
+    to_local(&gShatterHit, hit, pos, m);
     to_local(&gShatterHitA, hit, pos, m);
     n0 = (hit->normal.z * m[6] + hit->normal.y * m[3]) + m[0] * hit->normal.x;
     n1 = (hit->normal.z * m[7] + hit->normal.y * m[4]) + hit->normal.x * m[1];
@@ -223,7 +223,7 @@ void GlassShatter_Spawn(void **model, Vec3f *dir, Vec3d *pos, Matrix *matrix, vo
     gShatterNormal.y = n1;
     gShatterNormal.x = n0;
     gShatterShards = g->shards;
-    gShatterTen = 10.0f;
+    gShatterSpeed = 10.0f;
     gShatterColor = gShardColor;
     gShatterNormal.z = n2;
     gShatterTask = g;
@@ -535,11 +535,11 @@ void GlassShatter_AddTri(float *a, float *b, float *c)
         s->center.z = cz;
         s->color0 = *(const Vec3f *)gShatterColor;
         s->color = s->color0;
-        if (gShatterTen > kZero) {
-            s->vel.x = cx - gShatterHitB.x;
-            s->vel.y = cy - gShatterHitB.y;
-            s->vel.z = cz - gShatterHitB.z;
-            k = gShatterTen / x87_sqrt(sq3(s->vel.x, s->vel.y, s->vel.z));
+        if (gShatterSpeed > kZero) {
+            s->vel.x = cx - gShatterHit.x;
+            s->vel.y = cy - gShatterHit.y;
+            s->vel.z = cz - gShatterHit.z;
+            k = gShatterSpeed / x87_sqrt(sq3(s->vel.x, s->vel.y, s->vel.z));
             s->vel.x = s->vel.x * k;
             s->vel.y = s->vel.y * k;
             s->vel.z = s->vel.z * k;
@@ -609,7 +609,7 @@ BSS(57C228) const float *gShatterColor;
 PAD(igb, 57C228, 57C22C, 0x4);
 STORE(igb, 57C228, 1) char store_57C230[12];
 ALIAS(gShatterRandom, store_57C230, 0);
-BSS(57C228) float gShatterTen;
+BSS(57C228) float gShatterSpeed;
 BSS(57C228) uint16_t gShatterType;
 PAD(igb, 57C228, 57C242, 0x2);
 BSS(57C228) int gShatter244;
@@ -619,9 +619,6 @@ BSS(57C228) Vec3f gShatterHitA;
 BSS(57C228) GlassShatter *gShatterTask;
 BSS(57C228) Vec3f gShatterNormal;
 BSS(57C228) ShardPoly *gShatterPolys;
-BSS(57C228) Vec3f gShatterHitB;
-BSS(57C228) Shard *gShatterShards;
-PAD(igb, 57C228, 57C280, 0x4B4);
+BSS(57C27C) Shard *gShatterShards;
+PAD(igb, 57C27C, 57C280, 0x4B4);
 ALIAS(gShardSpin, pad_57C280, 0);
-ALIAS(gShatterHit, gShatterHitB, 0);
-ALIAS(gShatterSpeed, gShatterTen, 0);

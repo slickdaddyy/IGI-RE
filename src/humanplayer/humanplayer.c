@@ -202,10 +202,10 @@ extern float gLeanSide;
 extern float gLeanUp;
 extern int gLeanFrames;
 extern float gMaxDamage;
-extern float gUnk56E208;
+extern float gFenceDamage;
 extern QTaskList *gHumanPlayerList;
 extern char gUnlimitedAmmo;
-extern char gScriptNumberType[];
+extern char gEmptyString[];
 
 extern float kKmhToUnits;
 extern float kPerFrameHour;
@@ -1135,7 +1135,7 @@ static void return_one(ScriptValue *ret)
 {
     ret->i = 1;
     ret->d = 1.0;
-    ret->s = gScriptNumberType;
+    ret->s = gEmptyString;
 }
 
 ScriptValue *DefineHumanPlayerGeneral(ScriptValue *ret, void *unused, void *args)
@@ -1151,7 +1151,7 @@ ScriptValue *DefineHumanPlayerGeneral(ScriptValue *ret, void *unused, void *args
     gLeanUp = Script_GetArgReal(args, 5) * 4096.0;
     gLeanFrames = (int)llrintl(Script_GetArgReal(args, 6) * 30.0);
     gMaxDamage = Script_GetArgReal(args, 7);
-    gUnk56E208 = Script_GetArgReal(args, 8);
+    gFenceDamage = Script_GetArgReal(args, 8);
     for (k = 0; k < 17; k++)
         gMoveSpeeds[k * 4] = Script_GetArgReal(args, i++);
     for (k = 0; k < 17; k++)
@@ -1596,9 +1596,6 @@ BSS(56E1F8) float gLeanSide;
 BSS(56E1F8) float gLeanUp;
 BSS(56E1F8) int gLeanFrames;
 BSS(56E1F8) float gMaxDamage;
-BSS(56E1F8) float gUnk56E208;
-PAD(igb, 56E1F8, 56E20C, 0x4);
-BSS(56E1F8) QTaskList *gHumanPlayerList;
-BSS(56E1F8) char gUnlimitedAmmo;
-PAD(igb, 56E1F8, 56E215, 0x3);
-ALIAS(gFenceDamage, gUnk56E208, 0);
+BSS(56E210) QTaskList *gHumanPlayerList;
+BSS(56E210) char gUnlimitedAmmo;
+PAD(igb, 56E210, 56E215, 0x3);

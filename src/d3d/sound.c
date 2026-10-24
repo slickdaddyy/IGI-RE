@@ -74,7 +74,7 @@ extern float gMusicVolume;
 extern float gMasterVolume;
 extern float gSfxVolume;
 extern int gCDTrack;
-extern int gUnk54391C;
+extern int gVoiceUpdateRate;
 extern char gCDUnk676AB4;
 extern int gSoundUnk676E50;
 extern Mixer gMixers[];
@@ -85,8 +85,8 @@ extern char gCDAudioOpen;
 extern char gSoundReady;
 extern char gSound3D;
 extern char *gSoundVoices;
-extern int gSoundUnk6840F4;
-extern SoundNode *gSoundFreeVoices;
+extern int gActiveVoices;
+extern SoundNode *gFreeVoices;
 
 void CD_Open(void);
 void Mixer_Init(void);
@@ -195,8 +195,8 @@ void Sound_InitDirectSound(void)
     gSoundVoices = Mem_Alloc(gSoundVoiceCount * 0x4C, 4);
     memset(gSoundVoices, 0, gSoundVoiceCount * 0x4C);
     for (i = 0; i < gSoundVoiceCount; i++)
-        Sound_ListPush((SoundNode *)(gSoundVoices + i * 0x4C), &gSoundFreeVoices);
-    gSoundUnk6840F4 = 0;
+        Sound_ListPush((SoundNode *)(gSoundVoices + i * 0x4C), &gFreeVoices);
+    gActiveVoices = 0;
     gSoundReady = 1;
     return;
 
@@ -366,8 +366,8 @@ void Sound_ShutdownDirectSound(void)
     if (gSoundVoices) {
         Mem_Free(gSoundVoices);
         gSoundVoices = NULL;
-        gSoundFreeVoices = NULL;
-        gSoundUnk6840F4 = 0;
+        gFreeVoices = NULL;
+        gActiveVoices = 0;
     }
     if (gDSound) {
         if (gSound3D)
@@ -439,7 +439,7 @@ HOOK(0x495CB0, Sound_IsReady);
 
 void Sound_SetUpdateRate(int v)
 {
-    gUnk54391C = v;
+    gVoiceUpdateRate = v;
 }
 HOOK(0x495CC0, Sound_SetUpdateRate);
 
@@ -671,7 +671,3 @@ BSS(6840E8) char gSoundReady;
 BSS(6840E8) char gSound3D;
 PAD(igb, 6840E8, 6840EB, 0x5);
 BSS(6840E8) char *gSoundVoices;
-BSS(6840E8) int gSoundUnk6840F4;
-BSS(6840E8) SoundNode *gSoundFreeVoices;
-ALIAS(gActiveVoices, gSoundUnk6840F4, 0);
-ALIAS(gFreeVoices, gSoundFreeVoices, 0);

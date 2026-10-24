@@ -609,7 +609,7 @@ void GunPickup_Touch(GunPickup *t, Toucher *by)
         fn(by->task, &msg);
     t->pickedUp = 1;
     crt_sprintf(buf, "PICKEDUPWEAPON%s", WeaponType_Find(t->weapon) + 0x110);
-    StatusMessageShow(Level_GetDynamic(), buf, gScriptEmptyString, gScriptEmptyString);
+    StatusMessageShow(Level_GetDynamic(), buf, gEmptyString, gEmptyString);
 }
 HOOK(0x46D230, GunPickup_Touch);
 
@@ -742,7 +742,7 @@ void AmmoPickup_Touch(AmmoPickup *t, Toucher *by)
     if (fn)
         fn(by->task, &msg);
     t->pickedUp = 1;
-    StatusMessageShow(Level_GetDynamic(), "PICKEDUPAMMO", "STATUSSCREEN:ammo.spr", gScriptEmptyString);
+    StatusMessageShow(Level_GetDynamic(), "PICKEDUPAMMO", "STATUSSCREEN:ammo.spr", gEmptyString);
 }
 HOOK(0x46D990, AmmoPickup_Touch);
 

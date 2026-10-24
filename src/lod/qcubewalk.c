@@ -88,19 +88,19 @@ _Static_assert(sizeof(WTerrainCell) == 0x30, "WTerrainCell");
 
 typedef void (*WHandler)(WTask *task, void *arg);
 
-extern WHandler gWalkHandlers[][0x180];
-extern char *gWalkWorld;
+extern WHandler gTaskHandlers[][0x180];
+extern char *gCurrentWorld;
 extern int gDisplayFrame;
-extern WEntry *gWalkOut;
-extern int gWalkCount;
-extern WCache gWalkCache[];
-extern Pool gWalkPool0;
-extern Pool gWalkPool1;
-extern Pool gWalkPool2;
-extern int gWalkMinSize;
-extern int gWalkOrigin[];
-extern uint8_t gWalkChildOrder[];
-extern int gWalkCollChildTable[];
+extern WEntry *gQCubeOut;
+extern int gQCubeCount;
+extern WCache gQCubeCache[];
+extern Pool gQCubePool0;
+extern Pool gQCubePool1;
+extern Pool gQCubePool2;
+extern int gQCubeMinSize;
+extern int gQCubeOrigin[];
+extern uint8_t gQCubeChildOrder[];
+extern int gCollChildTable[];
 extern signed char gWalkTreeIndex[];
 extern WCube gWalkSavedRoots[];
 extern WCube gWalkFakeRoots[];
@@ -146,10 +146,10 @@ static inline int walk_abs(int x)
 
 static void walk_add(WTask *t, uint8_t slot)
 {
-    gWalkOut->task = t;
-    gWalkOut->slot = slot;
-    gWalkOut++;
-    gWalkCount++;
+    gQCubeOut->task = t;
+    gQCubeOut->slot = slot;
+    gQCubeOut++;
+    gQCubeCount++;
 }
 
 static void walk_release(Pool *p, char *elem)
@@ -178,14 +178,14 @@ static void walk_release(Pool *p, char *elem)
  */
 void QCube_Walk(WWorld *w)
 {
-    double *nearp = *(double **)(gWalkWorld + 0xDFC);
+    double *nearp = *(double **)(gCurrentWorld + 0xDFC);
     int nearZ = nearp ? (int)walk_round(*nearp) : (int)0xE0000000;
     WTerrainCell *out = gTerrainCells;
     char **meshes = gTerrainMeshes;
     int cells = 0, nmeshes = 0;
     int cur = gDisplayFrame & 0xFFFF, prev = (gDisplayFrame - 1) & 0xFFFF;
     WCell *terrain = w->cells;
-    int minSize = gWalkMinSize;
+    int minSize = gQCubeMinSize;
     float fovx, fovy, sx, sy, cy, cz, m[10];
     uint8_t order[64], perm[64];
     int camx, camy, camz, ox, oy, oz, vx, vy, vz;
@@ -199,20 +199,20 @@ void QCube_Walk(WWorld *w)
     Coll_ResetMods();
     fovx = gTransContext.fov;
     fovy = gTransContext.fovY;
-    memcpy(order, gWalkChildOrder, sizeof(order));
+    memcpy(order, gQCubeChildOrder, sizeof(order));
     sx = kSlope.f / walk_cos_atan(fovx) * kFixedOne.f;
     sy = kSlope.f / walk_cos_atan(fovy) * kFixedOne.f;
     for (i = 0; i < 64; i++)
-        perm[i] = gWalkCollChildTable[i];
+        perm[i] = gCollChildTable[i];
     cy = gTransContext.pos[1];
     cz = gTransContext.pos[2];
     memcpy(m, gTransContext.m, sizeof(m));
     camx = walk_round(gTransContext.pos[0]);
-    ox = -(camx + gWalkOrigin[0]);
+    ox = -(camx + gQCubeOrigin[0]);
     camy = walk_round(cy);
-    oy = -(gWalkOrigin[1] + camy);
+    oy = -(gQCubeOrigin[1] + camy);
     camz = walk_round(cz);
-    oz = -(camz + gWalkOrigin[2]);
+    oz = -(camz + gQCubeOrigin[2]);
     {
         long double a = ox, b = oy, c = oz;
         float t0 = m[2] * c + m[1] * b + m[0] * a;
@@ -300,7 +300,7 @@ void QCube_Walk(WWorld *w)
                         t = n->tasks;
                         do {
                             if (t->flags & 0x100)
-                                gWalkHandlers[16][t->type](t, t->arg);
+                                gTaskHandlers[16][t->type](t, t->arg);
                             t = t->next;
                         } while (t);
                     }
@@ -350,7 +350,7 @@ void QCube_Walk(WWorld *w)
                     t = c->tasks;
                     do {
                         if (t->flags & 0x80)
-                            gWalkHandlers[15][t->type](t, t->arg);
+                            gTaskHandlers[15][t->type](t, t->arg);
                         t = t->next;
                     } while (t);
                 }
@@ -444,7 +444,7 @@ void QCube_Walk(WWorld *w)
                     int fresh = 1;
 
                     for (;;) {
-                        ce = &gWalkCache[h];
+                        ce = &gQCubeCache[h];
                         if (ce->frame == -1)
                             break;
                         if (prev == ce->frame && ce->cell[0] == X && ce->cell[1] == Y && ce->cell[2] == Z)
@@ -511,17 +511,17 @@ void QCube_Walk(WWorld *w)
     gTerrainCellCount = cells;
     gTerrainMeshCount = nmeshes;
     for (i = 0; i < 0x800; i++) {
-        WCache *c = &gWalkCache[i];
+        WCache *c = &gQCubeCache[i];
         int f = c->frame;
 
         if (((f & 0xFFFF0000) == 0 && (f & 0xFFFF) != cur) || (f & 0xFFFF) + 1 < cur) {
             if (c->data) {
                 if (c->kind == 0) {
-                    walk_release(&gWalkPool0, c->data);
+                    walk_release(&gQCubePool0, c->data);
                 } else if (c->kind == 1) {
-                    walk_release(&gWalkPool1, c->data);
+                    walk_release(&gQCubePool1, c->data);
                 } else if (c->kind == 2) {
-                    walk_release(&gWalkPool2, c->data);
+                    walk_release(&gQCubePool2, c->data);
                 } else {
                     Error_Show("Illegal alloc info");
                     for (;;)
@@ -542,27 +542,16 @@ PAD(igb, A4EF38, A4EF38, 0x20C4);
 ALIAS(gWalkSavedRoots, pad_A4EF38, 0);
 PAD(igb, A53740, A53740, 0x18C);
 ALIAS(gWalkFakeRoots, pad_A53740, 0);
-BSS(B12B60) Pool gWalkPool0;
-ALIAS(gQCubePool0, gWalkPool0, 0);
-ALIAS(gTerrainPool0, gWalkPool0, 0);
 BSS(B12B80) int gWalkOverflow;
 BSS(B12BB8) int gQCubeSkipCells;
-BSS(B12C20) int gWalkCount;
-PAD(igb, B12C20, B12C24, 0x1C);
-BSS(B12C20) Pool gWalkPool1;
-BSS(B12C20) WEntry *gWalkOut;
-ALIAS(gQCubeCount, gWalkCount, 0);
-ALIAS(gQCubeOut, gWalkOut, 0);
-ALIAS(gQCubePool1, gWalkPool1, 0);
-ALIAS(gTerrainPool1, gWalkPool1, 0);
-BSS(B16C6C) int gWalkMinSize;
-ALIAS(gQCubeMinSize, gWalkMinSize, 0);
-BSS(B16CC0) Pool gWalkPool2;
-PAD(igb, B16CC0, B16CD8, 0x8);
-STORE(igb, B16CC0, 8) __typeof__(gTerrainCells[0]) store_B16CE0[4096];
+PAD(igb, B12BB8, B12BBC, 0x4);
+STORE(igb, B12BB8, 4) int store_B12BC0[3];
+ALIAS(gQCubeOrigin, store_B12BC0, 0);
+STORE(igb, B12BE0, 1) uint8_t store_B12BE0[64];
+ALIAS(gQCubeChildOrder, store_B12BE0, 0);
+BSS(B12C58) WEntry *gQCubeOut;
+STORE(igb, B16CE0, 8) __typeof__(gTerrainCells[0]) store_B16CE0[4096];
 ALIAS(gTerrainCells, store_B16CE0, 0);
-ALIAS(gQCubePool2, gWalkPool2, 0);
-ALIAS(gTerrainPool2, gWalkPool2, 0);
 STORE(igb, B97B20, 4) int store_B97B20[64];
 ALIAS(gVisibleLightMaps, store_B97B20, 0);
 BSS(C10380) int gDisplayFrame;

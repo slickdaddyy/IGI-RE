@@ -267,7 +267,7 @@ ScriptValue *StatusMessageScreen_ClearMessages(ScriptValue *out, void *data, voi
     StatusMessageScreen_Clear(StatusScreen_Get()->messages);
     v.i = 1;
     v.d = 1.0;
-    v.s = gScriptEmptyString;
+    v.s = gEmptyString;
     *out = v;
     return out;
 }
@@ -379,7 +379,7 @@ void StatusMessageScreen_WrapText(StatusMessageScreen *s, int i, float maxWidth)
     saved = *l->cursor;
     *l->cursor = 0;
     for (k = 0; k < 3; k++)
-        Text_SetString(l->texts[k], gScriptEmptyString);
+        Text_SetString(l->texts[k], gEmptyString);
     c = *p;
     if (c) {
         out = rows[0];
@@ -642,7 +642,7 @@ void StatusMessageScreen_AddMessage(StatusMessageScreen *s, StatusMessage *m)
     Mem_PushMode(1);
     font = StatusMessageScreen_GetFont(s, i);
     for (k = 0; k < 3; k++)
-        l->texts[k] = Text_New(font, 0.0f, 0.0f, gScriptEmptyString);
+        l->texts[k] = Text_New(font, 0.0f, 0.0f, gEmptyString);
     Mem_PopMode();
     if (m->sound[0]) {
         float params[3] = {1.0f, 1.0f, 0.0f};

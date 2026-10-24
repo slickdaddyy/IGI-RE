@@ -41,13 +41,13 @@ extern unsigned char gMaterialImpactEvent;
 extern int gMaterialActive;
 extern GameMaterial gMaterials[];
 extern TaskHandler gTaskHandlers[][0x180];
-extern const char gScriptNumberType[];
+extern const char gEmptyString[];
 
 static ScriptValue *Material_Return(ScriptValue *out)
 {
     out->i = 1;
     out->d = 1.0;
-    out->s = gScriptNumberType;
+    out->s = gEmptyString;
     return out;
 }
 
@@ -210,8 +210,5 @@ DATA(538518) unsigned char gMaterialParseEvent INIT(255);
 DATA(538518) unsigned char gMaterialImpactEvent INIT(255);
 PAD(igd, 538518, 53851B, 0x1);
 DATA(538518) int gMaterialActive INIT(-1);
-ALIAS(gMaterialEvent0, gMaterialSizeEvent, 0);
-ALIAS(gMaterialEvent1, gMaterialParseEvent, 0);
-ALIAS(gMaterialEvent2, gMaterialImpactEvent, 0);
 PAD(igb, 569210, 569210, 0x4D08);
 ALIAS(gMaterials, pad_569210, 0);

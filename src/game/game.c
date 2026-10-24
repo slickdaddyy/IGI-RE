@@ -209,7 +209,7 @@ extern char gMusicEnabled;
 extern void *gCurrentWorld;
 extern void (*gRenderFuncs[])(void *);
 extern int gUnkBC20A0;
-extern char gUnkC28C61;
+extern char gKeyboardPresent;
 extern char gUnkC28F80;
 
 #define KEY_R 0x13
@@ -445,7 +445,7 @@ void LevelStart(Game *g)
     CameraControl_AddListener(Game_Get(), t, world);
     gGame->unk48 = NULL;
     BoneObj_SetFrameRate(30.0f);
-    if (gUnkC28C61) {
+    if (gKeyboardPresent) {
         int mode = gUnkC28F80 ? 3 : 0;
         void *keys = Profile_GetKeys(mode, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f,
                                      0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f);
@@ -556,7 +556,7 @@ static void RunChildren(Task *task)
         return;
     do {
         gTaskStack[gTaskStackTop++] = n->next && n->next->next ? n->next : NULL;
-        fn = gTaskHandlers1[1][n->type];
+        fn = gTaskHandlers[1][n->type];
         if (fn)
             fn(n);
         n = gTaskStack[--gTaskStackTop];

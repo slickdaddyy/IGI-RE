@@ -337,7 +337,7 @@ ScriptValue *DefineGroup(ScriptValue *out, Task *parent, ScriptArgs *args)
     set_context(parent);
     out->i = i;
     out->d = i;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4EBA90, DefineGroup);

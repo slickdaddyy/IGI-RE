@@ -88,7 +88,7 @@ _Static_assert(sizeof(StatusScreen) == 0x4F0, "StatusScreen");
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern const char gScriptEmptyString[];
+extern const char gEmptyString[];
 extern char *gTickInfo;
 #define TICKS (*(int *)(gTickInfo + 0x68))
 

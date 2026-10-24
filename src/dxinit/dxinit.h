@@ -14,13 +14,13 @@
 
 extern TransCtx gView;
 extern Vec3d gViewPos;
-extern float gNearPlaneScale;
+extern float gWorldScale;
 extern int gD3DTnL;
 extern int gD3DZEnable;
-extern PtrList *gD3DListA;
-extern PtrList *gD3DListB;
-extern PtrList *gD3DListC;
-extern PtrList *gD3DStateList;
+extern PtrList *gD3DTextureStates;
+extern PtrList *gD3DBlendStates;
+extern PtrList *gD3DRenderStates;
+extern PtrList *gD3DClipStates;
 extern IDirect3D7 *gD3D;
 extern IDirect3DDevice7 *gD3DDevice;
 extern uint16_t gDynCubeObjType;

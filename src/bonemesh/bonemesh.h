@@ -49,18 +49,18 @@ typedef struct MeshLoadArg {
 
 _Static_assert(sizeof(MeshRender) == 0x38, "MeshRender");
 
-extern void *gDevice;
+extern void *gD3DDevice;
 extern TransCtx gTransCtx;
 extern SceneArea gSceneArea;
-extern float gNearPlaneScale;
+extern float gWorldScale;
 extern void (*gRenderFuncs[])(void *);
 extern TaskHandler gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern PtrList *gStateListA;
-extern PtrList *gStateListB;
-extern PtrList *gStateListC;
-extern PtrList *gStateListD;
+extern PtrList *gD3DTextureStates;
+extern PtrList *gD3DBlendStates;
+extern PtrList *gD3DRenderStates;
+extern PtrList *gD3DClipStates;
 
 /* method idx of a COM object */
 #define COM(obj, idx, type) ((type)(*(void ***)(obj))[idx])

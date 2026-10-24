@@ -23,7 +23,7 @@ ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
 ORIG(0x4CE3D0, void, Terrain_InvalidateLighting, (Terrain *t));
 ORIG(0x4D11C0, void, QCube_Reset, (void));
 
-extern const char gScriptEmptyString[];
+extern const char gEmptyString[];
 extern char gHmpResident[];
 extern char gBitResident[];
 extern TerrainLightmap gLightmaps[];
@@ -160,7 +160,7 @@ static ScriptValue *ret_zero(ScriptValue *out)
 {
     out->i = 0;
     out->d = 0.0;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 

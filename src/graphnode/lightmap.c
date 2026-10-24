@@ -492,8 +492,6 @@ ALIAS(gLightMapRandom, store_A76CD0, 0);
 BSS(A76CD0) uint16_t gTerrainLightMapType;
 PAD(igb, A76CD0, A76CDE, 0x26);
 BSS(A76CD0) void *gTerrainLightMapParams;
-BSS(B97D24) int gVisibleLightMapCount;
-ALIAS(gCounterB, gVisibleLightMapCount, 0);
 PAD(igb, BA80A0, BA80A0, 0x10);
 ALIAS(gLightMapDraw, pad_BA80A0, 0);
 STORE(igb, BC00A0, 4) __typeof__(gLightMapTasks[0]) store_BC00A0[2048];

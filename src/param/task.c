@@ -52,7 +52,7 @@ const char *TaskNote_GetText(Task *task)
 
     if (n)
         return n->text;
-    return gScriptEmptyString;
+    return gEmptyString;
 }
 HOOK(0x4F1180, TaskNote_GetText);
 
@@ -141,4 +141,3 @@ HOOK(0x4F17C0, Level_Get);
 DATA(54DDA4) uint8_t gLevelEventDA4 INIT(255);
 DATA(54DDA4) uint8_t gLevelNameEvent INIT(255);
 PAD(igd, 54DDA4, 54DDA6, 0x2);
-ALIAS(gLevelEvent0, gLevelEventDA4, 0);

@@ -98,10 +98,10 @@ void MoveRigidObj_Create(MoveRigidObj *t)
     t->obj.attached = MagicObjContainer_New(NULL, t);
     t->model[0] = 0;
     VarString_Init(&t->expr);
-    RigidDynCubeObj_Init(gWorld, t, NULL);
+    RigidDynCubeObj_Init(gCurrentWorld, t, NULL);
     scale = max_scale(&t->obj);
     radius = VirModel_GetRadius2(t->obj.model, 2) * scale;
-    DynCube_Add(gWorld, t, &pos, radius, 2);
+    DynCube_Add(gCurrentWorld, t, &pos, radius, 2);
     for (i = 0; i < 2; i++) {
         memset(&t->keyPos[i], 0, sizeof(Vec3d));
         t->alpha[i] = 0;

@@ -50,7 +50,7 @@ extern Pool gFadePool;
 extern Pool gNodePool;
 extern int gBoneUnkA54684;
 extern int gBoneUnkA54688;
-extern float gBoneTicksPerFrame;
+extern float gTicksPerFrame;
 extern int gBoneSmoothAnims;
 
 static const float kTicksPerSecond = 4800.0f;
@@ -82,7 +82,7 @@ void BoneObj_Init(void)
     Pool_Init_(&gSourcePool, 0x14, 0x100, 4);
     gBoneUnkA54684 = 0;
     gBoneUnkA54688 = 0;
-    gBoneTicksPerFrame = 0;
+    gTicksPerFrame = 0;
 }
 HOOK(0x4D2C30, BoneObj_Init);
 
@@ -99,13 +99,13 @@ HOOK(0x4D2CF0, BoneObj_Shutdown);
 
 void BoneObj_SetFrameRate(float fps)
 {
-    gBoneTicksPerFrame = kTicksPerSecond / fps;
+    gTicksPerFrame = kTicksPerSecond / fps;
 }
 HOOK(0x4D2D30, BoneObj_SetFrameRate);
 
 float BoneObj_GetTicksPerFrame(void)
 {
-    return gBoneTicksPerFrame;
+    return gTicksPerFrame;
 }
 HOOK(0x4D2D50, BoneObj_GetTicksPerFrame);
 
@@ -270,8 +270,10 @@ BSS(A542F0) Pool gInstPool;
 BSS(A542F0) BoneHierarchy *gBoneBuild;
 PAD(igb, A542F0, A5463C, 0x4);
 BSS(A542F0) Pool gFadePool;
+BSS(A542F0) float gTicksPerFrame;
+PAD(igb, A542F0, A5465C, 0x4);
+BSS(A542F0) Pool gNodePool;
 ALIAS(gSkeletons, store_A542F0, 0);
-BSS(A54660) Pool gNodePool;
 BSS(A5467C) Bone *gBoneBuildBones;
 PAD(igb, A5467C, A54680, 0x4);
 BSS(A5467C) int gBoneUnkA54684;

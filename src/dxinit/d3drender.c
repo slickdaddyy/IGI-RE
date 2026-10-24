@@ -88,8 +88,8 @@ extern int gMeshVBCount;
 extern const unsigned gMeshFVF[];
 extern const unsigned gMeshCaps[];
 extern const unsigned gMeshCapsTnL[];
-extern int gGenericUVFromRenderModeUV;
-extern int gRenderModeUVFromGenericUV;
+extern int gGenericUVFromRenderModeUVMethod;
+extern int gRenderModeUVFromGenericUVMethod;
 extern int gTexStageIdx;
 extern int gAlphaBlendIdx;
 extern int gLitAlphaIdx;
@@ -142,8 +142,8 @@ void Fog_SetRange(const Vec3d *pos, float radius)
     long double d = gView.matrix.m[8] * pz + gView.matrix.m[7] * py + gView.matrix.m[6] * px;
     float n = d - radius;
     float f = d + radius;
-    float a = kOne / x87_exp(gNearPlaneScale * n * gFogDensity);
-    long double bl = kOne / x87_exp(gNearPlaneScale * f * gFogDensity);
+    float a = kOne / x87_exp(gWorldScale * n * gFogDensity);
+    long double bl = kOne / x87_exp(gWorldScale * f * gFogDensity);
     float b = bl;
     long double diffl = bl - a;
     float diff = diffl;
@@ -155,8 +155,8 @@ void Fog_SetRange(const Vec3d *pos, float radius)
     } else {
         long double t = (b * n - a * f) / diff;
 
-        start = (t - (t - n) / a) * gNearPlaneScale;
-        end = gNearPlaneScale * t;
+        start = (t - (t - n) / a) * gWorldScale;
+        end = gWorldScale * t;
     }
     SET_RS(D3DRENDERSTATE_FOGSTART, f2u(start));
     SET_RS(D3DRENDERSTATE_FOGEND, f2u(end));
@@ -351,8 +351,8 @@ void Direct3DRender_Init(void)
     RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_DrawBoneMesh);
     m = Mesh3D_GetDrawSplineMethod();
     RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_DrawSplineMesh);
-    RenderMode_SetMethod(Direct3D_GetRenderMode(), gGenericUVFromRenderModeUV, Direct3D_ConvertUV);
-    RenderMode_SetMethod(Direct3D_GetRenderMode(), gRenderModeUVFromGenericUV, Direct3D_ConvertUV);
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), gGenericUVFromRenderModeUVMethod, Direct3D_ConvertUV);
+    RenderMode_SetMethod(Direct3D_GetRenderMode(), gRenderModeUVFromGenericUVMethod, Direct3D_ConvertUV);
     m = Mesh3D_GetExcludeMethod();
     RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_DrawLightmapMesh);
     m = Model_GetLoadMethod();
@@ -368,14 +368,14 @@ void Direct3DRender_Init(void)
         gMeshBatches[i].total = 0;
     }
     gMeshVBCount = 0;
-    gTexStageIdx = PtrList_Add(gD3DListA, FN(0x49D730, Direct3DRender_SetTextureStages));
-    gOpaqueBlendIdx = PtrList_Add(gD3DListB, FN(0x49DB10, Direct3DRender_AlphaBlendOff));
-    gLitIdx = PtrList_Add(gD3DListC, FN(0x49D480, Direct3DRender_SetLitState));
-    gLmStageIdx = PtrList_Add(gD3DListA, FN(0x49D960, Direct3DRender_SetLightmapStages));
-    gUnlitIdx = PtrList_Add(gD3DListC, FN(0x49D810, Direct3DRender_SetUnlitState));
-    gAlphaBlendIdx = PtrList_Add(gD3DListB, FN(0x49DB10, Direct3DRender_AlphaBlendOff));
-    gLitAlphaIdx = PtrList_Add(gD3DListC, FN(0x49DB20, Direct3DRender_SetLitAlphaState));
-    gUnlitAlphaIdx = PtrList_Add(gD3DListC, FN(0x49DDF0, Direct3DRender_SetUnlitAlphaState));
+    gTexStageIdx = PtrList_Add(gD3DTextureStates, FN(0x49D730, Direct3DRender_SetTextureStages));
+    gOpaqueBlendIdx = PtrList_Add(gD3DBlendStates, FN(0x49DB10, Direct3DRender_AlphaBlendOff));
+    gLitIdx = PtrList_Add(gD3DRenderStates, FN(0x49D480, Direct3DRender_SetLitState));
+    gLmStageIdx = PtrList_Add(gD3DTextureStates, FN(0x49D960, Direct3DRender_SetLightmapStages));
+    gUnlitIdx = PtrList_Add(gD3DRenderStates, FN(0x49D810, Direct3DRender_SetUnlitState));
+    gAlphaBlendIdx = PtrList_Add(gD3DBlendStates, FN(0x49DB10, Direct3DRender_AlphaBlendOff));
+    gLitAlphaIdx = PtrList_Add(gD3DRenderStates, FN(0x49DB20, Direct3DRender_SetLitAlphaState));
+    gUnlitAlphaIdx = PtrList_Add(gD3DRenderStates, FN(0x49DDF0, Direct3DRender_SetUnlitAlphaState));
     Direct3D_AddRestoreCallback(FN(0x49BD30, Direct3DRender_RestoreVertexBuffers));
     slot = QCube_GetNearClipEvent();
     TaskType_SetHandler(SplineObjSegment_GetType(), slot, FN(0x49BE10, Direct3DRender_SplineNearZ));

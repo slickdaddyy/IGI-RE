@@ -63,10 +63,10 @@ extern int gTaskStackTop;
 extern char gUnk5C8E00;
 extern int gUnkA4438C[];
 extern int gUnkBC20A0;
-extern int gUnkC28C5C;
-extern char gUnkC28C61;
+extern int gFlowFrames;
+extern char gKeyboardPresent;
 extern char gUnkC28F80;
-extern char gScriptNumberType[];
+extern char gEmptyString[];
 
 void Flow_Open(void)
 {
@@ -110,7 +110,7 @@ void Flow_CreateHandler(Flow *flow)
     gFlow->unk20 = Screen_New(gFlow);
     gFlow->unk24 = InputPort_New(gFlow);
     SoundSys_NewController(gFlow);
-    if (gUnkC28C61) {
+    if (gKeyboardPresent) {
         int mode = gUnkC28F80 ? 3 : 0;
         void *keys = Profile_GetKeys(mode, 0.03f, 0.001f, 0.001f, 0.03f, 0.001f, 0.001f, 0.03f, 0.001f, 0.001f, 0.03f,
                                      0.001f, 0.001f);
@@ -245,7 +245,7 @@ void Flow_RunHandler(Flow *flow)
             break;
         }
     }
-    gUnkC28C5C = gFlow->frames;
+    gFlowFrames = gFlow->frames;
     gFlow->start_time += gFlow->time_adjust;
     if (Game_CheatKeyPressed(0x43))
         *(int *)(Profile_GetActive() + 0x560) = 14;
@@ -269,7 +269,7 @@ ScriptValue *Flow_RequestEvent(ScriptValue *ret, void *unused, void *args)
     Flow_SetRequest(Script_GetArgInt(args, 0));
     ret->i = 1;
     ret->d = 1.0;
-    ret->s = gScriptNumberType;
+    ret->s = gEmptyString;
     return ret;
 }
 HOOK(0x402780, Flow_RequestEvent);
@@ -393,5 +393,3 @@ PAD(igb, 567C78, 567C7E, 0x2);
 BSS(567C78) int gFlowPauseDepth;
 PAD(igb, 567C78, 567C84, 0x8);
 BSS(567C78) Flow *gFlow;
-BSS(C28C5C) int gUnkC28C5C;
-ALIAS(gTimeMs, gUnkC28C5C, 0);

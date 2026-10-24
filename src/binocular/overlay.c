@@ -97,7 +97,7 @@ extern const float gTargetShape[];
 extern void (*gRenderFuncs[])(QVertexStrip *);
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
-extern const char gScriptEmptyString[];
+extern const char gEmptyString[];
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);
@@ -175,8 +175,8 @@ void BinocularOverlay_Create(BinocularOverlay *ov)
 
     for (i = 0; i < 12; i++)
         VUMeter_Init(&ov->meters[i], 30, 0.02f);
-    ov->text = Text_New(*(void **)(ComputerRes_Get() + 0x10), 0, 0, gScriptEmptyString);
-    ov->unk34 = Text_New(*(void **)(ComputerRes_Get() + 0x10), 0, 0, gScriptEmptyString);
+    ov->text = Text_New(*(void **)(ComputerRes_Get() + 0x10), 0, 0, gEmptyString);
+    ov->unk34 = Text_New(*(void **)(ComputerRes_Get() + 0x10), 0, 0, gEmptyString);
     for (i = 0; i < 4; i++) {
         buf[0] = kLetters[i];
         ov->letters[i] = Text_New(*(void **)(ComputerRes_Get() + 0x10), 0, 0, buf);

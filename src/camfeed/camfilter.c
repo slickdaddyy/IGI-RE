@@ -56,7 +56,7 @@ extern uint16_t gBandFilterType;
 extern uint16_t gHandiCamFilterType;
 extern uint16_t gLineFilterType;
 extern uint16_t gWideScreenFilterType;
-extern void *gDevice;
+extern void *gD3DDevice;
 extern char gFilterRandom[];
 extern int gHandiCamDrawMethod;
 extern int gBandDrawMethod;
@@ -81,16 +81,16 @@ extern float gViewX;
 extern float gViewY;
 extern float gScreenW;
 extern float gScreenH;
-extern float gD3DUnkBCABEC;
+extern float gWorldScale;
 extern DynVB gVBTL;
-extern int *gD3DListB;
-extern float gD3DViewMaxZ;
+extern int *gD3DBlendStates;
+extern float gLayer1MaxZ;
 extern float gD3DMinZ;
-extern int *gD3DListC;
-extern float gD3DViewMinZ;
+extern int *gD3DRenderStates;
+extern float gLayer1MinZ;
 extern float gNearPlane;
-extern int *gD3DStateList;
-extern int *gD3DListA;
+extern int *gD3DClipStates;
+extern int *gD3DTextureStates;
 
 /* method idx of a COM object */
 #define COM(obj, idx, type) ((type)(*(void ***)(obj))[idx])
@@ -304,27 +304,27 @@ static void overlay_depth(float z, float *vz, float *rhw)
 {
     float m[16];
 
-    DEV_GetTransform(gDevice, 3, m);
-    *rhw = kOne / (gD3DUnkBCABEC * z);
-    *vz = (kOne - gD3DMinZ * *rhw) * m[10] * (gD3DViewMaxZ - gD3DViewMinZ) + gD3DViewMinZ;
-    gD3DListA[1] = -1;
-    gD3DListB[1] = -1;
-    gD3DListC[1] = -1;
-    gD3DStateList[1] = -1;
+    DEV_GetTransform(gD3DDevice, 3, m);
+    *rhw = kOne / (gWorldScale * z);
+    *vz = (kOne - gD3DMinZ * *rhw) * m[10] * (gLayer1MaxZ - gLayer1MinZ) + gLayer1MinZ;
+    gD3DTextureStates[1] = -1;
+    gD3DBlendStates[1] = -1;
+    gD3DRenderStates[1] = -1;
+    gD3DClipStates[1] = -1;
 }
 
 static void overlay_states(void)
 {
-    DEV_SetRenderState(gDevice, 0x2F, 0);
-    DEV_SetRenderState(gDevice, 0x1C, 0);
-    DEV_SetRenderState(gDevice, 0x1D, 0);
-    DEV_SetRenderState(gDevice, 0x16, 1);
-    DEV_SetRenderState(gDevice, 0x89, 0);
-    DEV_SetRenderState(gDevice, 0x1A, 1);
-    DEV_SetRenderState(gDevice, 0x0F, 0);
-    DEV_SetRenderState(gDevice, 0x17, 4);
-    DEV_SetRenderState(gDevice, 0x07, 0);
-    DEV_SetRenderState(gDevice, 0x0E, 0);
+    DEV_SetRenderState(gD3DDevice, 0x2F, 0);
+    DEV_SetRenderState(gD3DDevice, 0x1C, 0);
+    DEV_SetRenderState(gD3DDevice, 0x1D, 0);
+    DEV_SetRenderState(gD3DDevice, 0x16, 1);
+    DEV_SetRenderState(gD3DDevice, 0x89, 0);
+    DEV_SetRenderState(gD3DDevice, 0x1A, 1);
+    DEV_SetRenderState(gD3DDevice, 0x0F, 0);
+    DEV_SetRenderState(gD3DDevice, 0x17, 4);
+    DEV_SetRenderState(gD3DDevice, 0x07, 0);
+    DEV_SetRenderState(gD3DDevice, 0x0E, 0);
 }
 
 static void vertex(TLVertex *v, float x, float y, float z, float rhw)
@@ -380,7 +380,7 @@ static void band_texture(BandFilter *t, int second)
     Texture_Download(&t->tex, NULL, 0x40, 0x10, 0x10, 3, gBandPixels);
     if (!mode)
         Mem_ClearMode();
-    DEV_SetTexture(gDevice, 0, t->tex.surface);
+    DEV_SetTexture(gD3DDevice, 0, t->tex.surface);
 }
 
 /* bands of two noise textures, alternating down the screen */
@@ -397,19 +397,19 @@ void BandFilter_Render(BandFilter *t)
         return;
     overlay_depth(z, &vz, &rhw);
     overlay_states();
-    DEV_SetTextureStageState(gDevice, 0, 0x0C, 1);
-    DEV_SetTextureStageState(gDevice, 0, 0x12, 1);
-    DEV_SetTextureStageState(gDevice, 0, 0x0B, 0);
-    DEV_SetTextureStageState(gDevice, 0, 4, 2);
-    DEV_SetTextureStageState(gDevice, 0, 5, 2);
-    DEV_SetTextureStageState(gDevice, 0, 6, 0);
-    DEV_SetTextureStageState(gDevice, 0, 1, 2);
-    DEV_SetTextureStageState(gDevice, 0, 2, 2);
-    DEV_SetTextureStageState(gDevice, 0, 3, 0);
-    DEV_SetTextureStageState(gDevice, 1, 1, 1);
-    DEV_SetRenderState(gDevice, 0x1B, 1);
-    DEV_SetRenderState(gDevice, 0x13, 9);
-    DEV_SetRenderState(gDevice, 0x14, 1);
+    DEV_SetTextureStageState(gD3DDevice, 0, 0x0C, 1);
+    DEV_SetTextureStageState(gD3DDevice, 0, 0x12, 1);
+    DEV_SetTextureStageState(gD3DDevice, 0, 0x0B, 0);
+    DEV_SetTextureStageState(gD3DDevice, 0, 4, 2);
+    DEV_SetTextureStageState(gD3DDevice, 0, 5, 2);
+    DEV_SetTextureStageState(gD3DDevice, 0, 6, 0);
+    DEV_SetTextureStageState(gD3DDevice, 0, 1, 2);
+    DEV_SetTextureStageState(gD3DDevice, 0, 2, 2);
+    DEV_SetTextureStageState(gD3DDevice, 0, 3, 0);
+    DEV_SetTextureStageState(gD3DDevice, 1, 1, 1);
+    DEV_SetRenderState(gD3DDevice, 0x1B, 1);
+    DEV_SetRenderState(gD3DDevice, 0x13, 9);
+    DEV_SetRenderState(gD3DDevice, 0x14, 1);
 
     h = gScreenH * kBandH;
     y = (int)round_ll(gViewY);
@@ -432,7 +432,7 @@ void BandFilter_Render(BandFilter *t)
         return;
     band_quads(p, &ys[1], n >> 1, vz, rhw, h);
     VB_Unlock(gVBTL.vb);
-    DEV_DrawPrimitiveVB(gDevice, 4, gVBTL.vb, start, (n >> 1) * 6, 0);
+    DEV_DrawPrimitiveVB(gD3DDevice, 4, gVBTL.vb, start, (n >> 1) * 6, 0);
 
     band_texture(t, 1);
     p = vb_lock(100, &start);
@@ -440,7 +440,7 @@ void BandFilter_Render(BandFilter *t)
         return;
     band_quads(p, &ys[0], (n + 1) >> 1, vz, rhw, h);
     VB_Unlock(gVBTL.vb);
-    DEV_DrawPrimitiveVB(gDevice, 4, gVBTL.vb, start, ((n + 1) >> 1) * 6, 0);
+    DEV_DrawPrimitiveVB(gD3DDevice, 4, gVBTL.vb, start, ((n + 1) >> 1) * 6, 0);
 }
 HOOK(0x4A3940, BandFilter_Render);
 
@@ -456,17 +456,17 @@ void HandiCamFilter_Render(HandiCamFilter *t)
     z = t->depth > gNearPlane ? t->depth : gNearPlane;
     overlay_depth(z, &vz, &rhw);
     overlay_states();
-    DEV_SetTextureStageState(gDevice, 0, 4, 3);
-    DEV_SetTextureStageState(gDevice, 0, 5, 2);
-    DEV_SetTextureStageState(gDevice, 0, 6, 0);
-    DEV_SetTextureStageState(gDevice, 0, 1, 3);
-    DEV_SetTextureStageState(gDevice, 0, 2, 2);
-    DEV_SetTextureStageState(gDevice, 0, 3, 0);
-    DEV_SetTextureStageState(gDevice, 1, 1, 1);
-    DEV_SetTexture(gDevice, 0, NULL);
-    DEV_SetRenderState(gDevice, 0x1B, 1);
-    DEV_SetRenderState(gDevice, 0x13, 5);
-    DEV_SetRenderState(gDevice, 0x14, 6);
+    DEV_SetTextureStageState(gD3DDevice, 0, 4, 3);
+    DEV_SetTextureStageState(gD3DDevice, 0, 5, 2);
+    DEV_SetTextureStageState(gD3DDevice, 0, 6, 0);
+    DEV_SetTextureStageState(gD3DDevice, 0, 1, 3);
+    DEV_SetTextureStageState(gD3DDevice, 0, 2, 2);
+    DEV_SetTextureStageState(gD3DDevice, 0, 3, 0);
+    DEV_SetTextureStageState(gD3DDevice, 1, 1, 1);
+    DEV_SetTexture(gD3DDevice, 0, NULL);
+    DEV_SetRenderState(gD3DDevice, 0x1B, 1);
+    DEV_SetRenderState(gD3DDevice, 0x13, 5);
+    DEV_SetRenderState(gD3DDevice, 0x14, 6);
 
     p = vb_lock(200, &start);
     if (!p)
@@ -476,7 +476,7 @@ void HandiCamFilter_Render(HandiCamFilter *t)
     for (limit = (long double)y + kFour; (long double)gScreenH + gViewY >= limit; limit = next + kFour) {
         if (n >= 196) {
             VB_Unlock(gVBTL.vb);
-            DEV_DrawPrimitiveVB(gDevice, 2, gVBTL.vb, start, n, 0);
+            DEV_DrawPrimitiveVB(gD3DDevice, 2, gVBTL.vb, start, n, 0);
             p = vb_lock(200, &start);
             if (!p)
                 return;
@@ -503,7 +503,7 @@ void HandiCamFilter_Render(HandiCamFilter *t)
     }
     VB_Unlock(gVBTL.vb);
     if (n > 0)
-        DEV_DrawPrimitiveVB(gDevice, 2, gVBTL.vb, start, n, 0);
+        DEV_DrawPrimitiveVB(gD3DDevice, 2, gVBTL.vb, start, n, 0);
 
     p = vb_lock(200, &start);
     if (!p)
@@ -524,7 +524,7 @@ void HandiCamFilter_Render(HandiCamFilter *t)
         }
     }
     VB_Unlock(gVBTL.vb);
-    DEV_DrawPrimitiveVB(gDevice, 2, gVBTL.vb, start, 32, 0);
+    DEV_DrawPrimitiveVB(gD3DDevice, 2, gVBTL.vb, start, 32, 0);
 }
 HOOK(0x4A4300, HandiCamFilter_Render);
 
@@ -612,8 +612,7 @@ void LineFilter_SetLevel(LineFilter *t, float level)
 HOOK(0x4A4FF0, LineFilter_SetLevel);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-BSS(5CA114) void *gDevice;
-ALIAS(gD3DDevice, gDevice, 0);
+BSS(5CA114) void *gD3DDevice;
 BSS(935BFC) int gHandiCamDrawMethod;
 BSS(935BFC) int gBandDrawMethod;
 BSS(935C08) int gHandiCamFilterPrim;
@@ -621,19 +620,15 @@ BSS(935C08) int gBandFilterPrim;
 BSS(936010) int gLineDrawMethod;
 BSS(936010) int gLineFilterPrim;
 BSS(936010) int gWideScreenPrim;
-BSS(936030) int gTimecodeX;
-BSS(936030) int gTimecodeY;
-BSS(936030) float gTimecode;
-BSS(936030) float gBandTextX;
-BSS(936030) float gBandTextY;
-BSS(936030) float gBandTextDX;
-BSS(936030) float gBandTextDY;
-ALIAS(gBandFontA, gBandTextX, 0);
-ALIAS(gBandFontB, gBandTextY, 0);
-ALIAS(gBandFontC, gBandTextDX, 0);
-ALIAS(gBandFontD, gBandTextDY, 0);
-ALIAS(gHandiCamFontX, gTimecodeX, 0);
-ALIAS(gHandiCamFontY, gTimecodeY, 0);
+BSS(936028) int gBatteryX;
+BSS(936028) int gBatteryY;
+BSS(936028) int gTimecodeX;
+BSS(936028) int gTimecodeY;
+BSS(936028) float gTimecode;
+BSS(936028) float gBandTextX;
+BSS(936028) float gBandTextY;
+BSS(936028) float gBandTextDX;
+BSS(936028) float gBandTextDY;
 BSS(BCAD00) DynVB gVBTL;
 ALIAS(gFilterVB, gVBTL, 0);
 ALIAS(gFilterVBSize, gVBTL, 4);

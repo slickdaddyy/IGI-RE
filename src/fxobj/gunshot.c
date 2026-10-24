@@ -106,7 +106,7 @@ extern char *gGunShotDust2;
 extern uint16_t gPlaceExplosiveType;
 extern void *gPlaceExplosiveParams;
 
-extern const char gScriptEmptyString[];
+extern const char gEmptyString[];
 #define GameMaterial_GetSize (FN(0x46FB50, AIStationaryGun_GetDefSize))
 
 static const double kDecalUnit = 4096.0;
@@ -158,7 +158,7 @@ void GunShotEffect_Impact(void *t, ImpactArg *a)
     if (def->debris && !isExcluded) {
         int n = Random_Int(Game_GetRandom(), 3);
 
-        Explosion_New(&a->hit->pos, 1, 0, 0, 2048.0f, 0, 0, n + 2, 0, 0, def->sound, gScriptEmptyString, -1, 2,
+        Explosion_New(&a->hit->pos, 1, 0, 0, 2048.0f, 0, 0, n + 2, 0, 0, def->sound, gEmptyString, -1, 2,
                    20480.0f, a->unk8, 0x1.0c1524p-1f, 340.0f, 680.0f, 0);
     }
     if (hit->task && ((a->exit && (tex = def->decalTex)) || (tex = def->decal2Tex))) {

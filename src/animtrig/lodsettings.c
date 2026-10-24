@@ -155,7 +155,7 @@ void ModelLODSettings_Create(ModelLODSettings *s)
     s->dist[1] = 0;
     s->dist[2] = 0;
     s->dist[3] = 0;
-    crt_sprintf(s->name, gScriptEmptyString);
+    crt_sprintf(s->name, gEmptyString);
 }
 HOOK(0x4EDB30, ModelLODSettings_Create);
 

@@ -310,7 +310,7 @@ ScriptValue *DefineTriggerOnce(ScriptValue *out, void *data, void *args)
     Task_New(data, gSoundDefTriggerOnceType2, &arg);
     out->i = 15;
     out->d = 15.0;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4E9EC0, DefineTriggerOnce);

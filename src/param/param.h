@@ -71,6 +71,6 @@ extern int gLevelEventDA8;
 extern int gLevelEventDAC;
 extern int gLevelEventDB0;
 
-extern char gScriptEmptyString[];
+extern char gEmptyString[];
 
 #endif

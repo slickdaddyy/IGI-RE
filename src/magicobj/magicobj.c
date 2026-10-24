@@ -54,8 +54,8 @@ extern uint16_t gRigidType;
 extern uint16_t gDynCubeObjType;
 extern MagicObjDef gMagicObjDefs[];
 extern int gMagicObjDefCount;
-extern void *gWorld;
-extern char gScriptNumberType[];
+extern void *gCurrentWorld;
+extern char gEmptyString[];
 
 static float max_scale(const RigidDynCubeObj *o)
 {
@@ -217,7 +217,7 @@ MagicScriptValue *DefineMagicObj(MagicScriptValue *ret, void *data, void *args)
     gMagicObjDefCount++;
     ret->i = 1;
     ret->d = 1.0;
-    ret->type = gScriptNumberType;
+    ret->type = gEmptyString;
     return ret;
 }
 HOOK(0x4C4520, DefineMagicObj);
@@ -245,7 +245,7 @@ HOOK(0x4C4660, RigidDynCubeObj_ActivateHandler);
 
 void RigidDynCubeObj_MoveHandler(RigidDynCubeObj *o, char *arg)
 {
-    DynCube_Move(gWorld, o, arg, radius(o));
+    DynCube_Move(gCurrentWorld, o, arg, radius(o));
     o->matrix = *(Matrix *)(arg + 0x18);
 }
 HOOK(0x4C4780, RigidDynCubeObj_MoveHandler);

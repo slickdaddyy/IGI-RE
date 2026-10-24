@@ -469,7 +469,7 @@ void FlatWater_Create(FlatWater *w)
 {
     WaterState *s;
 
-    w->world = gWorld;
+    w->world = gCurrentWorld;
     w->height = 5.0;
     w->unk7C = 0x1.aaaaap-1f;
     w->unk78 = 30000.0f;
@@ -477,15 +477,15 @@ void FlatWater_Create(FlatWater *w)
     w->color[1] = 0;
     w->color[2] = 0;
     DynCube_ListAdd(w->world, w, -1);
-    *(WaterState **)(gWorld + 0xDFC) = &gWaterState;
-    s = *(WaterState **)(gWorld + 0xDFC);
+    *(WaterState **)(gCurrentWorld + 0xDFC) = &gWaterState;
+    s = *(WaterState **)(gCurrentWorld + 0xDFC);
     memcpy(&s->height, &w->height, sizeof(double));
 }
 HOOK(0x51D840, FlatWater_Create);
 
 void FlatWater_Delete(FlatWater *w)
 {
-    *(WaterState **)(gWorld + 0xDFC) = NULL;
+    *(WaterState **)(gCurrentWorld + 0xDFC) = NULL;
     DynCube_ListRemove(w->world, w, -1);
 }
 HOOK(0x51D8B0, FlatWater_Delete);
@@ -588,8 +588,8 @@ void FlatLayer_Create(FlatLayer *l)
     l->color[0] = 1.0f;
     l->color[1] = 1.0f;
     l->color[2] = 1.0f;
-    crt_sprintf(l->lastName, gScriptEmptyString);
-    crt_sprintf(l->name, gScriptEmptyString);
+    crt_sprintf(l->lastName, gEmptyString);
+    crt_sprintf(l->name, gEmptyString);
 }
 HOOK(0x51DB80, FlatLayer_Create);
 
@@ -602,7 +602,7 @@ void FlatLayer_ParamsChanged(FlatLayer *l)
     l->color[0] = clamp01(l->color[0]);
     l->color[1] = clamp01(l->color[1]);
     l->color[2] = clamp01(l->color[2]);
-    crt_sprintf(path, "LOCAL:%s%s", gScriptEmptyString, l->name);
+    crt_sprintf(path, "LOCAL:%s%s", gEmptyString, l->name);
     if (l->name[0]) {
         if (crt_strstr(l->lastName, l->name) && strlen(l->name) == strlen(l->lastName)) {
             crt_sprintf(l->lastName, l->name);

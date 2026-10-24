@@ -126,16 +126,16 @@ extern int gClearGreen;
 extern int gClearBlue;
 extern DisplayMode gDisplayModes[];
 extern int gDisplayModeCount;
-extern int *gD3DListA;
-extern int *gD3DListB;
-extern int *gD3DListC;
-extern int *gD3DStateList;
+extern int *gD3DTextureStates;
+extern int *gD3DBlendStates;
+extern int *gD3DRenderStates;
+extern int *gD3DClipStates;
 extern int gD3DClippingOnIndex;
 extern int gD3DClippingOffIndex;
 extern float gD3DMinZ;
 extern float gD3DMaxZ;
-extern float gD3DViewMinZ;
-extern float gD3DViewMaxZ;
+extern float gLayer1MinZ;
+extern float gLayer1MaxZ;
 
 #define DX_ERROR "%s\n\nDirectX error message: %s"
 
@@ -513,23 +513,23 @@ const char *DDraw_GetErrorString(HRESULT hr)
 }
 HOOK(0x492BE0, DDraw_GetErrorString);
 
-extern float gD3DUnkBCABEC;
-extern float gD3DUnkBCABF0;
-extern float gD3DUnkBCACF0;
-extern float gD3DUnkBCAD70;
-extern int gD3DUnkBCAD78;
-extern float gD3DUnkBCAD9C;
-extern float gD3DUnkBCADA8;
-extern float gD3DUnkBCADB0;
-extern float gD3DUnkBCADB8;
-extern float gD3DUnkBCADBC;
+extern float gWorldScale;
+extern float gLayer0MinZ;
+extern float gLayer0MaxZ;
+extern float gClipRhwScale;
+extern int gD3DZEnable;
+extern float gLayer2MaxZ;
+extern float gLayer2Far;
+extern float gLayer2Near;
+extern float gLayer0Far;
+extern float gSkyRadius;
 extern float gNearPlane;
-extern float gD3DUnkBCADCC;
+extern float gFarZ;
 extern float gD3DUnkBCADD0;
 extern float gD3DUnkBCADD4;
-extern float gD3DUnkBCADD8;
-extern float gD3DUnkBCADDC;
-extern float gD3DUnkBCADE4;
+extern float gLayer0Near;
+extern float gNearZ;
+extern float gLayer2MinZ;
 
 int Direct3D_DisplayOpen(void);
 void Direct3D_SetMode(DisplayMode *mode);
@@ -560,35 +560,35 @@ void Direct3D_Init(void)
     RenderMode_SetMethod(gD3DRenderMode, Display_GetClipWindowPrim(), Direct3D_ClipWindow);
     RenderMode_SetMethod(gD3DRenderMode, Display_GetSnapshotPrim(), Direct3D_Snapshot);
     RenderMode_SetMethod(gD3DRenderMode, Display_GetGFXCapsMethod(), Direct3D_GetGFXCaps);
-    gD3DUnkBCAD78 = 1;
+    gD3DZEnable = 1;
     gD3DReady = 1;
     memset(gD3DCallbackPool, 0, 10 * sizeof(D3DCallback));
-    gD3DUnkBCABEC = 0.001f;
-    gD3DUnkBCAD70 = 999.99994f;
-    gD3DUnkBCADDC = 204.8f;
+    gWorldScale = 0.001f;
+    gClipRhwScale = 999.99994f;
+    gNearZ = 204.8f;
     gD3DUnkBCADD0 = 6144.0f;
     gNearPlane = 409.6f;
-    gD3DUnkBCADCC = 4.096e8f;
+    gFarZ = 4.096e8f;
     gD3DUnkBCADD4 = 4.096e8f;
-    gD3DUnkBCADBC = 4.096e8f;
-    gD3DUnkBCADD8 = 0.20480001f;
-    gD3DUnkBCADB8 = 6.144f;
+    gSkyRadius = 4.096e8f;
+    gLayer0Near = 0.20480001f;
+    gLayer0Far = 6.144f;
     gD3DMinZ = 0.40960002f;
     gD3DMaxZ = 409600.03f;
-    gD3DUnkBCADB0 = 409600.03f;
-    gD3DUnkBCADA8 = 409600.03f;
-    gD3DUnkBCABF0 = 0.0f;
-    gD3DUnkBCACF0 = 0.05f;
-    gD3DViewMinZ = 0.060000002f;
-    gD3DViewMaxZ = 1.0f;
-    gD3DUnkBCADE4 = 1.0f;
-    gD3DUnkBCAD9C = 1.0f;
-    gD3DListA = PtrList_New(10);
-    gD3DListB = PtrList_New(10);
-    gD3DListC = PtrList_New(10);
-    gD3DStateList = PtrList_New(10);
-    gD3DClippingOnIndex = PtrList_Add(gD3DStateList, Direct3D_ClippingOn);
-    gD3DClippingOffIndex = PtrList_Add(gD3DStateList, Direct3D_ClippingOff);
+    gLayer2Near = 409600.03f;
+    gLayer2Far = 409600.03f;
+    gLayer0MinZ = 0.0f;
+    gLayer0MaxZ = 0.05f;
+    gLayer1MinZ = 0.060000002f;
+    gLayer1MaxZ = 1.0f;
+    gLayer2MinZ = 1.0f;
+    gLayer2MaxZ = 1.0f;
+    gD3DTextureStates = PtrList_New(10);
+    gD3DBlendStates = PtrList_New(10);
+    gD3DRenderStates = PtrList_New(10);
+    gD3DClipStates = PtrList_New(10);
+    gD3DClippingOnIndex = PtrList_Add(gD3DClipStates, Direct3D_ClippingOn);
+    gD3DClippingOffIndex = PtrList_Add(gD3DClipStates, Direct3D_ClippingOff);
     AppMain_AddWinProcCallback(Direct3D_WinProcCB);
     Direct3D_AddRestoreCallback(Direct3D_RestoreVertexBuffers);
 }
@@ -819,8 +819,8 @@ void Direct3D_SetMode(DisplayMode *mode)
     vp.dwY = 0;
     vp.dwWidth = gScreenWidth;
     vp.dwHeight = gScreenHeight;
-    vp.dvMinZ = gD3DViewMinZ;
-    vp.dvMaxZ = gD3DViewMaxZ;
+    vp.dvMinZ = gLayer1MinZ;
+    vp.dvMaxZ = gLayer1MaxZ;
     hr = IDirect3DDevice7_SetViewport(gD3DDevice, &vp);
     if (hr)
         DXError("Couldn't set viewport", hr);
@@ -985,10 +985,10 @@ HOOK(0x494690, Direct3D_FindZBufferCB);
 
 void Direct3D_ResetLists(void)
 {
-    gD3DListA[1] = -1;
-    gD3DListB[1] = -1;
-    gD3DListC[1] = -1;
-    gD3DStateList[1] = -1;
+    gD3DTextureStates[1] = -1;
+    gD3DBlendStates[1] = -1;
+    gD3DRenderStates[1] = -1;
+    gD3DClipStates[1] = -1;
 }
 HOOK(0x4946D0, Direct3D_ResetLists);
 
@@ -1225,12 +1225,12 @@ void Direct3D_Shutdown(void)
 {
     Direct3D_RemoveRestoreCallback(Direct3D_RestoreVertexBuffers);
     AppMain_RemoveWinProcCallback(Direct3D_WinProcCB);
-    PtrList_Clear(gD3DStateList, gD3DClippingOnIndex);
-    PtrList_Clear(gD3DStateList, gD3DClippingOffIndex);
-    QTaskList_Free(gD3DListA);
-    QTaskList_Free(gD3DListB);
-    QTaskList_Free(gD3DListC);
-    QTaskList_Free(gD3DStateList);
+    PtrList_Clear(gD3DClipStates, gD3DClippingOnIndex);
+    PtrList_Clear(gD3DClipStates, gD3DClippingOffIndex);
+    QTaskList_Free(gD3DTextureStates);
+    QTaskList_Free(gD3DBlendStates);
+    QTaskList_Free(gD3DRenderStates);
+    QTaskList_Free(gD3DClipStates);
     RenderMode_Delete(gD3DRenderMode);
 }
 HOOK(0x495060, Direct3D_Shutdown);
@@ -1361,11 +1361,10 @@ BSS(5CA118) D3DCallback *gD3DRestoreCallbacks;
 BSS(BCACF4) int gD3DFoundHAL;
 STORE(igb, BCAD20, 4) __typeof__(gD3DCallbackPool[0]) store_BCAD20[10];
 ALIAS(gD3DCallbackPool, store_BCAD20, 0);
-BSS(BCAD20) float gD3DUnkBCAD70;
-BSS(BCAD20) int gD3DTnL;
-ALIAS(gClipRhwScale, gD3DUnkBCAD70, 0);
+BSS(BCAD74) int gD3DTnL;
 BSS(BCADD0) float gD3DUnkBCADD0;
 BSS(BCADD0) float gD3DUnkBCADD4;
+BSS(BCADDC) float gNearZ;
 BSS(BCADF0) int gClearRed;
 BSS(BCADF0) int gClearGreen;
 BSS(BCADF0) int gClearBlue;

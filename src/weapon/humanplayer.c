@@ -96,7 +96,7 @@ ORIG(0x4F2060, void *, WeaponSlots_Get, (Task **slots, int i));
 
 extern uint16_t gHumanPlayerType;
 extern char gInputChannels[][16];
-extern uint16_t gTaskType548638;
+extern uint16_t gQObjType;
 extern void *gUnk56E09C;
 extern float gMoveScale;
 extern float gFenceDamage;
@@ -707,7 +707,7 @@ void HumanPlayer_HitHandler(HumanPlayer *h, HumanHit *hit)
     HumanDamage_GetZone(d, part);
     Damage_Add(d, part, Damage_Scale(profile, d->part[part].mult * hit->damage));
     if (d->total >= d->max && !h->attacker && hit->attacker &&
-        TaskType_IsA(*(uint16_t *)((char *)hit->attacker + 0x1C), gTaskType548638))
+        TaskType_IsA(*(uint16_t *)((char *)hit->attacker + 0x1C), gQObjType))
         h->attacker = TaskRef_Add(hit->attacker);
     Human_Bleed(h, dir, (int)hit->shot);
     if (!h->dead)
@@ -1191,4 +1191,5 @@ DATA(538C50) char str_538D24[9] INIT("Analog Y");
 PAD(igd, 538C50, 538D2D, 0x3);
 DATA(538C50) char str_538D30[9] INIT("Analog X");
 PAD(igd, 538C50, 538D39, 0x3);
+BSS(56E208) float gFenceDamage;
 BSS(A84A54) int gQVertexStrip;

@@ -312,7 +312,7 @@ ScriptValue *DefineSound(ScriptValue *out, void *data, void *args)
     Task_New(data, gSoundDefSoundType2, &arg);
     out->i = 13;
     out->d = 13.0;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4E8C60, DefineSound);

@@ -60,7 +60,7 @@ extern void *gLightmapBufB;
 extern void *gLightmapBufC;
 extern void *gLightmapBufD;
 extern int gLightmapBufCount;
-extern int gLightmapBufCount2;
+extern int gLightmapBuilt;
 extern char gLightmapDir[];
 extern char gLightmapResPath[];
 extern SlotPool gLightmapInfoPool;
@@ -90,7 +90,7 @@ void Lightmap_FreeBuffers(void)
         gLightmapBufD = NULL;
     }
     gLightmapBufCount = 0;
-    gLightmapBufCount2 = 0;
+    gLightmapBuilt = 0;
 }
 HOOK(0x521040, Lightmap_FreeBuffers);
 
@@ -373,6 +373,7 @@ BSS(A839CC) void *gLightmapBufD;
 BSS(A839CC) void *gLightmapBufA;
 PAD(igb, A839CC, A839D4, 0x1C);
 BSS(A839CC) void *gLightmapBufB;
+BSS(A83A00) SlotPool gLightmapInfoPool;
 STORE(igb, A83A20, 1) char store_A83A20[260];
 ALIAS(gLightmapDir, store_A83A20, 0);
 BSS(A83A20) const char *gLightmapScanName;
@@ -382,3 +383,4 @@ STORE(igb, A83B54, 1) char store_A83B54[256];
 ALIAS(gLightmapResPath, store_A83B54, 0);
 BSS(A83B54) void *gLightmapBufC;
 BSS(A83D24) int gLightmapBufCount;
+BSS(A83D24) int gLightmapBuilt;

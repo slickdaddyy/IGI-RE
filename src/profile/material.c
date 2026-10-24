@@ -11,9 +11,9 @@ ORIG(0x407F50, void, GameMaterial_Define, (void));
 #define MATERIAL_MAX 32
 
 extern GameMaterial gMaterials[];
-extern uint8_t gMaterialEvent0;
-extern uint8_t gMaterialEvent1;
-extern uint8_t gMaterialEvent2;
+extern uint8_t gMaterialSizeEvent;
+extern uint8_t gMaterialParseEvent;
+extern uint8_t gMaterialImpactEvent;
 
 void Material_Init(void)
 {
@@ -21,9 +21,9 @@ void Material_Init(void)
 
     for (i = 0; i < MATERIAL_MAX; i++)
         gMaterials[i].used = 0;
-    gMaterialEvent0 = TaskEvent_Alloc(0);
-    gMaterialEvent1 = TaskEvent_Alloc(0);
-    gMaterialEvent2 = TaskEvent_Alloc(0);
+    gMaterialSizeEvent = TaskEvent_Alloc(0);
+    gMaterialParseEvent = TaskEvent_Alloc(0);
+    gMaterialImpactEvent = TaskEvent_Alloc(0);
     Script_RegisterFunction("SetActiveMaterial", GameMaterial_SetActive, NULL, -1);
     Script_RegisterFunction("DefineQMaterial", GameMaterial_DefineQ, NULL, -1);
     Script_RegisterFunction("DefineGameMaterial", GameMaterial_Define, NULL, -1);

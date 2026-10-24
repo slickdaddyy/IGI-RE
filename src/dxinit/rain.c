@@ -379,14 +379,14 @@ void Rain_FillVB(Rain *r)
     r->vb->lpVtbl->Unlock(r->vb);
     if (r->snow == 1) {
         for (i = 0; i < 3; i++) {
-            r->matrix[i * 4] = gView.matrix.m[i * 3] * gNearPlaneScale;
-            r->matrix[i * 4 + 1] = gView.matrix.m[i * 3 + 1] * gNearPlaneScale;
-            r->matrix[i * 4 + 2] = gView.matrix.m[i * 3 + 2] * gNearPlaneScale;
+            r->matrix[i * 4] = gView.matrix.m[i * 3] * gWorldScale;
+            r->matrix[i * 4 + 1] = gView.matrix.m[i * 3 + 1] * gWorldScale;
+            r->matrix[i * 4 + 2] = gView.matrix.m[i * 3 + 2] * gWorldScale;
             r->matrix[i * 4 + 3] = 0.0f;
         }
     } else {
         for (i = 0; i < 12; i++)
-            r->matrix[i] = i % 5 ? 0.0f : gNearPlaneScale;
+            r->matrix[i] = i % 5 ? 0.0f : gWorldScale;
     }
 }
 HOOK(0x499090, Rain_FillVB);
@@ -407,10 +407,10 @@ void Rain_DrawCell(RainDrawItem *it)
     list = &r->lists[q];
     if (!gRainEnabled)
         return;
-    gD3DListA->current = -1;
-    gD3DListB->current = -1;
-    gD3DListC->current = -1;
-    gD3DStateList->current = -1;
+    gD3DTextureStates->current = -1;
+    gD3DBlendStates->current = -1;
+    gD3DRenderStates->current = -1;
+    gD3DClipStates->current = -1;
     SET_RS(0x1B, 1);
     SET_RS(0x13, 5);
     SET_RS(0x14, 6);
@@ -456,14 +456,14 @@ void Rain_DrawCell(RainDrawItem *it)
         mult = 2;
     }
     SET_TSS(1, 1, 1);
-    r->matrix[12] = (c->x - gViewPos.x) * gNearPlaneScale;
-    r->matrix[13] = (c->y - gViewPos.y) * gNearPlaneScale;
+    r->matrix[12] = (c->x - gViewPos.x) * gWorldScale;
+    r->matrix[13] = (c->y - gViewPos.y) * gWorldScale;
     r->matrix[15] = 1.0f;
-    r->matrix[14] = (it->z - gViewPos.z + kTop) * gNearPlaneScale;
+    r->matrix[14] = (it->z - gViewPos.z + kTop) * gWorldScale;
     for (k = 3; k; k--) {
         long double hl;
 
-        r->matrix[14] = r->matrix[14] - gNearPlaneScale * kLayer;
+        r->matrix[14] = r->matrix[14] - gWorldScale * kLayer;
         hl = h + kLayer;
         h = hl;
         if (!(hl >= kZero)) {

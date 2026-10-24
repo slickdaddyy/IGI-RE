@@ -273,7 +273,7 @@ void FlatSky_Create(FlatSky *s)
     static const float blue[3] = { 0x1.851eb8p-3f, 0x1.333334p-2f, 0x1.b851ecp-2f };
     int i, j;
 
-    s->world = gWorld;
+    s->world = gCurrentWorld;
     s->unk74 = 0.5f;
     s->unk70 = 100.0f;
     s->unk6C = 5.0f;

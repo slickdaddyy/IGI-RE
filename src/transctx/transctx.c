@@ -28,7 +28,7 @@ extern int gSetNearClippingPlaneMethod;
 extern int gTransContextValid;
 extern int gTransContextSelects;
 extern double gViewPos[];
-extern float gNearPlaneScale;
+extern float gWorldScale;
 extern float gLayer0MinZ;
 extern float gLayer0MaxZ;
 extern float gLayer1MaxZ;
@@ -173,7 +173,7 @@ void Direct3D_SetNearClippingPlane(float *arg)
     TransContext *ctx = &gTransContext;
 
     *(int *)&gNearPlane = *(int *)arg;
-    gD3DMinZ = gNearPlaneScale * gNearPlane;
+    gD3DMinZ = gWorldScale * gNearPlane;
     Direct3D_SetActiveTransContext(&ctx);
     *(int *)&arg[1] = gD3DZ24;
 }
@@ -314,19 +314,11 @@ PAD(igb, 6E5BA4, 6E5BAC, 0x4);
 BSS(6E5BA4) int gTransContextValid;
 BSS(6E5BA4) int gTransContextSelects;
 BSS(BCABF0) float gLayer0MinZ;
-ALIAS(gD3DUnkBCABF0, gLayer0MinZ, 0);
 BSS(BCACF0) float gLayer0MaxZ;
-ALIAS(gD3DUnkBCACF0, gLayer0MaxZ, 0);
 BSS(BCAD9C) float gLayer2MaxZ;
-ALIAS(gD3DUnkBCAD9C, gLayer2MaxZ, 0);
 BSS(BCADA4) int gD3DZ24;
 BSS(BCADA4) float gLayer2Far;
-ALIAS(gD3DUnkBCADA8, gLayer2Far, 0);
 BSS(BCADB0) float gLayer2Near;
-ALIAS(gD3DUnkBCADB0, gLayer2Near, 0);
 BSS(BCADB8) float gLayer0Far;
-ALIAS(gD3DUnkBCADB8, gLayer0Far, 0);
 BSS(BCADD8) float gLayer0Near;
-ALIAS(gD3DUnkBCADD8, gLayer0Near, 0);
 BSS(BCADE4) float gLayer2MinZ;
-ALIAS(gD3DUnkBCADE4, gLayer2MinZ, 0);

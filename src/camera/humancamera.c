@@ -47,7 +47,7 @@ ORIG(0x4E75A0, int, Screen_GetFrame, (void));
 extern uint16_t gHumanCameraType;
 extern uint8_t gHumanCameraEvent;
 extern HumanCameraEntry gHumanCameraList[];
-extern float gCameraUnkB81700;
+extern float gLayerFov;
 extern float gMouseDX;
 extern float gMouseDY;
 
@@ -231,7 +231,7 @@ void HumanCamera_RunHandler(HumanCamera *c)
     unk9 = LevelFlow_GetHour();
     frame = Screen_GetFrame();
     Camera_Set(c->camera, &c->pos, &c->matrix, c->fov, 1.0f, 300.0f, frame, c, unk9, firstPerson);
-    gCameraUnkB81700 = c->info.unk6C;
+    gLayerFov = c->info.unk6C;
 }
 HOOK(0x482700, HumanCamera_RunHandler);
 
@@ -790,7 +790,5 @@ HOOK(0x484450, HumanCamera_DeathCameraUpdate);
 DATA(540990) uint16_t gHumanCameraType INIT(385);
 DATA(540990) uint8_t gHumanCameraEvent INIT(255);
 PAD(igd, 540990, 540993, 0x1);
-BSS(B81700) float gCameraUnkB81700;
-ALIAS(gLayerFov, gCameraUnkB81700, 0);
 BSS(BC20F4) float gMouseDX;
 BSS(BC20F4) float gMouseDY;

@@ -109,3 +109,4 @@ HOOK(0x44BD70, GlassShatter_SpawnFrom);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 STORE(igd, 53C8F0, 4) const float store_53C8F0[12] INIT({0.7f, 0.7f, 0.7f, 1.7859847e+31f, 2.6785361e+20f, 4.5448224e+30f, 0.0f, 1.7108323e+25f, 15.276952f, 8.944435e-39f, 2.6797955e+20f, 1.54143e-43f});
 ALIAS(gShardColor2, store_53C8F0, 0);
+BSS(57C270) Vec3f gShatterHit;

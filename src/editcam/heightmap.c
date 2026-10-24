@@ -523,6 +523,6 @@ PAD(igb, A7AD10, A7B24A, 0x6);
 BSS(A7AD10) int gHeightMapCount;
 STORE(igb, B81920, 1) char store_B81920[256];
 ALIAS(gHmpResident, store_B81920, 0);
-ALIAS(gUnkB81920, store_B81920, 0);
 STORE(igb, B97D40, 4) int store_B97D40[16];
 ALIAS(gCollBumpList, store_B97D40, 0);
+BSS(B97DF4) int gCollBumpDepth;

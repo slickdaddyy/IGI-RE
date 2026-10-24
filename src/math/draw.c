@@ -5,9 +5,9 @@
 
 typedef void (*DrawFunc)(QVertexStrip *cmd);
 
-extern int gDrawUnkA84A50;
+extern int gQVertexTexture;
 extern int gQVertexStrip;
-extern int gDrawUnkA84A58;
+extern int gQVertexPalette;
 extern DrawFunc gRenderFuncs[];
 
 #define COLOR_SCALE (1.0f / 128)
@@ -48,8 +48,8 @@ static void DrawRect(float x, float y, float w, float h, float r, float g, float
     cmd.queue = unk8;
     cmd.count = 2;
     cmd.verts = v;
-    gDrawUnkA84A50 = 0;
-    gDrawUnkA84A58 = 0;
+    gQVertexTexture = 0;
+    gQVertexPalette = 0;
     gRenderFuncs[gQVertexStrip](&cmd);
 }
 
@@ -109,8 +109,8 @@ void Draw_RectGradient(float x, float y, float w, float h,
     cmd.queue = unk8;
     cmd.count = 4;
     cmd.verts = v;
-    gDrawUnkA84A50 = 0;
-    gDrawUnkA84A58 = 0;
+    gQVertexTexture = 0;
+    gQVertexPalette = 0;
     gRenderFuncs[gQVertexStrip](&cmd);
 }
 HOOK(0x4B4BE0, Draw_RectGradient);
@@ -144,8 +144,8 @@ static void DrawSprite(const Sprite *sheet, float x, float y, float r, float g, 
     cmd.queue = unk8;
     cmd.count = 2;
     cmd.verts = v;
-    gDrawUnkA84A50 = (int)f->texture;
-    gDrawUnkA84A58 = (int)sheet->palette;
+    gQVertexTexture = (int)f->texture;
+    gQVertexPalette = (int)sheet->palette;
     gRenderFuncs[gQVertexStrip](&cmd);
 }
 
@@ -162,3 +162,7 @@ void Draw_SpriteZ(const Sprite *sheet, float x, float y, float r, float g, float
     DrawSprite(sheet, x, y, r, g, b, frame, unk4, unk8, z);
 }
 HOOK(0x4B4F40, Draw_SpriteZ);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A84A50) int gQVertexTexture;
+BSS(A84A58) int gQVertexPalette;

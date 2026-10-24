@@ -68,7 +68,7 @@ _Static_assert(sizeof(Wire) == 0x138, "Wire");
 
 extern uint16_t gWireType;
 extern void *gWireParams;
-extern void *gRoom;
+extern void *gCurrentWorld;
 
 #define sub_45E3D0 (FN(0x45E3D0, Human_ClearResult))
 
@@ -120,10 +120,10 @@ void Wire_Create(Wire *w)
     float scale, radius;
 
     QTaskList_Add(Game_GetTaskList0(), w);
-    RigidDynCubeObj_Init(gRoom, w, NULL);
+    RigidDynCubeObj_Init(gCurrentWorld, w, NULL);
     scale = max_scale(&w->obj);
     radius = VirModel_GetRadius(w->obj.model) * scale;
-    DynCube_Add(gRoom, w, &zero, radius, 1);
+    DynCube_Add(gCurrentWorld, w, &zero, radius, 1);
     memset(&w->start, 0, sizeof(w->start));
     memset(&w->end, 0, sizeof(w->end));
     w->model[0] = 0;

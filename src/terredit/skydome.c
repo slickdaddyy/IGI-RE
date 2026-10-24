@@ -47,11 +47,11 @@ extern int gLightCount;
 extern int gLightStride;
 extern float gWorldScale;
 extern int gD3DTnL;
-extern PtrList *gD3DListB;
-extern PtrList *gD3DListC;
+extern PtrList *gD3DBlendStates;
+extern PtrList *gD3DRenderStates;
 extern float gSkyRadius;
-extern PtrList *gD3DStateList;
-extern PtrList *gD3DListA;
+extern PtrList *gD3DClipStates;
+extern PtrList *gD3DTextureStates;
 
 static const float kHalfPi = 0x1.921fb6p+0f;
 static const float kRingStep = 0x1.aceeap-4f;
@@ -242,10 +242,10 @@ void SkyDome_Render(SkyDome *d)
 
         angle = x87_atan2(l[0], l[1]) + kHalfPi;
     }
-    gD3DListA->current = -1;
-    gD3DListB->current = -1;
-    gD3DListC->current = -1;
-    gD3DStateList->current = -1;
+    gD3DTextureStates->current = -1;
+    gD3DBlendStates->current = -1;
+    gD3DRenderStates->current = -1;
+    gD3DClipStates->current = -1;
     dev = gD3DDevice;
     IDirect3DDevice7_SetRenderState(dev, D3DRENDERSTATE_ALPHABLENDENABLE, 0);
     IDirect3DDevice7_SetRenderState(gD3DDevice, D3DRENDERSTATE_FOGENABLE, 0);
@@ -348,4 +348,3 @@ BSS(A84568) SkyDome *gSkyDome;
 PAD(igb, A84568, A8456C, 0x4);
 BSS(A84568) void *gSkyModel;
 BSS(BCADBC) float gSkyRadius;
-ALIAS(gD3DUnkBCADBC, gSkyRadius, 0);

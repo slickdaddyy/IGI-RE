@@ -73,7 +73,7 @@ extern int gVolumeTable[];
 extern char gSoundReady;
 extern Voice *gActiveVoices;
 extern Voice *gFreeVoices;
-extern int gTimeMs;
+extern int gFlowFrames;
 
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }
@@ -388,7 +388,7 @@ Voice *Voice_Create(int key1, int key2, int flags, SoundParams *p)
         v->endTime = 0;
         v->unk30 = 0;
         v->unk38 = 0;
-        v->startTime = gTimeMs;
+        v->startTime = gFlowFrames;
         frames = s->rate * 4000 / 1000;
         v->halfFrames = frames / 2;
         frames = s->rate * 4000 / 1000;
@@ -466,7 +466,7 @@ void Voice_Fill(Voice *v, int frames)
                 Adpcm_Init(&v->adpcm, v->sound->channels);
             } else if (!ending) {
                 ending = 1;
-                end = gVoiceUpdateRate * 4000 / 1000 + gTimeMs;
+                end = gVoiceUpdateRate * 4000 / 1000 + gFlowFrames;
                 v->endTime = end;
                 d = (int)((unsigned)v->playPos - (unsigned)end);
                 v->unk30 = d < 0 ? end - v->playPos : d;
@@ -637,7 +637,7 @@ char Voice_Update(Voice *v)
     IDirectSoundBuffer_GetCurrentPosition(v->buffer, &play, NULL);
     pos = (int)play / (v->sound->channels * v->sound->bits / 8);
     v->playPos = pos;
-    if (v->state == 1 && gTimeMs > v->endTime) {
+    if (v->state == 1 && gFlowFrames > v->endTime) {
         v->state = 2;
         return 0;
     }
@@ -746,7 +746,6 @@ DATA(543904) float gSfxVolume INIT(1.0f);
 PAD(igd, 543904, 543910, 0x4) INIT({0x00, 0x00, 0x80, 0x3F});
 DATA(543904) int gSoundSwapPan INIT(1);
 DATA(54391C) int gVoiceUpdateRate INIT(30);
-ALIAS(gUnk54391C, gVoiceUpdateRate, 0);
 STORE(igd, 543920, 1) const signed char store_543920[16] INIT({-1, -1, -1, -1, 2, 4, 6, 8, -1, -1, -1, -1, 2, 4, 6, 8});
 ALIAS(gAdpcmIndexTable, store_543920, 0);
 STORE(igd, 543920, 2) const short store_543930[152] INIT({7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 19, 21, 23, 25, 28, 31, 34, 37, 41, 45, 50, 55, 60, 66, 73, 80, 88, 97, 107, 118, 130, 143, 157, 173, 190, 209, 230, 253, 279, 307, 337, 371, 408, 449, 494, 544, 598, 658, 724, 796, 876, 963, 1060, 1166, 1282, 1411, 1552, 1707, 1878, 2066, 2272, 2499, 2749, 3024, 3327, 3660, 4026, 4428, 4871, 5358, 5894, 6484, 7132, 7845, 8630, 9493, 10442, 11487, 12635, 13899, 15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767, 0, 25699, 30049, 26980, 111, 17475, 16672, 25717, 28521, 0, 0, 24919, 25974, 0, 0, 20307, 20053, 8260, 8237, 26950, 25964, 9504, 8307, 27745, 25970, 25697, 8313, 28524, 25697, 25701, 33, 20307, 20053, 8260, 8237, 26950, 25964, 9504, 8307, 28526, 8308, 24950, 26988, 8292, 28518, 28018, 29793, 33, 0, 20307, 20053, 8260, 8237, 28233, 24950, 26988, 8292, 26982, 25964, 24942, 25965, 9504, 115});
@@ -763,3 +762,6 @@ STORE(igb, 676AB8, 8) double store_676AB8[115];
 ALIAS(gListenerVel, store_676AB8, 0);
 STORE(igb, 67A4A0, 4) int store_67A4A0[10002];
 ALIAS(gVolumeTable, store_67A4A0, 0);
+BSS(6840F4) Voice *gActiveVoices;
+BSS(6840F4) Voice *gFreeVoices;
+BSS(C28C5C) int gFlowFrames;

@@ -180,6 +180,5 @@ HOOK(0x4C9020, Coll_LeafPointInside);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 PAD(igb, BA2030, BA2030, 0x10);
 ALIAS(gCollBumps, pad_BA2030, 0);
-ALIAS(gTerrainHeightMaps, pad_BA2030, 0);
-ALIAS(gTerrainTint, pad_BA2030, 0);
 ALIAS(gWaterTint, pad_BA2030, 0);
+BSS(BA2058) int gCollBumpCount;

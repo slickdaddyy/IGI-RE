@@ -64,7 +64,7 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 
-extern void *gWorld;
+extern void *gCurrentWorld;
 extern void *gSwitchParams;
 extern uint16_t gSwitchType;
 
@@ -136,10 +136,10 @@ void Switch_CreateHandler(Switch *s)
     int i;
 
     QTaskList_Add(Game_GetTaskList0(), s);
-    RigidDynCubeObj_Init(gWorld, s, NULL);
+    RigidDynCubeObj_Init(gCurrentWorld, s, NULL);
     scale = max_scale(&s->o);
     radius = VirModel_GetRadius(s->o.model) * scale;
-    DynCube_Add(gWorld, s, &zero, radius, 1);
+    DynCube_Add(gCurrentWorld, s, &zero, radius, 1);
     Sector_AddObject(s->o.world, s, DynCubeObj_GetPosition(s));
     s->o.matrix = id;
     s->matrix = id;

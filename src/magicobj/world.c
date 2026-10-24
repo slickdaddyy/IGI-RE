@@ -38,50 +38,50 @@ ORIG(0x5177F0, void, TexSet_Free, (void *p));
 extern MagicHandler gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern int gTaskHandlerDepth;
+extern int gTaskHandlerChanges;
 extern uint16_t gDynCubeObjType;
 extern char gWorldEvents[];
 extern int gWorldUnkA44348[];
 extern char gWorldName[];
 extern Lightmap gLightmaps[];
 #define gLightmapCount 0x800
-extern char gUnkB81920[];
-extern char gUnkB81A20[];
-extern int gUnkB97D20;
-extern int gCounterA;
-extern int gCounterB;
-extern int gCounterC;
-extern int gCounterD;
-extern int gCounterE;
+extern char gHmpResident[];
+extern char gBitResident[];
+extern int gCollWalkTasks;
+extern int gCollBumpDepth;
+extern int gVisibleLightMapCount;
+extern int gCollHoleCount;
+extern int gCollBumpCount;
+extern int gCollHoleBits;
 extern int gSavedCounters[];
 
 void Coll_ResetMods(void)
 {
-    gCounterA = 0;
-    gCounterB = 0;
-    gCounterC = 0;
-    gCounterD = 0;
-    gCounterE = 0;
+    gCollBumpDepth = 0;
+    gVisibleLightMapCount = 0;
+    gCollHoleCount = 0;
+    gCollBumpCount = 0;
+    gCollHoleBits = 0;
 }
 HOOK(0x4C5810, Coll_ResetMods);
 
 void Coll_SaveMods(void)
 {
-    gSavedCounters[0] = gCounterA;
-    gSavedCounters[1] = gCounterB;
-    gSavedCounters[2] = gCounterC;
-    gSavedCounters[3] = gCounterD;
-    gSavedCounters[4] = gCounterE;
+    gSavedCounters[0] = gCollBumpDepth;
+    gSavedCounters[1] = gVisibleLightMapCount;
+    gSavedCounters[2] = gCollHoleCount;
+    gSavedCounters[3] = gCollBumpCount;
+    gSavedCounters[4] = gCollHoleBits;
 }
 HOOK(0x4C5830, Coll_SaveMods);
 
 void Coll_RestoreMods(void)
 {
-    gCounterA = gSavedCounters[0];
-    gCounterB = gSavedCounters[1];
-    gCounterC = gSavedCounters[2];
-    gCounterD = gSavedCounters[3];
-    gCounterE = gSavedCounters[4];
+    gCollBumpDepth = gSavedCounters[0];
+    gVisibleLightMapCount = gSavedCounters[1];
+    gCollHoleCount = gSavedCounters[2];
+    gCollBumpCount = gSavedCounters[3];
+    gCollHoleBits = gSavedCounters[4];
 }
 HOOK(0x4C5870, Coll_RestoreMods);
 
@@ -201,11 +201,11 @@ World *World_New(int rooms)
         w->unkE8[i] = 0;
         DynCube_UpdateStart(w, i);
         memset(w->unk118[i], 0, sizeof(w->unk118[i]));
-        w->unk100[i] = gTaskHandlerDepth;
+        w->unk100[i] = gTaskHandlerChanges;
     }
     w->unkDC8 = 0;
     w->unkDF0 = 0;
-    gUnkB97D20 = 0;
+    gCollWalkTasks = 0;
     Coll_ResetMods();
     return w;
 }
@@ -261,9 +261,9 @@ void World_Free(World *w)
         w->palette = NULL;
     }
     if (w->unkDCC)
-        free_unshared(w->unkDCC, gUnkB81A20);
+        free_unshared(w->unkDCC, gBitResident);
     if (w->unkDD0)
-        free_unshared(w->unkDD0, gUnkB81920);
+        free_unshared(w->unkDD0, gHmpResident);
     if (w->unk08)
         Resource_Flush(w->unk08);
     if (w->unk0C) {
@@ -354,8 +354,6 @@ void World_LoadTextures(World *w, const char *name)
 HOOK(0x4C5F00, World_LoadTextures);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-DATA(536148) int gTaskHandlerDepth INIT(-1);
-ALIAS(gTaskHandlerChanges, gTaskHandlerDepth, 0);
 PAD(igd, 548174, 548174, 0x2) INIT({0xFF, 0xF0});
 STORE(igd, 548174, 1) char store_548176[138] INIT({-1, -1, 73, 110, 118, 97, 108, 105, 100, 32, 100, 121, 110, 99, 117, 98, 101, 116, 114, 101, 101, 0, 46, 108, 109, 112, 0, 0, 0, 0, 46, 116, 101, 120, 0, 0, 0, 0, 67, 114, 101, 97, 116, 101, 84, 101, 114, 114, 97, 105, 110, 84, 105, 108, 101, 77, 97, 112, 0, 0, 0, 0, 67, 114, 101, 97, 116, 101, 84, 101, 114, 114, 97, 105, 110, 77, 97, 116, 101, 114, 105, 97, 108, 0, 0, 0, 46, 99, 116, 114, 0, 0, 0, 0, 46, 99, 109, 100, 0, 0, 0, 0, 46, 104, 109, 112, 0, 0, 0, 0, 46, 98, 105, 116, 0, 0, 0, 0, 73, 110, 118, 97, 108, 105, 100, 32, 99, 97, 116, 101, 103, 111, 114, 121});
 ALIAS(gWorldEvents, store_548176, 0);
@@ -365,15 +363,6 @@ STORE(igb, B81B20, 4) __typeof__(gLightmaps[0]) store_B81B20[2048];
 ALIAS(gLightmaps, store_B81B20, 0);
 STORE(igb, B97C20, 1) char store_B97C20[256];
 ALIAS(gWorldName, store_B97C20, 0);
-BSS(B97C20) int gUnkB97D20;
-ALIAS(gCollWalkTasks, gUnkB97D20, 0);
+BSS(B97D24) int gVisibleLightMapCount;
 STORE(igb, B97D80, 4) int store_B97D80[8];
 ALIAS(gSavedCounters, store_B97D80, 0);
-BSS(B97DF4) int gCounterA;
-BSS(B97DF4) int gCounterC;
-ALIAS(gCollBumpDepth, gCounterA, 0);
-ALIAS(gCollHoleCount, gCounterC, 0);
-BSS(BA2058) int gCounterD;
-ALIAS(gCollBumpCount, gCounterD, 0);
-BSS(BA5060) int gCounterE;
-ALIAS(gCollHoleBits, gCounterE, 0);

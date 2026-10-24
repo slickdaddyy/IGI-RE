@@ -72,7 +72,7 @@ _Static_assert(sizeof(HazeLayer) == 0x90, "HazeLayer");
 extern HzHandler gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern void *gWorld;
+extern void *gCurrentWorld;
 
 uint8_t Camera_GetChangedEvent(void);
 QTaskList *Camera_GetListeners(void);

@@ -75,17 +75,17 @@ extern void *gD3D;
 extern void (*gRenderFuncs[])(void *);
 extern float gScreenW;
 extern float gScreenH;
-extern void *gDevice;
+extern void *gD3DDevice;
 extern float gViewX;
 extern float gViewY;
-extern float gD3DUnkBCABEC;
+extern float gWorldScale;
 extern float gD3DMinZ;
-extern float gD3DViewMinZ;
-extern float gD3DViewMaxZ;
-extern int *gD3DListA;
-extern int *gD3DListB;
-extern int *gD3DListC;
-extern int *gD3DStateList;
+extern float gLayer1MinZ;
+extern float gLayer1MaxZ;
+extern int *gD3DTextureStates;
+extern int *gD3DBlendStates;
+extern int *gD3DRenderStates;
+extern int *gD3DClipStates;
 
 /* method idx of a COM object */
 #define COM(obj, idx, type) ((type)(*(void ***)(obj))[idx])
@@ -224,34 +224,34 @@ long ComputerStartup_Render(ComputerStartup *t)
     uint32_t c;
     int i, x0, y0, w, h, bw, bh;
 
-    DEV_GetTransform(gDevice, 3, m);
-    rhw = kOne / (gD3DUnkBCABEC * t->depth);
-    z = (kOne - gD3DMinZ * rhw) * m[10] * (gD3DViewMaxZ - gD3DViewMinZ) + gD3DViewMinZ;
-    gD3DListA[1] = -1;
-    gD3DListB[1] = -1;
-    gD3DListC[1] = -1;
-    gD3DStateList[1] = -1;
-    DEV_SetRenderState(gDevice, 0x2F, 0);
-    DEV_SetRenderState(gDevice, 0x1C, 0);
-    DEV_SetRenderState(gDevice, 0x1D, 0);
-    DEV_SetRenderState(gDevice, 0x16, 1);
-    DEV_SetRenderState(gDevice, 0x89, 0);
-    DEV_SetRenderState(gDevice, 0x1A, 1);
-    DEV_SetRenderState(gDevice, 0x0F, 0);
-    DEV_SetRenderState(gDevice, 0x17, 4);
-    DEV_SetRenderState(gDevice, 0x07, 1);
-    DEV_SetRenderState(gDevice, 0x0E, 0);
-    DEV_SetTextureStageState(gDevice, 0, 4, 3);
-    DEV_SetTextureStageState(gDevice, 0, 5, 2);
-    DEV_SetTextureStageState(gDevice, 0, 6, 0);
-    DEV_SetTextureStageState(gDevice, 0, 1, 3);
-    DEV_SetTextureStageState(gDevice, 0, 2, 2);
-    DEV_SetTextureStageState(gDevice, 0, 3, 0);
-    DEV_SetTextureStageState(gDevice, 1, 1, 1);
-    DEV_SetTexture(gDevice, 0, NULL);
-    DEV_SetRenderState(gDevice, 0x1B, 1);
-    DEV_SetRenderState(gDevice, 0x13, 5);
-    DEV_SetRenderState(gDevice, 0x14, 6);
+    DEV_GetTransform(gD3DDevice, 3, m);
+    rhw = kOne / (gWorldScale * t->depth);
+    z = (kOne - gD3DMinZ * rhw) * m[10] * (gLayer1MaxZ - gLayer1MinZ) + gLayer1MinZ;
+    gD3DTextureStates[1] = -1;
+    gD3DBlendStates[1] = -1;
+    gD3DRenderStates[1] = -1;
+    gD3DClipStates[1] = -1;
+    DEV_SetRenderState(gD3DDevice, 0x2F, 0);
+    DEV_SetRenderState(gD3DDevice, 0x1C, 0);
+    DEV_SetRenderState(gD3DDevice, 0x1D, 0);
+    DEV_SetRenderState(gD3DDevice, 0x16, 1);
+    DEV_SetRenderState(gD3DDevice, 0x89, 0);
+    DEV_SetRenderState(gD3DDevice, 0x1A, 1);
+    DEV_SetRenderState(gD3DDevice, 0x0F, 0);
+    DEV_SetRenderState(gD3DDevice, 0x17, 4);
+    DEV_SetRenderState(gD3DDevice, 0x07, 1);
+    DEV_SetRenderState(gD3DDevice, 0x0E, 0);
+    DEV_SetTextureStageState(gD3DDevice, 0, 4, 3);
+    DEV_SetTextureStageState(gD3DDevice, 0, 5, 2);
+    DEV_SetTextureStageState(gD3DDevice, 0, 6, 0);
+    DEV_SetTextureStageState(gD3DDevice, 0, 1, 3);
+    DEV_SetTextureStageState(gD3DDevice, 0, 2, 2);
+    DEV_SetTextureStageState(gD3DDevice, 0, 3, 0);
+    DEV_SetTextureStageState(gD3DDevice, 1, 1, 1);
+    DEV_SetTexture(gD3DDevice, 0, NULL);
+    DEV_SetRenderState(gD3DDevice, 0x1B, 1);
+    DEV_SetRenderState(gD3DDevice, 0x13, 5);
+    DEV_SetRenderState(gD3DDevice, 0x14, 6);
     if (t->step == 0) {
         VB_Lock(t->vb, 0x2021, &v, &size);
         x0 = (int)round_ll(gViewX);
@@ -263,7 +263,7 @@ long ComputerStartup_Render(ComputerStartup *t)
         vertex(&v[2], (long double)w + x0, y0, z, rhw, 0xFF000000);
         vertex(&v[3], (long double)w + x0, (long double)h + y0, z, rhw, 0xFF000000);
         VB_Unlock(t->vb);
-        DEV_DrawPrimitiveVB(gDevice, 5, t->vb, 0, 4, 0);
+        DEV_DrawPrimitiveVB(gD3DDevice, 5, t->vb, 0, 4, 0);
     }
     VB_Lock(t->vb, 0x2021, &v, &size);
     h = (int)round_ll(gScreenH);
@@ -280,7 +280,7 @@ long ComputerStartup_Render(ComputerStartup *t)
         vertex(v++, (long double)bw * kEdgeX1[i] + left, (long double)bh * kEdgeY1[i] + top, z, rhw, c);
     }
     VB_Unlock(t->vb);
-    DEV_DrawPrimitiveVB(gDevice, 2, t->vb, 0, 8, 0);
+    DEV_DrawPrimitiveVB(gD3DDevice, 2, t->vb, 0, 8, 0);
     VB_Lock(t->vb, 0x2021, &v, &size);
     c = rgb(t->barColor);
     frac = t->timer / t->frames[t->step];
@@ -293,7 +293,7 @@ long ComputerStartup_Render(ComputerStartup *t)
     vertex(&v[2], x2, y1, z, rhw, c);
     vertex(&v[3], x2, y2, z, rhw, c);
     VB_Unlock(t->vb);
-    return DEV_DrawPrimitiveVB(gDevice, 5, t->vb, 0, 4, 0);
+    return DEV_DrawPrimitiveVB(gD3DDevice, 5, t->vb, 0, 4, 0);
 }
 HOOK(0x466480, ComputerStartup_Render);
 

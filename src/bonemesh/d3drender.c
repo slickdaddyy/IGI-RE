@@ -70,28 +70,28 @@ extern ClipVertex gRigidClipVerts[];
 extern ClipVertex gLightmapClipVerts[];
 extern float gNearPlane;
 extern void *gVertexBuffer;
-extern int gClipOnIndex;
-extern int gClipOffIndex;
+extern int gD3DClippingOnIndex;
+extern int gD3DClippingOffIndex;
 extern float gNearZ;
 extern float gFarZ;
-extern int gStateA0;
-extern int gStateA1;
-extern int gStateB0;
-extern int gStateB1;
-extern int gStateC0;
-extern int gStateC1;
-extern int gStateC2;
-extern int gStateC3;
+extern int gTexStageIdx;
+extern int gLmStageIdx;
+extern int gOpaqueBlendIdx;
+extern int gAlphaBlendIdx;
+extern int gLitIdx;
+extern int gUnlitIdx;
+extern int gLitAlphaIdx;
+extern int gUnlitAlphaIdx;
 
 /* view frustum planes as x = k * z (0xB46CE4 ...), and their scales */
-extern float gFrustumL;
-extern float gFrustumLScale;
-extern float gFrustumR;
-extern float gFrustumRScale;
-extern float gFrustumB;
-extern float gFrustumBScale;
-extern float gFrustumT;
-extern float gFrustumTScale;
+extern float gExclLeft;
+extern float gExclLeftCos;
+extern float gExclRight;
+extern float gExclRightCos;
+extern float gExclTop;
+extern float gExclTopCos;
+extern float gExclBottom;
+extern float gExclBottomCos;
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);
@@ -155,40 +155,40 @@ void Direct3DRender_DrawBoneMesh(MeshDrawArg *arg)
     h = (MeshHeader *)lod->mesh->header;
     pos.x = (float)(obj->pos.x - gTransCtx.pos.x);
     pos.y = (float)(obj->pos.y - gTransCtx.pos.y);
-    pos.x = gNearPlaneScale * pos.x;
-    pos.y = gNearPlaneScale * pos.y;
-    pos.z = gNearPlaneScale * (obj->pos.z - gTransCtx.pos.z);
-    rot.m[0] = gNearPlaneScale;
+    pos.x = gWorldScale * pos.x;
+    pos.y = gWorldScale * pos.y;
+    pos.z = gWorldScale * (obj->pos.z - gTransCtx.pos.z);
+    rot.m[0] = gWorldScale;
     rot.m[1] = kZero.f;
     rot.m[2] = kZero.f;
     rot.m[3] = kZero.f;
-    rot.m[4] = gNearPlaneScale;
+    rot.m[4] = gWorldScale;
     rot.m[5] = kZero.f;
     rot.m[6] = kZero.f;
     rot.m[7] = kZero.f;
-    rot.m[8] = gNearPlaneScale;
+    rot.m[8] = gWorldScale;
     rot.count = 0;
     Direct3D_MakeMatrix(d3dm, &rot, &pos);
-    DEV_SetTransform(gDevice, 1, d3dm);
+    DEV_SetTransform(gD3DDevice, 1, d3dm);
     Fog_SetRange(&obj->pos, h->sphere);
     if (h->format == 1) {
         r = h->data;
         g = r->unk1C;
         base = BoneMesh_Skin(r, model, &obj->bones, n);
-        STATE_SELECT(gStateListA, gStateA0);
-        STATE_SELECT(gStateListB, gStateB0);
-        STATE_SELECT(gStateListC, gStateC0);
-        STATE_SELECT(gStateListD, clip ? gClipOffIndex : gClipOnIndex);
+        STATE_SELECT(gD3DTextureStates, gTexStageIdx);
+        STATE_SELECT(gD3DBlendStates, gOpaqueBlendIdx);
+        STATE_SELECT(gD3DRenderStates, gLitIdx);
+        STATE_SELECT(gD3DClipStates, clip ? gD3DClippingOffIndex : gD3DClippingOnIndex);
         for (;;) {
             if (g->texture == 0xFFFF) {
-                DEV_SetTextureStageState(gDevice, 0, 1, 3);
-                DEV_SetTexture(gDevice, 0, NULL);
-                DEV_DrawIndexedPrimitiveVB(gDevice, r->primType, gVertexBuffer, g->base + base, g->vertexCount,
+                DEV_SetTextureStageState(gD3DDevice, 0, 1, 3);
+                DEV_SetTexture(gD3DDevice, 0, NULL);
+                DEV_DrawIndexedPrimitiveVB(gD3DDevice, r->primType, gVertexBuffer, g->base + base, g->vertexCount,
                                            g->indices, g->indexCount, 0);
-                DEV_SetTextureStageState(gDevice, 0, 1, 4);
+                DEV_SetTextureStageState(gD3DDevice, 0, 1, 4);
             } else {
-                DEV_SetTexture(gDevice, 0, ((void **)lod->textures[g->texture])[8]);
-                DEV_DrawIndexedPrimitiveVB(gDevice, r->primType, gVertexBuffer, g->base + base, g->vertexCount,
+                DEV_SetTexture(gD3DDevice, 0, ((void **)lod->textures[g->texture])[8]);
+                DEV_DrawIndexedPrimitiveVB(gD3DDevice, r->primType, gVertexBuffer, g->base + base, g->vertexCount,
                                            g->indices, g->indexCount, 0);
             }
             if (g->next == 0xFFFF)
@@ -315,11 +315,11 @@ void Direct3DRender_ExcludeObject(ExcludeArg *arg)
         arg->outside = 1;
         return;
     }
-    left = (c->x - gFrustumL * c->z) * gFrustumLScale;
-    right = (c->x - gFrustumR * c->z) * gFrustumRScale;
+    left = (c->x - gExclLeft * c->z) * gExclLeftCos;
+    right = (c->x - gExclRight * c->z) * gExclRightCos;
     rightF = right;
-    bottom = (c->y - gFrustumB * c->z) * gFrustumBScale;
-    top = (c->y - gFrustumT * c->z) * gFrustumTScale;
+    bottom = (c->y - gExclTop * c->z) * gExclTopCos;
+    top = (c->y - gExclBottom * c->z) * gExclBottomCos;
     outL = left < nr;
     outR = right > r;
     outB = bottom < nr;
@@ -342,14 +342,14 @@ HOOK(0x49FEB0, Direct3DRender_ExcludeObject);
 
 void Direct3DRender_Shutdown(void)
 {
-    PtrList_Clear(gStateListB, gStateB1);
-    PtrList_Clear(gStateListC, gStateC3);
-    PtrList_Clear(gStateListC, gStateC2);
-    PtrList_Clear(gStateListA, gStateA1);
-    PtrList_Clear(gStateListC, gStateC1);
-    PtrList_Clear(gStateListA, gStateA0);
-    PtrList_Clear(gStateListB, gStateB0);
-    PtrList_Clear(gStateListC, gStateC0);
+    PtrList_Clear(gD3DBlendStates, gAlphaBlendIdx);
+    PtrList_Clear(gD3DRenderStates, gUnlitAlphaIdx);
+    PtrList_Clear(gD3DRenderStates, gLitAlphaIdx);
+    PtrList_Clear(gD3DTextureStates, gLmStageIdx);
+    PtrList_Clear(gD3DRenderStates, gUnlitIdx);
+    PtrList_Clear(gD3DTextureStates, gTexStageIdx);
+    PtrList_Clear(gD3DBlendStates, gOpaqueBlendIdx);
+    PtrList_Clear(gD3DRenderStates, gLitIdx);
 }
 HOOK(0x4A0110, Direct3DRender_Shutdown);
 
@@ -870,56 +870,9 @@ void RigidDynCubeObj_CloseD3D(void)
 HOOK(0x4A23D0, RigidDynCubeObj_CloseD3D);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-BSS(7205B8) int gStateB1;
-BSS(7205B8) int gStateC2;
-ALIAS(gAlphaBlendIdx, gStateB1, 0);
-ALIAS(gLitAlphaIdx, gStateC2, 0);
-BSS(7234B8) int gStateC0;
-ALIAS(gLitIdx, gStateC0, 0);
-BSS(723504) int gStateA1;
-ALIAS(gLmStageIdx, gStateA1, 0);
-BSS(7AC09C) int gStateB0;
-ALIAS(gOpaqueBlendIdx, gStateB0, 0);
 BSS(7AF1E0) int gBoneClipDepth;
 PAD(igb, 7AF1E0, 7AF1E4, 0x4);
 PAD(igb, 7AF1E0, 7AF1E8, 0xFDE80);
 ALIAS(gRigidClipVerts, pad_7AF1E8, 0);
 PAD(igb, 7AF1E0, 8AD068, 0x88B88);
 ALIAS(gLightmapClipVerts, pad_8AD068, 0);
-BSS(B46CE4) float gFrustumL;
-BSS(B46CE4) float gFrustumTScale;
-ALIAS(gExclBottomCos, gFrustumTScale, 0);
-ALIAS(gExclLeft, gFrustumL, 0);
-BSS(B46D18) float gFrustumBScale;
-BSS(B46D18) float gFrustumR;
-BSS(B46D18) float gFrustumRScale;
-ALIAS(gExclRight, gFrustumR, 0);
-ALIAS(gExclRightCos, gFrustumRScale, 0);
-ALIAS(gExclTopCos, gFrustumBScale, 0);
-BSS(B816FC) float gFrustumB;
-ALIAS(gExclTop, gFrustumB, 0);
-BSS(B8179C) float gFrustumT;
-ALIAS(gExclBottom, gFrustumT, 0);
-BSS(B817A4) float gFrustumLScale;
-ALIAS(gExclLeftCos, gFrustumLScale, 0);
-BSS(BCAD7C) PtrList *gStateListB;
-ALIAS(gD3DListB, gStateListB, 0);
-ALIAS(gD3DStatesB, gStateListB, 0);
-ALIAS(gStateCache1, gStateListB, 0);
-BSS(BCADAC) PtrList *gStateListC;
-ALIAS(gD3DListC, gStateListC, 0);
-ALIAS(gD3DStatesC, gStateListC, 0);
-ALIAS(gStateCache2, gStateListC, 0);
-BSS(BCADC4) PtrList *gStateListD;
-ALIAS(gD3DStateList, gStateListD, 0);
-ALIAS(gD3DStatesD, gStateListD, 0);
-ALIAS(gStateCache3, gStateListD, 0);
-BSS(BCADCC) float gFarZ;
-ALIAS(gD3DUnkBCADCC, gFarZ, 0);
-ALIAS(gFarPlane, gFarZ, 0);
-BSS(BCADDC) float gNearZ;
-ALIAS(gD3DUnkBCADDC, gNearZ, 0);
-BSS(BCADE8) PtrList *gStateListA;
-ALIAS(gD3DListA, gStateListA, 0);
-ALIAS(gD3DStatesA, gStateListA, 0);
-ALIAS(gStateCache0, gStateListA, 0);

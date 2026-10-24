@@ -64,7 +64,7 @@ extern uint16_t gLightmapInfoType;
 extern void *gLightmapInfoParams;
 extern int gLightmapCountA839F4;
 extern int gLightmapCountA83B4C;
-extern Pool gLightmapPoolA83A00;
+extern Pool gLightmapInfoPool;
 extern char gLightmapRandom[];
 extern Matrix gLightmapRotations[];
 extern char gLightmapScene[];
@@ -387,7 +387,7 @@ void LightmapInfo_Init(void)
     ParamTable_Add(gLightmapInfoParams, &t, &t.texelsA8, Param_Int32(), 2, NULL);
     ParamTable_Add(gLightmapInfoParams, &t, &t.texelsAC, Param_Int32(), 2, NULL);
     ParamTable_Add(gLightmapInfoParams, &t, &t.vertexLightSize, Param_Int32(), 2, NULL);
-    Pool_Init(&gLightmapPoolA83A00, 4, 1000, 0);
+    Pool_Init(&gLightmapInfoPool, 4, 1000, 0);
     Pool_Init(&gLightSourcePool, 4, 100, 0);
     Random_Init(gLightmapRandom);
     for (i = 0, m = gLightmapRotations; m < gLightmapRotations + 4; m++, i++) {
@@ -424,7 +424,7 @@ void LightmapInfo_Shutdown(void)
     TaskEvent_Free(gLightSourceTraceEvent);
     TaskEvent_Free(gLightSourceIsEvent);
     Pool_Free(&gLightSourcePool);
-    Pool_Free(&gLightmapPoolA83A00);
+    Pool_Free(&gLightmapInfoPool);
     QTaskList_Free(gLightmapInfoParams);
     TaskType_Free(gLightmapInfoType);
 }
@@ -440,11 +440,8 @@ PAD(igb, A8397C, A8397D, 0x3);
 STORE(igb, A8397C, 1) char store_A83980[76];
 ALIAS(gLightmapScene, store_A83980, 0);
 BSS(A839F4) int gLightmapCountA839F4;
-PAD(igb, A839F4, A839F8, 0x8);
-BSS(A839F4) Pool gLightmapPoolA83A00;
-BSS(A839F4) uint8_t gLightSourceIsEvent;
-PAD(igb, A839F4, A83A19, 0x3);
-ALIAS(gLightmapInfoPool, gLightmapPoolA83A00, 0);
+BSS(A83A18) uint8_t gLightSourceIsEvent;
+PAD(igb, A83A18, A83A19, 0x3);
 BSS(A83B28) int *gLightmapBuffer;
 STORE(igb, A83B30, 1) char store_A83B30[12];
 ALIAS(gLightmapRandom, store_A83B30, 0);

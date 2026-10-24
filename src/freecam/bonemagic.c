@@ -126,7 +126,7 @@ HOOK(0x5316F0, BoneMagicObj_Enter);
 void BoneMagicObj_Delete(BoneMagicObj *o)
 {
     BoneDynCubeObj_Deinit(o);
-    DynCube_Remove(gWorld, o);
+    DynCube_Remove(gCurrentWorld, o);
 }
 HOOK(0x5317B0, BoneMagicObj_Delete);
 
@@ -193,7 +193,7 @@ void BoneMagicObj_Move(BoneMagicObj *o, BoneMoveArgs *a)
     p.x = o->motion[0] + x;
     p.y = o->motion[1] + p.y;
     p.z = o->motion[2] + z;
-    DynCube_Move(gWorld, o, &p, o->radius);
+    DynCube_Move(gCurrentWorld, o, &p, o->radius);
     m = a->matrix;
     r[0] = l[6] * m[2] + l[0] * m[0] + l[3] * m[1];
     r[1] = l[7] * m[2] + l[1] * m[0] + l[4] * m[1];

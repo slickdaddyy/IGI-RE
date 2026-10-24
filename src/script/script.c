@@ -386,7 +386,7 @@ ScriptValue *BreakScript(ScriptValue *out)
     gScriptBreak = 1;
     out->i = 0;
     out->d = 0;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4B8C10, BreakScript);
@@ -396,7 +396,7 @@ ScriptValue *Script_SetWarningLevelCmd(ScriptValue *out, void *data, ScriptArgs 
     Script_SetWarningLevel(Script_GetArgInt(args, 0));
     out->i = 0;
     out->d = 0;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4B8C60, Script_SetWarningLevelCmd);

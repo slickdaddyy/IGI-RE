@@ -44,7 +44,7 @@ ScriptValue *Script_IntValue(ScriptValue *out, int *var)
 {
     out->i = *var;
     out->d = *var;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4B7EA0, Script_IntValue);
@@ -59,7 +59,7 @@ ScriptValue *Script_Bool8Value(ScriptValue *out, char *var)
 {
     out->i = *var;
     out->d = *var;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4B7F00, Script_Bool8Value);
@@ -74,7 +74,7 @@ ScriptValue *Script_Int16Value(ScriptValue *out, short *var)
 {
     out->i = *var;
     out->d = *var;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4B7F60, Script_Int16Value);
@@ -95,7 +95,7 @@ ScriptValue *Script_RealValue(ScriptValue *out, double *var)
 {
     out->i = Script_Round(*var);
     memcpy(&out->d, var, sizeof(double));
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4B7FE0, Script_RealValue);
@@ -131,7 +131,7 @@ ScriptValue *Script_ConstantValue(ScriptValue *out, int value)
 {
     out->i = value;
     out->d = value;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4B8830, Script_ConstantValue);

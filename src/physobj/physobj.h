@@ -18,7 +18,7 @@ extern TaskFn gTaskHandlers[][0x180];
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
-extern char gScriptNumberType[];
+extern char gEmptyString[];
 
 /* a point of a physics object type, read from the script */
 typedef struct PhysicsObjJoint {

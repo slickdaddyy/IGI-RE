@@ -50,7 +50,7 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 
-extern void *gWorld;
+extern void *gCurrentWorld;
 extern uint16_t gDrawerType;
 extern void *gCabinetParams;
 extern uint16_t gCabinetType;
@@ -178,9 +178,9 @@ void Cabinet_Create(Cabinet *c)
     float scale;
 
     QTaskList_Add(Game_GetTaskList0(), c);
-    RigidDynCubeObj_Init(gWorld, c, NULL);
+    RigidDynCubeObj_Init(gCurrentWorld, c, NULL);
     scale = sobj_scale(&c->o);
-    DynCube_Add(gWorld, c, &zero, VirModel_GetRadius(c->o.model) * scale, 1);
+    DynCube_Add(gCurrentWorld, c, &zero, VirModel_GetRadius(c->o.model) * scale, 1);
     Sector_AddObject(c->o.world, c, DynCubeObj_GetPosition(c));
     c->place.x = 0;
     c->place.y = 0;

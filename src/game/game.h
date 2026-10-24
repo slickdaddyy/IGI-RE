@@ -12,11 +12,10 @@ typedef void (*TaskFn)(void *task, void *arg);
 typedef void (*TaskFn1)(void *task);
 
 extern Game *gGame;
-extern TaskFn gTaskHandlers[][0x180];
-extern TaskFn1 gTaskHandlers1[][0x180];
+extern void (*gTaskHandlers[][0x180])();
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern const char gScriptEmptyString[];
+extern const char gEmptyString[];
 extern uint8_t gKeys[];
 extern uint8_t gKeysPrev[];
 
@@ -25,7 +24,7 @@ static inline ScriptValue *Game_ReturnOne(ScriptValue *out, int i, double d)
 {
     out->i = i;
     out->d = d;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 

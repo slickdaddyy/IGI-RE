@@ -100,7 +100,7 @@ ScriptValue *DefineMission(ScriptValue *out, void *data, void *args)
     gMissionCount++;
     v.i = 1;
     v.d = 1.0;
-    v.s = gScriptEmptyString;
+    v.s = gEmptyString;
     *out = v;
     return out;
 }

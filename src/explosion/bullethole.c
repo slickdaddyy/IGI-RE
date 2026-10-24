@@ -19,7 +19,7 @@ ORIG(0x4CE410, char, Coll_LineOfSight, (void *world, const Vec3d *from, const Ve
                                         int flags, int trees, float *vis));
 ORIG(0x4E0810, void, SectorObject_SetMatrix, (void *mesh, Matrix *m));
 
-extern void *gWorld;
+extern void *gCurrentWorld;
 extern const Vec3f gWhite[];
 
 static const double kOne = 1.0;
@@ -168,7 +168,7 @@ static void add_hole(Task *obj, HoleMsg *msg, const Vec3d *pos, const Matrix *m,
         }
         Task_Delete(oldest);
     }
-    bh = (BulletHole *)Task_New(obj, gHoleType, NULL);
+    bh = (BulletHole *)Task_New(obj, gBulletHoleType, NULL);
     item = pool_take(&gHolePool);
     bh->poolItem = item;
     *item = bh;
@@ -361,10 +361,10 @@ void BulletHole_Place(const Vec3d *pos, const Matrix *m, BulletHole *bh, Hole *h
         to[i].y = w[i].y - dir.y;
         to[i].z = w[i].z - dz;
     }
-    clear = Coll_LineOfSight(gWorld, &w[0], &to[0], 0xFF, 0, -1, -1, NULL) == 0;
-    clear &= Coll_LineOfSight(gWorld, &w[1], &to[1], 0xFF, 0, -1, -1, NULL) == 0;
-    clear &= Coll_LineOfSight(gWorld, &w[2], &to[2], 0xFF, 0, -1, -1, NULL) == 0;
-    if (!(clear & (Coll_LineOfSight(gWorld, &w[3], &to[3], 0xFF, 0, -1, -1, NULL) == 0)))
+    clear = Coll_LineOfSight(gCurrentWorld, &w[0], &to[0], 0xFF, 0, -1, -1, NULL) == 0;
+    clear &= Coll_LineOfSight(gCurrentWorld, &w[1], &to[1], 0xFF, 0, -1, -1, NULL) == 0;
+    clear &= Coll_LineOfSight(gCurrentWorld, &w[2], &to[2], 0xFF, 0, -1, -1, NULL) == 0;
+    if (!(clear & (Coll_LineOfSight(gCurrentWorld, &w[3], &to[3], 0xFF, 0, -1, -1, NULL) == 0)))
         h->state = -1;
 }
 HOOK(0x47D920, BulletHole_Place);
@@ -382,28 +382,20 @@ void BulletHole_Close(void)
 {
     Pool_Free(&gHolePolyPool);
     Pool_Free(&gHolePool);
-    TaskType_Free(gHoleType);
-    TaskEvent_Free(gHoleEvent);
-    gHoleEvent = 0xFF;
+    TaskType_Free(gBulletHoleType);
+    TaskEvent_Free(gBulletHoleEvent);
+    gBulletHoleEvent = 0xFF;
 }
 HOOK(0x47E6B0, BulletHole_Close);
 
 uint8_t BulletHole_GetEvent(void)
 {
-    return gHoleEvent;
+    return gBulletHoleEvent;
 }
 HOOK(0x47E6F0, BulletHole_GetEvent);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 STORE(igd, 5408F8, 4) __typeof__(gWhite[0]) store_5408F8[1] INIT({{.x = 1.0f, .y = 1.0f, .z = 1.0f}});
 ALIAS(gWhite, store_5408F8, 0);
-DATA(540904) uint8_t gHoleEvent INIT(255);
-PAD(igd, 540904, 540905, 0x3);
-ALIAS(gBulletHoleEvent, gHoleEvent, 0);
 BSS(5C1108) Pool gHolePool;
 BSS(5C1108) Pool gHolePolyPool;
-BSS(5C1108) uint16_t gHoleType;
-PAD(igb, 5C1108, 5C113A, 0x2);
-ALIAS(gBulletHolePool, gHolePool, 0);
-ALIAS(gBulletHolePool2, gHolePolyPool, 0);
-ALIAS(gBulletHoleType, gHoleType, 0);

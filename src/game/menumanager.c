@@ -56,7 +56,7 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 extern uint16_t gMenuManagerType;
 extern void *gMenuManagerParams;
 extern int gUnkBC20A0;
-extern char gUnkC28C61;
+extern char gKeyboardPresent;
 extern char gUnkC28F80;
 
 #define FIELD(name) ((void *)offsetof(MenuManager, name))
@@ -116,7 +116,7 @@ void MenuManager_Create(MenuManager *mm)
     Script_RegisterConstant("MENUMANAGER_IDLE", 9);
     Script_RegisterConstant("MENUMANAGER_RESTARTLEVEL", 12);
     mm->unk26BE = 0;
-    if (gUnkC28C61) {
+    if (gKeyboardPresent) {
         int mode = gUnkC28F80 ? 3 : 0;
         void *keys = Profile_GetKeys(mode, 0.05f, 0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.25f, 0x1.b4e81cp-9f,
                                      0x1.b4e81cp-9f, 0.05f, 0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.25f, 0x1.b4e81cp-9f,
@@ -168,7 +168,7 @@ void MenuManager_ApplyLanguage(MenuManager *mm)
     TaskFn1 fn;
 
     if (w) {
-        fn = gTaskHandlers1[MenuWindow_GetEvent918()][w->type];
+        fn = gTaskHandlers[MenuWindow_GetEvent918()][w->type];
         if (fn)
             fn(w);
     }
@@ -186,7 +186,7 @@ void MenuManager_Refresh(MenuManager *mm, int all)
 
     if (!all) {
         w = (Task *)mm->screenTask;
-        fn = gTaskHandlers1[MenuWindow_GetEvent91C()][w->type];
+        fn = gTaskHandlers[MenuWindow_GetEvent91C()][w->type];
         if (fn)
             fn(w);
     } else {
@@ -194,7 +194,7 @@ void MenuManager_Refresh(MenuManager *mm, int all)
         if (n->next && n) {
             do {
                 gTaskStack[gTaskStackTop++] = n->next && n->next->next ? n->next : NULL;
-                fn = gTaskHandlers1[MenuWindow_GetEvent91C()][n->type];
+                fn = gTaskHandlers[MenuWindow_GetEvent91C()][n->type];
                 if (fn)
                     fn(n);
                 n = gTaskStack[--gTaskStackTop];
@@ -208,7 +208,7 @@ HOOK(0x417590, MenuManager_Refresh);
 void MenuManager_SendEvent910(MenuManager *mm, Task *w)
 {
     if (w)
-        gTaskHandlers1[MenuWindow_GetEvent910()][w->type](w);
+        gTaskHandlers[MenuWindow_GetEvent910()][w->type](w);
 }
 HOOK(0x417660, MenuManager_SendEvent910);
 
@@ -275,7 +275,7 @@ ScriptValue *MenuManager_ForceUpdateWindow(ScriptValue *out, MenuManager *mm, vo
     TaskFn1 fn;
 
     if (w) {
-        fn = gTaskHandlers1[MenuWindow_GetEvent914()][w->type];
+        fn = gTaskHandlers[MenuWindow_GetEvent914()][w->type];
         if (fn)
             fn(w);
     }

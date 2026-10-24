@@ -93,7 +93,7 @@ ScriptValue *DefineAnimTrigger(ScriptValue *out, void *data, ScriptArgs *args)
     gAnimTriggerCount++;
     out->i = 1;
     out->d = 1.0;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4EBEB0, DefineAnimTrigger);

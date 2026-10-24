@@ -421,3 +421,5 @@ BSS(A7A508) RangeI gSplineObjSegmentRange;
 BSS(A7A508) uint16_t gSplineObjType;
 PAD(igb, A7A508, A7A61A, 0x2);
 BSS(A7A508) void *gSplineObjParams;
+BSS(A7A508) uint16_t gSplineObjWaypointType;
+PAD(igb, A7A508, A7A622, 0x2);

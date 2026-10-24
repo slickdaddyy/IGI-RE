@@ -37,7 +37,7 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1AF0, void, ParamType_Call, (void *field, int type, uint8_t op, void *arg));
 ORIG(0x4F1B60, uint8_t, ParamOp_Parse, (void));
 
-extern const char gScriptEmptyString[];
+extern const char gEmptyString[];
 
 static const char kTaskNew[] = "Task_New";
 
@@ -156,7 +156,7 @@ ScriptValue *Task_DeclareParameters(ScriptValue *out)
 
     v.i = 0;
     v.d = 0;
-    v.s = gScriptEmptyString;
+    v.s = gEmptyString;
     *out = v;
     return out;
 }
@@ -236,7 +236,7 @@ ScriptValue *Level_NewTask(ScriptValue *out, Task *parent, ScriptArgs *args)
     Script_SetSymbolContext(kTaskNew, parent);
     v.i = argc;
     v.d = argc;
-    v.s = gScriptEmptyString;
+    v.s = gEmptyString;
     *out = v;
     return out;
 }
@@ -280,12 +280,12 @@ void Level_Shutdown(void)
     ParamType_Free(gParamLevelExpression);
     ParamType_Free(gParamQTaskNote);
     ParamType_Free(gParamBool8);
-    TaskEvent_Free(gLevelEvent0);
+    TaskEvent_Free(gLevelEventDA4);
     TaskEvent_Free(gLevelNameEvent);
     TaskEvent_Free2(gLevelEventDA8);
     TaskEvent_Free2(gLevelEventDAC);
     TaskEvent_Free2(gLevelEventDB0);
-    gLevelEvent0 = 0xFF;
+    gLevelEventDA4 = 0xFF;
     gLevelNameEvent = 0xFF;
     gLevelEventDA8 = 0xFF;
     gLevelEventDAC = 0xFF;

@@ -154,12 +154,12 @@ extern TerrainMesh *gTerrainMeshes[];
 extern int gTerrainMeshCount;
 extern int gTerrainCellCount;
 extern TerrainCell gTerrainCells[];
-extern Pool gTerrainPool0;
-extern Pool gTerrainPool1;
-extern Pool gTerrainPool2;
+extern Pool gQCubePool0;
+extern Pool gQCubePool1;
+extern Pool gQCubePool2;
 extern double gQCubeOriginD[];
 extern TerrainLightMapInfo gTerrainLightMaps[];
-extern TerrainHeightMapInfo gTerrainHeightMaps[];
+extern TerrainHeightMapInfo gCollBumps[];
 extern TerrainMaterialMapInfo gTerrainMaterialMaps[];
 extern uint8_t gTerrainTileMaps[][8];
 extern int gTerrainMeshRenderAll;
@@ -175,7 +175,7 @@ extern TerrainFog gTerrainFog[];
 extern int gTerrainTextures;
 extern float gTerrainBottom;
 extern float gTerrainRight;
-extern int gUnkC31088;
+extern int gMorphStart;
 extern char gUnkC3108C;
 extern int gUnkC31090;
 extern float gTerrainScaleY;
@@ -185,11 +185,11 @@ extern float gTerrainLeft;
 extern float gTerrainCenterX;
 extern float gTerrainCenterY;
 extern float gTerrainInvSize;
-extern int gUnkC28FBC;
-extern float gUnkC28FC0;
+extern int gTerrMeshTotal;
+extern float gMorphScale;
 extern TerrainMaterial gTerrainMaterials[];
 extern float gTerrainView[]; /* 3x3 matrix, unk24, then the view origin */
-extern float gTerrainTint[];
+extern float gWaterTint[];
 extern double gTerrainClipUV[][2];
 extern double gTerrainClipPos[][3];
 extern TerrainClipVertex gTerrainClipVerts[];
@@ -403,8 +403,8 @@ static void setup_view(void)
     gTerrainScaleX = gViewScaleX;
     gTerrainCenterY = gSceneHalfH + gSceneY;
     gTerrainInvSize = kOne.f / (long double)(gQCubeMinSize - 0x40);
-    gUnkC31088 = x87_fistp((long double)(gQCubeMinSize + 0x40) * kThreeEighths.d);
-    gUnkC28FC0 = gTerrainInvSize * k8Thirds.f;
+    gMorphStart = x87_fistp((long double)(gQCubeMinSize + 0x40) * kThreeEighths.d);
+    gMorphScale = gTerrainInvSize * k8Thirds.f;
     c = ViewSlot_GetCurrent();
     nx = -(long double)gViewPos[0];
     py = gViewPos[1];
@@ -426,7 +426,7 @@ void TerrainMesh_Build(void);
 void TerrainMesh_Update(void)
 {
     setup_view();
-    gUnkC28FBC = 0;
+    gTerrMeshTotal = 0;
     gUnkC31090 = 0;
     if (gTerrainCellCount)
         TerrainMesh_Build();
@@ -546,14 +546,14 @@ void TerrainMesh_Build(void)
 
         memcpy(pos, cell->pos, sizeof(pos));
         lm = cell->maps & 0xFFFF;
-        if (gTerrainPool0.used <= gTerrainPool0.count - 3) {
-            cache->data = (char *)pool_take(&gTerrainPool0);
+        if (gQCubePool0.used <= gQCubePool0.count - 3) {
+            cache->data = (char *)pool_take(&gQCubePool0);
             cache->kind = 0;
-        } else if (gTerrainPool1.used <= gTerrainPool1.count - 3) {
-            cache->data = (char *)pool_take(&gTerrainPool1);
+        } else if (gQCubePool1.used <= gQCubePool1.count - 3) {
+            cache->data = (char *)pool_take(&gQCubePool1);
             cache->kind = 1;
-        } else if (gTerrainPool2.used <= gTerrainPool2.count - 3) {
-            cache->data = (char *)pool_take(&gTerrainPool2);
+        } else if (gQCubePool2.used <= gQCubePool2.count - 3) {
+            cache->data = (char *)pool_take(&gQCubePool2);
             cache->kind = 2;
         } else {
             cache->frame = -1;
@@ -577,7 +577,7 @@ void TerrainMesh_Build(void)
         if (level < 0xE) {
             height = 0;
         } else if (height) {
-            const TerrainHeightMapInfo *r = &gTerrainHeightMaps[height];
+            const TerrainHeightMapInfo *r = &gCollBumps[height];
 
             hmap = r->data;
             hmX0 = r->x0;
@@ -717,13 +717,13 @@ void TerrainMesh_Build(void)
             char *old = cache->data;
             int bytes = (char *)vend - old;
 
-            if (kind < 1 && total < 0xC80 && gTerrainPool1.used < gTerrainPool1.count - 2) {
-                cache->data = (char *)pool_take(&gTerrainPool1);
+            if (kind < 1 && total < 0xC80 && gQCubePool1.used < gQCubePool1.count - 2) {
+                cache->data = (char *)pool_take(&gQCubePool1);
                 memcpy(cache->data, old, bytes);
                 cache->kind = 1;
                 moved = 1;
-            } else if (kind < 2 && total < 8000 && gTerrainPool2.used < gTerrainPool2.count - 2) {
-                cache->data = (char *)pool_take(&gTerrainPool2);
+            } else if (kind < 2 && total < 8000 && gQCubePool2.used < gQCubePool2.count - 2) {
+                cache->data = (char *)pool_take(&gQCubePool2);
                 memcpy(cache->data, old, bytes);
                 cache->kind = 2;
                 moved = 1;
@@ -733,11 +733,11 @@ void TerrainMesh_Build(void)
                 gTerrainMeshes[gTerrainMeshCount - 1] = (TerrainMesh *)cache->data;
             }
             if (kind == 0)
-                pool_release(&gTerrainPool0, old);
+                pool_release(&gQCubePool0, old);
             else if (kind == 1)
-                pool_release(&gTerrainPool1, old);
+                pool_release(&gQCubePool1, old);
             else if (kind == 2)
-                pool_release(&gTerrainPool2, old);
+                pool_release(&gQCubePool2, old);
             if (!moved) {
                 cache->data = NULL;
                 cache->frame = -1;
@@ -1027,7 +1027,7 @@ void TerrainMesh_DrawTriangle(TerrainPoly *t)
     }
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++)
-            v[i].c[j] = clamp01(gTerrainTint[j] * t->color[i][j]) * k255.f;
+            v[i].c[j] = clamp01(gWaterTint[j] * t->color[i][j]) * k255.f;
         v[i].c[3] = fog[i];
     }
     if ((code[0] | code[1] | code[2]) & 0x10 && !(code[0] & code[1] & code[2] & 0x10))
@@ -1137,31 +1137,32 @@ STORE(igb, A7DA10, 8) double store_A7DAB0[4][3];
 ALIAS(gTerrainClipPos, store_A7DAB0, 0);
 PAD(igb, A7DA10, A7DB10, 0xC8);
 ALIAS(gTerrainClipVerts, pad_A7DB10, 0);
+BSS(B12B60) Pool gQCubePool0;
 STORE(igb, B12BA0, 8) double store_B12BA0[3];
 ALIAS(gQCubeOriginD, store_B12BA0, 0);
+BSS(B12C40) Pool gQCubePool1;
 STORE(igb, B12C60, 4) __typeof__(gTerrainMeshes[0]) store_B12C60[4096];
 ALIAS(gTerrainMeshes, store_B12C60, 0);
+BSS(B16C6C) int gQCubeMinSize;
+BSS(B16CC0) Pool gQCubePool2;
 PAD(igb, BA5050, BA5050, 0x10);
 ALIAS(gTerrainMaterialMaps, pad_BA5050, 0);
 PAD(igb, BA80B0, BA80B0, 0x17FF0);
 ALIAS(gTerrainLightMaps, pad_BA80B0, 0);
-BSS(C28FBC) int gUnkC28FBC;
-BSS(C28FBC) float gUnkC28FC0;
-ALIAS(gMorphScale, gUnkC28FC0, 0);
-ALIAS(gTerrMeshTotal, gUnkC28FBC, 0);
+BSS(C28FBC) int gTerrMeshTotal;
+BSS(C28FBC) float gMorphScale;
 BSS(C30060) int gTerrainTextures;
 STORE(igb, C30080, 1) uint8_t store_C30080[512][8];
 ALIAS(gTerrainTileMaps, store_C30080, 0);
 BSS(C30080) float gTerrainBottom;
 BSS(C30080) float gTerrainRight;
-BSS(C30080) int gUnkC31088;
+BSS(C30080) int gMorphStart;
 BSS(C30080) char gUnkC3108C;
 PAD(igb, C30080, C3108D, 0x3);
 BSS(C30080) int gUnkC31090;
 PAD(igb, C30080, C31094, 0xC);
 STORE(igb, C30080, 4) __typeof__(gTerrainFog[0]) store_C310A0[32];
 ALIAS(gTerrainFog, store_C310A0, 0);
-ALIAS(gMorphStart, gUnkC31088, 0);
 BSS(C311A8) float gTerrainTop;
 BSS(C311A8) float gTerrainLeft;
 BSS(C311B8) float gTerrainInvSize;

@@ -31,7 +31,7 @@ ORIG(0x41C690, void, ScrollListBox_AddItem, (const char *text, int id));
 ORIG(0x41B870, void, PictureBox_AddItem, (const char *text, int id));
 ORIG(0x41B290, void, TextBox_AddItem, (const char *text, int id));
 
-extern const char gScriptEmptyString[];
+extern const char gEmptyString[];
 extern char gLanguageAliasSet;
 extern int gPerfLevelFlags[];
 extern InputRemap gDefaultKeys[];
@@ -68,7 +68,7 @@ static ScriptValue *ret_int(ScriptValue *out, int v)
 {
     out->i = v;
     out->d = v;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 
@@ -274,7 +274,7 @@ ScriptValue *Config_IsGermany(ScriptValue *out)
 {
     out->i = AppContext_IsGerman();
     out->d = AppContext_IsGerman();
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x403B30, Config_IsGermany);
@@ -390,7 +390,7 @@ ScriptValue *Config_GameOptionsInputGetInvertMouse(ScriptValue *out)
 {
     out->i = Profile_GetActive()->invert_mouse == 0;
     out->d = Profile_GetActive()->invert_mouse == 0;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4041D0, Config_GameOptionsInputGetInvertMouse);
@@ -408,7 +408,7 @@ ScriptValue *Config_GameOptionsInputGetMouseSensitivity(ScriptValue *out)
 {
     out->i = round_x87(Profile_GetActive()->mouse_sensitivity);
     out->d = Profile_GetActive()->mouse_sensitivity;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x404290, Config_GameOptionsInputGetMouseSensitivity);
@@ -426,7 +426,7 @@ ScriptValue *Config_GameOptionsInputGetBloodEnabled(ScriptValue *out)
 {
     out->i = Profile_GetActive()->blood;
     out->d = Profile_GetActive()->blood;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x404340, Config_GameOptionsInputGetBloodEnabled);
@@ -569,7 +569,7 @@ ScriptValue *Config_GraphicOptionsGetGamma(ScriptValue *out)
 {
     out->i = round_x87(Config_GetGraphicOptions()->gamma);
     out->d = Config_GetGraphicOptions()->gamma;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x404910, Config_GraphicOptionsGetGamma);
@@ -587,7 +587,7 @@ ScriptValue *Config_GraphicOptionsGetTransparency(ScriptValue *out)
 {
     out->i = Config_GetGraphicOptions()->transparency;
     out->d = Config_GetGraphicOptions()->transparency;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4049C0, Config_GraphicOptionsGetTransparency);
@@ -611,7 +611,7 @@ ScriptValue *Config_SoundOptionsGetSoundsEffects(ScriptValue *out)
 {
     out->i = Config_GetSoundOptions()->fx;
     out->d = Config_GetSoundOptions()->fx;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x404A90, Config_SoundOptionsGetSoundsEffects);
@@ -629,7 +629,7 @@ ScriptValue *Config_SoundOptionsGetSoundsEffectsVolume(ScriptValue *out)
 {
     out->i = round_x87(Config_GetSoundOptions()->fx_volume);
     out->d = Config_GetSoundOptions()->fx_volume;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x404B40, Config_SoundOptionsGetSoundsEffectsVolume);
@@ -647,7 +647,7 @@ ScriptValue *Config_SoundOptionsGetMusic(ScriptValue *out)
 {
     out->i = Config_GetSoundOptions()->music;
     out->d = Config_GetSoundOptions()->music;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x404BF0, Config_SoundOptionsGetMusic);
@@ -665,7 +665,7 @@ ScriptValue *Config_SoundOptionsGetMusicVolume(ScriptValue *out)
 {
     out->i = round_x87(Config_GetSoundOptions()->music_volume);
     out->d = Config_GetSoundOptions()->music_volume;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x404CA0, Config_SoundOptionsGetMusicVolume);
@@ -683,7 +683,7 @@ ScriptValue *Config_SoundOptionsGetSpeech(ScriptValue *out)
 {
     out->i = Config_GetSoundOptions()->speech;
     out->d = Config_GetSoundOptions()->speech;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x404D50, Config_SoundOptionsGetSpeech);
@@ -702,7 +702,7 @@ ScriptValue *Config_SoundOptionsGetSpeechVolume(ScriptValue *out)
 {
     out->i = round_x87(Config_GetSoundOptions()->fx_volume);
     out->d = Config_GetSoundOptions()->fx_volume;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x404E00, Config_SoundOptionsGetSpeechVolume);
@@ -720,7 +720,7 @@ ScriptValue *Config_SoundOptionsGetReverseStereo(ScriptValue *out)
 {
     out->i = Config_GetSoundOptions()->reverse_stereo;
     out->d = Config_GetSoundOptions()->reverse_stereo;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x404EB0, Config_SoundOptionsGetReverseStereo);
@@ -738,7 +738,7 @@ ScriptValue *Config_GraphicOptionsGetPerformanceFlags(ScriptValue *out)
 {
     out->i = Config_GetGraphicOptions()->perf_flags;
     out->d = Config_GetGraphicOptions()->perf_flags;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x404F60, Config_GraphicOptionsGetPerformanceFlags);
@@ -880,7 +880,7 @@ ScriptValue *Config_GraphicOptionsGetPerfFlagsFromLevel(ScriptValue *out, void *
 {
     out->i = gPerfLevelFlags[Script_GetArgInt(args, 0)];
     out->d = gPerfLevelFlags[Script_GetArgInt(args, 0)];
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4055C0, Config_GraphicOptionsGetPerfFlagsFromLevel);
@@ -957,6 +957,8 @@ ALIAS(gInputDevicesEnd, pad_536994, 0);
 PAD(igd, 537B74, 537B74, 0x1C) INIT({0x9E, 0x01, 0x00, 0x00, 0xAE, 0x01, 0x00, 0x00, 0x0D, 0x00, 0x00, 0x00, 0x60, 0x00, 0x00, 0x00, 0x4D, 0x00, 0x00, 0x00, 0x41});
 ALIAS(gInputKeysEnd, pad_537B74, 0);
 ALIAS(gPerfLevelFlags, pad_537B74, 0);
+STORE(igb, 567C74, 1) const char store_567C74[4];
+ALIAS(gEmptyString, store_567C74, 0);
 PAD(igb, 567C98, 567C98, 0x1418);
 ALIAS(gDrivers, pad_567C98, 0);
 BSS(BC2380) int gProfileCount;

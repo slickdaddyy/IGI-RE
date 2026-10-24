@@ -309,7 +309,7 @@ ScriptValue *DefineGraph(ScriptValue *out, void *data, void *args)
     Task_New(data, gSoundDefGraphType2, &arg);
     out->i = n;
     out->d = n;
-    out->s = gScriptEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4EAD20, DefineGraph);

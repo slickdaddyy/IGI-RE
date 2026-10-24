@@ -155,7 +155,7 @@ extern int gBloodSprite2;
 extern int gHumanMaskType;
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern char gScriptNumberType[];
+extern char gEmptyString[];
 
 /* handlers of the Human type that live after this file */
 #define Human_Handler45F280 (FN(0x45F280, Human_DrawHandler))
@@ -339,7 +339,7 @@ ScriptValue *Human_GetCutSceneDeltaTime(ScriptValue *ret)
 
     r.i = x87_fistp(v);
     r.d = v;
-    r.s = gScriptNumberType;
+    r.s = gEmptyString;
     memcpy(ret, &r, sizeof(r));
     return ret;
 }
