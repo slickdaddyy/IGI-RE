@@ -229,6 +229,19 @@ static void open_log(void *module, const char *path)
 
 /* --- installation ---------------------------------------------------------- */
 
+/* msvc kept string literals in writable .data and the game upper-cases some in place */
+static void make_rdata_writable(void *module)
+{
+    IMAGE_NT_HEADERS *nt = (IMAGE_NT_HEADERS *)((char *)module + ((IMAGE_DOS_HEADER *)module)->e_lfanew);
+    IMAGE_SECTION_HEADER *s = IMAGE_FIRST_SECTION(nt);
+    DWORD old;
+    int i;
+
+    for (i = 0; i < nt->FileHeader.NumberOfSections; i++, s++)
+        if (!memcmp(s->Name, ".rdata", 7))
+            VirtualProtect((char *)module + s->VirtualAddress, s->Misc.VirtualSize, PAGE_READWRITE, &old);
+}
+
 /* Settings come from dinput.ini next to the DLL; without it every hook is installed. */
 void Hook_InstallAll(void *module)
 {
@@ -257,6 +270,7 @@ void Hook_InstallAll(void *module)
         log_line("hooks turned off, nothing installed");
         return;
     }
+    make_rdata_writable(module);
     for (i = 0; i < hook_count; i++) {
         if (!selected(i))
             continue;
