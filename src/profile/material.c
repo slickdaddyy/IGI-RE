@@ -23,8 +23,8 @@ void Material_Init(void)
     gMaterialEvent0 = TaskEvent_Alloc(0);
     gMaterialEvent1 = TaskEvent_Alloc(0);
     gMaterialEvent2 = TaskEvent_Alloc(0);
-    Script_RegisterFunction("GameMaterial_SetActive", GameMaterial_SetActive, NULL, -1);
-    Script_RegisterFunction("GameMaterial_DefineQ", GameMaterial_DefineQ, NULL, -1);
-    Script_RegisterFunction("GameMaterial_Define", GameMaterial_Define, NULL, -1);
+    Script_RegisterFunction("SetActiveMaterial", GameMaterial_SetActive, NULL, -1);
+    Script_RegisterFunction("DefineQMaterial", GameMaterial_DefineQ, NULL, -1);
+    Script_RegisterFunction("DefineGameMaterial", GameMaterial_Define, NULL, -1);
 }
 HOOK(0x407D60, Material_Init);
