@@ -32,12 +32,6 @@ typedef struct PartCreateArg {
     void *params;
 } PartCreateArg;
 
-/* sent by a vehicle each frame to move its parts along */
-typedef struct PartMoveArg {
-    Vec3d *pos;
-    Matrix *matrix;
-} PartMoveArg;
-
 /* the same with the vehicle itself */
 typedef struct CarMoveArg {
     Vec3d *pos;
@@ -76,12 +70,6 @@ typedef struct Prim {
     int unk20;
     float color[3];
 } Prim;
-
-/* position and orientation as sent to the children by value */
-typedef struct Frame {
-    Vec3d pos;
-    Matrix matrix;
-} Frame;
 
 typedef struct CarWheel {
     char unk0;

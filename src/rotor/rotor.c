@@ -279,7 +279,7 @@ void Rotor_Move(Part *o, PartMoveArg *a)
     mat_mul(&f, a->matrix, &o->local, 1, 0, 0);
     o->obj.matrix = f;
     if (o->obj.task.head->next) {
-        PartMoveArg arg;
+        MoveArg arg;
 
         arg.pos = &o->obj.pos;
         arg.matrix = &o->obj.matrix;

@@ -152,7 +152,7 @@ void Door_Place(Door *d)
 }
 HOOK(0x446290, Door_Place);
 
-void Door_GetMoveMsg(MoveMsg *msg, RigidDynCubeObj *o)
+void Door_GetMoveMsg(MoveArg *msg, RigidDynCubeObj *o)
 {
     msg->pos = &o->pos;
     msg->matrix = &o->matrix;
@@ -161,7 +161,7 @@ HOOK(0x446450, Door_GetMoveMsg);
 
 void Door_MoveChildren(Door *d)
 {
-    MoveMsg msg;
+    MoveArg msg;
 
     Door_GetMoveMsg(&msg, &d->o);
     BROADCAST(&d->o.task, RigidDynCubeObj_GetEvent4(), &msg);
@@ -170,7 +170,7 @@ HOOK(0x4463B0, Door_MoveChildren);
 
 /* RigidDynCubeObj event 4: moves along with the object it is fixed to,
    then straightens the closed matrix again */
-void Door_MoveHandler(Door *d, MoveMsg *msg)
+void Door_MoveHandler(Door *d, MoveArg *msg)
 {
     const float *m = d->base.m;
     float x, y, z, a, b, c, e, f, g;

@@ -54,12 +54,6 @@ typedef struct UseQuery {
     void *best;         /* 0x80 */
 } UseQuery;
 
-/* sent with the RigidDynCubeObj move event */
-typedef struct MoveMsg {
-    Vec3d *pos;
-    Matrix *matrix;
-} MoveMsg;
-
 /* the collision filter message of 0x4FC0E0 */
 typedef struct CollMsg {
     int unk0;

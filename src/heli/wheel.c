@@ -243,7 +243,7 @@ void Wheel_Move(Wheel *w, PartMoveArg *a)
 
         if (j < 0)
             j = -10 - j;
-        z = ((Car *)a->vehicle)->v.joints[j].height + off.z - cfg->wheel_drop;
+        z = ((Car *)a->owner)->v.joints[j].height + off.z - cfg->wheel_drop;
     } else {
         z = off.z;
     }

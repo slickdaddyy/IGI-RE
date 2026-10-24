@@ -174,12 +174,6 @@ typedef struct GunPartArgs {
     int unk8C;
 } GunPartArgs;
 
-typedef struct MoveMsg {
-    Vec3d *pos;
-    Matrix *matrix;
-    Task *obj;
-} MoveMsg;
-
 /* fire message of the Gun (event 0x4F1FF0) */
 typedef struct GunFire {
     char trigger;

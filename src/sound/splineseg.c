@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "sound/sound.h"
+#include "magicobj/magicobjtypes.h"
 
 FN_EXTERN(SplineObjSegment_Hit);
 
@@ -98,12 +99,6 @@ typedef struct SplineDrawArg {
     int *layers;
     int layerCount;
 } SplineDrawArg;
-
-typedef struct MoveArg {
-    Vec3d pos;
-    float m[9];
-    int unk;
-} MoveArg;
 
 static const float kHalf = 0.5f;
 static const double kHalfD = 0.5;
@@ -215,23 +210,23 @@ HOOK(0x4E4280, Task_YesHandler);
 void SplineObjSegment_Render(SplineObjSegment *o)
 {
     SplineDrawArg draw;
-    MoveArg move;
+    Frame move;
 
     draw.obj = o;
     draw.lights = Light_GetActive(&draw.lightCount);
     Haze_GetVisible(&draw.layers, &draw.layerCount);
     gRenderFuncs[Mesh3D_GetDrawSplineMethod()](&draw);
     move.pos = o->pos;
-    move.m[0] = 1.0f;
-    move.m[1] = 0;
-    move.m[2] = 0;
-    move.m[3] = 0;
-    move.m[4] = 1.0f;
-    move.m[5] = 0;
-    move.m[6] = 0;
-    move.m[7] = 0;
-    move.m[8] = 1.0f;
-    move.unk = 0;
+    move.matrix.m[0] = 1.0f;
+    move.matrix.m[1] = 0;
+    move.matrix.m[2] = 0;
+    move.matrix.m[3] = 0;
+    move.matrix.m[4] = 1.0f;
+    move.matrix.m[5] = 0;
+    move.matrix.m[6] = 0;
+    move.matrix.m[7] = 0;
+    move.matrix.m[8] = 1.0f;
+    move.matrix.count = 0;
     CALL_CHILDREN(&o->task, RigidDynCubeObj_GetEvent2(), &move);
 }
 HOOK(0x4E4290, SplineObjSegment_Render);

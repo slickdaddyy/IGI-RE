@@ -68,11 +68,6 @@ typedef struct DeathZoneMsg {
     float *speed;
 } DeathZoneMsg;
 
-typedef struct MoveArg {
-    Vec3d *pos;
-    float *matrix;
-} MoveArg;
-
 extern uint16_t gDeathZoneType;
 extern uint8_t gDeathZoneEvent;
 
@@ -168,7 +163,7 @@ void DeathZone_Move(DeathZone *z, MoveArg *a)
 
     if (!TaskType_IsA(z->vehicle->type, Vehicle_GetType()))
         return;
-    m = a->matrix;
+    m = a->matrix->m;
     d[0] = z->offset.x;
     d[1] = z->offset.y;
     d[2] = z->offset.z;
@@ -181,7 +176,7 @@ void DeathZone_Move(DeathZone *z, MoveArg *a)
     scale = max_scale(&z->o);
     radius = VirModel_GetRadius(z->o.model) * scale;
     DynCube_Move(Game_GetWorld(), z, &p, radius);
-    m = a->matrix;
+    m = a->matrix->m;
     out.m[0] = m[0] * b[0] + b[3] * m[1] + m[2] * b[6];
     out.m[1] = m[0] * b[1] + b[4] * m[1] + m[2] * b[7];
     out.m[2] = m[0] * b[2] + b[5] * m[1] + m[2] * b[8];

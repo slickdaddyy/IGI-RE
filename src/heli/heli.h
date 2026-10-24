@@ -9,6 +9,7 @@
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "coll/colltypes.h"
+#include "magicobj/magicobjtypes.h"
 
 /* a physics object type (DefinePhysicsObjType); data is its parsed arguments */
 typedef struct PhysType {
@@ -226,13 +227,6 @@ typedef struct PartCreateArg {
     Task *owner;
     void *params;
 } PartCreateArg;
-
-/* sent by a vehicle each frame to move its parts along */
-typedef struct PartMoveArg {
-    Vec3d *pos;
-    Matrix *matrix;
-    void *vehicle;
-} PartMoveArg;
 
 /* the argument of the physics type argument parsers */
 typedef struct ParseArg {

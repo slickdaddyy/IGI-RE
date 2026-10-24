@@ -20,12 +20,6 @@ typedef struct UseQuery {
     Vec3d pos;          /* 0x08 */
 } UseQuery;
 
-/* sent with the RigidDynCubeObj event 4: move along with the parent */
-typedef struct MoveMsg {
-    Vec3d *pos;
-    Matrix *matrix;
-} MoveMsg;
-
 /* "Cabinet" (0x138) */
 typedef struct Cabinet {
     RigidDynCubeObj o;

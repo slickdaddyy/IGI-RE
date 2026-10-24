@@ -443,7 +443,7 @@ void AIStationaryGun_Move(AIStationaryGun *g, PartMoveArg *a)
     Matrix r, m, b;
     Vec3d pos;
     float s;
-    PartMoveArg out;
+    MoveArg out;
 
     pos.x = (long double)p->m[2] * g->offset.z + (long double)p->m[1] * g->offset.y
             + (long double)p->m[0] * g->offset.x;

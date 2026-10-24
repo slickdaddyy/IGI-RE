@@ -7,6 +7,7 @@
 #include "hook.h"
 #include "camera/camera.h"
 #include "param/paramtypes.h"
+#include "magicobj/magicobjtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -51,12 +52,6 @@ typedef struct ExplodeObject {
     char inWorld;
     char pad235[3];
 } ExplodeObject;
-
-/* sent to the children with the RigidDynCubeObj event 4 */
-typedef struct MoveArg {
-    Vec3d *pos;
-    Matrix *matrix;
-} MoveArg;
 
 /* the argument of the Game event 9 handler */
 typedef struct HitArg {

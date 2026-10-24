@@ -256,7 +256,7 @@ HOOK(0x43E0A0, Elevator_Deactivate);
 /* RigidDynCubeObj event 4: follow the graph, then move the children along */
 void Elevator_MoveHandler(Elevator *e)
 {
-    MoveMsg msg;
+    MoveArg msg;
 
     Elevator_UpdatePlace(e);
     msg.pos = &e->place;

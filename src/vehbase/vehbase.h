@@ -28,12 +28,6 @@ typedef struct EditRigidObj {
     int unk19C;
 } EditRigidObj;
 
-/* sent with the RigidDynCubeObj move event */
-typedef struct MoveMsg {
-    Vec3d *pos;
-    Matrix *matrix;
-} MoveMsg;
-
 /* World events 0 and 1 */
 typedef struct WorldMsg {
     void *unk0;

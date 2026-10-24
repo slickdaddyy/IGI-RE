@@ -63,12 +63,6 @@ typedef struct Smoke {
     char moved;
 } Smoke;
 
-/* sent by a moving parent each frame */
-typedef struct MoveArg {
-    Vec3d *pos;
-    float *m;
-} MoveArg;
-
 _Static_assert(offsetof(Smoke, expr) == 0xA4, "Smoke.expr");
 _Static_assert(offsetof(Smoke, local) == 0x130, "Smoke.local");
 _Static_assert(offsetof(Smoke, enabled) == 0x170, "Smoke.enabled");
@@ -202,7 +196,7 @@ HOOK(0x437510, Smoke_Init);
 /* follows the parent: pos = parent pos + parent rotation * local */
 void Smoke_Move(Smoke *t, MoveArg *a)
 {
-    const float *m = a->m;
+    const float *m = a->matrix->m;
     Vec3d v;
 
     v.x = m[2] * t->local.z + m[1] * t->local.y + m[0] * t->local.x;

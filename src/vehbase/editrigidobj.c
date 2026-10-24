@@ -72,11 +72,11 @@ static float radius(EditRigidObj *o)
 }
 
 /* RigidDynCubeObj move event: follow the object this one sits on */
-void EditRigidObj_Move(EditRigidObj *o, MoveMsg *msg)
+void EditRigidObj_Move(EditRigidObj *o, MoveArg *msg)
 {
     static const char last[3] = {1, 1, 1};
     const float *m = msg->matrix->m;
-    MoveMsg out;
+    MoveArg out;
     Vec3d p;
 
     p.x = (m[2] * o->offset.z + m[1] * o->offset.y) + m[0] * o->offset.x;

@@ -8,6 +8,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "magicobj/magicobjtypes.h"
 
 /* per type data of a vehicle physics type, parsed by 0x5031F0 */
 typedef struct VehicleConfig {
@@ -142,13 +143,6 @@ typedef struct PartCreateArg {
     Plane *owner;
     void *def;
 } PartCreateArg;
-
-/* sent by a vehicle to move its parts along */
-typedef struct PartMoveArg {
-    Vec3d *pos;
-    Matrix *matrix;
-    Plane *owner;
-} PartMoveArg;
 
 /* argument of the MagicObj definition parsers */
 typedef struct DefParseArg {

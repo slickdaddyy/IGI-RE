@@ -40,7 +40,7 @@ HOOK(0x4F2290, Weapon_DeleteAll);
 
 void Weapon_Move(Task *w, Vec3d *pos, Matrix *m)
 {
-    MoveMsg msg = {pos, m};
+    MoveArg msg = {pos, m};
 
     HANDLER(gWeaponMoveEvent, w->type)(w, &msg);
 }

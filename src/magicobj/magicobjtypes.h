@@ -41,4 +41,23 @@ typedef struct ObjInfo {
 } ObjInfo;
 _Static_assert(offsetof(ObjInfo, name) == 0x50, "ObjInfo");
 
+/* sent to children with the RigidDynCubeObj event 4 */
+typedef struct MoveArg {
+    Vec3d *pos;
+    Matrix *matrix;
+} MoveArg;
+
+/* a MoveArg with the object the parts belong to */
+typedef struct PartMoveArg {
+    Vec3d *pos;
+    Matrix *matrix;
+    void *owner;
+} PartMoveArg;
+
+/* a position and rotation, sent to children with the RigidDynCubeObj event 2 */
+typedef struct Frame {
+    Vec3d pos;
+    Matrix matrix;
+} Frame;
+
 #endif

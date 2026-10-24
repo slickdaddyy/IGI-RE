@@ -72,7 +72,7 @@ HOOK(0x4361D0, Rudder_Init);
    matrix = parent * local * RotX(angle) */
 void Rudder_Move(Part *o, PartMoveArg *a)
 {
-    VehicleConfig *cfg = a->owner->v.phys->data;
+    VehicleConfig *cfg = ((Plane *)a->owner)->v.phys->data;
     RudderDef *def;
     const float *m = a->matrix->m, *l, *p, *r;
     long double x = m[2] * o->offset.z + m[1] * o->offset.y + m[0] * o->offset.x;
@@ -95,22 +95,22 @@ void Rudder_Move(Part *o, PartMoveArg *a)
     angle = scale;
     switch (def->kind) {
     case RUDDER_TAILERON_LEFT:
-        v = k * a->owner->v.turn[1] - k * a->owner->v.turn[0];
+        v = k * ((Plane *)a->owner)->v.turn[1] - k * ((Plane *)a->owner)->v.turn[0];
         angle = v;
         if (v >= cfg->axis[0].rate)
             angle = cfg->axis[0].rate;
         break;
     case RUDDER_TAILERON_RIGHT:
-        v = k * a->owner->v.turn[1] + k * a->owner->v.turn[0];
+        v = k * ((Plane *)a->owner)->v.turn[1] + k * ((Plane *)a->owner)->v.turn[0];
         angle = v;
         if (v >= cfg->axis[0].rate)
             angle = cfg->axis[0].rate;
         break;
     case RUDDER_AILERON:
-        angle = x87_neg(k * a->owner->v.turn[0]);
+        angle = x87_neg(k * ((Plane *)a->owner)->v.turn[0]);
         break;
     case RUDDER_GAMMA:
-        angle = x87_neg(k * a->owner->v.turn[2]);
+        angle = x87_neg(k * ((Plane *)a->owner)->v.turn[2]);
         break;
     }
     Matrix_SetRotX(&rot, angle);

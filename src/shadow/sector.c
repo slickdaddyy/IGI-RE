@@ -311,12 +311,6 @@ void SectorObject_SetModel(SectorObject *so, const char *name)
 }
 HOOK(0x4DEE90, SectorObject_SetModel);
 
-typedef struct MoveArg {
-    Vec3d *pos;
-    Matrix *matrix;
-    Sector *owner;
-} MoveArg;
-
 /* Places each child sector from its local frame, or builds the sectors and
    magic objects first when the model changed. Then tells the magic objects
    of the object and of each sector that they moved. */
@@ -368,7 +362,7 @@ void SectorObject_Update(SectorObject *so)
     }
     s = &so->s;
     do {
-        MoveArg arg;
+        PartMoveArg arg;
 
         arg.pos = &s->o.pos;
         arg.matrix = &s->o.matrix;

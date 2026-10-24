@@ -84,7 +84,7 @@ void Switch_DrawIcon(void *task, char **arg);
 void Switch_Destroy(Switch *s);
 void Switch_AddSymbols(Switch *s);
 void Switch_RemoveSymbols(Switch *s);
-void Switch_MoveHandler(Switch *s, MoveMsg *msg);
+void Switch_MoveHandler(Switch *s, MoveArg *msg);
 
 /* the script pressed the switch */
 void Switch_Press(Switch *s)
@@ -310,10 +310,10 @@ void Switch_RemoveSymbols(Switch *s)
 HOOK(0x445980, Switch_RemoveSymbols);
 
 /* RigidDynCubeObj event 4: moves along with the object it is fixed to */
-void Switch_MoveHandler(Switch *s, MoveMsg *msg)
+void Switch_MoveHandler(Switch *s, MoveArg *msg)
 {
     float scale, radius;
-    MoveMsg out;
+    MoveArg out;
 
     place_from(&s->place, msg->matrix, &s->offset, msg->pos);
     scale = max_scale(&s->o);

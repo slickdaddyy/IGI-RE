@@ -127,7 +127,7 @@ void Gun_DrawHandler(Gun *g);
 void Gun_GetParamTableHandler(Gun *g, void **out);
 void Gun_ParamChangedHandler(Gun *g);
 void Gun_GetStateHandler(Gun *g, char **out);
-void Gun_MoveHandler(Gun *g, MoveMsg *msg);
+void Gun_MoveHandler(Gun *g, PartMoveArg *msg);
 void GunCasing_CreateHandler(GunCasing *c);
 void GunCasing_RunHandler(GunCasing *c);
 void GunCasing_DeleteHandler(GunCasing *c);
@@ -511,7 +511,7 @@ void Gun_GetStateHandler(Gun *g, char **out)
 }
 HOOK(0x478A80, Gun_GetStateHandler);
 
-void Gun_MoveHandler(Gun *g, MoveMsg *msg)
+void Gun_MoveHandler(Gun *g, PartMoveArg *msg)
 {
     if (g->inWorld) {
         float s = max_scale(&g->o);

@@ -31,12 +31,6 @@ typedef struct StatGun {
     char pad21D[3];
 } StatGun;
 
-/* sent with the RigidDynCubeObj move event */
-typedef struct MoveMsg {
-    Vec3d *pos;
-    Matrix *matrix;
-} MoveMsg;
-
 /* the search used to pick what a human can use (see 0x416AD0) */
 typedef struct UseQuery {
     Task *human;
@@ -123,7 +117,7 @@ void StationaryGun_Attach(StatGun *o, AttachMsg *m);
 void StationaryGun_Event6(void *task, Human **msg);
 void StationaryGun_Event14(StatGun *o, int *out);
 void StationaryGun_GetParams(void *task, void **out);
-void StationaryGun_Move(StatGun *o, MoveMsg *m);
+void StationaryGun_Move(StatGun *o, MoveArg *m);
 void StationaryGun_Detect(StatGun *o, DetectMsg *m);
 void StationaryGun_Fire(StatGun *o, char fire);
 void StationaryGun_Aim(StatGun *o);
@@ -489,10 +483,10 @@ void StationaryGun_GetParams(void *task, void **out)
 HOOK(0x474F50, StationaryGun_GetParams);
 
 /* the carrier moved: move the base along and tell the children */
-void StationaryGun_Move(StatGun *o, MoveMsg *m)
+void StationaryGun_Move(StatGun *o, MoveArg *m)
 {
     float *f = m->matrix->m;
-    MoveMsg out;
+    MoveArg out;
     Vec3d p;
     Matrix t;
     float radius;

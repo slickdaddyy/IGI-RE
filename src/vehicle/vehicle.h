@@ -27,12 +27,6 @@ typedef struct PartCreateArg {
     void *params;
 } PartCreateArg;
 
-/* sent by the vehicle each frame to move its parts along */
-typedef struct PartMoveArg {
-    Vec3d *pos;
-    Matrix *matrix;
-} PartMoveArg;
-
 /* the argument of the script argument handlers */
 typedef struct PartScriptArg {
     void *out;

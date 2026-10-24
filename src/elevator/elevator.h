@@ -12,12 +12,6 @@
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-/* sent to children with the RigidDynCubeObj event 4 */
-typedef struct MoveArg {
-    Vec3d *pos;
-    Matrix *matrix;
-} MoveArg;
-
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
