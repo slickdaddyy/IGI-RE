@@ -12,6 +12,7 @@
 #include "humanai/humanaitypes.h"
 #include "graphnode/graphnodetypes.h"
 #include "weapon/weapontypes.h"
+#include "patrol/patroltypes.h"
 
 typedef struct Human {
     Task task;
@@ -21,19 +22,6 @@ typedef struct Human {
     char unk4EC[0x7B4 - 0x4EC];
     Task **statGun;
 } Human;
-
-/* {path, cur, end, move, prevMove, ...}, see the patrol notes */
-typedef struct PatrolRoute {
-    void *path;
-    void *cur;
-    void *end;
-    void *move;
-    void *prevMove;
-    char crouch;
-    char walk;
-    char unk16[2];
-    int timer;
-} PatrolRoute;
 
 typedef struct HumanAI {
     Task task;
@@ -181,7 +169,6 @@ typedef char (*AIGraphFn)(HumanAI *ai, GraphNode *node, void *ctx);
 
 _Static_assert(offsetof(Human, weapons) == 0x4C4, "Human");
 _Static_assert(offsetof(Human, statGun) == 0x7B4, "Human");
-_Static_assert(sizeof(PatrolRoute) == 0x1C, "PatrolRoute");
 _Static_assert(offsetof(HumanAI, routes) == 0x1518, "routes");
 _Static_assert(offsetof(HumanAI, target) == 0x3AA8, "target");
 _Static_assert(offsetof(HumanAI, alarmTriggerId) == 0x3AC0, "alarmTriggerId");

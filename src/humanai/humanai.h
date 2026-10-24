@@ -74,16 +74,6 @@ typedef struct AIDetectView {
 #define AIMSG_SAME_TEAM  0x20
 #define AIMSG_OTHER_TEAM 0x40
 
-/* a queued message, waiting for the script */
-typedef struct AIEvent {
-    Node node;
-    int type;
-    int team;
-    Vec3d pos;
-    Task **from;
-    Task **about;
-} AIEvent;
-
 typedef struct HumanAI HumanAI;
 typedef struct AIAction AIAction;
 typedef void (*AIActionFn)(HumanAI *ai, AIAction *a);
@@ -105,19 +95,6 @@ struct AIAction {
     char used;
     char unk2D[3];
 };
-
-/* a task several AIs are after, with what each of them is doing about it */
-typedef struct AITarget {
-    Node node;
-    char used;
-    char unk09[3];
-    Task **ref;
-    Task *humans[32];
-    int states[32];
-    Vec3d pos;
-    int count;
-    int removed;
-} AITarget;
 
 #define AI_EVENT_TYPES 24
 #define AI_POOL 32
@@ -279,9 +256,7 @@ _Static_assert(offsetof(Human, unk7C4) == 0x7C4, "Human");
 _Static_assert(offsetof(Human, unkD00) == 0xD00, "Human");
 _Static_assert(sizeof(AIView) == 0xC0, "AIView");
 _Static_assert(sizeof(AIDetectView) == 0x78, "AIDetectView");
-_Static_assert(sizeof(AIEvent) == 0x30, "AIEvent");
 _Static_assert(sizeof(AIAction) == 0x30, "AIAction");
-_Static_assert(sizeof(AITarget) == 0x130, "AITarget");
 _Static_assert(offsetof(HumanAI, eventPool) == 0xF0, "eventPool");
 _Static_assert(offsetof(HumanAI, events) == 0x6F0, "events");
 _Static_assert(offsetof(HumanAI, eventEnabled) == 0x8E4, "eventEnabled");

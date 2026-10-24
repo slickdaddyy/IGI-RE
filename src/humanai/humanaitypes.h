@@ -79,4 +79,27 @@ typedef struct AIParam {
     CombatData d;
 } AIParam;
 
+typedef struct AIEvent {
+    Node node;
+    int type;
+    int team;
+    Vec3d pos;
+    Task **from;
+    Task **about;
+} AIEvent;
+_Static_assert(sizeof(AIEvent) == 0x30, "AIEvent");
+
+typedef struct AITarget {
+    Node node;
+    char used;
+    char unk09[3];
+    Task **ref;
+    Task *humans[32];
+    int states[32];
+    Vec3d pos;
+    int count;
+    int removed;
+} AITarget;
+_Static_assert(sizeof(AITarget) == 0x130, "AITarget");
+
 #endif

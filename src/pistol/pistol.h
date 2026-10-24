@@ -8,6 +8,7 @@
 #include "loadscreen/loadscreentypes.h"
 #include "soldier/soldiertypes.h"
 #include "humanplayer/humanplayertypes.h"
+#include "humanai/humanaitypes.h"
 
 typedef struct Soldier Soldier;
 typedef struct SoldierSM SoldierSM;
@@ -29,11 +30,6 @@ enum {
     SB_DEAD = 0x20000,
     SB_RUN = 0x40000,
 };
-
-typedef struct AITarget {
-    char unk0[0xC];
-    void **task;
-} AITarget;
 
 /* The AI brain that drives a soldier (Soldier.ai). */
 typedef struct SoldierAI {

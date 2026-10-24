@@ -98,16 +98,6 @@ ORIG(0x509890, char, GraphNode_HasCriteria, (void *node, unsigned mask));
 #define AI_FIRE_AT_NODE (FN(0x48ECA0, AIFireAtNode_Start))
 #define AI_FIRE_AT_TASK (FN(0x48EDE0, AIFireAtTask_Start))
 
-/* an entry of the event stack */
-typedef struct AIEvent {
-    Node node;
-    int type;           /* AIEVENT_* */
-    int unkC;
-    Vec3d pos;          /* 0x10 */
-    Task **source;      /* 0x28 */
-    Task **target;      /* 0x2C */
-} AIEvent;
-
 /* a queued action */
 typedef struct AIAction {
     Node node;
@@ -229,40 +219,6 @@ typedef struct EventData {
 
 _Static_assert(offsetof(EventData, ref) == 0x28, "EventData");
 
-/* the static pools HumanAI_Init sets up; other areas take items from their free lists */
-typedef struct MonitorGraph {
-    Node node;
-    void *graph;
-    List targets;
-} MonitorGraph;
-
-typedef struct AITarget {
-    Node node;
-    char used;
-    char unk09[3];
-    Task **ref;
-    Task *humans[32];
-    int states[32];
-    Vec3d pos;
-    int count;
-    int removed;
-} AITarget;
-
-typedef struct NodeGrid {
-    Node node;
-    int graph;
-    int nodeId;
-    int refs;
-    int w;
-    int h;
-    int unk1C;
-    int cells[20][20];
-} NodeGrid;
-
-_Static_assert(sizeof(MonitorGraph) == 0x18, "MonitorGraph");
-_Static_assert(sizeof(AITarget) == 0x130, "AITarget");
-_Static_assert(sizeof(NodeGrid) == 0x660, "NodeGrid");
-
 #define AI_MONITOR_GRAPHS 64
 #define AI_MONITOR_TARGETS 128
 #define AI_CLAIMS 16
@@ -368,7 +324,7 @@ void HumanAI_Init(void)
         g->node.next = NULL;
         List_AddTail(&gGridsFree, g);
         memset(g->cells, 0, sizeof(g->cells));
-        g->graph = -1;
+        g->graphId = -1;
         g->nodeId = -1;
         g->w = 0;
         g->h = 0;
@@ -583,8 +539,8 @@ ScriptValue *AIAction_FallFlat(ScriptValue *out, void *data, void *args)
     if (GraphNode_HasCriteria(node, AIGraph_GetStairCriteria()))
         return ret_int(out, 2);
     e = AIEvent_GetCurrent();
-    if (e->target && *e->target) {
-        Task *t = *e->target;
+    if (e->about && *e->about) {
+        Task *t = *e->about;
         Vec3d *a = DynCubeObj_GetPosition(gAICurrent->task.parent);
 
         if (!(Vec3d_Distance(DynCubeObj_GetPosition(t), a) >= gAICurrent->fallFlatRange))
@@ -722,11 +678,11 @@ ScriptValue *AIAction_KickGrenade(ScriptValue *out, void *data, void *args)
     AIEvent *e = AIEvent_GetCurrent();
     int flags = Script_GetArgInt(args, 0);
 
-    if (*e->source) {
+    if (*e->from) {
         EventData *d = HumanAI_AllocParam(gAICurrent);
 
         d->pos = e->pos;
-        d->ref = TaskRef_Add(*e->source);
+        d->ref = TaskRef_Add(*e->from);
         HumanAI_PushAction(AI_KICK_GRENADE, d, flags);
     }
     return ret_int(out, 1);
@@ -759,14 +715,14 @@ ScriptValue *AIAction_SetCombat(ScriptValue *out, void *data, void *args)
     AIEvent *e = AIEvent_GetCurrent();
     int flags = Script_GetArgInt(args, 0);
 
-    if (e && e->target && *e->target) {
+    if (e && e->about && *e->about) {
         d->pos = e->pos;
         d->unk24.target = NULL;
         d->unk20.source = NULL;
-        if (e->source && *e->source)
-            d->unk20.source = TaskRef_Add(*e->source);
-        if (e->target && *e->target)
-            d->unk24.target = TaskRef_Add(*e->target);
+        if (e->from && *e->from)
+            d->unk20.source = TaskRef_Add(*e->from);
+        if (e->about && *e->about)
+            d->unk24.target = TaskRef_Add(*e->about);
         HumanAI_PushAction(AI_SET_COMBAT, d, flags);
     }
     return ret_int(out, 1);
@@ -1165,7 +1121,7 @@ ScriptValue *AIFunction_SendResponse(ScriptValue *out, void *data, void *args)
         for (;;)
             ;
     }
-    HumanAI_SendSimple(*e->source, 6, 0x24);
+    HumanAI_SendSimple(*e->from, 6, 0x24);
     return ret_int(out, 0);
 }
 HOOK(0x44EE40, AIFunction_SendResponse);

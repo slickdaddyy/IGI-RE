@@ -21,29 +21,9 @@ typedef struct ViewObj {
     Matrix matrix;
 } ViewObj;
 
-/* 20 x 20 counters spread around a graph node so AIs pick different spots */
-typedef struct NodeGrid {
-    Node node;
-    int graph;
-    int nodeId;
-    int refs;
-    int w;
-    int h;
-    int unk1C;
-    int cells[20][20];
-} NodeGrid;
-
-_Static_assert(sizeof(NodeGrid) == 0x660, "NodeGrid");
-
 typedef struct GridStamp {
     int dx, dy, weight;
 } GridStamp;
-
-typedef struct MonitorGraph {
-    Node node;
-    Graph *graph;
-    List targets;
-} MonitorGraph;
 
 ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x4148F0, long double, Vec3d_PitchAngle, (Vec3d v));
@@ -156,7 +136,7 @@ NodeGrid *NodeGrid_Find(int graph, int nodeId)
     NodeGrid *g;
 
     for (g = (NodeGrid *)gGridsUsed.head; g->node.next; g = (NodeGrid *)g->node.next)
-        if (g->graph == graph && g->nodeId == nodeId)
+        if (g->graphId == graph && g->nodeId == nodeId)
             return g;
     return NULL;
 }
@@ -189,7 +169,7 @@ static NodeGrid *NodeGrid_New(Graph *graph, int nodeId, GraphNode *node, int get
     if (!getNodeFirst)
         node = Graph_GetNode(graph, nodeId);
     g->refs = 0;
-    g->graph = graph->id;
+    g->graphId = graph->id;
     g->nodeId = nodeId;
     g->w = x87_fistp(node->diameter * kHalfF);
     g->h = x87_fistp(node->diameter * kHalfF);

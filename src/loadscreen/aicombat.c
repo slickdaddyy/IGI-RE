@@ -16,6 +16,7 @@
 #include "statgun/statguntypes.h"
 #include "graphnode/graphnodetypes.h"
 #include "weapon/weapontypes.h"
+#include "patrol/patroltypes.h"
 
 FN_EXTERN(AICombat_End);
 FN_EXTERN(AICombat_KneelFire);
@@ -39,28 +40,6 @@ typedef struct Human {
     char unk4D8[0x7B4 - 0x4D8];
     Task **statGun;
 } Human;
-
-/* one cell grid per graph node, so AIs at the same node spread out */
-typedef struct NodeGrid {
-    Node node;
-    int graphId;
-    int nodeId;
-    int refs;
-    int w, h;
-    int unk1C;
-    int cells[20][20];
-} NodeGrid;
-
-typedef struct AITarget {
-    char unk0[0x110];
-    Vec3d pos;
-} AITarget;
-
-typedef struct AIEvent {
-    Node node;
-    char unk8[0x24];
-    Task **about;
-} AIEvent;
 
 typedef struct HumanAI HumanAI;
 typedef struct AIAction AIAction;
@@ -167,8 +146,6 @@ struct HumanAI {
 _Static_assert(offsetof(Human, weapons) == 0x4C4, "weapons");
 _Static_assert(offsetof(Human, aimError) == 0x4D4, "aimError");
 _Static_assert(offsetof(Human, statGun) == 0x7B4, "statGun");
-_Static_assert(offsetof(NodeGrid, cells) == 0x20, "cells");
-_Static_assert(offsetof(AIEvent, about) == 0x2C, "about");
 _Static_assert(offsetof(AIAction, param) == 0x28, "param");
 _Static_assert(offsetof(HumanAI, viewLength) == 0xB0, "viewLength");
 _Static_assert(offsetof(HumanAI, eventCounts) == 0x87C, "eventCounts");

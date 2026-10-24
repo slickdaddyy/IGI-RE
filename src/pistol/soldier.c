@@ -345,15 +345,15 @@ void Soldier_MeleeUpdate(SoldierSM *sm, Soldier *h)
         return;
     if (h->unk53C == Anim_GetId(h->anim, 0) && h->unk538 == 0xC && !s->meleeDone) {
         s->meleeDone = 1;
-        if (!(Random_Float(Game_GetRandom()) > ai->meleeChance) && ai->target && ai->target->task &&
-            *ai->target->task) {
+        if (!(Random_Float(Game_GetRandom()) > ai->meleeChance) && ai->target && ai->target->ref &&
+            *ai->target->ref) {
             SoldierPunch p;
             void *t;
             TaskHandler fn;
 
             p.damage = ai->meleeDamage;
             p.attacker = h;
-            t = *ai->target->task;
+            t = *ai->target->ref;
             fn = TASK_HANDLER(Human_GetPunchEvent(), *(uint16_t *)((char *)t + 0x1C));
             if (fn)
                 fn(t, &p);
