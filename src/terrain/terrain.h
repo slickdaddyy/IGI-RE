@@ -12,8 +12,6 @@
 #define DYNCUBE_MIN_SIZE 0x2000
 #define DYNCUBE_MAX_SIZE 0x40000000
 
-typedef struct DynCubeObj DynCubeObj;
-
 /* Octree node. Children are indexed by x | y << 1 | z << 2, where each bit
    is the coordinate bit equal to the node's size. */
 typedef struct DynCubeNode {

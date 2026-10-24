@@ -8,8 +8,6 @@
 #include "sysmisc/sysmisctypes.h"
 #include "graphnode/graphnodetypes.h"
 
-typedef struct GraphStream GraphStream;
-
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4B0D60, void, Mem_PushMode, (int mode));

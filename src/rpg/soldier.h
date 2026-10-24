@@ -10,9 +10,6 @@
 #include "humanplayer/humanplayertypes.h"
 #include "humanai/humanaitypes.h"
 
-typedef struct Soldier Soldier;
-typedef struct SoldierSM SoldierSM;
-typedef void (*SoldierStateFn)(SoldierSM *sm, Soldier *h);
 typedef void (*TaskHandler)(void *task, void *arg);
 
 extern void *gTaskHandlers[][0x180];

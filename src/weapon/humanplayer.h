@@ -9,8 +9,6 @@
 #include "humanplayer/humanplayertypes.h"
 #include "viewcam/viewcamtypes.h"
 
-typedef struct HumanPlayer HumanPlayer;
-
 #define HUMAN_DEAD 0x20000
 
 enum {

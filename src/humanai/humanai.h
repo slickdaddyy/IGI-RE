@@ -27,8 +27,6 @@ typedef void (*TaskFn)(void *task, void *arg);
 #define AIMSG_SAME_TEAM  0x20
 #define AIMSG_OTHER_TEAM 0x40
 
-typedef struct HumanAI HumanAI;
-typedef struct AIAction AIAction;
 typedef void (*AIActionFn)(HumanAI *ai, AIAction *a);
 
 /* AIAction.flags */

@@ -10,9 +10,6 @@
 #include "humanplayer/humanplayertypes.h"
 #include "humanai/humanaitypes.h"
 
-typedef struct Soldier Soldier;
-typedef struct SoldierSM SoldierSM;
-typedef void (*SoldierStateFn)(SoldierSM *sm, Soldier *h);
 typedef void (*TaskHandler)(void *task, void *arg);
 
 extern void *gTaskHandlers[][0x180];
@@ -32,7 +29,6 @@ enum {
 };
 
 #pragma pack(pop)
-
 
 /* fcomp/fnstsw/test ah,0x40: equal, or unordered */
 static inline int is_zero(long double x)

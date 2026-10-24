@@ -33,8 +33,6 @@ FN_EXTERN(AICombat_StandRollLeft);
 FN_EXTERN(AICombat_StandRollRight);
 FN_EXTERN(AICombat_StandThrowGrenade);
 
-typedef struct HumanAI HumanAI;
-typedef struct AIAction AIAction;
 typedef void (*AIActionFn)(HumanAI *ai, AIAction *a);
 typedef char (*AIStepFn)(HumanAI *ai, AIAction *a);
 

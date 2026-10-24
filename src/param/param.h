@@ -22,8 +22,6 @@ typedef struct ParamType {
     int used;
 } ParamType;
 
-typedef struct ScriptArgs ScriptArgs;
-
 /* script constants whose names match one of the regex patterns */
 typedef struct ParamEnum {
     List patterns;

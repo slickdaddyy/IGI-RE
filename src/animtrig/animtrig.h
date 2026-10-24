@@ -53,8 +53,6 @@ extern int gTaskStackTop;
         } while (c_);                                                   \
     } while (0)
 
-typedef struct ScriptArgs ScriptArgs;
-
 extern const char gScriptEmptyString[];
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));

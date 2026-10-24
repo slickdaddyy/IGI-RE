@@ -6,7 +6,6 @@
 #include "math/vecmath.h"
 #include "boneobj/boneobjtypes.h"
 
-typedef struct Bone Bone;
 typedef struct BlendNode BlendNode;
 
 /* An animation event handed to the game: sound or effect at an offset from the bone */

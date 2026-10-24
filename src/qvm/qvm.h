@@ -6,7 +6,6 @@
 #include "script/scripttypes.h"
 #include "qvm/qvmtypes.h"
 
-typedef struct ScriptArgs ScriptArgs;
 typedef ScriptValue *(*ScriptHandler)(ScriptValue *out, void *data, ScriptArgs *args);
 
 /* Stack slot types */

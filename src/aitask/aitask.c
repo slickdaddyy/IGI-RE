@@ -15,7 +15,6 @@
 #include "patrol/patroltypes.h"
 #include "humanbase/humanbasetypes.h"
 
-typedef struct AIAction AIAction;
 typedef void (*AIActionFn)(HumanAI *ai, AIAction *a);
 
 /* the parameter blocks, each after an 8 byte list node */

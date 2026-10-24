@@ -37,8 +37,6 @@ ORIG(0x497700, void, Scene_DrawAll, (void));
 ORIG(0x4977F0, void, Frame_Reset, (void));
 ORIG(0x4C1780, void, Debug_Log, (void));
 
-typedef struct Sprite Sprite;
-
 ORIG(0x4B6EC0, Text *, Text_New, (Sprite *s, float x, float y, const char *str));
 ORIG(0x4B6F30, void, Text_Free, (Text *t));
 ORIG(0x4B6F50, void, Text_DrawAlt, (Text *t));

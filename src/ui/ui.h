@@ -14,8 +14,6 @@
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-typedef struct Sprite Sprite;
-
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;

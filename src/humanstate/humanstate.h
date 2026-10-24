@@ -7,8 +7,6 @@
 #include "humanbase/humanbasetypes.h"
 #include "humanplayer/humanplayertypes.h"
 
-typedef struct HumanPlayer HumanPlayer;
-typedef struct HumanPlayerSM HumanPlayerSM;
 typedef void (*HumanStateFn)(HumanPlayerSM *sm, HumanPlayer *h);
 
 /* HumanPlayerSM.input */

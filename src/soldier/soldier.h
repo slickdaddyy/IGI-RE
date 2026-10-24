@@ -20,8 +20,6 @@ typedef void (*TaskHandler1)(void *task);
 extern void *gTaskHandlers[][0x180];
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 
-typedef struct Human Human;
-typedef struct HumanSM HumanSM;
 typedef void (*HumanStateFn)(HumanSM *sm, Human *h);
 
 /* HumanSM.bits of a HumanSoldier */

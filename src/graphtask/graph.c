@@ -5,8 +5,6 @@
 #include "graphnode/graphnodetypes.h"
 #include "param/paramtypes.h"
 
-typedef struct GraphLink GraphLink;
-
 /* node record size per task type */
 typedef struct GraphNodeSize {
     uint16_t type;

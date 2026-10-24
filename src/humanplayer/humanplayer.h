@@ -12,8 +12,6 @@
 #include "ammotype/ammotypetypes.h"
 #include "viewcam/viewcamtypes.h"
 
-typedef struct HumanPlayerSM HumanPlayerSM;
-typedef struct HumanPlayer HumanPlayer;
 typedef void (*StateFn)(HumanPlayerSM *sm, HumanPlayer *h);
 
 enum {
