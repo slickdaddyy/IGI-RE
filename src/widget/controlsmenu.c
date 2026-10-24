@@ -2,14 +2,15 @@
 #include "igi.h"
 #include "widget/widget.h"
 #include "script/scripttypes.h"
+#include "config/configtypes.h"
 
 ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
 ORIG(0x4B8920, void, Script_UnregisterSymbol, (const char *name));
 ORIG(0x4B7EE0, void, Script_RegisterBool8, (const char *name, char *value));
 ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
-ORIG(0x4061B0, struct KeyBinding *, Config_GetDefaultKeys, (void));
-ORIG(0x4061C0, struct KeyBinding *, Profile_GetKeys, (void));
+ORIG(0x4061B0, struct InputRemap *, Config_GetDefaultKeys, (void));
+ORIG(0x4061C0, struct InputRemap *, Profile_GetKeys, (void));
 ORIG(0x4061E0, int, Profile_GetKeyCount, (void));
 ORIG(0x406240, void, Config_GetKey, (int i, int *value, const char **name));
 ORIG(0x406270, int, Config_GetKeyCount, (void));
@@ -27,13 +28,6 @@ ORIG(0x4B6E90, void, Text_SetString, (Text *t, const char *s));
 ORIG(0x4B6EC0, Text *, Text_New, (Sprite *s, float x, float y, const char *str));
 ORIG(0x4B6F30, void, Text_Free, (Text *t));
 ORIG(0x4B6F50, void, Text_DrawAlt, (Text *t));
-
-/* one action's binding in a player profile */
-typedef struct KeyBinding {
-    int action;
-    int device; /* 1 = keyboard, 3 = joystick button */
-    int key;
-} KeyBinding;
 
 #define ROWS 64
 #define ROW_HEIGHT 20
@@ -318,12 +312,12 @@ int ControlsMenu_FindKey(int device, int key);
 /* the defaults are indexed like the profile's bindings */
 void ControlsMenu_LoadDefaults(ControlsMenu *cm)
 {
-    KeyBinding *defaults = Config_GetDefaultKeys();
+    InputRemap *defaults = Config_GetDefaultKeys();
     int n = Config_GetActionCount();
     int i;
 
     for (i = 0; i < n; i++) {
-        KeyBinding *k = &defaults[ControlsMenu_FindBinding(i)];
+        InputRemap *k = &defaults[ControlsMenu_FindBinding(i)];
 
         ControlsMenu_SetBinding(cm, i, ControlsMenu_FindKey(k->device, k->key));
     }
@@ -334,7 +328,7 @@ HOOK(0x4237C0, ControlsMenu_LoadDefaults);
 int ControlsMenu_FindBinding(int action)
 {
     int n = Profile_GetKeyCount();
-    KeyBinding *k = Profile_GetKeys();
+    InputRemap *k = Profile_GetKeys();
     int value, i;
 
     Config_GetAction(action, &value, NULL);
@@ -513,7 +507,7 @@ HOOK(0x423D30, ControlsMenu_Deactivate);
 /* shows the active profile's bindings */
 void ControlsMenu_Load(ControlsMenu *cm)
 {
-    KeyBinding *keys = Profile_GetKeys();
+    InputRemap *keys = Profile_GetKeys();
     int n = Config_GetActionCount();
     int i;
 
@@ -533,13 +527,13 @@ HOOK(0x423DB0, ControlsMenu_Load);
 /* writes the bindings back to the active profile */
 void ControlsMenu_Save(ControlsMenu *cm)
 {
-    KeyBinding *keys = Profile_GetKeys();
+    InputRemap *keys = Profile_GetKeys();
     int n = Config_GetActionCount();
     int i;
 
     for (i = 0; i < n; i++) {
         unsigned int value = ControlsMenu_GetKeyValue(cm->bindings[i]);
-        KeyBinding *k = &keys[ControlsMenu_FindBinding(i)];
+        InputRemap *k = &keys[ControlsMenu_FindBinding(i)];
 
         k->device = (int)value >> 30 & 3;
         k->key = value & 0x3FFFFFFF;

@@ -242,9 +242,9 @@ HOOK(0x4038E0, GOInMouSens);
 
 ScriptValue *GOGfxDisp(ScriptValue *out, void *data, void *args)
 {
-    last_profile()->gfx.width = Script_GetArgInt(args, 0);
-    last_profile()->gfx.height = Script_GetArgInt(args, 1);
-    last_profile()->gfx.depth = Script_GetArgInt(args, 2);
+    last_profile()->gfx.display.width = Script_GetArgInt(args, 0);
+    last_profile()->gfx.display.height = Script_GetArgInt(args, 1);
+    last_profile()->gfx.display.depth = Script_GetArgInt(args, 2);
     return ret_int(out, 0);
 }
 HOOK(0x403950, GOGfxDisp);
@@ -284,9 +284,9 @@ ScriptValue *Config_ResetGraphicOptions(ScriptValue *out)
     Profile_GetActive()->gfx.unk11 = 1;
     Profile_GetActive()->gfx.unk12 = 1;
     Profile_GetActive()->gfx.transparency = 1;
-    Profile_GetActive()->gfx.height = 480;
-    Profile_GetActive()->gfx.width = 640;
-    Profile_GetActive()->gfx.depth = 32;
+    Profile_GetActive()->gfx.display.height = 480;
+    Profile_GetActive()->gfx.display.width = 640;
+    Profile_GetActive()->gfx.display.depth = 32;
     Profile_GetActive()->gfx.device_desc[0] = 0;
     Profile_GetActive()->gfx.device[0] = 0;
     Profile_GetActive()->gfx.gamma = 1.0f;
@@ -477,9 +477,9 @@ ScriptValue *Config_GraphicOptionsSetResolution(ScriptValue *out, void *data, vo
 {
     int v = Script_GetArgInt(args, 0);
 
-    Config_GetGraphicOptions()->depth = v >> 26 & 0x3F;
-    Config_GetGraphicOptions()->width = v >> 13 & 0x1FFF;
-    Config_GetGraphicOptions()->height = v & 0x1FFF;
+    Config_GetGraphicOptions()->display.depth = v >> 26 & 0x3F;
+    Config_GetGraphicOptions()->display.width = v >> 13 & 0x1FFF;
+    Config_GetGraphicOptions()->display.height = v & 0x1FFF;
     return ret_int(out, 0);
 }
 HOOK(0x404510, Config_GraphicOptionsSetResolution);
@@ -502,9 +502,9 @@ static unsigned absdiff(int a, int b)
 ScriptValue *Config_GraphicOptionsGetResolution(ScriptValue *out, void *data, void *args)
 {
     int dev = Script_GetArgInt(args, 0);
-    int width = Config_GetGraphicOptions()->width;
-    int height = Config_GetGraphicOptions()->height;
-    int depth = Config_GetGraphicOptions()->depth;
+    int width = Config_GetGraphicOptions()->display.width;
+    int height = Config_GetGraphicOptions()->display.height;
+    int depth = Config_GetGraphicOptions()->display.depth;
     ConfigDevice *d = &gDrivers[dev];
     ConfigDisplayMode *best = NULL;
     int best_score = 0x7FFFFFFF;
