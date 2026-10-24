@@ -29,7 +29,7 @@ ORIG(0x464BD0, void, HumanView_UpdateBody, (void *view, Soldier *h));
 ORIG(0x465800, void, HumanView_GetEye, (double *pos, void *view));
 ORIG(0x465970, void, HumanView_Shake, (void *view, float amount, float angle, int frames));
 ORIG(0x489C60, int, Human_GetHitZone, (Soldier *h, SoldierHit *hit));
-ORIG(0x489E10, HitAnims *, HumanDamage_GetZone, (SoldierDamage *d, int part));
+ORIG(0x489E10, HitAnims *, HumanDamage_GetZone, (HumanDamage *d, int part));
 ORIG(0x4B3100, void, Vec3d_Normalize, (double *v));
 ORIG(0x4B3130, long double, Vec3d_Length, (const double *v));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
@@ -147,7 +147,7 @@ HOOK(0x4550B0, SoldierFemale_Update);
 
 static void Female_AddDamage(SoldierF *f, int part, long double dmg)
 {
-    SoldierDamage *d = &f->s.damage;
+    HumanDamage *d = &f->s.damage;
 
     d->part[part].dmg = dmg + d->part[part].dmg;
     d->total = dmg + d->total;
@@ -156,7 +156,7 @@ static void Female_AddDamage(SoldierF *f, int part, long double dmg)
 void SoldierFemale_HitHandler(Soldier *h, SoldierHit *hit)
 {
     SoldierF *f = (SoldierF *)h;
-    SoldierDamage *d = &h->damage;
+    HumanDamage *d = &h->damage;
     double scratch[3];
     char headshot = 0;
     int part;
@@ -198,7 +198,7 @@ HOOK(0x4553E0, SoldierFemale_HitHandler);
 void SoldierFemale_BlastHandler(Soldier *h, SoldierBlast *e)
 {
     SoldierF *f = (SoldierF *)h;
-    SoldierDamage *d = &h->damage;
+    HumanDamage *d = &h->damage;
     double cam[3], v[3];
     long double k, r, sum;
     uint32_t bits;
@@ -248,7 +248,7 @@ HOOK(0x455570, SoldierFemale_BlastHandler);
 void SoldierFemale_PunchHandler(Soldier *h, SoldierPunch *p)
 {
     SoldierF *f = (SoldierF *)h;
-    SoldierDamage *d = &h->damage;
+    HumanDamage *d = &h->damage;
     double fwd[3], v[3], *a, *b;
     long double dmg, sum;
     int part;

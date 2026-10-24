@@ -73,7 +73,7 @@ ORIG(0x465970, void, HumanView_Shake, (void *view, float amount, float angle, in
 ORIG(0x47E990, uint8_t, FlashBang_GetEvent, (void));
 ORIG(0x489C30, void, Human_InitDamage, (Soldier *h, void *speeds));
 ORIG(0x489C60, int, Human_GetHitZone, (Soldier *h, SoldierHit *hit));
-ORIG(0x489E10, HitAnims *, HumanDamage_GetZone, (SoldierDamage *d, int part));
+ORIG(0x489E10, HitAnims *, HumanDamage_GetZone, (HumanDamage *d, int part));
 ORIG(0x489E70, void, Human_PlayAnimSlot, (Soldier *h, int slot, float blend));
 ORIG(0x489EA0, void, Human_PlayAnim, (Soldier *h, int anim, int loop, float blend));
 ORIG(0x48A320, void, Human_EnableLook, (Soldier *h));
@@ -791,7 +791,7 @@ static uint32_t ps_flinch(SoldierP *s, long double dmg, uint32_t bits, int *flin
 void SoldierPistol_HitHandler(Soldier *h, SoldierHit *hit)
 {
     SoldierP *s = (SoldierP *)h;
-    SoldierDamage *d = &h->damage;
+    HumanDamage *d = &h->damage;
     double scratch[3];
     char headshot = 0;
     int part, flinched;
@@ -829,7 +829,7 @@ HOOK(0x45A230, SoldierPistol_HitHandler);
 void SoldierPistol_BlastHandler(Soldier *h, SoldierBlast *e)
 {
     SoldierP *s = (SoldierP *)h;
-    SoldierDamage *d = &h->damage;
+    HumanDamage *d = &h->damage;
     double cam[3], v[3];
     long double k, r;
     uint32_t bits;
@@ -877,7 +877,7 @@ HOOK(0x45A3D0, SoldierPistol_BlastHandler);
 void SoldierPistol_PunchHandler(Soldier *h, SoldierPunch *p)
 {
     SoldierP *s = (SoldierP *)h;
-    SoldierDamage *d = &h->damage;
+    HumanDamage *d = &h->damage;
     double fwd[3], v[3], *a, *b;
     long double dmg;
     int part, flinched;

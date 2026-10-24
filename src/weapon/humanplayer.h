@@ -6,20 +6,9 @@
 #include "igi.h"
 #include "types.h"
 #include "humanstate/humanstatetypes.h"
+#include "loadscreen/loadscreentypes.h"
 
 typedef struct HumanPlayer HumanPlayer;
-
-/* Damage per body part. Hits add mult * damage to a part and to total. */
-typedef struct HumanDamage {
-    float total;
-    float max;
-    float unk08;
-    struct {
-        float dmg;
-        float mult;
-    } part[17];
-    int hitZone;
-} HumanDamage;
 
 #define HUMAN_DEAD 0x20000
 

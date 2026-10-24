@@ -24,4 +24,16 @@ typedef struct SightFilter {
     Task *target;
 } SightFilter;
 
+typedef struct HumanDamage {
+    float total;
+    float max;
+    HitAnims *zones;
+    struct {
+        float dmg;
+        float mult;
+    } part[17];
+    int hitZone;
+} HumanDamage;
+_Static_assert(sizeof(HumanDamage) == 0x98, "HumanDamage");
+
 #endif

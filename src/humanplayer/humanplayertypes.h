@@ -8,6 +8,9 @@ typedef struct HumanMotion {
     uint32_t flags;
     char unk8[0x44];
     int unk4C[5];
+    char unk60[0x7F8];
+    float throwPos[3];
 } HumanMotion;
+_Static_assert(sizeof(HumanMotion) == 0x864, "HumanMotion");
 
 #endif

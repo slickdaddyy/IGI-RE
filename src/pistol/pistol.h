@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "loadscreen/loadscreentypes.h"
 #include "soldier/soldiertypes.h"
+#include "humanplayer/humanplayertypes.h"
 
 typedef struct Soldier Soldier;
 typedef struct SoldierSM SoldierSM;
@@ -28,13 +29,6 @@ enum {
     SB_DEAD = 0x20000,
     SB_RUN = 0x40000,
 };
-
-typedef struct SoldierMotion {
-    int unk0;
-    uint32_t flags;
-    char unk8[0x850];
-    float throwPos[3];
-} SoldierMotion;
 
 typedef struct AITarget {
     char unk0[0xC];
@@ -68,7 +62,7 @@ struct Soldier {
     double pos[3];
     char unk38[0x30];
     char anim[8];
-    SoldierMotion *motion;
+    HumanMotion *motion;
     char unk74[4];
     float matrix[9];
     char unk9C[4];
@@ -83,7 +77,7 @@ struct Soldier {
     float input[40];
     char inputLocked;
     char unk251[3];
-    SoldierDamage damage;
+    HumanDamage damage;
     SoldierSM sm;
     void *animSlots;
     char unk33C;
@@ -157,7 +151,7 @@ typedef struct SoldierP {
 #pragma pack(pop)
 
 #define SCHECK(t, f, off) _Static_assert(offsetof(t, f) == (off), #f)
-SCHECK(SoldierMotion, throwPos, 0x858);
+SCHECK(HumanMotion, throwPos, 0x858);
 SCHECK(Soldier, motion, 0x70);
 SCHECK(Soldier, radius, 0xA0);
 SCHECK(Soldier, unkCC, 0xCC);

@@ -10,6 +10,7 @@
 #include "humanai/humanaitypes.h"
 #include "soldier/soldiertypes.h"
 #include "camera/cameratypes.h"
+#include "loadscreen/loadscreentypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
@@ -60,18 +61,6 @@ typedef struct HumanAI {
     char unk3B70[0x2BC];
     int node;
 } HumanAI;
-
-/* damage per body part; hits add mult * damage to a part and to total */
-typedef struct HumanDamage {
-    float total;
-    float max;
-    float unk8;
-    struct {
-        float dmg;
-        float mult;
-    } part[17];
-    int hitZone;
-} HumanDamage;
 
 #define HUMAN_ON_GROUND 0x4
 #define HUMAN_ROOF      0x10

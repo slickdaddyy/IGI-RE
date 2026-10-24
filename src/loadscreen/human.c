@@ -9,17 +9,6 @@
 #include "loadscreen/loadscreentypes.h"
 #include "humanai/humanaitypes.h"
 
-typedef struct HumanDamage {
-    float total;
-    float max;
-    HitAnims *zones;
-    struct {
-        float dmg;
-        float mult;
-    } part[17];
-    int hitZone;
-} HumanDamage;
-
 typedef struct AnimSlot {
     int anim;
     int loop;

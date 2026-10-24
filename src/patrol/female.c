@@ -7,6 +7,7 @@
 #include "patrol/patrol.h"
 #include "loadscreen/loadscreentypes.h"
 #include "soldier/soldiertypes.h"
+#include "humanplayer/humanplayertypes.h"
 
 FN_EXTERN(Human_DeadRun);
 FN_EXTERN(Human_UseRun);
@@ -52,13 +53,6 @@ enum {
     SF_USE,
 };
 
-typedef struct SoldierMotion {
-    int unk0;
-    uint32_t flags;
-    char unk8[0x44];
-    int unk4C[5];
-} SoldierMotion;
-
 typedef struct SoldierAI {
     char unk0[0x3AD0];
     int deathAnim;
@@ -72,7 +66,7 @@ struct Soldier {
     double pos[3];
     SPAD(0x38, 0x68);
     char anim[8];
-    SoldierMotion *motion;
+    HumanMotion *motion;
     SPAD(0x74, 0x78);
     float matrix[9];
     SPAD(0x9C, 0xA0);

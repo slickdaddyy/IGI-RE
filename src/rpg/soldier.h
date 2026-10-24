@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "loadscreen/loadscreentypes.h"
 #include "soldier/soldiertypes.h"
+#include "humanplayer/humanplayertypes.h"
 
 typedef struct Soldier Soldier;
 typedef struct SoldierSM SoldierSM;
@@ -29,13 +30,6 @@ enum {
     SB_RUN = 0x40000,
     SB_ANIM = 0x100000,
 };
-
-typedef struct SoldierMotion {
-    int unk0;
-    uint32_t flags;
-    char unk8[0x44];
-    int unk4C[5];
-} SoldierMotion;
 
 /* The AI brain that drives a soldier (Soldier.ai). */
 typedef struct SoldierAI {
@@ -61,7 +55,7 @@ struct Soldier {
     double pos[3];
     char unk38[0x30];
     char anim[8];
-    SoldierMotion *motion;
+    HumanMotion *motion;
     char unk74[4];
     float matrix[9];
     char unk9C[4];
@@ -76,7 +70,7 @@ struct Soldier {
     float input[40];
     char inputLocked;
     char unk251[3];
-    SoldierDamage damage;
+    HumanDamage damage;
     SoldierSM sm;
     void *animSlots;
     char unk33C;

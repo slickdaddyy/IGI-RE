@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "loadscreen/loadscreentypes.h"
+
 typedef struct SoldierSM SoldierSM;
 typedef struct Soldier Soldier;
 typedef void (*SoldierStateFn)(SoldierSM *sm, Soldier *h);
@@ -35,18 +37,6 @@ typedef struct SoldierAIMsg {
     void *attacker;
     void *attacker2;
 } SoldierAIMsg;
-
-/* Damage per body part. Hits add mult * damage to a part and to total. */
-typedef struct SoldierDamage {
-    float total;
-    float max;
-    float unk08;
-    struct {
-        float dmg;
-        float mult;
-    } part[17];
-    int hitZone;
-} SoldierDamage;
 
 typedef struct SoldierBlast {
     int unk00;

@@ -35,18 +35,6 @@ enum {
     SB_CROUCH_AIM = 0x2000000,
 };
 
-/* Damage per body part. Hits add mult * damage to a part and to total. */
-typedef struct HumanDamage {
-    float total;
-    float max;
-    float unk08;
-    struct {
-        float dmg;
-        float mult;
-    } part[17];
-    int hitZone;
-} HumanDamage;
-
 /* The AI brain that drives a soldier (Human.ai). */
 typedef struct HumanAI {
     char unk0[0x3ABC];

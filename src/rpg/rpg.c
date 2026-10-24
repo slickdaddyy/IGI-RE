@@ -53,7 +53,7 @@ ORIG(0x465970, void, HumanView_Shake, (void *view, float amount, float angle, in
 ORIG(0x47E990, uint8_t, FlashBang_GetEvent, (void));
 ORIG(0x489C30, void, Human_InitDamage, (Soldier *h, void *speeds));
 ORIG(0x489C60, int, Human_GetHitZone, (Soldier *h, SoldierHit *hit));
-ORIG(0x489E10, HitAnims *, HumanDamage_GetZone, (SoldierDamage *d, int part));
+ORIG(0x489E10, HitAnims *, HumanDamage_GetZone, (HumanDamage *d, int part));
 ORIG(0x489E70, void, Human_PlayAnimSlot, (Soldier *h, int slot, float blend));
 ORIG(0x489EA0, void, Human_PlayAnim, (Soldier *h, int anim, int loop, float blend));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
@@ -769,7 +769,7 @@ static void rpg_tell_ai(Soldier *h, void *data, void *attacker)
 void SoldierRPG_HitHandler(Soldier *h, SoldierHit *hit)
 {
     SoldierRPG *s = (SoldierRPG *)h;
-    SoldierDamage *d = &h->damage;
+    HumanDamage *d = &h->damage;
     double scratch[3];
     char headshot = 0;
     long double dmg;
@@ -808,7 +808,7 @@ HOOK(0x4572D0, SoldierRPG_HitHandler);
 void SoldierRPG_BlastHandler(Soldier *h, SoldierBlast *e)
 {
     SoldierRPG *s = (SoldierRPG *)h;
-    SoldierDamage *d = &h->damage;
+    HumanDamage *d = &h->damage;
     double cam[3], v[3];
     long double k, r, total;
     uint32_t bits;
@@ -856,7 +856,7 @@ HOOK(0x457430, SoldierRPG_BlastHandler);
 void SoldierRPG_PunchHandler(Soldier *h, SoldierPunch *p)
 {
     SoldierRPG *s = (SoldierRPG *)h;
-    SoldierDamage *d = &h->damage;
+    HumanDamage *d = &h->damage;
     double fwd[3], v[3], *a, *b;
     long double dmg, total;
     uint32_t bits;
