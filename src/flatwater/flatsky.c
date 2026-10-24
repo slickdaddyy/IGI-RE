@@ -165,12 +165,12 @@ void FlatSky_Render(FlatSky *s)
     TransContext_ProjectView(s0, v0);
     TransContext_ProjectView(s1, v1);
 
-    q[0][0] = gViewX;
-    q[0][1] = gViewY;
-    q[1][0] = gViewW + gViewX;
-    q[1][1] = gViewY;
-    q[2][0] = gViewX;
-    q[2][1] = gViewH + gViewY;
+    q[0][0] = gScene.x;
+    q[0][1] = gScene.y;
+    q[1][0] = gScene.w + gScene.x;
+    q[1][1] = gScene.y;
+    q[2][0] = gScene.x;
+    q[2][1] = gScene.h + gScene.y;
     q[3][0] = q[1][0];
     q[3][1] = q[2][1];
     dir[0] = s1[0] - s0[0];
@@ -218,8 +218,8 @@ void FlatSky_Render(FlatSky *s)
         ea = ea + stepX;
         eb = eb + stepY;
     }
-    ox = gViewCX + gViewX;
-    oy = gViewCY + gViewY;
+    ox = gScene.halfW + gScene.x;
+    oy = gScene.halfH + gScene.y;
 
     for (l = (FlatLayer *)Task_FindChild(s, gFlatSkyLayerType); l;
          l = (FlatLayer *)Task_FindNext(l, gFlatSkyLayerType)) {

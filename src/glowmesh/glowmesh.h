@@ -12,16 +12,7 @@
 
 /* the active TransContext (0xBCAAE0) and scene (0xBCABA0), only the fields used here */
 extern TransContext gTransContext;
-extern float gSceneX;
-extern float gSceneY;
-extern float gSceneW;
-extern float gSceneH;
-extern float gSceneHalfW;
-extern float gSceneHalfH;
-extern float gSceneMinX;
-extern float gSceneMinY;
-extern float gSceneMaxX;
-extern float gSceneMaxY;
+extern Scene gScene;
 extern float gNearPlane;
 extern int gQCubeMinSize;
 extern void (*gRenderFuncs[])(void *);

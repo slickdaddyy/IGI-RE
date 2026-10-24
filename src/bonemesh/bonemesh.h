@@ -51,7 +51,7 @@ _Static_assert(sizeof(MeshRender) == 0x38, "MeshRender");
 
 extern void *gD3DDevice;
 extern TransContext gTransContext;
-extern SceneArea gSceneArea;
+extern Scene gScene;
 extern float gWorldScale;
 extern void (*gRenderFuncs[])(void *);
 extern TaskHandler gTaskHandlers[][0x180];

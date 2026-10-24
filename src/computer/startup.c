@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "computer/computer.h"
+#include "transctx/transctxtypes.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -73,11 +74,8 @@ extern int gStartupDraw;
 extern int gStartupMethod;
 extern void *gD3D;
 extern void (*gRenderFuncs[])(void *);
-extern float gScreenW;
-extern float gScreenH;
+extern Scene gScene;
 extern void *gD3DDevice;
-extern float gViewX;
-extern float gViewY;
 extern float gWorldScale;
 extern float gD3DMinZ;
 extern float gLayer1MinZ;
@@ -254,10 +252,10 @@ long ComputerStartup_Render(ComputerStartup *t)
     DEV_SetRenderState(gD3DDevice, 0x14, 6);
     if (t->step == 0) {
         VB_Lock(t->vb, 0x2021, &v, &size);
-        x0 = (int)round_ll(gViewX);
-        y0 = (int)round_ll(gViewY);
-        w = (int)round_ll(gScreenW);
-        h = (int)round_ll(gScreenH);
+        x0 = (int)round_ll(gScene.x);
+        y0 = (int)round_ll(gScene.y);
+        w = (int)round_ll(gScene.w);
+        h = (int)round_ll(gScene.h);
         vertex(&v[0], x0, y0, z, rhw, 0xFF000000);
         vertex(&v[1], x0, (long double)h + y0, z, rhw, 0xFF000000);
         vertex(&v[2], (long double)w + x0, y0, z, rhw, 0xFF000000);
@@ -266,8 +264,8 @@ long ComputerStartup_Render(ComputerStartup *t)
         DEV_DrawPrimitiveVB(gD3DDevice, 5, t->vb, 0, 4, 0);
     }
     VB_Lock(t->vb, 0x2021, &v, &size);
-    h = (int)round_ll(gScreenH);
-    w = (int)round_ll(gScreenW);
+    h = (int)round_ll(gScene.h);
+    w = (int)round_ll(gScene.w);
     barH = (long double)h * kBarH;
     halfW = (long double)w * kHalf;
     left = (long double)w * kLeft;
@@ -344,8 +342,8 @@ void ComputerStartup_Draw(ComputerStartup *t)
     m = Mem_GetMode();
     if (!m)
         Mem_SetDefaultMode();
-    x = (int)round_ll(gScreenW) * kLeft;
-    y0 = (int)round_ll(gScreenH) * kTop;
+    x = (int)round_ll(gScene.w) * kLeft;
+    y0 = (int)round_ll(gScene.h) * kTop;
     str = t->text[t->step];
     h = Sprite_GetHeight(t->font, str);
     y = y0 - h - kTwo;

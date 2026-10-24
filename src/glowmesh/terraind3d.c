@@ -315,10 +315,10 @@ void TerrainMesh_DrawD3D(void)
     long double zr, range;
     int count, mi, r, g, b;
 
-    scr.minX = gSceneMinX;
-    scr.minY = gSceneMinY;
-    scr.maxX = gSceneMaxX;
-    scr.maxY = gSceneMaxY;
+    scr.minX = gScene.minX;
+    scr.minY = gScene.minY;
+    scr.maxX = gScene.maxX;
+    scr.maxY = gScene.maxY;
     zr = kOne.f / (kOne.f - gD3DMinZ / gD3DMaxZ);
     range = gLayer1MaxZ - gLayer1MinZ;
     gClipZScale = x87_neg(range * gClipRhwScale * gD3DMinZ * zr);

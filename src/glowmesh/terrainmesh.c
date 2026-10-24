@@ -266,8 +266,8 @@ void TerrainMesh_UpdateNearZ(float *arg)
                 sx = px;
                 py = gTransContext.scaleY * rhw * b + gTransContext.centerY;
                 sy = py;
-                code = (sy > gSceneMaxY) << 3 | (px > gSceneMaxX) << 2 | !(py >= gSceneMinY) << 1 |
-                       !(px >= gSceneMinX);
+                code = (sy > gScene.maxY) << 3 | (px > gScene.maxX) << 2 | !(py >= gScene.minY) << 1 |
+                       !(px >= gScene.minX);
             }
             v[j].x = a;
             v[j].y = b;
@@ -394,14 +394,14 @@ static void setup_view(void)
     long double nx, ny, nz;
     char c;
 
-    gTerrainRight = gSceneW + gSceneX;
-    gTerrainLeft = gSceneX;
+    gTerrainRight = gScene.w + gScene.x;
+    gTerrainLeft = gScene.x;
     gTerrainScaleY = gTransContext.scaleY;
-    gTerrainBottom = gSceneH + gSceneY;
-    gTerrainTop = gSceneY;
-    gTerrainCenterX = gSceneHalfW + gSceneX;
+    gTerrainBottom = gScene.h + gScene.y;
+    gTerrainTop = gScene.y;
+    gTerrainCenterX = gScene.halfW + gScene.x;
     gTerrainScaleX = gTransContext.scaleX;
-    gTerrainCenterY = gSceneHalfH + gSceneY;
+    gTerrainCenterY = gScene.halfH + gScene.y;
     gTerrainInvSize = kOne.f / (long double)(gQCubeMinSize - 0x40);
     gMorphStart = x87_fistp((long double)(gQCubeMinSize + 0x40) * kThreeEighths.d);
     gMorphScale = gTerrainInvSize * k8Thirds.f;
@@ -927,11 +927,11 @@ static long double clamp01(long double v)
    the original). */
 void TerrainMesh_DrawTriangle(TerrainPoly *t)
 {
-    double scaleX = gTransContext.scaleX, scaleY = gTransContext.scaleY, left = gSceneX, top = gSceneY;
-    double right = (long double)gSceneW + gSceneX;
-    double bottom = (long double)gSceneH + gSceneY;
-    double centerX = (long double)gSceneHalfW + gSceneX;
-    double centerY = (long double)gSceneHalfH + top;
+    double scaleX = gTransContext.scaleX, scaleY = gTransContext.scaleY, left = gScene.x, top = gScene.y;
+    double right = (long double)gScene.w + gScene.x;
+    double bottom = (long double)gScene.h + gScene.y;
+    double centerX = (long double)gScene.halfW + gScene.x;
+    double centerY = (long double)gScene.halfH + top;
     double c[3], rel[3][3], uv[3][2] = { { 0 } }, view[3][3], t0, t1;
     long double cx, cy, cz, vx, vy, vz, t2, m;
     TerrainClipVertex v[3];
@@ -1054,9 +1054,9 @@ void TerrainMesh_ClipEdge(int a, int b)
     c1 = ((double)vb->c[1] - (double)va->c[1]) * t + (double)va->c[1];
     c2 = ((double)vb->c[2] - (double)va->c[2]) * t + (double)va->c[2];
     c3 = ((long double)vb->c[3] - va->c[3]) * t + va->c[3];
-    sx = gTransContext.scaleX * x * kInvClipZ.d + ((long double)gSceneHalfW + gSceneX);
+    sx = gTransContext.scaleX * x * kInvClipZ.d + ((long double)gScene.halfW + gScene.x);
     syp = gTransContext.scaleY * y * kInvClipZ.d;
-    sy = ((long double)gSceneHalfH + gSceneY) + syp;
+    sy = ((long double)gScene.halfH + gScene.y) + syp;
     va->u = u * kClipUVScale.d;
     va->v = v * kClipUVScale.d;
     va->sx = sx;

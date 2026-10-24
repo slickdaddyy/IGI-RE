@@ -30,13 +30,6 @@ typedef struct SoundList {
     SoundNode *tailpred;
 } SoundList;
 
-typedef struct SceneArea {
-    char unk0[0x18];
-    float x, y, w, h;
-    float halfW, halfH;
-    float minX, minY, maxX, maxY;
-} SceneArea;
-
 typedef struct RenderNode {
     struct RenderNode *next;
     int type; /* method index, -1 for a queue head */

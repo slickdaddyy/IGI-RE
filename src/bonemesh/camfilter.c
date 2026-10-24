@@ -418,17 +418,17 @@ void LineFilter_Render(LineFilter *t)
     if (!LOCK_BATCH(v, first))
         return;
     count = 0;
-    y = gSceneArea.y;
-    while (!(gSceneArea.h + gSceneArea.y < y + kLineStep.f)) {
+    y = gScene.y;
+    while (!(gScene.h + gScene.y < y + kLineStep.f)) {
         if (count < 200) {
             fy = (int)round_ll(y);
-            v->x = (int)round_ll(gSceneArea.x);
+            v->x = (int)round_ll(gScene.x);
             v->y = fy;
             v->z = z;
             v->rhw = rhw;
             v->color = line_color(t);
             v++;
-            v->x = (int)round_ll(gSceneArea.w + gSceneArea.x);
+            v->x = (int)round_ll(gScene.w + gScene.x);
             v->y = fy;
             v->z = z;
             v->rhw = rhw;
@@ -460,13 +460,13 @@ void LineFilter_Render(LineFilter *t)
     if (!LOCK_BATCH(v, first))
         return;
     count = 0;
-    y = gSceneArea.y;
+    y = gScene.y;
     ny = step + y;
-    while (!(gSceneArea.h + gSceneArea.y < ny)) {
+    while (!(gScene.h + gScene.y < ny)) {
         for (k = 0; k < n; k++) {
             if (count < 200) {
                 fy = (int)round_ll(y);
-                v->x = Random_Float(gFilterRandom) * gSceneArea.w + gSceneArea.x;
+                v->x = Random_Float(gFilterRandom) * gScene.w + gScene.x;
                 v->y = fy;
                 v->z = z;
                 v->rhw = rhw;
@@ -477,7 +477,7 @@ void LineFilter_Render(LineFilter *t)
                 v++;
                 count++;
                 v->x = Random_Float(gFilterRandom) * kStreak.f + v[-1].x;
-                lim = gSceneArea.w + gSceneArea.x;
+                lim = gScene.w + gScene.x;
                 if (lim <= v->x)
                     v->x = lim;
                 v->y = fy;

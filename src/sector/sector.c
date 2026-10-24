@@ -141,8 +141,7 @@ extern uint16_t gSectorInteriorObjectType;
 extern float gQCubeOutsideMin[];
 extern float gQCubeOutsideMax[];
 extern TransContext gTransContext;
-extern char gScene[];
-extern SceneArea gSceneArea;
+extern Scene gScene;
 
 extern const double kOneD;
 extern const float kHalf;
@@ -162,8 +161,8 @@ static inline int feq0(long double x)
 /* screen outcode: 1 left, 2 top, 4 right, 8 bottom, 0x10 in front of the near plane */
 static int outcode(float sx, float sy)
 {
-    return (sy > gSceneArea.maxY) << 3 | (sx > gSceneArea.maxX) << 2 | (sy < gSceneArea.minY) << 1 |
-           (sx < gSceneArea.minX);
+    return (sy > gScene.maxY) << 3 | (sx > gScene.maxX) << 2 | (sy < gScene.minY) << 1 |
+           (sx < gScene.minX);
 }
 
 /* the other vertices of the triangle: o is the one outside, p and q follow it */
@@ -253,8 +252,8 @@ void Portal_ClipTriangle(ClipVertex a, ClipVertex b, ClipVertex c, float **rect,
             tmp.sx = sx;
             sy = tmp.rhw * tmp.y * gTransContext.scaleY + gTransContext.centerY;
             tmp.sy = sy;
-            tmp.code = (tmp.sy > gSceneArea.maxY) << 3 | (sx > gSceneArea.maxX) << 2 |
-                       (sy < gSceneArea.minY) << 1 | (sx < gSceneArea.minX);
+            tmp.code = (tmp.sy > gScene.maxY) << 3 | (sx > gScene.maxX) << 2 |
+                       (sy < gScene.minY) << 1 | (sx < gScene.minX);
             Portal_ClipTriangle(*q, tmp, *o, rect, nearZ);
         }
         any = a.code | b.code | c.code;
@@ -270,13 +269,13 @@ void Portal_ClipTriangle(ClipVertex a, ClipVertex b, ClipVertex c, float **rect,
         if (ma + mb + mc == 2) {
             pick_two(v, ma, mb, &in, &o, &p);
             d = o->sx - in->sx;
-            tf = (gSceneArea.minX - in->sx) / d;
+            tf = (gScene.minX - in->sx) / d;
             o->sx = d * tf + in->sx;
             o->sy = (o->sy - in->sy) * tf + in->sy;
             o->rhw = (o->rhw - in->rhw) * tf + in->rhw;
             o->code = outcode(o->sx, o->sy) & ~1;
             d = p->sx - in->sx;
-            tf = (gSceneArea.minX - in->sx) / d;
+            tf = (gScene.minX - in->sx) / d;
             p->sx = d * tf + in->sx;
             p->sy = (p->sy - in->sy) * tf + in->sy;
             p->rhw = (p->rhw - in->rhw) * tf + in->rhw;
@@ -284,20 +283,20 @@ void Portal_ClipTriangle(ClipVertex a, ClipVertex b, ClipVertex c, float **rect,
         } else {
             pick_one(v, ma, mb, &o, &p, &q);
             d = o->sx - p->sx;
-            tf = (gSceneArea.minX - p->sx) / d;
+            tf = (gScene.minX - p->sx) / d;
             tmp = *o;
             o->sx = d * tf + p->sx;
             o->sy = (o->sy - p->sy) * tf + p->sy;
             o->rhw = (o->rhw - p->rhw) * tf + p->rhw;
             o->code = outcode(o->sx, o->sy) & ~1;
             d = tmp.sx - q->sx;
-            tf = (gSceneArea.minX - q->sx) / d;
+            tf = (gScene.minX - q->sx) / d;
             sx = d * tf + q->sx;
             tmp.sx = sx;
             sy = (tmp.sy - q->sy) * tf + q->sy;
             tmp.sy = sy;
             tmp.rhw = (tmp.rhw - q->rhw) * tf + q->rhw;
-            tmp.code = (tmp.sy > gSceneArea.maxY) << 3 | (sx > gSceneArea.maxX) << 2 | (sy < gSceneArea.minY) << 1;
+            tmp.code = (tmp.sy > gScene.maxY) << 3 | (sx > gScene.maxX) << 2 | (sy < gScene.minY) << 1;
             Portal_ClipTriangle(*q, tmp, *o, rect, nearZ);
         }
         any = a.code | b.code | c.code;
@@ -312,31 +311,31 @@ void Portal_ClipTriangle(ClipVertex a, ClipVertex b, ClipVertex c, float **rect,
         mc = c.code & 2;
         if (ma + mb + mc == 4) {
             pick_two(v, ma, mb, &in, &o, &p);
-            t = (gSceneArea.minY - in->sy) / (o->sy - in->sy);
+            t = (gScene.minY - in->sy) / (o->sy - in->sy);
             o->sx = (o->sx - in->sx) * t + in->sx;
             o->sy = (o->sy - in->sy) * t + in->sy;
             o->rhw = (o->rhw - in->rhw) * t + in->rhw;
             o->code = outcode(o->sx, o->sy) & ~3;
-            t = (gSceneArea.minY - in->sy) / (p->sy - in->sy);
+            t = (gScene.minY - in->sy) / (p->sy - in->sy);
             p->sx = (p->sx - in->sx) * t + in->sx;
             p->sy = (p->sy - in->sy) * t + in->sy;
             p->rhw = (p->rhw - in->rhw) * t + in->rhw;
             p->code = outcode(p->sx, p->sy) & ~3;
         } else {
             pick_one(v, ma, mb, &o, &p, &q);
-            t = (gSceneArea.minY - p->sy) / (o->sy - p->sy);
+            t = (gScene.minY - p->sy) / (o->sy - p->sy);
             tmp = *o;
             o->sx = (o->sx - p->sx) * t + p->sx;
             o->sy = (o->sy - p->sy) * t + p->sy;
             o->rhw = (o->rhw - p->rhw) * t + p->rhw;
             o->code = outcode(o->sx, o->sy) & ~3;
             d = tmp.sy - q->sy;
-            tf = (gSceneArea.minY - q->sy) / d;
+            tf = (gScene.minY - q->sy) / d;
             tmp.sx = (tmp.sx - q->sx) * tf + q->sx;
             sy = d * tf + q->sy;
             tmp.sy = sy;
             tmp.rhw = (tmp.rhw - q->rhw) * tf + q->rhw;
-            tmp.code = (sy > gSceneArea.maxY) << 3 | (tmp.sx > gSceneArea.maxX) << 2;
+            tmp.code = (sy > gScene.maxY) << 3 | (tmp.sx > gScene.maxX) << 2;
             Portal_ClipTriangle(*q, tmp, *o, rect, nearZ);
         }
         any = a.code | b.code | c.code;
@@ -352,33 +351,33 @@ void Portal_ClipTriangle(ClipVertex a, ClipVertex b, ClipVertex c, float **rect,
         if (ma + mb + mc == 8) {
             pick_two(v, ma, mb, &in, &o, &p);
             d = o->sx - in->sx;
-            tf = (gSceneArea.maxX - in->sx) / d;
+            tf = (gScene.maxX - in->sx) / d;
             o->sx = d * tf + in->sx;
             o->sy = (o->sy - in->sy) * tf + in->sy;
             o->rhw = (o->rhw - in->rhw) * tf + in->rhw;
-            o->code = (o->sy > gSceneArea.maxY) << 3;
+            o->code = (o->sy > gScene.maxY) << 3;
             d = p->sx - in->sx;
-            tf = (gSceneArea.maxX - in->sx) / d;
+            tf = (gScene.maxX - in->sx) / d;
             p->sx = d * tf + in->sx;
             p->sy = (p->sy - in->sy) * tf + in->sy;
             p->rhw = (p->rhw - in->rhw) * tf + in->rhw;
-            p->code = (p->sy > gSceneArea.maxY) << 3;
+            p->code = (p->sy > gScene.maxY) << 3;
         } else {
             pick_one(v, ma, mb, &o, &p, &q);
             d = o->sx - p->sx;
-            tf = (gSceneArea.maxX - p->sx) / d;
+            tf = (gScene.maxX - p->sx) / d;
             tmp = *o;
             o->sx = d * tf + p->sx;
             o->sy = (o->sy - p->sy) * tf + p->sy;
             o->rhw = (o->rhw - p->rhw) * tf + p->rhw;
-            o->code = (o->sy > gSceneArea.maxY) << 3;
+            o->code = (o->sy > gScene.maxY) << 3;
             d = tmp.sx - q->sx;
-            tf = (gSceneArea.maxX - q->sx) / d;
+            tf = (gScene.maxX - q->sx) / d;
             tmp.sx = d * tf + q->sx;
             sy = (tmp.sy - q->sy) * tf + q->sy;
             tmp.sy = sy;
             tmp.rhw = (tmp.rhw - q->rhw) * tf + q->rhw;
-            tmp.code = (sy > gSceneArea.maxY) << 3;
+            tmp.code = (sy > gScene.maxY) << 3;
             Portal_ClipTriangle(*q, tmp, *o, rect, nearZ);
         }
         any = a.code | b.code | c.code;
@@ -393,19 +392,19 @@ void Portal_ClipTriangle(ClipVertex a, ClipVertex b, ClipVertex c, float **rect,
         mc = c.code & 8;
         if (ma + mb + mc == 0x10) {
             pick_two(v, ma, mb, &in, &o, &p);
-            t = (gSceneArea.maxY - in->sy) / (o->sy - in->sy);
+            t = (gScene.maxY - in->sy) / (o->sy - in->sy);
             o->sx = (o->sx - in->sx) * t + in->sx;
             o->sy = (o->sy - in->sy) * t + in->sy;
             o->code = 0;
             o->rhw = (o->rhw - in->rhw) * t + in->rhw;
-            t = (gSceneArea.maxY - in->sy) / (p->sy - in->sy);
+            t = (gScene.maxY - in->sy) / (p->sy - in->sy);
             p->sx = (p->sx - in->sx) * t + in->sx;
             p->sy = (p->sy - in->sy) * t + in->sy;
             p->code = 0;
             p->rhw = (p->rhw - in->rhw) * t + in->rhw;
         } else {
             pick_one(v, ma, mb, &o, &p, &q);
-            t = (gSceneArea.maxY - p->sy) / (o->sy - p->sy);
+            t = (gScene.maxY - p->sy) / (o->sy - p->sy);
             tmp = *o;
             tmp.code = 0;
             o->sx = (o->sx - p->sx) * t + p->sx;
@@ -413,7 +412,7 @@ void Portal_ClipTriangle(ClipVertex a, ClipVertex b, ClipVertex c, float **rect,
             o->code = 0;
             o->rhw = (o->rhw - p->rhw) * t + p->rhw;
             d = tmp.sy - q->sy;
-            tf = (gSceneArea.maxY - q->sy) / d;
+            tf = (gScene.maxY - q->sy) / d;
             tmp.sx = (tmp.sx - q->sx) * tf + q->sx;
             tmp.sy = d * tf + q->sy;
             tmp.rhw = (tmp.rhw - q->rhw) * tf + q->rhw;
@@ -990,10 +989,10 @@ void SectorObject_Render(SectorObject *so)
     Sector *s = &so->s;
     int lod, i;
 
-    savedMin[0] = gSceneArea.minX;
-    savedMax[0] = gSceneArea.maxX;
-    savedMin[1] = gSceneArea.minY;
-    savedMax[1] = gSceneArea.maxY;
+    savedMin[0] = gScene.minX;
+    savedMax[0] = gScene.maxX;
+    savedMin[1] = gScene.minY;
+    savedMax[1] = gScene.maxY;
     gCurrentSectorObj = so;
     if (!so->s.o.model)
         return;
@@ -1004,10 +1003,10 @@ void SectorObject_Render(SectorObject *so)
     }
     gSectorLights = Light_GetActive(&gSectorLightCount);
     Haze_GetVisible(&gSectorFog, &gSectorFogCount);
-    min[0] = gSceneArea.minX;
-    min[1] = gSceneArea.minY;
-    max[0] = gSceneArea.maxX;
-    max[1] = gSceneArea.maxY;
+    min[0] = gScene.minX;
+    min[1] = gScene.minY;
+    max[0] = gScene.maxX;
+    max[1] = gScene.maxY;
     lod = ModelObj_GetLOD(s);
     if (lod != -1)
         Sector_AddVisible(s, min, max, lod);
@@ -1018,7 +1017,7 @@ void SectorObject_Render(SectorObject *so)
     }
     while (gVisSectors.used)
         pool_release(&gVisSectors, pool_get(&gVisSectors, 0));
-    Scene_SetBounds(gScene, savedMin, savedMax);
+    Scene_SetBounds(&gScene, savedMin, savedMax);
 }
 HOOK(0x4DD310, SectorObject_Render);
 
@@ -1061,7 +1060,7 @@ void Sector_DrawVisible(Sector *s, float *min, float *max, int lod)
         gQCubeOutsideMax[1] = max[1];
         gQCubeDrawOutside = 1;
     }
-    Scene_SetBounds(gScene, min, max);
+    Scene_SetBounds(&gScene, min, max);
     HANDLER(4, gSectorType)(s, 0);
 }
 HOOK(0x4DD5D0, Sector_DrawVisible);
@@ -1223,8 +1222,8 @@ int Portal_GetScreenRect(Sector *s, int lod, int k, float *clipMin, float *clipM
             sy = rhw * c->y * gTransContext.scaleY + gTransContext.centerY;
             syf = sy;
             c->sy = syf;
-            c->code = (syf > gSceneArea.maxY) << 3 | (sx > gSceneArea.maxX) << 2 |
-                      !(sy >= gSceneArea.minY) << 1 | !(sx >= gSceneArea.minX);
+            c->code = (syf > gScene.maxY) << 3 | (sx > gScene.maxX) << 2 |
+                      !(sy >= gScene.minY) << 1 | !(sx >= gScene.minX);
         }
     }
     if (!any)
@@ -1268,3 +1267,4 @@ STORE(igb, B12B78, 4) float store_B12B78[2];
 ALIAS(gQCubeOutsideMin, store_B12B78, 0);
 STORE(igb, B16C60, 4) float store_B16C60[2];
 ALIAS(gQCubeOutsideMax, store_B16C60, 0);
+BSS(BCABA0) Scene gScene;

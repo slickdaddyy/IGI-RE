@@ -6,6 +6,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "terrdraw/terrdraw.h"
+#include "transctx/transctxtypes.h"
 
 /* A lens flare element; the list is drawn from its last element back. */
 typedef struct Flare {
@@ -29,10 +30,7 @@ extern int gViewSlotCurrent;
 extern char gViewSlotUsed[];
 extern TerrPool gFlarePool;
 extern TerrPool gGlowPool;
-extern float gViewX;
-extern float gViewY;
-extern float gViewW;
-extern float gViewH;
+extern Scene gScene;
 
 static const union {
     uint64_t u;
@@ -119,13 +117,13 @@ HOOK(0x518290, LensFlare_Shutdown);
    screen centre, when pos is near the viewport. */
 void LensFlare_Draw(Flare *f, const float *pos, const float *color)
 {
-    long double tx = pos[0] - gViewX, ty = pos[1] - gViewY;
-    float dx = gViewW - (tx + tx);
-    float dy = gViewH - (ty + ty);
+    long double tx = pos[0] - gScene.x, ty = pos[1] - gScene.y;
+    float dx = gScene.w - (tx + tx);
+    float dy = gScene.h - (ty + ty);
     float p[2], c[3];
 
-    if (!(gViewX + gViewW > pos[0] - kFlareMargin.f) || !(pos[0] + kFlareMargin.f > gViewX) ||
-        !(gViewY + gViewH > pos[1] - kFlareMargin.f) || !(pos[1] + kFlareMargin.f > gViewY))
+    if (!(gScene.x + gScene.w > pos[0] - kFlareMargin.f) || !(pos[0] + kFlareMargin.f > gScene.x) ||
+        !(gScene.y + gScene.h > pos[1] - kFlareMargin.f) || !(pos[1] + kFlareMargin.f > gScene.y))
         return;
     while (f->next)
         f = f->next;

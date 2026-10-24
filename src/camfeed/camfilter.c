@@ -5,6 +5,7 @@
 #include "d3d/d3dtypes.h"
 #include "camfeed/camfeedtypes.h"
 #include "qvertex/qvertextypes.h"
+#include "transctx/transctxtypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x490370, int, Timer_GetMs, (void));
@@ -76,11 +77,7 @@ extern float gBandTextY;
 extern float gBandTextDX;
 extern float gBandTextDY;
 extern void (*gRenderFuncs[])(void *);
-extern char gScene[];
-extern float gViewX;
-extern float gViewY;
-extern float gScreenW;
-extern float gScreenH;
+extern Scene gScene;
 extern float gWorldScale;
 extern DynVB gVBTL;
 extern int *gD3DBlendStates;
@@ -188,7 +185,7 @@ void WideScreenFilter_DrawPrim(FilterPrim *p)
     rect[1] = t->y;
     rect[2] = t->w;
     rect[3] = t->h;
-    Scene_SetRect(gScene, rect);
+    Scene_SetRect(&gScene, rect);
     Draw_RectZ(t->x, t->y + t->h - t->barHeight, t->w, t->barHeight, t->color[0], t->color[1], t->color[2], 0, -1, kOne);
     Draw_RectZ(t->x, t->y, t->w, t->barHeight, t->color[0], t->color[1], t->color[2], 0, -1, kOne);
 }
@@ -246,14 +243,14 @@ void BandFilter_Draw(BandFilter *t)
         if (!mode)
             Mem_SetDefaultMode();
         crt_sprintf(buf, "CAMERA %d", t->camera);
-        draw_label(t->font, gScreenW * gBandTextX + gBandTextDX + gViewX, gScreenH * gBandTextY + gBandTextDY + gViewY,
+        draw_label(t->font, gScene.w * gBandTextX + gBandTextDX + gScene.x, gScene.h * gBandTextY + gBandTextDY + gScene.y,
                    t->depth, buf);
         if (!mode)
             Mem_ClearMode();
     }
     if (is_zero(t->maxLevel)) {
         z = t->depth > gNearPlane ? t->depth : gNearPlane;
-        Draw_RectZ((int)round_ll(gViewX), (int)round_ll(gViewY), (int)round_ll(gScreenW), (int)round_ll(gScreenH),
+        Draw_RectZ((int)round_ll(gScene.x), (int)round_ll(gScene.y), (int)round_ll(gScene.w), (int)round_ll(gScene.h),
                    t->color[0] * k128, t->color[1] * k128, t->color[2] * k128, 0x80000000, 0, z);
     }
 }
@@ -344,9 +341,9 @@ static void uv(TLVertex *v, float u, float tv)
 /* one textured quad across the screen per pair of band edges */
 static TLVertex *band_quads(TLVertex *p, const float *ys, int pairs, float vz, float rhw, float h)
 {
-    int left = (int)round_ll(gViewX);
-    float right = (long double)left + gScreenW;
-    float u = gScreenW * kTexV;
+    int left = (int)round_ll(gScene.x);
+    float right = (long double)left + gScene.w;
+    float u = gScene.w * kTexV;
     float tv = h * kTexV;
 
     for (; pairs; pairs--, ys += 2, p += 6) {
@@ -411,15 +408,15 @@ void BandFilter_Render(BandFilter *t)
     DEV_SetRenderState(gD3DDevice, 0x13, 9);
     DEV_SetRenderState(gD3DDevice, 0x14, 1);
 
-    h = gScreenH * kBandH;
-    y = (int)round_ll(gViewY);
+    h = gScene.h * kBandH;
+    y = (int)round_ll(gScene.y);
     top = y;
     ys[0] = y;
     if (t->counter > 45)
         y += h * kHalf;
     ys[1] = y;
     y += h;
-    bottom = (long double)(int)round_ll(gScreenH) + top;
+    bottom = (long double)(int)round_ll(gScene.h) + top;
     for (n = 2; y < bottom; n++) {
         ys[n] = y;
         y += h;
@@ -472,8 +469,8 @@ void HandiCamFilter_Render(HandiCamFilter *t)
     if (!p)
         return;
     n = 0;
-    y = gViewY;
-    for (limit = (long double)y + kFour; (long double)gScreenH + gViewY >= limit; limit = next + kFour) {
+    y = gScene.y;
+    for (limit = (long double)y + kFour; (long double)gScene.h + gScene.y >= limit; limit = next + kFour) {
         if (n >= 196) {
             VB_Unlock(gVBTL.vb);
             DEV_DrawPrimitiveVB(gD3DDevice, 2, gVBTL.vb, start, n, 0);
@@ -487,8 +484,8 @@ void HandiCamFilter_Render(HandiCamFilter *t)
             color = color << 8 | (uint32_t)round_ll(t->color[1] * k255);
             color = color << 8 | (uint32_t)round_ll(t->color[2] * k255);
             iy = (int)round_ll(y);
-            x0 = (int)round_ll(gViewX);
-            x1 = (int)round_ll((long double)gScreenW + gViewX);
+            x0 = (int)round_ll(gScene.x);
+            x1 = (int)round_ll((long double)gScene.w + gScene.x);
             vertex(&p[0], x0, iy, vz, rhw);
             vertex(&p[1], x1, iy, vz, rhw);
             vertex(&p[2], x0, (long double)iy + kOne, vz, rhw);
@@ -511,8 +508,8 @@ void HandiCamFilter_Render(HandiCamFilter *t)
     for (i = 0; i < 4; i++) {
         a = kCornerDX[i] * k50;
         b = kCornerDY[i] * k50;
-        cx = (int)round_ll(gScreenW * kCornerX[i] + gViewX);
-        cy = (int)round_ll(gScreenH * kCornerY[i] + gViewY);
+        cx = (int)round_ll(gScene.w * kCornerX[i] + gScene.x);
+        cy = (int)round_ll(gScene.h * kCornerY[i] + gScene.y);
         for (j = 0; j < 2; j++, p += 4) {
             jx = (long double)j * kCornerDX[i];
             jy = (long double)j * kCornerDY[i];
@@ -570,17 +567,17 @@ void HandiCamFilter_Draw(HandiCamFilter *t)
     sec = frames / 24;
     min = sec / 60 % 60;
     crt_sprintf(buf, "%2.2d : %2.2d : %2.2d : %2.2d", min / 60, min, sec % 60, frames % 24);
-    draw_label(t->font, gScreenW * kTimecodeX + gViewX - (long double)gTimecodeX,
-               gScreenH * kTimecodeY + gViewY - (long double)gTimecodeY, t->depth, buf);
+    draw_label(t->font, gScene.w * kTimecodeX + gScene.x - (long double)gTimecodeX,
+               gScene.h * kTimecodeY + gScene.y - (long double)gTimecodeY, t->depth, buf);
     if (!mode)
         Mem_ClearMode();
 
     alpha = t->blink >= kBlinkOn ? kOne : kZero;
-    w = gScreenW * kBatteryW;
+    w = gScene.w * kBatteryW;
     sh = Sprite_Height(t->battery);
     h = sh / (long double)Sprite_Width(t->battery) * w;
-    left = gScreenW * kBatteryX + (long double)gBatteryX + gViewX;
-    y = gScreenH * kBatteryY + (long double)gBatteryY + gViewY;
+    left = gScene.w * kBatteryX + (long double)gBatteryX + gScene.x;
+    y = gScene.h * kBatteryY + (long double)gBatteryY + gScene.y;
     top = y;
     bottom = y + h;
     right = left + w;

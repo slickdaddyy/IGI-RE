@@ -8,6 +8,7 @@
 
 #include "hook.h"
 #include "igi.h"
+#include "transctx/transctxtypes.h"
 
 #define CLIP_LEFT 1
 #define CLIP_TOP 2
@@ -47,10 +48,7 @@ _Static_assert(sizeof(ClipVtx) == 0x40, "ClipVtx");
 extern int gClipCount;
 extern float gClipZBias;
 extern float gClipZScale;
-extern float gSceneMinX;
-extern float gSceneMinY;
-extern float gSceneMaxX;
-extern float gSceneMaxY;
+extern Scene gScene;
 extern float gClipRhwScale;
 extern float gNearPlane;
 extern float gTerrainScaleY;
@@ -72,10 +70,10 @@ static inline int64_t fistp64(long double x)
 }
 
 /* NaN counts as outside on the left and top edges only. */
-#define OUT_L(x) (!((x) >= gSceneMinX))
-#define OUT_T(y) (!((y) >= gSceneMinY))
-#define OUT_R(x) ((x) > gSceneMaxX)
-#define OUT_B(y) ((y) > gSceneMaxY)
+#define OUT_L(x) (!((x) >= gScene.minX))
+#define OUT_T(y) (!((y) >= gScene.minY))
+#define OUT_R(x) ((x) > gScene.maxX)
+#define OUT_B(y) ((y) > gScene.maxY)
 
 static uint8_t outcode(long double xl, long double yt, long double xr, long double yb)
 {
@@ -281,7 +279,7 @@ void TerrDraw_ClipTriangle(ClipVtx a, ClipVtx b, ClipVtx c, ClipOut *out)
             pick(v, CLIP_LEFT, 1, &in, &o, &o2);
             for (k = 0; k < 2; k++, o = o2) {
                 d = o->sx - in->sx;
-                tf = (gSceneMinX - in->sx) / d;
+                tf = (gScene.minX - in->sx) / d;
                 o->sx = d * tf + in->sx;
                 o->sy = (o->sy - in->sy) * tf + in->sy;
                 lerp_rest(o, in, tf);
@@ -290,7 +288,7 @@ void TerrDraw_ClipTriangle(ClipVtx a, ClipVtx b, ClipVtx c, ClipOut *out)
         } else {
             pick(v, CLIP_LEFT, 0, &o, &i1, &i2);
             d = o->sx - i1->sx;
-            tf = (gSceneMinX - i1->sx) / d;
+            tf = (gScene.minX - i1->sx) / d;
             t = *o;
             o->sx = d * tf + i1->sx;
             o->sy = (o->sy - i1->sy) * tf + i1->sy;
@@ -298,7 +296,7 @@ void TerrDraw_ClipTriangle(ClipVtx a, ClipVtx b, ClipVtx c, ClipOut *out)
             o->code = OUT_B(o->sy) << 3 | OUT_R(o->sx) << 2 | OUT_T(o->sy) << 1;
 
             d = t.sx - i2->sx;
-            tf = (gSceneMinX - i2->sx) / d;
+            tf = (gScene.minX - i2->sx) / d;
             sx = d * tf + i2->sx;
             t.sx = sx;
             sy = (t.sy - i2->sy) * tf + i2->sy;
@@ -320,19 +318,19 @@ void TerrDraw_ClipTriangle(ClipVtx a, ClipVtx b, ClipVtx c, ClipOut *out)
         if (n == 2) {
             pick(v, CLIP_TOP, 1, &in, &o, &o2);
             for (k = 0; k < 2; k++, o = o2) {
-                s = (gSceneMinY - in->sy) / (o->sy - in->sy);
+                s = (gScene.minY - in->sy) / (o->sy - in->sy);
                 lerp_all(o, in, s);
                 o->code = OUT_B(o->sy) << 3 | OUT_R(o->sx) << 2;
             }
         } else {
             pick(v, CLIP_TOP, 0, &o, &i1, &i2);
-            s = (gSceneMinY - i1->sy) / (o->sy - i1->sy);
+            s = (gScene.minY - i1->sy) / (o->sy - i1->sy);
             t = *o;
             lerp_all(o, i1, s);
             o->code = OUT_B(o->sy) << 3 | OUT_R(o->sx) << 2;
 
             d = t.sy - i2->sy;
-            tf = (gSceneMinY - i2->sy) / d;
+            tf = (gScene.minY - i2->sy) / d;
             t.sx = (t.sx - i2->sx) * tf + i2->sx;
             sy = d * tf + i2->sy;
             t.sy = sy;
@@ -354,7 +352,7 @@ void TerrDraw_ClipTriangle(ClipVtx a, ClipVtx b, ClipVtx c, ClipOut *out)
             pick(v, CLIP_RIGHT, 1, &in, &o, &o2);
             for (k = 0; k < 2; k++, o = o2) {
                 d = o->sx - in->sx;
-                tf = (gSceneMaxX - in->sx) / d;
+                tf = (gScene.maxX - in->sx) / d;
                 o->sx = d * tf + in->sx;
                 o->sy = (o->sy - in->sy) * tf + in->sy;
                 lerp_rest(o, in, tf);
@@ -363,7 +361,7 @@ void TerrDraw_ClipTriangle(ClipVtx a, ClipVtx b, ClipVtx c, ClipOut *out)
         } else {
             pick(v, CLIP_RIGHT, 0, &o, &i1, &i2);
             d = o->sx - i1->sx;
-            tf = (gSceneMaxX - i1->sx) / d;
+            tf = (gScene.maxX - i1->sx) / d;
             t = *o;
             o->sx = d * tf + i1->sx;
             o->sy = (o->sy - i1->sy) * tf + i1->sy;
@@ -371,7 +369,7 @@ void TerrDraw_ClipTriangle(ClipVtx a, ClipVtx b, ClipVtx c, ClipOut *out)
             o->code = OUT_B(o->sy) << 3;
 
             d = t.sx - i2->sx;
-            tf = (gSceneMaxX - i2->sx) / d;
+            tf = (gScene.maxX - i2->sx) / d;
             t.sx = d * tf + i2->sx;
             sy = (t.sy - i2->sy) * tf + i2->sy;
             t.sy = sy;
@@ -392,19 +390,19 @@ void TerrDraw_ClipTriangle(ClipVtx a, ClipVtx b, ClipVtx c, ClipOut *out)
         if (n == 2) {
             pick(v, CLIP_BOTTOM, 1, &in, &o, &o2);
             for (k = 0; k < 2; k++, o = o2) {
-                s = (gSceneMaxY - in->sy) / (o->sy - in->sy);
+                s = (gScene.maxY - in->sy) / (o->sy - in->sy);
                 lerp_all(o, in, s);
                 o->code = 0;
             }
         } else {
             pick(v, CLIP_BOTTOM, 0, &o, &i1, &i2);
-            s = (gSceneMaxY - i1->sy) / (o->sy - i1->sy);
+            s = (gScene.maxY - i1->sy) / (o->sy - i1->sy);
             t = *o;
             lerp_all(o, i1, s);
             o->code = 0;
 
             d = t.sy - i2->sy;
-            tf = (gSceneMaxY - i2->sy) / d;
+            tf = (gScene.maxY - i2->sy) / d;
             t.sx = (t.sx - i2->sx) * tf + i2->sx;
             t.sy = d * tf + i2->sy;
             lerp_rest(&t, i2, tf);

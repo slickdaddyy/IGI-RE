@@ -1,5 +1,6 @@
 #include "freecam/freecam.h"
 #include "d3d/d3dtypes.h"
+#include "transctx/transctxtypes.h"
 
 /* TransparencyList collects transparent triangle batches during the frame
    and draws them back to front at the end of the scene. */
@@ -62,7 +63,7 @@ extern char *gTransBufferEnd;
 extern TransEntry *gTransEntryEnd;
 extern int *gTransUsed;
 extern int *gTransCount;
-extern int gRenderQueueCount;
+extern Scene gScene;
 extern D3DDevice *gD3DDevice;
 
 void TransparencyList_Delete(TransparencyList *l)
@@ -144,7 +145,7 @@ void TransparencyList_Render(TransparencyList *l)
     n = Frame_Alloc(sizeof(TransListNode));
     n->list = l;
     n->primitive = gTransStartPrimitive;
-    RenderQueue_Add(gRenderQueueCount - 1, n);
+    RenderQueue_Add(gScene.queueCount - 1, n);
     gTransBufferEnd = l->buffer;
     gTransEntryEnd = l->entries;
     gTransUsed = &l->used;

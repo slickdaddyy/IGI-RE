@@ -129,11 +129,11 @@ static long double edge_y(const WaterEdge *e, long double x)
    on the left or right screen edge */
 static int keep_point(float x, int row)
 {
-    if (row != 0 && fne(x, gViewX) && fne(gViewW + gViewX, x))
+    if (row != 0 && fne(x, gScene.x) && fne(gScene.w + gScene.x, x))
         return 0;
-    if (!(x >= gViewX))
+    if (!(x >= gScene.x))
         return 0;
-    return gViewW + gViewX >= x;
+    return gScene.w + gScene.x >= x;
 }
 
 /* "a < b" as tested with C0: true when unordered */
@@ -184,8 +184,8 @@ void FlatWater_Render(FlatWater *w)
         return;
     nega = -a;
     do {
-        ox = gViewCX + gViewX;
-        oy = gViewCY + gViewY;
+        ox = gScene.halfW + gScene.x;
+        oy = gScene.halfH + gScene.y;
         n = 0;
         e = cam[6] * a;
         fa[0] = e;
@@ -230,19 +230,19 @@ void FlatWater_Render(FlatWater *w)
             /* from a towards b, onto the screen rectangle */
             dyf = sb.y - sa.y;
             if (sa.x > sb.x) {
-                pts[n].y = (gViewX - sa.x) * dyf / dxf + sa.y;
-                pts[n].x = gViewX;
+                pts[n].y = (gScene.x - sa.x) * dyf / dxf + sa.y;
+                pts[n].x = gScene.x;
             } else {
-                xw = gViewW + gViewX;
+                xw = gScene.w + gScene.x;
                 pts[n].y = (xw - sa.x) * dyf / dxf + sa.y;
                 pts[n].x = xw;
             }
-            if (!(pts[n].y >= gViewY) || !(gViewH + gViewY >= pts[n].y)) {
+            if (!(pts[n].y >= gScene.y) || !(gScene.h + gScene.y >= pts[n].y)) {
                 if (sa.y > sb.y) {
-                    pts[n].x = (gViewY - sa.y) * dxf / dyf + sa.x;
-                    pts[n].y = gViewY;
+                    pts[n].x = (gScene.y - sa.y) * dxf / dyf + sa.x;
+                    pts[n].y = gScene.y;
                 } else {
-                    yh = gViewH + gViewY;
+                    yh = gScene.h + gScene.y;
                     pts[n].x = (yh - sa.y) * dxf / dyf + sa.x;
                     pts[n].y = yh;
                 }
@@ -256,19 +256,19 @@ void FlatWater_Render(FlatWater *w)
             d18 = sa.y - sb.y;
             d14 = sa.x - sb.x;
             if (sb.x > sa.x) {
-                pts[n].y = (gViewX - sb.x) * d18 / d14 + sb.y;
-                pts[n].x = gViewX;
+                pts[n].y = (gScene.x - sb.x) * d18 / d14 + sb.y;
+                pts[n].x = gScene.x;
             } else {
-                xw = gViewW + gViewX;
+                xw = gScene.w + gScene.x;
                 pts[n].y = (xw - sb.x) * d18 / d14 + sb.y;
                 pts[n].x = xw;
             }
-            if (!(pts[n].y >= gViewY) || !(gViewH + gViewY >= pts[n].y)) {
+            if (!(pts[n].y >= gScene.y) || !(gScene.h + gScene.y >= pts[n].y)) {
                 if (sb.y > sa.y) {
-                    pts[n].x = (gViewY - sb.y) * d14 / d18 + sb.x;
-                    pts[n].y = gViewY;
+                    pts[n].x = (gScene.y - sb.y) * d14 / d18 + sb.x;
+                    pts[n].y = gScene.y;
                 } else {
-                    yh = gViewH + gViewY;
+                    yh = gScene.h + gScene.y;
                     pts[n].x = (yh - sb.y) * d14 / d18 + sb.x;
                     pts[n].y = yh;
                 }
@@ -288,8 +288,8 @@ void FlatWater_Render(FlatWater *w)
         /* screen corners on the water side of the first row */
         edge.dx = edge.bx - edge.ax;
         for (i = 0; i < 4; i++) {
-            long double cx = (long double)(i & 1) * gViewW + gViewX;
-            long double cy = (long double)(i >> 1 & 1) * gViewH + gViewY;
+            long double cx = (long double)(i & 1) * gScene.w + gScene.x;
+            long double cy = (long double)(i >> 1 & 1) * gScene.h + gScene.y;
             float cyf = cy;
 
             if ((!(cy >= edge_y(&edge, cx))) != edge.side) {
@@ -309,7 +309,7 @@ void FlatWater_Render(FlatWater *w)
                 if (i != j && !fne(pts[j].y, pts[i].y))
                     dup = 1;
             }
-            ex = fne(pts[j].x, gViewX) ? (long double)gViewX : (long double)gViewW + gViewX;
+            ex = fne(pts[j].x, gScene.x) ? (long double)gScene.x : (long double)gScene.w + gScene.x;
             ly = edge_y(&edge, ex);
             if (dup)
                 continue;
@@ -321,7 +321,7 @@ void FlatWater_Render(FlatWater *w)
                 j = 0;
                 continue;
             }
-            t1 = fne(pts[j].x, gViewX);
+            t1 = fne(pts[j].x, gScene.x);
             lo = -1;
             hi = -1;
             for (i = 0; i < n; i++) {
@@ -342,7 +342,7 @@ void FlatWater_Render(FlatWater *w)
                 continue;
             pts[n].x = (pts[hi].x - pts[lo].x) * (pts[j].y - pts[lo].y) / (pts[hi].y - pts[lo].y) + pts[lo].x;
             pts[n].y = pts[j].y;
-            if (!(pts[n].y >= gViewY) || pts[n].y > gViewH + gViewY)
+            if (!(pts[n].y >= gScene.y) || pts[n].y > gScene.h + gScene.y)
                 continue;
             flags[n] = 0;
             n++;

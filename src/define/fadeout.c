@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "define/define.h"
+#include "transctx/transctxtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -29,7 +30,7 @@ extern uint16_t gFadeOutStartType;
 extern FadeOut *gFadeOut;
 extern uint16_t gFadeOutEndType;
 extern uint16_t gGlowTaskType;
-extern const float gSceneRect[];
+extern Scene gScene;
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
@@ -78,10 +79,10 @@ void FadeOut_SetRect(FadeOut *f)
 {
     float rect[4];
 
-    rect[0] = gSceneRect[0];
-    rect[1] = gSceneRect[1];
-    rect[2] = gSceneRect[2];
-    rect[3] = gSceneRect[3];
+    rect[0] = gScene.x;
+    rect[1] = gScene.y;
+    rect[2] = gScene.w;
+    rect[3] = gScene.h;
     Scene_SetRect(&f->scene, rect);
 }
 HOOK(0x4E90C0, FadeOut_SetRect);

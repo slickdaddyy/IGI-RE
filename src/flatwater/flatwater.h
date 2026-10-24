@@ -105,12 +105,7 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 
 /* the current view: rotation rows, screen rectangle and projection scale */
 extern TransContext gTransContext;
-extern float gViewX;
-extern float gViewY;
-extern float gViewW;
-extern float gViewH;
-extern float gViewCX;
-extern float gViewCY;
+extern Scene gScene;
 
 extern void *gQVertexTexture;
 extern int gQVertexStrip;

@@ -72,10 +72,7 @@ extern float gD3DMaxZ;
 extern float gNearPlane;
 extern float gWorldScale;
 extern TransContext gTransContext;
-extern float gSceneMinX;
-extern float gSceneMinY;
-extern float gSceneMaxX;
-extern float gSceneMaxY;
+extern Scene gScene;
 extern int gTransContextValid;
 extern int gSortActive;
 
@@ -138,22 +135,22 @@ static void ClipVert_LerpRest(ClipVert *p, const ClipVert *a, long double t)
 
 static long double MaxX(void)
 {
-    return (long double)gSceneMaxX + kOne.f;
+    return (long double)gScene.maxX + kOne.f;
 }
 
 static long double MaxY(void)
 {
-    return (long double)gSceneMaxY + kOne.f;
+    return (long double)gScene.maxY + kOne.f;
 }
 
 static float CutLeft(const ClipVert *p, const ClipVert *a)
 {
-    return ((long double)gSceneMinX - a->x) / ((long double)p->x - a->x);
+    return ((long double)gScene.minX - a->x) / ((long double)p->x - a->x);
 }
 
 static long double CutTop(const ClipVert *p, const ClipVert *a)
 {
-    return ((long double)gSceneMinY - a->y) / ((long double)p->y - a->y);
+    return ((long double)gScene.minY - a->y) / ((long double)p->y - a->y);
 }
 
 static float CutRight(const ClipVert *p, const ClipVert *a)
@@ -169,7 +166,7 @@ static long double CutBottom(const ClipVert *p, const ClipVert *a)
 /* outcode of a vertex that is now inside the left edge */
 static unsigned int CodeAfterLeft(const ClipVert *p)
 {
-    unsigned int top = !(p->y >= gSceneMinY), right = !(MaxX() >= p->x), bottom = !(MaxY() >= p->y);
+    unsigned int top = !(p->y >= gScene.minY), right = !(MaxX() >= p->x), bottom = !(MaxY() >= p->y);
 
     return ((bottom * 2 | right) * 2 | top) * 2;
 }
@@ -245,7 +242,7 @@ void QVertex_ClipTriangle(ClipVert a, ClipVert b, ClipVert c, float nearZ, ClipF
             t.x = tx;
             t.y = ty;
             ClipVert_LerpRest(&t, n2, cut);
-            t.code = (((unsigned)!(MaxY() >= t.y) * 2 | (tx > MaxX())) * 2 | !(ty >= gSceneMinY)) * 2;
+            t.code = (((unsigned)!(MaxY() >= t.y) * 2 | (tx > MaxX())) * 2 | !(ty >= gScene.minY)) * 2;
             QVertex_ClipTriangle(*n2, t, *p, nearZ, fn, s);
         }
         any = a.code | b.code | c.code;
@@ -266,7 +263,7 @@ void QVertex_ClipTriangle(ClipVert a, ClipVert b, ClipVert c, float nearZ, ClipF
             t = *p;
             ClipVert_Lerp(p, n1, CutTop(p, n1));
             p->code = CodeAfterTop(p);
-            cut = (float)(((long double)gSceneMinY - n2->y) / ((long double)t.y - n2->y));
+            cut = (float)(((long double)gScene.minY - n2->y) / ((long double)t.y - n2->y));
             ty = ((long double)t.y - n2->y) * cut + n2->y;
             t.x = ((long double)t.x - n2->x) * cut + n2->x;
             t.y = ty;
@@ -667,12 +664,12 @@ void D3DQVertex_Strip(QVertexStrip *s)
     int n = s->count;
 
     if (n > 0) {
-        long double maxX = (long double)gSceneMaxX + kOne.f, maxY = (long double)gSceneMaxY + kOne.f;
+        long double maxX = (long double)gScene.maxX + kOne.f, maxY = (long double)gScene.maxY + kOne.f;
         const QVertex *v = s->verts;
 
         do {
-            code |= (((unsigned)!(maxY >= v->y) * 2 | (v->x > maxX)) * 2 | !(v->y >= gSceneMinY)) * 2 |
-                    !(v->x >= gSceneMinX);
+            code |= (((unsigned)!(maxY >= v->y) * 2 | (v->x > maxX)) * 2 | !(v->y >= gScene.minY)) * 2 |
+                    !(v->x >= gScene.minX);
             v++;
         } while (--n);
     }
@@ -701,10 +698,10 @@ HOOK(0x50E0D0, D3DQVertex_Strip);
 /* The outcode of the line and strip clippers. */
 static unsigned int Outcode(const QVertex *v)
 {
-    unsigned int left = !(v->x >= gSceneMinX);
-    unsigned int top = !(v->y >= gSceneMinY);
-    unsigned int right = !((long double)gSceneMaxX + kOne.f >= v->x);
-    unsigned int bottom = !((long double)gSceneMaxY + kOne.f >= v->y);
+    unsigned int left = !(v->x >= gScene.minX);
+    unsigned int top = !(v->y >= gScene.minY);
+    unsigned int right = !((long double)gScene.maxX + kOne.f >= v->x);
+    unsigned int bottom = !((long double)gScene.maxY + kOne.f >= v->y);
 
     return ((bottom * 2 | right) * 2 | top) * 2 | left;
 }
@@ -828,8 +825,8 @@ void D3DQVertex_ClipRect(QVertexStrip *s)
     QVertex buf[3];
     ClipVert c[4];
     const QVertex *v = s->verts;
-    float maxX = gSceneMaxX + kOne.f;
-    long double maxY = (long double)gSceneMaxY + kOne.f, w;
+    float maxX = gScene.maxX + kOne.f;
+    long double maxY = (long double)gScene.maxY + kOne.f, w;
     int i;
 
     l.count = 3;
@@ -837,7 +834,7 @@ void D3DQVertex_ClipRect(QVertexStrip *s)
     for (i = 0; i < 4; i++) {
         float x = v[i & 1].x, y = v[i >> 1].y;
 
-        c[i].code = (((unsigned)!(maxY >= y) * 2 | (x > maxX)) * 2 | !(y >= gSceneMinY)) * 2 | !(x >= gSceneMinX);
+        c[i].code = (((unsigned)!(maxY >= y) * 2 | (x > maxX)) * 2 | !(y >= gScene.minY)) * 2 | !(x >= gScene.minX);
         c[i].x = x;
         c[i].y = y;
     }
