@@ -6,18 +6,10 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
+#include "qvertex/qvertextypes.h"
 
 FN_EXTERN(SubLevel_Run);
-
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 
 typedef void (*TaskFn1)(void *task);
 typedef void (*TaskFn2)(void *task, void *arg);
@@ -123,18 +115,6 @@ extern float gViewH;
 extern float gViewCX;
 extern float gViewCY;
 extern double gCamPos[];
-
-typedef struct QVertex {
-    float x, y, z, u, v, a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
 
 extern void *gQVertexTexture;
 extern int gQVertexStrip;

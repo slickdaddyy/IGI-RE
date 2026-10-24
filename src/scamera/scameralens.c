@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "scamera/scamera.h"
+#include "qvertex/qvertextypes.h"
 
 ORIG(0x401AE0, Task **, TaskRef_Add, (Task *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
@@ -60,20 +61,6 @@ ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 extern char *gAlarmLightSprite;
 extern uint16_t gSCameraType;
 extern void *gLensList;
-
-typedef struct QVertex {
-    float x, y, z;
-    float u, v;
-    float a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
 
 extern void (*gRenderFuncs[])(QVertexStrip *);
 extern void *gQVertexTexture;
@@ -659,10 +646,10 @@ void SCameraLens_DrawViewCone(SCameraLens *l, void *arg)
     }
     gQVertexTexture = 0;
     gQVertexPalette = 0;
-    strip.untextured = 0;
+    strip.lines = 0;
     strip.verts = v;
     strip.flags = 0x400C0000;
-    strip.unk8 = -1;
+    strip.queue = -1;
     strip.count = 3;
     ComputerObject_ProjectPos(scr, &depth, &p, arg);
     cone_vertex(&v[0], scr);

@@ -7,16 +7,9 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
 
 typedef void (*TaskFn)();
-
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
 
 /* "RigidDynCubeObj" (0xF0 bytes), the fields used here */
 typedef struct Obj {
@@ -65,7 +58,6 @@ typedef struct ParamEnum {
     char **names;
 } ParamEnum;
 
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(sizeof(Obj) == 0xF0, "Obj");
 _Static_assert(offsetof(MagicArg, data) == 0x8C, "MagicArg");
 _Static_assert(sizeof(MagicPart) == 0x4C, "MagicPart");

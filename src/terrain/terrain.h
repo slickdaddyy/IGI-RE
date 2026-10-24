@@ -5,6 +5,7 @@
 
 #include "igi.h"
 #include "task/task.h"
+#include "script/scripttypes.h"
 
 #define DYNCUBE_TREES 6
 #define DYNCUBE_MIN_SIZE 0x2000
@@ -88,14 +89,6 @@ typedef struct Terrain {
     int unkDFC;
     char name[0x100];
 } Terrain;
-
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
 
 typedef struct TerrainLayer {
     int unk0;

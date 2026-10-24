@@ -1156,7 +1156,7 @@ static void return_one(ScriptValue *ret)
 {
     ret->i = 1;
     ret->d = 1.0;
-    ret->type = gScriptNumberType;
+    ret->s = gScriptNumberType;
 }
 
 ScriptValue *DefineHumanPlayerGeneral(ScriptValue *ret, void *unused, void *args)

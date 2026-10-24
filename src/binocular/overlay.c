@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "binocular/binocular.h"
+#include "qvertex/qvertextypes.h"
 
 FN_EXTERN(BinocularHolder_Changed);
 FN_EXTERN(BinocularHolder_GetParams);
@@ -15,20 +16,6 @@ typedef struct Text {
     float x;
     float y;
 } Text;
-
-typedef struct QVertex {
-    float x, y, z;
-    float u, v;
-    float a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
 
 typedef struct Display {
     int unk0;
@@ -743,9 +730,9 @@ void BinocularOverlay_DrawCompass(BinocularOverlay *ov)
     v[0].x = cx;
     v[1].y = y0;
     v[2].y = y0;
-    strip.untextured = 0;
+    strip.lines = 0;
     strip.flags = 0x800000;
-    strip.unk8 = 0;
+    strip.queue = 0;
     strip.count = 3;
     strip.verts = v;
     gQVertexTexture = NULL;

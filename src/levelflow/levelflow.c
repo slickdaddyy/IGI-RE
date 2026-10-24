@@ -102,7 +102,7 @@ ScriptValue *LevelFlow_GetBreakCutSceneKey(ScriptValue *ret)
 
     ret->i = key;
     ret->d = key;
-    ret->type = gScriptNumberType;
+    ret->s = gScriptNumberType;
     return ret;
 }
 HOOK(0x488E00, LevelFlow_GetBreakCutSceneKey);
@@ -113,7 +113,7 @@ ScriptValue *LevelFlow_LevelFailed(ScriptValue *ret)
 
     ret->i = failed;
     ret->d = failed;
-    ret->type = gScriptNumberType;
+    ret->s = gScriptNumberType;
     return ret;
 }
 HOOK(0x488E50, LevelFlow_LevelFailed);
@@ -122,7 +122,7 @@ ScriptValue *LevelFlow_IsCountryUSA(ScriptValue *ret)
 {
     ret->i = AppContext_IsUSA();
     ret->d = AppContext_IsUSA();
-    ret->type = gScriptNumberType;
+    ret->s = gScriptNumberType;
     return ret;
 }
 HOOK(0x488E90, LevelFlow_IsCountryUSA);

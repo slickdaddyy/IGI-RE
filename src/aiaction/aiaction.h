@@ -7,29 +7,10 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
+#include "script/scripttypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-/* what a script function returns */
-typedef struct ScriptValue {
-    int i;
-    int unk04;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
-
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
-_Static_assert(sizeof(ScriptValue) == 0x18, "ScriptValue");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

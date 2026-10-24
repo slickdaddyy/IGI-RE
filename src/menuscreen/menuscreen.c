@@ -212,9 +212,9 @@ void MenuScreen_DrawFrame(MenuScreen *ms)
     v[3].x = x0;
     v[3].y = y1;
     v[4] = v[0];
-    s.untextured = 1;
+    s.lines = 1;
     s.flags = 0x80000;
-    s.unk8 = 0;
+    s.queue = 0;
     s.count = 5;
     s.verts = v;
     gRenderFuncs[gQVertexStrip](&s);
@@ -230,8 +230,8 @@ void MenuScreen_DrawFrame(MenuScreen *ms)
     set_vertex(&v[1], x1, y0, a1, 1.0f);
     set_vertex(&v[2], x0, y1, a2, 0);
     set_vertex(&v[3], x1, y1, a2, 0);
-    s.untextured = 0;
-    s.unk8 = 0;
+    s.lines = 0;
+    s.queue = 0;
     s.count = 4;
     s.verts = v;
     gRenderFuncs[gQVertexStrip](&s);

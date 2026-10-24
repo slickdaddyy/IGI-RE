@@ -2,22 +2,9 @@
 
 #include "hook.h"
 #include "shadow/shadow.h"
+#include "qvertex/qvertextypes.h"
 
 ORIG(0x497F20, void, TransContext_Project, (float *screen, float *depth, Vec3d *pos));
-
-typedef struct QVertex {
-    float x, y, z;
-    float u, v;
-    float a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
 
 extern void (*gRenderFuncs[])(QVertexStrip *);
 extern void *gQVertexTexture;
@@ -99,10 +86,10 @@ static void line_draw(const Vec3d *pa, const Vec3d *pb, const float *ca, float a
     v[1].g = cb[1];
     v[1].b = cb[2];
     strip.flags = is_one(aa) && is_one(ab) ? 0x40060000 : 0xC0000;
-    strip.unk8 = unk8;
+    strip.queue = unk8;
     gQVertexTexture = NULL;
     gQVertexPalette = NULL;
-    strip.untextured = 1;
+    strip.lines = 1;
     strip.count = 2;
     strip.verts = v;
     gRenderFuncs[gQVertexStrip](&strip);

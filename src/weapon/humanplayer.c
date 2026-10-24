@@ -9,6 +9,7 @@
 #include "igi.h"
 #include "weapon/humanplayer.h"
 #include "weapon/weapon.h"
+#include "qvertex/qvertextypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401AE0, void *, TaskRef_Add, (void *task));
@@ -107,19 +108,6 @@ typedef struct WeaponCategory {
 } WeaponCategory;
 extern WeaponCategory gWeaponCategories[];
 
-typedef struct QVertex {
-    float x, y, z;
-    float u, v;
-    float a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
 extern void (*gRenderFuncs[])(QVertexStrip *);
 
 /* 0x1C byte message for 0x450CE0, probably a noise enemies can hear */
@@ -936,9 +924,9 @@ static void Render_ActionBar(HumanPlayer *h, int width, int height, float *top)
     v[0].r = v[1].r = 0;
     v[0].g = v[1].g = 1.0f;
     v[0].b = v[1].b = 0;
-    s.untextured = 1;
+    s.lines = 1;
     s.flags = 0;
-    s.unk8 = 0;
+    s.queue = 0;
     s.count = 2;
     s.verts = v;
     v[0].x = x;

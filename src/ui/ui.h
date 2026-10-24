@@ -6,6 +6,7 @@
 
 #include "igi.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -50,15 +51,6 @@ typedef struct MenuInput {
     int x, y;
 } MenuInput;
 
-/* a script string parameter that may hold an expression ("$...") */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
 typedef struct Display {
     int unk0;
     int width;
@@ -66,7 +58,6 @@ typedef struct Display {
 } Display;
 
 _Static_assert(sizeof(MenuWindow) == 0x54, "MenuWindow");
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

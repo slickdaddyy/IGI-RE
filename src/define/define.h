@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "script/scripttypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -61,15 +62,6 @@ typedef struct SoundCreateArg {
     void *def;
     char isDef;
 } SoundCreateArg;
-
-/* Same layout as the script engine's value. Bytes 4 and 20 are never set. */
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
 
 /* "SoundDefSound": DefineSound() */
 typedef struct SoundDefSound {

@@ -8,19 +8,11 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)();
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
 
 /* "RigidDynCubeObj" (0xF0 bytes), an object with a model */
 typedef struct RigidObj {

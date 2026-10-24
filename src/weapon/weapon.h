@@ -4,18 +4,10 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "script/scripttypes.h"
 
 #define WEAPON_TYPE_MAX 30
 #define TASK_NO_TYPE 0x181
-
-/* Same layout as the script engine's value. Bytes 4 and 20 are never set. */
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
 
 /* One DefineWeaponType() call from weapons/<name>/weapon.qsc. The fields
    are in script argument order from 0x610 on, see the notes. */

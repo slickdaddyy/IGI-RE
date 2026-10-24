@@ -4,14 +4,7 @@
 
 #include "hook.h"
 #include "animcam/animcam.h"
-
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
+#include "param/paramtypes.h"
 
 typedef struct AnimKey {
     char channel;

@@ -6,16 +6,9 @@
 
 #include "hook.h"
 #include "camera/camera.h"
+#include "param/paramtypes.h"
 
 FN_EXTERN(Task_Nothing);
-
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
 
 /* a camera key of a cut scene: an EditCamera child task */
 typedef struct EditCamera {
@@ -89,7 +82,6 @@ typedef struct DisplayMode {
     int height;
 } DisplayMode;
 
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(offsetof(EditCamera, fov) == 0x88, "EditCamera.fov");
 _Static_assert(offsetof(EditCamera, unk98) == 0x98, "EditCamera.unk98");
 _Static_assert(offsetof(EditCamera, shake) == 0xE0, "EditCamera.shake");

@@ -7,15 +7,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
-
-/* script string that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
+#include "param/paramtypes.h"
 
 /* per type data of a vehicle physics type, parsed by 0x5031F0 */
 typedef struct VehicleConfig {

@@ -7,16 +7,9 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
 
 /* a MagicObj definition; data is the block parsed from its script arguments */
 typedef struct MagicDef {
@@ -220,7 +213,6 @@ typedef struct Car {
     char pad2ED6[2];
 } Car;
 
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 _Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 _Static_assert(sizeof(Part) == 0x140, "Part");

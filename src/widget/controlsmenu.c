@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "widget/widget.h"
+#include "script/scripttypes.h"
 
 ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
 ORIG(0x4B8920, void, Script_UnregisterSymbol, (const char *name));
@@ -33,14 +34,6 @@ typedef struct KeyBinding {
     int device; /* 1 = keyboard, 3 = joystick button */
     int key;
 } KeyBinding;
-
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *type;
-    int unk14;
-} ScriptValue;
 
 #define ROWS 64
 #define ROW_HEIGHT 20
@@ -125,7 +118,7 @@ ScriptValue *ControlsMenu_ConvertFloatFromOffset(ScriptValue *out, void *data, v
     __asm__("fistpll %0" : "=m"(i) : "t"(f) : "st");
     out->i = (int)i;
     out->d = f;
-    out->type = gEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4231E0, ControlsMenu_ConvertFloatFromOffset);
@@ -139,7 +132,7 @@ ScriptValue *ControlsMenu_ConvertOffsetFromFloat(ScriptValue *out, void *data, v
     __asm__("fistpll %0" : "=m"(i) : "t"(f) : "st");
     out->i = (int)i;
     out->d = f;
-    out->type = gEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x423240, ControlsMenu_ConvertOffsetFromFloat);
@@ -417,9 +410,9 @@ void ControlsMenu_DrawFrame(ControlsMenu *cm, float alpha)
     v[3].x = fx;
     v[3].y = v[2].y;
     v[4] = v[0];
-    strip.untextured = 1;
+    strip.lines = 1;
     strip.flags = 0x80000;
-    strip.unk8 = 0;
+    strip.queue = 0;
     strip.count = 5;
     strip.verts = v;
     gRenderFuncs[gQVertexStrip](&strip);

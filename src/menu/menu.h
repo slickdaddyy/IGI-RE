@@ -6,6 +6,7 @@
 
 #include "igi.h"
 #include "task/tasktypes.h"
+#include "qvertex/qvertextypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -27,20 +28,6 @@ typedef struct Text {
     int unk20;
     unsigned int flags;
 } Text;
-
-typedef struct QVertex {
-    float x, y, z;
-    float u, v;
-    float a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
 
 /* the "MenuWindow" task (0x54 bytes), base of every menu element */
 typedef struct MenuWindow {

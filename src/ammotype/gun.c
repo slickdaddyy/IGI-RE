@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "ammotype/ammotype.h"
+#include "qvertex/qvertextypes.h"
 
 /* The "Gun" task (0x1B0 bytes, 0x5BE3C6), base of the hand weapons. These
    are its handlers from 0x479780 on; the type is registered by 0x477E30. */
@@ -138,20 +139,6 @@ typedef struct Hud {
 } Hud;
 
 #define HUD_SPRITE(hud, off) ((void *)((char *)(hud) + (off)))
-
-typedef struct QVertex {
-    float x, y, z;
-    float u, v;
-    float a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
 
 typedef struct TaskList {
     int count;
@@ -540,9 +527,9 @@ void Gun_HudHandler(Gun *g, Hud **msg)
 
         gQVertexTexture = NULL;
         gQVertexPalette = NULL;
-        strip.untextured = 1;
+        strip.lines = 1;
         strip.flags = 0x80000;
-        strip.unk8 = -1;
+        strip.queue = -1;
         strip.count = 2;
         strip.verts = v;
         v[0].x = rf(width * kHudRight);

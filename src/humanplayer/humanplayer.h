@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "task/tasktypes.h"
+#include "script/scripttypes.h"
 
 typedef struct StateMachine StateMachine;
 typedef struct HumanPlayer HumanPlayer;
@@ -247,13 +248,5 @@ _Static_assert(offsetof(WeaponInfo, kind) == 0x610, "kind");
 _Static_assert(offsetof(WeaponInfo, clip_size) == 0x648, "clip_size");
 _Static_assert(offsetof(WeaponInfo, anim67C) == 0x67C, "anim67C");
 _Static_assert(offsetof(WeaponInfo, heal) == 0x6E4, "heal");
-
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    void *type;
-    int unk14;
-} ScriptValue;
 
 #endif

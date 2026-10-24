@@ -7,15 +7,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
-
-/* script string that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
+#include "param/paramtypes.h"
 
 /* a physics object type (DefinePhysicsObjType); data is its parsed arguments */
 typedef struct PhysType {
@@ -270,7 +262,6 @@ typedef struct ControlInfo {
     float max;
 } ControlInfo;
 
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(offsetof(PhysType, data) == 0x2D4, "PhysType");
 _Static_assert(offsetof(Vehicle, contacts) == 0x1B8, "Vehicle");
 _Static_assert(offsetof(Vehicle, moved) == 0x690, "Vehicle");

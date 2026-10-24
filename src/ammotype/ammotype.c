@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "ammotype/ammotype.h"
+#include "script/scripttypes.h"
 
 FN_EXTERN(BulletHole_AddRigid);
 FN_EXTERN(BulletHole_AddSpline);
@@ -53,14 +54,6 @@ extern uint16_t gBulletHoleType;
 extern char gBulletHolePool[];
 extern char gBulletHolePool2[];
 extern const char gScriptEmptyString[];
-
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
 
 typedef struct DirEntry {
     char *name;

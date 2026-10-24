@@ -7,18 +7,10 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "script/scripttypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 typedef void (*TaskFn1)(void *task);
-
-/* Same layout as the script engine's value. Bytes 4 and 20 are never set. */
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *type;
-    int unk14;
-} ScriptValue;
 
 /* The in-mission game task, made from the "Game" task type. */
 typedef struct Game {
@@ -66,7 +58,7 @@ static inline ScriptValue *Game_ReturnOne(ScriptValue *out, int i, double d)
 {
     out->i = i;
     out->d = d;
-    out->type = gScriptEmptyString;
+    out->s = gScriptEmptyString;
     return out;
 }
 

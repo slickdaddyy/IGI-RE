@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -36,10 +37,6 @@ typedef struct MoveArg {
     Vec3d *pos;
     Matrix *matrix;
 } MoveArg;
-
-typedef struct RangeI {
-    int min, max;
-} RangeI;
 
 _Static_assert(sizeof(Obj) == 0xF0, "Obj");
 _Static_assert(offsetof(ObjInfo, radius) == 0x4C, "ObjInfo");

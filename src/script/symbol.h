@@ -4,17 +4,9 @@
 #include "igi.h"
 #include "core/list.h"
 #include "script/symtab.h"
+#include "script/scripttypes.h"
 
 struct Expr;
-
-/* A value returned by a symbol handler. Bytes 4 and 20 are never set. */
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
 
 /* Arguments of a function call, either parsed expressions or a running QVM. */
 typedef struct ScriptArgs {

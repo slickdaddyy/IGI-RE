@@ -6,6 +6,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "soldier/soldier.h"
+#include "script/scripttypes.h"
 
 FN_EXTERN(Car_CollFilter);
 FN_EXTERN(Human_ActivateHandler);
@@ -46,14 +47,6 @@ FN_EXTERN(Human_GetViewBarrelHandler);
 FN_EXTERN(Human_GetViewPartHandler);
 FN_EXTERN(Human_MapMarkerHandler);
 FN_EXTERN(Human_MapSelectHandler);
-
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    void *type;
-    int unk14;
-} ScriptValue;
 
 typedef struct TargetQuery {
     char result;
@@ -346,7 +339,7 @@ ScriptValue *Human_GetCutSceneDeltaTime(ScriptValue *ret)
 
     r.i = x87_fistp(v);
     r.d = v;
-    r.type = gScriptNumberType;
+    r.s = gScriptNumberType;
     memcpy(ret, &r, sizeof(r));
     return ret;
 }

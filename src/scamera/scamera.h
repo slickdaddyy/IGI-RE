@@ -7,16 +7,9 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
 
 typedef void (*TaskFn)();
-
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
 
 /* "SectorInteriorObject" (0xF0 bytes), a RigidDynCubeObj placed in a sector */
 typedef struct SObj {

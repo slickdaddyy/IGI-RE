@@ -2,15 +2,7 @@
 #define CONFIG_H
 
 #include "igi.h"
-
-/* Same layout as the script engine's value. Bytes 4 and 20 are never set. */
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
+#include "script/scripttypes.h"
 
 typedef struct ConfigDisplayMode {
     int width;

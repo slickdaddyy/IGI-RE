@@ -1,22 +1,9 @@
 #include "hook.h"
 #include "igi.h"
 #include "ui/ui.h"
+#include "qvertex/qvertextypes.h"
 
 ORIG(0x4B8030, void, Script_RegisterString, (const char *name, char *buf, int size));
-
-typedef struct QVertex {
-    float x, y, z;
-    float u, v;
-    float a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
 
 extern void (*gRenderFuncs[])(QVertexStrip *);
 extern void *gQVertexTexture;
@@ -299,9 +286,9 @@ void InputBox_Draw(InputBox *ib)
             v[1].r = 1.0f;
             v[1].g = 1.0f;
             v[1].b = 1.0f;
-            strip.untextured = 1;
+            strip.lines = 1;
             strip.flags = 0;
-            strip.unk8 = 0;
+            strip.queue = 0;
             strip.count = 2;
             strip.verts = v;
             gQVertexTexture = NULL;

@@ -6,6 +6,7 @@
 
 #include "igi.h"
 #include "task/tasktypes.h"
+#include "script/scripttypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -51,15 +52,6 @@ extern int gTaskStackTop;
             c_ = gTaskStack[--gTaskStackTop];                           \
         } while (c_);                                                   \
     } while (0)
-
-/* A script function result. Bytes 4 and 20 are never set. */
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
 
 typedef struct ScriptArgs ScriptArgs;
 

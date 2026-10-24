@@ -6,6 +6,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
 
 typedef struct Level {
     Task task;
@@ -20,16 +21,6 @@ typedef struct TaskNote {
     Task **ref;
     char text[0x41];
 } TaskNote;
-
-/* A script expression kept as text. Bind expands "this." and task ids
-   and keeps references to the tasks it names. */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    Task **refs[16];
-    int refCount;
-} VarString;
 
 typedef struct ParamEntry {
     int offset;

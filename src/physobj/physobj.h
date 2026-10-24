@@ -6,6 +6,7 @@
 
 #include "igi.h"
 #include "task/tasktypes.h"
+#include "script/scripttypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -15,15 +16,6 @@ extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[(uint8_t)(slot)][(uint16_t)(type)]
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
-
-/* what a script function returns */
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    void *type;
-    int unk14;
-} ScriptValue;
 
 extern char gScriptNumberType[];
 
@@ -71,6 +63,5 @@ _Static_assert(sizeof(PhysicsObjType) == 0x2D8, "PhysicsObjType");
 _Static_assert(offsetof(PhysicsObjType, model) == 0x138, "model");
 _Static_assert(offsetof(PhysicsObjType, joints) == 0x14C, "joints");
 _Static_assert(offsetof(PhysicsObjType, data) == 0x2D4, "data");
-_Static_assert(sizeof(ScriptValue) == 0x18, "ScriptValue");
 
 #endif

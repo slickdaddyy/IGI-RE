@@ -7,32 +7,15 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-/* min and max of a script parameter */
-typedef struct RangeF {
-    float min, max;
-} RangeF;
-
 typedef struct RangeD {
     double min, max;
 } RangeD;
-
-typedef struct RangeI {
-    int min, max;
-} RangeI;
 
 /* {count, names} extra data of an enum parameter */
 typedef struct ParamEnum {
@@ -71,7 +54,6 @@ typedef struct PartCreateArg {
     Task *owner;
 } PartCreateArg;
 
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 _Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 

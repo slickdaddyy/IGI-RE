@@ -7,19 +7,11 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
 
 /* "RigidDynCubeObj" (0xF0 bytes), a moving object with a model */
 typedef struct RigidObj {
@@ -104,7 +96,6 @@ typedef struct View {
     float centerY;
 } View;
 
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 _Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 _Static_assert(offsetof(RefNode, active) == 0x29, "RefNode");

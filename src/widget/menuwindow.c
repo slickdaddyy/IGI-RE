@@ -393,8 +393,8 @@ void MenuWindow_DrawEnd(MenuWindow *w, float fill, float alpha, int focused)
     strip.flags = 0;
     if (!(alpha > opaque))
         strip.flags = 0x80000;
-    strip.untextured = 1;
-    strip.unk8 = 0;
+    strip.lines = 1;
+    strip.queue = 0;
     strip.count = 5;
     strip.verts = v;
     gQVertexTexture = NULL;

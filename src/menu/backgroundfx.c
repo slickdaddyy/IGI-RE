@@ -71,9 +71,9 @@ static void draw_strip(QVertex *v, int count)
 {
     QVertexStrip s;
 
-    s.untextured = 1;
+    s.lines = 1;
     s.flags = 0x80000;
-    s.unk8 = 0;
+    s.queue = 0;
     s.count = count;
     s.verts = v;
     gRenderFuncs[gQVertexStrip](&s);

@@ -6,16 +6,9 @@
 
 #include "hook.h"
 #include "camera/camera.h"
+#include "param/paramtypes.h"
 
 FN_EXTERN(Task_Nothing);
-
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
 
 /* a placed object that explodes once its damage reaches its health, or when
    its script value or timer says so (0x238 bytes, parent SectorInteriorObject) */
@@ -77,7 +70,6 @@ typedef struct JoinArg {
     void *world;
 } JoinArg;
 
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(offsetof(ExplodeObject, unkDC) == 0xDC, "ExplodeObject.unkDC");
 _Static_assert(offsetof(ExplodeObject, local) == 0x148, "ExplodeObject.local");
 _Static_assert(offsetof(ExplodeObject, trigger) == 0x194, "ExplodeObject.trigger");

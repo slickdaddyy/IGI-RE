@@ -7,20 +7,13 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
+#include "script/scripttypes.h"
 
 FN_EXTERN(MagicObjContainer_Event);
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)();
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
 
 typedef struct ParamEntry {
     int offset;
@@ -36,22 +29,11 @@ typedef struct ParamTable {
     ParamEntry *entries;
 } ParamTable;
 
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    void *type;
-    int unk14;
-} ScriptValue;
-
 typedef struct QTaskList {
     int count;
     int max;
     Task *items[];
 } QTaskList;
-
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
-_Static_assert(sizeof(ScriptValue) == 0x18, "ScriptValue");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

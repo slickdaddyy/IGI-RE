@@ -7,25 +7,11 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
+#include "script/scripttypes.h"
+#include "qvertex/qvertextypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
 
 typedef struct Sprite {
     char unk0[0x18];
@@ -45,20 +31,6 @@ typedef struct Display {
     int width;
     int height;
 } Display;
-
-typedef struct QVertex {
-    float x, y, z;
-    float u, v;
-    float a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
 
 /* a "StatusMessage" task (0x1E0 bytes): a text shown on the status screen when cond becomes true */
 typedef struct StatusMessage {

@@ -423,9 +423,9 @@ void FlatWater_Render(FlatWater *w)
         }
 
         if (n > 2) {
-            strip.untextured = 0;
+            strip.lines = 0;
             strip.flags = 0x51420000;
-            strip.unk8 = -1;
+            strip.queue = -1;
             strip.count = n;
             strip.verts = verts;
             gQVertexTexture = l->loaded ? l->texture : NULL;
@@ -443,8 +443,8 @@ void FlatWater_Render(FlatWater *w)
         if (l == (FlatLayer *)Task_FindLastChild(w, gFlatWaterLayerType) && n > 2) {
             strip.verts = verts;
             strip.flags = 0x51400000;
-            strip.untextured = 0;
-            strip.unk8 = -1;
+            strip.lines = 0;
+            strip.queue = -1;
             strip.count = n;
             gQVertexTexture = NULL;
             for (c = 0; c < n; c++) {

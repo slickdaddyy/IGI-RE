@@ -2,6 +2,7 @@
 #define FLOW_H
 
 #include "task/task.h"
+#include "script/scripttypes.h"
 
 enum {
     FLOW_EVENT_QUIT = 1,
@@ -31,14 +32,6 @@ typedef struct Flow {
     int time_adjust;
     int paused_time;
 } Flow;
-
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    void *type;
-    int unk14;
-} ScriptValue;
 
 void Flow_Open(void);
 void Flow_CreateHandler(Flow *flow);

@@ -7,14 +7,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
-
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
+#include "param/paramtypes.h"
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;

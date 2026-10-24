@@ -7,6 +7,8 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
+#include "qvertex/qvertextypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -20,20 +22,6 @@ typedef struct Text {
     int unk20;
     unsigned int flags;
 } Text;
-
-typedef struct QVertex {
-    float x, y, z;
-    float u, v;
-    float a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
 
 /* the "MenuWindow" task (0x54 bytes), base of every menu element */
 typedef struct MenuWindow {
@@ -67,15 +55,6 @@ typedef struct MenuInput {
     int x, y;
 } MenuInput;
 
-/* a script string parameter that may hold an expression ("$...") */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
 typedef struct Display {
     int unk0;
     int width;
@@ -87,7 +66,6 @@ typedef struct IntRange {
 } IntRange;
 
 _Static_assert(sizeof(MenuWindow) == 0x54, "MenuWindow");
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

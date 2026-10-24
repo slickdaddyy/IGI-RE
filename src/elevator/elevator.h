@@ -7,17 +7,9 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
 
 /* "RigidDynCubeObj" (0xF0 bytes), the fields used here */
 typedef struct Obj {
@@ -50,16 +42,6 @@ typedef struct MoveArg {
     Matrix *matrix;
 } MoveArg;
 
-/* min and max of a script parameter */
-typedef struct RangeF {
-    float min, max;
-} RangeF;
-
-typedef struct RangeI {
-    int min, max;
-} RangeI;
-
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(sizeof(Obj) == 0xF0, "Obj");
 _Static_assert(offsetof(ObjInfo, name) == 0x50, "ObjInfo");
 

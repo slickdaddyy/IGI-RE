@@ -4,10 +4,7 @@
 
 #include "hook.h"
 #include "nodereg/nodereg.h"
-
-typedef struct VarString {
-    char text[0x50];
-} VarString;
+#include "param/paramtypes.h"
 
 /* "LevelTimer" (0x110) */
 typedef struct LevelTimer {

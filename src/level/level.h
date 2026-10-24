@@ -6,6 +6,8 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
+#include "script/scripttypes.h"
 
 /* the "Level" task, root of everything a level script creates */
 typedef struct Level {
@@ -17,14 +19,6 @@ typedef struct Level {
     int msPerTick;
     int unk34;
 } Level;
-
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
 
 typedef struct ScriptArgs {
     int count;
@@ -59,10 +53,6 @@ typedef struct ParamTable {
     int max;
     ParamEntry *entries;
 } ParamTable;
-
-typedef struct VarString {
-    char *text;
-} VarString;
 
 /* a text note attached to a task, kept in a hash of lists by task address */
 typedef struct TaskNote {

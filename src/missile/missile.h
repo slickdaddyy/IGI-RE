@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
 
 typedef void (*TaskFn1)(Task *task);
 typedef void (*TaskFn2)(Task *task, void *arg);
@@ -125,15 +126,6 @@ typedef struct Missile {
     void *sound;        /* 0x890 */
     int unk894;
 } Missile;
-
-/* script string that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
 
 typedef struct Train {
     Vehicle v;

@@ -7,17 +7,9 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
 
 /* a task list: count, then the tasks from +8 */
 typedef struct TaskArray {
@@ -52,7 +44,6 @@ typedef struct MapQuery {
     char *text2;
 } MapQuery;
 
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(offsetof(Obj, scale) == 0x98, "Obj");
 _Static_assert(sizeof(MapQuery) == 0x2C, "MapQuery");
 

@@ -72,10 +72,6 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 ORIG(0x5096A0, uint8_t, AIGraph_GetEvent, (void));
 
-typedef struct RangeF {
-    float min, max;
-} RangeF;
-
 /* asks for the door nearest to pos */
 typedef struct NearQuery {
     Vec3d pos;

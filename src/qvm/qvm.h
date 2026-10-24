@@ -3,6 +3,7 @@
 
 #include "igi.h"
 #include "types.h"
+#include "script/scripttypes.h"
 
 /* Same record as Script_RegisterSymbol makes. */
 typedef struct ScriptSymbol {
@@ -14,14 +15,6 @@ typedef struct ScriptSymbol {
     const char *name;
     void *data;
 } ScriptSymbol;
-
-typedef struct ScriptValue {
-    int i;
-    int unk04;
-    double d;
-    char *s;
-    int unk14;
-} ScriptValue;
 
 typedef struct ScriptArgs ScriptArgs;
 typedef ScriptValue *(*ScriptHandler)(ScriptValue *out, void *data, ScriptArgs *args);

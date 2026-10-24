@@ -6,16 +6,9 @@
 
 #include "hook.h"
 #include "camera/camera.h"
+#include "param/paramtypes.h"
 
 FN_EXTERN(crt_CIfmod);
-
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
 
 /* one cube of the 7x7x7 grid of rain around the camera */
 typedef struct RainCell {

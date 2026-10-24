@@ -8,19 +8,11 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "param/paramtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)();
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
 
 /* "RigidDynCubeObj" (0xF0 bytes), an object with a model */
 typedef struct RigidObj {
@@ -142,7 +134,6 @@ typedef struct ObjInfo {
     int unk50;
 } ObjInfo;
 
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 _Static_assert(offsetof(EditRigidObj, offset) == 0x158, "offset");
 _Static_assert(sizeof(EditRigidObj) == 0x1A0, "EditRigidObj");
