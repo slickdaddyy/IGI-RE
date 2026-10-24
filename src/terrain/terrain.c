@@ -181,10 +181,10 @@ ScriptValue *CreateTerrainMaterial(ScriptValue *out, void *data, void *args)
         l->unk0 = Script_GetArgInt(args, i - 1);
         l->unk4 = Script_GetArgReal(args, i);
         l->unk8 = Script_GetArgReal(args, i + 1);
-        l->unkC = Script_GetArgReal(args, i + 2) * 0.5f;
-        l->unk10 = Script_GetArgInt(args, i + 3);
-        l->unk14 = Script_GetArgReal(args, i + 4) * 0.5f;
-        l->unk18 = Script_GetArgInt(args, i + 5);
+        l->scaleA = Script_GetArgReal(args, i + 2) * 0.5f;
+        l->tileA = Script_GetArgInt(args, i + 3);
+        l->scaleB = Script_GetArgReal(args, i + 4) * 0.5f;
+        l->tileB = Script_GetArgInt(args, i + 5);
     }
     return ret_zero(out);
 }

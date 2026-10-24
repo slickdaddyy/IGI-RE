@@ -7,6 +7,7 @@
 #include "hook.h"
 #include "flatwater/flatwater.h"
 #include "magicobj/magicobjtypes.h"
+#include "flatwater/flatwatertypes.h"
 
 FN_EXTERN(MoveRigidObj_Changed);
 
@@ -23,29 +24,6 @@ ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *obj));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D0950, long double, VirModel_GetRadius2, (void **model, int unk));
 ORIG(0x4E0930, Task *, MagicObjContainer_New, (void *parent, void *owner));
-
-typedef struct MoveRigidObj {
-    RigidDynCubeObj obj;
-    Vec3d keyPos[2];   /* 0xF0 */
-    Vec3d unk120[2];
-    float alpha[2];    /* 0x150 */
-    float beta[2];
-    float gamma[2];
-    float unk168[2];
-    float unk170[2];
-    float unk178[2];
-    char unk180[16];
-    char unk190[16];
-    double value;      /* 0x1A0 */
-    double last;       /* 0x1A8, value of the last placement */
-    char unk1B0;
-    char pad1B1[3];
-    VarString expr;    /* 0x1B4 */
-    char registered;   /* 0x204 */
-    char pad205[3];
-} MoveRigidObj;
-
-_Static_assert(sizeof(MoveRigidObj) == 0x208, "MoveRigidObj");
 
 extern char gMoveBetaNames[][16];
 extern uint16_t gMoveRigidObjType;
@@ -92,7 +70,7 @@ void MoveRigidObj_Open(void)
         ParamTable_Add(gMoveRigidObjParams, &t, &t.beta[i], Param_Angle(), 7, NULL);
         ParamTable_Add(gMoveRigidObjParams, &t, &t.gamma[i], Param_Angle(), 7, NULL);
     }
-    ParamTable_Add(gMoveRigidObjParams, &t, &t.unk180, Param_String16(), 3, NULL);
+    ParamTable_Add(gMoveRigidObjParams, &t, &t.model, Param_String16(), 3, NULL);
     ParamTable_Add(gMoveRigidObjParams, &t, &t.expr, Param_VarString(), 7, NULL);
     ParamTable_Add(gMoveRigidObjParams, &t, &t.value, Param_Real64(), 3, NULL);
     ParamTable_Add(gMoveRigidObjParams, &t, &t.unk1B0, Param_Bool8(), 3, NULL);
@@ -119,7 +97,7 @@ void MoveRigidObj_Create(MoveRigidObj *t)
     pos.y = 0;
     pos.z = 0;
     t->obj.attached = MagicObjContainer_New(NULL, t);
-    t->unk180[0] = 0;
+    t->model[0] = 0;
     VarString_Init(&t->expr);
     RigidDynCubeObj_Init(gWorld, t, NULL);
     scale = max_scale(&t->obj);
@@ -130,10 +108,10 @@ void MoveRigidObj_Create(MoveRigidObj *t)
         t->alpha[i] = 0;
         t->beta[i] = 0;
         t->gamma[i] = 0;
-        memset(&t->unk120[i], 0, sizeof(Vec3d));
-        t->unk168[i] = -1.0f;
-        t->unk170[i] = -1.0f;
-        t->unk178[i] = -1.0f;
+        memset(&t->savedKey[i], 0, sizeof(Vec3d));
+        t->savedAlpha[i] = -1.0f;
+        t->savedBeta[i] = -1.0f;
+        t->savedGamma[i] = -1.0f;
     }
     t->registered = 0;
 }

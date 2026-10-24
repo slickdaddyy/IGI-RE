@@ -8,6 +8,7 @@
 #include "bonemesh/bonemesh.h"
 #include "magicobj/magicobjtypes.h"
 #include "bonemesh/bonemeshtypes.h"
+#include "haze/hazetypes.h"
 
 ORIG(0x491D40, long double, Display_GetAspect, (void));
 ORIG(0x4950F0, void, Direct3D_MakeMatrix, (void *out, const Matrix *rot, const Vec3f *pos));
@@ -44,19 +45,6 @@ ORIG(0x4DAA20, int, Light_GetActive, (int *a));
 #define ID_CFCE 0x43464345
 #define ID_CMAT 0x434D4154
 #define ID_CSPH 0x43535048
-
-/* an animated object drawn with DrawBoneMesh (a human) */
-typedef struct BoneObj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    char anim[0xC];
-    VirModel *model;
-    char unk78[0x5C];
-    int layer;
-} BoneObj;
-
-_Static_assert(offsetof(BoneObj, layer) == 0xD4, "BoneObj");
 
 /* what a rigid object passes to its children */
 typedef struct PlaceArg {
@@ -138,8 +126,8 @@ F32(kInsideMargin, 0x43CCCCCD); /* 409.6 */
 
 void Direct3DRender_DrawBoneMesh(MeshDrawArg *arg)
 {
-    BoneObj *obj = arg->obj;
-    VirModel *model = obj->model;
+    BoneDynCubeObj *obj = arg->obj;
+    VirModel *model = (VirModel *)obj->model;
     TransCtx saved, view;
     ModelLod *lod;
     MeshHeader *h;
@@ -192,7 +180,7 @@ void Direct3DRender_DrawBoneMesh(MeshDrawArg *arg)
     if (h->format == 1) {
         r = h->render;
         g = r->unk1C;
-        base = BoneMesh_Skin(r, model, obj->anim, n);
+        base = BoneMesh_Skin(r, model, &obj->bones, n);
         STATE_SELECT(gStateListA, gStateA0);
         STATE_SELECT(gStateListB, gStateB0);
         STATE_SELECT(gStateListC, gStateC0);

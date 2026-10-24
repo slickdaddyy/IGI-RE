@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "editobj/editobjtypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -55,40 +56,9 @@ typedef struct SplineObj {
     Vec3f unk5C;
 } SplineObj;
 
-/* "SplineObjWaypoint" (0x1A8), a RigidDynCubeObj; seg runs from the previous waypoint to this one */
-typedef struct SplineObjWaypoint {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    void *world;
-    void **model;
-    Matrix matrix;
-    float scale[3];
-    char unkA4[0xF0 - 0xA4];
-    SplineObjSegment *seg;
-    int unkF4;
-    Vec3d point;
-    Matrix rot;
-    char unk138[0x40];
-    char modelName[16];
-    char segModel[16];
-    int segments;
-    void *tree;
-    char inTree;
-    char straight;
-    char rigid;
-    char unk1A3;
-    char reversed;
-    char autoOrient;
-    char unk1A6[2];
-} SplineObjWaypoint;
-
 _Static_assert(sizeof(TagItem) == 0x224, "TagItem");
 _Static_assert(offsetof(SplineObjSegment, segRot) == 0x200, "segRot");
 _Static_assert(offsetof(SplineObjSegment, segments) == 0x59C, "segments");
 _Static_assert(sizeof(SplineObj) == 0x68, "SplineObj");
-_Static_assert(offsetof(SplineObjWaypoint, seg) == 0xF0, "seg");
-_Static_assert(offsetof(SplineObjWaypoint, modelName) == 0x178, "modelName");
-_Static_assert(sizeof(SplineObjWaypoint) == 0x1A8, "SplineObjWaypoint");
 
 #endif

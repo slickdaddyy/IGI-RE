@@ -9,6 +9,7 @@
 #include "task/tasktypes.h"
 #include "bonemesh/bonemeshtypes.h"
 #include "glowmesh/glowmeshtypes.h"
+#include "haze/hazetypes.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
@@ -39,33 +40,17 @@ typedef struct VirModel {
     MeshLod *lod;
 } VirModel;
 
-typedef struct BoneDynCubeObj {
-    Task task;
-    double pos[3];
-    char unk38[0x3C];
-    struct VirModel **model;
-    float matrix[10];
-    float unkA0;
-    float scale[3];
-    char unkB0[0x24];
-    int unkD4;
-} BoneDynCubeObj;
-
 /* what children get told: where the object is */
 typedef struct PlaceArg {
     double pos[3];
     float matrix[10];
 } PlaceArg;
 
-_Static_assert(offsetof(BoneDynCubeObj, model) == 0x74, "model");
-_Static_assert(offsetof(BoneDynCubeObj, scale) == 0xA4, "scale");
-_Static_assert(offsetof(BoneDynCubeObj, unkD4) == 0xD4, "unkD4");
-
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern TaskHandler gTaskHandlers[][0x180];
 
-#define HEADER(obj) ((*(obj)->model)->lod->header)
+#define HEADER(obj) (((VirModel *)*(obj)->model)->lod->header)
 
 void BoneDynCubeObj_NearZHandler(BoneDynCubeObj *obj, NearZArg *arg);
 
@@ -80,8 +65,8 @@ void BoneDynCubeObj_EnterHandler(BoneDynCubeObj *obj)
     d.lights = (int *)(Light_GetActive(&d.lightCount));
     Haze_GetVisible(&d.haze, &d.hazeCount);
     gRenderFuncs[Mesh3D_GetDrawBoneMethod()](&d);
-    memcpy(a.pos, obj->pos, sizeof(a.pos));
-    memcpy(a.matrix, obj->matrix, sizeof(a.matrix));
+    memcpy(a.pos, &obj->pos, sizeof(a.pos));
+    memcpy(a.matrix, &obj->matrix, sizeof(a.matrix));
     c = (Task *)obj->task.head;
     if (!c->node.next)
         return;
@@ -117,15 +102,15 @@ void BoneDynCubeObj_NearZHandler(BoneDynCubeObj *obj, NearZArg *arg)
     float v[3];
     long double x0, wx, wy, wz, n;
 
-    if (obj->unkD4 != 1 || !obj->model)
+    if (obj->layer != 1 || !obj->model)
         return;
     h = HEADER(obj);
-    px = obj->pos[0] - gViewPos[0];
-    py = obj->pos[1] - gViewPos[1];
-    pz = obj->pos[2] - gViewPos[2];
-    x0 = obj->matrix[2] * h->center[2] + obj->matrix[1] * h->center[1] + obj->matrix[0] * h->center[0];
-    y0 = obj->matrix[5] * h->center[2] + obj->matrix[4] * h->center[1] + obj->matrix[3] * h->center[0];
-    z0 = obj->matrix[8] * h->center[2] + obj->matrix[7] * h->center[1] + obj->matrix[6] * h->center[0];
+    px = obj->pos.x - gViewPos[0];
+    py = obj->pos.y - gViewPos[1];
+    pz = obj->pos.z - gViewPos[2];
+    x0 = obj->matrix.m[2] * h->center[2] + obj->matrix.m[1] * h->center[1] + obj->matrix.m[0] * h->center[0];
+    y0 = obj->matrix.m[5] * h->center[2] + obj->matrix.m[4] * h->center[1] + obj->matrix.m[3] * h->center[0];
+    z0 = obj->matrix.m[8] * h->center[2] + obj->matrix.m[7] * h->center[1] + obj->matrix.m[6] * h->center[0];
     wx = x0 + px;
     wy = y0 + py;
     wz = z0 + pz;

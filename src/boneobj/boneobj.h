@@ -51,27 +51,6 @@ struct BlendNode {
 #define BONE_ANIMATED 0x20000
 #define BONE_ORIENTED 0x40000
 
-struct Bone {
-    int index;
-    unsigned int flags;
-    Vec3f offset;
-    float unk14;
-    Vec3f pos;
-    Matrix matrix;
-    Quat world;
-    Quat local;
-    Bone *parent;
-    Bone *child;
-    Bone *next;
-    BlendNode *blend;
-};
-
-typedef struct BoneObj {
-    int skel;
-    int unk4;
-    Bone *bones;
-} BoneObj;
-
 typedef struct EventKey {
     int id;
     int unk4;

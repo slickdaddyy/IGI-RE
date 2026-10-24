@@ -5,6 +5,8 @@
 
 #include "types.h"
 #include "task/tasktypes.h"
+#include "coll/colltypes.h"
+#include "res/restypes.h"
 
 /* a point of a physics object type */
 typedef struct PhysJoint {
@@ -118,5 +120,53 @@ typedef struct PhysObj {
     Vec3d move;         /* 0x708 */
 } PhysObj;
 _Static_assert(sizeof(PhysObj) == 0x720, "PhysObj");
+
+typedef struct Particle2D {
+    Vec3d pos;
+    Vec3f vel;          /* 0x18 */
+    int16_t collideTimer; /* 0x24, frames to the next collision check */
+    int16_t delay;      /* 0x26, frames before it starts to fade */
+    int16_t frame;      /* 0x28 */
+    int16_t frameTimer; /* 0x2A */
+    float spin;         /* 0x2C */
+    float level;        /* 0x30, fades to 0 */
+    float fade;         /* 0x34 */
+    float angle;        /* 0x38 */
+    float scale;        /* 0x3C */
+    Vec3d lastPos;      /* 0x40, at the last collision check */
+} Particle2D;
+
+struct Particle2DHit;
+
+typedef struct Particle2DTask {
+    Task task;
+    char unk20[0x48];
+    Particle2D *buf;    /* 0x68 */
+    Particle2D **list;  /* 0x6C */
+    CollHit *hits;      /* 0x70 */
+    Vec3d *starts;      /* 0x74 */
+    Vec3d *ends;        /* 0x78 */
+    int *idx;           /* 0x7C */
+    Sprite *sprite;     /* 0x80 */
+    int unk84;
+    Vec3d min;          /* 0x88 */
+    Vec3d max;          /* 0xA0 */
+    void *world;        /* 0xB8 */
+    float size[2];      /* 0xBC */
+    Vec3f gravity;      /* 0xC4 */
+    Vec3f color;        /* 0xD0 */
+    float light;        /* 0xDC */
+    float maxDepth;     /* 0xE0 */
+    float grow;         /* 0xE4 */
+    uint32_t flags;     /* 0xE8 */
+    void (*callback)(struct Particle2DHit *hit); /* 0xEC */
+    int count;          /* 0xF0 */
+    int frameDelay;     /* 0xF4 */
+    int capacity;       /* 0xF8 */
+    char animated;      /* 0xFC */
+    char autoDelete;    /* 0xFD */
+    char unkFE[2];
+} Particle2DTask;
+_Static_assert(sizeof(Particle2DTask) == 0x100, "Particle2DTask");
 
 #endif

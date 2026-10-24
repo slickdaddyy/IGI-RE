@@ -55,7 +55,7 @@ static float radius(Wheel *w)
     return VirModel_GetRadius(w->model) * s;
 }
 
-void Wheel_ParseDef(void *unused, ParseArg *a);
+void Wheel_ParseDef(void *unused, ScriptArg *a);
 void Wheel_GetDefSize(void *unused, int *size);
 void Wheel_Create(Wheel *w, MagicCreateArg *a);
 void Wheel_Delete(Wheel *w);
@@ -75,7 +75,7 @@ void Wheel_RegisterDefHandlers(void)
 HOOK(0x42FE40, Wheel_RegisterDefHandlers);
 
 /* model name, radius, travel */
-void Wheel_ParseDef(void *unused, ParseArg *a)
+void Wheel_ParseDef(void *unused, ScriptArg *a)
 {
     WheelConfig *d = a->out;
     void *args = a->args;

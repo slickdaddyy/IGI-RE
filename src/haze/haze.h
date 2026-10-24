@@ -10,31 +10,11 @@
 #include "magicobj/magicobjtypes.h"
 #include "qasm/qasmtypes.h"
 #include "boneobj/boneobjtypes.h"
+#include "haze/hazetypes.h"
 
 typedef void (*HzHandler)(void *task, void *arg);
 
 /* --- animation data, shared with the bone code before 0x4D6D40 --- */
-
-typedef struct Bone {
-    int index;
-    unsigned int flags;
-    Vec3f offset;
-    float unk14;
-    Vec3f pos;
-    Matrix matrix;
-    Quat world;
-    Quat local;
-    struct Bone *parent;
-    struct Bone *child;
-    struct Bone *next;
-    void *blend;
-} Bone;
-
-typedef struct BoneObj {
-    int skel;
-    int unk4;
-    Bone *bones;
-} BoneObj;
 
 #define ANIM_LOOPS 0x80000000u
 
@@ -51,24 +31,6 @@ typedef struct QObj {
     void *renderData;   /* argument of handler slots 4 and 5 */
     char unk4C[4];
 } QObj;
-
-/* "BoneDynCubeObj", 0xD8 bytes */
-typedef struct BoneDynCubeObj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    BoneObj bones;
-    void **model;
-    Matrix matrix;
-    float radius;
-    float scale[3];
-    float unkB0;
-    int unkB4;
-    int unkB8[5];
-    int unkCC;
-    int unkD0;
-    int unkD4;
-} BoneDynCubeObj;
 
 /* "MagicObj", 0x138 bytes: a RigidDynCubeObj placed relative to its parent */
 typedef struct MagicObj {
@@ -118,9 +80,7 @@ typedef struct HazeLayer {
     int visible;
 } HazeLayer;
 
-_Static_assert(sizeof(Bone) == 0x84, "Bone");
 _Static_assert(sizeof(QObj) == 0x50, "QObj");
-_Static_assert(sizeof(BoneDynCubeObj) == 0xD8, "BoneDynCubeObj");
 _Static_assert(sizeof(MagicObj) == 0x138, "MagicObj");
 _Static_assert(sizeof(Camera) == 0x60, "Camera");
 _Static_assert(sizeof(HazeLayer) == 0x90, "HazeLayer");

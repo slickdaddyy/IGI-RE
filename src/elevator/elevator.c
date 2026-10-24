@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "elevator/elevator.h"
+#include "elevator/elevatortypes.h"
 
 FN_EXTERN(Elevator_Activate);
 FN_EXTERN(Elevator_Deactivate);
@@ -23,57 +24,6 @@ ORIG(0x43D960, void, Elevator_UpdatePlace, (void *elevator));
 ORIG(0x5020C0, long double, SplineObj_GetLength, (int id));
 ORIG(0x502130, int, SplineObj_GetWaypointCount, (int id));
 ORIG(0x502180, long double, SplineObj_GetLengthTo, (int id, int floor));
-
-/* a platform moving between the floors of a graph task */
-typedef struct Elevator {
-    RigidDynCubeObj obj;
-    Vec3d place;
-    Vec3d lastPos;
-    Matrix placeMatrix;
-    Matrix lastMatrix;
-    char model[16];
-    int graph;
-    float height;
-    float unk188;
-    char unk18C;
-    char unk18D;
-    char pad18E[2];
-    float speed;
-    float maxSpeed;
-    float accel;
-    int wanted;
-    double floorPos;
-    double lastFloorPos;
-    char request[10];
-    char pad1BA[2];
-    int restTicks;
-    char unk1C0;
-    char pad1C1[3];
-    VarString wantedFloor[10];
-    VarString up;
-    VarString down;
-    VarString move;
-    char lastUp;
-    char lastDown;
-    char isMoving;
-    char isStarting;
-    char isStopping;
-    char startSound[32];
-    char stopSound[32];
-    char moveSound[32];
-    char pad639[3];
-    Task *moving;
-    char lastMove;
-    char pad641[3];
-    int lastTick;
-} Elevator;
-
-_Static_assert(offsetof(Elevator, graph) == 0x180, "Elevator");
-_Static_assert(offsetof(Elevator, floorPos) == 0x1A0, "Elevator");
-_Static_assert(offsetof(Elevator, wantedFloor) == 0x1C4, "Elevator");
-_Static_assert(offsetof(Elevator, lastUp) == 0x5D4, "Elevator");
-_Static_assert(offsetof(Elevator, moving) == 0x63C, "Elevator");
-_Static_assert(sizeof(Elevator) == 0x648, "Elevator");
 
 extern uint16_t gElevatorType;
 extern void *gElevatorParams;
@@ -162,7 +112,7 @@ void Elevator_CreateHandler(Elevator *e)
     VarString_Init(&e->down);
     VarString_Init(&e->move);
     e->lastPos = e->obj.pos;
-    e->unk1C0 = 0;
+    e->registered = 0;
     e->lastMatrix = e->obj.matrix;
     e->lastUp = 0;
     e->lastDown = 0;

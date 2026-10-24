@@ -12,6 +12,7 @@
 #include "graphtask/graphtasktypes.h"
 #include "humanai/humanaitypes.h"
 #include "computer/computertypes.h"
+#include "guncasing/guncasingtypes.h"
 
 typedef void (*TaskFn)();
 
@@ -43,26 +44,6 @@ typedef struct WeaponType {
     GrenadeConfig *grenade; /* 0x6E0 */
     char unk6E4[4];
 } WeaponType;
-
-/* Mine (0x250 bytes), a subtype of ExplodeObject (0x238 bytes) */
-typedef struct Mine {
-    RigidDynCubeObj o;
-    Vec3d placePos;     /* 0xF0 */
-    Matrix placeMatrix; /* 0x108 */
-    char unk130[0x40];
-    char sound[0x20];   /* 0x170 */
-    char exploded;      /* 0x190 */
-    char unk191[0x53];
-    char explode;       /* 0x1E4 */
-    char unk1E5[0x53];
-    int armDelay;       /* 0x238, frames */
-    int countdown;      /* 0x23C */
-    float delay;        /* 0x240, seconds */
-    float radius;       /* 0x244, meters */
-    char triggered;     /* 0x248 */
-    char remote;        /* 0x249 */
-    char unk24A[6];
-} Mine;
 
 /* what the proximity handler gets */
 typedef struct MineProbe {
@@ -201,7 +182,7 @@ SCHECK(WeaponType, spread, 0x664);
 SCHECK(WeaponType, sound2, 0x6C0);
 SCHECK(WeaponType, gunType, 0x6D8);
 SCHECK(WeaponType, grenade, 0x6E0);
-SCHECK(Mine, sound, 0x170);
+SCHECK(Mine, model, 0x170);
 SCHECK(Mine, explode, 0x1E4);
 SCHECK(Mine, remote, 0x249);
 SCHECK(Grenade, phys, 0x1B4);
@@ -210,7 +191,6 @@ SCHECK(GunPartArgs, unk8C, 0x8C);
 SCHECK(Gun, rounds, 0x144);
 SCHECK(Gun, point, 0x178);
 SCHECK(Gun, reload, 0x1AC);
-_Static_assert(sizeof(Mine) == 0x250, "Mine");
 _Static_assert(sizeof(M203) == 0x128, "M203");
 _Static_assert(sizeof(Grenade) == 0x738, "Grenade");
 _Static_assert(sizeof(GunPart) == 0x140, "GunPart");

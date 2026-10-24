@@ -37,12 +37,6 @@ typedef struct GraphNode {
     GraphLink *links[64]; /* 0x13C */
 } GraphNode;
 
-/* a graph task reference, kept in gGraphRefs */
-typedef struct GraphRef {
-    Node node;
-    Graph **ref;
-} GraphRef;
-
 /* node record size per task type */
 typedef struct GraphNodeSize {
     uint16_t type;
@@ -64,7 +58,7 @@ ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
-ORIG(0x401B20, void, TaskRef_Remove, (Graph **ref));
+ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4AF8F0, void, List_AddTail, (List *list, Node *node));
 ORIG(0x4AF960, void, List_Remove, (Node *node));
@@ -216,7 +210,7 @@ void Graph_PreDelete(Graph *g)
     int i, j;
 
     for (next = r->node.next; next; next = next->next) {
-        if (r->ref && *r->ref == g) {
+        if (r->ref && *r->ref == (Task *)g) {
             TaskRef_Remove(r->ref);
             List_Remove(&r->node);
             Mem_Free(r);

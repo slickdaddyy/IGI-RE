@@ -9,6 +9,7 @@
 #include "types.h"
 #include "bonemesh/bonemeshtypes.h"
 #include "lod/lodtypes.h"
+#include "terrain/terraintypes.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -109,20 +110,6 @@ typedef struct TerrainMaterialMapInfo {
     int unk2C;
 } TerrainMaterialMapInfo;
 
-/* texture placement of a material at one level, 0xC28FE4 + material * 900 + level * 28 */
-typedef struct TerrainLevelMat {
-    char unk0[0xC];
-    float scaleA;
-    int tileA;
-    float scaleB;
-    int tileB;
-} TerrainLevelMat;
-
-typedef struct TerrainMaterial {
-    int unk0;
-    TerrainLevelMat levels[32];
-} TerrainMaterial;
-
 typedef struct TerrainMatEntry {
     int shift; /* 0 ends the list */
     float scale;
@@ -161,8 +148,7 @@ _Static_assert(sizeof(TerrainCell) == 0x30, "TerrainCell");
 _Static_assert(sizeof(TerrainLightMapInfo) == 0x30, "TerrainLightMapInfo");
 _Static_assert(sizeof(TerrainHeightMapInfo) == 0x30, "TerrainHeightMapInfo");
 _Static_assert(sizeof(TerrainMaterialMapInfo) == 0x30, "TerrainMaterialMapInfo");
-_Static_assert(sizeof(TerrainLevelMat) == 0x1C, "TerrainLevelMat");
-_Static_assert(sizeof(TerrainMaterial) == 900, "TerrainMaterial");
+_Static_assert(sizeof(TerrainLayer) == 0x1C, "TerrainLayer");
 _Static_assert(sizeof(TerrainVertRec) == 0x24, "TerrainVertRec");
 _Static_assert(sizeof(TerrainMatRec) == 0x28, "TerrainMatRec");
 _Static_assert(offsetof(TerrainPoly, fogLayers) == 0x84, "TerrainPoly");
@@ -779,7 +765,7 @@ void TerrainMesh_Build(void)
         m = 0;
         do {
             int mat = list[m], sh1 = (0x17 - level) & 31, sh2 = (0x16 - level) & 31, ax, ay, bx, by;
-            const TerrainLevelMat *t = &gTerrainMaterials[mat].levels[level];
+            const TerrainLayer *t = &gTerrainMaterials[mat].layers[level];
             TerrainMatRec *r = &mrec[m];
             long double fA = t->scaleA;
             float fB = t->scaleB;

@@ -30,14 +30,6 @@ typedef struct DynCubeNode {
     void *unk3C;
 } DynCubeNode;
 
-/* 256 entries at the start of the .bit and .hmp files. */
-typedef struct TerrainMap {
-    uint8_t *data;
-    char flag;
-    char unk5[3];
-    int size;
-} TerrainMap;
-
 /* 0x20 byte records of the .ctr file. */
 typedef struct TerrainCtr {
     char unk0[0x1C];
@@ -74,21 +66,6 @@ typedef struct Terrain {
     int unkDFC;
     char name[0x100];
 } Terrain;
-
-typedef struct TerrainLayer {
-    int unk0;
-    float unk4;
-    float unk8;
-    float unkC;
-    int unk10;
-    float unk14;
-    int unk18;
-} TerrainLayer;
-
-typedef struct TerrainMaterial {
-    int unk0;
-    TerrainLayer layers[32];
-} TerrainMaterial;
 
 typedef struct TerrainLightmap {
     int size;

@@ -3,6 +3,7 @@
 
 #include "hook.h"
 #include "editobj/editobj.h"
+#include "editobj/editobjtypes.h"
 
 FN_EXTERN(ConditionalContainer_ForwardEvent4);
 FN_EXTERN(SplineObjWaypoint_Changed);
@@ -35,31 +36,7 @@ typedef struct SplineObjSegment {
     float end;
 } SplineObjSegment;
 
-/* "SplineObjWaypoint" (0x1A8), a RigidDynCubeObj */
-typedef struct SplineObjWaypoint {
-    RigidDynCubeObj obj;
-    SplineObjSegment *seg;
-    int unkF4;
-    Vec3d point;
-    Matrix rot;
-    Vec3d attachPos;    /* point in the frame of the attached object */
-    Matrix attachRot;
-    char modelName[16];
-    char segModel[16];
-    int segments;
-    int unk19C;
-    char unk1A0;
-    char straight;
-    char unk1A2;
-    char unk1A3;
-    char reversed;
-    char autoOrient;
-    char unk1A6[2];
-} SplineObjWaypoint;
-
 _Static_assert(sizeof(SplineObj) == 0x68, "SplineObj");
-_Static_assert(offsetof(SplineObjWaypoint, attachRot) == 0x150, "attachRot");
-_Static_assert(sizeof(SplineObjWaypoint) == 0x1A8, "SplineObjWaypoint");
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));

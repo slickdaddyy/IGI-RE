@@ -57,4 +57,26 @@ typedef struct AnimSet {
     int count;
 } AnimSet;
 
+typedef struct Bone {
+    int index;
+    unsigned int flags;
+    Vec3f offset;
+    float length;
+    Vec3f pos;
+    Matrix matrix;
+    Quat world;
+    Quat local;
+    struct Bone *parent;
+    struct Bone *child;
+    struct Bone *next;
+    struct BlendNode *blend;
+} Bone;
+_Static_assert(sizeof(Bone) == 0x84, "Bone");
+
+typedef struct BoneObj {
+    int skel;
+    int unk4;
+    Bone *bones;
+} BoneObj;
+
 #endif

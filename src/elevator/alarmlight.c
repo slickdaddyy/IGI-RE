@@ -2,32 +2,12 @@
 
 #include "hook.h"
 #include "elevator/elevator.h"
+#include "elevator/elevatortypes.h"
 
 ORIG(0x4DCCB0, int, Sector_AddObject, (int world, void *obj, Vec3d *pos));
 ORIG(0x4DCDD0, void, Sector_RemoveObject, (void *obj));
 ORIG(0x4DCF00, void, Sector_MoveObject, (int world, void *obj, Vec3d *pos));
 ORIG(0x4E0930, Task *, MagicObjContainer_New, (void *parent, void *obj));
-
-/* a light that turns on and off with a script condition and breaks when hit */
-typedef struct AlarmLight {
-    RigidDynCubeObj obj;
-    Vec3d place;
-    Matrix placeMatrix;
-    char offModel[16];
-    char onModel[16];
-    char deadModel[16];
-    char onSound[32];
-    char deadSound[32];
-    char isOn;
-    char isDestroyed;
-    char registered;
-    char pad1A3;
-    VarString cond;
-    Task *sound;
-} AlarmLight;
-
-_Static_assert(offsetof(AlarmLight, offModel) == 0x130, "AlarmLight");
-_Static_assert(sizeof(AlarmLight) == 0x1F8, "AlarmLight");
 
 extern void *gAlarmLightParams;
 extern uint16_t gAlarmLightReflectorType;

@@ -53,14 +53,6 @@ static inline int x87_fistp(long double x)
     return (int)r;
 }
 
-/* one .bit or .hmp table entry */
-typedef struct TerrainMap {
-    void *data;
-    char flag;
-    char unk5[3];
-    int size;
-} TerrainMap;
-
 typedef struct Terrain {
     char unk0[0xDCC];
     TerrainMap *bit;

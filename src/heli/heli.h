@@ -66,13 +66,6 @@ typedef struct WheelConfig {
     float unk2EC;
 } WheelConfig;
 
-/* the argument of the physics type argument parsers */
-typedef struct ParseArg {
-    void *out;
-    void *args;
-    int index;
-} ParseArg;
-
 /* sent to a vehicle each tick by its driver; tick 0 resets it */
 typedef struct ControlArg {
     int tick;

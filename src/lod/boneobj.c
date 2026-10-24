@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "core/pool.h"
+#include "boneobj/boneobjtypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4B0B00, void, Pool_Init_, (Pool *pool, int size, int count, unsigned int align));
@@ -28,24 +29,6 @@ typedef struct BoneHierarchy {
     float (*offsets)[3];
 } BoneHierarchy;
 
-typedef struct Bone {
-    int index;
-    int unk4;
-    float offset[3];
-    float length;
-    char unk18[0x5C];
-    struct Bone *parent;
-    struct Bone *child;
-    struct Bone *sibling;
-    void *blend;
-} Bone;
-
-typedef struct BoneObj {
-    int type;
-    int unk4;
-    Bone *bones;
-} BoneObj;
-
 /* What sits at BoneObj bone +0x80: two tracks mixed by a weight function */
 typedef struct BoneBlend {
     char unk0[0xC];
@@ -54,7 +37,6 @@ typedef struct BoneBlend {
     void *arg;
 } BoneBlend;
 
-_Static_assert(sizeof(Bone) == 0x84, "Bone");
 _Static_assert(sizeof(BoneBlend) == 0x1C, "BoneBlend");
 
 extern BoneHierarchy gBoneHierarchies[];
@@ -135,10 +117,10 @@ void BoneObj_Create(BoneObj *o, int type)
     Bone root, *b;
     char mode;
 
-    o->type = type;
+    o->skel = type;
     o->unk4 = 0;
     root.child = NULL;
-    root.sibling = NULL;
+    root.next = NULL;
     root.index = -1;
     if (!h->count) {
         o->bones = NULL;
@@ -155,7 +137,7 @@ void BoneObj_Create(BoneObj *o, int type)
     gBoneBuildBones = o->bones;
     gBoneBuild = h;
     BoneObj_Build(&root, -1);
-    for (b = root.child; b; b = b->sibling)
+    for (b = root.child; b; b = b->next)
         b->parent = NULL;
 }
 HOOK(0x4D2D60, BoneObj_Create);
@@ -164,7 +146,7 @@ void BoneObj_Free(BoneObj *o)
 {
     int i;
 
-    for (i = 0; i < gBoneHierarchies[o->type].count; i++) {
+    for (i = 0; i < gBoneHierarchies[o->skel].count; i++) {
         if (o->bones[i].blend)
             BoneObj_DeleteBlendNode(o->bones[i].blend);
         o->bones[i].blend = NULL;
@@ -173,7 +155,7 @@ void BoneObj_Free(BoneObj *o)
         Mem_Free(o->bones);
         o->bones = NULL;
     }
-    o->type = 0;
+    o->skel = 0;
     o->unk4 = 0;
     o->bones = NULL;
 }
@@ -194,11 +176,11 @@ void BoneObj_Build(Bone *parent, int index)
             Bone_Init(b, parent);
             b->index = i;
             v = gBoneBuild->offsets[i];
-            b->offset[0] = v[0];
-            b->offset[1] = v[1];
-            b->offset[2] = v[2];
-            b->length = x87_sqrt((long double)b->offset[0] * b->offset[0] + (long double)b->offset[1] * b->offset[1] +
-                                 (long double)b->offset[2] * b->offset[2]);
+            b->offset.x = v[0];
+            b->offset.y = v[1];
+            b->offset.z = v[2];
+            b->length = x87_sqrt((long double)b->offset.x * b->offset.x + (long double)b->offset.y * b->offset.y +
+                                 (long double)b->offset.z * b->offset.z);
             BoneObj_Build(b, i);
         }
     }
@@ -214,7 +196,7 @@ void Bone_Init(Bone *b, Bone *parent)
         p[i] = 0;
     b->child = NULL;
     b->parent = parent;
-    b->sibling = parent->child;
+    b->next = parent->child;
     parent->child = b;
 }
 HOOK(0x4D2F80, Bone_Init);
@@ -233,7 +215,7 @@ static void clear3(float *v)
 /* Movement of the root bone this frame, zero when it has none */
 void BoneObj_GetRootMotion(float *pos, float *rot, BoneObj *o)
 {
-    BoneBlend *bl = o->bones->blend;
+    BoneBlend *bl = (BoneBlend *)o->bones->blend;
 
     if (bl && BoneBlend_GetMotion(pos, rot, bl))
         return;

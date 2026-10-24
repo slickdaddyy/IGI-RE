@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "dxinit/dxinit.h"
 #include "d3d/d3dtypes.h"
+#include "boneobj/boneobjtypes.h"
 
 FN_EXTERN(Direct3DRender_AlphaBlendOff);
 FN_EXTERN(Direct3DRender_SetLightmapStages);
@@ -51,13 +52,6 @@ typedef struct SkinVertex {
     uint16_t bone;
 } SkinVertex;
 
-typedef struct Bone {
-    char unk0[0x18];
-    float t[3];
-    float m[9];
-    char unk48[0x3C];
-} Bone;
-
 typedef struct NormalVertex {
     float x, y, z;
     float nx, ny, nz;
@@ -67,7 +61,6 @@ typedef struct NormalVertex {
 _Static_assert(sizeof(MeshBatch) == 0xFA8, "MeshBatch");
 _Static_assert(sizeof(MeshVB) == 0x24, "MeshVB");
 _Static_assert(sizeof(SkinVertex) == 0x28, "SkinVertex");
-_Static_assert(sizeof(Bone) == 0x84, "Bone");
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x4950E0, int, Direct3D_GetRenderMode, (void));
@@ -291,31 +284,31 @@ int BoneMesh_Skin(char *mesh, char *model, char *bones, int rigid)
 
         for (i = count; i > 0; i--, v++, o++) {
             const Bone *b = &(*(Bone **)(bones + 8))[v->bone];
-            float x = v->p[0] * b->m[0] + v->p[2] * b->m[2] + v->p[1] * b->m[1];
-            float y = v->p[0] * b->m[3] + v->p[2] * b->m[5] + v->p[1] * b->m[4];
-            float z = v->p[2] * b->m[8] + b->m[7] * v->p[1] + b->m[6] * v->p[0];
-            long double X = x + b->t[0];
-            float Y = y + b->t[1];
-            float Z = z + b->t[2];
+            float x = v->p[0] * b->matrix.m[0] + v->p[2] * b->matrix.m[2] + v->p[1] * b->matrix.m[1];
+            float y = v->p[0] * b->matrix.m[3] + v->p[2] * b->matrix.m[5] + v->p[1] * b->matrix.m[4];
+            float z = v->p[2] * b->matrix.m[8] + b->matrix.m[7] * v->p[1] + b->matrix.m[6] * v->p[0];
+            long double X = x + b->pos.x;
+            float Y = y + b->pos.y;
+            float Z = z + b->pos.z;
 
             o->x = X * v->w;
             o->y = Y * v->w;
             o->z = Z * v->w;
             o->u = v->uv[0];
             o->v = v->uv[1];
-            o->nx = b->m[1] * v->n[1] + b->m[2] * v->n[2] + v->n[0] * b->m[0];
-            o->ny = v->n[2] * b->m[5] + v->n[1] * b->m[4] + v->n[0] * b->m[3];
-            o->nz = b->m[6] * v->n[0] + b->m[8] * v->n[2] + b->m[7] * v->n[1];
+            o->nx = b->matrix.m[1] * v->n[1] + b->matrix.m[2] * v->n[2] + v->n[0] * b->matrix.m[0];
+            o->ny = v->n[2] * b->matrix.m[5] + v->n[1] * b->matrix.m[4] + v->n[0] * b->matrix.m[3];
+            o->nz = b->matrix.m[6] * v->n[0] + b->matrix.m[8] * v->n[2] + b->matrix.m[7] * v->n[1];
         }
         v = *(SkinVertex **)(mesh + 0x18) + *(int *)(mesh + 0x10);
         for (i = *(int *)(mesh + 0xC); i > 0; i--, v++) {
             const Bone *b = &(*(Bone **)(bones + 8))[v->bone];
-            float x = b->m[2] * v->p[2] + b->m[1] * v->p[1] + b->m[0] * v->p[0];
-            float y = b->m[5] * v->p[2] + b->m[4] * v->p[1] + b->m[3] * v->p[0];
-            float z = b->m[8] * v->p[2] + b->m[7] * v->p[1] + b->m[6] * v->p[0];
-            long double X = x + b->t[0];
-            float Y = y + b->t[1];
-            float Z = z + b->t[2];
+            float x = b->matrix.m[2] * v->p[2] + b->matrix.m[1] * v->p[1] + b->matrix.m[0] * v->p[0];
+            float y = b->matrix.m[5] * v->p[2] + b->matrix.m[4] * v->p[1] + b->matrix.m[3] * v->p[0];
+            float z = b->matrix.m[8] * v->p[2] + b->matrix.m[7] * v->p[1] + b->matrix.m[6] * v->p[0];
+            long double X = x + b->pos.x;
+            float Y = y + b->pos.y;
+            float Z = z + b->pos.z;
             float w = v->w;
             NormalVertex *t = &out[v->target];
 
@@ -328,16 +321,16 @@ int BoneMesh_Skin(char *mesh, char *model, char *bones, int rigid)
 
         for (i = count; i > 0; i--, v++, o++) {
             const Bone *b = &(*(Bone **)(bones + 8))[v->bone];
-            long double x = v->p[0] * b->m[0] + v->p[2] * b->m[2] + v->p[1] * b->m[1];
-            float y = v->p[0] * b->m[3] + v->p[2] * b->m[5] + v->p[1] * b->m[4];
-            float z = v->p[2] * b->m[8] + b->m[7] * v->p[1] + b->m[6] * v->p[0];
+            long double x = v->p[0] * b->matrix.m[0] + v->p[2] * b->matrix.m[2] + v->p[1] * b->matrix.m[1];
+            float y = v->p[0] * b->matrix.m[3] + v->p[2] * b->matrix.m[5] + v->p[1] * b->matrix.m[4];
+            float z = v->p[2] * b->matrix.m[8] + b->matrix.m[7] * v->p[1] + b->matrix.m[6] * v->p[0];
 
-            o->x = x + b->t[0];
-            o->y = y + b->t[1];
-            o->z = z + b->t[2];
-            o->nx = b->m[1] * v->n[1] + b->m[2] * v->n[2] + v->n[0] * b->m[0];
-            o->ny = v->n[2] * b->m[5] + v->n[1] * b->m[4] + v->n[0] * b->m[3];
-            o->nz = b->m[6] * v->n[0] + b->m[8] * v->n[2] + b->m[7] * v->n[1];
+            o->x = x + b->pos.x;
+            o->y = y + b->pos.y;
+            o->z = z + b->pos.z;
+            o->nx = b->matrix.m[1] * v->n[1] + b->matrix.m[2] * v->n[2] + v->n[0] * b->matrix.m[0];
+            o->ny = v->n[2] * b->matrix.m[5] + v->n[1] * b->matrix.m[4] + v->n[0] * b->matrix.m[3];
+            o->nz = b->matrix.m[6] * v->n[0] + b->matrix.m[8] * v->n[2] + b->matrix.m[7] * v->n[1];
             o->u = v->uv[0];
             o->v = v->uv[1];
         }

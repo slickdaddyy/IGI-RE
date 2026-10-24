@@ -2,6 +2,7 @@
 #define GRAPHNODE_GRAPHNODETYPES_H
 
 #include "types.h"
+#include "task/tasktypes.h"
 
 typedef struct GraphStream {
     int unk0;
@@ -23,5 +24,10 @@ typedef struct GraphStreamHandler {
     int type;
     void (*fn)(GraphStreamValue *v);
 } GraphStreamHandler;
+
+typedef struct GraphRef {
+    Node node;
+    Task **ref;
+} GraphRef;
 
 #endif

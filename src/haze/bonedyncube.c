@@ -121,7 +121,7 @@ void BoneDynCubeObj_Init(void *world, BoneDynCubeObj *o, short skel, void **mode
     o->unkB4 = 0;
     memset(o->unkB8, 0, sizeof(o->unkB8));
     o->unkCC = 1;
-    o->unkD4 = 1;
+    o->layer = 1;
 }
 HOOK(0x4D9620, BoneDynCubeObj_Init);
 
