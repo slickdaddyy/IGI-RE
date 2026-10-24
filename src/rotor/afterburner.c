@@ -129,7 +129,7 @@ HOOK(0x42BEB0, Afterburner_Init);
 
 void Afterburner_Run(Part *o)
 {
-    float throttle = o->owner->throttle;
+    float throttle = o->owner->v.speed;
     long double glow = throttle > kGlowStart.f ? ((long double)throttle - kGlowStart.f) * kGlowScale.f
                                                : (long double)kZero.f;
     long double s;

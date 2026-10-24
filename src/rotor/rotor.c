@@ -41,11 +41,11 @@ ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
 ORIG(0x4DA180, void, Haze_GetVisible, (int *a, int *b));
 ORIG(0x4DAA20, int, Light_GetActive, (int *a));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
-ORIG(0x4ECF50, void, Body_AddForce, (float *body, float *force));
+ORIG(0x4ECF50, void, Body_AddForce, (Body *body, float *force));
 ORIG(0x4EE0E0, uint8_t, PhysicsObjType_GetParseEvent, (void));
 ORIG(0x4EE0F0, uint8_t, PhysicsObjType_GetSizeEvent, (void));
 ORIG(0x4EE100, uint8_t, PhysicsObjType_GetFreeEvent, (void));
-ORIG(0x4EE140, MagicDef *, PhysicsObjType_Find, (const char *name));
+ORIG(0x4EE140, PhysType *, PhysicsObjType_Find, (const char *name));
 
 #define MAGICOBJ_DELETE (FN(0x51B940, EditorMagicObj_Delete))
 
@@ -113,7 +113,7 @@ void Rotor_DrawPrim(Prim *p)
     Matrix base = copy.matrix;
     RotorDef *d = src->def->data;
     Car *car = src->owner;
-    CarData *cd = car->def->data;
+    CarData *cd = car->v.phys->data;
     long double rate, k;
     float step, maxTilt, tilt, a;
     int i;
@@ -127,11 +127,11 @@ void Rotor_DrawPrim(Prim *p)
 
     if (!copy.model)
         return;
-    step = (float)((long double)d->speed * car->throttle);
+    step = (float)((long double)d->speed * car->v.speed);
     maxTilt = d->angle;
-    rate = (long double)car->matrix.m[8] * car->spin[2] + (long double)car->matrix.m[5] * car->spin[1]
-           + (long double)car->matrix.m[2] * car->spin[0];
-    k = (long double)kOne.f - car->throttle;
+    rate = (long double)car->v.matrix.m[8] * car->v.body.vel.z + (long double)car->v.matrix.m[5] * car->v.body.vel.y
+           + (long double)car->v.matrix.m[2] * car->v.body.vel.x;
+    k = (long double)kOne.f - car->v.speed;
     if (kMinPitch.f > k)
         k = kMinPitch.f;
     else if (kOne.f < k)
@@ -185,7 +185,7 @@ void Rotor_Move(Part *o, PartMoveArg *a);
 void Rotor_ForwardEvent9(Part *o, void *arg);
 void Rotor_ParseDef(void *unused, DefParseArg *a);
 void Rotor_GetDefSize(void *unused, int *size);
-void Rotor_FreeDef(void *unused, MagicDef **def);
+void Rotor_FreeDef(void *unused, PhysType **def);
 
 void Rotor_Init(void)
 {
@@ -215,19 +215,19 @@ void Rotor_Run(Part *o)
     RotorDef *d = o->def->data;
 
     if (d->lift) {
-        long double lift = (long double)car->def->power * car->throttle * kLift.f;
+        long double lift = (long double)car->v.phys->mass * car->v.speed * kLift.f;
         float f = (float)lift;
 
         if (lift != 0) {
             long double a = kZero.f;
             float up[3], fwd[3], force[6];
 
-            up[0] = car->matrix.m[1];
-            up[1] = car->matrix.m[4];
-            up[2] = car->matrix.m[7];
-            fwd[0] = car->matrix.m[2];
-            fwd[1] = car->matrix.m[5];
-            fwd[2] = car->matrix.m[8];
+            up[0] = car->v.matrix.m[1];
+            up[1] = car->v.matrix.m[4];
+            up[2] = car->v.matrix.m[7];
+            fwd[0] = car->v.matrix.m[2];
+            fwd[1] = car->v.matrix.m[5];
+            fwd[2] = car->v.matrix.m[8];
             if (up[0] != 0 || up[1] != 0) {
                 up[2] = 0;
                 a = Vec3_Angle(up, fwd);
@@ -238,10 +238,10 @@ void Rotor_Run(Part *o)
             force[3] = 0;
             force[4] = 0;
             force[5] = 0;
-            Body_AddForce(car->body, force);
+            Body_AddForce(&car->v.body, force);
         }
     }
-    if (car->throttle != 0 && (d->tilt || d->lift) && !car->unk1B8) {
+    if (car->v.speed != 0 && (d->tilt || d->lift) && !car->v.touching) {
         float force[6];
 
         force[3] = 0;
@@ -251,12 +251,12 @@ void Rotor_Run(Part *o)
         force[1] = 0;
         force[2] = 0;
         if (d->tilt)
-            force[0] = -(float)((long double)car->def->power * car->throttle * kTilt.f);
+            force[0] = -(float)((long double)car->v.phys->mass * car->v.speed * kTilt.f);
         else if (d->lift)
-            force[0] = (float)((long double)car->def->power * car->throttle * kTilt.f);
-        Body_AddForce(car->body, force);
+            force[0] = (float)((long double)car->v.phys->mass * car->v.speed * kTilt.f);
+        Body_AddForce(&car->v.body, force);
     }
-    o->value = (float)((long double)d->dir * d->speed * car->throttle + o->value);
+    o->value = (float)((long double)d->dir * d->speed * car->v.speed + o->value);
     RUN_CHILDREN(&o->obj.task);
 }
 HOOK(0x42D440, Rotor_Run);
@@ -291,7 +291,7 @@ HOOK(0x42D680, Rotor_Move);
 void Rotor_ForwardEvent9(Part *o, void *arg)
 {
     Car *car = o->owner;
-    TaskFn fn = HANDLER(Game_GetEvent9(), car->task.type);
+    TaskFn fn = HANDLER(Game_GetEvent9(), car->v.task.type);
 
     if (fn)
         fn(car, arg);
@@ -321,7 +321,7 @@ void Rotor_GetDefSize(void *unused, int *size)
 }
 HOOK(0x42DA60, Rotor_GetDefSize);
 
-void Rotor_FreeDef(void *unused, MagicDef **def)
+void Rotor_FreeDef(void *unused, PhysType **def)
 {
     (void)unused;
     if ((*def)->data) {

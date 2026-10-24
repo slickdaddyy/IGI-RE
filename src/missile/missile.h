@@ -10,50 +10,10 @@
 #include "param/paramtypes.h"
 #include "coll/colltypes.h"
 #include "graphtask/graphtasktypes.h"
+#include "vehbase/vehbasetypes.h"
 
 typedef void (*TaskFn1)(Task *task);
 typedef void (*TaskFn2)(Task *task, void *arg);
-
-/* "Vehicle" (0x748 bytes), a subtype of RigidDynCubeObj */
-typedef struct Vehicle {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x30];
-    int unk68;
-    void **model;       /* 0x6C */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0x44];
-    Task *coll;         /* 0xE8, its children get the move event */
-    char unkEC[4];
-    struct {
-        char unk0[8];
-        float unk8;
-        char unkC[0xC];
-        Vec3f velocity; /* 0x108 */
-        Vec3f unk24;    /* 0x114 */
-    } body;             /* 0xF0, see 0x4ECDB0 */
-    char unk120[0x34];
-    char name[0x14];    /* 0x154 */
-    Vec3d pos2;         /* 0x168 */
-    char unk180[0xC];
-    Matrix matrix2;     /* 0x18C */
-    PhysType *phys;     /* 0x1B4 */
-    int unk1B8;
-    char unk1BC[0x4D8];
-    Matrix prev_matrix; /* 0x694 */
-    char unk6BC[4];
-    Vec3d prev_pos;     /* 0x6C0 */
-    char unk6D8[0x48];
-    float speed;        /* 0x720 */
-    float turn[3];      /* 0x724 */
-    float target_speed; /* 0x730 */
-    float steer[3];     /* 0x734 */
-    float unk740;
-    char unk744;
-    char unk745;
-    char unk746[2];
-} Vehicle;
 
 /* per type data of a missile physics type, read by Missile_ParseArgs */
 typedef struct MissileConfig {
@@ -136,14 +96,6 @@ typedef struct Train {
     VarString script;   /* 0x890 */
 } Train;
 
-_Static_assert(offsetof(Vehicle, coll) == 0xE8, "coll");
-_Static_assert(offsetof(Vehicle, body.velocity) == 0x108, "velocity");
-_Static_assert(offsetof(Vehicle, name) == 0x154, "name");
-_Static_assert(offsetof(Vehicle, phys) == 0x1B4, "phys");
-_Static_assert(offsetof(Vehicle, prev_matrix) == 0x694, "prev_matrix");
-_Static_assert(offsetof(Vehicle, prev_pos) == 0x6C0, "prev_pos");
-_Static_assert(offsetof(Vehicle, speed) == 0x720, "speed");
-_Static_assert(sizeof(Vehicle) == 0x748, "Vehicle");
 _Static_assert(offsetof(MissileConfig, smoke) == 0x118, "smoke");
 _Static_assert(sizeof(MissileConfig) == 0x250, "MissileConfig");
 _Static_assert(offsetof(Missile, target) == 0x828, "target");

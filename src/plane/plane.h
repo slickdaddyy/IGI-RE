@@ -12,75 +12,14 @@
 #include "vehicle/vehicletypes.h"
 #include "graphtask/graphtasktypes.h"
 #include "plane/planetypes.h"
-
-/* per type data of a vehicle physics type, parsed by 0x5031F0 */
-typedef struct VehicleConfig {
-    float unk0;         /* start speed scale */
-    struct {
-        float rate;
-        float smooth;
-    } axis[3];          /* 0x04 */
-    float thrust;       /* 0x1C */
-    float accel;        /* 0x20 */
-    float accel_slow;   /* 0x24 */
-    int part_count;     /* 0x28 */
-    float parts[8][7];  /* 0x2C */
-    float unk10C[3];
-} VehicleConfig;
-
-/* the extra config of "Heli" */
-typedef struct HeliConfig {
-    VehicleConfig v;
-    int count1;         /* 0x118 */
-    int list[13];       /* 0x11C, the second list starts at list[3] */
-    int count2;         /* 0x150 */
-} HeliConfig;
+#include "vehbase/vehbasetypes.h"
+#include "heli/helitypes.h"
 
 typedef struct Joint {
     char unk0[0x18];
     char active;
     char unk19[0x38 - 0x19];
 } Joint;
-
-/* "Vehicle" (0x748 bytes), a subtype of RigidDynCubeObj */
-typedef struct Vehicle {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x34];
-    void **model;       /* 0x6C */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0x44];
-    Task *coll;         /* 0xE8, its children get the move event */
-    char unkEC[4];
-    struct {
-        char unk0[8];
-        float unk8;     /* 0xF8 */
-        char unkC[0xC];
-        float velocity[3]; /* 0x108 */
-        float unk24[3]; /* 0x114 */
-        float spin[3];  /* 0x120 */
-    } body;             /* 0xF0, see 0x4ECDB0 */
-    char unk12C[0x28];
-    char name[0x14];    /* 0x154 */
-    Vec3d pos2;         /* 0x168 */
-    float velocity2[3]; /* 0x180 */
-    Matrix matrix2;     /* 0x18C */
-    PhysType *phys;     /* 0x1B4 */
-    int unk1B8;
-    Joint joints[23];   /* 0x1BC */
-    char unk6C4[0x14];
-    char unk6D8;
-    char unk6D9;
-    char unk6DA[0x46];
-    float speed;        /* 0x720 */
-    float turn[3];      /* 0x724 */
-    float target_speed; /* 0x730 */
-    float steer[3];     /* 0x734 */
-    float start_speed;  /* 0x740 */
-    char brake;         /* 0x744 */
-    char unk745[3];
-} Vehicle;
 
 /* "Plane" (0x888 bytes) */
 typedef struct Plane {
@@ -98,15 +37,6 @@ typedef struct Plane {
     Task **sound;       /* 0x834 */
     VarString script;   /* 0x838 */
 } Plane;
-
-/* the "Heli" fields used here */
-typedef struct Heli {
-    Vehicle v;
-    char unk748[4];
-    Task **sound;       /* 0x74C */
-    char unk750[0x8C0 - 0x750];
-    char unk8C0[1];
-} Heli;
 
 /* the plane's input, see Plane_GetControl */
 typedef struct PlaneInput {
@@ -148,18 +78,8 @@ typedef struct Part {
     float angle;        /* 0x13C */
 } Part;
 
-_Static_assert(offsetof(Vehicle, coll) == 0xE8, "coll");
-_Static_assert(offsetof(Vehicle, body.spin) == 0x120, "spin");
-_Static_assert(offsetof(Vehicle, name) == 0x154, "name");
-_Static_assert(offsetof(Vehicle, phys) == 0x1B4, "phys");
-_Static_assert(offsetof(Vehicle, joints[0].active) == 0x1D4, "joints");
-_Static_assert(offsetof(Vehicle, speed) == 0x720, "speed");
-_Static_assert(sizeof(Vehicle) == 0x748, "Vehicle");
-_Static_assert(sizeof(VehicleConfig) == 0x118, "VehicleConfig");
-_Static_assert(offsetof(HeliConfig, count2) == 0x150, "HeliConfig");
 _Static_assert(offsetof(Plane, sound_params) == 0x828, "sound_params");
 _Static_assert(sizeof(Plane) == 0x888, "Plane");
-_Static_assert(offsetof(Heli, unk8C0) == 0x8C0, "Heli");
 _Static_assert(sizeof(GearDef) == 0x14, "GearDef");
 _Static_assert(offsetof(Part, offset) == 0xF0, "offset");
 _Static_assert(sizeof(Part) == 0x140, "Part");

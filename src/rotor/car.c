@@ -70,10 +70,10 @@ ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
 ORIG(0x4E6610, uint8_t, Sound_GetInfoEvent, (void));
-ORIG(0x4ECF50, void, Body_AddForce, (float *body, float *force));
+ORIG(0x4ECF50, void, Body_AddForce, (Body *body, float *force));
 ORIG(0x4E6AB0, float *, SoundParams_New, (int n));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
-ORIG(0x4EC2C0, void, Body_AddAeroForces, (void *a, int n, float k, float *body, Matrix *m, float *v));
+ORIG(0x4EC2C0, void, Body_AddAeroForces, (void *a, int n, float k, Body *body, Matrix *m, float *v));
 ORIG(0x4EE0E0, uint8_t, PhysicsObjType_GetParseEvent, (void));
 ORIG(0x4EE0F0, uint8_t, PhysicsObjType_GetSizeEvent, (void));
 ORIG(0x4F0EE0, int, Level_GetDynamic, (void));
@@ -110,7 +110,7 @@ ORIG(0x4F4660, void, Vehicle_RunParts, (Car *o));
 ORIG(0x4F4680, void, Vehicle_Init, (Car *o));
 ORIG(0x4F4820, void, Vehicle_DeleteParts, (Car *o));
 ORIG(0x4F4850, uint8_t, Vehicle_GetExplodeEvent, (void));
-ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (Car *o, MagicDef *def));
+ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (Car *o, PhysType *def));
 ORIG(0x4FC0E0, void, PhysicsObj_Collide, (Car *o, float a, float b, float c, void *world, int n, void *arg));
 ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (Car *o));
 
@@ -166,14 +166,14 @@ static const double kOneD = 1.0;
 
 static float car_radius(Car *o)
 {
-    float s = max_scale(o->scale);
+    float s = max_scale(o->v.scale);
 
-    return (float)(VirModel_GetRadius(o->model) * s);
+    return (float)(VirModel_GetRadius(o->v.model) * s);
 }
 
 static CarData *car_data(Car *o)
 {
-    return o->def->data;
+    return o->v.phys->data;
 }
 
 void Car_ParseDef(void *task, DefParseArg *a);
@@ -261,19 +261,19 @@ void Car_Init(void)
     gCarParams = ParamTable_New(13);
     gCarRange[0] = 0;
     gCarRange[1] = 1000;
-    ParamTable_Add(gCarParams, &c, &c.spawnPos, Param_ObjectPos(), 7, NULL);
-    ParamTable_Add(gCarParams, &c, &c.spawnMatrix, Param_Real32x9(), 7, NULL);
-    ParamTable_Add(gCarParams, &c, &c.maxThrottle, Param_Real32(), 7, NULL);
-    ParamTable_Add(gCarParams, &c, c.unk180, Param_Real32x3(), 7, NULL);
-    ParamTable_Add(gCarParams, &c, c.name, Param_String16(), 7, NULL);
-    ParamTable_Add(gCarParams, &c, &c.unk6D8, Param_Bool8(), 7, NULL);
-    ParamTable_Add(gCarParams, &c, &c.unk6D9, Param_Bool8(), 7, NULL);
-    ParamTable_Add(gCarParams, &c, &c.doorExpr, Param_VarString(), 7, NULL);
-    ParamTable_Add(gCarParams, &c, &c.unk978, Param_VarString(), 7, NULL);
-    ParamTable_Add(gCarParams, &c, &c.unk9C8, Param_VarString(), 7, NULL);
-    ParamTable_Add(gCarParams, &c, &c.unk2EC0, Param_Degrees(), 7, NULL);
-    ParamTable_Add(gCarParams, &c, &c.unk2EC4, Param_Degrees(), 7, NULL);
-    ParamTable_Add(gCarParams, &c, &c.unk2EC8, Param_Real32(), 7, gCarRange);
+    ParamTable_Add(gCarParams, &c, &c.v.startPos, Param_ObjectPos(), 7, NULL);
+    ParamTable_Add(gCarParams, &c, &c.v.startMatrix, Param_Real32x9(), 7, NULL);
+    ParamTable_Add(gCarParams, &c, &c.v.start_speed, Param_Real32(), 7, NULL);
+    ParamTable_Add(gCarParams, &c, &c.v.startVel, Param_Real32x3(), 7, NULL);
+    ParamTable_Add(gCarParams, &c, c.v.name, Param_String16(), 7, NULL);
+    ParamTable_Add(gCarParams, &c, &c.v.collide, Param_Bool8(), 7, NULL);
+    ParamTable_Add(gCarParams, &c, &c.v.airborne, Param_Bool8(), 7, NULL);
+    ParamTable_Add(gCarParams, &c, &c.vars[0], Param_VarString(), 7, NULL);
+    ParamTable_Add(gCarParams, &c, &c.vars[1], Param_VarString(), 7, NULL);
+    ParamTable_Add(gCarParams, &c, &c.vars[2], Param_VarString(), 7, NULL);
+    ParamTable_Add(gCarParams, &c, &c.light_params[0], Param_Degrees(), 7, NULL);
+    ParamTable_Add(gCarParams, &c, &c.light_params[1], Param_Degrees(), 7, NULL);
+    ParamTable_Add(gCarParams, &c, &c.light_params[2], Param_Real32(), 7, gCarRange);
     Script_RegisterConstant("TASKTYPE_CAR", gCarType);
 }
 HOOK(0x42DCF0, Car_Init);
@@ -295,29 +295,29 @@ void Car_Reset(Car *o)
     RigidDynCubeObj_Init(Game_GetWorld(), o, NULL);
     radius = car_radius(o);
     DynCube_Add(Game_GetWorld(), o, &zero, radius, 2);
-    o->engineParams = SoundParams_New(3);
-    o->engineSound = NULL;
-    o->name[0] = 0;
-    o->unk754 = 0;
-    o->unk750 = 0;
-    o->unk758 = 0;
+    o->sound_params = SoundParams_New(3);
+    o->engine_sound = NULL;
+    o->v.name[0] = 0;
+    o->steered_count = 0;
+    o->wheel_slots = 0;
+    o->driven_count = 0;
     Vehicle_Init(o);
-    o->maxThrottle = 0;
+    o->v.start_speed = 0;
     o->unk91D = 0;
-    o->lastTick = -1;
+    o->last_tick = -1;
     QTaskList_Add(Game_GetTaskList4(), o);
     o->exploding = 0;
-    o->wrecked = 0;
-    o->explodeTimer = -1;
-    VarString_Init(&o->doorExpr);
-    VarString_Init(&o->unk978);
-    VarString_Init(&o->unk9C8);
-    o->unk2EC0 = 180;
-    o->unk2EC4 = 360;
-    o->unk2EC8 = 30;
+    o->exploded = 0;
+    o->explode_timer = -1;
+    VarString_Init(&o->vars[0]);
+    VarString_Init(&o->vars[1]);
+    VarString_Init(&o->vars[2]);
+    o->light_params[0] = 180;
+    o->light_params[1] = 360;
+    o->light_params[2] = 30;
     o->unk2ECC = 1;
-    o->unk2ED0 = 0;
-    o->unk2ED4 = 0;
+    o->attacker = 0;
+    o->registered = 0;
 }
 HOOK(0x42E180, Car_Reset);
 
@@ -327,41 +327,41 @@ void Car_UpdateExplosion(Car *o);
 
 void Car_Run(Car *o)
 {
-    if (o->lastTick == Flow_GetFrames())
+    if (o->last_tick == Flow_GetFrames())
         return;
-    o->lastTick = Flow_GetFrames();
-    if (o->wrecked)
+    o->last_tick = Flow_GetFrames();
+    if (o->exploded)
         return;
-    if (VarString_HasExpr(&o->unk9C8) && (int)x87_round(VarString_EvalReal(&o->unk9C8, o)) == 0) {
-        if (o->engineSound) {
-            Task_Delete(o->engineSound);
-            o->engineSound = NULL;
+    if (VarString_HasExpr(&o->vars[2]) && (int)x87_round(VarString_EvalReal(&o->vars[2], o)) == 0) {
+        if (o->engine_sound) {
+            Task_Delete(o->engine_sound);
+            o->engine_sound = NULL;
         }
-    } else if (!o->engineSound && o->def) {
+    } else if (!o->engine_sound && o->v.phys) {
         Task *s = Sound_Play(o, car_data(o)->engineSound);
 
         if (s)
-            o->engineSound = s;
+            o->engine_sound = s;
     }
     Car_UpdateDoors(o);
     Car_UpdateDetector(o);
-    RUN_CHILDREN(&o->task);
-    if (o->parts)
-        RUN_CHILDREN(o->parts);
-    if (!o->unk2ECC && o->parts) {
+    RUN_CHILDREN(&o->v.task);
+    if (o->v.attached)
+        RUN_CHILDREN(o->v.attached);
+    if (!o->unk2ECC && o->v.attached) {
         CarMoveArg arg;
         Task *c;
 
-        arg.pos = &o->pos;
-        arg.matrix = &o->matrix;
+        arg.pos = &o->v.pos;
+        arg.matrix = &o->v.matrix;
         arg.car = o;
-        EACH_CHILD(o->parts, MagicObj_GetMoveEvent(), &arg);
-        for (c = Task_FindChild(o->parts, AIStationaryGun_GetType()); c;
+        EACH_CHILD(o->v.attached, MagicObj_GetMoveEvent(), &arg);
+        for (c = Task_FindChild(o->v.attached, AIStationaryGun_GetType()); c;
              c = Task_FindNext(c, AIStationaryGun_GetType()))
             ((void (*)(void *))HANDLER(1, c->type))(c);
     }
     o->unk2ECC = 0;
-    o->unk2ED0 = 0;
+    o->attacker = 0;
     Car_UpdateExplosion(o);
 }
 HOOK(0x42E320, Car_Run);
@@ -377,7 +377,7 @@ void Car_UpdateExplosion(Car *o)
     radius = car_radius(o);
     d = car_data(o);
     n = d->explodeCount;
-    if (o->explodeTimer == -1) {
+    if (o->explode_timer == -1) {
         if (n) {
             if (n > 0) {
                 int *pt = d->explodePoints;
@@ -388,44 +388,44 @@ void Car_UpdateExplosion(Car *o)
                     Vec3d v;
 
                     Model_GetPoint(&v, o, *pt);
-                    v.x = v.x + o->pos.x;
-                    v.y = v.y + o->pos.y;
-                    v.z = v.z + o->pos.z;
+                    v.x = v.x + o->v.pos.x;
+                    v.y = v.y + o->v.pos.y;
+                    v.z = v.z + o->v.pos.z;
                     Explosion_Spawn(&v, 1, r, 1.0f, 12288.0f, 3072.0f, 3072.0f, 3, 2, 0, "1009_01_1", "explo_03_l",
                                     0x15, 2, 102400.0f, 0);
                 }
             }
-            o->explodeTimer = 30;
+            o->explode_timer = 30;
             return;
         }
-        Explosion_Spawn(&o->pos, 1, 0, 1.0f, (float)(radius * kBlastBig.f), (float)(radius * kBlastMid.f),
+        Explosion_Spawn(&o->v.pos, 1, 0, 1.0f, (float)(radius * kBlastBig.f), (float)(radius * kBlastMid.f),
                         (float)(radius * kBlastSmall.f), 3, 1, 0, "1009_01_1", "explo_03_l", 0x15, 2, 102400.0f, 0);
-        o->explodeTimer = 10;
+        o->explode_timer = 10;
         return;
     }
-    if (--o->explodeTimer == 0) {
+    if (--o->explode_timer == 0) {
         float scale[3];
         int zero[3];
         void *world;
 
         zero[0] = zero[1] = zero[2] = 0;
         scale[0] = scale[1] = scale[2] = 1.0f;
-        EditRigidObj_New(Level_GetDynamic(), d->explodeObj, &o->pos, &o->matrix, scale, zero);
+        EditRigidObj_New(Level_GetDynamic(), d->explodeObj, &o->v.pos, &o->v.matrix, scale, zero);
         world = Game_GetWorld();
         Task_DeleteChildren(o);
-        o->engineSound = NULL;
+        o->engine_sound = NULL;
         Vehicle_DeleteParts(o);
         Car_OnWorldEvent1(o, &world);
-        o->wrecked = 1;
+        o->exploded = 1;
     }
 }
 HOOK(0x42E5A0, Car_UpdateExplosion);
 
 void Car_UpdateDoors(Car *o)
 {
-    if (VarString_HasExpr(&o->doorExpr)) {
-        int open = (int)x87_round(VarString_EvalReal(&o->doorExpr, o));
-        Task *door = Task_FindChild(o->parts, CarDoor_GetType());
+    if (VarString_HasExpr(&o->vars[0])) {
+        int open = (int)x87_round(VarString_EvalReal(&o->vars[0], o));
+        Task *door = Task_FindChild(o->v.attached, CarDoor_GetType());
 
         if (door)
             CarDoor_SetOpen(door, open);
@@ -435,20 +435,20 @@ HOOK(0x42E810, Car_UpdateDoors);
 
 void Car_UpdateDetector(Car *o)
 {
-    if (VarString_HasExpr(&o->unk978)) {
+    if (VarString_HasExpr(&o->vars[1])) {
         char was = o->unk91D;
 
-        o->unk91D = (char)x87_round(VarString_EvalReal(&o->unk978, o));
+        o->unk91D = (char)x87_round(VarString_EvalReal(&o->vars[1], o));
         if (o->unk91D) {
-            o->unkA18 = o->pos;
+            o->unkA18 = o->v.pos;
             o->unkA18.z = o->unkA18.z + kEffectUp;
-            o->unkA30 = o->matrix;
+            o->unkA30 = o->v.matrix;
             o->unkA88 = 0;
-            AIDetector_Update(o->unkA90, &o->unkA18, o, 1);
+            AIDetector_Update(&o->light, &o->unkA18, o, 1);
         }
         if (!o->unk91D && was) {
-            AIDetection_RemoveRefs(o->unkA90);
-            AIDetector_Init(o->unkA90, 1, 4, Human_GetMaskType(), 4, 8);
+            AIDetection_RemoveRefs(&o->light);
+            AIDetector_Init(&o->light, 1, 4, Human_GetMaskType(), 4, 8);
         }
     }
 }
@@ -457,22 +457,22 @@ HOOK(0x42E870, Car_UpdateDetector);
 void Car_Delete(Car *o)
 {
     Vehicle_Free(o);
-    if (!o->wrecked)
+    if (!o->exploded)
         DynCube_Remove(Game_GetWorld(), o);
     QTaskList_Remove(Game_GetTaskList3(), o);
-    if (o->engineParams)
-        QTaskList_Free(o->engineParams);
+    if (o->sound_params)
+        QTaskList_Free(o->sound_params);
     if (Task_GetId(o) >= 0) {
-        TaskFn fn = ((TaskFn *)gTaskHandlers)[Level_GetEventDAC() * 0x180 + o->task.type];
+        TaskFn fn = ((TaskFn *)gTaskHandlers)[Level_GetEventDAC() * 0x180 + o->v.task.type];
 
         if (fn)
             ((void (*)(void *))fn)(o);
     }
-    VarString_Free(&o->doorExpr);
-    VarString_Free(&o->unk978);
-    VarString_Free(&o->unk9C8);
+    VarString_Free(&o->vars[0]);
+    VarString_Free(&o->vars[1]);
+    VarString_Free(&o->vars[2]);
     QTaskList_Remove(Game_GetTaskList4(), o);
-    AIDetection_RemoveRefs(o->unkA90);
+    AIDetection_RemoveRefs(&o->light);
 }
 HOOK(0x42E940, Car_Delete);
 
@@ -493,9 +493,9 @@ void Car_Control(Car *o, CarControlArg *arg)
     float radius;
 
     if (*(uint32_t *)&in[1] != 0xBF800000)
-        o->targetThrottle = in[1];
-    o->targetSteer = arg->input[0];
-    o->unk744 = arg->input[3] < kMinusOne.f || arg->input[3] > kMinusOne.f;
+        o->v.target_speed = in[1];
+    o->v.steer[2] = arg->input[0];
+    o->v.brake = arg->input[3] < kMinusOne.f || arg->input[3] > kMinusOne.f;
     if (arg->unk0) {
         Vehicle_RunParts(o);
         o->unk2ECC = 1;
@@ -503,26 +503,26 @@ void Car_Control(Car *o, CarControlArg *arg)
         return;
     }
     radius = car_radius(o);
-    DynCube_Move(Game_GetWorld(), o, &o->spawnPos, radius);
-    o->matrix = o->spawnMatrix;
+    DynCube_Move(Game_GetWorld(), o, &o->v.startPos, radius);
+    o->v.matrix = o->v.startMatrix;
     *(uint32_t *)&arg->input[1] = 0xBF800000;
     *(uint32_t *)&arg->input[2] = 0xC0000000;
-    PhysicsObj_SetPhysType(o, o->def);
+    PhysicsObj_SetPhysType(o, o->v.phys);
     Vehicle_ResetControls(o);
     Car_ApplyWheelDrop(o);
-    o->throttle = o->maxThrottle;
-    o->targetThrottle = o->maxThrottle;
+    o->v.speed = o->v.start_speed;
+    o->v.target_speed = o->v.start_speed;
     o->exploding = 0;
-    o->wrecked = 0;
-    o->steer = 0;
-    o->targetSteer = 0;
-    if (o->parts) {
+    o->exploded = 0;
+    o->v.turn[2] = 0;
+    o->v.steer[2] = 0;
+    if (o->v.attached) {
         CarMoveArg m;
 
-        m.pos = &o->pos;
-        m.matrix = &o->matrix;
+        m.pos = &o->v.pos;
+        m.matrix = &o->v.matrix;
         m.car = o;
-        EACH_CHILD(o->parts, MagicObj_GetMoveEvent(), &m);
+        EACH_CHILD(o->v.attached, MagicObj_GetMoveEvent(), &m);
     }
 }
 HOOK(0x42EA10, Car_Control);
@@ -532,14 +532,14 @@ void Car_ApplyWheelDrop(Car *o)
     CarData *d;
     int i;
 
-    if (!o->def)
+    if (!o->v.phys)
         return;
     d = car_data(o);
     for (i = 0; i < d->wheelCount; i++) {
         int j = d->wheels[i].joint;
 
         if (j >= 0)
-            o->joints[j].pos[2] = o->joints[j].pos[2] - d->wheelDrop;
+            o->v.contacts[j].point.z = o->v.contacts[j].point.z - d->wheelDrop;
     }
 }
 HOOK(0x42EC30, Car_ApplyWheelDrop);
@@ -552,16 +552,16 @@ void Car_Drive(Car *o)
         Car *car;
     } ctx;
 
-    o->throttle = (float)((kOne.f - d->throttleLag) * o->targetThrottle + (long double)d->throttleLag * o->throttle);
+    o->v.speed = (float)((kOne.f - d->throttleLag) * o->v.target_speed + (long double)d->throttleLag * o->v.speed);
     d = car_data(o);
-    o->steer = (float)((kOne.f - d->steerLag) * o->targetSteer + (long double)o->steer * d->steerLag);
-    if (o->targetThrottle == kZero.f) {
-        float t = o->throttle;
+    o->v.turn[2] = (float)((kOne.f - d->steerLag) * o->v.steer[2] + (long double)o->v.turn[2] * d->steerLag);
+    if (o->v.target_speed == kZero.f) {
+        float t = o->v.speed;
 
         if (t < kZero.f)
             t = -t;
         if (t < kStop.f)
-            o->throttle = 0;
+            o->v.speed = 0;
     }
     Car_UpdateWheels(o);
     if (!PhysicsObj_IsResting(o)) {
@@ -569,29 +569,29 @@ void Car_Drive(Car *o)
         if (car_data(o)->unk28) {
             float v[3];
 
-            v[0] = -o->spin[0];
-            v[1] = -o->spin[1];
-            v[2] = -o->spin[2];
+            v[0] = -o->v.body.vel.x;
+            v[1] = -o->v.body.vel.y;
+            v[2] = -o->v.body.vel.z;
             d = car_data(o);
-            Body_AddAeroForces(d->unk2C, d->unk28, kDamp.f, o->body, &o->matrix, v);
+            Body_AddAeroForces(d->unk2C, d->unk28, kDamp.f, &o->v.body, &o->v.matrix, v);
         }
         PhysicsObj_Collide(o, kLift.f, kGripB.f, kGripC.f, Game_GetWorld(), 0xC, &ctx);
     }
-    if (o->engineParams) {
+    if (o->sound_params) {
         long double p;
 
-        o->engineParams[1] = o->throttle;
-        o->engineParams[2] = o->throttle > kStop.f ? 1 : 0;
-        p = (long double)o->body[2] * kPitch.f;
-        o->engineParams[3] = p < kOne.f ? (float)p : kOne.f;
+        o->sound_params[1] = o->v.speed;
+        o->sound_params[2] = o->v.speed > kStop.f ? 1 : 0;
+        p = (long double)o->v.body.speed * kPitch.f;
+        o->sound_params[3] = p < kOne.f ? (float)p : kOne.f;
     }
-    if (o->parts) {
+    if (o->v.attached) {
         CarMoveArg m;
 
-        m.pos = &o->pos;
-        m.matrix = &o->matrix;
+        m.pos = &o->v.pos;
+        m.matrix = &o->v.matrix;
         m.car = o;
-        EACH_CHILD(o->parts, MagicObj_GetMoveEvent(), &m);
+        EACH_CHILD(o->v.attached, MagicObj_GetMoveEvent(), &m);
     }
 }
 HOOK(0x42ECA0, Car_Drive);
@@ -604,12 +604,12 @@ void Car_UpdateWheels(Car *o)
         int unk0;
         Car *self;
     } q;
-    MagicDef *def = o->def;
+    PhysType *def = o->v.phys;
     CarData *d = def->data;
     Vec3d starts[16], ends[16];
     int wheelOf[16];
     CollHit hits[16];
-    CarJoint *joints = o->joints;
+    Contact *joints = o->v.contacts;
     CarContact *ct = o->contacts;
     double maxDepth = -0x1.fffffffffffffp+1023;
     int n = 0, any = 0, i;
@@ -619,30 +619,30 @@ void Car_UpdateWheels(Car *o)
         int j = w->joint;
 
         if (j >= 0 && ct->active) {
-            CarJoint *jp = &joints[j];
+            Contact *jp = &joints[j];
             long double reach = (long double)w->radius + kHalfMeter;
-            const float *m = o->matrix.m;
+            const float *m = o->v.matrix.m;
             Vec3d *s = &starts[n], *e = &ends[n], v;
             long double z;
 
-            s->x = jp->pos[0];
-            s->y = jp->pos[1];
-            s->z = jp->pos[2];
-            v.x = (long double)m[0] * s->x + (long double)m[2] * jp->pos[2] + (long double)m[1] * s->y;
-            v.y = (long double)m[3] * s->x + (long double)m[5] * jp->pos[2] + (long double)m[4] * s->y;
-            v.z = (long double)m[6] * s->x + (long double)m[8] * jp->pos[2] + (long double)m[7] * s->y;
+            s->x = jp->point.x;
+            s->y = jp->point.y;
+            s->z = jp->point.z;
+            v.x = (long double)m[0] * s->x + (long double)m[2] * jp->point.z + (long double)m[1] * s->y;
+            v.y = (long double)m[3] * s->x + (long double)m[5] * jp->point.z + (long double)m[4] * s->y;
+            v.z = (long double)m[6] * s->x + (long double)m[8] * jp->point.z + (long double)m[7] * s->y;
             *s = v;
-            s->x = o->pos.x + s->x;
-            s->y = o->pos.y + s->y;
-            z = (long double)o->pos.z + s->z;
+            s->x = o->v.pos.x + s->x;
+            s->y = o->v.pos.y + s->y;
+            z = (long double)o->v.pos.z + s->z;
             s->z = (long double)w->radius + z + kMeterD;
             *e = *s;
             e->z = (long double)e->z - reach - kMeterD;
-            jp->unk18 = 0;
+            jp->active = 0;
             wheelOf[n++] = i;
         }
         if (!ct->active)
-            joints[j].unk18 = 1;
+            joints[j].active = 1;
     }
     q.self = o;
     Coll_Lines(Game_GetWorld(), hits, starts, ends, n, 0xC, &q, 0xFFFFFFFF);
@@ -653,7 +653,7 @@ void Car_UpdateWheels(Car *o)
         CollHit *h = &hits[i];
         float radius = d->wheels[w].radius;
         int j = d->wheels[w].joint;
-        CarJoint *jp;
+        Contact *jp;
         float push = 0;
         int sink = 0, hit = 0;
         long double diff;
@@ -679,50 +679,50 @@ void Car_UpdateWheels(Car *o)
 
                 force[0] = 0;
                 force[1] = 0;
-                force[2] = (float)((long double)push / radius * d->wheels[w].unk10 * def->power * kLift.f);
+                force[2] = (float)((long double)push / radius * d->wheels[w].unk10 * def->mass * kLift.f);
                 if (sink)
                     force[2] = (float)((kTwo.f - h->dist * kInvMeter) * force[2]);
-                force[3] = joints[j].pos[0];
-                force[4] = joints[j].pos[1];
-                force[5] = joints[j].pos[2];
-                Body_AddForce(o->body, force);
+                force[3] = joints[j].point.x;
+                force[4] = joints[j].point.y;
+                force[5] = joints[j].point.z;
+                Body_AddForce(&o->v.body, force);
             }
         }
         jp = &joints[j];
-        diff = (long double)jp->unk34 - push;
+        diff = (long double)jp->height - push;
         if (diff < 0)
             diff = -diff;
         if (diff > kSnap.f) {
-            if (push > jp->unk34)
-                jp->unk34 = push;
+            if (push > jp->height)
+                jp->height = push;
             else
-                jp->unk34 = (float)((long double)jp->unk34 * kSmoothOld.f + (long double)push * kSmoothNew.f);
+                jp->height = (float)((long double)jp->height * kSmoothOld.f + (long double)push * kSmoothNew.f);
         }
         ct = &o->contacts[w];
         ct->hit = hit;
-        jp->unk1A = hit;
+        jp->touching = hit;
         if (hit) {
-            ct->normal[0] = h->normal.x;
-            ct->normal[1] = h->normal.y;
-            ct->normal[2] = h->normal.z;
-            if (ct->normal[0] != 0 || ct->normal[1] != 0 || ct->normal[2] != 0) {
-                long double x = ct->normal[0], y = ct->normal[1], z = ct->normal[2];
+            ct->normal.x = h->normal.x;
+            ct->normal.y = h->normal.y;
+            ct->normal.z = h->normal.z;
+            if (ct->normal.x != 0 || ct->normal.y != 0 || ct->normal.z != 0) {
+                long double x = ct->normal.x, y = ct->normal.y, z = ct->normal.z;
                 long double inv = kOneD / x87_sqrt(x * x + y * y + z * z);
 
-                ct->normal[0] = (float)(ct->normal[0] * inv);
-                ct->normal[1] = (float)(ct->normal[1] * inv);
-                ct->normal[2] = (float)(ct->normal[2] * inv);
+                ct->normal.x = (float)(ct->normal.x * inv);
+                ct->normal.y = (float)(ct->normal.y * inv);
+                ct->normal.z = (float)(ct->normal.z * inv);
             }
-            ct->pos[0] = jp->pos[0];
-            ct->pos[1] = jp->pos[1];
-            ct->pos[2] = jp->pos[2];
-            ct->pos[2] = (float)(ct->pos[2] + (long double)kWheelUp.f);
-            o->unk1B8 = 1;
+            ct->pos.x = jp->point.x;
+            ct->pos.y = jp->point.y;
+            ct->pos.z = jp->point.z;
+            ct->pos.z = (float)(ct->pos.z + (long double)kWheelUp.f);
+            o->v.touching = 1;
             Car_UpdateWheel(o, w, j);
         }
     }
     if (any) {
-        Vec3d p = o->pos;
+        Vec3d p = o->v.pos;
         float radius;
 
         p.z = p.z + maxDepth;

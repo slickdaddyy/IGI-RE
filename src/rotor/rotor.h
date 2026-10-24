@@ -11,17 +11,11 @@
 #include "magicobj/magicobjtypes.h"
 #include "vehicle/vehicletypes.h"
 #include "plane/planetypes.h"
+#include "heli/helitypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
 /* a MagicObj definition; data is the block parsed from its script arguments */
-typedef struct MagicDef {
-    char unk0[8];
-    float power;
-    char unkC[0x2D4 - 0xC];
-    void *data;
-} MagicDef;
-
 /* the same with the vehicle itself */
 typedef struct CarMoveArg {
     Vec3d *pos;
@@ -37,7 +31,7 @@ typedef struct Part {
     struct Car *owner;
     int unk134;
     float value;
-    MagicDef *def;
+    PhysType *def;
 } Part;
 
 /* a draw call queued for the frame (0x24 bytes, 0x30 for Afterburner) */
@@ -87,103 +81,11 @@ typedef struct CarData {
 } CarData;
 
 /* a model joint of the vehicle */
-typedef struct CarJoint {
-    char unk0[0xC];
-    float pos[3];
-    char unk18;
-    char unk19;
-    char unk1A;
-    char unk1B[0x34 - 0x1B];
-    float unk34;
-} CarJoint;
-
-typedef struct CarContact {
-    char active;
-    char hit;
-    char pad[2];
-    float normal[3];
-    float pos[3];
-} CarContact;
-
-typedef struct Car {
-    Task task;
-    Vec3d pos;
-    char unk38[0x10];
-    int unk48;
-    char unk4C[0x20];
-    void **model;
-    Matrix matrix;
-    float scale[3];
-    char unkA4[0xE8 - 0xA4];
-    Task *parts;
-    char unkEC[4];
-    float body[6];
-    float spin[3];
-    char unk114[0x154 - 0x114];
-    char name[0x10];
-    char unk164[4];
-    Vec3d spawnPos;
-    float unk180[3];
-    Matrix spawnMatrix;
-    MagicDef *def;
-    int unk1B8;
-    CarJoint joints[23];
-    char unk6C4[0x6D8 - 0x6C4];
-    char unk6D8;
-    char unk6D9;
-    char unk6DA[0x720 - 0x6DA];
-    float throttle;
-    char unk724[8];
-    float steer;
-    float targetThrottle;
-    char unk734[8];
-    float targetSteer;
-    float maxThrottle;
-    char unk744;
-    char pad745[3];
-    Task *engineSound;
-    float *engineParams;
-    int unk750;
-    int unk754;
-    int unk758;
-    CarContact contacts[16];
-    char exploding;
-    char unk91D;
-    char pad91E[2];
-    int explodeTimer;
-    int lastTick;
-    VarString doorExpr;
-    VarString unk978;
-    VarString unk9C8;
-    Vec3d unkA18;
-    Matrix unkA30;
-    char unkA58[0xA88 - 0xA58];
-    char unkA88;
-    char unkA89[7];
-    char unkA90[0x2EC0 - 0xA90];
-    float unk2EC0;
-    float unk2EC4;
-    float unk2EC8;
-    char unk2ECC;
-    char pad2ECD[3];
-    int unk2ED0;
-    char unk2ED4;
-    char wrecked;
-    char pad2ED6[2];
-} Car;
-
 _Static_assert(sizeof(Part) == 0x140, "Part");
 _Static_assert(offsetof(Prim, color) == 0x24, "Prim");
 _Static_assert(sizeof(CarData) == 0x2C0, "CarData");
 _Static_assert(offsetof(CarData, explodePoints) == 0x284, "CarData");
-_Static_assert(sizeof(CarJoint) == 0x38, "CarJoint");
-_Static_assert(sizeof(CarContact) == 0x1C, "CarContact");
-_Static_assert(offsetof(Car, def) == 0x1B4, "Car");
-_Static_assert(offsetof(Car, throttle) == 0x720, "Car");
-_Static_assert(offsetof(Car, contacts) == 0x75C, "Car");
-_Static_assert(offsetof(Car, doorExpr) == 0x928, "Car");
-_Static_assert(offsetof(Car, unkA88) == 0xA88, "Car");
-_Static_assert(sizeof(Car) == 0x2ED8, "Car");
+_Static_assert(sizeof(Contact) == 0x38, "Contact");
 
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }

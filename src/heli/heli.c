@@ -182,14 +182,14 @@ void Heli_Init(void)
     gHeliParams = ParamTable_New(13);
     gHeliRange[0] = 0;
     gHeliRange[1] = 1000;
-    ParamTable_Add(gHeliParams, &h, &h.v.pos2, Param_ObjectPos(), 7, NULL);
-    ParamTable_Add(gHeliParams, &h, &h.v.matrix2, Param_Real32x9(), 7, NULL);
+    ParamTable_Add(gHeliParams, &h, &h.v.startPos, Param_ObjectPos(), 7, NULL);
+    ParamTable_Add(gHeliParams, &h, &h.v.startMatrix, Param_Real32x9(), 7, NULL);
     range = Param_Range02();
     type = Param_Real32();
     ParamTable_Add(gHeliParams, &h, &h.v.start_speed, type, 7, range);
-    ParamTable_Add(gHeliParams, &h, &h.v.unk180, Param_Real32x3(), 7, NULL);
+    ParamTable_Add(gHeliParams, &h, &h.v.startVel, Param_Real32x3(), 7, NULL);
     ParamTable_Add(gHeliParams, &h, h.v.name, Param_String16(), 7, NULL);
-    ParamTable_Add(gHeliParams, &h, &h.v.unk6D8, Param_Bool8(), 7, NULL);
+    ParamTable_Add(gHeliParams, &h, &h.v.collide, Param_Bool8(), 7, NULL);
     ParamTable_Add(gHeliParams, &h, &h.v.airborne, Param_Bool8(), 7, NULL);
     ParamTable_Add(gHeliParams, &h, &h.rotor_expr, Param_VarString(), 7, NULL);
     ParamTable_Add(gHeliParams, &h, &h.light_expr, Param_VarString(), 7, NULL);
@@ -254,14 +254,14 @@ void Heli_Run(Heli *h)
     if (h->exploding) {
         float r = radius(h);
         HeliConfig *cfg = h->v.phys->data;
-        int n = cfg->explode_count;
+        int n = cfg->count2;
 
         if (h->explode_timer == -1) {
             if (n == 0) {
                 Explosion_Spawn(&h->v.pos, 1, 0, 1.0f, r * kQuarter, r * kTwentieth, r * kTwoHundredth, 3, 1, 0,
                                 "1009_01_1", "explo_03_l", -1, 0, 102400.0f, 0);
             } else {
-                int *point = cfg->explode_points;
+                int *point = &cfg->list[3];
 
                 Task_GetCount();
                 for (; n > 0; n--, point++) {
@@ -300,11 +300,11 @@ void Heli_Run(Heli *h)
             h->light_pos = h->v.pos;
             h->light_matrix = m;
             h->unk8B8 = 0;
-            AIDetector_Update(h->light, &h->light_pos, h, 1);
+            AIDetector_Update(&h->light, &h->light_pos, h, 1);
         }
         if (!h->lights && was) {
-            AIDetection_RemoveRefs(h->light);
-            AIDetector_Init(h->light, 1, 4, Human_GetMaskType(4, 8), 4, 8);
+            AIDetection_RemoveRefs(&h->light);
+            AIDetector_Init(&h->light, 1, 4, Human_GetMaskType(4, 8), 4, 8);
         }
     }
     BROADCAST(h->v.task.head, 1);
@@ -326,7 +326,7 @@ Task *Heli_FindDoor(Heli *h)
 {
     uint16_t type = HeliDoor_GetType();
 
-    return Task_FindChild(h->v.coll, type);
+    return Task_FindChild(h->v.attached, type);
 }
 HOOK(0x431AC0, Heli_FindDoor);
 
@@ -341,7 +341,7 @@ void Heli_Delete(Heli *h)
     VarString_Free(&h->light_expr);
     VarString_Free(&h->engine_expr);
     QTaskList_Remove(Game_GetTaskList4(), h);
-    AIDetection_RemoveRefs(h->light);
+    AIDetection_RemoveRefs(&h->light);
 }
 HOOK(0x431AE0, Heli_Delete);
 
@@ -366,13 +366,13 @@ void Heli_Control(Heli *h, ControlArg *arg)
         const float *m;
         Vec3f v;
 
-        DynCube_Move(Game_GetWorld(), h, &h->v.pos2, r);
+        DynCube_Move(Game_GetWorld(), h, &h->v.startPos, r);
         arg->axes[3] = -1.0f;
         arg->axes[4] = -2.0f;
         arg->axes[0] = 0;
         arg->axes[1] = 0;
         arg->axes[2] = 0;
-        h->v.matrix = h->v.matrix2;
+        h->v.matrix = h->v.startMatrix;
         PhysicsObj_SetPhysType(h, h->v.phys);
         Vehicle_ResetControls(h);
         h->v.speed = h->v.start_speed;
@@ -386,15 +386,15 @@ void Heli_Control(Heli *h, ControlArg *arg)
         Vehicle_DeleteParts(h);
         Vehicle_NewParts(h);
         m = h->v.matrix.m;
-        v.x = m[2] * h->v.unk180.z + m[1] * h->v.unk180.y + h->v.unk180.x * m[0];
-        v.y = m[5] * h->v.unk180.z + m[4] * h->v.unk180.y + h->v.unk180.x * m[3];
-        v.z = m[8] * h->v.unk180.z + m[7] * h->v.unk180.y + h->v.unk180.x * m[6];
-        h->v.body.velocity = v;
+        v.x = m[2] * h->v.startVel.z + m[1] * h->v.startVel.y + h->v.startVel.x * m[0];
+        v.y = m[5] * h->v.startVel.z + m[4] * h->v.startVel.y + h->v.startVel.x * m[3];
+        v.z = m[8] * h->v.startVel.z + m[7] * h->v.startVel.y + h->v.startVel.x * m[6];
+        h->v.body.vel = v;
         Body_Update(&h->v.body);
-        if (h->v.coll) {
+        if (h->v.attached) {
             PartMoveArg msg = {&h->v.pos, &h->v.matrix, h};
 
-            BROADCAST(h->v.coll->head, MagicObj_GetMoveEvent(), &msg);
+            BROADCAST(h->v.attached->head, MagicObj_GetMoveEvent(), &msg);
         }
     }
     if (arg->tick > 0) {
@@ -437,7 +437,7 @@ void Heli_Move(Heli *h)
     t2 = (kOne - cfg->axis[2].smooth) * h->v.steer[2] + cfg->axis[2].smooth * h->v.turn[2];
     h->v.turn[2] = t2;
     if ((fne(t0, kZero) || fne(t1, kZero) || fne(t2, kZero)) &&
-        (!h->v.contacts || h->v.body.unk8 > kTwo)) {
+        (!h->v.touching || h->v.body.speed > kTwo)) {
         VehicleConfig *c = phys->data;
         float a0 = t0 * c->axis[0].rate;
         float a1 = t1 * c->axis[1].rate;
@@ -453,7 +453,7 @@ void Heli_Move(Heli *h)
         Body_AddForce(&h->v.body, f2);
         Body_AddForce(&h->v.body, f3);
     }
-    if (!h->v.contacts && h->v.body.unk8 > kTwo) {
+    if (!h->v.touching && h->v.body.speed > kTwo) {
         float *m = h->v.matrix.m;
         long double pitch;
         Matrix r, nm;
@@ -491,18 +491,18 @@ void Heli_Move(Heli *h)
         if (c->part_count) {
             Vec3f v;
 
-            v.x = -h->v.body.velocity.x;
-            v.y = -h->v.body.velocity.y;
-            v.z = -h->v.body.velocity.z;
+            v.x = -h->v.body.vel.x;
+            v.y = -h->v.body.vel.y;
+            v.z = -h->v.body.vel.z;
             Body_AddAeroForces(c->parts, c->part_count, 0x1.56e264p-12f, &h->v.body, &h->v.matrix, &v);
         }
         PhysicsObj_Collide(h, 0x1.64ce9ep+5f, 1.0f, 0x1.d70a3ep-1f, Game_GetWorld(), 12, msg);
     }
-    if (h->v.coll) {
+    if (h->v.attached) {
         msg[0] = &h->v.pos;
         msg[1] = &h->v.matrix;
         msg[2] = h;
-        BROADCAST(h->v.coll->head, MagicObj_GetMoveEvent(), msg);
+        BROADCAST(h->v.attached->head, MagicObj_GetMoveEvent(), msg);
     }
     if (h->sound_params) {
         int fast = 1;
@@ -532,9 +532,9 @@ void Heli_UpdateWheels(Heli *h)
     } q;
     int count = 0, landed = 0, i;
     uint16_t type = HeliWheel_GetType();
-    Task *w = Task_FindChild(h->v.coll, type);
+    Task *w = Task_FindChild(h->v.attached, type);
 
-    h->v.contacts = 0;
+    h->v.touching = 0;
     if (!w)
         return;
     do {
@@ -598,13 +598,13 @@ void Heli_UpdateWheels(Heli *h)
         force[4] = offs[i].y;
         force[5] = offs[i].z;
         Body_AddForce(&h->v.body, force);
-        h->v.contacts++;
-        h->v.body.velocity.x = h->v.body.velocity.x * kHeliDamp;
-        h->v.body.velocity.y = h->v.body.velocity.y * kHeliDamp;
-        h->v.body.velocity.z = h->v.body.velocity.z * kDampZ;
-        h->v.body.spin.x = h->v.body.spin.x * kDamp98;
-        h->v.body.spin.y = h->v.body.spin.y * kDamp98;
-        h->v.body.spin.z = h->v.body.spin.z * kDamp98;
+        h->v.touching++;
+        h->v.body.vel.x = h->v.body.vel.x * kHeliDamp;
+        h->v.body.vel.y = h->v.body.vel.y * kHeliDamp;
+        h->v.body.vel.z = h->v.body.vel.z * kDampZ;
+        h->v.body.angMom.x = h->v.body.angMom.x * kDamp98;
+        h->v.body.angMom.y = h->v.body.angMom.y * kDamp98;
+        h->v.body.angMom.z = h->v.body.angMom.z * kDamp98;
     }
     if (landed) {
         Vec3d p = h->v.pos;
@@ -630,7 +630,7 @@ void Heli_ParamsChanged(Heli *h)
         h->light_cfg[0] = h->light_params[0] * kDegToRad;
         h->light_cfg[1] = h->light_params[1] * kDegToRad;
         h->light_cfg[2] = h->light_params[2] * kFixed;
-        AIDetector_Init(h->light, 1, 4, Human_GetMaskType(4, 8), 4, 8);
+        AIDetector_Init(&h->light, 1, 4, Human_GetMaskType(4, 8), 4, 8);
     } else if (h->v.name[0] && h->v.name[1] != '*') {
         crt_sprintf(buf, "Model \"%s\" not available", h->v.name);
         strcpy(name, h->v.name);
@@ -639,11 +639,11 @@ void Heli_ParamsChanged(Heli *h)
     h->v.target_speed = h->v.start_speed;
     h->v.speed = h->v.start_speed;
     r = radius(h);
-    DynCube_Move(Game_GetWorld(), h, &h->v.pos2, r);
-    h->v.matrix = h->v.matrix2;
+    DynCube_Move(Game_GetWorld(), h, &h->v.startPos, r);
+    h->v.matrix = h->v.startMatrix;
     Vehicle_DeleteParts(h);
     Vehicle_NewParts(h);
-    BROADCAST(h->v.coll->head, Param_GetChangedEvent(), NULL);
+    BROADCAST(h->v.attached->head, Param_GetChangedEvent(), NULL);
     VarString_Bind(&h->rotor_expr, h);
     VarString_Bind(&h->light_expr, h);
     VarString_Bind(&h->engine_expr, h);

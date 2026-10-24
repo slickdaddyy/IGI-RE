@@ -71,22 +71,6 @@ typedef struct AnimData {
     AnimKey keys[ANIM_KEYS];
 } AnimData;
 
-/* "Vehicle" (0x748 bytes), a subtype of PhysicsObj */
-typedef struct Vehicle {
-    RigidDynCubeObj obj;
-    char unkF0[0x18];
-    Vec3f velocity;     /* 0x108, of the rigid body */
-    char unk114[0x720 - 0x114];
-    float speed;        /* 0x720 */
-    float turn[3];      /* 0x724 */
-    float target_speed; /* 0x730 */
-    float steer[3];     /* 0x734 */
-    float start_speed;  /* 0x740 */
-    char brake;         /* 0x744 */
-    char active;        /* 0x745 */
-    char unk746[2];
-} Vehicle;
-
 /* saved by Vehicle_SaveState */
 typedef struct VehicleState {
     Vec3f velocity;
@@ -107,8 +91,6 @@ _Static_assert(offsetof(AnimTask, ref) == 0x20148, "ref");
 _Static_assert(offsetof(AnimTask, button) == 0x20158, "button");
 _Static_assert(sizeof(AnimTask) == 0x20160, "AnimTask");
 _Static_assert(sizeof(AnimData) == 0x2008C, "AnimData");
-_Static_assert(offsetof(Vehicle, speed) == 0x720, "speed");
-_Static_assert(sizeof(Vehicle) == 0x748, "Vehicle");
 _Static_assert(sizeof(VehicleState) == 0x70, "VehicleState");
 
 extern TaskFn gTaskHandlers[][0x180];

@@ -3,23 +3,7 @@
 
 #include "hook.h"
 #include "editobj/editobj.h"
-
-/* per type data of a vehicle physics type */
-typedef struct VehicleConfig {
-    float unk0;         /* start speed scale */
-    struct {
-        float rate;
-        float smooth;
-    } axis[3];
-    float thrust;
-    float accel;
-    float accel_slow;
-    int part_count;
-    float parts[8][7];
-    float unk10C[3];
-} VehicleConfig;
-
-_Static_assert(sizeof(VehicleConfig) == 0x118, "VehicleConfig");
+#include "vehbase/vehbasetypes.h"
 
 ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));

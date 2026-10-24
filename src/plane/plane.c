@@ -156,15 +156,15 @@ void Plane_Init(void)
     gPlaneParams = ParamTable_New(10);
     /* the original passes a dummy Plane on its stack, only the difference
        of the two pointers is kept */
-    ParamTable_Add(gPlaneParams, NULL, FIELD(v.pos2), Param_ObjectPos(), 7, NULL);
-    ParamTable_Add(gPlaneParams, NULL, FIELD(v.matrix2), Param_Real32x9(), 7, NULL);
+    ParamTable_Add(gPlaneParams, NULL, FIELD(v.startPos), Param_ObjectPos(), 7, NULL);
+    ParamTable_Add(gPlaneParams, NULL, FIELD(v.startMatrix), Param_Real32x9(), 7, NULL);
     ParamTable_Add(gPlaneParams, NULL, FIELD(v.start_speed), Param_Real32(), 7, NULL);
-    ParamTable_Add(gPlaneParams, NULL, FIELD(v.velocity2), Param_Real32x3(), 7, NULL);
+    ParamTable_Add(gPlaneParams, NULL, FIELD(v.startVel), Param_Real32x3(), 7, NULL);
     ParamTable_Add(gPlaneParams, NULL, FIELD(v.name), Param_String16(), 7, NULL);
     ParamTable_Add(gPlaneParams, NULL, FIELD(gear_init), Param_Bool8(), 7, NULL);
     ParamTable_Add(gPlaneParams, NULL, FIELD(cockpit_init), Param_Bool8(), 7, NULL);
-    ParamTable_Add(gPlaneParams, NULL, FIELD(v.unk6D8), Param_Bool8(), 7, NULL);
-    ParamTable_Add(gPlaneParams, NULL, FIELD(v.unk6D9), Param_Bool8(), 7, NULL);
+    ParamTable_Add(gPlaneParams, NULL, FIELD(v.collide), Param_Bool8(), 7, NULL);
+    ParamTable_Add(gPlaneParams, NULL, FIELD(v.airborne), Param_Bool8(), 7, NULL);
     ParamTable_Add(gPlaneParams, NULL, FIELD(script), Param_VarString(), 7, NULL);
     Script_RegisterConstant("TASKTYPE_PLANE", gPlaneType);
     Random_Init(gPlaneRandom);
@@ -299,7 +299,7 @@ void Plane_Fly(Plane *p);
 
 static int velocity2_zero(Plane *p)
 {
-    return !fne(p->v.velocity2[0], kZero) && !fne(p->v.velocity2[1], kZero) && !fne(p->v.velocity2[2], kZero);
+    return !fne(p->v.startVel.x, kZero) && !fne(p->v.startVel.y, kZero) && !fne(p->v.startVel.z, kZero);
 }
 
 /* the body velocity is velocity2, or along the nose at the start speed */
@@ -308,13 +308,13 @@ static void plane_start_velocity(Plane *p)
     if (velocity2_zero(p)) {
         long double k = (long double)p->v.speed * ((VehicleConfig *)p->v.phys->data)->unk0 * kStartSpeed;
 
-        p->v.body.velocity[0] = k * p->v.matrix.m[1];
-        p->v.body.velocity[1] = k * p->v.matrix.m[4];
-        p->v.body.velocity[2] = k * p->v.matrix.m[7];
+        p->v.body.vel.x = k * p->v.matrix.m[1];
+        p->v.body.vel.y = k * p->v.matrix.m[4];
+        p->v.body.vel.z = k * p->v.matrix.m[7];
     } else {
-        p->v.body.velocity[0] = p->v.velocity2[0];
-        p->v.body.velocity[1] = p->v.velocity2[1];
-        p->v.body.velocity[2] = p->v.velocity2[2];
+        p->v.body.vel.x = p->v.startVel.x;
+        p->v.body.vel.y = p->v.startVel.y;
+        p->v.body.vel.z = p->v.startVel.z;
     }
 }
 
@@ -337,9 +337,9 @@ void Plane_Control(Plane *p, PlaneControlArg *arg)
         float radius = plane_radius(p);
         PhysType *phys;
 
-        DynCube_Move(Game_GetWorld(), p, &p->v.pos2, radius);
+        DynCube_Move(Game_GetWorld(), p, &p->v.startPos, radius);
         phys = p->v.phys;
-        p->v.matrix = p->v.matrix2;
+        p->v.matrix = p->v.startMatrix;
         PhysicsObj_SetPhysType(p, phys);
         p->v.speed = p->v.start_speed;
         p->v.steer[0] = 0;
@@ -354,10 +354,10 @@ void Plane_Control(Plane *p, PlaneControlArg *arg)
         Plane_ResetControls(p);
         plane_start_velocity(p);
         Body_Update(&p->v.body);
-        if (p->v.coll) {
+        if (p->v.attached) {
             PartMoveArg m = {&p->v.pos, &p->v.matrix, p};
 
-            BROADCAST(p->v.coll->head, MagicObj_GetMoveEvent(), &m);
+            BROADCAST(p->v.attached->head, MagicObj_GetMoveEvent(), &m);
         }
     }
     if (arg->mode > 0) {
@@ -378,18 +378,18 @@ void Plane_Fly(Plane *p)
     long double t2;
     int i;
 
-    ratio = p->v.body.unk8 / (cfg->thrust * kKmhToFrame);
+    ratio = p->v.body.speed / (cfg->thrust * kKmhToFrame);
     if (!(ratio >= kZero))
         ratio = kZero;
     else if (ratio > kOne)
         ratio = kOne;
     for (i = 0; i < phys->jointCount; i++)
-        p->v.joints[i].active = !p->gear;
+        p->v.contacts[i].active = !p->gear;
 
     /* speed towards the thrust setting, slower on the ground */
     rate = !(p->v.speed >= kSlow) ? cfg->accel_slow : cfg->accel;
     s = p->v.speed;
-    if (p->v.unk1B8 && !(p->v.target_speed >= kOne))
+    if (p->v.touching && !(p->v.target_speed >= kOne))
         target = p->v.target_speed - kGroundThrust;
     else
         target = p->v.target_speed;
@@ -416,7 +416,7 @@ void Plane_Fly(Plane *p)
     p->v.turn[2] = t2;
 
     /* elevators: parts 3 and 4 turned by pitch minus and plus roll */
-    if ((fne(t0, kZero) || fne(t1, kZero) || fne(t2, kZero)) && (!p->v.unk1B8 || p->v.body.unk8 >= kFlySpeed)) {
+    if ((fne(t0, kZero) || fne(t1, kZero) || fne(t2, kZero)) && (!p->v.touching || p->v.body.speed >= kFlySpeed)) {
         float max = cfg->axis[0].rate;
         float pitch = t0 * cfg->axis[0].rate * kHalfDegToRad;
         long double roll = t1 * cfg->axis[1].rate * kHalfDegToRad;
@@ -464,7 +464,7 @@ void Plane_Fly(Plane *p)
         force[0] = 0;
         force[2] = 0;
         force[1] = phys->mass * p->v.speed * kThrust;
-        if (!p->v.unk1B8) {
+        if (!p->v.touching) {
             Matrix m;
             float g0, g1, g2;
 
@@ -490,20 +490,20 @@ void Plane_Fly(Plane *p)
         } msg;
 
         msg.p = p;
-        if (cfg->part_count && (!p->v.unk1B8 || p->v.body.unk8 > kPartsSpeed)) {
+        if (cfg->part_count && (!p->v.touching || p->v.body.speed > kPartsSpeed)) {
             float v[3];
 
-            v[0] = -p->v.body.velocity[0];
-            v[1] = -p->v.body.velocity[1];
-            v[2] = -p->v.body.velocity[2];
+            v[0] = -p->v.body.vel.x;
+            v[1] = -p->v.body.vel.y;
+            v[2] = -p->v.body.vel.z;
             Body_AddAeroForces(p->parts, cfg->part_count, 0x1.56e264p-12f, &p->v.body, &p->v.matrix, v);
         }
         PhysicsObj_Collide(p, 0x1.64ce9ep+5f, 1.0f, 0x1.d70a3ep-1f, Game_GetWorld(), 12, &msg);
     }
-    if (p->v.coll) {
+    if (p->v.attached) {
         PartMoveArg m = {&p->v.pos, &p->v.matrix, p};
 
-        BROADCAST(p->v.coll->head, MagicObj_GetMoveEvent(), &m);
+        BROADCAST(p->v.attached->head, MagicObj_GetMoveEvent(), &m);
     }
     if (p->sound_params) {
         p->sound_params[1] = p->v.speed;
@@ -544,7 +544,7 @@ void Plane_CheckWheels(Plane *p)
     int found = 0, n = 0, i;
     Task *g;
 
-    g = Task_FindChild(p->v.coll, Gear_GetType());
+    g = Task_FindChild(p->v.attached, Gear_GetType());
     if (!g)
         return;
     while (n < 4) {
@@ -607,11 +607,11 @@ void Plane_CheckWheels(Plane *p)
         force[4] = pts[i][1];
         force[5] = pts[i][2];
         Body_AddForce(&p->v.body, force);
-        p->v.body.velocity[0] = p->v.body.velocity[0] * p->v.speed * kWheelDrag;
-        p->v.body.velocity[1] = p->v.body.velocity[1] * p->v.speed * kWheelDrag;
-        p->v.body.spin[0] = p->v.body.spin[0] * kKeep;
-        p->v.body.spin[1] = p->v.body.spin[1] * kKeep;
-        p->v.body.spin[2] = p->v.body.spin[2] * kKeep;
+        p->v.body.vel.x = p->v.body.vel.x * p->v.speed * kWheelDrag;
+        p->v.body.vel.y = p->v.body.vel.y * p->v.speed * kWheelDrag;
+        p->v.body.angMom.x = p->v.body.angMom.x * kKeep;
+        p->v.body.angMom.y = p->v.body.angMom.y * kKeep;
+        p->v.body.angMom.z = p->v.body.angMom.z * kKeep;
     }
     if (found) {
         Vec3d pos = p->v.pos;
@@ -647,10 +647,10 @@ void Plane_ParamsChanged(Plane *p)
         Body_Update(&p->v.body);
     }
     radius = plane_radius(p);
-    DynCube_Move(Game_GetWorld(), p, &p->v.pos2, radius);
-    p->v.matrix = p->v.matrix2;
+    DynCube_Move(Game_GetWorld(), p, &p->v.startPos, radius);
+    p->v.matrix = p->v.startMatrix;
     Vehicle_NewParts(p);
-    BROADCAST(p->v.coll->head, Param_GetChangedEvent(), NULL);
+    BROADCAST(p->v.attached->head, Param_GetChangedEvent(), NULL);
     VarString_Bind(&p->script, p);
 }
 HOOK(0x434770, Plane_ParamsChanged);

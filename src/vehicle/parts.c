@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "vehicle/vehicle.h"
+#include "heli/helitypes.h"
 
 FN_EXTERN(EditorMagicObj_GetArgSize);
 FN_EXTERN(Rotor_ForwardEvent9);
@@ -41,13 +42,6 @@ typedef struct DoorParams {
 } DoorParams;
 
 /* the vehicle a rocket pod is on */
-typedef struct Vehicle {
-    char unk0[0xF8];
-    float speed;
-    char unkFC[0x8D8 - 0xFC];
-    RefNode *targets;
-} Vehicle;
-
 /* passed to the line of sight filter */
 typedef struct SightFilter {
     char visible;
@@ -58,7 +52,6 @@ typedef struct SightFilter {
 
 _Static_assert(offsetof(VehiclePart, owner) == 0x130, "VehiclePart");
 _Static_assert(offsetof(VehiclePart, open) == 0x140, "VehiclePart");
-_Static_assert(offsetof(Vehicle, targets) == 0x8D8, "Vehicle");
 
 extern uint16_t gCarDoorType;
 extern uint16_t gHeliWheelType;
@@ -466,11 +459,11 @@ HOOK(0x427940, RocketPod_Create);
    between delay and twice delay frames */
 void RocketPod_Run(VehiclePart *p)
 {
-    Vehicle *owner = (Vehicle *)p->owner;
+    Heli *owner = (Heli *)p->owner;
     RefNode *n, *next;
 
     if (p->cooldown < 0) {
-        for (n = owner->targets; (next = n->next) != NULL; n = next) {
+        for (n = (RefNode *)owner->light.enemies.head; (next = n->next) != NULL; n = next) {
             const float *m = p->obj.matrix.m;
             Vec3d l, pos, target;
             SightFilter filter;
@@ -511,7 +504,7 @@ void RocketPod_Run(VehiclePart *p)
             pos.y = (float)(m[4] * kRocketReach) + pos.y;
             pos.z = (float)(m[7] * kRocketReach) + pos.z;
             target = ((RigidDynCubeObj *)*n->ref)->pos;
-            speed = owner->speed * kRocketSpeed + kRocketSpeedMin;
+            speed = owner->v.body.speed * kRocketSpeed + kRocketSpeedMin;
             Missile_New(Level_GetDynamic(), p, p, &pos, &p->obj.matrix, speed, &target, 0, "700_10_1", 0);
             delay = *(int *)p->params;
             p->cooldown = Random_Int(Game_GetRandom(), delay) + *(int *)p->params;

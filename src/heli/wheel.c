@@ -182,11 +182,11 @@ void Wheel_Run(Wheel *w)
 
         if (j < 0)
             j = -10 - j;
-        if (car->v.joints[j].touching) {
+        if (car->v.contacts[j].touching) {
             Vec3f d;
             long double l;
 
-            Body_GetPointVelocity(&d, &car->v.body, &car->v.joints[j].pos);
+            Body_GetPointVelocity(&d, &car->v.body, &car->v.contacts[j].point);
             l = x87_sqrt(d.x * d.x + d.y * d.y + d.z * d.z);
             v = l;
             if (l < kGripLimit)
@@ -243,7 +243,7 @@ void Wheel_Move(Wheel *w, PartMoveArg *a)
 
         if (j < 0)
             j = -10 - j;
-        z = ((Car *)a->owner)->v.joints[j].height + off.z - cfg->wheel_drop;
+        z = ((Car *)a->owner)->v.contacts[j].height + off.z - cfg->wheel_drop;
     } else {
         z = off.z;
     }

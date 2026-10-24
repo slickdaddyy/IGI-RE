@@ -53,18 +53,18 @@ void Heli_RemoveFromWorld(Heli *h, void *arg)
     uint8_t slot = World_GetEvent1();
 
     ((TaskFn2)TASK_HANDLER(slot, Vehicle_GetType()))(h, arg);
-    if (h->sound) {
-        if (*h->sound)
-            Sound_Stop(*h->sound);
-        TaskRef_Remove(h->sound);
-        h->sound = NULL;
+    if (h->rotor_sound) {
+        if (*h->rotor_sound)
+            Sound_Stop(*h->rotor_sound);
+        TaskRef_Remove(h->rotor_sound);
+        h->rotor_sound = NULL;
     }
 }
 HOOK(0x432F90, Heli_RemoveFromWorld);
 
 void Heli_GetSoundInfo(Heli *h, void **out)
 {
-    *out = h->unk8C0;
+    *out = &h->light;
 }
 HOOK(0x433000, Heli_GetSoundInfo);
 
