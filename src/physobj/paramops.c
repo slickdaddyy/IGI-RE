@@ -680,3 +680,48 @@ void ParamInt16_Format(int16_t *v, ParamText *t)
     crt_sprintf(text_end(t->buf), "%d", *v);
 }
 HOOK(0x4F0140, ParamInt16_Format);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54DD0C) uint16_t gLevelType INIT(385);
+DATA(54DD0C) uint16_t gStaticType INIT(385);
+DATA(54DD0C) uint16_t gDynamicType INIT(385);
+DATA(54DD0C) uint16_t gIdleType INIT(385);
+DATA(54DDA8) int gLevelEventDA8 INIT(255);
+DATA(54DDA8) int gLevelEventDAC INIT(255);
+DATA(54DDA8) int gLevelEventDB0 INIT(255);
+BSS(A70C68) int gParamReal32x3;
+BSS(A70C68) int gParamReal32x9;
+BSS(A70C68) int gParamDropDownCombo;
+BSS(A70C78) int gParamInt16;
+BSS(A70C78) int gParamInt32;
+BSS(A70C78) int gParamGraphEnvelope;
+BSS(A70C78) int gParamAngle;
+BSS(A70C78) int gParamObjectPos;
+BSS(A70C78) int gParamScriptFile;
+BSS(A70C78) int gParamBool8;
+BSS(A70C9C) int gParamVarString;
+BSS(A70C9C) int gParamGraph;
+BSS(A70C9C) int gParamDegrees;
+PAD(igb, A70C9C, A70CA8, 0xBC4);
+ALIAS(gTaskNotes, pad_A70CA8, 0);
+BSS(A70C9C) int gParamString256;
+BSS(A70C9C) int gParamReal32;
+BSS(A70C9C) int gParamReal64;
+BSS(A70C9C) int gParamQuat32;
+BSS(A70C9C) int gParamPitchGraph;
+BSS(A70C9C) int gParamRGB;
+BSS(A70C9C) int gParamString16;
+BSS(A70C9C) int gParamString32;
+BSS(A70C9C) int gParamLevelExpression;
+ALIAS(gTaskRefBucketsEnd, gParamString256, 0);
+BSS(A75890) int gParamReal64x3;
+BSS(A75890) int gParamQTaskNote;
+BSS(A75890) int gParamPushButton;
+PAD(igb, A75890, A7589C, 0x4);
+BSS(A75890) int gParamBitfield;
+PAD(igb, A758BC, A758BC, 0x1);
+BSS(A758BC) char gLevelPaused;
+BSS(A758BC) char gLevelA758BE;
+PAD(igb, A758BC, A758BF, 0x1);
+BSS(A758BC) int gLevelA758C0;
+BSS(A758BC) int gLevelA758C4;

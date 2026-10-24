@@ -30,4 +30,27 @@
 #define FN_ASM(addr, name) "$" #addr
 #endif
 
+/* Data definitions. In igidecomp.exe a global defined with BSS(run) or DATA(run) goes in the
+   section of its run (the address the run starts at), which the linker places at that IGI.exe
+   address with fill.c around it (tools/gendefs.py, tools/genfill.py). In the DLL the line is
+   only a declaration: the global is IGI.exe's own (src/addr.c). */
+#ifdef IGI_STANDALONE
+#define BSS(run) __attribute__((section(".igb$" #run)))
+#define DATA(run) __attribute__((section(".igd$" #run)))
+#define INIT(...) = __VA_ARGS__
+#define PAD(sec, run, addr, n) static uint8_t pad_##addr[n] __attribute__((section("." #sec "$" #run), used, aligned(1)))
+#define PAD_CONST(sec, run, addr, n) \
+    static const uint8_t pad_##addr[n] __attribute__((section("." #sec "$" #run), used, aligned(1)))
+#define ALIAS(name, of, off) __asm__(".globl _" #name "\n.set _" #name ", _" #of "+" #off)
+#else
+#define BSS(run) extern
+#define DATA(run) extern
+#define INIT(...)
+#define PAD(sec, run, addr, n) _Static_assert(1, "")
+#define PAD_CONST(sec, run, addr, n) _Static_assert(1, "")
+#define ALIAS(name, of, off) _Static_assert(1, "")
+#endif
+/* a global or function by its assembler name, for initialisers that point at it */
+#define REF_EXTERN(name) extern char ref_##name[] __asm__("_" #name)
+
 #endif

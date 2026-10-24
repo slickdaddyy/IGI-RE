@@ -186,3 +186,16 @@ char WeaponSlots_SelectNext(Task *owner, Task **slots, int i)
     return 0;
 }
 HOOK(0x4F2140, WeaponSlots_SelectNext);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A76BFC) int gWeaponSelectEvent;
+BSS(A76BFC) uint8_t gWeaponTriggerEvent;
+BSS(A76BFC) uint8_t gWeaponUseAmmoEvent;
+BSS(A76BFC) uint8_t gWeaponSlotsEvent;
+BSS(A76BFC) uint8_t gWeaponStateEvent;
+BSS(A76BFC) int gWeaponDeselectEvent;
+BSS(A76BFC) uint8_t gWeaponDropEvent;
+BSS(A76BFC) uint8_t gWeaponMoveEvent;
+PAD(igb, A76BFC, A76C0A, 0x6);
+BSS(A76BFC) uint8_t gWeaponAmmoEvent;
+PAD(igb, A76BFC, A76C11, 0x3);

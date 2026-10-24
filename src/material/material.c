@@ -203,3 +203,15 @@ void GameMaterial_Impact(uint16_t type, int a, void *b, int c, const float *pos)
     gTaskHandlers[gMaterialImpactEvent][type](NULL, &e);
 }
 HOOK(0x4083C0, GameMaterial_Impact);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(538518) unsigned char gMaterialSizeEvent INIT(255);
+DATA(538518) unsigned char gMaterialParseEvent INIT(255);
+DATA(538518) unsigned char gMaterialImpactEvent INIT(255);
+PAD(igd, 538518, 53851B, 0x1);
+DATA(538518) int gMaterialActive INIT(-1);
+ALIAS(gMaterialEvent0, gMaterialSizeEvent, 0);
+ALIAS(gMaterialEvent1, gMaterialParseEvent, 0);
+ALIAS(gMaterialEvent2, gMaterialImpactEvent, 0);
+PAD(igb, 569210, 569210, 0x4D08);
+ALIAS(gMaterials, pad_569210, 0);

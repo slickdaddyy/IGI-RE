@@ -504,3 +504,7 @@ uint16_t AIStationaryGun_GetType(void)
     return gAIStationaryGunType;
 }
 HOOK(0x470400, AIStationaryGun_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53FEC0) uint16_t gAIStationaryGunType INIT(385);
+PAD(igd, 53FEC0, 53FEC2, 0x2);

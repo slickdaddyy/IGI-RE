@@ -58,3 +58,8 @@ Task *CameraControl_AddListener(void *parent, CameraControl *cc, void *arg)
     return cc->listener = SoundSysMicrophone_New(parent, arg);
 }
 HOOK(0x4E7D70, CameraControl_AddListener);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54D974) uint16_t gCameraControlType INIT(385);
+PAD(igd, 54D974, 54D976, 0x2);
+BSS(A5EBDC) CameraControl *gCameraControlCurrent;

@@ -55,3 +55,7 @@ void Cursor_Draw(Cursor *c)
         Draw_Sprite(c->sprite, c->hotX + c->x, c->hotY + c->y, 128.0f, 128.0f, 128.0f, 0, 0, 0);
 }
 HOOK(0x424C40, Cursor_Draw);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57BC60) uint16_t gCursorType;
+PAD(igb, 57BC60, 57BC62, 0x2);

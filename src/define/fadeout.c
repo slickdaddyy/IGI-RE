@@ -200,3 +200,12 @@ Task *GlowTask_New(void *parent)
     return Task_New(parent, gGlowTaskType, NULL);
 }
 HOOK(0x4E9500, GlowTask_New);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54DA50) uint16_t gGlowTaskType INIT(385);
+PAD(igd, 54DA50, 54DA52, 0x2);
+BSS(A5EC70) uint16_t gFadeOutStartType;
+PAD(igb, A5EC70, A5EC72, 0x2);
+BSS(A5EC70) FadeOut *gFadeOut;
+BSS(A5EC70) uint16_t gFadeOutEndType;
+PAD(igb, A5EC70, A5EC7A, 0x2);

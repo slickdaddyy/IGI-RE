@@ -181,3 +181,8 @@ void Generator_Close(void)
     TaskType_Free(gGeneratorType);
 }
 HOOK(0x43B830, Generator_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53C2FC) uint16_t gGeneratorType INIT(385);
+PAD(igd, 53C2FC, 53C2FE, 0x2);
+BSS(57BF3C) void *gGeneratorParams;

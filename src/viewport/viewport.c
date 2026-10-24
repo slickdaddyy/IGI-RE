@@ -240,3 +240,16 @@ void Viewport_AddCallback(ViewportCallback fn)
     }
 }
 HOOK(0x4E8290, Viewport_AddCallback);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54D98C) uint16_t gViewportType INIT(385);
+PAD(igd, 54D98C, 54D98E, 0x2);
+PAD(igb, A5EBE0, A5EBE0, 0x3C);
+ALIAS(gViewportCallbacks, pad_A5EBE0, 0);
+PAD(igb, A5EBE0, A5EC1C, 0x44);
+ALIAS(gViewportDrawn, pad_A5EC1C, 0);
+BSS(A5EBE0) int gViewportCount;
+BSS(A5EBE0) char gViewportReady;
+PAD(igb, A5EBE0, A5EC65, 0x3);
+BSS(A5EBE0) Viewport *gViewportCurrent;
+BSS(A5EBE0) int gViewportDrawnCount;

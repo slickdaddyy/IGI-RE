@@ -523,3 +523,18 @@ HeightMap *HeightMap_NewChild(Task *parent, HeightMap *hm, Vec3d *place)
     return t;
 }
 HOOK(0x507D60, HeightMap_NewChild);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igb, A7AD10, A7AD10, 0x428);
+ALIAS(gHeightMaps, pad_A7AD10, 0);
+PAD(igb, A7AD10, A7B138, 0x10C);
+ALIAS(gHeightMapRandom, pad_A7B138, 0);
+BSS(A7AD10) void *gHeightMapParams;
+BSS(A7AD10) uint16_t gHeightMapType;
+PAD(igb, A7AD10, A7B24A, 0x6);
+BSS(A7AD10) int gHeightMapCount;
+PAD(igb, B81920, B81920, 0x100);
+ALIAS(gHmpResident, pad_B81920, 0);
+ALIAS(gUnkB81920, pad_B81920, 0);
+PAD(igb, B97D40, B97D40, 0x40);
+ALIAS(gCollBumpList, pad_B97D40, 0);

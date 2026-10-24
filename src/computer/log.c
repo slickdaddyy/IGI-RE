@@ -29,3 +29,7 @@ void ComputerLog_Open(void)
     TaskType_SetHandler2(gComputerLogType, Screen_GetDrawEvent(), LOG_DRAW);
 }
 HOOK(0x4688B0, ComputerLog_Open);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5BDC98) uint16_t gComputerLogType;
+PAD(igb, 5BDC98, 5BDC9A, 0x2);

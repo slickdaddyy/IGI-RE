@@ -106,3 +106,6 @@ void BinocularOverlay_SetUnk7C(BinocularOverlay *o, const Vec3f *v)
     o->unk7C = *v;
 }
 HOOK(0x472650, BinocularOverlay_SetUnk7C);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5BE348) void *gBinocularHolderParams;

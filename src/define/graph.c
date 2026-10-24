@@ -313,3 +313,7 @@ ScriptValue *DefineGraph(ScriptValue *out, void *data, void *args)
     return out;
 }
 HOOK(0x4EAD20, DefineGraph);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54DAD8) uint16_t gSoundDefGraphType INIT(385);
+DATA(54DAD8) uint16_t gSoundDefGraphType2 INIT(385);

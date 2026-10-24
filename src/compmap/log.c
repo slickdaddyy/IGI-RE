@@ -149,3 +149,9 @@ void ComputerLog_Add(const char *line)
     gLogLines[gLogCount - 1] = line;
 }
 HOOK(0x468DE0, ComputerLog_Add);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igb, 5BDC9C, 5BDC9C, 0xCC);
+ALIAS(gLogLines, pad_5BDC9C, 0);
+BSS(5BDC9C) ComputerLog *gLog;
+BSS(5BDC9C) int gLogCount;

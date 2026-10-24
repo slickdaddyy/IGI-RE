@@ -373,3 +373,8 @@ uint16_t GuardGenerator_GetType(void)
     return gGuardGeneratorType;
 }
 HOOK(0x488610, GuardGenerator_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(541094) uint16_t gGuardGeneratorType INIT(385);
+PAD(igd, 541094, 541096, 0x2);
+BSS(5C8A88) ParamTable *gGuardGeneratorParams;

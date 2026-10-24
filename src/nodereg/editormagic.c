@@ -187,3 +187,7 @@ void EditorMagicObj_Close(void)
     TaskType_Free(gEditorMagicObjType);
 }
 HOOK(0x51BAB0, EditorMagicObj_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A8376C) uint16_t gEditorMagicObjType;
+PAD(igb, A8376C, A8376E, 0x2);

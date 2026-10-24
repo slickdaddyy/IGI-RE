@@ -521,3 +521,18 @@ void GraphNode_RemoveLink(GraphNode *node, GraphLink *link)
     }
 }
 HOOK(0x4F9CA0, GraphNode_RemoveLink);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igd, 54E368, 54E368, 0x1) INIT({0xFF});
+DATA(54E368) uint8_t gGraphAllocEvent INIT(255);
+PAD(igd, 54E368, 54E36A, 0x1) INIT({0xFF});
+DATA(54E368) uint8_t gGraphLoadEvent INIT(255);
+DATA(54E368) uint8_t gGraphSaveEvent INIT(255);
+DATA(54E368) uint8_t gGraphNodeLoadEvent INIT(255);
+DATA(54E368) uint8_t gGraphEvent36E INIT(255);
+DATA(54E368) uint8_t gGraphNodeAddEvent INIT(255);
+PAD(igd, 54E368, 54E370, 0x1) INIT({0xFF});
+DATA(54E368) uint8_t gGraphEvent371 INIT(255);
+PAD(igd, 54E368, 54E372, 0x2);
+PAD(igb, A77228, A77228, 0x20);
+ALIAS(gGraphNodeSizes, pad_A77228, 0);

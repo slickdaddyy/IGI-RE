@@ -221,3 +221,19 @@ void TagItem_Shutdown(void)
     TaskEvent_Free(gTagItemEvent);
 }
 HOOK(0x4FEB80, TagItem_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A7A4E0) uint16_t gTagItemReal32Type;
+PAD(igb, A7A4E0, A7A4E2, 0x2);
+BSS(A7A4E0) void *gTagItemString16Params;
+BSS(A7A4E0) uint16_t gTagItemString256Type;
+PAD(igb, A7A4E0, A7A4EA, 0x2);
+BSS(A7A4E0) void *gTagItemParams;
+BSS(A7A4E0) void *gTagItemReal32Params;
+BSS(A7A4E0) uint8_t gTagItemEvent;
+PAD(igb, A7A4E0, A7A4F5, 0x1);
+BSS(A7A4E0) uint16_t gTagItemInt32Type;
+BSS(A7A4E0) void *gTagItemInt32Params;
+BSS(A7A4E0) uint16_t gTagItemType;
+BSS(A7A4E0) uint16_t gTagItemString16Type;
+BSS(A7A4E0) void *gTagItemString256Params;

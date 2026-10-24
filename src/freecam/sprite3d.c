@@ -64,3 +64,8 @@ void Sprite3D_Shutdown(void)
     TaskType_Free(gSprite3DType);
 }
 HOOK(0x531F40, Sprite3D_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(C28F98) uint16_t gSprite3DType;
+PAD(igb, C28F98, C28F9A, 0x6);
+BSS(C28F98) Pool gSprite3DPool;

@@ -415,3 +415,14 @@ uint8_t MenuWindow_GetPlaceEvent(void)
     return gPlaceEvent;
 }
 HOOK(0x424B80, MenuWindow_GetPlaceEvent);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53B90C) uint16_t gMenuWindowType INIT(385);
+PAD(igd, 53B90C, 53B90E, 0x2);
+DATA(53B90C) int gEvent910 INIT(255);
+DATA(53B90C) int gEvent914 INIT(255);
+DATA(53B90C) int gEvent918 INIT(255);
+DATA(53B90C) int gEvent91C INIT(255);
+DATA(53B90C) uint8_t gPlaceEvent INIT(255);
+DATA(53B90C) uint8_t gSizeEvent INIT(255);
+PAD(igd, 53B90C, 53B922, 0x2);

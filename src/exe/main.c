@@ -5,12 +5,13 @@
 
 #include "hook.h"
 
-/* Standalone igidecomp.exe. It lays out IGI.exe's initialised data (data.c) at the original
-   addresses and fills the code range with int3, so anything that still reaches for original
-   code stops with its address. The exe is linked at 0x400000 with this section
-   first, so the range is ours from the start (see CMakeLists.txt); our own headers take the
-   place of IGI.exe's. Calls link straight to the rewrite (src/igi.h, link.c). */
-__asm__(".section .igi,\"bw\"\n\t.space 0x834000\n\t.text");
+/* Standalone igidecomp.exe. IGI.exe's data sits at its original addresses: the globals the
+   code defines, and fill.c around them (sections .igd and .igb, see tools/genfill.py). The
+   code range before it is filled with int3, so anything that still reaches for original code
+   stops with its address. The exe is linked at 0x400000 with this section first, so the
+   range is ours from the start (see CMakeLists.txt); our own headers take the place of
+   IGI.exe's. Calls link straight to the rewrite (src/igi.h, link.c). */
+__asm__(".section .igi,\"bw\"\n\t.space 0x132000\n\t.text");
 
 #define EXE_BASE 0x400000
 #define EXE_SIZE 0x835000
@@ -20,11 +21,7 @@ __asm__(".section .igi,\"bw\"\n\t.space 0x834000\n\t.text");
 int WINAPI AppMain_WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdLine, int show);
 int Link_Bind(HMODULE msvcrt, HMODULE dinput);
 
-extern const struct IgiData {
-    uint32_t addr, size;
-    const uint8_t *bytes;
-} igi_data[];
-extern const unsigned igi_data_count;
+extern const uint8_t igi_dimouse[0xB0], igi_dikeyboard[0x1000];
 extern const uint32_t igi_imports;
 
 /* tables in IGI.exe's data that hold code addresses (handlers, the lzss pair) */
@@ -33,7 +30,7 @@ static const uint32_t code_tables[][2] = {
     {0x53E8B8, 0x53E950}, {0x53EC10, 0x53ECA8}, {0x54F780, 0x54F790},
 };
 
-/* data that dinput.lib left in the code section (in data.c too): mouse and keyboard formats */
+/* data that dinput.lib left in the code section (in fill.c too): mouse and keyboard formats */
 static const uint32_t text_data[][2] = {{0x4AE680, 0xB0}, {0x4AE740, 0x1000}};
 
 static void fail(const char *msg)
@@ -45,17 +42,16 @@ static void fail(const char *msg)
 static void load_imports(uint32_t at);
 static void clear_code(void);
 
-/* lay out IGI.exe's initialised data; the rest of the range stays zero */
+/* the code range: int3 and dinput.lib's two tables; then the import table */
 static void load_data(void)
 {
     DWORD old;
-    unsigned i;
 
     if (!VirtualProtect((void *)TEXT_LO, EXE_SIZE - 0x1000, PAGE_EXECUTE_READWRITE, &old))
         fail("Couldn't open the game's memory at 0x401000.");
     clear_code();
-    for (i = 0; i < igi_data_count; i++)
-        memcpy((void *)(uintptr_t)igi_data[i].addr, igi_data[i].bytes, igi_data[i].size);
+    memcpy((void *)(uintptr_t)text_data[0][0], igi_dimouse, sizeof(igi_dimouse));
+    memcpy((void *)(uintptr_t)text_data[1][0], igi_dikeyboard, sizeof(igi_dikeyboard));
     load_imports(igi_imports);
 }
 

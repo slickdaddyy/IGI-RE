@@ -87,3 +87,10 @@ void Hatch_Close(void)
     TaskType_Free(gHatchType);
 }
 HOOK(0x4360B0, Hatch_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(533760) float kHatchKeep INIT(0.97f);
+ALIAS(kDampZ, kHatchKeep, 0);
+DATA(5337D0) float kHatchBlend INIT(0.029999971f);
+BSS(57BD6C) uint16_t gHatchType;
+PAD(igb, 57BD6C, 57BD6E, 0x2);

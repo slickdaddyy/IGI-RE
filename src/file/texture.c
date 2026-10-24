@@ -382,3 +382,21 @@ void Texture_ResetColorParams(float *p)
     p[6] = 1.0f;
 }
 HOOK(0x4B2740, Texture_ResetColorParams);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(546F90) int gSetLODId INIT(-1);
+DATA(546F90) int gGetTextureSizeId INIT(-1);
+DATA(546F90) int gReloadTextureId INIT(-1);
+DATA(546F90) int gRefreshTextureId INIT(-1);
+DATA(546F90) int gBeginTextureListId INIT(-1);
+DATA(546F90) int gEndTextureListId INIT(-1);
+DATA(546F90) int gAllocTextureId INIT(-1);
+DATA(546F90) int gDeAllocTextureId INIT(-1);
+DATA(546F90) int gDownloadTextureId INIT(-1);
+DATA(546F90) int gGetTMUsId INIT(-1);
+DATA(546F90) int gSetActiveTMUId INIT(-1);
+DATA(546F90) int gGetActiveTMUId INIT(-1);
+PAD(igb, 943B20, 943B20, 0x1C);
+ALIAS(gTexParams, pad_943B20, 0);
+BSS(943B20) char gTexFromFile;
+PAD(igb, 943B20, 943B3D, 0x3);

@@ -240,3 +240,12 @@ void SplinePathGuide_Close(void)
     gSplinePathGuideType = TASK_NO_TYPE;
 }
 HOOK(0x51B3A0, SplinePathGuide_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54ED50) uint16_t gSplinePathGuideType INIT(385);
+DATA(54ED50) uint8_t gGuideMoveEvent INIT(255);
+DATA(54ED50) uint8_t gGuideStartEvent INIT(255);
+BSS(A83754) void *gSplinePathGuideParams;
+BSS(A83754) float gFrameRate;
+BSS(A83754) int gUnkA8375C;
+BSS(A83754) void *gSplinePathGuides;

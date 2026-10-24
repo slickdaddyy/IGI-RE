@@ -156,3 +156,12 @@ void RainEffect_Close(void)
     TaskType_Free(gRainEffectType);
 }
 HOOK(0x436AF0, RainEffect_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57BD80) char *gRainTexture;
+BSS(57BD80) uint16_t gRainEffectType;
+PAD(igb, 57BD80, 57BD86, 0x2);
+BSS(57BD80) void *gRainEffectParams;
+PAD(igb, 57BD80, 57BD8C, 0x4);
+BSS(57BD80) RangeF gRainLevelRange;
+BSS(57BD80) RangeF gRainSizeRange;

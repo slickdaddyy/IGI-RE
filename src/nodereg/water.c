@@ -539,3 +539,26 @@ void Water_SetTint(const float *c)
     gWaterTint[2] = c[2];
 }
 HOOK(0x5196D0, Water_SetTint);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A44344) WaterWorld *gWorld;
+ALIAS(gCurrentWorld, gWorld, 0);
+ALIAS(gRoom, gWorld, 0);
+ALIAS(gTerrain, gWorld, 0);
+ALIAS(gWalkWorld, gWorld, 0);
+PAD(igb, A80200, A80200, 0x100);
+ALIAS(gWaters, pad_A80200, 0);
+BSS(A80200) int gWaterLevelType;
+BSS(A80200) void *gWaterParams;
+PAD(igb, A80200, A80308, 0x100);
+ALIAS(gWaterStack, pad_A80308, 0);
+PAD(igb, A80200, A80408, 0xC0C);
+ALIAS(gWaterTypes, pad_A80408, 0);
+BSS(A80200) uint16_t gWaterType;
+PAD(igb, A80200, A81016, 0x6);
+BSS(A80200) int gWaterCount;
+BSS(A80200) int gWaterDepth;
+PAD(igb, B818A0, B818A0, 0xC);
+ALIAS(gAmbient, pad_B818A0, 0);
+ALIAS(gAmbientColors, pad_B818A0, 0);
+BSS(BA2040) double gWaterLevel;

@@ -298,3 +298,13 @@ void CellMask_Disable(void)
     gCellMaskEnabled = 0;
 }
 HOOK(0x4E5CA0, CellMask_Disable);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54875C) uint16_t gDynCubeObjType INIT(385);
+DATA(54875C) uint8_t gDynCubeObjMaskVisibleEvent INIT(255);
+PAD(igd, 54875C, 54875F, 0xD) INIT({0x00, 0x44, 0x79, 0x6E, 0x43, 0x75, 0x62, 0x65, 0x4F, 0x62, 0x6A});
+DATA(54875C) int gCellMaskEnabled INIT(1);
+BSS(A5E404) float gCellMaskTriX;
+BSS(A5E404) uint8_t gCellMaskDrawEvent;
+PAD(igb, A5E404, A5E409, 0x3);
+BSS(B019E0) Pool gCellMaskPool;

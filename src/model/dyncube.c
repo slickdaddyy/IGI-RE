@@ -352,3 +352,6 @@ void Terrain_UpdateLighting(Terrain *t)
     }
 }
 HOOK(0x4CEA30, Terrain_UpdateLighting);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A44394) int gCollSightCalls;

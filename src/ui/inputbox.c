@@ -384,3 +384,10 @@ void InputBox_SetText(const char *s)
         ;
 }
 HOOK(0x41DC20, InputBox_SetText);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53B640) uint16_t gInputBoxType INIT(385);
+PAD(igd, 53B640, 53B642, 0x2);
+BSS(57BBC4) void *gInputBoxParams;
+PAD(igb, 57BBC4, 57BBC8, 0x4);
+BSS(57BBC4) InputBox *gInputBoxFilling;

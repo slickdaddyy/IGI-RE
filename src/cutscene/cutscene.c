@@ -764,3 +764,17 @@ void CutScene_SetTicksPerSecond(int ticks)
     gCutSceneTicksPerSec = ticks;
 }
 HOOK(0x4F65D0, CutScene_SetTicksPerSecond);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A76C50) void *gCutSceneModel;
+BSS(A76C50) int gCutSceneTicksPerSec;
+BSS(A76C50) void *gCutSceneParams;
+PAD(igb, A76C50, A76C5C, 0x4);
+PAD(igb, A76C50, A76C60, 0x8);
+ALIAS(gCutSceneTimeRange, pad_A76C60, 0);
+BSS(A76C50) uint16_t gCutSceneType;
+PAD(igb, A76C50, A76C6A, 0x6);
+PAD(igb, A76C50, A76C70, 0xC);
+ALIAS(gCutSceneRandom, pad_A76C70, 0);
+BSS(A76C50) void *gCutSceneCamera;
+BSS(A76C50) void *gCutSceneFilterParent;

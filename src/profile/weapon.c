@@ -307,3 +307,17 @@ void WeaponConfig_Shutdown(void)
     TaskEvent_Free(gWeaponConfigEvent);
 }
 HOOK(0x407D00, WeaponConfig_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5384C0) uint16_t gWeaponConfigContainerType INIT(385);
+DATA(5384C0) uint16_t gWeaponConfigType INIT(385);
+BSS(5690D8) uint8_t gWeaponConfigEvent;
+PAD(igb, 5690D8, 5690D9, 0x7);
+BSS(5690D8) char gDetectionRanges;
+PAD(igb, 5690D8, 5690E1, 0xF);
+PAD(igb, 5690D8, 5690F0, 0x100);
+ALIAS(gWeaponConfigPath, pad_5690F0, 0);
+BSS(5690D8) char gTaskTypeEnum;
+PAD(igb, 5690D8, 5691F1, 0x13);
+BSS(5690D8) ParamTable *gWeaponConfigContainerParams;
+BSS(5690D8) ParamTable *gWeaponConfigParams;

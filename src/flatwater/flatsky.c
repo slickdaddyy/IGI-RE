@@ -347,3 +347,20 @@ void FlatSky_Close(void)
     TaskType_Free(gFlatSkyType);
 }
 HOOK(0x51EC70, FlatSky_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(534B18) float kAlmostOne INIT(0.999f);
+DATA(534C10) float k16 INIT(16.0f);
+DATA(534C80) float kStripGrow INIT(1.001f);
+DATA(534C80) float kStripStep INIT(0.08341667f);
+DATA(534C80) float k180th INIT(0.0055555557f);
+PAD_CONST(igd, 54EEB0, 54EEB0, 0x8) INIT({0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x3F});
+ALIAS(kSkyRange01, pad_54EEB0, 0);
+PAD_CONST(igd, 54EEB0, 54EEB8, 0x8) INIT({0x00, 0x00, 0x80, 0xBF, 0x00, 0x00, 0x80, 0x3F});
+ALIAS(kSkyRange11, pad_54EEB8, 0);
+PAD_CONST(igd, 54EEB0, 54EEC0, 0x20) INIT({0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xB4, 0x42, 0x46, 0x6C, 0x61, 0x74, 0x53, 0x6B, 0x79, 0x4C, 0x61, 0x79, 0x65, 0x72, 0x00, 0x00, 0x00, 0x00, 0x46, 0x6C, 0x61, 0x74, 0x53, 0x6B, 0x79});
+ALIAS(kRange90, pad_54EEC0, 0);
+BSS(BA1FDC) uint16_t gFlatSkyLayerType;
+BSS(BA1FDC) uint16_t gFlatSkyType;
+BSS(BA1FDC) void *gFlatSkyLayerParams;
+BSS(BA1FDC) void *gFlatSkyParams;

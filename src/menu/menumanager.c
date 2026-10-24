@@ -972,3 +972,11 @@ void MenuManager_MarkBusy(MenuManager *mm)
     mm->busy = 1;
 }
 HOOK(0x4190D0, MenuManager_MarkBusy);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(539828) int gMenuKeepScreen INIT(1);
+BSS(57BAC8) MenuInput gMenuLastInput;
+BSS(57BAC8) int gMenuDemoTimer;
+BSS(57BAE4) MenuWindow *gMenuLastScreen;
+BSS(57BAE4) int gMenuIdleTimer;
+BSS(57BAE4) MenuWindow *gMenuLastFocus;

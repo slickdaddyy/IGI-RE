@@ -185,3 +185,10 @@ void ModelViewBox_Shutdown(void)
     gModelViewBoxType = 0x181;
 }
 HOOK(0x423050, ModelViewBox_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53B854) uint16_t gModelViewBoxType INIT(385);
+PAD(igd, 53B854, 53B856, 0x2);
+BSS(57BC28) void *gModelViewBoxParams;
+PAD(igb, 57BC28, 57BC2C, 0x4);
+BSS(57BC28) IntRange gModelViewBoxRange;

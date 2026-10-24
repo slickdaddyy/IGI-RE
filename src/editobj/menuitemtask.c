@@ -243,3 +243,10 @@ void MenuItem_Open(void)
     TaskType_SetHandler(gMenuItemType, MenuItem_GetCommitEvent(), MENUITEM_COMMIT);
 }
 HOOK(0x505630, MenuItem_Open);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54E708) uint16_t gMenuItemTaskType INIT(385);
+DATA(54E708) uint8_t gMenuItemTaskPointerEvent INIT(255);
+DATA(54E708) uint8_t gMenuItemTaskListEvent INIT(255);
+DATA(54E720) uint16_t gMenuItemType INIT(385);
+PAD(igd, 54E720, 54E722, 0x2);

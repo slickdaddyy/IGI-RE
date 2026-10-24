@@ -691,3 +691,13 @@ void StatusMessageScreen_Clear(StatusMessageScreen *s)
     }
 }
 HOOK(0x4868D0, StatusMessageScreen_Clear);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(540A8C) uint16_t gStatusMessageType INIT(385);
+PAD(igd, 540A8C, 540A8E, 0x2);
+DATA(540B08) uint16_t gStatusMessageScreenType INIT(385);
+PAD(igd, 540B08, 540B0A, 0x2);
+BSS(5C8A30) RangeF gStatusDurationRange;
+BSS(5C8A30) void *gStatusMessageParams;
+PAD(igb, 5C8A30, 5C8A3C, 0x4);
+BSS(5C8A30) void *gMessagesRes;

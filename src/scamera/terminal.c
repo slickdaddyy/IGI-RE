@@ -284,3 +284,10 @@ void Terminal_SetHacked(Terminal *t)
     t->hack_tick = gTick;
 }
 HOOK(0x443EA0, Terminal_SetHacked);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(533890) double kUseRange INIT(3072.0);
+ALIAS(kUseWidth, kUseRange, 0);
+DATA(53C680) uint16_t gTerminalType INIT(385);
+PAD(igd, 53C680, 53C682, 0x2);
+BSS(57C1A0) void *gTerminalParams;

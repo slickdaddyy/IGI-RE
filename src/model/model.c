@@ -472,3 +472,18 @@ void ModelFile_LoadTextures(ModelFile *f)
     }
 }
 HOOK(0x4CF790, ModelFile_LoadTextures);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(548200) int gModelInitMethod INIT(-1);
+DATA(548200) int gModelDeinitMethod INIT(-1);
+DATA(548200) int gModelLoadMethod INIT(-1);
+DATA(548200) int gModelUnloadMethod INIT(-1);
+PAD(igb, A443A0, A443A0, 0xA8C0);
+ALIAS(gVirModels, pad_A443A0, 0);
+BSS(A443A0) List gModelFiles;
+PAD(igb, A443A0, A4EC6C, 0x100);
+ALIAS(gModelPath, pad_A4EC6C, 0);
+PAD(igb, A443A0, A4ED6C, 0x80);
+ALIAS(gModelDir, pad_A4ED6C, 0);
+BSS(A443A0) int gVirModelCount;
+BSS(A443A0) int gVirModelSaved;

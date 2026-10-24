@@ -563,3 +563,10 @@ void ControlsMenu_Shutdown(void)
     gControlsMenuType = 0x181;
 }
 HOOK(0x423F90, ControlsMenu_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53B874) uint16_t gControlsMenuType INIT(385);
+PAD(igd, 53B874, 53B876, 0x2);
+BSS(57BC40) void *gControlsMenuParams;
+PAD(igb, 57BC40, 57BC44, 0x4);
+BSS(57BC40) Random gControlsRandom;

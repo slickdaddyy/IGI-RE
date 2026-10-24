@@ -385,3 +385,7 @@ void SoundDefSound_Update(SoundDefSound *s)
     s->range = SoundParams_ClampVolume(&s->h.params);
 }
 HOOK(0x4E8DC0, SoundDefSound_Update);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54D9B4) uint16_t gSoundDefSoundType INIT(385);
+DATA(54D9B4) uint16_t gSoundDefSoundType2 INIT(385);

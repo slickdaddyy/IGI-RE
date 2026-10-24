@@ -217,3 +217,10 @@ void SimpointObjContainer_SetAutoDelete(SimpointObjContainer *c, char on)
     c->autoDelete = on;
 }
 HOOK(0x503D50, SimpointObjContainer_SetAutoDelete);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A7A628) uint16_t gSimpointObjContainerType;
+BSS(A7A628) uint16_t gSimpointObjType;
+PAD(igb, A7A628, A7A62C, 0x4);
+PAD(igb, A7A628, A7A630, 0x10);
+ALIAS(gSimpointObjRandom, pad_A7A630, 0);

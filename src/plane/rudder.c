@@ -140,3 +140,7 @@ void Rudder_Move(Part *o, PartMoveArg *a)
     o->matrix = out;
 }
 HOOK(0x4362C0, Rudder_Move);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57BD74) uint16_t gRudderType;
+PAD(igb, 57BD74, 57BD76, 0x2);

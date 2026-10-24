@@ -381,3 +381,20 @@ void Graph_Close(void)
     TaskType_Free(gGraphType);
 }
 HOOK(0x4FB110, Graph_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54E364) uint16_t gGraphType INIT(385);
+PAD(igd, 54E364, 54E366, 0x2) INIT({0x81, 0x01});
+BSS(A76D10) void *gGraphParams;
+PAD(igb, A76D10, A76D14, 0x4);
+BSS(A76D10) List gStreamHandlersFree;
+BSS(A76D10) int gGraphLinkCost;
+PAD(igb, A76D10, A76D28, 0x500);
+ALIAS(gGraphHandlerSlots, pad_A76D28, 0);
+BSS(A77248) List gGraphRefs;
+BSS(A77248) int gGraphLinkB;
+BSS(A77248) int gGraphLinkA;
+PAD(igb, A77248, A7725C, 0x4);
+BSS(A77248) GraphNode gGraphNodeTemp;
+BSS(A77248) List gStreamHandlers;
+PAD(igb, A77248, A774AC, 0x4);

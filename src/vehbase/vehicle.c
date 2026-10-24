@@ -270,3 +270,12 @@ uint8_t Vehicle_GetExplodeEvent(void)
     return gVehicleExplodeEvent;
 }
 HOOK(0x4F4850, Vehicle_GetExplodeEvent);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54E200) uint16_t gVehicleType INIT(385);
+DATA(54E200) uint8_t gVehicleExplodeEvent INIT(255);
+DATA(54E200) uint8_t gVehicleEvent203 INIT(255);
+ALIAS(gVehicleClearHitEvent, gVehicleEvent203, 0);
+BSS(A76C40) VehicleList *gVehicles;
+PAD(igb, A76C40, A76C44, 0x4);
+BSS(A76C40) void *gVehicleCriteria;

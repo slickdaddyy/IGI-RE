@@ -258,3 +258,9 @@ void GunParts_Close(void)
     TaskType_Free(gGunFlameType);
 }
 HOOK(0x477BC0, GunParts_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54074C) uint16_t gGunFlameType INIT(385);
+DATA(54074C) uint16_t gGunClipType INIT(385);
+DATA(54074C) uint16_t gGunMovingPartType INIT(385);
+PAD(igd, 54074C, 540752, 0x2);

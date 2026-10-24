@@ -279,3 +279,7 @@ uint16_t Wheel_GetType(void)
     return gWheelType;
 }
 HOOK(0x430950, Wheel_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57BD30) uint16_t gWheelType;
+PAD(igb, 57BD30, 57BD32, 0x2);

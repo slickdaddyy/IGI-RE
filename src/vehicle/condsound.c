@@ -268,3 +268,8 @@ void ConditionalSound_Close(void)
     QTaskList_Free(gConditionalSoundParams);
 }
 HOOK(0x425580, ConditionalSound_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57BC68) uint16_t gConditionalSoundType;
+PAD(igb, 57BC68, 57BC6A, 0x2);
+BSS(57BC68) void *gConditionalSoundParams;

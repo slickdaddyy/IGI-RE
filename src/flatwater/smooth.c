@@ -184,3 +184,8 @@ void SmoothQTask_Close(void)
     TaskType_Free(gSmoothType);
 }
 HOOK(0x51F560, SmoothQTask_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A837A0) uint16_t gSmoothType;
+PAD(igb, A837A0, A837A2, 0x2);
+BSS(A837A0) void *gSmoothParams;

@@ -675,3 +675,38 @@ int Rain_IsEnabled(void)
     return gRainEnabled;
 }
 HOOK(0x499FE0, Rain_IsEnabled);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5334C0) const float kFadeStep INIT(0.016666668f);
+PAD_CONST(igd, 5334C0, 5334C4, 0x40) INIT({0x61, 0x0B, 0x36, 0x3C, 0x64, 0x3B, 0xDF, 0x4F, 0x8D, 0x97, 0xAE, 0x40, 0xAE, 0x47, 0xE1, 0x7A, 0x14, 0xAE, 0x97, 0x40, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0xAE, 0x40, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0xA3, 0xC0, 0xCD, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xA0, 0x40, 0x00, 0x00, 0x40, 0x45, 0x00, 0x00, 0x00, 0x00, 0xCD, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xAC, 0x40, 0x2F, 0xA1, 0x3D, 0x43});
+DATA(5334C0) const float kHalfF INIT(0.5f);
+ALIAS(gHalf, kHalfF, 0);
+ALIAS(gPixelCenter, kHalfF, 0);
+ALIAS(kHalf, kHalfF, 0);
+DATA(533688) const float kStreak INIT(2048.0f);
+ALIAS(kEyeBack, kStreak, 0);
+ALIAS(kHalfSpeed, kStreak, 0);
+DATA(534118) const float kTwelve INIT(12.0f);
+DATA(534278) const double kTwoTiles INIT(130744.32421875);
+DATA(534278) const float kTileInvF INIT(9.178219e-05f);
+PAD_CONST(igd, 534278, 534284, 0x4);
+DATA(534278) const double kTile INIT(10895.3603515625);
+DATA(534278) const double kTileInv INIT(9.178218688807207e-05);
+DATA(534278) const double kGridOrigin INIT(59924.48193359375);
+DATA(534278) const float kLayer INIT(24576.0f);
+PAD_CONST(igd, 534278, 5342A4, 0x4);
+DATA(534278) const double kLayerInv INIT(4.0690104166666664e-05);
+DATA(534278) const double kLayerOrigin INIT(36864.0);
+DATA(534278) const float kFlakeSize INIT(81.92f);
+PAD_CONST(igd, 534278, 5342BC, 0x4);
+DATA(534278) const double kTop INIT(73728.0);
+DATA(534278) const float kTopF INIT(73728.0f);
+DATA(534278) const float kSpawnStep INIT(307.2f);
+DATA(534278) const float kTileF INIT(10895.36f);
+DATA(534278) const float kSway INIT(136.53334f);
+DATA(543C58) int gRainEnabled INIT(1);
+BSS(6E5BD0) Rain *gRain;
+BSS(C311C0) uint16_t gRainType;
+PAD(igb, C311C0, C311C2, 0xE);
+PAD(igb, C311C0, C311D0, 0x104C);
+ALIAS(gDxRainRandom, pad_C311D0, 0);

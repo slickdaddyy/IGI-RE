@@ -110,3 +110,18 @@ void MipMapControl_Close(void)
     TaskType_Free(gMipMapType);
 }
 HOOK(0x51EEC0, MipMapControl_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54EEE0) uint16_t gMipMapType INIT(385);
+PAD(igd, 54EEE0, 54EEE2, 0x2);
+PAD(igb, A83788, A83788, 0x8);
+ALIAS(gMipMapModeRange, pad_A83788, 0);
+BSS(A83788) void *gMipMapParams;
+PAD(igb, A83788, A83794, 0x4);
+PAD(igb, A83788, A83798, 0x8);
+ALIAS(gMipMapBiasRange, pad_A83798, 0);
+BSS(BC79E8) uint32_t gRenderUnk24;
+BSS(BC79E8) signed char gRenderMipMapMode;
+BSS(BC79E8) char gRenderUnk2C;
+PAD(igb, BC79E8, BC79EE, 0x2);
+BSS(BC79E8) float gRenderLodBias;

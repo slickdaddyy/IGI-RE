@@ -465,3 +465,12 @@ void SplineObj_Close(void)
     QTaskList_Free(gSplineObjWaypointParams);
 }
 HOOK(0x5031B0, SplineObj_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A7A508) void *gSplineObjWaypointParams;
+PAD(igb, A7A508, A7A50C, 0x104);
+ALIAS(gSplineObjDebugText, pad_A7A50C, 0);
+BSS(A7A508) RangeI gSplineObjSegmentRange;
+BSS(A7A508) uint16_t gSplineObjType;
+PAD(igb, A7A508, A7A61A, 0x2);
+BSS(A7A508) void *gSplineObjParams;

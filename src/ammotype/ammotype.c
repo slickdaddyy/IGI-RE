@@ -319,3 +319,12 @@ void BulletHole_Forward(void *t, void *arg)
         fn(c, arg);
 }
 HOOK(0x47D060, BulletHole_Forward);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igb, 5BE3E0, 5BE3E0, 0x2D04);
+ALIAS(gAmmoTypes, pad_5BE3E0, 0);
+BSS(5BE3E0) int gAmmoTypeCount;
+BSS(5BE3E0) uint8_t gAmmoListEvent;
+PAD(igb, 5BE3E0, 5C10E9, 0x7);
+PAD(igb, 5BE3E0, 5C10F0, 0x18);
+ALIAS(gAmmoIdEnum, pad_5C10F0, 0);

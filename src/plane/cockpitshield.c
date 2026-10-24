@@ -112,3 +112,7 @@ void CockpitShield_Close(void)
     TaskType_Free(gCockpitShieldType);
 }
 HOOK(0x435450, CockpitShield_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57BD5C) uint16_t gCockpitShieldType;
+PAD(igb, 57BD5C, 57BD5E, 0x2);

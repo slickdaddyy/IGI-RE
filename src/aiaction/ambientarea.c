@@ -250,3 +250,9 @@ void AmbientArea_Set(AmbientArea *a, const Vec3d *pos, const Matrix *m, const Ve
     strcpy(a->sounds, sounds);
 }
 HOOK(0x44C860, AmbientArea_Set);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57C734) uint16_t gAmbientAreaType;
+PAD(igb, 57C734, 57C736, 0x2);
+BSS(57C734) void *gAmbientAreaParams;
+BSS(57C734) void *gAmbientAreaModel;

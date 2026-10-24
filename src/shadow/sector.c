@@ -709,3 +709,6 @@ uint16_t SectorInteriorObject_GetType(void)
     return gSectorInteriorObjectType;
 }
 HOOK(0x4E0830, SectorInteriorObject_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A5E318) Pool gSectorLinks;

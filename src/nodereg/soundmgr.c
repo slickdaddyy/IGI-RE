@@ -55,3 +55,8 @@ void SoundManager_Open(void)
     ParamTable_Add(gSoundManagerParams, &p, &p.name, Param_String32(), 7, NULL);
 }
 HOOK(0x51BFB0, SoundManager_Open);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54EE3C) uint16_t gSoundManagerType INIT(385);
+PAD(igd, 54EE3C, 54EE3E, 0x2);
+BSS(A83780) void *gSoundManagerParams;

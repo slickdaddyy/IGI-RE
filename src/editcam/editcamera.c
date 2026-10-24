@@ -373,3 +373,16 @@ void *EditCamera_GetFilterEnum(void)
     return gEditCameraFilterEnum;
 }
 HOOK(0x508D60, EditCamera_GetFilterEnum);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A7B260) uint16_t gEditCameraType;
+PAD(igb, A7B260, A7B262, 0x6);
+PAD(igb, A7B260, A7B268, 0x10);
+ALIAS(gEditCameraFilterEnum, pad_A7B268, 0);
+BSS(A7B260) void *gEditCameraParams;
+PAD(igb, A7B260, A7B27C, 0x4);
+PAD(igb, A7B260, A7B280, 0x8);
+ALIAS(gEditCameraLevelRange, pad_A7B280, 0);
+PAD(igb, A7B260, A7B288, 0x8);
+ALIAS(gEditCameraShakeRange, pad_A7B288, 0);
+BSS(A7B260) void *gEditCameraModel;

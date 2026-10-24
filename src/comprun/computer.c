@@ -249,3 +249,10 @@ int Computer_IsMapEnabled(void)
     return gComputerMapEnabled;
 }
 HOOK(0x46C0B0, Computer_IsMapEnabled);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53FD98) int gComputerMapEnabled INIT(1);
+DATA(53FD98) int gComputerSaved499 INIT(1);
+BSS(5BE2C4) uint16_t gComputerType;
+PAD(igb, 5BE2C4, 5BE2C6, 0x6);
+BSS(5BE2C4) Computer *gComputer;

@@ -195,3 +195,8 @@ char AlarmControl_IsAlarm(AlarmControl *a)
     return a->isAlarm;
 }
 HOOK(0x440C00, AlarmControl_IsAlarm);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57C164) uint16_t gAlarmControlType;
+PAD(igb, 57C164, 57C166, 0x2);
+BSS(57C164) void *gAlarmControlParams;

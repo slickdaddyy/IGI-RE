@@ -626,3 +626,33 @@ void TaskType_SetFlags(uint16_t type, uint32_t flags)
     gTaskTypes[type].flags = flags | 0x20000000;
 }
 HOOK(0x401FA0, TaskType_SetFlags);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54F928) uint16_t gTaskRootType INIT(0);
+PAD(igd, 54F928, 54F92A, 0x2);
+DATA(54F928) int gTaskUnk54F92C INIT(0);
+PAD(igd, 54F928, 54F930, 0x5F4);
+ALIAS(gTaskEvents, pad_54F930, 0);
+PAD(igd, 54F928, 54FF24, 0x10);
+ALIAS(gTaskEventSlot, pad_54FF24, 0);
+PAD(igd, 54F928, 54FF34, 0xCC);
+ALIAS(gTaskHandlerSet, pad_54FF34, 0);
+BSS(567C38) Pool gTaskRefs;
+PAD(igb, 567C38, 567C50, 0x8);
+BSS(567C38) int gTaskCount;
+BSS(567C38) uint32_t gTaskGlobalFlags;
+BSS(567C38) int gTaskUnk567C60;
+PAD(igb, 567C38, 567C64, 0x8);
+BSS(567C38) int gTaskSetDepth;
+BSS(567C38) int gTaskSetDepth2;
+PAD(igb, A969E0, A969E0, 0x100);
+ALIAS(gTaskSlotEvent, pad_A969E0, 0);
+PAD(igb, A969E0, A96AE0, 0x600);
+ALIAS(gTaskHandlers, pad_A96AE0, 0);
+ALIAS(gTaskHandlers1, pad_A96AE0, 0);
+ALIAS(gWalkHandlers, pad_A96AE0, 0);
+PAD(igb, AF5EE0, AF5EE0, 0x4800);
+ALIAS(gTaskTypes, pad_AF5EE0, 0);
+PAD(igb, AF5EE0, AFA6E0, 0x100);
+ALIAS(gTaskStack, pad_AFA6E0, 0);
+BSS(AF5EE0) int gTaskStackTop;

@@ -82,3 +82,8 @@ void SubLevel_Close(void)
     QTaskList_Free(gSubLevelParams);
 }
 HOOK(0x4887E0, SubLevel_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5C8A90) uint16_t gSubLevelType;
+PAD(igb, 5C8A90, 5C8A92, 0x2);
+BSS(5C8A90) ParamTable *gSubLevelParams;

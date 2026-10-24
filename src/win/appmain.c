@@ -289,3 +289,13 @@ LRESULT WINAPI AppMain_WinProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
     return DefWindowProcA(hwnd, msg, wparam, lparam);
 }
 HOOK(0x48F970, AppMain_WinProc);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+REF_EXTERN(gTypeLines);
+DATA(541D68) const char *gClassName INIT((char *)(ref_gTypeLines + 6380));
+PAD(igb, 5C8D28, 5C8D28, 0xC0);
+ALIAS(gWinProcs, pad_5C8D28, 0);
+BSS(5C8D28) char gRunning;
+PAD(igb, 5C8D28, 5C8DE9, 0x7);
+BSS(5C8D28) WinList gWinProcList;
+BSS(5C8E04) int gAltDown;

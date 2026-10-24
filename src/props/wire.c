@@ -317,3 +317,12 @@ char Wire_IsSloped(Wire *w)
     return a > kWireSlope;
 }
 HOOK(0x43F8A0, Wire_IsSloped);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5334B0) double kWireScale INIT(0.000244140625);
+ALIAS(kUnitsToMeters, kWireScale, 0);
+DATA(5335C0) double kHalfD INIT(0.5);
+DATA(533834) float kWireSlope INIT(0.034906585f);
+BSS(57C144) uint16_t gWireType;
+PAD(igb, 57C144, 57C146, 0x2);
+BSS(57C144) void *gWireParams;

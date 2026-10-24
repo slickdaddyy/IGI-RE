@@ -70,3 +70,9 @@ void FreeCamera_Shutdown(void)
     TaskType_Free(gFreeCameraType);
 }
 HOOK(0x531180, FreeCamera_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54F768) uint16_t gCamTaskType INIT(385);
+PAD(igd, 54F768, 54F76A, 0x2);
+DATA(54F7D0) uint16_t gFreeCameraType INIT(385);
+PAD(igd, 54F7D0, 54F7D2, 0x2);

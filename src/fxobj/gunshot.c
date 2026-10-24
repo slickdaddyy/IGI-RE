@@ -341,3 +341,13 @@ void PlaceExplosiveTBA_Close(void)
     TaskType_Free(gPlaceExplosiveType);
 }
 HOOK(0x438C10, PlaceExplosiveTBA_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53C1DC) uint16_t gPlaceExplosiveType INIT(385);
+PAD(igd, 53C1DC, 53C1DE, 0x2);
+BSS(57BE78) uint16_t gGunShotEffectType;
+PAD(igb, 57BE78, 57BE7A, 0x2);
+BSS(57BE78) char *gGunShotDust;
+BSS(57BE78) char *gGunShotDust2;
+PAD(igb, 57BE78, 57BE84, 0x8);
+BSS(57BE78) void *gPlaceExplosiveParams;

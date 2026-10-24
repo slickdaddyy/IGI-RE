@@ -109,3 +109,9 @@ void FlashTask_Shutdown(void)
     gFlashTaskReady = 0;
 }
 HOOK(0x530C60, FlashTask_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54F7A0) uint16_t gFlashTaskType INIT(385);
+PAD(igd, 54F7A0, 54F7A2, 0x2);
+BSS(A845EC) char gFlashTaskReady;
+PAD(igb, A845EC, A845ED, 0x3);

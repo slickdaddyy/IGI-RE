@@ -151,3 +151,11 @@ void AllTaskTypes_Open(void)
     AIGraph_Init();
 }
 HOOK(0x508F80, AllTaskTypes_Open);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54E830) uint8_t gSyncEvent0 INIT(255);
+DATA(54E830) uint8_t gSyncEvent1 INIT(255);
+PAD(igd, 54E830, 54E832, 0x2);
+BSS(A7B298) uint16_t gSyncType;
+PAD(igb, A7B298, A7B29A, 0x6);
+BSS(A7B298) Sync *gSync;

@@ -1642,3 +1642,7 @@ void BoneObj_Load(const char *name)
     Resource_Unload(name);
 }
 HOOK(0x4D67A0, BoneObj_Load);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A538E8) Quat *gRootQuat;
+BSS(A538E8) Matrix *gRootMatrix;

@@ -400,3 +400,9 @@ Grenade *Grenade_Throw(void *parent, Task *owner, Vec3d *pos, const Matrix *matr
     return g;
 }
 HOOK(0x477040, Grenade_Throw);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54066C) uint16_t gGrenadeType INIT(385);
+PAD(igd, 54066C, 54066E, 0x2);
+BSS(5BE3B8) uint8_t gGrenadeEvent;
+PAD(igb, 5BE3B8, 5BE3B9, 0x3);

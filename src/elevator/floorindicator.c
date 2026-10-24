@@ -170,3 +170,8 @@ void ElevatorFloorIndicator_Close(void)
     TaskType_Free(gElevatorFloorIndicatorType);
 }
 HOOK(0x43CC50, ElevatorFloorIndicator_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57BF84) uint16_t gElevatorFloorIndicatorType;
+PAD(igb, 57BF84, 57BF86, 0x2);
+BSS(57BF84) void *gElevatorFloorIndicatorParams;

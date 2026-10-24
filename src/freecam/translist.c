@@ -171,3 +171,14 @@ void TransparencyList_Shutdown(void)
     Primitive_Unregister(gTransStartPrimitive);
 }
 HOOK(0x5321C0, TransparencyList_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54F884) uint16_t gTransListType INIT(385);
+PAD(igd, 54F884, 54F886, 0x2);
+BSS(A84620) char *gTransBufferEnd;
+BSS(A84620) TransEntry *gTransEntryEnd;
+PAD(igb, A84620, A84628, 0x4);
+BSS(A84620) int *gTransUsed;
+BSS(A84620) int *gTransCount;
+BSS(C28F90) int gTransPrimitive;
+BSS(C28F90) int gTransStartPrimitive;

@@ -528,3 +528,20 @@ TextureModifier *TextureModifier_NewChild(Task *parent, TextureModifier *tm, Vec
     return t;
 }
 HOOK(0x506CD0, TextureModifier_NewChild);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A7A8EC) void *gTexModParams;
+BSS(A7A8EC) uint16_t gTexModType;
+PAD(igb, A7A8EC, A7A8F2, 0x2);
+PAD(igb, A7A8EC, A7A8F4, 0x404);
+ALIAS(gTexMods, pad_A7A8F4, 0);
+PAD(igb, A7A8EC, A7ACF8, 0x10);
+ALIAS(gTexModRandom, pad_A7ACF8, 0);
+BSS(A7A8EC) int gTexModCount;
+PAD(igb, B81A20, B81A20, 0x100);
+ALIAS(gBitResident, pad_B81A20, 0);
+ALIAS(gUnkB81A20, pad_B81A20, 0);
+PAD(igb, B97DA0, B97DA0, 0x50);
+ALIAS(gCollHoleList, pad_B97DA0, 0);
+PAD(igb, BA5080, BA5080, 0x3000);
+ALIAS(gCollHoles, pad_BA5080, 0);

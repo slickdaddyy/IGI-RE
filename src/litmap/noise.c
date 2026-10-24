@@ -230,3 +230,10 @@ void NoiseQTask_Shutdown(void)
     TaskType_Free(gNoiseQTaskType);
 }
 HOOK(0x520710, NoiseQTask_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A83838) uint16_t gNoiseQTaskType;
+PAD(igb, A83838, A8383A, 0x2);
+BSS(A83838) void *gNoiseQTaskParams;
+PAD(igb, A83838, A83840, 0x10);
+ALIAS(gNoiseRandom, pad_A83840, 0);

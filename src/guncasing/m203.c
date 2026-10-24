@@ -193,3 +193,15 @@ M203 *M203_New(void *parent, Task *owner, Task *other, const Vec3d *pos, const M
     return g;
 }
 HOOK(0x476670, M203_New);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5337F0) float kPuffSpinBase INIT(0.012799081f);
+DATA(5337F0) float kPuffSpin INIT(0.05235988f);
+DATA(5337F0) double kPuffRiseMin INIT(0.15);
+DATA(5337F0) double kPuffRise INIT(0.75);
+DATA(534138) double kPuffSize INIT(0.35);
+DATA(534138) float kM203Gravity INIT(35.68071f);
+PAD(igd, 534138, 534144, 0x4) INIT({0xF6, 0x28, 0x7C, 0x3F});
+BSS(5BE3AC) char *gM203Sprite;
+BSS(5BE3AC) uint16_t gM203Type;
+PAD(igb, 5BE3AC, 5BE3B2, 0x2);

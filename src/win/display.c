@@ -621,3 +621,34 @@ BOOL WINAPI Display_EnumDriverCB(GUID *guid, char *desc, char *name, void *conte
     return TRUE;
 }
 HOOK(0x491F10, Display_EnumDriverCB);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD_CONST(igd, 534A20, 534A20, 0x10) INIT({0x77, 0x9E, 0x04, 0xF5, 0x61, 0x48, 0xD2, 0x11, 0xA4, 0x07, 0x00, 0xA0, 0xC9, 0x06, 0x29, 0xA8});
+ALIAS(IID_IDirect3D7_, pad_534A20, 0);
+DATA(542310) int gMethodGetGFXCaps INIT(-1);
+DATA(542310) int gMethodOpen INIT(-1);
+DATA(542310) int gMethodClose INIT(-1);
+DATA(542310) int gMethodSetMode INIT(-1);
+DATA(542310) int gMethodUnsetMode INIT(-1);
+DATA(542310) int gMethodRestore INIT(-1);
+DATA(542310) int gMethodVSync INIT(-1);
+DATA(542310) int gMethodSwapBuffers INIT(-1);
+DATA(542310) int gMethodClear INIT(-1);
+DATA(542310) int gMethodEnum INIT(-1);
+DATA(542310) int gPrimBlit INIT(-1);
+DATA(542310) int gPrimSnapshot INIT(-1);
+DATA(542310) int gPrimClipWindow INIT(-1);
+PAD(igb, 5C9FA8, 5C9FA8, 0x84);
+ALIAS(gDisplayDevice, pad_5C9FA8, 0);
+BSS(5C9FA8) char gDisplayOpen;
+BSS(5C9FA8) char gDisplayModeSet;
+PAD(igb, 5C9FA8, 5CA02E, 0x2);
+BSS(BCADEC) DisplayCallback *gDisplaySetModeCallbacks;
+BSS(BCADFC) DisplayCallback *gDisplayEndFrameCallbacks;
+BSS(BCADFC) DisplayCallback *gDisplayFrameCallbacks;
+PAD(igb, BCADFC, BCAE04, 0x1C);
+PAD(igb, BCADFC, BCAE20, 0x45560);
+ALIAS(gDisplayModes, pad_BCAE20, 0);
+PAD(igb, C28A40, C28A40, 0x100);
+ALIAS(gDisplayCallbacks, pad_C28A40, 0);
+BSS(C28A40) DisplayMode gDisplayMode;

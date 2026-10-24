@@ -203,3 +203,9 @@ int DialogWindow_IsHorizontal(MenuWindow *w)
     return ((DialogWindow *)w)->horizontal;
 }
 HOOK(0x41A1D0, DialogWindow_IsHorizontal);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(539C28) uint16_t gDialogWindowType INIT(385);
+PAD(igd, 539C28, 539C2A, 0x2);
+BSS(57BB80) IntRange gDialogRange;
+BSS(57BB80) void *gDialogWindowParams;

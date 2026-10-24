@@ -168,3 +168,9 @@ void PictureBox_AddItem(const char *name, int id)
     pb->count++;
 }
 HOOK(0x41B870, PictureBox_AddItem);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53B58C) uint16_t gPictureBoxType INIT(385);
+PAD(igd, 53B58C, 53B58E, 0x2);
+BSS(57BBA4) PictureBox *gPictureBoxFilling;
+BSS(57BBA4) void *gPictureBoxParams;

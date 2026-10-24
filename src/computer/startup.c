@@ -370,3 +370,9 @@ void ComputerStartup_Close(void)
     TaskType_Free(gStartupType);
 }
 HOOK(0x466E10, ComputerStartup_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53F520) uint16_t gStartupType INIT(385);
+PAD(igd, 53F520, 53F522, 0x2);
+BSS(5BDC50) int gStartupDraw;
+BSS(5BDC50) int gStartupMethod;

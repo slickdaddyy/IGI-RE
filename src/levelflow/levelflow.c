@@ -310,3 +310,14 @@ int LevelFlow_GetTicksLeft(void)
     return left > 0 ? left : 0;
 }
 HOOK(0x4894B0, LevelFlow_GetTicksLeft);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5339B8) float kMinusFps INIT(-30.0f);
+ALIAS(kFuseFrames, kMinusFps, 0);
+DATA(53422C) float kSecondsPerHour INIT(3600.0f);
+BSS(5C8AA4) ParamTable *gLevelFlowParams;
+PAD(igb, 5C8AA4, 5C8AA8, 0xC);
+ALIAS(gKeyPressed, pad_5C8AA8, 0);
+BSS(5C8AA4) void *gLevelFlowModel;
+BSS(5C8AA4) uint16_t gLevelFlowType;
+PAD(igb, 5C8AA4, 5C8ABA, 0x2);

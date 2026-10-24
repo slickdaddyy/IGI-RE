@@ -104,3 +104,6 @@ void AITarget_Remove(AITarget *t, HumanAI *ai, char count)
     }
 }
 HOOK(0x4512A0, AITarget_Remove);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(58A9D8) List gAITargets;

@@ -570,3 +570,12 @@ void Coll_LinesEx(Terrain *t, CollHit *results, const Vec3d *starts, const Vec3d
     }
 }
 HOOK(0x4CDB20, Coll_LinesEx);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A4438C) int gCollLineCalls;
+BSS(A4438C) int gCollLineCount;
+ALIAS(gUnkA4438C, gCollLineCalls, 0);
+PAD(igb, A9C4E0, A9C4E0, 0x600);
+ALIAS(gTaskEnterHandlers, pad_A9C4E0, 0);
+PAD(igb, A9C4E0, A9CAE0, 0x59400);
+ALIAS(gTaskLeaveHandlers, pad_A9CAE0, 0);

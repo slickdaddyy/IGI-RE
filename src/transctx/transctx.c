@@ -304,3 +304,29 @@ int TransContext_GetNearClipMethod(void)
     return gSetNearClippingPlaneMethod;
 }
 HOOK(0x498070, TransContext_GetNearClipMethod);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(543A64) int gUnk543A64 INIT(1);
+DATA(543A64) int gTransContextPrim INIT(-1);
+BSS(6E5BA4) int gSetActiveTransContextMethod;
+BSS(6E5BA4) int gSetNearClippingPlaneMethod;
+PAD(igb, 6E5BA4, 6E5BAC, 0x4);
+BSS(6E5BA4) int gTransContextValid;
+BSS(6E5BA4) int gTransContextSelects;
+BSS(BCABF0) float gLayer0MinZ;
+ALIAS(gD3DUnkBCABF0, gLayer0MinZ, 0);
+BSS(BCACF0) float gLayer0MaxZ;
+ALIAS(gD3DUnkBCACF0, gLayer0MaxZ, 0);
+BSS(BCAD9C) float gLayer2MaxZ;
+ALIAS(gD3DUnkBCAD9C, gLayer2MaxZ, 0);
+BSS(BCADA4) int gD3DZ24;
+BSS(BCADA4) float gLayer2Far;
+ALIAS(gD3DUnkBCADA8, gLayer2Far, 0);
+BSS(BCADB0) float gLayer2Near;
+ALIAS(gD3DUnkBCADB0, gLayer2Near, 0);
+BSS(BCADB8) float gLayer0Far;
+ALIAS(gD3DUnkBCADB8, gLayer0Far, 0);
+BSS(BCADD8) float gLayer0Near;
+ALIAS(gD3DUnkBCADD8, gLayer0Near, 0);
+BSS(BCADE4) float gLayer2MinZ;
+ALIAS(gD3DUnkBCADE4, gLayer2MinZ, 0);

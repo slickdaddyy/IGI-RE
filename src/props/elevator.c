@@ -304,3 +304,7 @@ uint16_t Elevator_GetType(void)
     return gElevatorType;
 }
 HOOK(0x43E4E0, Elevator_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57C0F0) Vec3d gElevatorMove;
+BSS(57C110) Matrix gElevatorTurn;

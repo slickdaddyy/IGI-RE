@@ -261,3 +261,11 @@ void InputPort_Setup(int port, int count, InputBinding *bindings, int analog, fl
     Controller_Setup(&p->state, InputPort_InputHandler);
 }
 HOOK(0x4ED5E0, InputPort_Setup);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A5EF98) int gUnkA5EF98;
+BSS(A5EF98) int gInputPortIndex;
+BSS(A5EF98) uint16_t gInputPortType;
+PAD(igb, A5EF98, A5EFA2, 0x2);
+PAD(igb, BCAA08, BCAA08, 0x98);
+ALIAS(gJoypads, pad_BCAA08, 0);

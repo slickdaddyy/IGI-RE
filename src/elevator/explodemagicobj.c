@@ -182,3 +182,7 @@ void ExplodeMagicObj_Close(void)
     TaskType_Free(gExplodeMagicObjType);
 }
 HOOK(0x43C380, ExplodeMagicObj_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57BF7C) uint16_t gExplodeMagicObjType;
+PAD(igb, 57BF7C, 57BF7E, 0x2);

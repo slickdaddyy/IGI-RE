@@ -88,3 +88,11 @@ Task *GameScreen_GetView(GameScreen *s)
     return s->view;
 }
 HOOK(0x485320, GameScreen_GetView);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5C8A20) Task *gGameStatusScreen;
+PAD(igb, 5C8A20, 5C8A24, 0x4);
+BSS(5C8A20) uint16_t gGameScreenType;
+PAD(igb, 5C8A20, 5C8A2A, 0x2);
+BSS(5C8E00) char gUnk5C8E00;
+PAD(igb, 5C8E00, 5C8E01, 0x3);

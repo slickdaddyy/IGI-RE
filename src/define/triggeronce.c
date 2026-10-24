@@ -408,3 +408,7 @@ void SoundDefTriggerOnce_Update(SoundDefTriggerOnce *s)
         s->active = 0;
 }
 HOOK(0x4EA040, SoundDefTriggerOnce_Update);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54DA60) uint16_t gSoundDefTriggerOnceType INIT(385);
+DATA(54DA60) uint16_t gSoundDefTriggerOnceType2 INIT(385);

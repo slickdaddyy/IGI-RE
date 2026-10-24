@@ -126,3 +126,8 @@ void EditVariable_Close(void)
     TaskType_Free(gEditVariableType);
 }
 HOOK(0x488B90, EditVariable_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5410D0) uint16_t gEditVariableType INIT(385);
+PAD(igd, 5410D0, 5410D2, 0x2);
+BSS(5C8A9C) ParamTable *gEditVariableParams;

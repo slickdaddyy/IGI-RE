@@ -392,3 +392,15 @@ void WaterMesh_Close(void)
     Primitive_Unregister(gWaterPrimitive);
 }
 HOOK(0x530210, WaterMesh_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5336D4) float kEnvDistScale INIT(255.0f);
+ALIAS(k255, kEnvDistScale, 0);
+DATA(534CE0) float kEnvAngleScale INIT(81.16902f);
+PAD(igd, 534CE0, 534CE4, 0x4);
+DATA(534CE0) double kEnvLift INIT(819200.0);
+DATA(534CE0) float kViewAngle INIT(1.7278761f);
+PAD(igd, 534CE0, 534CF4, 0x4);
+DATA(534CE0) double kSplitMin INIT(131072.0);
+PAD(igb, A84584, A84584, 0x54);
+ALIAS(gWaterSplits, pad_A84584, 0);

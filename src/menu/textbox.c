@@ -57,3 +57,8 @@ void TextBox_Init(void)
     ParamTable_Add(gTextBoxParams, &tb, tb.text2, Param_VarString(), 7, NULL);
 }
 HOOK(0x41AAF0, TextBox_Init);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53B580) uint16_t gTextBoxType INIT(385);
+PAD(igd, 53B580, 53B582, 0x2);
+BSS(57BB98) void *gTextBoxParams;

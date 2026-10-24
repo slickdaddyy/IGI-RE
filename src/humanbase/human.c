@@ -1862,3 +1862,12 @@ done:
     h->groundValid = 1;
 }
 HOOK(0x462390, Human_ProbeGround);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53F314) uint8_t gHumanEvent0 INIT(255);
+PAD(igd, 53F314, 53F315, 0x2) INIT({0xFF, 0xFF});
+DATA(53F314) uint8_t gHumanPunchEvent INIT(255);
+PAD(igb, 5BDAD8, 5BDAD8, 0x20);
+ALIAS(gHumanTeamCriteria, pad_5BDAD8, 0);
+BSS(5BDAFC) int gHumanDebugTime;
+BSS(5BDC1C) int gHumanDebug;

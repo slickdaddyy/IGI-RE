@@ -40,3 +40,7 @@ uint16_t EditorRigidObj_GetType(void)
     return gEditorRigidObjType;
 }
 HOOK(0x5034D0, EditorRigidObj_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54E634) uint16_t gEditorRigidObjType INIT(385);
+PAD(igd, 54E634, 54E636, 0x2);

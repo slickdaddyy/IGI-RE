@@ -658,3 +658,26 @@ void Sound_AddTask(Task *t)
     QTaskList_Add(gSoundTasks, t);
 }
 HOOK(0x4E6D20, Sound_AddTask);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(548808) uint16_t gSoundSysControllerType INIT(385);
+DATA(548808) uint16_t gSoundSysDefType INIT(385);
+DATA(548808) uint16_t gSoundSysDefType2 INIT(385);
+DATA(548808) uint16_t gSoundSysDefParentType INIT(385);
+DATA(548808) uint16_t gSoundSysDefParentType2 INIT(385);
+DATA(548808) uint8_t gSoundListEvent INIT(255);
+DATA(548808) uint8_t gSoundInfoEvent INIT(255);
+DATA(548808) uint8_t gSoundFindEvent INIT(255);
+DATA(548808) uint8_t gSoundNameEvent INIT(255);
+DATA(548808) uint8_t gSoundSetPosEvent INIT(255);
+DATA(548808) uint8_t gSoundSetVolumeEvent INIT(255);
+DATA(548808) uint8_t gSoundSetPitchEvent INIT(255);
+DATA(548808) uint8_t gSoundRangeEvent INIT(255);
+DATA(548808) uint8_t gSoundDurationEvent INIT(255);
+DATA(548808) uint8_t gSoundSetGlobalEvent INIT(255);
+DATA(548808) int gSoundStopEvent INIT(255);
+BSS(A5E5F0) int gSoundInstCount;
+BSS(A5E5FC) int gSoundUpdateRate;
+BSS(A5E5FC) SoundInst *gSoundInsts;
+BSS(A5E60C) QTaskList *gSoundTasks;
+BSS(A5E60C) QTaskList *gSoundDefs;

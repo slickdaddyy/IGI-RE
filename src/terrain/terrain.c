@@ -201,3 +201,7 @@ ScriptValue *CreateTerrainTileMap(ScriptValue *out, void *data, void *args)
     return ret_zero(out);
 }
 HOOK(0x4C6760, CreateTerrainTileMap);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igb, C28FE0, C28FE0, 0x7080);
+ALIAS(gTerrainMaterials, pad_C28FE0, 0);

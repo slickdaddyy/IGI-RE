@@ -99,3 +99,7 @@ void Cursor_GetState(Cursor *c, int *x, int *y, int *buttons, int *prev)
     *prev = c->prevButtons;
 }
 HOOK(0x424E50, Cursor_GetState);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57BC58) int gCursorWindowX;
+BSS(57BC58) int gCursorWindowY;

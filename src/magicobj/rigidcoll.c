@@ -521,3 +521,10 @@ void RigidDynCubeObj_CreateMagicObjs(void *parent, RigidDynCubeObj *o, void *own
     }
 }
 HOOK(0x4C4950, RigidDynCubeObj_CreateMagicObjs);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5333B0) double kZeroD INIT(0.0);
+ALIAS(kZero64, kZeroD, 0);
+DATA(5333F8) double kOneD INIT(1.0);
+ALIAS(kBOneD, kOneD, 0);
+ALIAS(kOne64, kOneD, 0);

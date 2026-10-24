@@ -281,3 +281,10 @@ int16_t GenericTBA_GetAnim(GenericTBA *t)
     return t->anim;
 }
 HOOK(0x4485D0, GenericTBA_GetAnim);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53C7DC) uint16_t gTBAType INIT(385);
+PAD(igd, 53C7DC, 53C7DE, 0x2);
+BSS(57C1F0) ParamEnum gTBAIcons;
+PAD(igb, 57C1F0, 57C1F8, 0x4);
+BSS(57C1F0) void *gTBAParams;

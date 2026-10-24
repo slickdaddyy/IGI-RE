@@ -100,3 +100,8 @@ MenuButton *MenuButton_New(void *parent)
     return (MenuButton *)Task_New(parent, gMenuButtonType, parent);
 }
 HOOK(0x421730, MenuButton_New);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53B7F0) uint16_t gMenuButtonType INIT(385);
+PAD(igd, 53B7F0, 53B7F2, 0x2);
+BSS(57BBFC) void *gMenuButtonParams;

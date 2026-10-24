@@ -693,3 +693,8 @@ void HumanView_SetCamera(HumanView *v, const double *pos, const Rot *rot)
     v->camRot = *rot;
 }
 HOOK(0x4658D0, HumanView_SetCamera);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5BDC3C) int gHumanMaskType;
+BSS(5BDC3C) uint16_t gHumanViewType;
+PAD(igb, 5BDC3C, 5BDC42, 0x2);

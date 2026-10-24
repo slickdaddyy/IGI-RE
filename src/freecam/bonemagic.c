@@ -237,3 +237,7 @@ void BoneMagicObj_Shutdown(void)
     gBoneMagicObjType = 0x181;
 }
 HOOK(0x531D10, BoneMagicObj_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54F848) uint32_t gBoneMagicObjTypeWord INIT(385);
+ALIAS(gBoneMagicObjType, gBoneMagicObjTypeWord, 0);

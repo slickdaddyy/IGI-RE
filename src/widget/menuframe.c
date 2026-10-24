@@ -208,3 +208,10 @@ void MenuFrame_Shutdown(void)
     gMenuFrameType = 0x181;
 }
 HOOK(0x422B10, MenuFrame_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53B838) uint16_t gMenuFrameType INIT(385);
+PAD(igd, 53B838, 53B83A, 0x2);
+BSS(57BC10) void *gMenuFrameParams;
+PAD(igb, 57BC10, 57BC14, 0x4);
+BSS(57BC10) IntRange gMenuFrameRange;

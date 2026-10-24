@@ -168,3 +168,12 @@ void Dragunov_Close(void)
     TaskType_Free(gDragunovType);
 }
 HOOK(0x4733E0, Dragunov_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5339CC) float kDragunovZoomIn INIT(0.96f);
+DATA(533A80) float kDragunovZoomOut INIT(1.04f);
+BSS(5BE358) uint16_t gDragunovType;
+PAD(igb, 5BE358, 5BE35A, 0x2);
+BSS(5BE358) char *gSniperSightY;
+BSS(5BE358) char *gSniperSight;
+BSS(5BE358) char *gSniperSightX;

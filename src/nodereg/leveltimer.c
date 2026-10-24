@@ -191,3 +191,8 @@ void LevelTimer_Close(void)
     TaskType_Free(gLevelTimerType);
 }
 HOOK(0x51BF90, LevelTimer_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A83774) uint16_t gLevelTimerType;
+PAD(igb, A83774, A83776, 0x2);
+BSS(A83774) void *gLevelTimerParams;

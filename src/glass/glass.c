@@ -193,3 +193,10 @@ uint16_t Glass_GetType(void)
     return gGlassType;
 }
 HOOK(0x449D20, Glass_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53351C) float kThreeQuarters INIT(0.75f);
+ALIAS(kBrakeWing, kThreeQuarters, 0);
+DATA(5338B8) float kHitForce INIT(0.007f);
+BSS(57C220) uint16_t gGlassType;
+PAD(igb, 57C220, 57C222, 0x2);

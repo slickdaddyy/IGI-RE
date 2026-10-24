@@ -44,3 +44,7 @@ void TerraDraw_Shutdown(void)
     gTerraDrawType = 0x181;
 }
 HOOK(0x4E8350, TerraDraw_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54D9A0) uint16_t gTerraDrawType INIT(385);
+DATA(54D9A0) uint16_t gTerraDrawOn INIT(1);

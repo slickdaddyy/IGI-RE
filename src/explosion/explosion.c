@@ -661,3 +661,35 @@ void FireBall_Draw(FireBall *fb)
     } while (c);
 }
 HOOK(0x480790, FireBall_Draw);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5333C8) const float kTenth INIT(0.1f);
+ALIAS(kDepthFade2, kTenth, 0);
+DATA(533518) const float kQuarter INIT(0.25f);
+DATA(53353C) const float kThreeHalves INIT(1.5f);
+ALIAS(kOneHalf, kThreeHalves, 0);
+ALIAS(kSplitDist, kThreeHalves, 0);
+DATA(5336A4) const float kThreeTenths INIT(0.3f);
+ALIAS(kShadowMinFade, kThreeTenths, 0);
+ALIAS(kSmokeSize, kThreeTenths, 0);
+PAD_CONST(igd, 534180, 534180, 0x4) INIT({0x94, 0xCE, 0xA6, 0x3C});
+DATA(534180) const float kBlastSmokeSpin INIT(0.018849557f);
+DATA(534180) const float kSmokeRate INIT(15.0f);
+DATA(534180) const float kFragmentSpin INIT(0.006283186f);
+DATA(534180) const float kTrailRate INIT(27.0f);
+DATA(534180) const float kFragmentScale INIT(0.00048828125f);
+DATA(534180) const float kTumble INIT(0.03141593f);
+PAD_CONST(igd, 534180, 53419C, 0x4);
+DATA(534180) const double kSmokeScale INIT(0.8999999761581421);
+DATA(534180) const float kSmokeFrames INIT(150.0f);
+DATA(534180) const float kDelaySpread INIT(-15.0f);
+DATA(534180) const double kFireballScale INIT(0.00048828125);
+BSS(5C1154) uint16_t gExplosionType;
+BSS(5C1154) uint16_t gFragmentType;
+BSS(5C1154) char *gFireballSprite;
+BSS(5C1154) uint16_t gExplosionSmokeType;
+PAD(igb, 5C1154, 5C115E, 0x2);
+BSS(5C1154) char *gSmoke2Sprite;
+BSS(5C1154) char *gBurnTexture;
+BSS(5C1154) uint16_t gFireBallType;
+PAD(igb, 5C1154, 5C116A, 0x2);

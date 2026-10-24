@@ -196,3 +196,10 @@ void Radio_Close(void)
     TaskType_Free(gRadioType);
 }
 HOOK(0x43B2D0, Radio_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53C2E0) uint16_t gRadioType INIT(385);
+PAD(igd, 53C2E0, 53C2E2, 0x2);
+BSS(57BEF8) void *gRadioParams;
+PAD(igb, 57BEF8, 57BEFC, 0x40);
+ALIAS(gRadioSoundNames, pad_57BEFC, 0);

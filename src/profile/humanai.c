@@ -382,3 +382,14 @@ void HumanAIConfig_Apply(HumanAI *ai)
         COPY(*(float *)(owner + 0xD04), c->unk2A4);
 }
 HOOK(0x406F70, HumanAIConfig_Apply);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5383D8) uint16_t gHumanAIConfigType INIT(385);
+DATA(5383D8) uint16_t gHumanAIConfigItemType INIT(385);
+BSS(5690B0) ParamTable *gHumanAIConfigParams;
+PAD(igb, 5690B0, 5690B4, 0x4);
+BSS(5690B0) ParamRange gHumanAIIntRange;
+BSS(5690B0) ParamRange gHumanAIRealRange;
+BSS(5690B0) ParamTable *gHumanAIConfigItemParams;
+PAD(igb, 5690B0, 5690CC, 0x4);
+BSS(5690B0) HumanAIConfig *gHumanAIConfig;

@@ -694,3 +694,17 @@ void Particle2D_Emit(Particle2DTask *t, const Vec3d *pos, const float *dir, floa
     Particle2D_Add(t, pos, vel, level, spin, angle, scale, delay, frames);
 }
 HOOK(0x4FE210, Particle2D_Emit);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54E568) uint16_t gParticle2DType INIT(385);
+DATA(54E568) uint8_t gParticle2DEvent INIT(255);
+PAD(igd, 54E568, 54E56B, 0x1);
+PAD(igb, A774C0, A774C0, 0x3000);
+ALIAS(gParticle2DTrails, pad_A774C0, 0);
+PAD(igb, A774C0, A7A4C0, 0x10);
+ALIAS(gParticle2DRandom, pad_A7A4C0, 0);
+BSS(A774C0) int gParticle2DMem;
+BSS(A774C0) int gParticle2DMemMax;
+BSS(A774C0) int gParticle2DTrailIdx;
+BSS(A774C0) int16_t gParticle2DTimer;
+PAD(igb, A774C0, A7A4DE, 0x2);

@@ -79,3 +79,6 @@ Chunk *Chunk_Find(Chunk *c, unsigned int id)
     return NULL;
 }
 HOOK(0x4B7590, Chunk_Find);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A43E5C) int gChunkError;

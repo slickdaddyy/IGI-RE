@@ -188,3 +188,12 @@ void File_ScanDir(const char *path, void *fn, void *user)
     }
 }
 HOOK(0x4B1420, File_ScanDir);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igb, 942330, 942330, 0x1280);
+ALIAS(gAliases, pad_942330, 0);
+BSS(94396C) int gDeviceCount;
+BSS(94396C) List gLoadedFiles;
+BSS(943988) int gUnk943988;
+PAD(igb, 943A18, 943A18, 0x80);
+ALIAS(gExpandedPath, pad_943A18, 0);

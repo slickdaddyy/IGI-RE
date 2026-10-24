@@ -144,3 +144,8 @@ void BoneDynCubeObj_SetModel(BoneDynCubeObj *o, void **model)
     o->radius = VirModel_GetRadius(model);
 }
 HOOK(0x4D9700, BoneDynCubeObj_SetModel);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(548618) uint16_t gBoneType INIT(385);
+DATA(548618) uint8_t gBoneEvent INIT(255);
+PAD(igd, 548618, 54861B, 0x1);

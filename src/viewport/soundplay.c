@@ -325,3 +325,12 @@ void sub_4E7350(int v)
     gUnkA5E5E8 = v == 0;
 }
 HOOK(0x4E7350, sub_4E7350);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A5E5E8) int gUnkA5E5E8;
+BSS(A5E5E8) SoundInst *gSoundFree;
+BSS(A5E5F4) SoundInst *gSoundActive;
+BSS(A5E5F4) int gSoundNextId;
+PAD(igb, A5E608, A5E608, 0x2);
+BSS(A5E608) char gSoundDisabled;
+BSS(A5E608) char gSoundSilent;

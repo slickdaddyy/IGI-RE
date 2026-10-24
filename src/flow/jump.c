@@ -36,3 +36,9 @@ void Game_Quit(void)
     Crt_LongJmp(gGameJmpBuf, 1);
 }
 HOOK(0x4010A0, Game_Quit);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igd, 54F8E0, 54F8E0, 0x48);
+ALIAS(gGameJmpBuf, pad_54F8E0, 0);
+PAD(igb, A970E0, A970E0, 0x1200);
+ALIAS(gTaskRunHandlers, pad_A970E0, 0);

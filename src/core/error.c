@@ -93,3 +93,15 @@ void Error_ResetHandlers(void)
     sub_4AF8B0(0);
 }
 HOOK(0x4AF8C0, Error_ResetHandlers);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(93625C) void *gUnk93625C;
+PAD(igb, 93625C, 936260, 0x8);
+BSS(93625C) ErrorHandler gErrorHandler;
+BSS(93625C) ErrorHandler gErrorExitHandler;
+BSS(93625C) void *gUnk936270;
+BSS(93625C) ErrorHandler gWarningHandler;
+PAD(igb, 93625C, 936278, 0x4);
+BSS(93625C) int gUnk93627C;
+PAD(igb, A84640, A84640, 0x400);
+ALIAS(gErrorText, pad_A84640, 0);

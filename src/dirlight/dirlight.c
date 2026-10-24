@@ -285,3 +285,15 @@ void DirlightKeyframe_Changed(DirlightKeyframe *k)
         gDirlightKeyframeChanging = NULL;
 }
 HOOK(0x527320, DirlightKeyframe_Changed);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A83D30) void *gDirlightParams;
+BSS(A83D30) uint16_t gDirlightType;
+PAD(igb, A83D30, A83D36, 0x2);
+PAD(igb, A83D30, A83D38, 0xC);
+ALIAS(gDirlightRandom, pad_A83D38, 0);
+BSS(A83D30) float gDirlightKeyframeTime;
+BSS(A83D30) void *gDirlightKeyframeParams;
+BSS(A83D30) uint16_t gDirlightKeyframeType;
+PAD(igb, A83D30, A83D4E, 0x6);
+BSS(A83D30) DirlightKeyframe *gDirlightKeyframeChanging;

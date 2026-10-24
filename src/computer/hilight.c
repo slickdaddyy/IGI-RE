@@ -241,3 +241,11 @@ TaskArray *ComputerHilight_GetList(void)
     return gHilightList;
 }
 HOOK(0x4688A0, ComputerHilight_GetList);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53F6D0) uint16_t gHilightType INIT(385);
+PAD(igd, 53F6D0, 53F6D2, 0x2);
+BSS(5BDC80) void *gHilightList;
+BSS(5BDC80) void *gHilightParams;
+PAD(igb, 5BDC80, 5BDC88, 0x8);
+BSS(5BDC80) EnumDesc gHilightIcons;

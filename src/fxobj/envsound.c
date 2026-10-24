@@ -355,3 +355,9 @@ void EnvironmentSound_SetListener(Listener *l)
     gEnvSoundListener = l;
 }
 HOOK(0x437500, EnvironmentSound_SetListener);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57BDA8) void *gEnvSoundParams;
+BSS(57BDA8) Listener *gEnvSoundListener;
+BSS(57BDA8) uint16_t gEnvSoundType;
+PAD(igb, 57BDA8, 57BDB2, 0x2);

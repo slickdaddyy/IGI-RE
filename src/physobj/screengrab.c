@@ -267,3 +267,14 @@ unsigned TaskRef_Hash(unsigned key)
     return key % 251;
 }
 HOOK(0x4EE960, TaskRef_Hash);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54DCB8) uint16_t gScreenGrabType INIT(385);
+PAD(igd, 54DCB8, 54DCBA, 0x2);
+DATA(54DCB8) int gScreenGrabStep INIT(100000);
+BSS(A70C48) TgaHeader gScreenGrabHeader;
+BSS(A70C48) char gScreenGrabSingle;
+BSS(A70C48) char gScreenGrabRecording;
+PAD(igb, A70C48, A70C5C, 0x4);
+BSS(A70C48) void *gScreenGrabParams;
+BSS(A70C48) int gScreenGrabFrame;

@@ -398,3 +398,9 @@ void ScrollListBox_AddItem(const char *text, int id)
     lb->count++;
 }
 HOOK(0x41C690, ScrollListBox_AddItem);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53B59C) uint16_t gScrollListBoxType INIT(385);
+PAD(igd, 53B59C, 53B59E, 0x2);
+BSS(57BBB0) ScrollListBox *gScrollListBoxFilling;
+BSS(57BBB0) void *gScrollListBoxParams;

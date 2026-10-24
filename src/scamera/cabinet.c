@@ -198,3 +198,13 @@ void Cabinet_Create(Cabinet *c)
     c->moving = 0;
 }
 HOOK(0x444420, Cabinet_Create);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(533898) float kDrawerCloseStep INIT(102.4f);
+DATA(533898) float kDrawerOpen INIT(1843.2f);
+DATA(533898) float kDrawerOpenStep INIT(153.6f);
+BSS(57C1A4) uint16_t gDrawerType;
+PAD(igb, 57C1A4, 57C1A6, 0x2);
+BSS(57C1A4) void *gCabinetParams;
+BSS(57C1A4) uint16_t gCabinetType;
+PAD(igb, 57C1A4, 57C1AE, 0x2);

@@ -446,3 +446,21 @@ void PolyList_Close(void)
     Primitive_Unregister(gPolyListPrim);
 }
 HOOK(0x49B260, PolyList_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5342D8) const float kMinus255 INIT(-255.0f);
+DATA(5342D8) const float kNearScale INIT(1.01f);
+ALIAS(kAlphaScale, kMinus255, 0);
+DATA(543C64) uint16_t gPolyListType INIT(385);
+PAD(igd, 543C64, 543C66, 0x2);
+PAD(igb, 720570, 720570, 0xC);
+ALIAS(gPolyListRandom, pad_720570, 0);
+BSS(720570) int gPolyListStageState;
+PAD(igb, 720570, 720580, 0x20);
+BSS(720570) int gPolyListNothingD;
+BSS(720570) int gPolyListNothingB;
+BSS(720570) int gPolyListLightState;
+PAD(igb, B818AC, B818AC, 0x30);
+ALIAS(gLightColor, pad_B818AC, 0);
+BSS(BCAD80) DynVB gVBLit;
+BSS(C311BC) int gPolyListPrim;

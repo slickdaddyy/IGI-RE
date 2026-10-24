@@ -220,3 +220,6 @@ void TextBox_AddItem(const char *text, int id)
     tb->count++;
 }
 HOOK(0x41B290, TextBox_AddItem);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57BBA0) TextBox *gTextBoxFilling;

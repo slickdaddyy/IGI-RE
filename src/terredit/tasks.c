@@ -251,3 +251,17 @@ void PushButton_Shutdown(void)
     TaskType_Free(gPushButtonType);
 }
 HOOK(0x52CB20, PushButton_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54F6E4) uint16_t gSkyTaskType INIT(385);
+PAD(igd, 54F6E4, 54F6E6, 0xA) INIT({0x00, 0x00, 0x53, 0x6B, 0x79, 0x54, 0x61, 0x73, 0x6B});
+DATA(54F6E4) uint16_t gLevelScriptType INIT(385);
+DATA(54F6E4) uint8_t gLevelScriptEvent INIT(255);
+PAD(igd, 54F6E4, 54F6F3, 0xD) INIT({0x00, 0x4C, 0x65, 0x76, 0x65, 0x6C, 0x53, 0x63, 0x72, 0x69, 0x70, 0x74});
+DATA(54F6E4) uint16_t gSimBoneDynCubeObjType INIT(385);
+PAD(igd, 54F6E4, 54F702, 0x16) INIT({0x00, 0x00, 0x53, 0x69, 0x6D, 0x42, 0x6F, 0x6E, 0x65, 0x44, 0x79, 0x6E, 0x43, 0x75, 0x62, 0x65, 0x4F, 0x62, 0x6A});
+DATA(54F6E4) uint16_t gPushButtonType INIT(385);
+PAD(igd, 54F6E4, 54F71A, 0x2);
+BSS(A84558) void *gSkyTaskParams;
+PAD(igb, A84558, A8455C, 0x8);
+BSS(A84558) void *gLevelScriptParams;

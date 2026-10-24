@@ -296,3 +296,9 @@ void RotatingObject_Close(void)
     TaskType_Free(gRotatingType);
 }
 HOOK(0x4397A0, RotatingObject_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57BE90) void *gRotatingParams;
+PAD(igb, 57BE90, 57BE94, 0x4);
+BSS(57BE90) uint16_t gRotatingType;
+PAD(igb, 57BE90, 57BE9A, 0x2);

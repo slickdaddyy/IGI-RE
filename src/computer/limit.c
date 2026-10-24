@@ -83,3 +83,9 @@ Vec3d *ComputerLimit_Get(void)
     return NULL;
 }
 HOOK(0x466F60, ComputerLimit_Get);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5BDC5C) void *gLimitParams;
+BSS(5BDC5C) uint16_t gLimitType;
+PAD(igb, 5BDC5C, 5BDC62, 0x6);
+BSS(5BDC5C) ComputerLimit *gLimit;

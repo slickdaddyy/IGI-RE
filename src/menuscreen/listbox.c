@@ -341,3 +341,9 @@ void ListBox_AddItem(const char *text, int id)
     lb->count++;
 }
 HOOK(0x41F2D0, ListBox_AddItem);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53B694) uint16_t gListBoxType INIT(385);
+PAD(igd, 53B694, 53B696, 0x2);
+BSS(57BBD8) ListBox *gListBoxFilling;
+BSS(57BBD8) void *gListBoxParams;

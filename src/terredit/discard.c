@@ -260,3 +260,8 @@ DiscardTerrain *DiscardTerrain_New(void *parent, const Vec3d *pos, int shift)
     return dt;
 }
 HOOK(0x52C610, DiscardTerrain_New);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A8454C) uint16_t gDiscardTerrainType;
+PAD(igb, A8454C, A8454E, 0x2);
+BSS(A8454C) void *gDiscardTerrainParams;

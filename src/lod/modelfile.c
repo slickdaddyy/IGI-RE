@@ -161,3 +161,7 @@ void Model_SetAnimDir(const char *dir)
     strcpy(gModelAnimDir, dir);
 }
 HOOK(0x4CFC00, Model_SetAnimDir);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igb, A4EDF8, A4EDF8, 0x80);
+ALIAS(gModelAnimDir, pad_A4EDF8, 0);

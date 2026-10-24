@@ -108,3 +108,7 @@ void HumanAttach_Close(void)
     TaskType_Free(gHumanAttachType);
 }
 HOOK(0x465BB0, HumanAttach_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5BDC48) uint16_t gHumanAttachType;
+PAD(igb, 5BDC48, 5BDC4A, 0x2);

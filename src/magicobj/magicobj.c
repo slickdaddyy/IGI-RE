@@ -377,3 +377,11 @@ char RigidDynCubeObj_GetEvent4(void)
     return gRigidEvents[4];
 }
 HOOK(0x4C5800, RigidDynCubeObj_GetEvent4);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igd, 547F3C, 547F3C, 0x6) INIT({0xFF, 0xFF, 0xFF, 0xFF, 0xFF});
+ALIAS(gRigidEvents, pad_547F3C, 0);
+DATA(547F3C) uint16_t gRigidType INIT(385);
+BSS(A4433C) int gMagicObjDefCount;
+PAD(igb, B97E00, B97E00, 0xA000);
+ALIAS(gMagicObjDefs, pad_B97E00, 0);

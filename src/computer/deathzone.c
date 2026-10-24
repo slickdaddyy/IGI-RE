@@ -208,3 +208,8 @@ uint8_t DeathZone_GetEvent(void)
     return gDeathZoneEvent;
 }
 HOOK(0x466230, DeathZone_GetEvent);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53F4FC) uint16_t gDeathZoneType INIT(385);
+DATA(53F4FC) uint8_t gDeathZoneEvent INIT(255);
+PAD(igd, 53F4FC, 53F4FF, 0x1);

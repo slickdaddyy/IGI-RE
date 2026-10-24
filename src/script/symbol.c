@@ -326,3 +326,12 @@ void Script_FreeRefBlock(Node *block)
     Mem_Free(block);
 }
 HOOK(0x4BADA0, Script_FreeRefBlock);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A43E88) SymbolTable *gScriptSymbols;
+BSS(A43E88) unsigned int gScriptRefCount;
+BSS(A43E88) List gScriptRefs;
+PAD(igb, A43E88, A43E9C, 0x4);
+BSS(A43E88) List gScriptRefBlocks;
+BSS(A43E88) unsigned int gScriptRefPeak;
+BSS(A43E88) List gScriptRefFree;

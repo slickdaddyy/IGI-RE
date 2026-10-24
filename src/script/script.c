@@ -410,3 +410,18 @@ void Script_Shutdown(void)
     Script_FreeSymbols();
 }
 HOOK(0x4B8CC0, Script_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A43E60) int gScriptUnkA43E60;
+BSS(A43E60) int gScriptUnkA43E64;
+BSS(A43E60) void *gScriptErrorContext;
+BSS(A43E60) int gScriptUnkA43E6C;
+BSS(A43E74) int gScriptUnkA43E74;
+BSS(A96598) int gScriptWarningLevel;
+BSS(A96598) int gScriptWarningSp;
+BSS(A96598) int gScriptBreakEnabled;
+BSS(A96598) int gScriptBreak;
+BSS(A96598) int gScriptError;
+PAD(igb, A96598, A965AC, 0x14);
+PAD(igb, A96598, A965C0, 0x400);
+ALIAS(gScriptWarningStack, pad_A965C0, 0);

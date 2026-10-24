@@ -705,3 +705,11 @@ void Movie_LayoutSubtitle(Movie *m, MovieSubtitle *sub)
     sub->lineCount = n;
 }
 HOOK(0x491420, Movie_LayoutSubtitle);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5C8E40) int gMoviePauseStart;
+PAD(igb, 5C8E40, 5C8E44, 0x4);
+BSS(5C8E40) Movie gMovie;
+PAD(igb, 5C8E40, 5C9F98, 0x4);
+BSS(5C8E40) const char *gDisplayPrefDesc;
+BSS(5C8E40) const char *gDisplayPrefDevice;

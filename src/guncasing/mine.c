@@ -157,3 +157,6 @@ Mine *Mine_New(void *parent, const Vec3d *pos, const Matrix *matrix, const char 
     return m;
 }
 HOOK(0x476040, Mine_New);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5BE3A8) void *gMineList;

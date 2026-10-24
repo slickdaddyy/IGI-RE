@@ -98,3 +98,6 @@ ComputerRes *ComputerRes_Get(void)
     return &gComputerRes;
 }
 HOOK(0x46B4D0, ComputerRes_Get);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5BDDB0) ComputerRes gComputerRes;

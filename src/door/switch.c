@@ -333,3 +333,8 @@ void Switch_Close(void)
     TaskType_Free(gSwitchType);
 }
 HOOK(0x445DC0, Switch_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57C1B4) void *gSwitchParams;
+BSS(57C1B4) uint16_t gSwitchType;
+PAD(igb, 57C1B4, 57C1BA, 0x2);

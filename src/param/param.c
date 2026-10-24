@@ -383,3 +383,25 @@ void ParamEnum_FreeTypes(void)
     ParamType_Free(gParamEnumString256);
 }
 HOOK(0x4F1EA0, ParamEnum_FreeTypes);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54E0E4) uint8_t gParamTableEvent INIT(255);
+DATA(54E0E4) uint8_t gParamChangedEvent INIT(255);
+DATA(54E0E4) char gParamOpArgCount INIT(-1);
+DATA(54E0E4) char gParamOpCopy INIT(-1);
+DATA(54E0E4) char gParamOpPaste INIT(-1);
+DATA(54E0E4) char gParamOpSize INIT(-1);
+DATA(54E0E4) char gParamOpParse INIT(-1);
+DATA(54E0E4) char gParamOpFormat INIT(-1);
+DATA(54E150) int gParamEnumReal32 INIT(-1);
+DATA(54E150) int gParamEnumString16 INIT(-1);
+DATA(54E150) int gParamEnumString32 INIT(-1);
+DATA(54E150) int gParamEnumString256 INIT(-1);
+DATA(54E150) int gParamEnumInt32 INIT(-1);
+PAD(igb, A758C8, A758C8, 0x18);
+ALIAS(gParamEventUsed, pad_A758C8, 0);
+PAD(igb, A758C8, A758E0, 0x1300);
+ALIAS(gParamTypes, pad_A758E0, 0);
+BSS(A758C8) ParamRange gParamRange01;
+BSS(A758C8) ParamRange gParamRange0100;
+BSS(A758C8) ParamRange gParamRange02;

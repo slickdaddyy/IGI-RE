@@ -328,3 +328,7 @@ void View_ScaleSize(View *v, float *out, const float *size, float depth)
     out[1] = v->scaleY * size[1] * k;
 }
 HOOK(0x470F70, View_ScaleSize);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5BE33C) uint16_t gBinocularType;
+PAD(igb, 5BE33C, 5BE33E, 0x2);

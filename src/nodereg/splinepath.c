@@ -592,3 +592,9 @@ void SplinePath_UpdateRotations(SplinePath *p)
     }
 }
 HOOK(0x51ACB0, SplinePath_UpdateRotations);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54ED4C) uint16_t gSplinePathNodeType INIT(385);
+DATA(54ED4C) uint16_t gSplinePathType INIT(385);
+BSS(A8374C) void *gSplinePathNodeParams;
+BSS(A8374C) void *gSplinePathParams;

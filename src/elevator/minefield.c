@@ -167,3 +167,17 @@ void MineField_Close(void)
     TaskType_Free(gMineFieldType);
 }
 HOOK(0x43AD60, MineField_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53C2D0) uint16_t gMineFieldType INIT(385);
+PAD(igd, 53C2D0, 53C2D2, 0x2);
+BSS(57BEB0) RangeI gMineFieldTargetRange;
+BSS(57BEB0) RangeI gMineField9CRange;
+BSS(57BEB0) RangeF gMineField88Range;
+BSS(57BEB0) RangeI gMineField98Range;
+BSS(57BEB0) RangeF gMineField90Range;
+BSS(57BEB0) RangeF gMineFieldDelayRange;
+BSS(57BEB0) RangeF gMineField8CRange;
+BSS(57BEB0) RangeF gMineField94Range;
+PAD(igb, 57BEB0, 57BEF0, 0x4);
+BSS(57BEB0) void *gMineFieldParams;

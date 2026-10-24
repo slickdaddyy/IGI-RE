@@ -88,3 +88,8 @@ void Mine_Create(Mine *m, void *arg)
     m->unk248 = 0;
 }
 HOOK(0x475C10, Mine_Create);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5BE39C) void *gMineParams;
+BSS(5BE39C) uint16_t gMineType;
+PAD(igb, 5BE39C, 5BE3A2, 0x2);

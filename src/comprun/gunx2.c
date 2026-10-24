@@ -100,3 +100,7 @@ void Gunx2_Close(void)
     TaskType_Free(gGunx2Type);
 }
 HOOK(0x46DF00, Gunx2_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53FE68) uint16_t gGunx2Type INIT(385);
+PAD(igd, 53FE68, 53FE6A, 0x2);

@@ -197,3 +197,10 @@ void QVertex_Shutdown(void)
     RenderMode_DeleteMethod(gQVertexStrip);
 }
 HOOK(0x4B59D0, QVertex_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(534AB0) const float gColorScale INIT(0.0078125f);
+BSS(A84A50) Texture *gQVertexTexture;
+ALIAS(gDrawUnkA84A50, gQVertexTexture, 0);
+BSS(A84A58) Palette *gQVertexPalette;
+ALIAS(gDrawUnkA84A58, gQVertexPalette, 0);

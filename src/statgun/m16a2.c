@@ -181,3 +181,12 @@ void M16A2_Close(void)
     TaskType_Free(gM16A2Type);
 }
 HOOK(0x473980, M16A2_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5334A0) float kVelScale INIT(9.259259e-06f);
+ALIAS(kPerFrameHour, kVelScale, 0);
+ALIAS(kRiseScale, kVelScale, 0);
+DATA(534114) float kIconGap INIT(8.0f);
+ALIAS(kEight, kIconGap, 0);
+BSS(5BE36C) uint16_t gM16A2Type;
+PAD(igb, 5BE36C, 5BE36E, 0x2);

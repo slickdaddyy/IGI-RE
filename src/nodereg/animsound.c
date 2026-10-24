@@ -98,3 +98,7 @@ void AnimSound_Close(void)
     TaskType_Free(gAnimSoundType);
 }
 HOOK(0x51B530, AnimSound_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A83764) uint16_t gAnimSoundType;
+PAD(igb, A83764, A83766, 0x2);

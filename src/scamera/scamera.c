@@ -341,3 +341,14 @@ int SCamera_GetDetectMask(void)
     return gSCameraDetectMask;
 }
 HOOK(0x443670, SCamera_GetDetectMask);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57C180) uint16_t gSCameraType;
+PAD(igb, 57C180, 57C182, 0x2);
+BSS(57C180) void *gSCameraParams;
+BSS(57C180) uint16_t gViewConeType;
+PAD(igb, 57C180, 57C18A, 0x2);
+BSS(57C180) void *gLensList;
+BSS(57C180) uint16_t gLensType;
+PAD(igb, 57C180, 57C192, 0x6);
+BSS(57C180) int gSCameraDetectMask;

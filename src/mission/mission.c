@@ -135,3 +135,8 @@ Mission *Mission_Find(int id)
     return NULL;
 }
 HOOK(0x485170, Mission_Find);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igb, 5C1590, 5C1590, 0x746C);
+ALIAS(gMissions, pad_5C1590, 0);
+BSS(5C1590) int gMissionCount;

@@ -420,3 +420,17 @@ uint16_t AIGraph_GetType(void)
     return gAIGraphType;
 }
 HOOK(0x5098A0, AIGraph_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54E83C) uint16_t gAIGraphType INIT(385);
+DATA(54E83C) uint8_t gAIGraphEvent INIT(255);
+PAD(igd, 54E83C, 54E83F, 0x1);
+PAD(igb, A7B2A8, A7B2A8, 0x10);
+ALIAS(gRangeA8, pad_A7B2A8, 0);
+PAD(igb, A7B2A8, A7B2B8, 0x14);
+ALIAS(gRange98, pad_A7B2B8, 0);
+BSS(A7B2A8) void *gAIGraphParams;
+BSS(A7B2A8) int gCriteriaDoor;
+BSS(A7B2A8) int gCriteriaView;
+BSS(A7B2A8) int gCriteriaStair;
+PAD(igb, A7B2A8, A7B2DC, 0x4);

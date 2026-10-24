@@ -355,3 +355,10 @@ ScriptValue *MenuManager_SetEnabled(ScriptValue *out, MenuManager *mm, void *arg
     return Game_ReturnOne(out, 1, 1.0);
 }
 HOOK(0x4179B0, MenuManager_SetEnabled);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(539824) uint16_t gMenuManagerType INIT(385);
+PAD(igd, 539824, 539826, 0x2);
+BSS(57BAE0) void *gMenuManagerParams;
+BSS(BC20A0) int gUnkBC20A0;
+ALIAS(gInputPorts, gUnkBC20A0, 0);

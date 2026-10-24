@@ -786,3 +786,15 @@ void Gun_GetAmmoTextPos(float *x, float *y, Gun *g, Hud *hud)
     *x = *x - Text_GetWidth(hud->text);
 }
 HOOK(0x47AAB0, Gun_GetAmmoTextPos);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53352C) const float kThree INIT(3.0f);
+ALIAS(kBrakeTail, kThree, 0);
+DATA(533588) const float kTwo INIT(2.0f);
+DATA(5335C8) const float kFour INIT(4.0f);
+DATA(533730) const float kOff1Z INIT(40.96f);
+ALIAS(kGripLimit, kOff1Z, 0);
+DATA(533924) const float kHudBottom INIT(0.8958333f);
+DATA(53414C) const float kOff0Y INIT(389.12f);
+DATA(53414C) const float kOff0X INIT(143.36f);
+DATA(53414C) const float kHudRight INIT(0.984375f);

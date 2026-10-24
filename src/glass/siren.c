@@ -172,3 +172,8 @@ void Siren_Close(void)
     QTaskList_Free(gSirenParams);
 }
 HOOK(0x4497D0, Siren_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57C214) uint16_t gSirenType;
+PAD(igb, 57C214, 57C216, 0x6);
+BSS(57C214) void *gSirenParams;

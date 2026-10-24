@@ -251,3 +251,9 @@ int Anim_Exists(BoneObj *obj, int bone, int id)
     return set->byId[id] != NULL;
 }
 HOOK(0x4D74F0, Anim_Exists);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igb, A538F0, A538F0, 0xA00);
+ALIAS(gAnimSets, pad_A538F0, 0);
+ALIAS(gBoneSlots, pad_A538F0, 0);
+BSS(A54678) int gBoneSmoothAnims;

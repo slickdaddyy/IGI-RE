@@ -160,3 +160,12 @@ void GraphNode_Close(void)
     TaskType_Free(gGraphNodeType);
 }
 HOOK(0x518900, GraphNode_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54EC9C) uint16_t gGraphNodeType INIT(385);
+PAD(igd, 54EC9C, 54EC9E, 0x2);
+BSS(A800F0) void *gGraphNodeModel;
+PAD(igb, A800F0, A800F4, 0x4);
+PAD(igb, A800F0, A800F8, 0x104);
+ALIAS(gNodeCriteria, pad_A800F8, 0);
+BSS(A800F0) void *gGraphNodeParams;

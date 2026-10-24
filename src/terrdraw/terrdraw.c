@@ -153,3 +153,12 @@ void TerrDraw_Restore(void)
     create_vertex_buffer();
 }
 HOOK(0x5166F0, TerrDraw_Restore);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5470B4) DWORD gFogEnable INIT(1);
+BSS(A7E068) DWORD gTerrainFogColorD3D;
+PAD(igb, A7E080, A7E080, 0x17DC);
+ALIAS(gChunkHash, pad_A7E080, 0);
+PAD(igb, A7E080, A7F85C, 0x4);
+ALIAS(gChunkHashEnd, pad_A7F85C, 0);
+BSS(A7F890) IDirect3DVertexBuffer7 *gTerrainVB;

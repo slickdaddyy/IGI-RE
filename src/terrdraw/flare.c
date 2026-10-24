@@ -140,3 +140,9 @@ void LensFlare_Draw(Flare *f, const float *pos, const float *color)
     } while (f);
 }
 HOOK(0x5182B0, LensFlare_Draw);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A800BC) int gViewSlotCurrent;
+PAD(igb, A800BC, A800C0, 0x10);
+ALIAS(gViewSlotUsed, pad_A800C0, 0);
+BSS(A800BC) TerrPool gFlarePool;

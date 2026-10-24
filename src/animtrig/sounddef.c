@@ -493,3 +493,11 @@ double *SoundSysMicrophone_GetPos(SoundSysMicrophone *m)
     return m->pos;
 }
 HOOK(0x4EBDE0, SoundSysMicrophone_GetPos);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54DB48) uint16_t gSoundDefGroupType INIT(385);
+DATA(54DB48) uint16_t gSoundDefGroupType2 INIT(385);
+PAD(igd, 54DB48, 54DB4C, 0x1C) INIT({0x53, 0x6F, 0x75, 0x6E, 0x64, 0x44, 0x65, 0x66, 0x47, 0x72, 0x6F, 0x75, 0x70, 0x00, 0x00, 0x00, 0x2C, 0x0D, 0x0A, 0x00, 0x25, 0x73, 0x28, 0x22, 0x25, 0x73, 0x22});
+DATA(54DB48) uint16_t gSoundSysMicrophoneType INIT(385);
+DATA(54DB48) uint8_t gSoundSysMicrophonePlayEvent INIT(255);
+PAD(igd, 54DB48, 54DB6B, 0x1);

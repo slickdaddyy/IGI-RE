@@ -90,3 +90,7 @@ void Medipack_Close(void)
     TaskType_Free(gMedipackType);
 }
 HOOK(0x470600, Medipack_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5BE334) uint16_t gMedipackType;
+PAD(igb, 5BE334, 5BE336, 0x2);

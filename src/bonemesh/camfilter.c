@@ -550,3 +550,23 @@ void LineFilter_Render(LineFilter *t)
         DEV_DrawPrimitiveVB(gDevice, 2, gFilterVB, first, count, 0);
 }
 HOOK(0x4A2CD0, LineFilter_Render);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(543D4C) uint16_t gLineFilterType INIT(385);
+DATA(543D4C) uint16_t gWideScreenFilterType INIT(385);
+DATA(543D4C) uint16_t gBandFilterType INIT(385);
+PAD(igd, 543D4C, 543D52, 0x2);
+DATA(543D4C) int gBandCamera INIT(1);
+DATA(543D4C) uint16_t gHandiCamFilterType INIT(385);
+PAD(igd, 543D4C, 543D5A, 0x2);
+PAD(igb, 935BF0, 935BF0, 0xC);
+ALIAS(gFilterRandom, pad_935BF0, 0);
+BSS(935C04) const char *gBandFont;
+PAD(igb, 935C10, 935C10, 0x400);
+ALIAS(gBandPixels, pad_935C10, 0);
+BSS(936020) const char *gBatterySprite;
+BSS(936020) const char *gTimecodeFont;
+BSS(936020) int gHandiCamSpriteX;
+BSS(936020) int gHandiCamSpriteY;
+ALIAS(gBatteryX, gHandiCamSpriteX, 0);
+ALIAS(gBatteryY, gHandiCamSpriteY, 0);

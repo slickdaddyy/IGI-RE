@@ -54,3 +54,8 @@ void ShadowTask_Close(void)
     gShadowTaskType = TASK_NO_TYPE;
 }
 HOOK(0x519820, ShadowTask_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54ED3C) uint16_t gShadowTaskType INIT(385);
+PAD(igd, 54ED3C, 54ED3E, 0x2);
+BSS(A83744) void *gShadowTaskParams;

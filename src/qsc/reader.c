@@ -122,3 +122,6 @@ int Reader_Refill(Reader *r)
     return r->refill(r);
 }
 HOOK(0x4BF1E0, Reader_Refill);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A969C4) int gScriptLineSize;

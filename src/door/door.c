@@ -727,3 +727,16 @@ int Door_GetState(Door *d)
     return 3 - (d->opening != 0);
 }
 HOOK(0x447D70, Door_GetState);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(533498) double kUseMaxY INIT(4096.0);
+ALIAS(kUnit, kUseMaxY, 0);
+DATA(5338A8) double kUseMaxX INIT(1843.2);
+DATA(5338A8) double kUseMin INIT(-4096.0);
+BSS(57C1C0) uint16_t gDoorType;
+PAD(igb, 57C1C0, 57C1C2, 0x6);
+BSS(57C1C0) RangeF gDoorSlideRange;
+BSS(57C1C0) RangeF gDoorTimeRange;
+BSS(57C1C0) RangeF gDoorAngleRange;
+BSS(57C1C0) RangeF gDoorUnitRange;
+BSS(57C1C0) void *gDoorParams;

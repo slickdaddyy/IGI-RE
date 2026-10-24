@@ -693,3 +693,16 @@ void SCameraLens_WorldAdd(SCameraLens *l, void **arg)
     EACH_CHILD(&l->o.task, World_GetEvent0(), arg);
 }
 HOOK(0x4432F0, SCameraLens_WorldAdd);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(533514) float kTrackMax INIT(0.01308997f);
+DATA(533678) float kThirtieth INIT(0.033333335f);
+DATA(533678) float kDegToRad INIT(0.017453292f);
+ALIAS(kBurnScale, kThirtieth, 0);
+ALIAS(kFrame, kThirtieth, 0);
+DATA(533874) float kPitchRest INIT(-1.3089969f);
+DATA(533874) float kTrackMin INIT(-0.01308997f);
+DATA(533880) double kGlassStep INIT(20.48);
+DATA(533880) float kTwelfth INIT(0.083333336f);
+PAD(igd, 533880, 53388C, 0x4);
+BSS(57C17C) char *gAlarmLightSprite;

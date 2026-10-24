@@ -385,3 +385,13 @@ void Flow_CheckCD(void)
         ;
 }
 HOOK(0x402F50, Flow_CheckCD);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(567C78) int gFlowPauseStart;
+BSS(567C78) uint16_t gFlowType;
+PAD(igb, 567C78, 567C7E, 0x2);
+BSS(567C78) int gFlowPauseDepth;
+PAD(igb, 567C78, 567C84, 0x8);
+BSS(567C78) Flow *gFlow;
+BSS(C28C5C) int gUnkC28C5C;
+ALIAS(gTimeMs, gUnkC28C5C, 0);

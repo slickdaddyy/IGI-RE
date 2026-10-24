@@ -1314,3 +1314,23 @@ int Portal_GetScreenRect(Sector *s, int lod, int k, float *clipMin, float *clipM
     return 1;
 }
 HOOK(0x4DD7F0, Portal_GetScreenRect);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(534B2C) const float kNearZ INIT(0.04096f);
+DATA(534B2C) const float kPortalDist2 INIT(167772.17f);
+DATA(548694) uint16_t gSectorType INIT(385);
+DATA(548694) uint16_t gSectorObjectType INIT(385);
+DATA(548694) uint16_t gSectorInteriorObjectType INIT(385);
+PAD(igd, 548694, 54869A, 0x2);
+BSS(A5E310) int gSectorFogCount;
+BSS(A5E330) int *gSectorFog;
+BSS(A5E330) int gSectorLightCount;
+BSS(A5E330) Pool gVisSectors;
+BSS(A5E330) int gPortalClipDepth;
+BSS(A5E330) SectorObject *gCurrentSectorObj;
+BSS(A5E330) int gVisFrame;
+BSS(A5E330) int *gSectorLights;
+PAD(igb, B12B78, B12B78, 0x8);
+ALIAS(gQCubeOutsideMin, pad_B12B78, 0);
+PAD(igb, B16C60, B16C60, 0x8);
+ALIAS(gQCubeOutsideMax, pad_B16C60, 0);

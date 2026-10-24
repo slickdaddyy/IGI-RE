@@ -260,3 +260,9 @@ void AlarmLightReflector_DrawFlare(Reflector *t, int point)
                        w, 0.5f, 0, 0x1040008, 0);
 }
 HOOK(0x439F10, AlarmLightReflector_DrawFlare);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57BE9C) void *gAlarmLightParams;
+BSS(57BE9C) uint16_t gAlarmLightReflectorType;
+BSS(57BE9C) uint16_t gAlarmLightType;
+BSS(57BE9C) char *gAlarmSprite;

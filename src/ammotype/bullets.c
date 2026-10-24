@@ -405,3 +405,10 @@ trail:
     }
 }
 HOOK(0x47B750, GunShot_MoveBullets);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(533468) const float kHalfPi INIT(1.5707964f);
+DATA(534148) const float kSurfaceGap INIT(20.48f);
+ALIAS(kOff0Z, kSurfaceGap, 0);
+DATA(540838) int gImpactSoundTime INIT(-1);
+BSS(5BE3D8) int gImpactSoundDelay;

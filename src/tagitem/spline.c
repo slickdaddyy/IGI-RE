@@ -846,3 +846,15 @@ void SplineObjWaypoint_Changed(Waypoint *w)
     SplineObjWaypoint_UpdateAttach(w);
 }
 HOOK(0x500EF0, SplineObjWaypoint_Changed);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(533400) const float kPi INIT(3.1415927f);
+DATA(533714) const float kSmallAngle INIT(0.01f);
+ALIAS(kHundredth, kSmallAngle, 0);
+DATA(534BA0) const double kTiny INIT(0.001);
+DATA(534BA0) const float kMinusTwo INIT(-2.0f);
+PAD_CONST(igd, 534BA0, 534BAC, 0x4);
+DATA(54E5D4) const float kDefaultSegLength INIT(141314.9f);
+BSS(A7A620) uint16_t gWaypointType;
+PAD(igb, A7A620, A7A622, 0x2);
+ALIAS(gSplineObjWaypointType, gWaypointType, 0);

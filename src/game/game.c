@@ -1118,3 +1118,30 @@ int Mission_GetFirst(void)
     return 1;
 }
 HOOK(0x417090, Mission_GetFirst);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igd, 539540, 539540, 0x10) INIT({0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF});
+ALIAS(gGameEvents, pad_539540, 0);
+PAD_CONST(igd, 539550, 539550, 0x8) INIT({0x1B, 0x2D, 0x44, 0x54, 0xFB, 0x21, 0x09, 0x40});
+ALIAS(gMathPi, pad_539550, 0);
+PAD_CONST(igd, 539550, 539558, 0x8) INIT({0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xB0, 0x40});
+ALIAS(gWorldMeter, pad_539558, 0);
+DATA(539560) int gMission INIT(1);
+BSS(57B1A0) signed char gRaining;
+PAD(igb, 57B1A0, 57B1A1, 0x1);
+BSS(57B1A0) uint16_t gGameType;
+PAD(igb, 57B1A0, 57B1A4, 0x4);
+PAD(igb, 57B1A0, 57B1A8, 0x3C0);
+ALIAS(gGameSprites, pad_57B1A8, 0);
+PAD(igb, 57B1A0, 57B568, 0x80);
+ALIAS(gMissionPath, pad_57B568, 0);
+PAD(igb, 57B1A0, 57B5E8, 0x4B4);
+ALIAS(gGameTextures, pad_57B5E8, 0);
+PAD(igb, 57B1A0, 57BA9C, 0x14);
+ALIAS(gGameTaskLists, pad_57BA9C, 0);
+BSS(57B1A0) QTaskList *gCutsceneList;
+BSS(57B1A0) int gGameTextureCount;
+BSS(57B1A0) int gGameSpriteCount;
+BSS(57B1A0) Game *gGame;
+BSS(57B1A0) char gMusicEnabled;
+PAD(igb, 57B1A0, 57BAC1, 0x3);

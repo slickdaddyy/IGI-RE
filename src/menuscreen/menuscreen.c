@@ -241,3 +241,10 @@ void MenuScreen_DrawFrame(MenuScreen *ms)
                     1.0f, 0x80000, 0);
 }
 HOOK(0x421CD0, MenuScreen_DrawFrame);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53B800) uint16_t gMenuScreenType INIT(385);
+PAD(igd, 53B800, 53B802, 0x2);
+BSS(57BC04) void *gMenuScreenParams;
+PAD(igb, 57BC04, 57BC08, 0x4);
+BSS(57BC04) int gLogoOffset;

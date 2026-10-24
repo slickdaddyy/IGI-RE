@@ -881,3 +881,14 @@ void D3DQVertex_ClipRect(QVertexStrip *s)
     QVertex_ClipTriangle(c[1], c[2], c[3], gNearPlane, D3DQVertex_EmitTriangle, &l);
 }
 HOOK(0x50E7F0, D3DQVertex_ClipRect);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A7CED8) int gQVTextureStatesIndex;
+PAD(igb, A7CED8, A7CEDC, 0xB18);
+ALIAS(gQVStripBuffer, pad_A7CEDC, 0);
+BSS(A7CED8) int gQVRenderStatesIndex;
+BSS(A7CED8) int gQVBlendStatesIndex;
+PAD(igb, A7CED8, A7D9FC, 0x4);
+BSS(A7CED8) unsigned int gQVLastFlags;
+BSS(A7CED8) QTexture *gQVLastTexture;
+BSS(A7CED8) int gClipDepth;

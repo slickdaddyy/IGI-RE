@@ -897,3 +897,18 @@ void RainObj_AllocDrops(RainObj *r)
     gRainMemory += RAIN_DROPS * sizeof(RainDrop);
 }
 HOOK(0x4F8040, RainObj_AllocDrops);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54E2CC) uint16_t gRainObjType INIT(385);
+PAD(igd, 54E2CC, 54E2CE, 0x2);
+BSS(A76C88) int gRainVisibleCubes;
+BSS(A76C88) int gRainLineId;
+PAD(igb, A76C88, A76C90, 0xC);
+ALIAS(gRainRandom, pad_A76C90, 0);
+BSS(A76C88) int gRainMemory;
+PAD(igb, A76C88, A76CA0, 0x4);
+PAD(igb, A76C88, A76CA4, 0x20);
+ALIAS(gRainObjs, pad_A76CA4, 0);
+BSS(A76C88) RainCallback gRainCallback;
+PAD(igb, A76C88, A76CC8, 0x4);
+BSS(A76C88) void *gRainParams;

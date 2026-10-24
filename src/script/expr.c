@@ -911,3 +911,7 @@ Expr *Expr_New(int type, void *data, int line, Expr *prev)
         ;
 }
 HOOK(0x4BA880, Expr_New);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A43E80) int gExprInTernary;
+BSS(A969C0) int gScriptMaxArgs;

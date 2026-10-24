@@ -352,3 +352,10 @@ void QvmAsm_Init(void)
     QvmAsm_RegisterOps();
 }
 HOOK(0x4BBC80, QvmAsm_Init);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A43EC4) int gQvmAsmUnkA43EC4;
+BSS(A43EC4) void *gQvmAsmLogData;
+BSS(A43EC4) int gQvmAsmUnkA43ECC;
+BSS(A43EC4) int gAsmErrorCount;
+BSS(A43EC4) QvmAsmCallback gQvmAsmLogFn;

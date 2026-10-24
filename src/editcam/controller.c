@@ -68,3 +68,7 @@ void Controller_Update(Controller *c, void *arg)
     }
 }
 HOOK(0x507EC0, Controller_Update);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A7B254) uint8_t gControllerEvent;
+PAD(igb, A7B254, A7B255, 0x3);

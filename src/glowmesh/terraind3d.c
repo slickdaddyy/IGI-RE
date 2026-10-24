@@ -640,3 +640,27 @@ void TerrainMesh_DrawD3D(void)
     }
 }
 HOOK(0x512C30, TerrainMesh_DrawD3D);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A7E06C) int gTerrMirror;
+BSS(A7E074) float gClipZBias;
+BSS(A7E074) int gTerrVertCount;
+BSS(A7F860) D3DVIEWPORT7 gTerrViewport;
+BSS(A7F860) TdPool gTerrainChunkPool;
+BSS(A7F894) float gClipZScale;
+PAD(igb, A7F894, A7F898, 0x4);
+BSS(A7F894) TdTLVertex *gTerrVBData;
+BSS(BCAD78) DWORD gUnkBCAD78;
+ALIAS(gD3DUnkBCAD78, gUnkBCAD78, 0);
+ALIAS(gD3DZEnable, gUnkBCAD78, 0);
+BSS(BCAD8C) float gZFar;
+ALIAS(gD3DViewMaxZ, gZFar, 0);
+ALIAS(gLayer1MaxZ, gZFar, 0);
+BSS(BCADA0) float gUnkBCADA0;
+ALIAS(gD3DMinZ, gUnkBCADA0, 0);
+BSS(BCADB4) float gZNear;
+ALIAS(gD3DViewMinZ, gZNear, 0);
+ALIAS(gLayer1MinZ, gZNear, 0);
+BSS(BCADC8) float gUnkBCADC8;
+ALIAS(gD3DMaxZ, gUnkBCADC8, 0);
+BSS(C28FB8) int gUnkC28FB8;

@@ -299,3 +299,7 @@ void Codec_Register(int index, Codec *codec)
     gCodecs[index] = codec;
 }
 HOOK(0x530950, Codec_Register);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igb, A845D8, A845D8, 0x8);
+ALIAS(gCodecs, pad_A845D8, 0);

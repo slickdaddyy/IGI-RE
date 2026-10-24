@@ -816,3 +816,24 @@ void AddAmmo_Close(void)
     TaskType_Free(gAddAmmoType);
 }
 HOOK(0x46DCE0, AddAmmo_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53FDE0) uint8_t gGunPickupEvent INIT(255);
+PAD(igd, 53FDE0, 53FDE1, 0x3);
+DATA(53FE28) uint8_t gAmmoPickupEvent INIT(255);
+PAD(igd, 53FE28, 53FE29, 0x3);
+BSS(5BE2D0) uint16_t gGenericPickupType;
+PAD(igb, 5BE2D0, 5BE2D2, 0x2);
+BSS(5BE2D0) void *gGenericPickupParams;
+PAD(igb, 5BE2D0, 5BE2D8, 0x8);
+BSS(5BE2D0) uint16_t gGunPickupType;
+PAD(igb, 5BE2D0, 5BE2E2, 0x16);
+BSS(5BE2D0) void *gGunPickupParams;
+PAD(igb, 5BE2D0, 5BE2FC, 0x4);
+BSS(5BE2D0) uint16_t gAmmoPickupType;
+PAD(igb, 5BE2D0, 5BE302, 0x2);
+BSS(5BE2D0) void *gAmmoPickupParams;
+PAD(igb, 5BE2D0, 5BE308, 0x4);
+BSS(5BE2D0) uint16_t gAddAmmoType;
+PAD(igb, 5BE2D0, 5BE30E, 0x2);
+BSS(5BE2D0) void *gAddAmmoParams;

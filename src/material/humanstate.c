@@ -999,3 +999,6 @@ void HumanState_Enter21(HumanStateMachine *sm, HumanPlayer *p)
     sm->update = HumanPlayer_RunForwardLeftUpdate;
 }
 HOOK(0x40AE70, HumanState_Enter21);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(56E1F4) float gHumanAirSpeed;

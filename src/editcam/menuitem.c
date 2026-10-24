@@ -256,3 +256,9 @@ uint16_t MenuItem_GetType(void)
     return gMenuItemType;
 }
 HOOK(0x505C80, MenuItem_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54E71C) uint8_t gMenuItemCommitEvent INIT(255);
+DATA(54E71C) uint8_t gMenuItemSelectEvent INIT(255);
+DATA(54E71C) uint8_t gMenuItemFindEvent INIT(255);
+PAD(igd, 54E71C, 54E71F, 0x1);

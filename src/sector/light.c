@@ -177,3 +177,34 @@ void Light_Remove(Light *l)
     pool_release(&gLightPool, l);
 }
 HOOK(0x4DAAF0, Light_Remove);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(534B1C) const float kFogBias INIT(130.0f);
+DATA(534B1C) const float kFogScale INIT(1.5258789e-05f);
+DATA(534B1C) const float kFovBase INIT(0.17f);
+DATA(534B1C) const float kFovScale INIT(0.83f);
+PAD(igb, B01A00, B01A00, 0x23F0);
+ALIAS(gLightFrame, pad_B01A00, 0);
+BSS(B01A00) int gLightStackCount;
+PAD(igb, B01A00, B03DF4, 0xC);
+PAD(igb, B01A00, B03E00, 0x190);
+ALIAS(gPointLights, pad_B03E00, 0);
+BSS(B01A00) int gLightNest;
+PAD(igb, B01A00, B03F94, 0xC);
+PAD(igb, B01A00, B03FA0, 0x230);
+ALIAS(gSpotLights, pad_B03FA0, 0);
+BSS(B01A00) int gLightFrameUsed;
+PAD(igb, B01A00, B041D4, 0xC);
+BSS(B01A00) Pool gLightPool;
+PAD(igb, B01A00, B041F8, 0x8);
+PAD(igb, B01A00, B04200, 0x5C);
+ALIAS(gLightStack, pad_B04200, 0);
+BSS(B01A00) int gSpotCount;
+BSS(B01A00) int gPointCount;
+PAD(igb, B01A00, B04264, 0x4);
+ALIAS(gLightBase, gLightPool, 0);
+ALIAS(gLightCount, gLightPool, 8);
+ALIAS(gLightData, gLightPool, 0);
+ALIAS(gLightIndex, gLightPool, 4);
+ALIAS(gLightStride, gLightPool, 16);
+ALIAS(gLights, gLightPool, 0);

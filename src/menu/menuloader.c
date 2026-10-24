@@ -94,3 +94,10 @@ void MenuLoader_Shutdown(void)
     gMenuLoaderType = 0x181;
 }
 HOOK(0x4192B0, MenuLoader_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(539ADC) uint16_t gMenuLoaderType INIT(385);
+PAD(igd, 539ADC, 539ADE, 0x2);
+BSS(57BAF4) void *gMenuLoaderParams;
+PAD(igb, 57BAF4, 57BAF8, 0x88);
+ALIAS(gMenuLoaderPath, pad_57BAF8, 0);

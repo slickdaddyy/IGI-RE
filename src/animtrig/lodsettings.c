@@ -234,3 +234,15 @@ uint16_t ModelLODSettingsContainer_GetType(void)
     return gModelLODSettingsContainerType;
 }
 HOOK(0x4EDCB0, ModelLODSettingsContainer_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54DBDC) uint16_t gLODSettingsType INIT(385);
+DATA(54DBDC) uint16_t gModelLODSettingsType INIT(385);
+DATA(54DBDC) uint16_t gModelLODSettingsContainerType INIT(385);
+PAD(igd, 54DBDC, 54DBE2, 0x2);
+BSS(A5EFA8) ParamRange gModelLodDistRange;
+BSS(A5EFA8) ParamRange gLodBlendRange;
+BSS(A5EFA8) ParamRange gLodCullRange;
+BSS(A5EFA8) ParamRange gLodDetailRange;
+BSS(A5EFA8) void *gLODSettingsParams;
+BSS(A5EFA8) void *gModelLODSettingsParams;

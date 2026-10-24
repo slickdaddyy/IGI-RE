@@ -348,3 +348,15 @@ void Elevator_MoveChildren(Elevator *e)
     CALL_CHILDREN(&e->obj.task, RigidDynCubeObj_GetEvent4(), &arg);
 }
 HOOK(0x43D8C0, Elevator_MoveChildren);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igb, 57BF90, 57BF90, 0x140);
+ALIAS(gElevatorFloorNames, pad_57BF90, 0);
+BSS(57BF90) RangeF gElevatorMaxSpeedRange;
+BSS(57BF90) RangeF gElevatorAccelRange;
+BSS(57BF90) void *gElevatorParams;
+PAD(igb, 57BF90, 57C0E4, 0x4);
+BSS(57BF90) RangeF gElevator188Range;
+ALIAS(gElevatorLength, gElevator188Range, 4);
+BSS(57C108) uint16_t gElevatorType;
+PAD(igb, 57C108, 57C10A, 0x2);

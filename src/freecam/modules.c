@@ -488,3 +488,8 @@ void Core_Shutdown(void)
     Debug_Log();
 }
 HOOK(0x532490, Core_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A845E0) uint8_t gEventA845E0;
+BSS(A845E0) uint8_t gEventA845E1;
+PAD(igb, A845E0, A845E2, 0x2);

@@ -301,3 +301,15 @@ void Fence_Close(void)
     QTaskList_Free(gFenceParams);
 }
 HOOK(0x440250, Fence_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(533838) double kSparkBase INIT(1.5);
+DATA(533838) float kSparkScale INIT(0.00012207031f);
+PAD(igd, 533838, 533844, 0x4);
+DATA(533838) double kShockHeight INIT(12288.0);
+DATA(533838) double kShockSide INIT(1228.8);
+DATA(533838) float kUseAngle INIT(1.0471976f);
+PAD(igd, 533838, 53385C, 0x4);
+BSS(57C150) void *gFenceParams;
+BSS(57C150) uint16_t gFenceType;
+PAD(igb, 57C150, 57C156, 0x2);

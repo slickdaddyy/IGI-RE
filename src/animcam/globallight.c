@@ -440,3 +440,42 @@ void GlobalLight_SetTime(float time)
     }
 }
 HOOK(0x528460, GlobalLight_SetTime);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igd, 534CA0, 534CA0, 0x18) INIT({0xCD, 0xCC, 0x4C, 0x3D, 0x00, 0x00, 0x80, 0x40, 0x6F, 0x12, 0x03, 0x3A, 0x00, 0x00, 0x00, 0x00, 0x7B, 0x14, 0xAE, 0x47, 0xE1, 0x7A, 0x44, 0x40});
+ALIAS(gTexGammaRange, pad_534CA0, 0);
+PAD(igb, A83D60, A83D60, 0xA0);
+ALIAS(gLinkNames, pad_A83D60, 0);
+PAD(igb, A83D60, A83E00, 0xA0);
+ALIAS(gAmbientNames, pad_A83E00, 0);
+BSS(A83D60) float gKeyframeTime;
+PAD(igb, A83D60, A83EA4, 0xA0);
+ALIAS(gScaleRNames, pad_A83EA4, 0);
+BSS(A83D60) void *gKeyframeParams;
+PAD(igb, A83D60, A83F48, 0xA0);
+ALIAS(gScaleGNames, pad_A83F48, 0);
+PAD(igb, A83D60, A83FE8, 0xA0);
+ALIAS(gFogDensityNames, pad_A83FE8, 0);
+BSS(A83D60) void *gGlobalLightParams;
+BSS(A83D60) uint16_t gGlobalLightType;
+PAD(igb, A83D60, A8408E, 0x2);
+PAD(igb, A83D60, A84090, 0xA0);
+ALIAS(gScaleBNames, pad_A84090, 0);
+PAD(igb, A83D60, A84130, 0x1A4);
+ALIAS(gKeyframeTemplate, pad_A84130, 0);
+PAD(igb, A83D60, A842D4, 0xA0);
+ALIAS(gFogNames, pad_A842D4, 0);
+BSS(A83D60) uint16_t gKeyframeType;
+PAD(igb, A83D60, A84376, 0x6);
+BSS(A83D60) GlobalLight *gCurrentGlobalLight;
+BSS(A83D60) GlobalLightKeyframe *gChangedKeyframe;
+PAD(igb, B46D00, B46D00, 0x4);
+ALIAS(gFogDensities, pad_B46D00, 0);
+PAD(igb, B816C0, B816C0, 0x3C);
+ALIAS(gColorMatrix0, pad_B816C0, 0);
+PAD(igb, B81720, B81720, 0x40);
+ALIAS(gColorMatrix1, pad_B81720, 0);
+PAD(igb, B81720, B81760, 0x3C);
+ALIAS(gColorMatrix2, pad_B81760, 0);
+PAD(igb, B818E0, B818E0, 0xC);
+ALIAS(gFogColors, pad_B818E0, 0);

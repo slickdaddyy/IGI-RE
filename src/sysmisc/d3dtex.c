@@ -852,3 +852,23 @@ void D3DTex_Shutdown(void)
     Pool_Free(&gTexPool);
 }
 HOOK(0x50BD70, D3DTex_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5CA124) int gTexturesCreated;
+BSS(5CA124) int gTextureBytes;
+BSS(A7C128) Pool gTexPool;
+PAD(igb, A7C128, A7C140, 0xD6C);
+ALIAS(gTexFormats, pad_A7C140, 0);
+BSS(A7C128) int gActiveTMU;
+BSS(A7C128) int gTexLOD;
+BSS(A7C128) int gTexCount;
+BSS(A7C128) int gTexBytes;
+BSS(A7C128) int gTexFormatCount;
+BSS(A7C128) LONGLONG gTexReleaseTime;
+BSS(A84A40) int gDeAllocPaletteId;
+BSS(A84A40) int gDownloadPaletteId;
+BSS(A84A40) int gAllocPaletteId;
+ALIAS(gAllocPalette, gAllocPaletteId, 0);
+ALIAS(gDeAllocPalette, gDeAllocPaletteId, 0);
+ALIAS(gDownloadPalette, gDownloadPaletteId, 0);
+BSS(BCAC00) D3DDEVICEDESC7 gD3DDeviceDesc;

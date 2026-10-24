@@ -116,3 +116,8 @@ uint16_t EditRigidObjAttachedToBone_GetType(void)
     return gAttachedToBoneType;
 }
 HOOK(0x504DB0, EditRigidObjAttachedToBone_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(BA8080) void *gAttachedToBoneParams;
+BSS(BA8080) uint16_t gAttachedToBoneType;
+PAD(igb, BA8080, BA8086, 0x2);

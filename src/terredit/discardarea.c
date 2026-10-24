@@ -242,3 +242,8 @@ void DiscardTerrainArea_Shutdown(void)
     TaskType_Free(gDiscardAreaType);
 }
 HOOK(0x52BEE0, DiscardTerrainArea_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A84540) uint16_t gDiscardAreaType;
+PAD(igb, A84540, A84542, 0x2);
+BSS(A84540) void *gDiscardAreaParams;

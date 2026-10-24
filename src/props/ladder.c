@@ -207,3 +207,11 @@ void Ladder_Close(void)
     TaskType_Free(gLadderType);
 }
 HOOK(0x440700, Ladder_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(533440) double kReachMax INIT(2867.2);
+DATA(533528) float kClimbTime INIT(6.0f);
+DATA(533860) double kRungScale INIT(0.0008138020833333334);
+DATA(533860) double kReachMin INIT(-2867.2);
+BSS(57C15C) uint16_t gLadderType;
+PAD(igb, 57C15C, 57C15E, 0x2);

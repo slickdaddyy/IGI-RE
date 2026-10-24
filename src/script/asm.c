@@ -225,3 +225,7 @@ int Asm_NextToken(void *lex, void *token)
     return 1;
 }
 HOOK(0x4BB240, Asm_NextToken);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A43EC0) void *gAsmErrorContext;
+BSS(A43ED8) AsmErrorHandler gAsmErrorHandler;

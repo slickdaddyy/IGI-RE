@@ -50,3 +50,7 @@ uint16_t Container_GetType(void)
     return gContainerType;
 }
 HOOK(0x505D40, Container_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A7A7BC) uint16_t gContainerType;
+PAD(igb, A7A7BC, A7A7BE, 0x2);

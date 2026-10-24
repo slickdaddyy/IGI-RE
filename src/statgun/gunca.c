@@ -161,3 +161,8 @@ void GunCA_Close(void)
     TaskType_Free(gGunCAClipType);
 }
 HOOK(0x472A50, GunCA_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(534130) float gGunCAMagic INIT(113.0f);
+DATA(5402FC) uint16_t gGunCAClipType INIT(385);
+DATA(5402FC) uint16_t gGunCABarrelType INIT(385);

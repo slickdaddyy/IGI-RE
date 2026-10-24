@@ -116,3 +116,7 @@ void SymbolTable_Remove(SymbolTable *table, const char *name)
         ;
 }
 HOOK(0x4C0460, SymbolTable_Remove);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A44314) SymbolFilter gSymbolFilter;
+BSS(A44314) void *gSymbolFilterData;

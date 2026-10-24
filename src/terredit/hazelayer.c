@@ -116,3 +116,8 @@ void EditHazeLayer_Shutdown(void)
     TaskType_Free(gEditHazeLayerType);
 }
 HOOK(0x52B300, EditHazeLayer_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A84398) uint16_t gEditHazeLayerType;
+PAD(igb, A84398, A8439A, 0x2);
+BSS(A84398) void *gEditHazeLayerParams;

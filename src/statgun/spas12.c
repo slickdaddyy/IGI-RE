@@ -94,3 +94,7 @@ void Spas12_Close(void)
     TaskType_Free(gSpas12Type);
 }
 HOOK(0x472CF0, Spas12_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5BE350) uint16_t gSpas12Type;
+PAD(igb, 5BE350, 5BE352, 0x2);

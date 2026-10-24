@@ -212,3 +212,8 @@ void ToggleBox_Forward918(ToggleBox *tb)
     CALL_CHILDREN(&tb->w.task, MenuWindow_GetEvent918);
 }
 HOOK(0x41E500, ToggleBox_Forward918);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53B674) uint16_t gToggleBoxType INIT(385);
+PAD(igd, 53B674, 53B676, 0x2);
+BSS(57BBD0) void *gToggleBoxParams;

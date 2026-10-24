@@ -812,3 +812,30 @@ void Missile_CopyParts(Missile *m)
     ((float *)m->parts[3])[5] = -((float *)m->parts[3])[5];
 }
 HOOK(0x429EF0, Missile_CopyParts);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53346C) float kThrustScale INIT(44.600887f);
+ALIAS(kCasingGravity, kThrustScale, 0);
+ALIAS(kThrust, kThrustScale, 0);
+DATA(533540) double kAntitankUp INIT(102400.0);
+DATA(533540) double kForward INIT(4096000.0);
+DATA(533598) float kSmokeMin INIT(0.15f);
+DATA(533680) float kSpeedScale INIT(136.53334f);
+DATA(533698) float kSmokeSpin INIT(0.037699115f);
+DATA(533698) float kSmokeFade INIT(0.6f);
+DATA(533698) float kSmokeLife INIT(3.0f);
+ALIAS(kGroundThrust, kSmokeFade, 0);
+ALIAS(kPierceChance, kSmokeFade, 0);
+ALIAS(kSixTenths, kSmokeFade, 0);
+DATA(5336A8) double kEighth INIT(0.125);
+DATA(5336A8) double kAntitankNear INIT(122880.0);
+DATA(5336A8) double kMinusOneD INIT(-1.0);
+DATA(5336C4) float kSevenTenths INIT(0.7f);
+DATA(53BB8C) uint16_t gMissileType INIT(385);
+PAD(igd, 53BB8C, 53BB8E, 0x2);
+PAD(igb, 57BC88, 57BC88, 0xC);
+ALIAS(gMissileRandom, pad_57BC88, 0);
+BSS(57BC88) void *gMissileParams;
+BSS(BC2360) char *gUnkBC2360;
+ALIAS(gLevelFlow, gUnkBC2360, 0);
+ALIAS(gTickInfo, gUnkBC2360, 0);

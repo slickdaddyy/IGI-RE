@@ -122,3 +122,14 @@ char Mem_GetMode(void)
     return gMemMode;
 }
 HOOK(0x4B0DB0, Mem_GetMode);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igb, 9422E8, 9422E8, 0x14);
+ALIAS(gMemModeStack, pad_9422E8, 0);
+BSS(9422E8) char gMemReady;
+BSS(9422E8) char gMemMode;
+PAD(igb, 9422E8, 9422FE, 0x2);
+BSS(9422E8) int gMemCount;
+BSS(A960E0) int gMemModeTop;
+PAD(igb, A960E0, A960E4, 0xC);
+BSS(A960E0) List gMemList;

@@ -242,3 +242,14 @@ void Primitive_SetHandlerCB(const int *mode, const PrimHandler *h)
     RenderMode_SetMethod(*mode, h->id, h->fn);
 }
 HOOK(0x497920, Primitive_SetHandlerCB);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(684100) SceneList gSceneList;
+PAD(igb, 684100, 68410C, 0x4);
+BSS(684100) int gSceneVersion;
+PAD(igb, 684100, 684114, 0x4);
+PAD(igb, 684100, 684118, 0x61A80);
+ALIAS(gFrameMem, pad_684118, 0);
+BSS(684100) char *gFramePtr;
+PAD(igb, 684100, 6E5B9C, 0x4);
+BSS(684100) unsigned gFramePeak;

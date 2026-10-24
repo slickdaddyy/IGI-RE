@@ -305,3 +305,11 @@ unsigned int AreaActivate_GetMask(AreaActivate *a)
     return a->mask;
 }
 HOOK(0x504AC0, AreaActivate_GetMask);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54E69C) uint16_t gAreaActivateType INIT(385);
+DATA(54E69C) uint8_t gAreaActivateEvent INIT(255);
+PAD(igd, 54E69C, 54E69F, 0x1);
+PAD(igb, A7A640, A7A640, 0x174);
+ALIAS(gAreaCriteria, pad_A7A640, 0);
+BSS(A7A640) void *gAreaActivateParams;

@@ -239,3 +239,7 @@ int Computer_DrawWrapped(int x, int y, float z, int width, int unused, const cha
     }
 }
 HOOK(0x469450, Computer_DrawWrapped);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5BDD70) uint16_t gObjectivesType;
+PAD(igb, 5BDD70, 5BDD72, 0x2);

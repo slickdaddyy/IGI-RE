@@ -323,3 +323,9 @@ void Hemicube_ClipTriangle(int *color, float *depth, int pitch, int *ids, int id
                           uv[k], uv[3], affine);
 }
 HOOK(0x521960, Hemicube_ClipTriangle);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(534BB8) float kHemiNear INIT(4.096f);
+DATA(534C90) double kAlmostOneD INIT(0.9999899864196777);
+DATA(534C90) float kHemiAlmostOne INIT(0.99999f);
+PAD(igd, 534C90, 534C9C, 0x4) INIT({0xCD, 0x20, 0x80, 0x3F});

@@ -252,3 +252,17 @@ void MoveRigidObj_Apply(MoveRigidObj *t, RigidObj *o, char force)
     memcpy(&t->last, &t->value, sizeof(double));
 }
 HOOK(0x51FBA0, MoveRigidObj_Apply);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(533928) double kTwo64 INIT(2.0);
+PAD(igb, A837AC, A837AC, 0x20);
+ALIAS(gMoveBetaNames, pad_A837AC, 0);
+BSS(A837AC) uint16_t gMoveRigidObjType;
+PAD(igb, A837AC, A837CE, 0x2);
+BSS(A837AC) void *gMoveRigidObjParams;
+PAD(igb, A837AC, A837D4, 0x20);
+ALIAS(gMoveAlphaNames, pad_A837D4, 0);
+PAD(igb, A837AC, A837F4, 0x20);
+ALIAS(gMoveGammaNames, pad_A837F4, 0);
+PAD(igb, A837AC, A83814, 0x24);
+ALIAS(gMovePosNames, pad_A83814, 0);

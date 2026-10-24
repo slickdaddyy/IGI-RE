@@ -818,3 +818,15 @@ bad:
     }
 }
 HOOK(0x4BDA60, Qvm_OpAssign);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A442EC) int gQvmUnkA442EC;
+BSS(A442EC) int gQvmSavedSp;
+BSS(A442EC) int gQvmUnkA442F4;
+BSS(A442EC) int gQvmUnkA442F8;
+BSS(A442EC) int gQvmUnkA442FC;
+BSS(A442EC) int gQvmUnkA44300;
+BSS(A442EC) int gQvmSavedTsp;
+BSS(A442EC) int gQvmUnkA44308;
+PAD(igb, A96108, A96108, 0x490);
+ALIAS(gQvmHandlers, pad_A96108, 0);

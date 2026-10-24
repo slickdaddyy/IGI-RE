@@ -162,3 +162,14 @@ void SimpointObjGenerator_Close(void)
     TaskType_Free(gSimpointObjGeneratorType);
 }
 HOOK(0x43BE60, SimpointObjGenerator_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53C31C) uint16_t gSimpointObjGeneratorType INIT(385);
+PAD(igd, 53C31C, 53C31E, 0x2);
+BSS(57BF48) RangeF gSimpointObjGenerator12CRange;
+BSS(57BF48) RangeI gSimpointObjGeneratorIntervalRange;
+BSS(57BF48) RangeI gSimpointObjGenerator124Range;
+BSS(57BF48) void *gSimpointObjGeneratorParams;
+PAD(igb, 57BF48, 57BF64, 0x4);
+BSS(57BF48) RangeF gSimpointObjGenerator130Range;
+BSS(57BF48) RangeF gSimpointObjGenerator134Range;

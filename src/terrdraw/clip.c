@@ -420,3 +420,10 @@ void TerrDraw_ClipTriangle(ClipVtx a, ClipVtx b, ClipVtx c, ClipOut *out)
     emit(v, out);
 }
 HOOK(0x514760, TerrDraw_ClipTriangle);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A7E070) int gClipCount;
+BSS(C311A0) float gTerrainScaleY;
+BSS(C311A0) float gTerrainScaleX;
+BSS(C311B0) float gTerrainCenterX;
+BSS(C311B0) float gTerrainCenterY;

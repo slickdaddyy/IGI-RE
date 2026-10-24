@@ -393,3 +393,17 @@ uint8_t BulletHole_GetEvent(void)
     return gHoleEvent;
 }
 HOOK(0x47E6F0, BulletHole_GetEvent);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD_CONST(igd, 5408F8, 5408F8, 0xC) INIT({0x00, 0x00, 0x80, 0x3F, 0x00, 0x00, 0x80, 0x3F, 0x00, 0x00, 0x80, 0x3F});
+ALIAS(gWhite, pad_5408F8, 0);
+DATA(540904) uint8_t gHoleEvent INIT(255);
+PAD(igd, 540904, 540905, 0x3);
+ALIAS(gBulletHoleEvent, gHoleEvent, 0);
+BSS(5C1108) Pool gHolePool;
+BSS(5C1108) Pool gHolePolyPool;
+BSS(5C1108) uint16_t gHoleType;
+PAD(igb, 5C1108, 5C113A, 0x2);
+ALIAS(gBulletHolePool, gHolePool, 0);
+ALIAS(gBulletHolePool2, gHolePolyPool, 0);
+ALIAS(gBulletHoleType, gHoleType, 0);

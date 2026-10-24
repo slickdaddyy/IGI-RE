@@ -444,3 +444,19 @@ void Level_SetTaskId(int id, Task *task)
     gLevelTaskIds[id] = TaskRef_Add(task);
 }
 HOOK(0x4F1090, Level_SetTaskId);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igd, 54DD14, 54DD14, 0x2) INIT({0x81, 0x01});
+DATA(54DD14) char gLevelTaskNewEnabled INIT(1);
+PAD(igd, 54DD14, 54DD17, 0x1);
+BSS(A70C74) int gLevelScriptLine;
+BSS(A70C94) void *gLevelModels;
+BSS(A70C94) const char *gLevelScriptFile;
+PAD(igb, A71890, A71890, 0x4000);
+ALIAS(gLevelTaskIds, pad_A71890, 0);
+BSS(A758A4) Level *gLevel;
+BSS(A758A4) Task *gLevelFirstTask;
+BSS(A758A4) Task *gLevelDynamic;
+BSS(A758A4) Task *gLevelStatic;
+BSS(A758A4) Task *gLevelIdle;
+BSS(A758A4) Task *gLevelCameraBase;

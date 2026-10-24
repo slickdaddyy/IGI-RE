@@ -107,3 +107,20 @@ uint16_t Screen_GetType(void)
     return gScreenType;
 }
 HOOK(0x4E75B0, Screen_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5488C8) int gScreenDrawEvent INIT(255);
+BSS(A5E618) uint16_t gScreenType;
+PAD(igb, A5E618, A5E61A, 0x6);
+PAD(igb, A5E618, A5E620, 0x120);
+ALIAS(gScreenNextMode, pad_A5E620, 0);
+PAD(igb, A5E618, A5E740, 0x200);
+ALIAS(gScreenOverlays, pad_A5E740, 0);
+PAD(igb, A5E618, A5E940, 0x120);
+ALIAS(gScreenMode, pad_A5E940, 0);
+BSS(A5E618) int gScreenFrame;
+BSS(A5E618) char gScreenModeFlag;
+BSS(A5E618) char gScreenModePending;
+BSS(A5E618) char gScreenReady;
+PAD(igb, A5E618, A5EA67, 0x1);
+BSS(A5E618) int gScreenOverlayCount;

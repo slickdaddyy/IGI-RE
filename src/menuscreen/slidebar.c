@@ -403,3 +403,8 @@ void SlideBar_SetPos(SlideBar *sb, int pos)
         sb->value = ((long double)pos + 0.5f) / sb->steps;
 }
 HOOK(0x4202D0, SlideBar_SetPos);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53B6BC) uint16_t gSlideBarType INIT(385);
+PAD(igd, 53B6BC, 53B6BE, 0x2);
+BSS(57BBE4) void *gSlideBarParams;

@@ -44,3 +44,7 @@ void WeaponType_Close(void)
     gWeaponTypeCount = 0;
 }
 HOOK(0x414810, WeaponType_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igb, 56E258, 56E258, 0xCF34);
+ALIAS(gWeaponTypes, pad_56E258, 0);

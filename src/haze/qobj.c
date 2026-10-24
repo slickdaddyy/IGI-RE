@@ -121,3 +121,11 @@ void Camera_Init(Camera *cam)
     cam->count = 0;
 }
 HOOK(0x4D9950, Camera_Init);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igd, 548638, 548638, 0x2) INIT({0x81, 0x01});
+DATA(548638) uint8_t gQObjEvent INIT(255);
+PAD(igd, 548638, 54863B, 0x9) INIT({0x00, 0x51, 0x4F, 0x62, 0x6A});
+DATA(548638) uint8_t gCameraEvent INIT(255);
+PAD(igd, 548638, 548645, 0x3);
+BSS(A54690) QTaskList *gCameraListeners;

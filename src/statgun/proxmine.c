@@ -223,3 +223,11 @@ void ProxMine_Close(void)
     TaskType_Free(gProxMineType);
 }
 HOOK(0x475AB0, ProxMine_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5333BC) float kTicksPerSecond INIT(30.0f);
+ALIAS(gFramesPerSecond, kTicksPerSecond, 0);
+ALIAS(kFps, kTicksPerSecond, 0);
+ALIAS(kThirty, kTicksPerSecond, 0);
+BSS(5BE394) uint16_t gProxMineType;
+PAD(igb, 5BE394, 5BE396, 0x2);

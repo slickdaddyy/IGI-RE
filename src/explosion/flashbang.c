@@ -153,3 +153,16 @@ FlashBang *FlashBang_Explode(Vec3d *pos, HoleHit *hit, float radius, float fallo
     return t;
 }
 HOOK(0x47E9A0, FlashBang_Explode);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5334A4) const float kRise INIT(4.096e+06f);
+ALIAS(kKmh, kRise, 0);
+ALIAS(kKmhToUnits, kRise, 0);
+DATA(533870) const float kSpread INIT(0.043633234f);
+ALIAS(kPitchStep, kSpread, 0);
+DATA(540914) uint8_t gFlashEvent INIT(255);
+PAD(igd, 540914, 540915, 0x3);
+BSS(5C1144) uint16_t gFlashType;
+PAD(igb, 5C1144, 5C1146, 0x2);
+BSS(5C1144) char *gFlashTexture;
+BSS(5C1144) char *gFlashSprite;

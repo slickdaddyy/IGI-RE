@@ -149,3 +149,10 @@ uint16_t Gear_GetType(void)
     return gGearType;
 }
 HOOK(0x435C40, Gear_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5336D8) float kBlend INIT(0.01999998f);
+DATA(5337C0) float kQuarterPi INIT(0.7853982f);
+ALIAS(kLadderAngle, kQuarterPi, 0);
+BSS(57BD64) uint16_t gGearType;
+PAD(igb, 57BD64, 57BD66, 0x2);

@@ -144,3 +144,8 @@ void Building_Close(void)
     TaskType_Free(gBuildingType);
 }
 HOOK(0x448B50, Building_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57C200) uint16_t gBuildingType;
+PAD(igb, 57C200, 57C202, 0x2);
+BSS(57C200) void *gBuildingParams;

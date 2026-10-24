@@ -457,3 +457,19 @@ void Lightmaps_Free(Lightmaps *o)
     Mem_Free(o);
 }
 HOOK(0x5237E0, Lightmaps_Free);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A83978) int gLightmapFileFound;
+BSS(A839CC) void *gLightmapBufD;
+BSS(A839CC) void *gLightmapBufA;
+PAD(igb, A839CC, A839D4, 0x1C);
+BSS(A839CC) void *gLightmapBufB;
+PAD(igb, A83A20, A83A20, 0x104);
+ALIAS(gLightmapDir, pad_A83A20, 0);
+BSS(A83A20) const char *gLightmapScanName;
+BSS(A83B2C) float gHemicubeSideMax;
+BSS(A83B40) float gHemicubeTopMax;
+PAD(igb, A83B54, A83B54, 0x100);
+ALIAS(gLightmapResPath, pad_A83B54, 0);
+BSS(A83B54) void *gLightmapBufC;
+BSS(A83D24) int gLightmapBufCount;

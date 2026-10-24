@@ -139,3 +139,7 @@ void KnifeStab_Close(void)
     TaskType_Free(gKnifeStabType);
 }
 HOOK(0x46E200, KnifeStab_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53FE84) uint16_t gKnifeStabType INIT(385);
+PAD(igd, 53FE84, 53FE86, 0x2);

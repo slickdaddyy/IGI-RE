@@ -154,3 +154,9 @@ Objective *ComputerObjective_Get(int i)
     return NULL;
 }
 HOOK(0x467590, ComputerObjective_Get);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5BDC6C) void *gObjectiveParams;
+BSS(5BDC6C) uint16_t gObjectiveType;
+PAD(igb, 5BDC6C, 5BDC72, 0x6);
+BSS(5BDC6C) ComputerObjective *gObjective;

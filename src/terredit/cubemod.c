@@ -140,3 +140,10 @@ void CubeModifier_Shutdown(void)
     TaskType_Free(gCubeModifierType);
 }
 HOOK(0x52B6A0, CubeModifier_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A843A4) void *gCubeModifierParams;
+BSS(A843A4) uint16_t gCubeModifierType;
+PAD(igb, A843A4, A843AA, 0x2);
+PAD(igb, A843A4, A843AC, 0x194);
+ALIAS(gCubeModifiers, pad_A843AC, 0);

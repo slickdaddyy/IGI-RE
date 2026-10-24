@@ -288,3 +288,9 @@ int HumanPlayerInput_GetWeaponSelect(void)
     return -1;
 }
 HOOK(0x45E3C0, HumanPlayerInput_GetWeaponSelect);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5BDAC4) uint16_t gHumanPlayerInputType;
+PAD(igb, 5BDAC4, 5BDAC6, 0x2);
+BSS(5BDAC4) void *gHumanPlayerInputParams;
+BSS(BC210C) uint32_t gControls;

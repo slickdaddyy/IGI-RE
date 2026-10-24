@@ -254,3 +254,6 @@ int AppContext_GetQvmOnly(void)
     return gApp.qvmOnly;
 }
 HOOK(0x48F340, AppContext_GetQvmOnly);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5C8BC0) AppContext gApp;

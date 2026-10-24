@@ -729,3 +729,19 @@ __attribute__((noipa)) void WaterMesh_DrawNode(WaterMesh *w, WaterNode *node, in
     }
 }
 HOOK(0x52E660, WaterMesh_DrawNode);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5334A8) float kTwoPiF INIT(6.2831855f);
+ALIAS(gTwoPi, kTwoPiF, 0);
+ALIAS(kTwoPi, kTwoPiF, 0);
+DATA(534CB8) double kGridScale INIT(3.725290298461914e-09);
+DATA(534CB8) double kWaterTwoPi INIT(6.283185307179586);
+DATA(534CB8) float kPeriodScale INIT(0.703f);
+PAD(igd, 534CB8, 534CCC, 0x4);
+DATA(534CB8) double kMinusTwoD INIT(-2.0);
+DATA(534CB8) double kFinestSize INIT(8388608.0);
+PAD_CONST(igd, 54F75C, 54F75C, 0xC) INIT({0x57, 0x61, 0x74, 0x65, 0x72, 0x4D, 0x65, 0x73, 0x68});
+ALIAS(gWaterName, pad_54F75C, 0);
+BSS(A84578) int gWaterPrimitive;
+BSS(A84578) int gWaterUnk7C;
+BSS(A84578) int gWaterUnk80;

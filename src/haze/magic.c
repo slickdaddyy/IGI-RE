@@ -180,3 +180,8 @@ uint8_t MagicObj_GetMoveEvent(void)
     return gMagicMoveEvent;
 }
 HOOK(0x4D9FB0, MagicObj_GetMoveEvent);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(548648) uint16_t gMagicType INIT(385);
+DATA(548648) uint8_t gMagicMoveEvent INIT(255);
+DATA(548648) uint8_t gMagicEvent1 INIT(255);

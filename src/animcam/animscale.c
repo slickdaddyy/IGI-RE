@@ -155,3 +155,8 @@ void AnimScaleTask_Close(void)
     gAnimScaleTaskType = 0x181;
 }
 HOOK(0x52AFB0, AnimScaleTask_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54F68C) uint16_t gAnimScaleTaskType INIT(385);
+PAD(igd, 54F68C, 54F68E, 0x2);
+BSS(A84394) void *gAnimScaleTaskParams;

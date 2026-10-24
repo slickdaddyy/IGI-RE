@@ -47,3 +47,6 @@ void QVertex_ShutdownDriver(void)
     RenderMode_DeleteMethod(gQVertexDrawStrip);
 }
 HOOK(0x509960, QVertex_ShutdownDriver);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54E890) int gQVertexDrawStrip INIT(-1);

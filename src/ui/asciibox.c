@@ -301,3 +301,8 @@ void AsciiBox_Shutdown(void)
     gAsciiBoxType = 0x181;
 }
 HOOK(0x41D050, AsciiBox_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53B5F4) uint16_t gAsciiBoxType INIT(385);
+PAD(igd, 53B5F4, 53B5F6, 0x2);
+BSS(57BBBC) void *gAsciiBoxParams;

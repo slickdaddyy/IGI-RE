@@ -322,3 +322,7 @@ int LocalDevice_GetTime(int dev, FILETIME *time, const char *path)
     return 0;
 }
 HOOK(0x50A5D0, LocalDevice_GetTime);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igb, A7B640, A7B640, 0xAE8);
+ALIAS(gLocalFiles, pad_A7B640, 0);

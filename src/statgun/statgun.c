@@ -562,3 +562,16 @@ char StationaryGun_IsUsed(StatGun *o)
     return o->used;
 }
 HOOK(0x475370, StationaryGun_IsUsed);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5335A8) float kRecoilFade INIT(0.9f);
+ALIAS(kNineTenths, kRecoilFade, 0);
+DATA(533728) double kTwoPiD INIT(6.283185307179589);
+DATA(53387C) float kTurnStep INIT(0.08726647f);
+ALIAS(kTrackDead, kTurnStep, 0);
+DATA(534134) float kEyeUp INIT(819.2f);
+PAD(igb, 5BE380, 5BE380, 0x8);
+ALIAS(gStatGunAmmoRange, pad_5BE380, 0);
+BSS(5BE380) uint16_t gStatGunType;
+PAD(igb, 5BE380, 5BE38A, 0x2);
+BSS(5BE380) void *gStatGunParams;

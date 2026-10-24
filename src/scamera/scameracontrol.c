@@ -136,3 +136,8 @@ void SCameraControl_Close(void)
     TaskType_Free(gSCameraControlType);
 }
 HOOK(0x440FB0, SCameraControl_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57C170) void *gSCameraControlParams;
+BSS(57C170) uint16_t gSCameraControlType;
+PAD(igb, 57C170, 57C176, 0x2);

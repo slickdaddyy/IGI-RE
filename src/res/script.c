@@ -32,3 +32,6 @@ void Script_Error(const char *fmt, ...)
     gScriptErrorHandler(buf, gScriptErrorContext);
 }
 HOOK(0x4B7E10, Script_Error);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A43E70) ScriptErrorFn gScriptErrorHandler;

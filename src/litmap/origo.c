@@ -170,3 +170,12 @@ void Origo_Shutdown(void)
     TaskType_Free(gOrigoType);
 }
 HOOK(0x520B90, Origo_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A83850) void *gOrigoParams;
+BSS(A83850) uint16_t gOrigoType;
+PAD(igb, A83850, A83856, 0x2);
+BSS(BA1FC8) Vec3d *gOrigoPlace;
+PAD(igb, BA1FC8, BA1FCC, 0x4);
+PAD(igb, BA1FC8, BA1FD0, 0xC);
+ALIAS(gOrigoDelta, pad_BA1FD0, 0);

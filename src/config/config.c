@@ -948,3 +948,20 @@ void Config_RemoveLanguageAlias(void)
         Alias_Remove("LANGUAGE:");
 }
 HOOK(0x405830, Config_RemoveLanguageAlias);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igd, 536924, 536924, 0x4);
+ALIAS(gInputActionsEnd, pad_536924, 0);
+PAD(igd, 536994, 536994, 0x4);
+ALIAS(gInputDevicesEnd, pad_536994, 0);
+PAD(igd, 537B74, 537B74, 0x1C) INIT({0x9E, 0x01, 0x00, 0x00, 0xAE, 0x01, 0x00, 0x00, 0x0D, 0x00, 0x00, 0x00, 0x60, 0x00, 0x00, 0x00, 0x4D, 0x00, 0x00, 0x00, 0x41});
+ALIAS(gInputKeysEnd, pad_537B74, 0);
+ALIAS(gPerfLevelFlags, pad_537B74, 0);
+PAD(igb, 567C98, 567C98, 0x1418);
+ALIAS(gDrivers, pad_567C98, 0);
+BSS(BC2380) int gProfileCount;
+BSS(BC2380) int gActiveProfile;
+PAD(igb, BC2380, BC2388, 0x5640);
+ALIAS(gProfiles, pad_BC2388, 0);
+PAD(igb, BC2380, BC79C8, 0x20);
+ALIAS(gContentControlPassword, pad_BC79C8, 0);

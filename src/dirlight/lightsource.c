@@ -45,3 +45,6 @@ void LightSource_Remove(void *light)
         ;
 }
 HOOK(0x526920, LightSource_Remove);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A83CF8) Pool gLightSourcePool;

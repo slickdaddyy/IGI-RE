@@ -144,3 +144,10 @@ void LightObj_Shutdown(void)
     gSpotLightType = 0x181;
 }
 HOOK(0x5314F0, LightObj_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54F800) uint16_t gPointLightType INIT(385);
+DATA(54F800) uint16_t gSpotLightType INIT(385);
+BSS(AFA800) Pool gPointLightPool;
+PAD(igb, AFA800, AFA818, 0x8);
+BSS(AFA800) Pool gSpotLightPool;

@@ -534,3 +534,35 @@ void QCube_Walk(WWorld *w)
     }
 }
 HOOK(0x4D14E0, QCube_Walk);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+PAD(igd, 548444, 548444, 0x8) INIT({0x00, 0x01, 0x02, 0x04, 0x05});
+ALIAS(gWalkTreeIndex, pad_548444, 0);
+PAD(igb, A4EF38, A4EF38, 0x20C4);
+ALIAS(gWalkSavedRoots, pad_A4EF38, 0);
+PAD(igb, A53740, A53740, 0x18C);
+ALIAS(gWalkFakeRoots, pad_A53740, 0);
+BSS(B12B60) Pool gWalkPool0;
+ALIAS(gQCubePool0, gWalkPool0, 0);
+ALIAS(gTerrainPool0, gWalkPool0, 0);
+BSS(B12B80) int gWalkOverflow;
+BSS(B12BB8) int gQCubeSkipCells;
+BSS(B12C20) int gWalkCount;
+PAD(igb, B12C20, B12C24, 0x1C);
+BSS(B12C20) Pool gWalkPool1;
+BSS(B12C20) WEntry *gWalkOut;
+ALIAS(gQCubeCount, gWalkCount, 0);
+ALIAS(gQCubeOut, gWalkOut, 0);
+ALIAS(gQCubePool1, gWalkPool1, 0);
+ALIAS(gTerrainPool1, gWalkPool1, 0);
+BSS(B16C6C) int gWalkMinSize;
+ALIAS(gQCubeMinSize, gWalkMinSize, 0);
+BSS(B16CC0) Pool gWalkPool2;
+PAD(igb, B16CC0, B16CD8, 0x8);
+PAD(igb, B16CC0, B16CE0, 0x30000);
+ALIAS(gTerrainCells, pad_B16CE0, 0);
+ALIAS(gQCubePool2, gWalkPool2, 0);
+ALIAS(gTerrainPool2, gWalkPool2, 0);
+PAD(igb, B97B20, B97B20, 0x100);
+ALIAS(gVisibleLightMaps, pad_B97B20, 0);
+BSS(C10380) int gDisplayFrame;

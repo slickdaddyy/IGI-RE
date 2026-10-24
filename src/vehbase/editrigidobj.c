@@ -281,3 +281,8 @@ EditRigidObj *EditRigidObj_New(void *parent, const char *model, Vec3d *pos, Matr
     return o;
 }
 HOOK(0x4F3390, EditRigidObj_New);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54E1AC) uint16_t gEditRigidObjType INIT(385);
+PAD(igd, 54E1AC, 54E1AE, 0x2);
+BSS(A76C14) void *gEditRigidObjParams;

@@ -89,3 +89,6 @@ void Dirlight_SetTime(float time)
     }
 }
 HOOK(0x5274D0, Dirlight_SetTime);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(BA1E00) Pool gDirlightPool;

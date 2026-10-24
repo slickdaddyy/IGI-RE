@@ -477,3 +477,12 @@ void ExplodeObject_Close(void)
     TaskType_Free(gExplodeObjectType);
 }
 HOOK(0x482560, ExplodeObject_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54097C) uint16_t gExplodeObjectType INIT(385);
+PAD(igd, 54097C, 54097E, 0x2);
+PAD(igb, 5C1170, 5C1170, 0x8);
+ALIAS(gRealRange, pad_5C1170, 0);
+PAD(igb, 5C1170, 5C1178, 0xC);
+ALIAS(gIntRange, pad_5C1178, 0);
+BSS(5C1170) void *gExplodeObjectParams;

@@ -141,3 +141,11 @@ void SortRender_Shutdown(void)
     Primitive_Unregister(gSortTask);
 }
 HOOK(0x4B73E0, SortRender_Shutdown);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(943E48) int gSortTask;
+PAD(igb, 943E48, 943E4C, 0x100004);
+ALIAS(gSortData, pad_943E4C, 0);
+BSS(943E48) SortList *gSortList;
+BSS(943E48) int gSortDataUsed;
+BSS(A84A4C) int gSortActive;

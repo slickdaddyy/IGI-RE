@@ -147,3 +147,10 @@ int Offscreen_GetMode(void)
     return gOffscreenMode;
 }
 HOOK(0x498370, Offscreen_GetMode);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(6E5BB8) int gOffscreenMode;
+BSS(6E5BB8) char gOffscreenReady;
+PAD(igb, 6E5BB8, 6E5BBD, 0x3);
+PAD(igb, BCAAC0, BCAAC0, 0x20);
+ALIAS(gOffscreenClip, pad_BCAAC0, 0);

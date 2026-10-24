@@ -174,3 +174,8 @@ void ConditionalContainer_Show(ConditionalContainer *c)
     c->shown = 1;
 }
 HOOK(0x487860, ConditionalContainer_Show);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5C8A7C) void *gConditionalContainerParams;
+BSS(5C8A7C) uint16_t gConditionalContainerType;
+PAD(igb, 5C8A7C, 5C8A82, 0x2);

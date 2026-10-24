@@ -337,3 +337,8 @@ void Rotor_Close(void)
     Primitive_Unregister(gRotorPrim);
 }
 HOOK(0x42DAA0, Rotor_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57BD10) uint16_t gRotorType;
+PAD(igb, 57BD10, 57BD12, 0x2);
+BSS(57BD10) int gRotorPrim;

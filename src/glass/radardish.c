@@ -217,3 +217,8 @@ void RadarDish_Close(void)
     TaskType_Free(gRadarDishType);
 }
 HOOK(0x449290, RadarDish_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(533818) float k360 INIT(360.0f);
+BSS(57C20C) uint16_t gRadarDishType;
+PAD(igb, 57C20C, 57C20E, 0x2);

@@ -585,3 +585,8 @@ void CarAI_Close(void)
     TaskType_Free(gCarAIType);
 }
 HOOK(0x426610, CarAI_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(53BA50) uint16_t gCarAIType INIT(385);
+PAD(igd, 53BA50, 53BA52, 0x2);
+BSS(57BC74) void *gCarAIParams;

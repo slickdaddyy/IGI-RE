@@ -83,3 +83,7 @@ uint16_t Train_GetType(void)
     return gTrainType;
 }
 HOOK(0x42BC20, Train_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(57BCA0) Vec3d gTrainRelPos;
+BSS(57BCC0) Matrix gTrainMatrix;

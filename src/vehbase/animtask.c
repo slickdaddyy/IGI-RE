@@ -532,3 +532,24 @@ void *AnimTask_GetList(void)
     return gAnimTasks;
 }
 HOOK(0x4F4150, AnimTask_GetList);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54E1D8) uint16_t gAnimTaskType INIT(385);
+DATA(54E1D8) uint8_t gVehicleControlEvent INIT(255);
+DATA(54E1D8) uint8_t gAnimEventDB INIT(255);
+DATA(54E1D8) uint8_t gVehicleInputInfoEvent INIT(255);
+DATA(54E1D8) uint8_t gVehicleStateSizeEvent INIT(255);
+DATA(54E1D8) uint8_t gVehicleSaveEvent INIT(255);
+DATA(54E1D8) uint8_t gVehicleLoadEvent INIT(255);
+DATA(54E1D8) uint8_t gVehicleKeysEvent INIT(255);
+PAD(igd, 54E1D8, 54E1E1, 0x3);
+DATA(54E1D8) int gAnimDataType INIT(-1);
+BSS(A76C20) int gUnkA76C20;
+PAD(igb, A76C20, A76C24, 0x4);
+BSS(A76C20) void *gAnimTasksHead;
+BSS(A76C20) void *gAnimTasksTail;
+BSS(A76C20) void *gAnimTasksTailPred;
+BSS(A76C20) int gUnkA76C34;
+PAD(igb, A76C20, A76C38, 0x4);
+BSS(A76C20) void *gAnimTaskParams;
+ALIAS(gAnimTasks, gAnimTasksHead, 0);

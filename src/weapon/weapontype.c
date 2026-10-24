@@ -371,3 +371,24 @@ ScriptValue *DefineWeaponType(ScriptValue *out, void *data, void *args)
     return out;
 }
 HOOK(0x413F90, DefineWeaponType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5391AC) uint8_t gWeaponSizeEvent INIT(255);
+DATA(5391AC) uint8_t gWeaponInitEvent INIT(255);
+DATA(5391AC) uint8_t gWeaponFireEvent INIT(255);
+DATA(5391AC) uint8_t gWeaponSizeEvent2 INIT(255);
+DATA(5391AC) uint8_t gWeaponInitEvent2 INIT(255);
+DATA(5391AC) uint8_t gWeaponTypeEvent INIT(255);
+DATA(5391AC) uint8_t gWeaponEventB2 INIT(255);
+PAD(igd, 5391AC, 5391B3, 0x1);
+DATA(5391AC) int gWeaponMaxId INIT(-1);
+ALIAS(gWeaponEvents, gWeaponSizeEvent, 0);
+PAD(igb, 56E218, 56E218, 0x10);
+ALIAS(gWeaponAmmoEnum, pad_56E218, 0);
+PAD(igb, 56E218, 56E228, 0x10);
+ALIAS(gWeaponIdEnum, pad_56E228, 0);
+PAD(igb, 56E218, 56E238, 0x10);
+ALIAS(gWeaponSightEnum, pad_56E238, 0);
+PAD(igb, 56E218, 56E248, 0x10);
+ALIAS(gWeaponCategoryEnum, pad_56E248, 0);
+BSS(57B18C) int gWeaponTypeCount;

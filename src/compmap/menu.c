@@ -210,3 +210,8 @@ unsigned int ComputerMenu_GetPressed(void)
     return ComputerMenu_Get2()->pressed;
 }
 HOOK(0x46B500, ComputerMenu_GetPressed);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5BDDA8) uint16_t gMenuType;
+PAD(igb, 5BDDA8, 5BDDAA, 0x2);
+BSS(5BE2B0) ComputerMenu *gMenu;

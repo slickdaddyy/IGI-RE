@@ -694,3 +694,34 @@ void LineFilter_SetLevel(LineFilter *t, float level)
     t->level = level;
 }
 HOOK(0x4A4FF0, LineFilter_SetLevel);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(5CA114) void *gDevice;
+ALIAS(gD3DDevice, gDevice, 0);
+BSS(935BFC) int gHandiCamDrawMethod;
+BSS(935BFC) int gBandDrawMethod;
+BSS(935C08) int gHandiCamFilterPrim;
+BSS(935C08) int gBandFilterPrim;
+BSS(936010) int gLineDrawMethod;
+BSS(936010) int gLineFilterPrim;
+BSS(936010) int gWideScreenPrim;
+BSS(936030) int gTimecodeX;
+BSS(936030) int gTimecodeY;
+BSS(936030) float gTimecode;
+BSS(936030) float gBandTextX;
+BSS(936030) float gBandTextY;
+BSS(936030) float gBandTextDX;
+BSS(936030) float gBandTextDY;
+ALIAS(gBandFontA, gBandTextX, 0);
+ALIAS(gBandFontB, gBandTextY, 0);
+ALIAS(gBandFontC, gBandTextDX, 0);
+ALIAS(gBandFontD, gBandTextDY, 0);
+ALIAS(gHandiCamFontX, gTimecodeX, 0);
+ALIAS(gHandiCamFontY, gTimecodeY, 0);
+BSS(BCAD00) DynVB gVBTL;
+ALIAS(gFilterVB, gVBTL, 0);
+ALIAS(gFilterVBSize, gVBTL, 4);
+ALIAS(gFilterVBUsed, gVBTL, 8);
+ALIAS(gVBTLSize, gVBTL, 4);
+ALIAS(gVBTLUsed, gVBTL, 8);
+BSS(BCADC0) float gNearPlane;

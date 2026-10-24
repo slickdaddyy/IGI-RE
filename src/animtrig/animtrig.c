@@ -193,3 +193,15 @@ void sub_4EC180(void)
     TaskEvent_Free(gUnkA5EF88);
 }
 HOOK(0x4EC180, sub_4EC180);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54DB80) uint8_t gAnimTriggerFireEvent INIT(255);
+DATA(54DB80) uint8_t gAnimTriggerSizeEvent INIT(255);
+DATA(54DB80) uint8_t gAnimTriggerParseEvent INIT(255);
+PAD(igd, 54DB80, 54DB83, 0x1);
+PAD(igb, A5EC80, A5EC80, 0x304);
+ALIAS(gAnimTriggers, pad_A5EC80, 0);
+BSS(A5EC80) int gAnimTriggerCount;
+BSS(A5EC80) uint8_t gUnkA5EF88;
+PAD(igb, A5EC80, A5EF89, 0x7);
+BSS(A5EC80) int gUnkA5EF90;

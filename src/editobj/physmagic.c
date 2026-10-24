@@ -162,3 +162,7 @@ uint16_t PhysicsMagicObj_GetType(void)
     return gPhysicsMagicObjType;
 }
 HOOK(0x5042A0, PhysicsMagicObj_GetType);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(54E66C) uint16_t gPhysicsMagicObjType INIT(385);
+PAD(igd, 54E66C, 54E66E, 0x2);

@@ -116,3 +116,16 @@ void Mp5sd_Close(void)
     TaskType_Free(gMp5sdType);
 }
 HOOK(0x473D20, Mp5sd_Close);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(533520) float kZoomOut INIT(1.25f);
+DATA(5335E8) double kAngle45 INIT(0.7853981852531433);
+ALIAS(gQuarterPi, kAngle45, 0);
+DATA(5336CC) float kZoomIn INIT(0.8f);
+ALIAS(kFourFifths, kZoomIn, 0);
+ALIAS(kShadowFade, kZoomIn, 0);
+ALIAS(kSlow, kZoomIn, 0);
+ALIAS(kSoundMin, kZoomIn, 0);
+DATA(5339C0) double kAngle30 INIT(0.5235987901687622);
+BSS(5BE374) uint16_t gMp5sdType;
+PAD(igb, 5BE374, 5BE376, 0x2);

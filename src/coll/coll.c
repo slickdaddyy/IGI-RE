@@ -976,3 +976,8 @@ void Coll_Lines(Terrain *t, CollHit *results, const Vec3d *starts, const Vec3d *
     }
 }
 HOOK(0x4CC2A0, Coll_Lines);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A44398) int gCollLeafTests;
+BSS(A44398) int gCollTriangleTests;
+BSS(B97DFC) int gCollSavedHoleCount;
