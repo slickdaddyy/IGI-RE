@@ -278,8 +278,8 @@ HOOK(0x46EAA0, GunHolder_Close);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(5BE318) uint16_t gGunHolderType;
 PAD(igb, 5BE318, 5BE31A, 0x6);
-PAD(igb, 5BE318, 5BE320, 0x8);
-ALIAS(gGunHolderRange, pad_5BE320, 0);
+STORE(igb, 5BE318, 4) __typeof__(gGunHolderRange[0]) store_5BE320[2];
+ALIAS(gGunHolderRange, store_5BE320, 0);
 BSS(5BE318) void *gGunHolderParams;
 PAD(igb, 5BE318, 5BE32C, 0x4);
 BSS(5BE318) void *gGunHolderList;

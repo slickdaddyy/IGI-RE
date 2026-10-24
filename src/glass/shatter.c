@@ -665,8 +665,8 @@ STORE(igd, 53C880, 4) __typeof__(gShardColor[0]) store_53C8E0[4] INIT({0.7f, 0.7
 ALIAS(gShardColor, store_53C8E0, 0);
 BSS(57C228) const float *gShatterColor;
 PAD(igb, 57C228, 57C22C, 0x4);
-PAD(igb, 57C228, 57C230, 0xC);
-ALIAS(gShatterRandom, pad_57C230, 0);
+STORE(igb, 57C228, 1) __typeof__(gShatterRandom[0]) store_57C230[12];
+ALIAS(gShatterRandom, store_57C230, 0);
 BSS(57C228) float gShatterTen;
 BSS(57C228) uint16_t gShatterType;
 PAD(igb, 57C228, 57C242, 0x2);

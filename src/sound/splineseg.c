@@ -340,8 +340,8 @@ uint16_t SplineObjSegment_GetType(void)
 HOOK(0x4E5350, SplineObjSegment_GetType);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igb, A5E374, A5E374, 0x78);
-ALIAS(gSphereStack, pad_A5E374, 0);
+STORE(igb, A5E374, 4) __typeof__(gSphereStack[0]) store_A5E374[30];
+ALIAS(gSphereStack, store_A5E374, 0);
 BSS(A5E374) float *gSphereVerts;
 BSS(A5E374) SphereNode **gSphereNodes;
 BSS(A5E374) uint16_t gSplineObjSegmentType;

@@ -214,5 +214,5 @@ void HumanCamera_RemoveHuman(Task *h)
 HOOK(0x484E00, HumanCamera_RemoveHuman);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igb, 5C1188, 5C1188, 0x408);
-ALIAS(gHumanCameraList, pad_5C1188, 0);
+STORE(igb, 5C1188, 4) __typeof__(gHumanCameraList[0]) store_5C1188[129];
+ALIAS(gHumanCameraList, store_5C1188, 0);

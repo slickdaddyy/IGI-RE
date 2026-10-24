@@ -534,5 +534,5 @@ DATA(54E368) uint8_t gGraphNodeAddEvent INIT(255);
 PAD(igd, 54E368, 54E370, 0x1) INIT({0xFF});
 DATA(54E368) uint8_t gGraphEvent371 INIT(255);
 PAD(igd, 54E368, 54E372, 0x2);
-PAD(igb, A77228, A77228, 0x20);
-ALIAS(gGraphNodeSizes, pad_A77228, 0);
+STORE(igb, A77228, 4) __typeof__(gGraphNodeSizes[0]) store_A77228[4];
+ALIAS(gGraphNodeSizes, store_A77228, 0);

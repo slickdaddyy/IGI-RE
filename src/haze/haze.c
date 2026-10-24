@@ -238,10 +238,10 @@ void Haze_GetFog(float *color, float *density, const Vec3d *from, const Vec3d *t
 HOOK(0x4DA300, Haze_GetFog);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igb, A54694, A54694, 0x28);
-ALIAS(gHazeVisible, pad_A54694, 0);
-PAD(igb, A54694, A546BC, 0x9C40);
-ALIAS(gHazeFrame, pad_A546BC, 0);
+STORE(igb, A54694, 4) __typeof__(gHazeVisible[0]) store_A54694[10];
+ALIAS(gHazeVisible, store_A54694, 0);
+STORE(igb, A54694, 4) __typeof__(gHazeFrame[0]) store_A546BC[10000];
+ALIAS(gHazeFrame, store_A546BC, 0);
 BSS(A54694) int gHazeVisibleCount;
 BSS(A54694) int gHazeFrameUsed;
 BSS(A54694) uint16_t gHazeType;

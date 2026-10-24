@@ -253,7 +253,7 @@ int Anim_Exists(BoneObj *obj, int bone, int id)
 HOOK(0x4D74F0, Anim_Exists);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igb, A538F0, A538F0, 0xA00);
-ALIAS(gAnimSets, pad_A538F0, 0);
-ALIAS(gBoneSlots, pad_A538F0, 0);
+STORE(igb, A538F0, 4) __typeof__(gAnimSets[0]) store_A538F0[64];
+ALIAS(gAnimSets, store_A538F0, 0);
+ALIAS(gBoneSlots, store_A538F0, 0);
 BSS(A54678) int gBoneSmoothAnims;

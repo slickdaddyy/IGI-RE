@@ -280,15 +280,15 @@ int BoneBlend_GetMotion(float *pos, float *rot, BoneBlend *bl)
 HOOK(0x4D3020, BoneBlend_GetMotion);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igb, A542F0, A542F0, 0x300);
-ALIAS(gBoneHierarchies, pad_A542F0, 0);
+STORE(igb, A542F0, 4) __typeof__(gBoneHierarchies[0]) store_A542F0[64];
+ALIAS(gBoneHierarchies, store_A542F0, 0);
 BSS(A542F0) Pool gSourcePool;
 BSS(A542F0) Pool gOrientPool;
 BSS(A542F0) Pool gInstPool;
 BSS(A542F0) BoneHierarchy *gBoneBuild;
 PAD(igb, A542F0, A5463C, 0x4);
 BSS(A542F0) Pool gFadePool;
-ALIAS(gSkeletons, pad_A542F0, 0);
+ALIAS(gSkeletons, store_A542F0, 0);
 BSS(A54660) Pool gNodePool;
 BSS(A5467C) Bone *gBoneBuildBones;
 PAD(igb, A5467C, A54680, 0x4);

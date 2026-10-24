@@ -235,5 +235,5 @@ HOOK(0x520710, NoiseQTask_Shutdown);
 BSS(A83838) uint16_t gNoiseQTaskType;
 PAD(igb, A83838, A8383A, 0x2);
 BSS(A83838) void *gNoiseQTaskParams;
-PAD(igb, A83838, A83840, 0x10);
-ALIAS(gNoiseRandom, pad_A83840, 0);
+STORE(igb, A83838, 1) __typeof__(gNoiseRandom[0]) store_A83840[16];
+ALIAS(gNoiseRandom, store_A83840, 0);

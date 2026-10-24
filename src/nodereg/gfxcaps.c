@@ -34,7 +34,7 @@ void GFXCapsViewer_Close(void)
 HOOK(0x519750, GFXCapsViewer_Close);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igb, A81028, A81028, 0x271C);
-ALIAS(gGFXCaps, pad_A81028, 0);
+STORE(igb, A81028, 1) __typeof__(gGFXCaps[0]) store_A81028[10012];
+ALIAS(gGFXCaps, store_A81028, 0);
 BSS(BA2028) uint16_t gGFXCapsViewerType;
 PAD(igb, BA2028, BA202A, 0x2);

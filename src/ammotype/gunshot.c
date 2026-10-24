@@ -682,5 +682,5 @@ PAD(igb, 5BE3CC, 5BE3CD, 0x1);
 BSS(5BE3CC) uint16_t gGunShotType;
 PAD(igb, 5BE3CC, 5BE3D0, 0x4);
 BSS(5BE3CC) int gRicochetDelay;
-PAD(igb, A982E0, A982E0, 0x4200);
-ALIAS(gRenderHandlers, pad_A982E0, 0);
+STORE(igb, A982E0, 4) __typeof__(gRenderHandlers[0]) store_A982E0[4224];
+ALIAS(gRenderHandlers, store_A982E0, 0);

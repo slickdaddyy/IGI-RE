@@ -884,8 +884,8 @@ HOOK(0x50E7F0, D3DQVertex_ClipRect);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(A7CED8) int gQVTextureStatesIndex;
-PAD(igb, A7CED8, A7CEDC, 0xB18);
-ALIAS(gQVStripBuffer, pad_A7CEDC, 0);
+STORE(igb, A7CED8, 4) __typeof__(gQVStripBuffer[0]) store_A7CEDC[71];
+ALIAS(gQVStripBuffer, store_A7CEDC, 0);
 BSS(A7CED8) int gQVRenderStatesIndex;
 BSS(A7CED8) int gQVBlendStatesIndex;
 PAD(igb, A7CED8, A7D9FC, 0x4);

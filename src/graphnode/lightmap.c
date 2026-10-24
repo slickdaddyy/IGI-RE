@@ -508,8 +508,8 @@ TerrainLightMap *TerrainLightMap_NewChild(Task *parent, TerrainLightMap *lm, con
 HOOK(0x4F8FE0, TerrainLightMap_NewChild);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igb, A76CD0, A76CD0, 0xC);
-ALIAS(gLightMapRandom, pad_A76CD0, 0);
+STORE(igb, A76CD0, 1) __typeof__(gLightMapRandom[0]) store_A76CD0[12];
+ALIAS(gLightMapRandom, store_A76CD0, 0);
 BSS(A76CD0) uint16_t gTerrainLightMapType;
 PAD(igb, A76CD0, A76CDE, 0x26);
 BSS(A76CD0) void *gTerrainLightMapParams;
@@ -517,5 +517,5 @@ BSS(B97D24) int gVisibleLightMapCount;
 ALIAS(gCounterB, gVisibleLightMapCount, 0);
 PAD(igb, BA80A0, BA80A0, 0x10);
 ALIAS(gLightMapDraw, pad_BA80A0, 0);
-PAD(igb, BC00A0, BC00A0, 0x2000);
-ALIAS(gLightMapTasks, pad_BC00A0, 0);
+STORE(igb, BC00A0, 4) __typeof__(gLightMapTasks[0]) store_BC00A0[2048];
+ALIAS(gLightMapTasks, store_BC00A0, 0);

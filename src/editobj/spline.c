@@ -468,8 +468,8 @@ HOOK(0x5031B0, SplineObj_Close);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(A7A508) void *gSplineObjWaypointParams;
-PAD(igb, A7A508, A7A50C, 0x104);
-ALIAS(gSplineObjDebugText, pad_A7A50C, 0);
+STORE(igb, A7A508, 1) __typeof__(gSplineObjDebugText[0]) store_A7A50C[260];
+ALIAS(gSplineObjDebugText, store_A7A50C, 0);
 BSS(A7A508) RangeI gSplineObjSegmentRange;
 BSS(A7A508) uint16_t gSplineObjType;
 PAD(igb, A7A508, A7A61A, 0x2);

@@ -314,5 +314,5 @@ HOOK(0x530950, Codec_Register);
 REF_EXTERN(Lzss_Compress);
 REF_EXTERN(Lzss_Decompress);
 DATA(54F778) Codec gLzssCodec INIT({.compress = (__typeof__(gLzssCodec.compress))ref_Lzss_Compress, .decompress = (__typeof__(gLzssCodec.decompress))ref_Lzss_Decompress});
-PAD(igb, A845D8, A845D8, 0x8);
-ALIAS(gCodecs, pad_A845D8, 0);
+STORE(igb, A845D8, 4) __typeof__(gCodecs[0]) store_A845D8[2];
+ALIAS(gCodecs, store_A845D8, 0);

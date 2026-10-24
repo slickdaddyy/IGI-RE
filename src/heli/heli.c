@@ -755,6 +755,6 @@ DATA(53BE58) char str_53BEB0[6] INIT("dBeta");
 PAD(igd, 53BE58, 53BEB6, 0x2);
 DATA(53BE58) char str_53BEB8[7] INIT("dAlpha");
 PAD(igd, 53BE58, 53BEBF, 0x1);
-PAD(igb, 57BD38, 57BD38, 0x8);
-ALIAS(gHeliRange, pad_57BD38, 0);
+STORE(igb, 57BD38, 4) __typeof__(gHeliRange[0]) store_57BD38[2];
+ALIAS(gHeliRange, store_57BD38, 0);
 BSS(57BD38) void *gHeliParams;

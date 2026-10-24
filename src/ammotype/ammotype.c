@@ -326,5 +326,5 @@ ALIAS(gAmmoTypes, pad_5BE3E0, 0);
 BSS(5BE3E0) int gAmmoTypeCount;
 BSS(5BE3E0) uint8_t gAmmoListEvent;
 PAD(igb, 5BE3E0, 5C10E9, 0x7);
-PAD(igb, 5BE3E0, 5C10F0, 0x18);
-ALIAS(gAmmoIdEnum, pad_5C10F0, 0);
+STORE(igb, 5BE3E0, 1) __typeof__(gAmmoIdEnum[0]) store_5C10F0[24];
+ALIAS(gAmmoIdEnum, store_5C10F0, 0);

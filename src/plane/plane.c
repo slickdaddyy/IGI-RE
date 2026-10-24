@@ -811,6 +811,6 @@ PAD(igd, 53BEE8, 53BFA1, 0x3);
 DATA(53BEE8) char str_53BFA4[5] INIT("Gear");
 PAD(igd, 53BEE8, 53BFA9, 0x3);
 DATA(53BEE8) char str_53BFAC[8] INIT("Cockpit");
-PAD(igb, 57BD48, 57BD48, 0xC);
-ALIAS(gPlaneRandom, pad_57BD48, 0);
+STORE(igb, 57BD48, 1) __typeof__(gPlaneRandom[0]) store_57BD48[12];
+ALIAS(gPlaneRandom, store_57BD48, 0);
 BSS(57BD48) void *gPlaneParams;

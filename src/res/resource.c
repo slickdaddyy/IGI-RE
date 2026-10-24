@@ -447,7 +447,7 @@ HOOK(0x4B64E0, Resource_Find);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(943B90) int gResourceUnk;
-PAD(igb, 943C20, 943C20, 0x200);
-ALIAS(gMemberName, pad_943C20, 0);
+STORE(igb, 943C20, 1) __typeof__(gMemberName[0]) store_943C20[512];
+ALIAS(gMemberName, store_943C20, 0);
 BSS(943C20) Pool gResourcePool;
 BSS(943C20) List gResourceList;

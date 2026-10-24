@@ -40,5 +40,5 @@ HOOK(0x4010A0, Game_Quit);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 STORE(igd, 54F8E0, 1) __typeof__(gGameJmpBuf[0]) store_54F8E0[72];
 ALIAS(gGameJmpBuf, store_54F8E0, 0);
-PAD(igb, A970E0, A970E0, 0x1200);
-ALIAS(gTaskRunHandlers, pad_A970E0, 0);
+STORE(igb, A970E0, 4) __typeof__(gTaskRunHandlers[0]) store_A970E0[1152];
+ALIAS(gTaskRunHandlers, store_A970E0, 0);

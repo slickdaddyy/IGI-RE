@@ -105,8 +105,8 @@ int Keys_GetCount(void)
 HOOK(0x48A910, Keys_GetCount);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igb, 5C8B20, 5C8B20, 0x80);
-ALIAS(gKeyQueue, pad_5C8B20, 0);
+STORE(igb, 5C8B20, 4) __typeof__(gKeyQueue[0]) store_5C8B20[32];
+ALIAS(gKeyQueue, store_5C8B20, 0);
 BSS(5C8B20) int gKeysStart;
 BSS(5C8B20) int gKeysCount;
 BSS(5C8B20) char gKeysActive;

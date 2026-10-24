@@ -26,6 +26,8 @@ B = 0x400000
 assert pe.FILE_HEADER.TimeDateStamp == 0x3A1D74C6, 'needs the EU IGI.exe'
 
 SECTIONS = (('igd', 0x533000, 0x550000), ('igb', 0x550000, 0xC35000))
+# IGI.exe's import address table: its slots hold the functions they name (mixerOpen_ -> mixerOpen)
+IAT = (0x533000, 0x533228)
 # dinput.lib's object formats in .text, which src/exe/fill.c carries (tools/genfill.py)
 TEXT_DATA = ((0x4AE680, 'igi_dimouse', 0xB0), (0x4AE740, 'igi_dikeyboard', 0x1000), (0x516FA0, 'igi_dijoystick', 0x2C0))
 MARK = '/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */'
@@ -625,17 +627,23 @@ for SEC, prim, alias, runs in plans:
             if a > here:
                 out.append('%s(%s, %s, %06X, 0x%X)%s;' % (pad, SEC, run, here, a - here,
                                                         bytes_init(here, a - here) if SEC == 'igd' else ''))
-            init = (initialiser(f, p, a, size) if p in synthetic else typed_init(f, p, a, size, p)) \
-                if typed and SEC == 'igd' else None
+            if IAT[0] <= a < IAT[1] and p.endswith('_'):
+                init = p[:-1]
+            else:
+                init = (initialiser(f, p, a, size) if p in synthetic else typed_init(f, p, a, size, p)) \
+                    if typed and SEC == 'igd' else None
             if typed and (SEC == 'igb' or init is not None):
                 out.append('%s(%s) %s%s;' % (macro, run, owner[p][1], ' INIT(%s)' % init if init not in (None, '{0}', '0') else ''))
                 home[p] = p
                 here = a + size
                 continue
             store = 'store_%06X' % a
-            count, init = typed_prefix(f, p, a, size, store) if not typed and SEC == 'igd' else (0, None)
+            if not typed and SEC == 'igb' and p in info and info[p][0] and size % info[p][0] == 0:
+                count, init = size // info[p][0], '{0}'
+            else:
+                count, init = typed_prefix(f, p, a, size, store) if not typed and SEC == 'igd' else (0, None)
             if count:  # an array of unknown length, as typed storage under the name
-                es = size_of(*types[p])
+                es = info[p][0]
                 out.append('STORE(%s, %s, %d) __typeof__(%s[0]) %s[%d]%s;' % (
                     SEC, run, info[p][1], p, store, count, ' INIT(%s)' % init if init != '{0}' else ''))
                 home[p] = store

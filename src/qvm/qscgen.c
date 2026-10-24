@@ -514,8 +514,8 @@ void QscGen_Init(void)
 HOOK(0x4BC920, QscGen_Init);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igb, A43EE0, A43EE0, 0x3D4);
-ALIAS(gQscGenOpText, pad_A43EE0, 0);
+STORE(igb, A43EE0, 1) __typeof__(gQscGenOpText[0]) store_A43EE0[49];
+ALIAS(gQscGenOpText, store_A43EE0, 0);
 BSS(A43EE0) void *gQscGenErrorData;
 BSS(A43EE0) int gQscGenUnkA442B8;
 BSS(A43EE0) int gQscGenUnkA442BC;
@@ -523,5 +523,5 @@ BSS(A43EE0) QscGenCallback gQscGenLogFn;
 BSS(A43EE0) QscGenCallback gQscGenErrorFn;
 BSS(A43EE0) int gQscGenErrors;
 BSS(A43EE0) void *gQscGenLogData;
-PAD(igb, A43EE0, A442D0, 0x1C);
-ALIAS(gQscGenIndent, pad_A442D0, 0);
+STORE(igb, A43EE0, 1) __typeof__(gQscGenIndent[0]) store_A442D0[28];
+ALIAS(gQscGenIndent, store_A442D0, 0);

@@ -40,6 +40,8 @@ for n, a, size in (('igi_dimouse', 0x4AE680, 0xB0), ('igi_dikeyboard', 0x4AE740,
 
 lo, hi = 0x533000, 0x550000
 for a in range(lo, hi, 4):
+    if 0x533000 <= a < 0x533228:  # the import table: the exe's slots hold the functions
+        continue
     o, x = oimg[a - B:a - B + 4], ximg[a - B:a - B + 4]
     if o == x:
         continue

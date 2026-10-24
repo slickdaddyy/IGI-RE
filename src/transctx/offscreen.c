@@ -152,5 +152,5 @@ HOOK(0x498370, Offscreen_GetMode);
 BSS(6E5BB8) int gOffscreenMode;
 BSS(6E5BB8) char gOffscreenReady;
 PAD(igb, 6E5BB8, 6E5BBD, 0x3);
-PAD(igb, BCAAC0, BCAAC0, 0x20);
-ALIAS(gOffscreenClip, pad_BCAAC0, 0);
+STORE(igb, BCAAC0, 4) __typeof__(gOffscreenClip[0]) store_BCAAC0[8];
+ALIAS(gOffscreenClip, store_BCAAC0, 0);

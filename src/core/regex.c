@@ -656,21 +656,21 @@ void Regex_Substitute(char *out, int size, const char *tmpl, const char *src)
 HOOK(0x4B0A80, Regex_Substitute);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igb, 936280, 936280, 0x2000);
-ALIAS(gRegexMatchClasses, pad_936280, 0);
+STORE(igb, 936280, 1) __typeof__(gRegexMatchClasses[0]) store_936280[8192];
+ALIAS(gRegexMatchClasses, store_936280, 0);
 PAD(igb, 936280, 938280, 0x2808);
 ALIAS(gRegexFindProg, pad_938280, 0);
-PAD(igb, 936280, 93AA88, 0x50);
-ALIAS(gRegexGroups, pad_93AA88, 0);
+STORE(igb, 936280, 4) __typeof__(gRegexGroups[0]) store_93AA88[10];
+ALIAS(gRegexGroups, store_93AA88, 0);
 BSS(936280) int gRegexMaxFrames;
 PAD(igb, 936280, 93AADC, 0x4);
-PAD(igb, 936280, 93AAE0, 0x2800);
-ALIAS(gRegexMatchProg, pad_93AAE0, 0);
-PAD(igb, 936280, 93D2E0, 0x800);
-ALIAS(gRegexCounters, pad_93D2E0, 0);
-PAD(igb, 936280, 93DAE0, 0x2800);
-ALIAS(gRegexStack, pad_93DAE0, 0);
-PAD(igb, 936280, 9402E0, 0x2000);
-ALIAS(gRegexFindClasses, pad_9402E0, 0);
+STORE(igb, 936280, 4) __typeof__(gRegexMatchProg[0]) store_93AAE0[512];
+ALIAS(gRegexMatchProg, store_93AAE0, 0);
+STORE(igb, 936280, 4) __typeof__(gRegexCounters[0]) store_93D2E0[512];
+ALIAS(gRegexCounters, store_93D2E0, 0);
+STORE(igb, 936280, 4) __typeof__(gRegexStack[0]) store_93DAE0[512];
+ALIAS(gRegexStack, store_93DAE0, 0);
+STORE(igb, 936280, 1) __typeof__(gRegexFindClasses[0]) store_9402E0[8192];
+ALIAS(gRegexFindClasses, store_9402E0, 0);
 BSS(936280) RegexGroup *gRegexResult;
 BSS(936280) int gRegexResultCount;

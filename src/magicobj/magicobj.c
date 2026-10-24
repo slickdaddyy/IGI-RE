@@ -383,5 +383,5 @@ STORE(igd, 547F3C, 1) __typeof__(gRigidEvents[0]) store_547F3C[6] INIT({-1, -1, 
 ALIAS(gRigidEvents, store_547F3C, 0);
 DATA(547F3C) uint16_t gRigidType INIT(385);
 BSS(A4433C) int gMagicObjDefCount;
-PAD(igb, B97E00, B97E00, 0xA000);
-ALIAS(gMagicObjDefs, pad_B97E00, 0);
+STORE(igb, B97E00, 4) __typeof__(gMagicObjDefs[0]) store_B97E00[1024];
+ALIAS(gMagicObjDefs, store_B97E00, 0);

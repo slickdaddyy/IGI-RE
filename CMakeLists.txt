@@ -37,7 +37,7 @@ if(NOT IGI_DIRS)
     target_compile_definitions(igidecomp PRIVATE IGI_STANDALONE)
     # data definitions keep their order and the ABI's alignment (tools/gendefs.py)
     target_compile_options(igidecomp PRIVATE ${IGI_CFLAGS} -fno-toplevel-reorder -malign-data=abi)
-    target_link_libraries(igidecomp PRIVATE ddraw dsound vfw32)
+    target_link_libraries(igidecomp PRIVATE ddraw dsound vfw32 winmm ole32)
     target_link_options(igidecomp PRIVATE -static -static-libgcc -Wl,--image-base,0x400000 -Wl,--disable-dynamicbase
         -Wl,--section-start=.igi=0x401000 -Wl,--section-start=.igd=0x533000 -Wl,--section-start=.igb=0x550000
         -Wl,--section-start=.text=0xC35000)

@@ -413,11 +413,11 @@ STORE(igd, 546F04, 4) __typeof__(gModeNames[0]) store_546F04[5] INIT({(__typeof_
 ALIAS(gModeNames, store_546F04, 0);
 DATA(546F04) char str_546F18[3] INIT("r+");
 PAD(igd, 546F04, 546F1B, 0x1);
-PAD(igb, 9435B0, 9435B0, 0x100);
-ALIAS(gOpenPath, pad_9435B0, 0);
-PAD(igb, 9435B0, 9436B0, 0x2BC);
-ALIAS(gDevices, pad_9436B0, 0);
+STORE(igb, 9435B0, 1) __typeof__(gOpenPath[0]) store_9435B0[256];
+ALIAS(gOpenPath, store_9435B0, 0);
+STORE(igb, 9435B0, 4) __typeof__(gDevices[0]) store_9436B0[5];
+ALIAS(gDevices, store_9436B0, 0);
 PAD(igb, 943980, 943980, 0x8);
 ALIAS(gNullFile, pad_943980, 0);
-PAD(igb, 943A98, 943A98, 0x88);
-ALIAS(gDeletePath, pad_943A98, 0);
+STORE(igb, 943A98, 1) __typeof__(gDeletePath[0]) store_943A98[136];
+ALIAS(gDeletePath, store_943A98, 0);

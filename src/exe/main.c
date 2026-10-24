@@ -13,7 +13,6 @@
    IGI.exe's. Calls link straight to the rewrite (src/igi.h, link.c). */
 __asm__(".section .igi,\"bw\"\n\t.space 0x132000\n\t.text");
 
-#define EXE_BASE 0x400000
 #define EXE_SIZE 0x835000
 #define TEXT_LO 0x401000
 #define TEXT_HI 0x533000
@@ -21,7 +20,6 @@ __asm__(".section .igi,\"bw\"\n\t.space 0x132000\n\t.text");
 int WINAPI AppMain_WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdLine, int show);
 int Link_Bind(HMODULE msvcrt, HMODULE dinput);
 
-extern const uint32_t igi_imports;
 
 static void fail(const char *msg)
 {
@@ -29,10 +27,9 @@ static void fail(const char *msg)
     ExitProcess(1);
 }
 
-static void load_imports(uint32_t at);
 static void clear_code(void);
 
-/* the code range is int3; then the import table */
+/* the code range is int3 */
 static void load_data(void)
 {
     DWORD old;
@@ -40,25 +37,6 @@ static void load_data(void)
     if (!VirtualProtect((void *)TEXT_LO, EXE_SIZE - 0x1000, PAGE_EXECUTE_READWRITE, &old))
         fail("Couldn't open the game's memory at 0x401000.");
     clear_code();
-    load_imports(igi_imports);
-}
-
-/* fill the exe's import table; some code calls through its slots */
-static void load_imports(uint32_t at)
-{
-    const IMAGE_IMPORT_DESCRIPTOR *d = (const IMAGE_IMPORT_DESCRIPTOR *)(uintptr_t)at;
-
-    for (; d->Name; d++) {
-        HMODULE m = LoadLibraryA((const char *)(EXE_BASE + d->Name));
-        DWORD *name = (DWORD *)(EXE_BASE + (d->OriginalFirstThunk ? d->OriginalFirstThunk : d->FirstThunk));
-        DWORD *slot = (DWORD *)(EXE_BASE + d->FirstThunk);
-
-        for (; *name; name++, slot++) {
-            const char *fn = IMAGE_SNAP_BY_ORDINAL32(*name) ? (const char *)(uintptr_t)IMAGE_ORDINAL32(*name)
-                                                            : (const char *)((IMAGE_IMPORT_BY_NAME *)(EXE_BASE + *name))->Name;
-            *slot = m ? (DWORD)(uintptr_t)GetProcAddress(m, fn) : 0;
-        }
-    }
 }
 
 /* fill the code range with int3 */

@@ -185,6 +185,6 @@ HOOK(0x42C4E0, Afterburner_Close);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(57BCF8) uint16_t gAfterburnerType;
 PAD(igb, 57BCF8, 57BCFA, 0x6);
-PAD(igb, 57BCF8, 57BD00, 0x10);
-ALIAS(gAfterburnerRandom, pad_57BD00, 0);
+STORE(igb, 57BCF8, 1) __typeof__(gAfterburnerRandom[0]) store_57BD00[16];
+ALIAS(gAfterburnerRandom, store_57BD00, 0);
 BSS(BC2364) int gAfterburnerPrim;

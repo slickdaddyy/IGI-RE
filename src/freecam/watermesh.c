@@ -402,5 +402,5 @@ DATA(534CE0) double kEnvLift INIT(819200.0);
 DATA(534CE0) float kViewAngle INIT(1.7278761f);
 PAD(igd, 534CE0, 534CF4, 0x4);
 DATA(534CE0) double kSplitMin INIT(131072.0);
-PAD(igb, A84584, A84584, 0x54);
-ALIAS(gWaterSplits, pad_A84584, 0);
+STORE(igb, A84584, 4) __typeof__(gWaterSplits[0]) store_A84584[21];
+ALIAS(gWaterSplits, store_A84584, 0);

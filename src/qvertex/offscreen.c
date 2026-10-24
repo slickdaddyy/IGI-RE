@@ -448,10 +448,10 @@ void OffscreenBufferSprite_RenderSprite(OffscreenSprite *s)
 HOOK(0x50F070, OffscreenBufferSprite_RenderSprite);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igb, A7CEC8, A7CEC8, 0x10);
-ALIAS(gPaletteSlotWords, pad_A7CEC8, 0);
-ALIAS(gPaletteSlots, pad_A7CEC8, 0);
-PAD(igb, BC7A00, BC7A00, 0x1000);
-ALIAS(gPalette565, pad_BC7A00, 0);
-PAD(igb, BC7A00, BC8A00, 0x2000);
-ALIAS(gPaletteColors, pad_BC8A00, 0);
+STORE(igb, A7CEC8, 4) __typeof__(gPaletteSlotWords[0]) store_A7CEC8[4];
+ALIAS(gPaletteSlotWords, store_A7CEC8, 0);
+ALIAS(gPaletteSlots, store_A7CEC8, 0);
+STORE(igb, BC7A00, 2) __typeof__(gPalette565[0]) store_BC7A00[2048];
+ALIAS(gPalette565, store_BC7A00, 0);
+STORE(igb, BC7A00, 1) __typeof__(gPaletteColors[0]) store_BC8A00[8192];
+ALIAS(gPaletteColors, store_BC8A00, 0);

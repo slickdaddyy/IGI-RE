@@ -593,5 +593,5 @@ PAD(igd, 53BCE8, 53BD1B, 0x1);
 BSS(57BCB8) uint16_t gTrainType;
 PAD(igb, 57BCB8, 57BCBA, 0x2);
 BSS(57BCB8) void *gTrainParams;
-PAD(igb, 57BCE8, 57BCE8, 0x10);
-ALIAS(gTrainOffsetRange, pad_57BCE8, 0);
+STORE(igb, 57BCE8, 4) __typeof__(gTrainOffsetRange[0]) store_57BCE8[4];
+ALIAS(gTrainOffsetRange, store_57BCE8, 0);

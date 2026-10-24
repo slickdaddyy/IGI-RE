@@ -279,12 +279,9 @@ void App_ResetErrorHandlers(void)
 HOOK(0x498950, App_ResetErrorHandlers);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igd, 533218, 533218, 0x4) INIT({0x1A, 0x56, 0x13});
-ALIAS(CoCreateInstance_, pad_533218, 0);
-PAD(igd, 533218, 53321C, 0x4) INIT({0x0A, 0x56, 0x13});
-ALIAS(CoInitialize_, pad_53321C, 0);
-PAD(igd, 533218, 533220, 0x4) INIT({0xF8, 0x55, 0x13});
-ALIAS(CoUninitialize_, pad_533220, 0);
+DATA(533218) HRESULT(WINAPI *CoCreateInstance_)(REFCLSID, IUnknown *, DWORD, REFIID, void **) INIT(CoCreateInstance);
+DATA(533218) HRESULT(WINAPI *CoInitialize_)(void *) INIT(CoInitialize);
+DATA(533218) void(WINAPI *CoUninitialize_)(void) INIT(CoUninitialize);
 STORE(igd, 5348E0, 4) __typeof__(IID_IDirectMusic_[0]) store_5348E0[1] INIT({{.Data1 = 1698042202, .Data2 = 31533, .Data3 = 4562, .Data4 = {186, 24, 0, 0, 248, 117, 172, 18}}});
 ALIAS(IID_IDirectMusic_, store_5348E0, 0);
 STORE(igd, 5348E0, 4) __typeof__(CLSID_DirectMusic_[0]) store_5348F0[1] INIT({{.Data1 = 1667997456, .Data2 = 3197, .Data3 = 4561, .Data4 = {149, 178, 0, 32, 175, 220, 116, 33}}});
