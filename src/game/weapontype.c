@@ -9,7 +9,13 @@ ORIG(0x4F1D80, void, ParamEnum_Free, (void *e));
 
 extern WeaponType gWeaponTypes[];
 extern int gWeaponTypeCount;
-extern uint8_t gWeaponEvents[];
+extern uint8_t gWeaponSizeEvent;
+extern uint8_t gWeaponInitEvent;
+extern uint8_t gWeaponFireEvent;
+extern uint8_t gWeaponSizeEvent2;
+extern uint8_t gWeaponInitEvent2;
+extern uint8_t gWeaponTypeEvent;
+extern uint8_t gWeaponEventB2;
 extern char gWeaponCategoryEnum[];
 extern char gWeaponSightEnum[];
 extern char gWeaponAmmoEnum[];
@@ -33,8 +39,13 @@ void WeaponType_Close(void)
             gWeaponTypes[i].data = NULL;
         }
     }
-    for (i = 0; i < 7; i++)
-        TaskEvent_Free(gWeaponEvents[i]);
+    TaskEvent_Free(gWeaponSizeEvent);
+    TaskEvent_Free(gWeaponInitEvent);
+    TaskEvent_Free(gWeaponFireEvent);
+    TaskEvent_Free(gWeaponSizeEvent2);
+    TaskEvent_Free(gWeaponInitEvent2);
+    TaskEvent_Free(gWeaponTypeEvent);
+    TaskEvent_Free(gWeaponEventB2);
     gWeaponTypeCount = 0;
 }
 HOOK(0x414810, WeaponType_Close);

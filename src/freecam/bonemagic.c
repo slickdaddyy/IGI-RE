@@ -95,7 +95,6 @@ ORIG(0x4D2FB0, void, BoneObj_GetRootMotion, (void *unk, float *delta, void *anim
 ORIG(0x4D3210, void, BoneObj_GetEvents, (void *unk, void *anim));
 
 extern uint16_t gBoneMagicObjType;
-extern uint32_t gBoneMagicObjTypeWord;
 #define kSomeHandler427F80 (FN(0x427F80, HitZone_GetArgSize))
 
 void BoneMagicObj_Run(BoneMagicObj *o)
@@ -147,7 +146,7 @@ void BoneMagicObj_Init(void)
     TaskType_SetHandler(gBoneMagicObjType, RigidDynCubeObj_GetEvent0(), BoneMagicObj_ReadArgs);
     TaskType_SetHandler(gBoneMagicObjType, RigidDynCubeObj_GetEvent1(), kSomeHandler427F80);
     TaskType_SetHandler2(gBoneMagicObjType, 2, BoneMagicObj_Delete);
-    Script_RegisterConstant("TASKTYPE_BONEMAGICOBJ", gBoneMagicObjTypeWord & 0xFFFF);
+    Script_RegisterConstant("TASKTYPE_BONEMAGICOBJ", gBoneMagicObjType);
 }
 HOOK(0x5317D0, BoneMagicObj_Init);
 
@@ -239,5 +238,5 @@ void BoneMagicObj_Shutdown(void)
 HOOK(0x531D10, BoneMagicObj_Shutdown);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-DATA(54F848) uint32_t gBoneMagicObjTypeWord INIT(385);
-ALIAS(gBoneMagicObjType, gBoneMagicObjTypeWord, 0);
+DATA(54F848) uint16_t gBoneMagicObjType INIT(385);
+PAD(igd, 54F848, 54F84A, 0x2);

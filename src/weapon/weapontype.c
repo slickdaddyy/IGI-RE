@@ -377,7 +377,6 @@ DATA(5391AC) uint8_t gWeaponTypeEvent INIT(255);
 DATA(5391AC) uint8_t gWeaponEventB2 INIT(255);
 PAD(igd, 5391AC, 5391B3, 0x1);
 DATA(5391AC) int gWeaponMaxId INIT(-1);
-ALIAS(gWeaponEvents, gWeaponSizeEvent, 0);
 STORE(igb, 56E218, 1) char store_56E218[16];
 ALIAS(gWeaponAmmoEnum, store_56E218, 0);
 STORE(igb, 56E218, 1) char store_56E228[16];
