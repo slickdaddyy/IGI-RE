@@ -399,7 +399,7 @@ void MenuWindow_DrawEnd(MenuWindow *w, float fill, float alpha, int focused)
     strip.verts = v;
     gQVertexTexture = NULL;
     gQVertexPalette = NULL;
-    gRenderFuncs[gQVertexStrip](&strip);
+    gRenderModeCurrent.methods[gQVertexStrip](&strip);
     Draw_RectA(sx, sy, width, height, 0.0f, 0.0f, 0.0f, alpha * fill, 0x80000, 0);
 }
 HOOK(0x424980, MenuWindow_DrawEnd);

@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "orig.h"
 #include "sysmisc/sysmisctypes.h"
+#include "core/coretypes.h"
 
 /* Header of a .tex file, version 2. */
 typedef struct LoopHeader2 {
@@ -63,7 +64,7 @@ ORIG(0x4B74D0, void *, Chunk_Data, (void *chunk, void *file));
 ORIG(0x509910, void, D3DTex_Register, (void));
 ORIG(0x509920, void, D3DTex_Unregister, (void));
 
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 extern char gTexFromFile;
 extern float gTexParams[];
 
@@ -187,7 +188,7 @@ void Texture_Alloc(Texture *tex, int a2, int pitch, int width, int height, int f
     d.flags = a8;
     d.mipmap = gTexFromFile;
     d.data = NULL;
-    gRenderFuncs[gAllocTextureId](&d);
+    gRenderModeCurrent.methods[gAllocTextureId](&d);
 }
 HOOK(0x4B2320, Texture_Alloc);
 
@@ -207,8 +208,8 @@ void Texture_Create(Texture *tex, int a2, int pitch, int width, int height, int 
     d.flags = a8;
     d.mipmap = gTexFromFile;
     d.data = data;
-    gRenderFuncs[gAllocTextureId](&d);
-    gRenderFuncs[gDownloadTextureId](&d);
+    gRenderModeCurrent.methods[gAllocTextureId](&d);
+    gRenderModeCurrent.methods[gDownloadTextureId](&d);
 }
 HOOK(0x4B23B0, Texture_Create);
 
@@ -227,7 +228,7 @@ void Texture_Download(void *tex, int a2, int pitch, int width, int height, int f
     d.flags = 0;
     d.mipmap = gTexFromFile;
     d.data = data;
-    gRenderFuncs[gDownloadTextureId](&d);
+    gRenderModeCurrent.methods[gDownloadTextureId](&d);
 }
 HOOK(0x4B2450, Texture_Download);
 
@@ -260,22 +261,22 @@ void Texture_BeginList(int a, int b)
 {
     int args[2] = { a, b };
 
-    if (gRenderFuncs[gBeginTextureListId])
-        gRenderFuncs[gBeginTextureListId](args);
+    if (gRenderModeCurrent.methods[gBeginTextureListId])
+        gRenderModeCurrent.methods[gBeginTextureListId](args);
 }
 HOOK(0x4B25B0, Texture_BeginList);
 
 void Texture_EndList(void)
 {
-    if (gRenderFuncs[gEndTextureListId])
-        gRenderFuncs[gEndTextureListId](NULL);
+    if (gRenderModeCurrent.methods[gEndTextureListId])
+        gRenderModeCurrent.methods[gEndTextureListId](NULL);
 }
 HOOK(0x4B25F0, Texture_EndList);
 
 void Texture_SetActiveTMU(int tmu)
 {
-    if (gRenderFuncs[gSetActiveTMUId])
-        gRenderFuncs[gSetActiveTMUId](&tmu);
+    if (gRenderModeCurrent.methods[gSetActiveTMUId])
+        gRenderModeCurrent.methods[gSetActiveTMUId](&tmu);
 }
 HOOK(0x4B2610, Texture_SetActiveTMU);
 
@@ -283,8 +284,8 @@ int Texture_GetActiveTMU(void)
 {
     int tmu = 0;
 
-    if (gRenderFuncs[gGetActiveTMUId])
-        gRenderFuncs[gGetActiveTMUId](&tmu);
+    if (gRenderModeCurrent.methods[gGetActiveTMUId])
+        gRenderModeCurrent.methods[gGetActiveTMUId](&tmu);
     return tmu;
 }
 HOOK(0x4B2640, Texture_GetActiveTMU);
@@ -293,8 +294,8 @@ int Texture_GetTMUs(void)
 {
     int n = 1;
 
-    if (gRenderFuncs[gGetTMUsId])
-        gRenderFuncs[gGetTMUsId](&n);
+    if (gRenderModeCurrent.methods[gGetTMUsId])
+        gRenderModeCurrent.methods[gGetTMUsId](&n);
     return n;
 }
 HOOK(0x4B2670, Texture_GetTMUs);
@@ -315,8 +316,8 @@ int Texture_GetReloadId(void);
 
 void Texture_ReloadAll(void)
 {
-    if (gRenderFuncs[Texture_GetReloadId()])
-        gRenderFuncs[Texture_GetReloadId()](NULL);
+    if (gRenderModeCurrent.methods[Texture_GetReloadId()])
+        gRenderModeCurrent.methods[Texture_GetReloadId()](NULL);
 }
 HOOK(0x4B26C0, Texture_ReloadAll);
 
@@ -379,3 +380,4 @@ STORE(igb, 943B20, 4) float store_943B20[7];
 ALIAS(gTexParams, store_943B20, 0);
 BSS(943B20) char gTexFromFile;
 PAD(igb, 943B20, 943B3D, 0x3);
+BSS(A94E80) RenderMode gRenderModeCurrent;

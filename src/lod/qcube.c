@@ -8,6 +8,7 @@
 #include "core/pool.h"
 #include "transctx/transctx.h"
 #include "lod/lodtypes.h"
+#include "core/coretypes.h"
 
 FN_EXTERN(crt_CIpow);
 
@@ -91,7 +92,7 @@ _Static_assert(offsetof(QEnclosing, radius) == 0x28, "QEnclosing");
 typedef void (*QHandler)(QTask *task, void *arg);
 
 extern QHandler gTaskHandlers[];
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 extern QEntry *gQCubeList;
 extern QEntry *gQCubeOut;
 extern int gQCubeCount;
@@ -492,8 +493,8 @@ void QCube_UpdateNearPlane(QWorld *w, const char *flags)
 
     arg.dist = kNearStart;
     arg.zbuffer = 0;
-    if (gRenderFuncs[TransContext_GetNearClipMethod()])
-        gRenderFuncs[TransContext_GetNearClipMethod()](&arg);
+    if (gRenderModeCurrent.methods[TransContext_GetNearClipMethod()])
+        gRenderModeCurrent.methods[TransContext_GetNearClipMethod()](&arg);
     if (!arg.zbuffer || !gUnk543A64)
         return;
     nearq[0] = 0;
@@ -517,8 +518,8 @@ void QCube_UpdateNearPlane(QWorld *w, const char *flags)
     nearq[2] = nearq[2] * kNearScale;
     arg.dist = nearq[2];
     arg.zbuffer = 0;
-    if (gRenderFuncs[TransContext_GetNearClipMethod()])
-        gRenderFuncs[TransContext_GetNearClipMethod()](&arg);
+    if (gRenderModeCurrent.methods[TransContext_GetNearClipMethod()])
+        gRenderModeCurrent.methods[TransContext_GetNearClipMethod()](&arg);
     crt_sprintf(gNearClipText, "Closest Z: %.2f", (double)nearq[2]);
 }
 HOOK(0x4D2840, QCube_UpdateNearPlane);

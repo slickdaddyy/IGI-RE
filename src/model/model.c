@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "model/model.h"
+#include "core/coretypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4AF8F0, void, List_AddTail_, (List *list, Node *node));
@@ -33,7 +34,7 @@ extern char gModelPath[];
 extern char gModelDir[];
 extern int gVirModelCount;
 extern int gVirModelSaved;
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 
 _Static_assert(sizeof(ModelFile) == 0x4C, "ModelFile");
 
@@ -398,8 +399,8 @@ Mesh *Mesh_Load(const char *name)
     }
     arg.header = (float *)m->header;
     arg.res = m->res;
-    if (gRenderFuncs[Model_GetLoadMethod()])
-        gRenderFuncs[Model_GetLoadMethod()](&arg);
+    if (gRenderModeCurrent.methods[Model_GetLoadMethod()])
+        gRenderModeCurrent.methods[Model_GetLoadMethod()](&arg);
     return m;
 }
 HOOK(0x4CF390, Mesh_Load);

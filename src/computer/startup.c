@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "computer/computer.h"
 #include "transctx/transctxtypes.h"
+#include "core/coretypes.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -73,7 +74,7 @@ extern uint16_t gStartupType;
 extern int gStartupDraw;
 extern int gStartupMethod;
 extern void *gD3D;
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 extern Scene gScene;
 extern void *gD3DDevice;
 extern float gWorldScale;
@@ -297,8 +298,8 @@ HOOK(0x466480, ComputerStartup_Render);
 
 void ComputerStartup_SortDraw(SortDraw *d)
 {
-    if ((d->task->flags & STARTUP_RUNNING) && gRenderFuncs[gStartupMethod])
-        gRenderFuncs[gStartupMethod](d->task);
+    if ((d->task->flags & STARTUP_RUNNING) && gRenderModeCurrent.methods[gStartupMethod])
+        gRenderModeCurrent.methods[gStartupMethod](d->task);
 }
 HOOK(0x466C60, ComputerStartup_SortDraw);
 

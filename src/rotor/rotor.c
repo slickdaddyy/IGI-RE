@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "rotor/rotor.h"
+#include "core/coretypes.h"
 
 FN_EXTERN(EditorMagicObj_Delete);
 
@@ -49,7 +50,7 @@ ORIG(0x4EE140, PhysType *, PhysicsObjType_Find, (const char *name));
 
 #define MAGICOBJ_DELETE (FN(0x51B940, EditorMagicObj_Delete))
 
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 extern uint16_t gRotorType;
 extern int gRotorPrim;
 
@@ -158,7 +159,7 @@ void Rotor_DrawPrim(Prim *p)
         arg.unk18 = p->unk18;
         arg.unk20 = p->unk20;
         arg.unk1C = p->unk1C;
-        gRenderFuncs[Mesh3D_GetDrawRigidMethod()](&arg);
+        gRenderModeCurrent.methods[Mesh3D_GetDrawRigidMethod()](&arg);
         a = a + step;
     }
 }

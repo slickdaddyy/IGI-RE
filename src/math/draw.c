@@ -2,13 +2,14 @@
 #include "igi.h"
 #include "res/restypes.h"
 #include "qvertex/qvertextypes.h"
+#include "core/coretypes.h"
 
 typedef void (*DrawFunc)(QVertexStrip *cmd);
 
 extern int gQVertexTexture;
 extern int gQVertexStrip;
 extern int gQVertexPalette;
-extern DrawFunc gRenderFuncs[];
+extern RenderMode gRenderModeCurrent;
 
 #define COLOR_SCALE (1.0f / 128)
 
@@ -50,7 +51,7 @@ static void DrawRect(float x, float y, float w, float h, float r, float g, float
     cmd.verts = v;
     gQVertexTexture = 0;
     gQVertexPalette = 0;
-    gRenderFuncs[gQVertexStrip](&cmd);
+    gRenderModeCurrent.methods[gQVertexStrip](&cmd);
 }
 
 void Draw_Rect(float x, float y, float w, float h, float r, float g, float b, int unk4, int unk8)
@@ -111,7 +112,7 @@ void Draw_RectGradient(float x, float y, float w, float h,
     cmd.verts = v;
     gQVertexTexture = 0;
     gQVertexPalette = 0;
-    gRenderFuncs[gQVertexStrip](&cmd);
+    gRenderModeCurrent.methods[gQVertexStrip](&cmd);
 }
 HOOK(0x4B4BE0, Draw_RectGradient);
 
@@ -146,7 +147,7 @@ static void DrawSprite(const Sprite *sheet, float x, float y, float r, float g, 
     cmd.verts = v;
     gQVertexTexture = (int)f->texture;
     gQVertexPalette = (int)sheet->palette;
-    gRenderFuncs[gQVertexStrip](&cmd);
+    gRenderModeCurrent.methods[gQVertexStrip](&cmd);
 }
 
 void Draw_Sprite(const Sprite *sheet, float x, float y, float r, float g, float b, int frame, int unk4,

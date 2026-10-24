@@ -11,6 +11,7 @@
 #include "weapon/weapon.h"
 #include "qvertex/qvertextypes.h"
 #include "humanai/humanaitypes.h"
+#include "core/coretypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401AE0, void *, TaskRef_Add, (void *task));
@@ -105,7 +106,7 @@ extern int gQVertexStrip;
 
 extern WeaponCategory gWeaponCategories[];
 
-extern void (*gRenderFuncs[])(QVertexStrip *);
+extern RenderMode gRenderModeCurrent;
 
 typedef struct HumanBlast {
     int unk00;
@@ -912,22 +913,22 @@ static void Render_ActionBar(HumanPlayer *h, int width, int height, float *top)
     v[0].y = y;
     v[1].x = right;
     v[1].y = y;
-    gRenderFuncs[gQVertexStrip](&s);
+    gRenderModeCurrent.methods[gQVertexStrip](&s);
     v[0].x = x;
     v[0].y = bottom;
     v[1].x = right;
     v[1].y = bottom;
-    gRenderFuncs[gQVertexStrip](&s);
+    gRenderModeCurrent.methods[gQVertexStrip](&s);
     v[0].x = x;
     v[0].y = y;
     v[1].x = x;
     v[1].y = bottom;
-    gRenderFuncs[gQVertexStrip](&s);
+    gRenderModeCurrent.methods[gQVertexStrip](&s);
     v[0].x = right;
     v[0].y = y;
     v[1].x = right;
     v[1].y = bottom + 1.0f;
-    gRenderFuncs[gQVertexStrip](&s);
+    gRenderModeCurrent.methods[gQVertexStrip](&s);
 }
 
 /* debug range finder: distance to what the view points at */

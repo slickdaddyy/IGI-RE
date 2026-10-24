@@ -364,7 +364,7 @@ void RigidDynCubeObj_EnterHandler(RigidDynCubeObj *obj)
     d.obj = (struct BoneDynCubeObj *)obj;
     d.lights = (int *)(Light_GetActive(&d.lightCount));
     Haze_GetVisible(&d.haze, &d.hazeCount);
-    gRenderFuncs[Mesh3D_GetDrawRigidMethod()](&d);
+    gRenderModeCurrent.methods[Mesh3D_GetDrawRigidMethod()](&d);
     a.pos = obj->pos;
     a.matrix = obj->matrix;
     EACH_CHILD(&obj->task, RigidDynCubeObj_GetEvent2, &a);

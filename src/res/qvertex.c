@@ -2,13 +2,14 @@
 #include "igi.h"
 #include "res/sprite.h"
 #include "qvertex/qvertextypes.h"
+#include "core/coretypes.h"
 
 ORIG(0x4B0E70, int, RenderMode_CreateMethod, (const char *name));
 ORIG(0x4B0EB0, void, RenderMode_DeleteMethod, (int id));
 ORIG(0x509930, void, QVertex_InitDriver, (void));
 ORIG(0x509960, void, QVertex_ShutdownDriver, (void));
 
-extern void (*gRenderFuncs[])(QVertexStrip *);
+extern RenderMode gRenderModeCurrent;
 extern Texture *gQVertexTexture;
 extern int gQVertexStrip;
 extern Palette *gQVertexPalette;
@@ -39,7 +40,7 @@ static void QVertex_Draw(Sprite *s, Texture *t, int untextured, unsigned int fla
     strip.verts = verts;
     gQVertexTexture = t;
     gQVertexPalette = s ? s->palette : NULL;
-    gRenderFuncs[gQVertexStrip](&strip);
+    gRenderModeCurrent.methods[gQVertexStrip](&strip);
 }
 
 void QVertex_DrawFrame(Sprite *s, float x, float y, float r, float g, float b, float a, float z, int frame,

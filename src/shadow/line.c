@@ -4,10 +4,11 @@
 #include "shadow/shadow.h"
 #include "qvertex/qvertextypes.h"
 #include "transctx/transctxtypes.h"
+#include "core/coretypes.h"
 
 ORIG(0x497F20, void, TransContext_Project, (float *screen, float *depth, Vec3d *pos));
 
-extern void (*gRenderFuncs[])(QVertexStrip *);
+extern RenderMode gRenderModeCurrent;
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
 extern void *gQVertexPalette;
@@ -92,7 +93,7 @@ static void line_draw(const Vec3d *pa, const Vec3d *pb, const float *ca, float a
     strip.lines = 1;
     strip.count = 2;
     strip.verts = v;
-    gRenderFuncs[gQVertexStrip](&strip);
+    gRenderModeCurrent.methods[gQVertexStrip](&strip);
 }
 
 /* a 3D line with a colour and alpha at each end */

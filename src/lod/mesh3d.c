@@ -8,6 +8,7 @@
 #include "model/model.h"
 #include "transctx/transctx.h"
 #include "bonemesh/bonemeshtypes.h"
+#include "core/coretypes.h"
 
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x401810, int, TaskEvent_Alloc2, (uint16_t type));
@@ -99,7 +100,7 @@ extern float gExclRightCos;
 extern float gExclTopCos;
 extern float gExclBottomCos;
 
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 
 static const float kOne = 1.0f;
 static const float kBoneSphere = 0x1.68f5c2p+0f; /* 1.41 */
@@ -320,7 +321,7 @@ int Mesh3D_Exclude(float *pos, float radius, void *clip)
     arg.center = (Vec3f *)pos;
     arg.radius = radius;
     arg.inside = clip;
-    gRenderFuncs[Mesh3D_GetExcludeMethod()](&arg);
+    gRenderModeCurrent.methods[Mesh3D_GetExcludeMethod()](&arg);
     return arg.outside;
 }
 HOOK(0x4D03D0, Mesh3D_Exclude);

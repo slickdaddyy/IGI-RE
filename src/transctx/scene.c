@@ -174,13 +174,13 @@ void RenderQueue_Draw(RenderNode *n)
 {
     for (; n; n = n->next)
         if (n->type != -1)
-            gRenderFuncs[n->type](n);
+            gRenderModeCurrent.methods[n->type](n);
 }
 HOOK(0x497830, RenderQueue_Draw);
 
 void Primitive_Draw(RenderNode *n)
 {
-    gRenderFuncs[n->type](n);
+    gRenderModeCurrent.methods[n->type](n);
 }
 HOOK(0x497860, Primitive_Draw);
 

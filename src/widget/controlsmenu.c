@@ -410,13 +410,13 @@ void ControlsMenu_DrawFrame(ControlsMenu *cm, float alpha)
     strip.queue = 0;
     strip.count = 5;
     strip.verts = v;
-    gRenderFuncs[gQVertexStrip](&strip);
+    gRenderModeCurrent.methods[gQVertexStrip](&strip);
     v[0].x = fx + column;
     v[1].x = v[0].x;
     v[1].y = (long double)h + fy - 1.0f;
     strip.count = 2;
     strip.verts = v;
-    gRenderFuncs[gQVertexStrip](&strip);
+    gRenderModeCurrent.methods[gQVertexStrip](&strip);
 }
 HOOK(0x423930, ControlsMenu_DrawFrame);
 

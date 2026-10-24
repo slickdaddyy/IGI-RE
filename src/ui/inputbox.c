@@ -2,10 +2,11 @@
 #include "igi.h"
 #include "ui/ui.h"
 #include "qvertex/qvertextypes.h"
+#include "core/coretypes.h"
 
 ORIG(0x4B8030, void, Script_RegisterString, (const char *name, char *buf, int size));
 
-extern void (*gRenderFuncs[])(QVertexStrip *);
+extern RenderMode gRenderModeCurrent;
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
 extern void *gQVertexPalette;
@@ -293,7 +294,7 @@ void InputBox_Draw(InputBox *ib)
             strip.verts = v;
             gQVertexTexture = NULL;
             gQVertexPalette = NULL;
-            gRenderFuncs[gQVertexStrip](&strip);
+            gRenderModeCurrent.methods[gQVertexStrip](&strip);
         }
     }
     MenuWindow_DrawEnd(ib, 0.5f, alpha, ib->w.focused);

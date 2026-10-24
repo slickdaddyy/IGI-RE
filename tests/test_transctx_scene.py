@@ -18,7 +18,7 @@ def mem_init(e):
 
 
 def handler(e, slot, name):
-    """gRenderFuncs[slot] logs the 0x24 bytes of the node it gets."""
+    """gRenderModeCurrent.methods[slot] logs the 0x24 bytes of the node it gets."""
     fn = trap(e, name, logged(name, 0, pop=0, before=lambda e: (None, e.read(e.arg(0), 0x24))))
     for table in (FUNCS, 0xA950A4, 0xA950A4 + 0x208):
         u32(e, table + 4 * slot, fn)

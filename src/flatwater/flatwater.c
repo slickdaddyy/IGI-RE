@@ -439,7 +439,7 @@ void FlatWater_Render(FlatWater *w)
                 memcpy(&v->x, &pts[i], sizeof(Point2));
                 memcpy(&v->z, &depth[i], sizeof(float));
             }
-            gRenderFuncs[gQVertexStrip](&strip);
+            gRenderModeCurrent.methods[gQVertexStrip](&strip);
         }
         if (l == (FlatLayer *)Task_FindLastChild(w, gFlatWaterLayerType) && n > 2) {
             strip.verts = verts;
@@ -459,7 +459,7 @@ void FlatWater_Render(FlatWater *w)
                 memcpy(&v->x, &pts[i], sizeof(Point2));
                 memcpy(&v->z, &depth[i], sizeof(float));
             }
-            gRenderFuncs[gQVertexStrip](&strip);
+            gRenderModeCurrent.methods[gQVertexStrip](&strip);
         }
         l = (FlatLayer *)Task_FindNext(l, gFlatWaterLayerType);
     } while (l);

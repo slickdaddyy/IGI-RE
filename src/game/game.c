@@ -9,6 +9,7 @@
 #include "game/game.h"
 #include "win/wintypes.h"
 #include "qasm/qasmtypes.h"
+#include "core/coretypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A5234, int, crt_fclose, (void *f));
@@ -207,7 +208,7 @@ extern int gGameTextureCount;
 extern int gGameSpriteCount;
 extern char gMusicEnabled;
 extern void *gCurrentWorld;
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 extern int gUnkBC20A0;
 extern char gKeyboardPresent;
 extern Mouse gMouse;
@@ -417,8 +418,8 @@ void LevelStart(Game *g)
     LoadingScreen_Step(loading, 1);
     Texture_EndList();
     Texture_SetActiveTMU(-1);
-    if (gRenderFuncs[Model_GetInitMethod()])
-        gRenderFuncs[Model_GetInitMethod()](NULL);
+    if (gRenderModeCurrent.methods[Model_GetInitMethod()])
+        gRenderModeCurrent.methods[Model_GetInitMethod()](NULL);
     SoundLoad("LOCAL:common/sounds");
     SoundLoad("MISSION:sounds");
     LoadingScreen_Step(loading, 1);
@@ -658,8 +659,8 @@ void LevelQuit(void)
     Resource_Flush(gGame->textures);
     ComputerRes_Free();
     StatusMessages_Free();
-    if (gRenderFuncs[Model_GetDeinitMethod()])
-        gRenderFuncs[Model_GetDeinitMethod()](NULL);
+    if (gRenderModeCurrent.methods[Model_GetDeinitMethod()])
+        gRenderModeCurrent.methods[Model_GetDeinitMethod()](NULL);
     Level_FreeModels();
     SoundFree("MISSION:sounds");
     SoundFree("LOCAL:common/sounds");

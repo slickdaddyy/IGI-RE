@@ -5,6 +5,7 @@
 #include "qvertex/qvertextypes.h"
 #include "coll/colltypes.h"
 #include "material/materialtypes.h"
+#include "core/coretypes.h"
 
 ORIG(0x401AE0, Task **, TaskRef_Add, (Task *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
@@ -64,7 +65,7 @@ extern char *gAlarmLightSprite;
 extern uint16_t gSCameraType;
 extern void *gLensList;
 
-extern void (*gRenderFuncs[])(QVertexStrip *);
+extern RenderMode gRenderModeCurrent;
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
 extern void *gQVertexPalette;
@@ -648,7 +649,7 @@ void SCameraLens_DrawViewCone(SCameraLens *l, void *arg)
         cone_vertex(&v[1], scr);
         ComputerObject_ProjectPos(scr, &depth, &ends[i], arg);
         cone_vertex(&v[2], scr);
-        gRenderFuncs[gQVertexStrip](&strip);
+        gRenderModeCurrent.methods[gQVertexStrip](&strip);
     }
 }
 HOOK(0x442DD0, SCameraLens_DrawViewCone);

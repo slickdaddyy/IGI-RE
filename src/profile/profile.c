@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "profile/profile.h"
+#include "core/coretypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -32,7 +33,7 @@ ORIG(0x4D2C20, void, QCube_SetDetail, (int v));
 extern int gDriverCount;
 extern ConfigDevice gDrivers[];
 extern char gLanguageAliasSet;
-extern void (*gRenderFuncs[])(int *);
+extern RenderMode gRenderModeCurrent;
 
 void Config_AddMissingKeys(void);
 void Config_FixDisplayModes(void);
@@ -407,7 +408,7 @@ void Profile_ApplyPerformance(void)
     unsigned flags = Profile_GetActive()->gfx.perf_flags;
     int v = flags & 1 ? 1 : flags & 2;
 
-    gRenderFuncs[Texture_GetSetLODId()](&v);
+    gRenderModeCurrent.methods[Texture_GetSetLODId()](&v);
     AppContext_SetTerrainLightmapsUsed(~flags >> 2 & 1);
     AppContext_SetLightmapsUsed(~flags >> 3 & 1);
     QCube_SetDetail(flags & 0x10 ? 0x60 : flags & 0x20 ? 0x81 : 0xA3);

@@ -1279,7 +1279,6 @@ BSS(BCACEC) int gD3DClippingOnIndex;
 BSS(BCAD78) DWORD gD3DZEnable;
 BSS(BCAD78) PtrList *gD3DBlendStates;
 BSS(BCAD90) DynVB gVBNormal;
-ALIAS(gVertexBuffer, gVBNormal, 0);
 BSS(BCADAC) PtrList *gD3DRenderStates;
 BSS(BCADC4) PtrList *gD3DClipStates;
 BSS(BCADE0) int gD3DClippingOffIndex;

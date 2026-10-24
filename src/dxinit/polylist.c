@@ -373,7 +373,7 @@ void PolyList_Draw(void **msg)
     Random_Init(gPolyListRandom);
     nearPlane = gNearPlane;
     nearScaled = nearPlane * kNearScale;
-    gRenderFuncs[TransContext_GetNearClipMethod()](&nearScaled);
+    gRenderModeCurrent.methods[TransContext_GetNearClipMethod()](&nearScaled);
     if (PolyList_Lock(&v, &start) || !v)
         return;
     for (i = 0, n = 0; i < p->count; i++) {
@@ -413,7 +413,7 @@ void PolyList_Draw(void **msg)
         n = 0;
     }
     gVBLit.vb->lpVtbl->Unlock(gVBLit.vb);
-    gRenderFuncs[TransContext_GetNearClipMethod()](&nearPlane);
+    gRenderModeCurrent.methods[TransContext_GetNearClipMethod()](&nearPlane);
 }
 HOOK(0x49A9B0, PolyList_Draw);
 

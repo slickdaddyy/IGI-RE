@@ -3,8 +3,9 @@
 
 #include "igi.h"
 #include "transctx/transctxtypes.h"
+#include "core/coretypes.h"
 
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 extern TransContext gTransContext;
 extern Scene gScene;
 

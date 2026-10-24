@@ -143,5 +143,7 @@ HOOK(0x498370, Offscreen_GetMode);
 BSS(6E5BB8) int gOffscreenMode;
 BSS(6E5BB8) char gOffscreenReady;
 PAD(igb, 6E5BB8, 6E5BBD, 0x3);
-STORE(igb, BCAAC0, 4) float store_BCAAC0[8];
+BSS(BCAAA0) OffscreenBuffer gOffscreenTarget;
+PAD(igb, BCAAA0, BCAAAC, 0x14);
+STORE(igb, BCAAA0, 4) float store_BCAAC0[8];
 ALIAS(gOffscreenClip, store_BCAAC0, 0);

@@ -7,6 +7,7 @@
 #include "coll/colltypes.h"
 #include "win/wintypes.h"
 #include "binocular/binoculartypes.h"
+#include "core/coretypes.h"
 
 FN_EXTERN(BinocularHolder_Changed);
 FN_EXTERN(BinocularHolder_GetParams);
@@ -94,7 +95,7 @@ extern void *gBinocularHolderParams;
 extern const int gGridTemplate[];
 extern const float gMarkerShape[];
 extern const float gTargetShape[];
-extern void (*gRenderFuncs[])(QVertexStrip *);
+extern RenderMode gRenderModeCurrent;
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
 extern const char gEmptyString[];
@@ -643,7 +644,7 @@ void BinocularOverlay_DrawCompass(BinocularOverlay *ov)
     strip.count = 3;
     strip.verts = v;
     gQVertexTexture = NULL;
-    gRenderFuncs[gQVertexStrip](&strip);
+    gRenderModeCurrent.methods[gQVertexStrip](&strip);
     bottom = (long double)bh + y0;
     v[0].x = cx;
     v[0].y = bottom - kFour.f;
@@ -651,7 +652,7 @@ void BinocularOverlay_DrawCompass(BinocularOverlay *ov)
     v[1].y = bottom;
     v[2].x = right;
     v[2].y = bottom;
-    gRenderFuncs[gQVertexStrip](&strip);
+    gRenderModeCurrent.methods[gQVertexStrip](&strip);
 }
 HOOK(0x472050, BinocularOverlay_DrawCompass);
 

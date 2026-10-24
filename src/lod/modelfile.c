@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "model/model.h"
+#include "core/coretypes.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4AF960, void, List_Remove_, (Node *node));
@@ -24,7 +25,7 @@ ORIG(0x4D67A0, void, BoneObj_Load, (const char *path));
 extern char gModelPath[];
 extern char gModelDir[];
 extern char gModelAnimDir[];
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 
 /* Palettes named in the PALF chunk, 0xC bytes each at f->unk3C. */
 void ModelFile_LoadPalettes(ModelFile *f)
@@ -134,8 +135,8 @@ void Mesh_Free(Mesh *m)
     }
     arg.header = (float *)m->header;
     arg.res = m->res;
-    if (gRenderFuncs[Model_GetUnloadMethod_()])
-        gRenderFuncs[Model_GetUnloadMethod_()](&arg);
+    if (gRenderModeCurrent.methods[Model_GetUnloadMethod_()])
+        gRenderModeCurrent.methods[Model_GetUnloadMethod_()](&arg);
     Resource_Flush(m->res);
     List_Remove_(&m->node);
     Mem_Free(m);

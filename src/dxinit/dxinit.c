@@ -288,7 +288,3 @@ STORE(igd, 534A60, 4) __typeof__(IID_IDirectDraw2_[0]) store_534A60[1] INIT({{.D
 ALIAS(IID_IDirectDraw2_, store_534A60, 0);
 BSS(6E5BC4) unsigned short gFPUControlWord;
 PAD(igb, 6E5BC4, 6E5BC6, 0x2);
-BSS(BCAAA0) OffscreenBuffer gOffscreenTarget;
-ALIAS(gOffscreenHeight, gOffscreenTarget, 4);
-ALIAS(gOffscreenPixels, gOffscreenTarget, 8);
-ALIAS(gOffscreenWidth, gOffscreenTarget, 0);

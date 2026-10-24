@@ -7,6 +7,7 @@
 #include "param/paramtypes.h"
 #include "qvertex/qvertextypes.h"
 #include "transctx/transctxtypes.h"
+#include "core/coretypes.h"
 
 FN_EXTERN(SubLevel_Run);
 
@@ -109,7 +110,7 @@ extern Scene gScene;
 
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
-extern void (*gRenderFuncs[])(QVertexStrip *);
+extern RenderMode gRenderModeCurrent;
 
 extern float kZero;
 extern float kOne;

@@ -64,7 +64,7 @@ def test_register_mode_cb():
 
 
 def set_active_log(name):
-    """gRenderFuncs[SetActiveTransContext] logs the context it is handed."""
+    """gRenderModeCurrent.methods[SetActiveTransContext] logs the context it is handed."""
     return logged(name, 0, pop=0, before=lambda e: (None, e.read(e.u32(e.arg(0)), 0xA8)))
 
 

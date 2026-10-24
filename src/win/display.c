@@ -62,7 +62,7 @@ extern DisplayCallback *gDisplayEndFrameCallbacks;
 extern DisplayCallback *gDisplayFrameCallbacks;
 extern int gD3DFoundHAL;
 extern int gD3DTnL;
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 
 /* RenderMode method ids */
 extern int gMethodGetGFXCaps;
@@ -275,14 +275,14 @@ DisplayMode *Display_GetMode(void);
 void Display_Clear(void)
 {
     if (gDisplayModeSet)
-        gRenderFuncs[Display_GetClearMethod()](NULL);
+        gRenderModeCurrent.methods[Display_GetClearMethod()](NULL);
 }
 HOOK(0x491A30, Display_Clear);
 
 void Display_UnsetMode(DisplayMode *next)
 {
     if (gDisplayModeSet) {
-        gRenderFuncs[Display_GetUnsetModeMethod()](next);
+        gRenderModeCurrent.methods[Display_GetUnsetModeMethod()](next);
         gDisplayMode.renderMode = -1;
         RenderMode_Deselect();
         gDisplayModeSet = 0;
@@ -328,7 +328,7 @@ void Display_SetMode(DisplayMode *mode)
     UpdateWindow(AppContext_GethWnd());
     SetFocus(AppContext_GethWnd());
     RenderMode_Select(mode->renderMode);
-    gRenderFuncs[Display_GetSetModeMethod()](mode);
+    gRenderModeCurrent.methods[Display_GetSetModeMethod()](mode);
     gDisplayModeSet = 1;
     strcpy(gDisplayDevice, Display_GetMode()->device);
 }
@@ -344,7 +344,7 @@ HOOK(0x491CA0, Display_RunCallbacks);
 void Display_SwapBuffers(void)
 {
     if (gDisplayModeSet)
-        gRenderFuncs[Display_GetSwapBuffersMethod()](NULL);
+        gRenderModeCurrent.methods[Display_GetSwapBuffersMethod()](NULL);
     gDisplayFrame++;
 }
 HOOK(0x491CC0, Display_SwapBuffers);
@@ -496,9 +496,9 @@ int Display_EnumModes(void *out, int max)
     args.out = out;
     args.count = &count;
     args.max = max;
-    if (!gRenderFuncs[gMethodEnum])
+    if (!gRenderModeCurrent.methods[gMethodEnum])
         return 0;
-    gRenderFuncs[gMethodEnum](&args);
+    gRenderModeCurrent.methods[gMethodEnum](&args);
     return count;
 }
 HOOK(0x491EA0, Display_EnumModes);

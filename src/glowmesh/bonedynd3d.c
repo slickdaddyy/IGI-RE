@@ -42,7 +42,7 @@ void BoneDynCubeObj_EnterHandler(BoneDynCubeObj *obj)
     d.obj = obj;
     d.lights = (int *)(Light_GetActive(&d.lightCount));
     Haze_GetVisible(&d.haze, &d.hazeCount);
-    gRenderFuncs[Mesh3D_GetDrawBoneMethod()](&d);
+    gRenderModeCurrent.methods[Mesh3D_GetDrawBoneMethod()](&d);
     memcpy(&a.pos, &obj->pos, sizeof(a.pos));
     memcpy(&a.matrix, &obj->matrix, sizeof(a.matrix));
     c = (Task *)obj->task.head;

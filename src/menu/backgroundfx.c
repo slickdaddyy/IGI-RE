@@ -76,7 +76,7 @@ static void draw_strip(QVertex *v, int count)
     s.queue = 0;
     s.count = count;
     s.verts = v;
-    gRenderFuncs[gQVertexStrip](&s);
+    gRenderModeCurrent.methods[gQVertexStrip](&s);
 }
 
 void BackgroundFX_SetTransform(BgTransform *t, float angle, float scale, float tx, float ty)

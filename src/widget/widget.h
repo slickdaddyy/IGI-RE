@@ -10,13 +10,14 @@
 #include "win/wintypes.h"
 #include "menu/menutypes.h"
 #include "widget/widgettypes.h"
+#include "core/coretypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern void (*gRenderFuncs[])(QVertexStrip *);
+extern RenderMode gRenderModeCurrent;
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
 extern void *gQVertexPalette;

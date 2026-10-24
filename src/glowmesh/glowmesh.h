@@ -5,6 +5,7 @@
 
 #include "igi.h"
 #include "transctx/transctxtypes.h"
+#include "core/coretypes.h"
 
 /* exe constants, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }
@@ -15,7 +16,7 @@ extern TransContext gTransContext;
 extern Scene gScene;
 extern float gNearPlane;
 extern int gQCubeMinSize;
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 
 /* fistp with the current rounding mode, low 32 bits */
 static inline int x87_fistp(long double x)

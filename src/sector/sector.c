@@ -10,6 +10,7 @@
 #include "bonemesh/bonemeshtypes.h"
 #include "transctx/transctxtypes.h"
 #include "glowmesh/glowmeshtypes.h"
+#include "core/coretypes.h"
 
 FN_EXTERN(SectorInteriorObject_WorldAdd);
 FN_EXTERN(SectorInteriorObject_WorldRemove);
@@ -121,7 +122,7 @@ _Static_assert(sizeof(LocateArg) == 0x30, "LocateArg");
 _Static_assert(sizeof(LineQuery) == 0x24, "LineQuery");
 _Static_assert(sizeof(LineHit) == 0x70, "LineHit");
 
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 extern int gQCubeInside;
 extern SectorObject *gQCubeEnclosing;
 extern Sector *gViewSector;
@@ -946,7 +947,7 @@ void Sector_Render(Sector *s)
     d.lightCount = gSectorLightCount;
     d.haze = gSectorFog;
     d.hazeCount = gSectorFogCount;
-    gRenderFuncs[Mesh3D_GetDrawRigidMethod()](&d);
+    gRenderModeCurrent.methods[Mesh3D_GetDrawRigidMethod()](&d);
     a.pos = s->o.pos;
     a.matrix = s->o.matrix;
     c = s->o.attached->head;

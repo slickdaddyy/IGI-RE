@@ -11,6 +11,7 @@
 #include "glowmesh/glowmeshtypes.h"
 #include "transctx/transctxtypes.h"
 #include "res/restypes.h"
+#include "core/coretypes.h"
 
 typedef void (*TaskHandler)(Task *task, void *arg);
 
@@ -53,7 +54,7 @@ extern void *gD3DDevice;
 extern TransContext gTransContext;
 extern Scene gScene;
 extern float gWorldScale;
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 extern TaskHandler gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;

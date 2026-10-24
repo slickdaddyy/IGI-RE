@@ -381,8 +381,3 @@ ALIAS(gKeysPrev, store_C28D62, 0);
 STORE(igb, C28C60, 1) unsigned char store_C28E80[256];
 ALIAS(gWinKeys, store_C28E80, 0);
 BSS(C28C60) Mouse gMouse;
-ALIAS(gJoyButton, gMouse, 12);
-ALIAS(gMouseButtons, gMouse, 12);
-ALIAS(gMouseX, gMouse, 4);
-ALIAS(gMouseY, gMouse, 8);
-ALIAS(gUnkC28F80, gMouse, 0);

@@ -3,13 +3,14 @@
 #include "orig.h"
 #include "res/resource.h"
 #include "res/sprite.h"
+#include "core/coretypes.h"
 
 ORIG(0x4B0E70, int, RenderMode_CreateMethod, (const char *name));
 ORIG(0x4B0EB0, void, RenderMode_DeleteMethod, (int id));
 ORIG(0x4B0F80, int, RenderMode_GetCurrent, (void));
 ORIG(0x4B1000, void, RenderMode_Call, (int device, int id, void *arg));
 
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 extern int gAllocPalette;
 extern int gDeAllocPalette;
 extern int gDownloadPalette;
@@ -42,7 +43,7 @@ void Palette_Create(Palette *p, void *colors, int count)
     args.palette = p;
     args.count = count;
     args.colors = colors;
-    gRenderFuncs[gAllocPalette](&args);
+    gRenderModeCurrent.methods[gAllocPalette](&args);
 }
 HOOK(0x4B7CF0, Palette_Create);
 

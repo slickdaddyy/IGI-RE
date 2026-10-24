@@ -8,6 +8,7 @@
 #include "res/restypes.h"
 #include "humanai/humanaitypes.h"
 #include "guncasing/guncasingtypes.h"
+#include "core/coretypes.h"
 
 /* The "Gun" task (0x1B0 bytes, 0x5BE3C6), base of the hand weapons. These
    are its handlers from 0x479780 on; the type is registered by 0x477E30. */
@@ -94,7 +95,7 @@ extern uint8_t gGunEvents[];
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
 extern void *gQVertexPalette;
-extern void (*gRenderFuncs[])(QVertexStrip *);
+extern RenderMode gRenderModeCurrent;
 
 extern const float kHalf;
 extern const float kOne;
@@ -437,7 +438,7 @@ void Gun_HudHandler(Gun *g, Hud **msg)
             m = iconW;
         v[1].x = v[0].x - m;
         v[1].y = v[0].y;
-        gRenderFuncs[gQVertexStrip](&strip);
+        gRenderModeCurrent.methods[gQVertexStrip](&strip);
     }
     if (w->sightDisplay == 1) {
         void *cross = HUD_SPRITE(hud, 0x74);

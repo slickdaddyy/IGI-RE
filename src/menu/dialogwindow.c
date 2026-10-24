@@ -150,14 +150,14 @@ void DialogWindow_DrawFrame(DialogWindow *dw, float alpha)
     s.queue = 0;
     s.count = 5;
     s.verts = v;
-    gRenderFuncs[gQVertexStrip](&s);
+    gRenderModeCurrent.methods[gQVertexStrip](&s);
 
     v[0].x = x0;
     v[0].y = line;
     v[1].x = x1;
     v[1].y = line;
     s.count = 2;
-    gRenderFuncs[gQVertexStrip](&s);
+    gRenderModeCurrent.methods[gQVertexStrip](&s);
 
     set_vertex(&v[0], x0, y0, a1, 1.0f);
     set_vertex(&v[1], x1, y0, a1, 1.0f);
@@ -166,7 +166,7 @@ void DialogWindow_DrawFrame(DialogWindow *dw, float alpha)
     s.lines = 0;
     s.queue = 0;
     s.count = 4;
-    gRenderFuncs[gQVertexStrip](&s);
+    gRenderModeCurrent.methods[gQVertexStrip](&s);
 
     Draw_RectAZ(x0, y0, rf((long double)x1 - x0), rf((long double)y1 - y0), 0, 0, 0, rf((long double)alpha * 0.9f),
                 1.0f, 0x80000, 0);

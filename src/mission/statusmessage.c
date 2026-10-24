@@ -6,6 +6,7 @@
 
 #include "hook.h"
 #include "mission/mission.h"
+#include "core/coretypes.h"
 
 ORIG(0x416D50, char, Game_IsPaused, (void));
 ORIG(0x418E40, void *, MenuManager_FindFont, (void *mm, const char *name));
@@ -32,7 +33,7 @@ extern RangeF gStatusDurationRange;
 extern uint16_t gStatusMessageScreenType;
 extern void *gMessagesRes;
 
-extern void (*gRenderFuncs[])(QVertexStrip *);
+extern RenderMode gRenderModeCurrent;
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
 extern void *gQVertexPalette;
@@ -547,7 +548,7 @@ void StatusMessageScreen_DrawBox(StatusMessageScreen *s, int i, float x, float y
     strip.queue = flags;
     strip.count = 4;
     strip.verts = v;
-    gRenderFuncs[gQVertexStrip](&strip);
+    gRenderModeCurrent.methods[gQVertexStrip](&strip);
 
     for (k = 0; k < 4; k++) {
         v[k].z = 1.0f;
@@ -571,7 +572,7 @@ void StatusMessageScreen_DrawBox(StatusMessageScreen *s, int i, float x, float y
     strip.queue = flags;
     strip.count = 5;
     strip.verts = v;
-    gRenderFuncs[gQVertexStrip](&strip);
+    gRenderModeCurrent.methods[gQVertexStrip](&strip);
 }
 HOOK(0x486210, StatusMessageScreen_DrawBox);
 

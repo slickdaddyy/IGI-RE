@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "explosion/explosion.h"
 #include "transctx/transctxtypes.h"
+#include "core/coretypes.h"
 
 FN_EXTERN(Explosion_CreateHandler);
 FN_EXTERN(Explosion_RunHandler);
@@ -67,7 +68,7 @@ extern char *gSmoke2Sprite;
 extern char *gBurnTexture;
 extern uint16_t gFireBallType;
 extern TransContext gTransContext;
-extern void (*gRenderFuncs[])(RenderArg *);
+extern RenderMode gRenderModeCurrent;
 
 #define Explosion_Create (FN(0x480F30, Explosion_CreateHandler))
 #define Explosion_Run (FN(0x480F40, Explosion_RunHandler))
@@ -644,7 +645,7 @@ void FireBall_Draw(FireBall *fb)
         ra.obj = fb;
         ra.unk4 = Light_GetActive(&ra.unk8);
         Haze_GetVisible(&ra.unkC, &ra.unk10);
-        gRenderFuncs[Mesh3D_GetDrawRigidMethod()](&ra);
+        gRenderModeCurrent.methods[Mesh3D_GetDrawRigidMethod()](&ra);
     }
     msg.pos = fb->obj.pos;
     msg.matrix = fb->obj.matrix;

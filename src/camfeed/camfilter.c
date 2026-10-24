@@ -6,6 +6,7 @@
 #include "camfeed/camfeedtypes.h"
 #include "qvertex/qvertextypes.h"
 #include "transctx/transctxtypes.h"
+#include "core/coretypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x490370, int, Timer_GetMs, (void));
@@ -76,7 +77,7 @@ extern float gBandTextX;
 extern float gBandTextY;
 extern float gBandTextDX;
 extern float gBandTextDY;
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 extern Scene gScene;
 extern float gWorldScale;
 extern DynVB gVBTL;
@@ -153,7 +154,7 @@ static inline int is_zero(float f)
 
 void LineFilter_DrawPrim(FilterPrim *p)
 {
-    void (*fn)(void *) = gRenderFuncs[gLineDrawMethod];
+    RenderMethod fn = gRenderModeCurrent.methods[gLineDrawMethod];
 
     if (fn)
         fn(p->task);
@@ -209,7 +210,7 @@ HOOK(0x4A3650, WideScreenFilter_Draw);
 
 void BandFilter_DrawPrim(FilterPrim *p)
 {
-    void (*fn)(void *) = gRenderFuncs[gBandDrawMethod];
+    RenderMethod fn = gRenderModeCurrent.methods[gBandDrawMethod];
 
     if (fn)
         fn(p->task);
@@ -527,7 +528,7 @@ HOOK(0x4A4300, HandiCamFilter_Render);
 
 void HandiCamFilter_DrawPrim(FilterPrim *p)
 {
-    void (*fn)(void *) = gRenderFuncs[gHandiCamDrawMethod];
+    RenderMethod fn = gRenderModeCurrent.methods[gHandiCamDrawMethod];
 
     if (fn)
         fn(p->task);
@@ -627,9 +628,4 @@ BSS(936028) float gBandTextY;
 BSS(936028) float gBandTextDX;
 BSS(936028) float gBandTextDY;
 BSS(BCAD00) DynVB gVBTL;
-ALIAS(gFilterVB, gVBTL, 0);
-ALIAS(gFilterVBSize, gVBTL, 4);
-ALIAS(gFilterVBUsed, gVBTL, 8);
-ALIAS(gVBTLSize, gVBTL, 4);
-ALIAS(gVBTLUsed, gVBTL, 8);
 BSS(BCADC0) float gNearPlane;

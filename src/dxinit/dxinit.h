@@ -11,6 +11,7 @@
 #include "task/tasktypes.h"
 #include "res/restypes.h"
 #include "transctx/transctxtypes.h"
+#include "core/coretypes.h"
 
 extern TransContext gTransContext;
 extern float gWorldScale;
@@ -24,7 +25,7 @@ extern IDirect3D7 *gD3D;
 extern IDirect3DDevice7 *gD3DDevice;
 extern uint16_t gDynCubeObjType;
 extern void (* gTaskHandlers[][0x180])(void *, void *);
-extern void (*gRenderFuncs[])(void *);
+extern RenderMode gRenderModeCurrent;
 
 #define SET_RS(state, value) gD3DDevice->lpVtbl->SetRenderState(gD3DDevice, (D3DRENDERSTATETYPE)(state), (value))
 #define SET_TSS(stage, state, value) \

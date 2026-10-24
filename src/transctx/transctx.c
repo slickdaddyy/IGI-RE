@@ -224,7 +224,7 @@ HOOK(0x497E60, TransContext_SetUnk5C);
 /* Makes ctx the active camera and tells the render mode. */
 void TransContext_Select(TransContext *ctx)
 {
-    void (*fn)(void *) = gRenderFuncs[gSetActiveTransContextMethod];
+    RenderMethod fn = gRenderModeCurrent.methods[gSetActiveTransContextMethod];
     TransContext *p = &gTransContext;
 
     gTransContext = *ctx;

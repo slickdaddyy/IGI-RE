@@ -5,6 +5,7 @@
 #include "sound/sound.h"
 #include "magicobj/magicobjtypes.h"
 #include "sound/soundtypes.h"
+#include "core/coretypes.h"
 
 FN_EXTERN(SplineObjSegment_Hit);
 
@@ -31,7 +32,7 @@ ORIG(0x4E4530, void, SplineObjSegment_Setup, (void *o, Vec3d *from, Vec3d *to, f
 #define SplineObjSegment_Hit (FN(0x4E16E0, SplineObjSegment_Hit))
 
 typedef void (*RenderFn)(void *arg);
-extern RenderFn gRenderFuncs[];
+extern RenderMode gRenderModeCurrent;
 extern uint16_t gSplineObjSegmentType;
 
 /* the argument of the spline draw method */
@@ -158,7 +159,7 @@ void SplineObjSegment_Render(SplineObjSegment *o)
     draw.obj = o;
     draw.lights = Light_GetActive(&draw.lightCount);
     Haze_GetVisible(&draw.layers, &draw.layerCount);
-    gRenderFuncs[Mesh3D_GetDrawSplineMethod()](&draw);
+    gRenderModeCurrent.methods[Mesh3D_GetDrawSplineMethod()](&draw);
     move.pos = o->pos;
     move.matrix.m[0] = 1.0f;
     move.matrix.m[1] = 0;

@@ -263,7 +263,7 @@ void FlatSky_Render(FlatSky *s)
         strip.count = SKY_ROWS * 2;
         strip.verts = verts;
         gQVertexTexture = l->loaded ? l->texture : NULL;
-        gRenderFuncs[gQVertexStrip](&strip);
+        gRenderModeCurrent.methods[gQVertexStrip](&strip);
     }
 }
 HOOK(0x51E1F0, FlatSky_Render);
