@@ -5,27 +5,12 @@
 #include "hook.h"
 #include "igi.h"
 #include "sound/sound.h"
+#include "sound/soundtypes.h"
 
 ORIG(0x4B0B00, void, Pool_Init, (void *pool, int stride, int capacity, int index_offset));
 ORIG(0x4B0B70, void, Pool_Free, (void *pool));
 ORIG(0x4C7770, void, DynCube_SendEventBox, (void *tree, uint8_t slot, void *arg, Vec3d *min, Vec3d *max,
                                             uint32_t flags, int unk));
-
-/* one bit per cell of a size x size grid (size a power of two) */
-typedef struct CellMask {
-    struct CellMask **item;
-    int shift;
-    int size;
-    uint8_t bits[];
-} CellMask;
-
-/* the argument of the draw event: objects draw themselves into the mask */
-typedef struct CellMaskDrawArg {
-    CellMask *mask;
-    int size;
-    double *center;
-    float range;
-} CellMaskDrawArg;
 
 extern uint16_t gDynCubeObjType;
 extern uint8_t gDynCubeObjMaskVisibleEvent;

@@ -4,19 +4,9 @@
 #include "hook.h"
 #include "igi.h"
 #include "terrain/terrain.h"
+#include "coll/colltypes.h"
 
 static const double kOneOver24 = 1.0 / 24.0;
-
-/* Height offsets added to the leaf vertices while a task bumps the terrain */
-typedef struct CollBump {
-    char unk0[0xC];
-    int shift;
-    float scale;
-    int unk14;
-    double x, y;
-    const signed char *heights;
-    int unk2C;
-} CollBump;
 
 ORIG(0x4B2C70, int, Vec3_RayPlane, (Vec3f *out, const Vec3f *p, const Vec3f *d, const Vec3f *n));
 ORIG(0x4B2D90, char, Vec3_TriangleCoords, (float *u, float *v, const Vec3f *p, const Vec3f *e1, const Vec3f *e2,
@@ -66,7 +56,7 @@ int Coll_LeafPointInside(const short *leaf, const Vec3d *base, const Vec3d *p, u
         bump_scale = b->scale;
         heights = b->heights;
         bump_y = (float)b->y;
-        bump_shift = b->shift + 3;
+        bump_shift = b->sizeShift + 3;
     }
     if (flags & ~3u)
         sign = -1.0f;

@@ -38,16 +38,6 @@ extern int gCollLineCount;
 
 typedef void (*TaskHandler)(CollTask *task, int arg);
 
-/* Height offsets added to the leaf vertices while a task bumps the terrain */
-typedef struct CollBump {
-    char unk0[0xC];
-    int shift;
-    float scale;
-    int unk14;
-    double x, y;
-    const signed char *heights;
-    int unk2C;
-} CollBump;
 extern TaskHandler gTaskEnterHandlers[];
 extern TaskHandler gTaskLeaveHandlers[];
 extern const CollBump gCollBumps[];
@@ -285,7 +275,7 @@ int Coll_LeafLineHit(const short *leaf, const Vec3d *base, const Vec3d *s, const
         bump_scale = b->scale;
         heights = b->heights;
         bump_y = (float)b->y;
-        bump_shift = b->shift + 3;
+        bump_shift = b->sizeShift + 3;
     }
     if (flags & 4)
         sign = -1.0f;

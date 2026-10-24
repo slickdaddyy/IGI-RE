@@ -38,17 +38,6 @@ ORIG(0x4B32F0, long double, Vec3d_DistanceSq, (const Vec3d *a, const Vec3d *b));
 
 typedef void (*TaskHandler)(CollTask *task, int arg);
 
-/* Records added by task handlers while a query walks the object octree */
-typedef struct CollBump {
-    char unk0[0xC];
-    int shift;
-    float scale;
-    int unk14;
-    double x, y;
-    const signed char *heights;
-    int unk2C;
-} CollBump;
-
 extern const int gCollChildTable[];
 extern TaskHandler gTaskEnterHandlers[];
 extern TaskHandler gTaskLeaveHandlers[];
@@ -323,7 +312,7 @@ int Coll_LeafHit(const short *leaf, const Vec3d *base, const Vec3d *p, Vec3d *hi
 
         bump_x = (float)((long double)bump->x - base->x);
         bump_y = (float)((long double)bump->y - base->y);
-        bump_shift = bump->shift + 3;
+        bump_shift = bump->sizeShift + 3;
         bump_scale = bump->scale;
         heights = bump->heights;
     }

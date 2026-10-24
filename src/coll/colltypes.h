@@ -78,4 +78,18 @@ typedef struct CollQuery {
 } CollQuery;
 _Static_assert(sizeof(CollQuery) == 0x98, "CollQuery");
 
+/* a terrain box whose height map raises or lowers the ground */
+typedef struct CollBump {
+    int unk0;
+    int texShift;
+    int unk8;
+    int sizeShift;
+    float scale;
+    int unk14;
+    double x, y;
+    const signed char *heights;
+    int unk2C;
+} CollBump;
+_Static_assert(sizeof(CollBump) == 0x30, "CollBump");
+
 #endif

@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "sound/sound.h"
 #include "magicobj/magicobjtypes.h"
+#include "sound/soundtypes.h"
 
 FN_EXTERN(SplineObjSegment_Hit);
 
@@ -82,14 +83,6 @@ _Static_assert(offsetof(SplineObjSegment, segRot) == 0x200, "segRot");
 _Static_assert(offsetof(SplineObjSegment, segLength) == 0x544, "segLength");
 _Static_assert(offsetof(SplineObjSegment, buffers) == 0x5A0, "buffers");
 _Static_assert(sizeof(SplineObjSegment) == 0x5B8, "SplineObjSegment");
-
-/* the argument of the cell mask draw event */
-typedef struct CellMaskDrawArg {
-    void *mask;
-    int size;
-    double *center;
-    float range;
-} CellMaskDrawArg;
 
 /* the argument of the spline draw method */
 typedef struct SplineDrawArg {

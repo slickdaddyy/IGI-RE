@@ -6,6 +6,7 @@
 #include "igi.h"
 #include "math/x87.h"
 #include "terrain/terrain.h"
+#include "sound/soundtypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4B3360, char, Vec3d_Equal, (const Vec3d *a, const Vec3d *b));
@@ -23,13 +24,6 @@ extern const signed char gTaskSlotEvent[];
 extern const int gDynCubeChildDir[][3];
 extern const float gPixelCenter;
 extern const float gSqrt3;
-
-/* Visibility bitmap a node may carry in unk3C. */
-typedef struct CellMask {
-    void *unk0;
-    int shift;
-    int size;
-} CellMask;
 
 /* One level of the explicit stack used by the event queries. */
 typedef struct QueryFrame {

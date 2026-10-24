@@ -73,22 +73,8 @@ typedef struct HeightMap {
     Task *children;
 } HeightMap;
 
-/* what Coll reads while walking the terrain; record 0 is never used */
-typedef struct CollBump {
-    int unk0;
-    int texShift;
-    int unk8;
-    int sizeShift;
-    float scale;
-    int unk14;
-    double x, y;
-    void *heights;
-    int unk2C;
-} CollBump;
-
 _Static_assert(sizeof(HeightMap) == 0x100, "HeightMap");
 _Static_assert(offsetof(HeightMap, slot) == 0xF8, "HeightMap.slot");
-_Static_assert(sizeof(CollBump) == 0x30, "CollBump");
 
 extern char gHeightMapRandom[];
 extern HeightMap *gHeightMaps[];
