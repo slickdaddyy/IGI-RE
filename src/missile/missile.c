@@ -839,6 +839,3 @@ DATA(544344) char str_544345[3] INIT("GS");
 STORE(igb, 57BC88, 1) char store_57BC88[12];
 ALIAS(gMissileRandom, store_57BC88, 0);
 BSS(57BC88) void *gMissileParams;
-BSS(BC2360) char *gUnkBC2360;
-ALIAS(gLevelFlow, gUnkBC2360, 0);
-ALIAS(gTickInfo, gUnkBC2360, 0);

@@ -4572,7 +4572,6 @@ static uint8_t fill_BA202C[0x4] __attribute__((section(".igb$BA202C"), used));
 static uint8_t fill_BA2048[0x10] __attribute__((section(".igb$BA2048"), used));
 static uint8_t fill_BA205C[0x2FF4] __attribute__((section(".igb$BA205C"), used));
 static uint8_t fill_BA8088[0x18] __attribute__((section(".igb$BA8088"), used));
-static uint8_t fill_BC20A4[0x50] __attribute__((section(".igb$BC20A4"), used));
 static uint8_t fill_BC20FC[0x10] __attribute__((section(".igb$BC20FC"), used));
 static uint8_t fill_BC2110[0x250] __attribute__((section(".igb$BC2110"), used));
 static uint8_t fill_BC2368[0x18] __attribute__((section(".igb$BC2368"), used));

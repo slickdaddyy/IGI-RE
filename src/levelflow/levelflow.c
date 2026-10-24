@@ -294,3 +294,4 @@ ALIAS(gKeyPressed, store_5C8AA8, 0);
 BSS(5C8AA4) void *gLevelFlowModel;
 BSS(5C8AA4) uint16_t gLevelFlowType;
 PAD(igb, 5C8AA4, 5C8ABA, 0x2);
+BSS(BC2360) LevelFlow *gLevelFlow;

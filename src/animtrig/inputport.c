@@ -233,5 +233,7 @@ BSS(A5EF98) int gInputPortUnused;
 BSS(A5EF98) int gInputPortIndex;
 BSS(A5EF98) uint16_t gInputPortType;
 PAD(igb, A5EF98, A5EFA2, 0x2);
+PAD(igb, BC20A0, BC20A0, 0x54);
+ALIAS(gInputPorts, pad_BC20A0, 0);
 PAD(igb, BCAA08, BCAA08, 0x98);
 ALIAS(gJoypads, pad_BCAA08, 0);

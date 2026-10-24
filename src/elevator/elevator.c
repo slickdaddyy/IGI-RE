@@ -307,6 +307,5 @@ BSS(57BF90) RangeF gElevatorAccelRange;
 BSS(57BF90) void *gElevatorParams;
 PAD(igb, 57BF90, 57C0E4, 0x4);
 BSS(57BF90) RangeF gElevatorStartRange;
-ALIAS(gElevatorLength, gElevatorStartRange, 4);
 BSS(57C108) uint16_t gElevatorType;
 PAD(igb, 57C108, 57C10A, 0x2);

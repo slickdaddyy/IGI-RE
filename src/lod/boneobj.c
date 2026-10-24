@@ -22,13 +22,6 @@ ORIG(0x4D3720, void *, BoneObj_GetBlendBranch, (void *blend, int i));
 ORIG(0x4D38A0, void, BoneObj_SetRoot, (int a, int b));
 ORIG(0x4D65D0, void, BoneObj_FreeAll, (void));
 
-/* A loaded skeleton: per bone its parent index and offset from the parent */
-typedef struct BoneHierarchy {
-    int count;
-    int *parents;
-    float (*offsets)[3];
-} BoneHierarchy;
-
 /* What sits at BoneObj bone +0x80: two tracks mixed by a weight function */
 typedef struct BoneBlend {
     char unk0[0xC];
@@ -39,9 +32,9 @@ typedef struct BoneBlend {
 
 _Static_assert(sizeof(BoneBlend) == 0x1C, "BoneBlend");
 
-extern BoneHierarchy gBoneHierarchies[];
-extern int gBoneSlots[][10];
-extern BoneHierarchy *gBoneBuild;
+extern Skeleton gSkeletons[];
+extern AnimSet gAnimSets[];
+extern Skeleton *gBoneBuild;
 extern Bone *gBoneBuildBones;
 extern Pool gSourcePool;
 extern Pool gOrientPool;
@@ -68,12 +61,12 @@ void BoneObj_Init(void)
     BoneObj_SetRoot(0, 0);
     gBoneSmoothAnims = 1;
     for (i = 0; i < 64; i++) {
-        gBoneHierarchies[i].count = 0;
-        gBoneHierarchies[i].parents = NULL;
-        gBoneSlots[i][9] = 0;
-        gBoneHierarchies[i].offsets = NULL;
-        gBoneSlots[i][0] = 0;
-        gBoneSlots[i][1] = 0;
+        gSkeletons[i].count = 0;
+        gSkeletons[i].parents = NULL;
+        gAnimSets[i].count = 0;
+        gSkeletons[i].offsets = NULL;
+        gAnimSets[i].descs = NULL;
+        gAnimSets[i].byId = NULL;
     }
     Pool_Init_(&gFadePool, 0x10, 0x80, 4);
     Pool_Init_(&gInstPool, 0x34, 0x80, 4);
@@ -113,7 +106,7 @@ void BoneObj_Build(Bone *parent, int index);
 
 void BoneObj_Create(BoneObj *o, int type)
 {
-    BoneHierarchy *h = &gBoneHierarchies[type];
+    Skeleton *h = &gSkeletons[type];
     Bone root, *b;
     char mode;
 
@@ -146,7 +139,7 @@ void BoneObj_Free(BoneObj *o)
 {
     int i;
 
-    for (i = 0; i < gBoneHierarchies[o->skel].count; i++) {
+    for (i = 0; i < gSkeletons[o->skel].count; i++) {
         if (o->bones[i].blend)
             BoneObj_DeleteBlendNode(o->bones[i].blend);
         o->bones[i].blend = NULL;
@@ -175,7 +168,7 @@ void BoneObj_Build(Bone *parent, int index)
 
             Bone_Init(b, parent);
             b->index = i;
-            v = gBoneBuild->offsets[i];
+            v = &gBoneBuild->offsets[i].x;
             b->offset.x = v[0];
             b->offset.y = v[1];
             b->offset.z = v[2];
@@ -262,18 +255,17 @@ int BoneBlend_GetMotion(float *pos, float *rot, BoneBlend *bl)
 HOOK(0x4D3020, BoneBlend_GetMotion);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igb, A542F0, 4) __typeof__(gBoneHierarchies[0]) store_A542F0[64];
-ALIAS(gBoneHierarchies, store_A542F0, 0);
+STORE(igb, A542F0, 4) __typeof__(gSkeletons[0]) store_A542F0[64];
+ALIAS(gSkeletons, store_A542F0, 0);
 BSS(A542F0) Pool gSourcePool;
 BSS(A542F0) Pool gOrientPool;
 BSS(A542F0) Pool gInstPool;
-BSS(A542F0) BoneHierarchy *gBoneBuild;
+BSS(A542F0) Skeleton *gBoneBuild;
 PAD(igb, A542F0, A5463C, 0x4);
 BSS(A542F0) Pool gFadePool;
 BSS(A542F0) float gTicksPerFrame;
 PAD(igb, A542F0, A5465C, 0x4);
 BSS(A542F0) Pool gNodePool;
-ALIAS(gSkeletons, store_A542F0, 0);
 BSS(A5467C) Bone *gBoneBuildBones;
 PAD(igb, A5467C, A54680, 0x4);
 BSS(A5467C) int gBoneUnkA54684;

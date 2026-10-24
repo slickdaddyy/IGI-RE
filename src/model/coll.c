@@ -564,7 +564,6 @@ HOOK(0x4CDB20, Coll_LinesEx);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(A4438C) int gCollLineCalls;
 BSS(A4438C) int gCollLineCount;
-ALIAS(gUnkA4438C, gCollLineCalls, 0);
 STORE(igb, A9C4E0, 4) __typeof__(gTaskEnterHandlers[0]) store_A9C4E0[384];
 ALIAS(gTaskEnterHandlers, store_A9C4E0, 0);
 STORE(igb, A9C4E0, 4) __typeof__(gTaskLeaveHandlers[0]) store_A9CAE0[91392];
