@@ -661,5 +661,5 @@ void Game_Shutdown(void)
 HOOK(0x4010B0, Game_Shutdown);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igd, 536144, 1) __typeof__(gGameName[0]) store_536144[4] INIT({73, 71, 73});
+STORE(igd, 536144, 1) char store_536144[4] INIT({73, 71, 73});
 ALIAS(gGameName, store_536144, 0);

@@ -446,7 +446,7 @@ void Level_SetTaskId(int id, Task *task)
 HOOK(0x4F1090, Level_SetTaskId);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igd, 54DD14, 54DD14, 0x2) INIT({0x81, 0x01});
+DATA(54DD14) uint16_t gCameraBaseType INIT(385);
 DATA(54DD14) char gLevelTaskNewEnabled INIT(1);
 PAD(igd, 54DD14, 54DD17, 0x1);
 DATA(54DDB4) char str_54DDB4[2] INIT("B");

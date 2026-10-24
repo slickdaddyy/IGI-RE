@@ -536,7 +536,7 @@ void QCube_Walk(WWorld *w)
 HOOK(0x4D14E0, QCube_Walk);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igd, 548444, 1) __typeof__(gWalkTreeIndex[0]) store_548444[8] INIT({0, 1, 2, 4, 5});
+STORE(igd, 548444, 1) signed char store_548444[8] INIT({0, 1, 2, 4, 5});
 ALIAS(gWalkTreeIndex, store_548444, 0);
 PAD(igb, A4EF38, A4EF38, 0x20C4);
 ALIAS(gWalkSavedRoots, pad_A4EF38, 0);
@@ -563,6 +563,6 @@ STORE(igb, B16CC0, 8) __typeof__(gTerrainCells[0]) store_B16CE0[4096];
 ALIAS(gTerrainCells, store_B16CE0, 0);
 ALIAS(gQCubePool2, gWalkPool2, 0);
 ALIAS(gTerrainPool2, gWalkPool2, 0);
-STORE(igb, B97B20, 4) __typeof__(gVisibleLightMaps[0]) store_B97B20[64];
+STORE(igb, B97B20, 4) int store_B97B20[64];
 ALIAS(gVisibleLightMaps, store_B97B20, 0);
 BSS(C10380) int gDisplayFrame;

@@ -701,7 +701,7 @@ DATA(54E568) uint8_t gParticle2DEvent INIT(255);
 PAD(igd, 54E568, 54E56B, 0x1);
 STORE(igb, A774C0, 8) __typeof__(gParticle2DTrails[0]) store_A774C0[256];
 ALIAS(gParticle2DTrails, store_A774C0, 0);
-STORE(igb, A774C0, 1) __typeof__(gParticle2DRandom[0]) store_A7A4C0[16];
+STORE(igb, A774C0, 1) char store_A7A4C0[16];
 ALIAS(gParticle2DRandom, store_A7A4C0, 0);
 BSS(A774C0) int gParticle2DMem;
 BSS(A774C0) int gParticle2DMemMax;

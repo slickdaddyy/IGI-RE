@@ -201,7 +201,7 @@ DATA(5337F0) double kPuffRiseMin INIT(0.15);
 DATA(5337F0) double kPuffRise INIT(0.75);
 DATA(534138) double kPuffSize INIT(0.35);
 DATA(534138) float kM203Gravity INIT(35.68071f);
-PAD(igd, 534138, 534144, 0x4) INIT({0xF6, 0x28, 0x7C, 0x3F});
+DATA(534138) float kDrag INIT(0.985f);
 BSS(5BE3AC) char *gM203Sprite;
 BSS(5BE3AC) uint16_t gM203Type;
 PAD(igb, 5BE3AC, 5BE3B2, 0x2);

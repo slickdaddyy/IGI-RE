@@ -185,7 +185,7 @@ ComputerTextItem *ComputerTextItem_New(Task *parent, int id, int a, int b, int c
 HOOK(0x46B970, ComputerTextItem_New);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igd, 53F7D0, 4) __typeof__(gItemColor[0]) store_53F7D0[10] INIT({{128.0f, 16.0f, 16.0f}, {16.0f, 96.0f, 16.0f}, {48.0f, 96.0f, 48.0f}, {128.0f, 128.0f, 128.0f}, {7.711968e-39f, 7.711934e-39f, 7.7119e-39f}, {7.711867e-39f, 7.711833e-39f, 7.711805e-39f}, {7.711777e-39f, 7.711749e-39f, 7.711721e-39f}, {7.711693e-39f, 7.711665e-39f, 7.711637e-39f}, {7.711609e-39f, 7.711581e-39f, 7.711553e-39f}, {7.711525e-39f, 7.711486e-39f, 7.711452e-39f}});
+STORE(igd, 53F7D0, 4) const float store_53F7D0[10][3] INIT({{128.0f, 16.0f, 16.0f}, {16.0f, 96.0f, 16.0f}, {48.0f, 96.0f, 48.0f}, {128.0f, 128.0f, 128.0f}, {7.711968e-39f, 7.711934e-39f, 7.7119e-39f}, {7.711867e-39f, 7.711833e-39f, 7.711805e-39f}, {7.711777e-39f, 7.711749e-39f, 7.711721e-39f}, {7.711693e-39f, 7.711665e-39f, 7.711637e-39f}, {7.711609e-39f, 7.711581e-39f, 7.711553e-39f}, {7.711525e-39f, 7.711486e-39f, 7.711452e-39f}});
 ALIAS(gItemColor, store_53F7D0, 0);
 PAD_CONST(igd, 53F7D0, 53F848, 0x4) INIT({0x4C, 0xF8, 0x53});
 DATA(53F84C) char str_53F84C[24] INIT("COMPUTER:h_scamera2.spr");

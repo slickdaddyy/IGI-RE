@@ -396,7 +396,7 @@ DATA(53E020) char str_53E274[19] INIT("No command entered");
 PAD(igd, 53E020, 53E287, 0x15) INIT({0x00, 0x50, 0x61, 0x74, 0x72, 0x6F, 0x6C, 0x50, 0x61, 0x74, 0x68, 0x43, 0x6F, 0x6D, 0x6D, 0x61, 0x6E, 0x64});
 DATA(53E020) uint16_t gPatrolPathType INIT(385);
 PAD(igd, 53E020, 53E29E, 0x2);
-STORE(igd, 53E020, 4) __typeof__(gPatrolCommandNames[0]) store_53E2A0[10] INIT({(__typeof__(store_53E2A0[0]))ref_str_53E3B8, (__typeof__(store_53E2A0[1]))ref_str_53E39C, (__typeof__(store_53E2A0[2]))ref_str_53E384, (__typeof__(store_53E2A0[3]))ref_str_53E368, (__typeof__(store_53E2A0[4]))ref_str_53E350, (__typeof__(store_53E2A0[5]))ref_str_53E334, (__typeof__(store_53E2A0[6]))ref_str_53E314, (__typeof__(store_53E2A0[7]))ref_str_53E2FC, (__typeof__(store_53E2A0[8]))ref_str_53E2E4, (__typeof__(store_53E2A0[9]))ref_str_53E2C8});
+STORE(igd, 53E020, 4) const char *store_53E2A0[10] INIT({(__typeof__(store_53E2A0[0]))ref_str_53E3B8, (__typeof__(store_53E2A0[1]))ref_str_53E39C, (__typeof__(store_53E2A0[2]))ref_str_53E384, (__typeof__(store_53E2A0[3]))ref_str_53E368, (__typeof__(store_53E2A0[4]))ref_str_53E350, (__typeof__(store_53E2A0[5]))ref_str_53E334, (__typeof__(store_53E2A0[6]))ref_str_53E314, (__typeof__(store_53E2A0[7]))ref_str_53E2FC, (__typeof__(store_53E2A0[8]))ref_str_53E2E4, (__typeof__(store_53E2A0[9]))ref_str_53E2C8});
 ALIAS(gPatrolCommandNames, store_53E2A0, 0);
 DATA(53E020) char str_53E2C8[27] INIT("PATROLPATHCOMMAND_SETSPEED");
 PAD(igd, 53E020, 53E2E3, 0x1);

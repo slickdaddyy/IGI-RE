@@ -835,7 +835,7 @@ DATA(53BB8C) uint16_t gMissileType INIT(385);
 PAD(igd, 53BB8C, 53BB8E, 0x2);
 PAD(igd, 544344, 544344, 0x1) INIT({0x08});
 DATA(544344) char str_544345[3] INIT("GS");
-STORE(igb, 57BC88, 1) __typeof__(gMissileRandom[0]) store_57BC88[12];
+STORE(igb, 57BC88, 1) char store_57BC88[12];
 ALIAS(gMissileRandom, store_57BC88, 0);
 BSS(57BC88) void *gMissileParams;
 BSS(BC2360) char *gUnkBC2360;

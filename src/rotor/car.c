@@ -749,6 +749,6 @@ HOOK(0x42EF00, Car_UpdateWheels);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(53BDA8) uint16_t gCarType INIT(385);
 PAD(igd, 53BDA8, 53BDAA, 0x2);
-STORE(igb, 57BD20, 4) __typeof__(gCarRange[0]) store_57BD20[2];
+STORE(igb, 57BD20, 4) float store_57BD20[2];
 ALIAS(gCarRange, store_57BD20, 0);
 BSS(57BD20) void *gCarParams;

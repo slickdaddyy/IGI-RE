@@ -762,11 +762,11 @@ void BinocularOverlay_DrawCompass(BinocularOverlay *ov)
 HOOK(0x472050, BinocularOverlay_DrawCompass);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igd, 534038, 4) __typeof__(gGridTemplate[0]) store_534038[14] INIT({1069547520, 1073741824, 1069547520, 1073741824, 1069547520, 1073741824, 1069547520, 1073741824, 1069547520, 1073741824, 1069547520, 1073741824, 1069547520, 1073741824});
+STORE(igd, 534038, 4) const int store_534038[14] INIT({1069547520, 1073741824, 1069547520, 1073741824, 1069547520, 1073741824, 1069547520, 1073741824, 1069547520, 1073741824, 1069547520, 1073741824, 1069547520, 1073741824});
 ALIAS(gGridTemplate, store_534038, 0);
-STORE(igd, 534038, 4) __typeof__(gMarkerShape[0]) store_534070[16] INIT({-0.5f, -2.5f, -2.0f, -2.5f, -2.0f, 2.5f, -0.5f, 2.5f, 0.0f, 0.0f, 1.5f, 1.0f, -1.5f, 1.0f, 0.0f, 0.0f});
+STORE(igd, 534038, 4) const float store_534070[16] INIT({-0.5f, -2.5f, -2.0f, -2.5f, -2.0f, 2.5f, -0.5f, 2.5f, 0.0f, 0.0f, 1.5f, 1.0f, -1.5f, 1.0f, 0.0f, 0.0f});
 ALIAS(gMarkerShape, store_534070, 0);
-STORE(igd, 534038, 4) __typeof__(gTargetShape[0]) store_5340B0[25] INIT({-1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -0.015625f, -0.020833334f, 0.015625f, 0.020833334f, 0.09375f, 0.009375f, 0.1875f, 0.7625f, 0.55f, 0.378125f, -6.791383e+36f, 2.1601048f, 4.1723254e-08f, 4.3929687f, 0.004f});
+STORE(igd, 534038, 4) const float store_5340B0[25] INIT({-1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -0.015625f, -0.020833334f, 0.015625f, 0.020833334f, 0.09375f, 0.009375f, 0.1875f, 0.7625f, 0.55f, 0.378125f, -6.791383e+36f, 2.1601048f, 4.1723254e-08f, 4.3929687f, 0.004f});
 ALIAS(gTargetShape, store_5340B0, 0);
 DATA(5401F8) uint16_t gBinocularOverlayType INIT(385);
 DATA(5401F8) uint16_t gBinocularHolderType INIT(385);

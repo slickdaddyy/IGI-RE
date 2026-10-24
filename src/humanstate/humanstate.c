@@ -1410,9 +1410,9 @@ void HumanPlayer_ZiplineUpdate(HumanState *sm, Human *h)
 HOOK(0x40DEF0, HumanPlayer_ZiplineUpdate);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igd, 538C18, 4) __typeof__(gLadderSounds[0]) store_538C18[12] INIT({0, 1, 2, 3, 1, 2, 1, 2, 3, 2, 1});
+STORE(igd, 538C18, 4) const int store_538C18[12] INIT({0, 1, 2, 3, 1, 2, 1, 2, 3, 2, 1});
 ALIAS(gLadderSounds, store_538C18, 0);
-STORE(igd, 538C18, 4) __typeof__(gWireDragSounds[0]) store_538C48[2] INIT({0, 1});
+STORE(igd, 538C18, 4) const int store_538C48[2] INIT({0, 1});
 ALIAS(gWireDragSounds, store_538C48, 0);
 BSS(56E1EC) float gJumpSpeed;
 BSS(56E1EC) float gJumpUp;

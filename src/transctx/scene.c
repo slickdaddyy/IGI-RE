@@ -248,7 +248,7 @@ BSS(684100) SceneList gSceneList;
 PAD(igb, 684100, 68410C, 0x4);
 BSS(684100) int gSceneVersion;
 PAD(igb, 684100, 684114, 0x4);
-STORE(igb, 684100, 1) __typeof__(gFrameMem[0]) store_684118[400000];
+STORE(igb, 684100, 1) char store_684118[400000];
 ALIAS(gFrameMem, store_684118, 0);
 BSS(684100) char *gFramePtr;
 PAD(igb, 684100, 6E5B9C, 0x4);

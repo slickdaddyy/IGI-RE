@@ -653,9 +653,9 @@ PAD(igd, 534C50, 534C58, 0x18) INIT({0x3E, 0xCF, 0xF3, 0x38, 0x00, 0x00, 0xC0, 0
 DATA(534C50) float k2000 INIT(2000.0f);
 PAD(igd, 534C50, 534C74, 0x4);
 DATA(534C50) double k2Pow30 INIT(1073741824.0);
-STORE(igd, 54EE68, 4) __typeof__(kRange01[0]) store_54EE68[2] INIT({0.0f, 1.0f});
+STORE(igd, 54EE68, 4) const float store_54EE68[2] INIT({0.0f, 1.0f});
 ALIAS(kRange01, store_54EE68, 0);
-STORE(igd, 54EE68, 4) __typeof__(kRange11[0]) store_54EE70[16] INIT({-1.0f, 1.0f, 7.143938e+31f, 7.2128314e+22f, 7.311358e+34f, 4.1037e-41f, 7.143938e+31f, 7.2128314e+22f, 1.59748e-43f, 6.9776278e+22f, 7.587845e+31f, 3.034742e+32f, 3.60274e-41f, 12.20686f, 1.3090689e+31f, 4.13061e-41f});
+STORE(igd, 54EE68, 4) const float store_54EE70[16] INIT({-1.0f, 1.0f, 7.143938e+31f, 7.2128314e+22f, 7.311358e+34f, 4.1037e-41f, 7.143938e+31f, 7.2128314e+22f, 1.59748e-43f, 6.9776278e+22f, 7.587845e+31f, 3.034742e+32f, 3.60274e-41f, 12.20686f, 1.3090689e+31f, 4.13061e-41f});
 ALIAS(kRange11, store_54EE70, 0);
 BSS(BA2000) WaterState gWaterState;
 BSS(BA2000) uint16_t gFlatWaterLayerType;

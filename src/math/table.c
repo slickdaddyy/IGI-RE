@@ -26,9 +26,9 @@ void Math_InitTables(void)
 HOOK(0x4B46A0, Math_InitTables);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igb, A84A60, 4) __typeof__(gCosTable[0]) store_A84A60[4096];
+STORE(igb, A84A60, 4) float store_A84A60[4096];
 ALIAS(gCosTable, store_A84A60, 0);
-STORE(igb, A84A60, 4) __typeof__(gSinTable[0]) store_A88A60[4096];
+STORE(igb, A84A60, 4) float store_A88A60[4096];
 ALIAS(gSinTable, store_A88A60, 0);
-STORE(igb, A84A60, 4) __typeof__(gAsinTable[0]) store_A8CA60[8193];
+STORE(igb, A84A60, 4) float store_A8CA60[8193];
 ALIAS(gAsinTable, store_A8CA60, 0);

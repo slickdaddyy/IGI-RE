@@ -350,7 +350,7 @@ void Elevator_MoveChildren(Elevator *e)
 HOOK(0x43D8C0, Elevator_MoveChildren);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igb, 57BF90, 1) __typeof__(gElevatorFloorNames[0]) store_57BF90[10];
+STORE(igb, 57BF90, 1) char store_57BF90[10][32];
 ALIAS(gElevatorFloorNames, store_57BF90, 0);
 BSS(57BF90) RangeF gElevatorMaxSpeedRange;
 BSS(57BF90) RangeF gElevatorAccelRange;

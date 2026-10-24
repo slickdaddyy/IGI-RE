@@ -1761,7 +1761,7 @@ REF_EXTERN(str_54170C);
 REF_EXTERN(str_541718);
 REF_EXTERN(str_541724);
 DATA(5416CC) int gLastDetectedTick INIT(-1);
-STORE(igd, 5416CC, 4) __typeof__(gDetectedSounds[0]) store_5416D0[6] INIT({(__typeof__(store_5416D0[0]))ref_str_541724, (__typeof__(store_5416D0[1]))ref_str_541718, (__typeof__(store_5416D0[2]))ref_str_54170C, (__typeof__(store_5416D0[3]))ref_str_541700, (__typeof__(store_5416D0[4]))ref_str_5416F4, (__typeof__(store_5416D0[5]))ref_str_5416E8});
+STORE(igd, 5416CC, 4) const char *store_5416D0[6] INIT({(__typeof__(store_5416D0[0]))ref_str_541724, (__typeof__(store_5416D0[1]))ref_str_541718, (__typeof__(store_5416D0[2]))ref_str_54170C, (__typeof__(store_5416D0[3]))ref_str_541700, (__typeof__(store_5416D0[4]))ref_str_5416F4, (__typeof__(store_5416D0[5]))ref_str_5416E8});
 ALIAS(gDetectedSounds, store_5416D0, 0);
 DATA(5416CC) char str_5416E8[12] INIT("detected_06");
 DATA(5416CC) char str_5416F4[12] INIT("detected_05");

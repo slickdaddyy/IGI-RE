@@ -398,7 +398,7 @@ DATA(54E150) int gParamEnumString16 INIT(-1);
 DATA(54E150) int gParamEnumString32 INIT(-1);
 DATA(54E150) int gParamEnumString256 INIT(-1);
 DATA(54E150) int gParamEnumInt32 INIT(-1);
-STORE(igb, A758C8, 1) __typeof__(gParamEventUsed[0]) store_A758C8[24];
+STORE(igb, A758C8, 1) char store_A758C8[24];
 ALIAS(gParamEventUsed, store_A758C8, 0);
 STORE(igb, A758C8, 4) __typeof__(gParamTypes[0]) store_A758E0[64];
 ALIAS(gParamTypes, store_A758E0, 0);

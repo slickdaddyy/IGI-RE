@@ -331,6 +331,7 @@ BSS(A5E5E8) int gUnkA5E5E8;
 BSS(A5E5E8) SoundInst *gSoundFree;
 BSS(A5E5F4) SoundInst *gSoundActive;
 BSS(A5E5F4) int gSoundNextId;
-PAD(igb, A5E608, A5E608, 0x2);
+BSS(A5E608) char gUnkA5E608;
+PAD(igb, A5E608, A5E609, 0x1);
 BSS(A5E608) char gSoundDisabled;
 BSS(A5E608) char gSoundSilent;

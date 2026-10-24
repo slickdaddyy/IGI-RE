@@ -377,12 +377,12 @@ HOOK(0x508D60, EditCamera_GetFilterEnum);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(A7B260) uint16_t gEditCameraType;
 PAD(igb, A7B260, A7B262, 0x6);
-STORE(igb, A7B260, 1) __typeof__(gEditCameraFilterEnum[0]) store_A7B268[16];
+STORE(igb, A7B260, 1) char store_A7B268[16];
 ALIAS(gEditCameraFilterEnum, store_A7B268, 0);
 BSS(A7B260) void *gEditCameraParams;
 PAD(igb, A7B260, A7B27C, 0x4);
-STORE(igb, A7B260, 4) __typeof__(gEditCameraLevelRange[0]) store_A7B280[2];
+STORE(igb, A7B260, 4) float store_A7B280[2];
 ALIAS(gEditCameraLevelRange, store_A7B280, 0);
-STORE(igb, A7B260, 4) __typeof__(gEditCameraShakeRange[0]) store_A7B288[2];
+STORE(igb, A7B260, 4) float store_A7B288[2];
 ALIAS(gEditCameraShakeRange, store_A7B288, 0);
 BSS(A7B260) void *gEditCameraModel;

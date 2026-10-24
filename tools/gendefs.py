@@ -533,6 +533,18 @@ def typed_prefix(f, n, a, size, expr):
     return count, ('{' + ', '.join(vals) + '}' if vals else '{0}')
 
 
+def portable(n):
+    """the declaration needs no types of its own file (a number, or a pointer to one or void)"""
+    if n in synthetic:
+        return True
+    m = re.match(r'\s*(?:const\s+)?(.*?)\s*\b%s\s*(\[[^\]]*\])*\s*$' % n, owner[n][1])
+    if not m:
+        return False
+    t = re.sub(r'\bconst\b|\*', ' ', m[1]).split()
+    return ' '.join(t) in SCALARS or ' '.join(t) == 'void'
+
+
+movedonce = set()
 # phase 1: per section, the primaries that tile it and the runs they form
 plans = []
 ndef = nalias = ndrop = 0
@@ -582,6 +594,8 @@ for SEC, LO, HI in SECTIONS:
             for p in ps:
                 a, size, _ = prim[p]
                 if a % info[p][1]:
+                    if os.environ.get('GENDEFS_WHY'):
+                        print('fill: %s at 0x%X is not %d-aligned' % (p, a, info[p][1]), file=sys.stderr)
                     dropped.add(p)
                     continue
                 if run and a - run[1] <= 64 and not any(run[1] <= prim[q][0] < a and key(q) != (f, c) for q in prim):
@@ -596,14 +610,28 @@ for SEC, LO, HI in SECTIONS:
             r[0] -= r[0] % r[2]
             r[1] += -r[1] % r[2]
         runs.sort()
-        clash = set()
+        clash, moved = set(), False
         for x, y in zip(runs, runs[1:]):
             if y[0] < x[1]:
                 last = x[3][-1]
-                clash.add(last if prim[last][0] + prim[last][1] > y[0] else y[3][0])
+                p, other = (last, y) if prim[last][0] + prim[last][1] > y[0] else (y[3][0], x)
+                q, mine = (y[3][0], x) if p == last else (x[3][-1], y)
+                # a global of a plain type can be defined by the file it shares a word with
+                for g, run in ((p, other), (q, mine)):
+                    if portable(g) and (g, run[4]) not in movedonce and (SEC == 'igb' or bool(is_const(owner[g][1], g)) == run[5]):
+                        owner[g] = (run[4], owner[g][1])
+                        movedonce.add((g, run[4]))
+                        moved = True
+                        break
+                else:
+                    clash.add(p)
+        if moved:
+            continue
         if not clash:
             break
         for p in clash:
+            if os.environ.get('GENDEFS_WHY'):
+                print('fill: %s at 0x%X shares bytes with a run of another file' % (p, prim[p][0]), file=sys.stderr)
             prim.pop(p)
             dropped.add(p)
     alias = {n: v for n, v in alias.items() if v[0] in prim and n not in prim}
@@ -644,8 +672,12 @@ for SEC, prim, alias, runs in plans:
                 count, init = typed_prefix(f, p, a, size, store) if not typed and SEC == 'igd' else (0, None)
             if count:  # an array of unknown length, as typed storage under the name
                 es = info[p][0]
-                out.append('STORE(%s, %s, %d) __typeof__(%s[0]) %s[%d]%s;' % (
-                    SEC, run, info[p][1], p, store, count, ' INIT(%s)' % init if init != '{0}' else ''))
+                if portable(p):  # the declaration itself: the file may not declare p
+                    decl = re.sub(r'\b%s\s*\[\s*\]' % p, '%s[%d]' % (store, count), owner[p][1], count=1)
+                else:
+                    decl = '__typeof__(%s[0]) %s[%d]' % (p, store, count)
+                out.append('STORE(%s, %s, %d) %s%s;' % (
+                    SEC, run, info[p][1], decl, ' INIT(%s)' % init if init != '{0}' else ''))
                 home[p] = store
                 out.append('ALIAS(%s, %s, 0);' % (p, store))
                 if count * es < size:

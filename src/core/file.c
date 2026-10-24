@@ -195,5 +195,5 @@ ALIAS(gAliases, store_942330, 0);
 BSS(94396C) int gDeviceCount;
 BSS(94396C) List gLoadedFiles;
 BSS(943988) int gUnk943988;
-STORE(igb, 943A18, 1) __typeof__(gExpandedPath[0]) store_943A18[128];
+STORE(igb, 943A18, 1) char store_943A18[128];
 ALIAS(gExpandedPath, store_943A18, 0);

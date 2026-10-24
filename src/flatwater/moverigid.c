@@ -255,14 +255,14 @@ HOOK(0x51FBA0, MoveRigidObj_Apply);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(533928) double kTwo64 INIT(2.0);
-STORE(igb, A837AC, 1) __typeof__(gMoveBetaNames[0]) store_A837AC[2];
+STORE(igb, A837AC, 1) char store_A837AC[2][16];
 ALIAS(gMoveBetaNames, store_A837AC, 0);
 BSS(A837AC) uint16_t gMoveRigidObjType;
 PAD(igb, A837AC, A837CE, 0x2);
 BSS(A837AC) void *gMoveRigidObjParams;
-STORE(igb, A837AC, 1) __typeof__(gMoveAlphaNames[0]) store_A837D4[2];
+STORE(igb, A837AC, 1) char store_A837D4[2][16];
 ALIAS(gMoveAlphaNames, store_A837D4, 0);
-STORE(igb, A837AC, 1) __typeof__(gMoveGammaNames[0]) store_A837F4[2];
+STORE(igb, A837AC, 1) char store_A837F4[2][16];
 ALIAS(gMoveGammaNames, store_A837F4, 0);
 PAD(igb, A837AC, A83814, 0x24);
 ALIAS(gMovePosNames, pad_A83814, 0);

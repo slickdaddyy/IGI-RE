@@ -729,6 +729,12 @@ int Door_GetState(Door *d)
 HOOK(0x447D70, Door_GetState);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5333B8) float kSlideScale INIT(4096.0f);
+ALIAS(k4096, kSlideScale, 0);
+ALIAS(kFixed, kSlideScale, 0);
+ALIAS(kMeter, kSlideScale, 0);
+ALIAS(kRangeScale, kSlideScale, 0);
+ALIAS(kSpeed, kSlideScale, 0);
 DATA(533498) double kUseMaxY INIT(4096.0);
 ALIAS(kUnit, kUseMaxY, 0);
 DATA(5338A8) double kUseMaxX INIT(1843.2);

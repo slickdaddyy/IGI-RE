@@ -140,7 +140,7 @@ HOOK(0x4B1000, RenderMode_Call);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(942304) int gRenderModeStackTop;
-STORE(igb, 942304, 4) __typeof__(gRenderModeStack[0]) store_942308[10];
+STORE(igb, 942304, 4) int store_942308[10];
 ALIAS(gRenderModeStack, store_942308, 0);
 BSS(A94A64) int gRenderModeIndex;
 PAD(igb, A94A64, A94A68, 0x18);

@@ -315,7 +315,7 @@ BSS(5690D8) uint8_t gWeaponConfigEvent;
 PAD(igb, 5690D8, 5690D9, 0x7);
 BSS(5690D8) char gDetectionRanges;
 PAD(igb, 5690D8, 5690E1, 0xF);
-STORE(igb, 5690D8, 1) __typeof__(gWeaponConfigPath[0]) store_5690F0[256];
+STORE(igb, 5690D8, 1) char store_5690F0[256];
 ALIAS(gWeaponConfigPath, store_5690F0, 0);
 BSS(5690D8) char gTaskTypeEnum;
 PAD(igb, 5690D8, 5691F1, 0x13);

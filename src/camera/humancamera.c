@@ -836,7 +836,8 @@ HOOK(0x484450, HumanCamera_DeathCameraUpdate);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(540990) uint16_t gHumanCameraType INIT(385);
-PAD(igd, 540990, 540992, 0x2) INIT({0xFF});
+DATA(540990) uint8_t gHumanCameraEvent INIT(255);
+PAD(igd, 540990, 540993, 0x1);
 BSS(B81700) float gCameraUnkB81700;
 ALIAS(gLayerFov, gCameraUnkB81700, 0);
 BSS(BC20F4) float gMouseDX;

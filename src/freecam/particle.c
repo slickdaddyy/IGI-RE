@@ -173,7 +173,7 @@ HOOK(0x5311C0, SpriteParticleSystem_Shutdown);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(54F7B0) uint16_t gParticleSystemType INIT(385);
 PAD(igd, 54F7B0, 54F7B2, 0x2);
-STORE(igb, A845F8, 1) __typeof__(gParticleRandom[0]) store_A845F8[16];
+STORE(igb, A845F8, 1) char store_A845F8[16];
 ALIAS(gParticleRandom, store_A845F8, 0);
 BSS(A845F8) uint16_t gSpriteParticleSystemType;
 PAD(igb, A845F8, A8460A, 0x6);

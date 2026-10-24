@@ -143,6 +143,6 @@ HOOK(0x5182B0, LensFlare_Draw);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(A800BC) int gViewSlotCurrent;
-STORE(igb, A800BC, 1) __typeof__(gViewSlotUsed[0]) store_A800C0[16];
+STORE(igb, A800BC, 1) char store_A800C0[16];
 ALIAS(gViewSlotUsed, store_A800C0, 0);
 BSS(A800BC) TerrPool gFlarePool;

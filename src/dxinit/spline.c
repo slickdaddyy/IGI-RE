@@ -143,9 +143,9 @@ void SplineCache_Reset(void)
 HOOK(0x49A340, SplineCache_Reset);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igb, 720558, 4) __typeof__(gSplineCache[0]) store_720558[2];
+STORE(igb, 720558, 4) void *store_720558[2];
 ALIAS(gSplineCache, store_720558, 0);
-STORE(igb, 720558, 4) __typeof__(gSplineCacheData[0]) store_720560[4];
+STORE(igb, 720558, 4) int store_720560[4];
 ALIAS(gSplineCacheData, store_720560, 0);
-STORE(igb, B46D40, 4) __typeof__(gSplineVerts[0]) store_B46D40[60000];
+STORE(igb, B46D40, 4) float store_B46D40[60000];
 ALIAS(gSplineVerts, store_B46D40, 0);

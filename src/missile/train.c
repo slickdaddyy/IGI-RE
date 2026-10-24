@@ -584,7 +584,7 @@ HOOK(0x42B700, Train_Run);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(5336D0) float kSoundScale INIT(5.0f);
-STORE(igd, 53BCE8, 1) __typeof__(gTrainChannels[0]) store_53BCE8[32] INIT({20, -67, 83, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -128, 63, 8, -67, 83, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -128, 65});
+STORE(igd, 53BCE8, 1) char store_53BCE8[32] INIT({20, -67, 83, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -128, 63, 8, -67, 83, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -128, 65});
 ALIAS(gTrainChannels, store_53BCE8, 0);
 DATA(53BCE8) char str_53BD08[10] INIT("PilotAnim");
 PAD(igd, 53BCE8, 53BD12, 0x2);
@@ -593,5 +593,5 @@ PAD(igd, 53BCE8, 53BD1B, 0x1);
 BSS(57BCB8) uint16_t gTrainType;
 PAD(igb, 57BCB8, 57BCBA, 0x2);
 BSS(57BCB8) void *gTrainParams;
-STORE(igb, 57BCE8, 4) __typeof__(gTrainOffsetRange[0]) store_57BCE8[4];
+STORE(igb, 57BCE8, 4) float store_57BCE8[4];
 ALIAS(gTrainOffsetRange, store_57BCE8, 0);

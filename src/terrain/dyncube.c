@@ -855,5 +855,5 @@ HOOK(0x4C8130, DynCube_SendEventLines);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(534AC8) const float gSqrt3 INIT(1.7320508f);
-STORE(igd, 548000, 4) __typeof__(gDynCubeChildDir[0]) store_548000[8] INIT({{-1, -1, -1}, {1, -1, -1}, {-1, 1, -1}, {1, 1, -1}, {-1, -1, 1}, {1, -1, 1}, {-1, 1, 1}, {1, 1, 1}});
+STORE(igd, 548000, 4) const int store_548000[8][3] INIT({{-1, -1, -1}, {1, -1, -1}, {-1, 1, -1}, {1, 1, -1}, {-1, -1, 1}, {1, -1, 1}, {-1, 1, 1}, {1, 1, 1}});
 ALIAS(gDynCubeChildDir, store_548000, 0);

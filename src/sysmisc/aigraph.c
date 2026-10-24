@@ -425,7 +425,7 @@ HOOK(0x5098A0, AIGraph_GetType);
 DATA(54E83C) uint16_t gAIGraphType INIT(385);
 DATA(54E83C) uint8_t gAIGraphEvent INIT(255);
 PAD(igd, 54E83C, 54E83F, 0x1);
-STORE(igb, A7B2A8, 8) __typeof__(gRangeA8[0]) store_A7B2A8[2];
+STORE(igb, A7B2A8, 8) double store_A7B2A8[2];
 ALIAS(gRangeA8, store_A7B2A8, 0);
 PAD(igb, A7B2A8, A7B2B8, 0x14);
 ALIAS(gRange98, pad_A7B2B8, 0);

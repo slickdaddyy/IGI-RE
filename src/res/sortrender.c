@@ -144,7 +144,7 @@ HOOK(0x4B73E0, SortRender_Shutdown);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(943E48) int gSortTask;
-STORE(igb, 943E48, 1) __typeof__(gSortData[0]) store_943E4C[1048580];
+STORE(igb, 943E48, 1) char store_943E4C[1048580];
 ALIAS(gSortData, store_943E4C, 0);
 BSS(943E48) SortList *gSortList;
 BSS(943E48) int gSortDataUsed;

@@ -177,5 +177,5 @@ BSS(A83850) uint16_t gOrigoType;
 PAD(igb, A83850, A83856, 0x2);
 BSS(BA1FC8) Vec3d *gOrigoPlace;
 PAD(igb, BA1FC8, BA1FCC, 0x4);
-STORE(igb, BA1FC8, 4) __typeof__(gOrigoDelta[0]) store_BA1FD0[3];
+STORE(igb, BA1FC8, 4) int store_BA1FD0[3];
 ALIAS(gOrigoDelta, store_BA1FD0, 0);

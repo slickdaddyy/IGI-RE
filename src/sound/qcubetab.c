@@ -94,26 +94,26 @@ void QCube_FreeTables(void)
 HOOK(0x4E5EA0, QCube_FreeTables);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igd, 548790, 1) __typeof__(gQCubeFaceCorners[0]) store_548790[6] INIT({{6, 4, 2}, {5, 7, 1, 3}, {4, 5, 0, 1}, {7, 6, 3, 2}, {0, 1, 2, 3}, {6, 7, 4, 5}});
+STORE(igd, 548790, 1) const uint8_t store_548790[6][4] INIT({{6, 4, 2}, {5, 7, 1, 3}, {4, 5, 0, 1}, {7, 6, 3, 2}, {0, 1, 2, 3}, {6, 7, 4, 5}});
 ALIAS(gQCubeFaceCorners, store_548790, 0);
-STORE(igd, 548790, 1) __typeof__(gQCubePermA[0]) store_5487A8[48] INIT({0, 1, 2, 3, 4, 5, 3, 2, 0, 1, 4, 5, 1, 0, 3, 2, 4, 5, 2, 3, 1, 0, 4, 5, 1, 0, 2, 3, 4, 5, 3, 2, 1, 0, 4, 5, 0, 1, 3, 2, 4, 5, 2, 3, 0, 1, 4, 5});
+STORE(igd, 548790, 1) const uint8_t store_5487A8[48] INIT({0, 1, 2, 3, 4, 5, 3, 2, 0, 1, 4, 5, 1, 0, 3, 2, 4, 5, 2, 3, 1, 0, 4, 5, 1, 0, 2, 3, 4, 5, 3, 2, 1, 0, 4, 5, 0, 1, 3, 2, 4, 5, 2, 3, 0, 1, 4, 5});
 ALIAS(gQCubePermA, store_5487A8, 0);
-STORE(igd, 548790, 1) __typeof__(gQCubePermB[0]) store_5487D8[48] INIT({0, 1, 2, 3, 4, 5, 2, 3, 1, 0, 4, 5, 1, 0, 3, 2, 4, 5, 3, 2, 0, 1, 4, 5, 1, 0, 2, 3, 4, 5, 3, 2, 1, 0, 4, 5, 0, 1, 3, 2, 4, 5, 2, 3, 0, 1, 4, 5});
+STORE(igd, 548790, 1) const uint8_t store_5487D8[48] INIT({0, 1, 2, 3, 4, 5, 2, 3, 1, 0, 4, 5, 1, 0, 3, 2, 4, 5, 3, 2, 0, 1, 4, 5, 1, 0, 2, 3, 4, 5, 3, 2, 1, 0, 4, 5, 0, 1, 3, 2, 4, 5, 2, 3, 0, 1, 4, 5});
 ALIAS(gQCubePermB, store_5487D8, 0);
 BSS(A5E410) double gQCubeUnkA5E410;
 BSS(A5E410) double gQCubeUnkA5E418;
 PAD(igb, A5E410, A5E420, 0x4);
-STORE(igb, A5E410, 1) __typeof__(gQCubeUnkA5E424[0]) store_A5E424[64];
+STORE(igb, A5E410, 1) uint8_t store_A5E424[64];
 ALIAS(gQCubeUnkA5E424, store_A5E424, 0);
-STORE(igb, A5E410, 4) __typeof__(gQCubeUnkA5E464[0]) store_A5E464[97];
+STORE(igb, A5E410, 4) int store_A5E464[97];
 ALIAS(gQCubeUnkA5E464, store_A5E464, 0);
 BSS(B015B8) double gQCubeScaleX;
 BSS(B015B8) double gQCubeScaleY;
 BSS(B015B8) uint8_t gQCubeEvent;
 PAD(igb, B015B8, B015C9, 0x17);
-STORE(igb, B015B8, 1) __typeof__(gQCubeUnkB015E0[0]) store_B015E0[512];
+STORE(igb, B015B8, 1) uint8_t store_B015E0[512];
 ALIAS(gQCubeUnkB015E0, store_B015E0, 0);
-STORE(igb, B015B8, 1) __typeof__(gQCubeUnkB017E0[0]) store_B017E0[512];
+STORE(igb, B015B8, 1) uint8_t store_B017E0[512];
 ALIAS(gQCubeUnkB017E0, store_B017E0, 0);
 STORE(igb, B04280, 8) __typeof__(gQCubeCorners[0]) store_B04280[8];
 ALIAS(gQCubeCorners, store_B04280, 0);

@@ -481,8 +481,8 @@ HOOK(0x482560, ExplodeObject_Close);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(54097C) uint16_t gExplodeObjectType INIT(385);
 PAD(igd, 54097C, 54097E, 0x2);
-STORE(igb, 5C1170, 4) __typeof__(gRealRange[0]) store_5C1170[2];
+STORE(igb, 5C1170, 4) float store_5C1170[2];
 ALIAS(gRealRange, store_5C1170, 0);
-STORE(igb, 5C1170, 4) __typeof__(gIntRange[0]) store_5C1178[3];
+STORE(igb, 5C1170, 4) int store_5C1178[3];
 ALIAS(gIntRange, store_5C1178, 0);
 BSS(5C1170) void *gExplodeObjectParams;

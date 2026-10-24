@@ -843,7 +843,7 @@ void Human_ShowShadow(Human *h)
 HOOK(0x464240, Human_ShowShadow);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igd, 53F318, 4) __typeof__(gFootstepSounds[0]) store_53F318[12] INIT({0, 1, 2, 3, 4, 5, 3, 1, 4, 2, 3, 5});
+STORE(igd, 53F318, 4) const int store_53F318[12] INIT({0, 1, 2, 3, 4, 5, 3, 1, 4, 2, 3, 5});
 ALIAS(gFootstepSounds, store_53F318, 0);
 BSS(5BDAD0) char *gBloodSprite2;
 BSS(5BDAD0) char *gBloodSprite1;

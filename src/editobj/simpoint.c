@@ -222,5 +222,5 @@ HOOK(0x503D50, SimpointObjContainer_SetAutoDelete);
 BSS(A7A628) uint16_t gSimpointObjContainerType;
 BSS(A7A628) uint16_t gSimpointObjType;
 PAD(igb, A7A628, A7A62C, 0x4);
-STORE(igb, A7A628, 1) __typeof__(gSimpointObjRandom[0]) store_A7A630[16];
+STORE(igb, A7A628, 1) char store_A7A630[16];
 ALIAS(gSimpointObjRandom, store_A7A630, 0);

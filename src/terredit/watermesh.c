@@ -740,7 +740,7 @@ DATA(534CB8) float kPeriodScale INIT(0.703f);
 PAD(igd, 534CB8, 534CCC, 0x4);
 DATA(534CB8) double kMinusTwoD INIT(-2.0);
 DATA(534CB8) double kFinestSize INIT(8388608.0);
-STORE(igd, 54F75C, 1) __typeof__(gWaterName[0]) store_54F75C[12] INIT({87, 97, 116, 101, 114, 77, 101, 115, 104});
+STORE(igd, 54F75C, 1) const char store_54F75C[12] INIT({87, 97, 116, 101, 114, 77, 101, 115, 104});
 ALIAS(gWaterName, store_54F75C, 0);
 BSS(A84578) int gWaterPrimitive;
 BSS(A84578) int gWaterUnk7C;

@@ -963,5 +963,5 @@ BSS(BC2380) int gProfileCount;
 BSS(BC2380) int gActiveProfile;
 STORE(igb, BC2380, 4) __typeof__(gProfiles[0]) store_BC2388[16];
 ALIAS(gProfiles, store_BC2388, 0);
-STORE(igb, BC2380, 1) __typeof__(gContentControlPassword[0]) store_BC79C8[32];
+STORE(igb, BC2380, 1) char store_BC79C8[32];
 ALIAS(gContentControlPassword, store_BC79C8, 0);

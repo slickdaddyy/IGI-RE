@@ -558,7 +558,7 @@ BSS(A80200) uint16_t gWaterType;
 PAD(igb, A80200, A81016, 0x6);
 BSS(A80200) int gWaterCount;
 BSS(A80200) int gWaterDepth;
-STORE(igb, B818A0, 4) __typeof__(gAmbient[0]) store_B818A0[3];
+STORE(igb, B818A0, 4) float store_B818A0[3];
 ALIAS(gAmbient, store_B818A0, 0);
 ALIAS(gAmbientColors, store_B818A0, 0);
 BSS(BA2040) double gWaterLevel;

@@ -527,14 +527,14 @@ HOOK(0x507D60, HeightMap_NewChild);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 STORE(igb, A7AD10, 4) __typeof__(gHeightMaps[0]) store_A7AD10[266];
 ALIAS(gHeightMaps, store_A7AD10, 0);
-STORE(igb, A7AD10, 1) __typeof__(gHeightMapRandom[0]) store_A7B138[268];
+STORE(igb, A7AD10, 1) char store_A7B138[268];
 ALIAS(gHeightMapRandom, store_A7B138, 0);
 BSS(A7AD10) void *gHeightMapParams;
 BSS(A7AD10) uint16_t gHeightMapType;
 PAD(igb, A7AD10, A7B24A, 0x6);
 BSS(A7AD10) int gHeightMapCount;
-STORE(igb, B81920, 1) __typeof__(gHmpResident[0]) store_B81920[256];
+STORE(igb, B81920, 1) char store_B81920[256];
 ALIAS(gHmpResident, store_B81920, 0);
 ALIAS(gUnkB81920, store_B81920, 0);
-STORE(igb, B97D40, 4) __typeof__(gCollBumpList[0]) store_B97D40[16];
+STORE(igb, B97D40, 4) int store_B97D40[16];
 ALIAS(gCollBumpList, store_B97D40, 0);

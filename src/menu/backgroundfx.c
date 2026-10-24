@@ -287,7 +287,7 @@ REF_EXTERN(str_539BA8);
 REF_EXTERN(str_539BC0);
 DATA(53357C) const float gGridStep INIT(0.05f);
 DATA(53357C) const float gCircleDetail INIT(0.31415927f);
-STORE(igd, 53357C, 4) __typeof__(gBgSpeed[0]) store_533584[1] INIT({0.0011111111f});
+STORE(igd, 53357C, 4) const float store_533584[1] INIT({0.0011111111f});
 ALIAS(gBgSpeed, store_533584, 0);
 DATA(539AF0) uint16_t gBackgroundFXType INIT(385);
 PAD(igd, 539AF0, 539AF2, 0x6);

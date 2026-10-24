@@ -570,7 +570,7 @@ DATA(533728) double kTwoPiD INIT(6.283185307179589);
 DATA(53387C) float kTurnStep INIT(0.08726647f);
 ALIAS(kTrackDead, kTurnStep, 0);
 DATA(534134) float kEyeUp INIT(819.2f);
-STORE(igb, 5BE380, 4) __typeof__(gStatGunAmmoRange[0]) store_5BE380[2];
+STORE(igb, 5BE380, 4) int store_5BE380[2];
 ALIAS(gStatGunAmmoRange, store_5BE380, 0);
 BSS(5BE380) uint16_t gStatGunType;
 PAD(igb, 5BE380, 5BE38A, 0x2);

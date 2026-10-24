@@ -683,7 +683,7 @@ BSS(B8170C) int gRenderModeUVFromGenericUVMethod;
 ALIAS(gRenderModeUVFromGenericUV, gRenderModeUVFromGenericUVMethod, 0);
 BSS(B817A0) int gGenericUVFromRenderModeUVMethod;
 ALIAS(gGenericUVFromRenderModeUV, gGenericUVFromRenderModeUVMethod, 0);
-STORE(igb, B817C0, 4) __typeof__(gMesh3DFade[0]) store_B817C0[16];
+STORE(igb, B817C0, 4) float store_B817C0[16][3];
 ALIAS(gMesh3DFade, store_B817C0, 0);
 BSS(B817C0) int gDrawBoneMeshMethod;
 BSS(B818DC) int gDrawLightmapMeshMethod;

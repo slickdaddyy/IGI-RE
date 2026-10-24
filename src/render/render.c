@@ -1367,7 +1367,7 @@ PAD(igb, 7AC0A0, 7AC0A0, 0x1D34);
 ALIAS(gMeshVBs, pad_7AC0A0, 0);
 BSS(7AC0A0) int gUnlitIdx;
 ALIAS(gStateC1, gUnlitIdx, 0);
-STORE(igb, B818EC, 4) __typeof__(gFogColor[0]) store_B818EC[13];
+STORE(igb, B818EC, 4) float store_B818EC[13];
 ALIAS(gFogColor, store_B818EC, 0);
 BSS(BCAAE0) View gView;
 ALIAS(gCamDir, gView, 24);

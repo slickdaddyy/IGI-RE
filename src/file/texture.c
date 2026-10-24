@@ -396,7 +396,7 @@ DATA(546F90) int gDownloadTextureId INIT(-1);
 DATA(546F90) int gGetTMUsId INIT(-1);
 DATA(546F90) int gSetActiveTMUId INIT(-1);
 DATA(546F90) int gGetActiveTMUId INIT(-1);
-STORE(igb, 943B20, 4) __typeof__(gTexParams[0]) store_943B20[7];
+STORE(igb, 943B20, 4) float store_943B20[7];
 ALIAS(gTexParams, store_943B20, 0);
 BSS(943B20) char gTexFromFile;
 PAD(igb, 943B20, 943B3D, 0x3);

@@ -138,6 +138,7 @@ Level *Level_Get(void)
 HOOK(0x4F17C0, Level_Get);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igd, 54DDA4, 54DDA4, 0x1) INIT({0xFF});
+DATA(54DDA4) uint8_t gLevelEventDA4 INIT(255);
 DATA(54DDA4) uint8_t gLevelNameEvent INIT(255);
 PAD(igd, 54DDA4, 54DDA6, 0x2);
+ALIAS(gLevelEvent0, gLevelEventDA4, 0);

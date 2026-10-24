@@ -327,7 +327,7 @@ DATA(54127C) uint8_t gAIDetectEvent1 INIT(255);
 DATA(54127C) uint8_t gAIDetectEvent2 INIT(255);
 PAD(igd, 54127C, 54127F, 0x1);
 BSS(5C8AC0) QTaskList *gAIDetectList;
-STORE(igb, 5C8AC0, 2) __typeof__(gAIDetectMaskTypes[0]) store_5C8AC4[34];
+STORE(igb, 5C8AC0, 2) uint16_t store_5C8AC4[34];
 ALIAS(gAIDetectMaskTypes, store_5C8AC4, 0);
 BSS(5C8AC0) int gAIDetectPhase;
 BSS(5C8AC0) int gAIDetectUnk5C8B0C;

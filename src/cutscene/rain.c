@@ -903,7 +903,7 @@ DATA(54E2CC) uint16_t gRainObjType INIT(385);
 PAD(igd, 54E2CC, 54E2CE, 0x2);
 BSS(A76C88) int gRainVisibleCubes;
 BSS(A76C88) int gRainLineId;
-STORE(igb, A76C88, 1) __typeof__(gRainRandom[0]) store_A76C90[12];
+STORE(igb, A76C88, 1) char store_A76C90[12];
 ALIAS(gRainRandom, store_A76C90, 0);
 BSS(A76C88) int gRainMemory;
 PAD(igb, A76C88, A76CA0, 0x4);

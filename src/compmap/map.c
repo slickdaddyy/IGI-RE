@@ -666,7 +666,7 @@ void ComputerMap_SetStartTask(Task *t)
 HOOK(0x46AB50, ComputerMap_SetStartTask);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igd, 53F750, 4) __typeof__(gMapZoomAngle[0]) store_53F750[4] INIT({0.7853982f, 0.32724923f, 0.13962634f, 0.009599311f});
+STORE(igd, 53F750, 4) const float store_53F750[4] INIT({0.7853982f, 0.32724923f, 0.13962634f, 0.009599311f});
 ALIAS(gMapZoomAngle, store_53F750, 0);
 DATA(53F760) uint8_t gMapSelectEvent INIT(255);
 PAD(igd, 53F760, 53F761, 0x3);

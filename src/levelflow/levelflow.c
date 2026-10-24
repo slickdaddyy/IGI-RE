@@ -316,7 +316,7 @@ DATA(5339B8) float kMinusFps INIT(-30.0f);
 ALIAS(kFuseFrames, kMinusFps, 0);
 DATA(53422C) float kSecondsPerHour INIT(3600.0f);
 BSS(5C8AA4) ParamTable *gLevelFlowParams;
-STORE(igb, 5C8AA4, 1) __typeof__(gKeyPressed[0]) store_5C8AA8[12];
+STORE(igb, 5C8AA4, 1) char store_5C8AA8[12];
 ALIAS(gKeyPressed, store_5C8AA8, 0);
 BSS(5C8AA4) void *gLevelFlowModel;
 BSS(5C8AA4) uint16_t gLevelFlowType;

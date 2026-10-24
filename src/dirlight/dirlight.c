@@ -290,7 +290,7 @@ HOOK(0x527320, DirlightKeyframe_Changed);
 BSS(A83D30) void *gDirlightParams;
 BSS(A83D30) uint16_t gDirlightType;
 PAD(igb, A83D30, A83D36, 0x2);
-STORE(igb, A83D30, 1) __typeof__(gDirlightRandom[0]) store_A83D38[12];
+STORE(igb, A83D30, 1) char store_A83D38[12];
 ALIAS(gDirlightRandom, store_A83D38, 0);
 BSS(A83D30) float gDirlightKeyframeTime;
 BSS(A83D30) void *gDirlightKeyframeParams;

@@ -197,7 +197,10 @@ Shadow *Shadow_New(Task *parent, Vec3d *pos, int *visible, int *enabled, float *
 HOOK(0x4E0CC0, Shadow_New);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igd, 548708, 4) __typeof__(gShadowColor[0]) store_548708[4] INIT({0.9f, 0.9f, 0.9f, 0.0f});
+DATA(533480) float kShadowDepth INIT(10.0f);
+ALIAS(kFlySpeed, kShadowDepth, 0);
+ALIAS(kTen, kShadowDepth, 0);
+STORE(igd, 548708, 4) float store_548708[4] INIT({0.9f, 0.9f, 0.9f, 0.0f});
 ALIAS(gShadowColor, store_548708, 0);
 DATA(548708) Matrix gIdentity INIT({.m = {1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f}});
 BSS(A5E364) uint16_t gMagicObjContainerType;

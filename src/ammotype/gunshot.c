@@ -671,7 +671,7 @@ DATA(534158) const float kTrailWidth INIT(286.72f);
 PAD_CONST(igd, 534158, 53417C, 0x4) INIT({0xA6, 0x9B, 0xC4, 0x41});
 ALIAS(kGridMin, kNearPad, 0);
 DATA(540834) int gRicochetTime INIT(-1);
-STORE(igd, 54083C, 4) __typeof__(gRicochetSounds[0]) store_54083C[4] INIT({(__typeof__(store_54083C[0]))ref_str_540870, (__typeof__(store_54083C[1]))ref_str_540864, (__typeof__(store_54083C[2]))ref_str_540858, (__typeof__(store_54083C[3]))ref_str_54084C});
+STORE(igd, 54083C, 4) const char *store_54083C[4] INIT({(__typeof__(store_54083C[0]))ref_str_540870, (__typeof__(store_54083C[1]))ref_str_540864, (__typeof__(store_54083C[2]))ref_str_540858, (__typeof__(store_54083C[3]))ref_str_54084C});
 ALIAS(gRicochetSounds, store_54083C, 0);
 DATA(54083C) char str_54084C[12] INIT("riccochet_4");
 DATA(54083C) char str_540858[12] INIT("riccochet_3");

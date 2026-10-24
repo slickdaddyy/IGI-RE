@@ -1120,11 +1120,11 @@ int Mission_GetFirst(void)
 HOOK(0x417090, Mission_GetFirst);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igd, 539540, 1) __typeof__(gGameEvents[0]) store_539540[16] INIT({255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255});
+STORE(igd, 539540, 1) uint8_t store_539540[16] INIT({255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255});
 ALIAS(gGameEvents, store_539540, 0);
-STORE(igd, 539550, 8) __typeof__(gMathPi[0]) store_539550[1] INIT({3.1415926535897944});
+STORE(igd, 539550, 8) const double store_539550[1] INIT({3.1415926535897944});
 ALIAS(gMathPi, store_539550, 0);
-STORE(igd, 539550, 8) __typeof__(gWorldMeter[0]) store_539558[1] INIT({4096.0});
+STORE(igd, 539550, 8) const double store_539558[1] INIT({4096.0});
 ALIAS(gWorldMeter, store_539558, 0);
 DATA(539560) int gMission INIT(1);
 BSS(57B1A0) signed char gRaining;
@@ -1133,11 +1133,11 @@ BSS(57B1A0) uint16_t gGameType;
 PAD(igb, 57B1A0, 57B1A4, 0x4);
 STORE(igb, 57B1A0, 1) __typeof__(gGameSprites[0]) store_57B1A8[20];
 ALIAS(gGameSprites, store_57B1A8, 0);
-STORE(igb, 57B1A0, 1) __typeof__(gMissionPath[0]) store_57B568[128];
+STORE(igb, 57B1A0, 1) char store_57B568[128];
 ALIAS(gMissionPath, store_57B568, 0);
 PAD(igb, 57B1A0, 57B5E8, 0x4B4);
 ALIAS(gGameTextures, pad_57B5E8, 0);
-STORE(igb, 57B1A0, 4) __typeof__(gGameTaskLists[0]) store_57BA9C[5];
+STORE(igb, 57B1A0, 4) void *store_57BA9C[5];
 ALIAS(gGameTaskLists, store_57BA9C, 0);
 BSS(57B1A0) QTaskList *gCutsceneList;
 BSS(57B1A0) int gGameTextureCount;

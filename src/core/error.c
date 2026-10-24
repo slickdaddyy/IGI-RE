@@ -103,5 +103,5 @@ BSS(93625C) void *gUnk936270;
 BSS(93625C) ErrorHandler gWarningHandler;
 PAD(igb, 93625C, 936278, 0x4);
 BSS(93625C) int gUnk93627C;
-STORE(igb, A84640, 1) __typeof__(gErrorText[0]) store_A84640[1024];
+STORE(igb, A84640, 1) char store_A84640[1024];
 ALIAS(gErrorText, store_A84640, 0);

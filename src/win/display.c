@@ -652,7 +652,7 @@ DATA(54524C) char str_54524F[1] INIT("");
 PAD(igd, 545344, 545344, 0x1);
 DATA(545344) char str_545345[1] INIT("");
 PAD(igd, 545344, 545346, 0x2);
-STORE(igb, 5C9FA8, 1) __typeof__(gDisplayDevice[0]) store_5C9FA8[132];
+STORE(igb, 5C9FA8, 1) char store_5C9FA8[132];
 ALIAS(gDisplayDevice, store_5C9FA8, 0);
 BSS(5C9FA8) char gDisplayOpen;
 BSS(5C9FA8) char gDisplayModeSet;

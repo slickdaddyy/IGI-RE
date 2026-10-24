@@ -217,10 +217,10 @@ HOOK(0x512BA0, Glow_QueueAll);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(A7DBD8) int gGlowReadPrim;
 PAD(igb, A7DBD8, A7DBDC, 0x4);
-STORE(igb, A7DBD8, 4) __typeof__(gGlowDirs[0]) store_A7DBE0[16];
+STORE(igb, A7DBD8, 4) float store_A7DBE0[16][2];
 ALIAS(gGlowDirs, store_A7DBE0, 0);
 BSS(A7DBD8) int gGlowInstancePrim;
-STORE(igb, A7DBD8, 1) __typeof__(gGlowMask[0]) store_A7DC64[1028];
+STORE(igb, A7DBD8, 1) char store_A7DC64[1028];
 ALIAS(gGlowMask, store_A7DC64, 0);
 BSS(A800EC) int gGlowCount;
 STORE(igb, AFA840, 4) __typeof__(gGlows[0]) store_AFA840[1000];

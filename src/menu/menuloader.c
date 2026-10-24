@@ -99,5 +99,5 @@ HOOK(0x4192B0, MenuLoader_Shutdown);
 DATA(539ADC) uint16_t gMenuLoaderType INIT(385);
 PAD(igd, 539ADC, 539ADE, 0x2);
 BSS(57BAF4) void *gMenuLoaderParams;
-STORE(igb, 57BAF4, 1) __typeof__(gMenuLoaderPath[0]) store_57BAF8[136];
+STORE(igb, 57BAF4, 1) char store_57BAF8[136];
 ALIAS(gMenuLoaderPath, store_57BAF8, 0);

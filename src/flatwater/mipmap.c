@@ -114,11 +114,11 @@ HOOK(0x51EEC0, MipMapControl_Close);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(54EEE0) uint16_t gMipMapType INIT(385);
 PAD(igd, 54EEE0, 54EEE2, 0x2);
-STORE(igb, A83788, 4) __typeof__(gMipMapModeRange[0]) store_A83788[2];
+STORE(igb, A83788, 4) int store_A83788[2];
 ALIAS(gMipMapModeRange, store_A83788, 0);
 BSS(A83788) void *gMipMapParams;
 PAD(igb, A83788, A83794, 0x4);
-STORE(igb, A83788, 4) __typeof__(gMipMapBiasRange[0]) store_A83798[2];
+STORE(igb, A83788, 4) float store_A83798[2];
 ALIAS(gMipMapBiasRange, store_A83798, 0);
 BSS(BC79E8) uint32_t gRenderUnk24;
 BSS(BC79E8) signed char gRenderMipMapMode;

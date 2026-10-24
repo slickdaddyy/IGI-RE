@@ -708,5 +708,5 @@ DATA(543C58) int gRainEnabled INIT(1);
 BSS(6E5BD0) Rain *gRain;
 BSS(C311C0) uint16_t gRainType;
 PAD(igb, C311C0, C311C2, 0xE);
-STORE(igb, C311C0, 1) __typeof__(gDxRainRandom[0]) store_C311D0[4172];
+STORE(igb, C311C0, 1) char store_C311D0[4172];
 ALIAS(gDxRainRandom, store_C311D0, 0);

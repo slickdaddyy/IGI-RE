@@ -379,7 +379,7 @@ char RigidDynCubeObj_GetEvent4(void)
 HOOK(0x4C5800, RigidDynCubeObj_GetEvent4);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igd, 547F3C, 1) __typeof__(gRigidEvents[0]) store_547F3C[6] INIT({-1, -1, -1, -1, -1});
+STORE(igd, 547F3C, 1) char store_547F3C[6] INIT({-1, -1, -1, -1, -1});
 ALIAS(gRigidEvents, store_547F3C, 0);
 DATA(547F3C) uint16_t gRigidType INIT(385);
 BSS(A4433C) int gMagicObjDefCount;

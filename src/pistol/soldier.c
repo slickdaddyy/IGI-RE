@@ -411,5 +411,5 @@ void Soldier_State12Update(SoldierSM *sm, Soldier *h)
 HOOK(0x45B820, Soldier_State12Update);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igd, 53ECE0, 4) __typeof__(gSoldierFootsteps[0]) store_53ECE0[12] INIT({0, 1, 2, 3, 4, 5, 3, 1, 4, 2, 3, 5});
+STORE(igd, 53ECE0, 4) const int store_53ECE0[12] INIT({0, 1, 2, 3, 4, 5, 3, 1, 4, 2, 3, 5});
 ALIAS(gSoldierFootsteps, store_53ECE0, 0);

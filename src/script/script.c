@@ -423,5 +423,5 @@ BSS(A96598) int gScriptBreakEnabled;
 BSS(A96598) int gScriptBreak;
 BSS(A96598) int gScriptError;
 PAD(igb, A96598, A965AC, 0x14);
-STORE(igb, A96598, 4) __typeof__(gScriptWarningStack[0]) store_A965C0[256];
+STORE(igb, A96598, 4) int store_A965C0[256];
 ALIAS(gScriptWarningStack, store_A965C0, 0);

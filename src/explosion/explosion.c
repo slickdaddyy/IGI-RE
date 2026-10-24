@@ -672,7 +672,7 @@ ALIAS(kSplitDist, kThreeHalves, 0);
 DATA(5336A4) const float kThreeTenths INIT(0.3f);
 ALIAS(kShadowMinFade, kThreeTenths, 0);
 ALIAS(kSmokeSize, kThreeTenths, 0);
-PAD_CONST(igd, 534180, 534180, 0x4) INIT({0x94, 0xCE, 0xA6, 0x3C});
+DATA(534180) const float kSpreadBase INIT(0.020362176f);
 DATA(534180) const float kBlastSmokeSpin INIT(0.018849557f);
 DATA(534180) const float kSmokeRate INIT(15.0f);
 DATA(534180) const float kFragmentSpin INIT(0.006283186f);

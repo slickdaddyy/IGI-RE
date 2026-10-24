@@ -207,9 +207,9 @@ uint16_t Lensflare_GetType(void)
 HOOK(0x521030, Lensflare_GetType);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igb, A83860, 4) __typeof__(gLensflareUnk[0]) store_A83860[10];
+STORE(igb, A83860, 4) int store_A83860[10];
 ALIAS(gLensflareUnk, store_A83860, 0);
-STORE(igb, A83860, 1) __typeof__(gLensflareRandom[0]) store_A83888[12];
+STORE(igb, A83860, 1) char store_A83888[12];
 ALIAS(gLensflareRandom, store_A83888, 0);
 BSS(A83860) uint16_t gLensflareType;
 PAD(igb, A83860, A83896, 0x2);
@@ -221,7 +221,7 @@ ALIAS(gLensflareSlots, pad_A838A8, 0);
 BSS(A83860) uint16_t gLensflareItemType;
 PAD(igb, A83860, A8396A, 0x6);
 BSS(A83860) void *gLensflareItemParams;
-STORE(igb, BA1E20, 4) __typeof__(gLensflareTextureUsed[0]) store_BA1E20[16];
+STORE(igb, BA1E20, 4) int store_BA1E20[16];
 ALIAS(gLensflareTextureUsed, store_BA1E20, 0);
-STORE(igb, BA1E20, 1) __typeof__(gLensflareTextures[0]) store_BA1E60[360];
+STORE(igb, BA1E20, 1) char store_BA1E60[360];
 ALIAS(gLensflareTextures, store_BA1E60, 0);
