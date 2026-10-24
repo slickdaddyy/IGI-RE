@@ -29,16 +29,16 @@ _Static_assert(offsetof(MineField, cond) == 0x38, "MineField");
 _Static_assert(offsetof(MineField, targetId) == 0xC0, "MineField");
 _Static_assert(sizeof(MineField) == 0xD0, "MineField");
 
-#define gMineFieldType VAR(uint16_t, 0x53C2D0)
-#define gMineFieldParams VAR(void *, 0x57BEF4)
-#define gMineFieldTargetRange VAR(RangeI, 0x57BEB0)
-#define gMineField9CRange VAR(RangeI, 0x57BEB8)
-#define gMineField88Range VAR(RangeF, 0x57BEC0)
-#define gMineField98Range VAR(RangeI, 0x57BEC8)
-#define gMineField90Range VAR(RangeF, 0x57BED0)
-#define gMineFieldDelayRange VAR(RangeF, 0x57BED8)
-#define gMineField8CRange VAR(RangeF, 0x57BEE0)
-#define gMineField94Range VAR(RangeF, 0x57BEE8)
+extern uint16_t gMineFieldType;
+extern void *gMineFieldParams;
+extern RangeI gMineFieldTargetRange;
+extern RangeI gMineField9CRange;
+extern RangeF gMineField88Range;
+extern RangeI gMineField98Range;
+extern RangeF gMineField90Range;
+extern RangeF gMineFieldDelayRange;
+extern RangeF gMineField8CRange;
+extern RangeF gMineField94Range;
 
 static const float kFrames = 30.0f;
 static const float kUnits = 4096.0f;

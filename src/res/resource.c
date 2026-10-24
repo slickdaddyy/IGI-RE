@@ -20,10 +20,10 @@ ORIG(0x4B1FB0, char *, File_GetExpandedPath, (void));
 ORIG(0x4B1FC0, int, File_Exists, (const char *name));
 ORIG(0x5098F0, int, File_CompareTime, (const int *a, const int *b));
 
-#define gResourcePool VAR(Pool, 0x943E20)
-#define gResourceList VAR(List, 0x943E38)
-#define gResourceUnk VAR(int, 0x943B90)
-#define gMemberName ((char *)0x943C20)
+extern Pool gResourcePool;
+extern List gResourceList;
+extern int gResourceUnk;
+extern char gMemberName[];
 
 static Resource *Pool_New(void)
 {

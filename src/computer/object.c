@@ -84,13 +84,13 @@ typedef struct MarkerShape {
     int count;
 } MarkerShape;
 
-#define gObjectType VAR(uint16_t, 0x53F580)
-#define gObjectEvent0 VAR(uint8_t, 0x53F582)
-#define gObjectEvent1 VAR(uint8_t, 0x53F583)
-#define gObjectEvent2 VAR(uint8_t, 0x53F584)
-#define gMarkerShapes ((const MarkerShape *)0x53F5F0)
+extern uint16_t gObjectType;
+extern uint8_t gObjectEvent0;
+extern uint8_t gObjectEvent1;
+extern uint8_t gObjectEvent2;
+extern const MarkerShape gMarkerShapes[];
 #define gMarkerColors ((const float (*)[3])0x53F608)
-#define gLevelFlow VAR(char *, 0xBC2360)
+extern char *gLevelFlow;
 
 static const float kHalf = 0.5f;
 static const float kTen = 10.0f;

@@ -102,16 +102,16 @@ ORIG(0x4BFC70, int, Lexer_Next, (void *lexer, void *token));
 ORIG(0x4BF1F0, int, Parse_Block, (void *lexer, Block **out));
 ORIG(0x4BF8F0, void, Block_Free, (Block *b));
 
-#define gQscGenErrorData VAR(void *, 0xA442B4)
-#define gQscGenLogFn VAR(QscGenCallback, 0xA442C0)
-#define gQscGenErrorFn VAR(QscGenCallback, 0xA442C4)
-#define gQscGenErrors VAR(int, 0xA442C8)
-#define gQscGenLogData VAR(void *, 0xA442CC)
-#define gScriptError VAR(int, 0xA965A8)
+extern void *gQscGenErrorData;
+extern QscGenCallback gQscGenLogFn;
+extern QscGenCallback gQscGenErrorFn;
+extern int gQscGenErrors;
+extern void *gQscGenLogData;
+extern int gScriptError;
 
 /* "           NAME    ", one per opcode, and 20 spaces for continued lines */
 #define gQscGenOpText ((char (*)[20])0xA43EE0)
-#define gQscGenIndent ((char *)0xA442D0)
+extern char gQscGenIndent[];
 
 void QscGen_Error(const char *fmt, ...);
 void QscGen_Log(const char *fmt, ...);

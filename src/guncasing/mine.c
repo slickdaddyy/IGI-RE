@@ -28,9 +28,9 @@ ORIG(0x4E6C30, void, Sound_SetPos, (void *sound, Vec3d *pos));
 ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 
-#define gMineParams VAR(void *, 0x5BE39C)
-#define gMineType VAR(uint16_t, 0x5BE3A0)
-#define gMineList VAR(void *, 0x5BE3A8)
+extern void *gMineParams;
+extern uint16_t gMineType;
+extern void *gMineList;
 
 void Mine_ParamChangedHandler(Mine *m, void *arg);
 

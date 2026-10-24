@@ -24,8 +24,8 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 
-#define gSCameraControlParams VAR(void *, 0x57C170)
-#define gSCameraControlType VAR(uint16_t, 0x57C174)
+extern void *gSCameraControlParams;
+extern uint16_t gSCameraControlType;
 
 void SCameraControl_Create(SCameraControl *c, void *arg);
 void SCameraControl_Run(SCameraControl *c);

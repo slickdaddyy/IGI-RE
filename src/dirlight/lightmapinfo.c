@@ -60,18 +60,18 @@ ORIG(0x5274C0, uint16_t, Dirlight_GetType, (void));
 ORIG(0x523D40, Lightmaps *, BuildLod, (void *lod, int lodIndex, float scale, const char *name, int index, int full,
                                        int flags, int unk));
 
-#define gLightmapInfoType VAR(uint16_t, 0x54F040)
-#define gLightmapInfoParams VAR(void *, 0xA83B3C)
-#define gLightmapCountA839F4 VAR(int, 0xA839F4)
-#define gLightmapCountA83B4C VAR(int, 0xA83B4C)
-#define gLightmapPoolA83A00 VAR(Pool, 0xA83A00)
+extern uint16_t gLightmapInfoType;
+extern void *gLightmapInfoParams;
+extern int gLightmapCountA839F4;
+extern int gLightmapCountA83B4C;
+extern Pool gLightmapPoolA83A00;
 #define gLightmapRandom ((void *)0xA83B30)
-#define gLightmapRotations ((Matrix *)0xA83C58)
+extern Matrix gLightmapRotations[];
 #define gLightmapScene ((void *)0xA83980)
-#define gLightmapBuffer VAR(int *, 0xA83B28)
-#define gLightSourceIsEvent VAR(uint8_t, 0xA83A18)
-#define gLightSourceTraceEvent VAR(uint8_t, 0xA8397C)
-#define gLightSourceVertexEvent VAR(uint8_t, 0xA83B44)
+extern int *gLightmapBuffer;
+extern uint8_t gLightSourceIsEvent;
+extern uint8_t gLightSourceTraceEvent;
+extern uint8_t gLightSourceVertexEvent;
 
 #define kScaleRange ((void *)0x54F050)
 

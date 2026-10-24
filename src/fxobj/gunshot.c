@@ -100,13 +100,13 @@ _Static_assert(offsetof(PlaceExplosive, active) == 0x240, "PlaceExplosive");
 _Static_assert(sizeof(PlaceExplosive) == 0x2B0, "PlaceExplosive");
 _Static_assert(offsetof(AimArg, found) == 0x80, "AimArg");
 
-#define gGunShotEffectType VAR(uint16_t, 0x57BE78)
-#define gGunShotDust VAR(char *, 0x57BE7C)
-#define gGunShotDust2 VAR(char *, 0x57BE80)
-#define gPlaceExplosiveType VAR(uint16_t, 0x53C1DC)
-#define gPlaceExplosiveParams VAR(void *, 0x57BE8C)
+extern uint16_t gGunShotEffectType;
+extern char *gGunShotDust;
+extern char *gGunShotDust2;
+extern uint16_t gPlaceExplosiveType;
+extern void *gPlaceExplosiveParams;
 
-#define gScriptEmptyString ((const char *)0x567C74)
+extern const char gScriptEmptyString[];
 #define GameMaterial_GetSize (FN(0x46FB50, AIStationaryGun_GetDefSize))
 
 static const double kDecalUnit = 4096.0;

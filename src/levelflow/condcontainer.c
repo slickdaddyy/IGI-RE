@@ -18,8 +18,8 @@ typedef struct ConditionalContainer {
 
 _Static_assert(sizeof(ConditionalContainer) == 0x114, "ConditionalContainer");
 
-#define gConditionalContainerType VAR(uint16_t, 0x5C8A80)
-#define gConditionalContainerParams VAR(void *, 0x5C8A7C)
+extern uint16_t gConditionalContainerType;
+extern void *gConditionalContainerParams;
 
 void ConditionalContainer_Activate(ConditionalContainer *c)
 {

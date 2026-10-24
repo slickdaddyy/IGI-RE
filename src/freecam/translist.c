@@ -65,15 +65,15 @@ ORIG(0x4978B0, void, RenderQueue_Add, (int queue, void *node));
 
 void crt_qsort(void *base, unsigned num, unsigned width, int (*comp)(const void *, const void *));
 
-#define gTransListType VAR(uint16_t, 0x54F884)
-#define gTransPrimitive VAR(int, 0xC28F90)
-#define gTransStartPrimitive VAR(int, 0xC28F94)
-#define gTransBufferEnd VAR(char *, 0xA84620)
-#define gTransEntryEnd VAR(TransEntry *, 0xA84624)
-#define gTransUsed VAR(int *, 0xA8462C)
-#define gTransCount VAR(int *, 0xA84630)
-#define gRenderQueueCount VAR(int, 0xBCABE0)
-#define gD3DDevice VAR(D3DDevice *, 0x5CA114)
+extern uint16_t gTransListType;
+extern int gTransPrimitive;
+extern int gTransStartPrimitive;
+extern char *gTransBufferEnd;
+extern TransEntry *gTransEntryEnd;
+extern int *gTransUsed;
+extern int *gTransCount;
+extern int gRenderQueueCount;
+extern D3DDevice *gD3DDevice;
 
 void TransparencyList_Delete(TransparencyList *l)
 {

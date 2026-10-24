@@ -60,22 +60,22 @@ typedef struct CollHole {
     int unk2C;
 } CollHole;
 
-#define gCollChildTable ((const int *)0x548060)
-#define gTaskEnterHandlers ((TaskHandler *)0xA9C4E0)
-#define gTaskLeaveHandlers ((TaskHandler *)0xA9CAE0)
-#define gCollWalkTasks VAR(int, 0xB97D20)
-#define gCollHoleList ((int *)0xB97DA0)
-#define gCollHoleCount VAR(int, 0xB97DF8)
-#define gCollSavedHoleCount VAR(int, 0xB97DFC)
-#define gCollBumps ((CollBump *)0xBA2030)
-#define gCollBumpCount VAR(int, 0xBA2058)
-#define gCollHoles ((CollHole *)0xBA5080)
-#define gCollLineCalls VAR(int, 0xA4438C)
-#define gCollLineCount VAR(int, 0xA44390)
-#define gCollLeafTests VAR(int, 0xA44398)
-#define gCollTriangleTests VAR(int, 0xA4439C)
+extern const int gCollChildTable[];
+extern TaskHandler gTaskEnterHandlers[];
+extern TaskHandler gTaskLeaveHandlers[];
+extern int gCollWalkTasks;
+extern int gCollHoleList[];
+extern int gCollHoleCount;
+extern int gCollSavedHoleCount;
+extern CollBump gCollBumps[];
+extern int gCollBumpCount;
+extern CollHole gCollHoles[];
+extern int gCollLineCalls;
+extern int gCollLineCount;
+extern int gCollLeafTests;
+extern int gCollTriangleTests;
 /* 900 byte TerrainMaterial records; only the low byte of the first field is read */
-#define gTerrainMaterials ((const uint8_t *)0xC28FE0)
+extern const uint8_t gTerrainMaterials[];
 
 #define SAR(v, n) ((int)(v) >> ((n) & 31))
 

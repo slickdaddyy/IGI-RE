@@ -45,19 +45,19 @@ ORIG(0x4FDF00, void *, Particle2D_New, (void *root, void *world, void *sprite, V
 ORIG(0x4FE120, void, Particle2D_Add, (void *smoke, Vec3d *pos, Vec3f *dir, float size, float a, float b, float c, int d,
                                   int e));
 
-#define gM203Sprite VAR(char *, 0x5BE3AC)
-#define gM203Type VAR(uint16_t, 0x5BE3B0)
+extern char *gM203Sprite;
+extern uint16_t gM203Type;
 
-#define kM203Drag VAR(float, 0x533790)    /* 0.995 */
-#define kM203Gravity VAR(float, 0x534140)
-#define kPuffRise VAR(double, 0x533800)
-#define kPuffRiseMin VAR(double, 0x5337F8)
-#define kKmh VAR(float, 0x5334A4)
-#define kPerFrameHour VAR(float, 0x5334A0)
-#define kPuffSize VAR(double, 0x534138)
-#define kHalf VAR(float, 0x533504)
-#define kPuffSpin VAR(float, 0x5337F4)
-#define kPuffSpinBase VAR(float, 0x5337F0)
+extern float kM203Drag;    /* 0.995 */
+extern float kM203Gravity;
+extern double kPuffRise;
+extern double kPuffRiseMin;
+extern float kKmh;
+extern float kPerFrameHour;
+extern double kPuffSize;
+extern float kHalf;
+extern float kPuffSpin;
+extern float kPuffSpinBase;
 
 #define Game_NullHandler (FN(0x416A90, Game_CollFilterSkip3))
 

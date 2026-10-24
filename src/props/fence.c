@@ -77,18 +77,18 @@ typedef struct TouchMsg {
     Vec3d pos;
 } TouchMsg;
 
-#define gFenceType VAR(uint16_t, 0x57C154)
-#define gFenceParams VAR(void *, 0x57C150)
+extern uint16_t gFenceType;
+extern void *gFenceParams;
 
 #define sub_4EF8B0 (FN(0x4EF8B0, ParamGraphEnvelope_ArgCount))
 
-#define kHalf VAR(float, 0x533504)
-#define kSparkUp VAR(double, 0x533708)    /* 8192 */
-#define kSparkScale VAR(float, 0x533840)  /* 1/8192 */
-#define kSparkBase VAR(double, 0x533838)  /* 1.5 */
-#define kShockSide VAR(double, 0x533850)  /* 1228.8 */
-#define kShockHeight VAR(double, 0x533848) /* 12288 */
-#define kUseAngle VAR(float, 0x533858)    /* pi / 3 */
+extern float kHalf;
+extern double kSparkUp;    /* 8192 */
+extern float kSparkScale;  /* 1/8192 */
+extern double kSparkBase;  /* 1.5 */
+extern double kShockSide;  /* 1228.8 */
+extern double kShockHeight; /* 12288 */
+extern float kUseAngle;    /* pi / 3 */
 
 void Fence_Create(Fence *f);
 void Fence_Run(Fence *f);

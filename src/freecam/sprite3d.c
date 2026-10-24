@@ -28,8 +28,8 @@ ORIG(0x499FF0, int, Float_Log2, (float f));
 ORIG(0x4B51F0, void, QVertex_DrawQuad, (void *sprite, float x0, float y0, float x1, float y1, float x2, float y2,
                                         float x3, float y3, float r, float g, float b, int frame, int flags, int mip));
 
-#define gSprite3DType VAR(uint16_t, 0xC28F98)
-#define gSprite3DPool VAR(Pool, 0xC28FA0)
+extern uint16_t gSprite3DType;
+extern Pool gSprite3DPool;
 
 void Sprite3D_Draw(Sprite3D *s)
 {

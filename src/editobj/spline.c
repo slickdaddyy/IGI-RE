@@ -97,12 +97,12 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 #define SPLINEOBJWAYPOINT_DELETE (FN(0x500DE0, SplineObjWaypoint_Delete))
 #define SPLINEOBJWAYPOINT_CHANGED (FN(0x500EF0, SplineObjWaypoint_Changed))
 
-#define gSplineObjDebugText ((char *)0xA7A50C)
-#define gSplineObjWaypointParams VAR(void *, 0xA7A508)
-#define gSplineObjSegmentRange VAR(RangeI, 0xA7A610)
-#define gSplineObjType VAR(uint16_t, 0xA7A618)
-#define gSplineObjParams VAR(void *, 0xA7A61C)
-#define gSplineObjWaypointType VAR(uint16_t, 0xA7A620)
+extern char gSplineObjDebugText[];
+extern void *gSplineObjWaypointParams;
+extern RangeI gSplineObjSegmentRange;
+extern uint16_t gSplineObjType;
+extern void *gSplineObjParams;
+extern uint16_t gSplineObjWaypointType;
 
 static const float kZero = 0.0f;
 static const float kFar = 4096.0f;

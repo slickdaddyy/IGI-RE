@@ -44,19 +44,19 @@ typedef struct ClipOut {
 
 _Static_assert(sizeof(ClipVtx) == 0x40, "ClipVtx");
 
-#define gClipCount VAR(int, 0xA7E070)
-#define gClipZBias VAR(float, 0xA7E074)
-#define gClipZScale VAR(float, 0xA7F894)
-#define gSceneMinX VAR(float, 0xBCABD0)
-#define gSceneMinY VAR(float, 0xBCABD4)
-#define gSceneMaxX VAR(float, 0xBCABD8)
-#define gSceneMaxY VAR(float, 0xBCABDC)
-#define gClipRhwScale VAR(float, 0xBCAD70)
-#define gNearPlane VAR(float, 0xBCADC0)
-#define gTerrainScaleY VAR(float, 0xC311A0)
-#define gTerrainScaleX VAR(float, 0xC311A4)
-#define gTerrainCenterX VAR(float, 0xC311B0)
-#define gTerrainCenterY VAR(float, 0xC311B4)
+extern int gClipCount;
+extern float gClipZBias;
+extern float gClipZScale;
+extern float gSceneMinX;
+extern float gSceneMinY;
+extern float gSceneMaxX;
+extern float gSceneMaxY;
+extern float gClipRhwScale;
+extern float gNearPlane;
+extern float gTerrainScaleY;
+extern float gTerrainScaleX;
+extern float gTerrainCenterX;
+extern float gTerrainCenterY;
 
 static const union {
     uint32_t u;

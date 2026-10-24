@@ -58,8 +58,8 @@ typedef struct ConditionalSound {
 _Static_assert(offsetof(ConditionalSound, streamA) == 0xB8, "ConditionalSound");
 _Static_assert(sizeof(ConditionalSound) == 0x128, "ConditionalSound");
 
-#define gConditionalSoundType VAR(uint16_t, 0x57BC68)
-#define gConditionalSoundParams VAR(void *, 0x57BC6C)
+extern uint16_t gConditionalSoundType;
+extern void *gConditionalSoundParams;
 
 void ConditionalSound_Create(ConditionalSound *cs);
 void ConditionalSound_Run(ConditionalSound *cs);

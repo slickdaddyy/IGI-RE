@@ -136,45 +136,45 @@ typedef struct DynVB {
     int used;
 } DynVB;
 
-#define gBandFilterType VAR(uint16_t, 0x543D50)
-#define gHandiCamFilterType VAR(uint16_t, 0x543D58)
-#define gLineFilterType VAR(uint16_t, 0x543D4C)
-#define gWideScreenFilterType VAR(uint16_t, 0x543D4E)
-#define gDevice VAR(void *, 0x5CA114)
+extern uint16_t gBandFilterType;
+extern uint16_t gHandiCamFilterType;
+extern uint16_t gLineFilterType;
+extern uint16_t gWideScreenFilterType;
+extern void *gDevice;
 #define gFilterRandom ((void *)0x935BF0)
-#define gHandiCamDrawMethod VAR(int, 0x935BFC)
-#define gBandDrawMethod VAR(int, 0x935C00)
-#define gHandiCamFilterPrim VAR(int, 0x935C08)
-#define gBandFilterPrim VAR(int, 0x935C0C)
+extern int gHandiCamDrawMethod;
+extern int gBandDrawMethod;
+extern int gHandiCamFilterPrim;
+extern int gBandFilterPrim;
 #define gBandPixels ((void *)0x935C10)
-#define gLineDrawMethod VAR(int, 0x936010)
-#define gLineFilterPrim VAR(int, 0x936014)
-#define gWideScreenPrim VAR(int, 0x936018)
-#define gBatteryX VAR(int, 0x936028)
-#define gBatteryY VAR(int, 0x93602C)
-#define gTimecodeX VAR(int, 0x936030)
-#define gTimecodeY VAR(int, 0x936034)
-#define gTimecode VAR(float, 0x936038)
-#define gBandTextX VAR(float, 0x93603C)
-#define gBandTextY VAR(float, 0x936040)
-#define gBandTextDX VAR(float, 0x936044)
-#define gBandTextDY VAR(float, 0x936048)
+extern int gLineDrawMethod;
+extern int gLineFilterPrim;
+extern int gWideScreenPrim;
+extern int gBatteryX;
+extern int gBatteryY;
+extern int gTimecodeX;
+extern int gTimecodeY;
+extern float gTimecode;
+extern float gBandTextX;
+extern float gBandTextY;
+extern float gBandTextDX;
+extern float gBandTextDY;
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
 #define gScene ((void *)0xBCABA0)
-#define gViewX VAR(float, 0xBCABB8)
-#define gViewY VAR(float, 0xBCABBC)
-#define gScreenW VAR(float, 0xBCABC0)
-#define gScreenH VAR(float, 0xBCABC4)
-#define gD3DUnkBCABEC VAR(float, 0xBCABEC)
-#define gVBTL VAR(DynVB, 0xBCAD00)
-#define gD3DListB VAR(int *, 0xBCAD7C)
-#define gD3DViewMaxZ VAR(float, 0xBCAD8C)
-#define gD3DMinZ VAR(float, 0xBCADA0)
-#define gD3DListC VAR(int *, 0xBCADAC)
-#define gD3DViewMinZ VAR(float, 0xBCADB4)
-#define gNearPlane VAR(float, 0xBCADC0)
-#define gD3DStateList VAR(int *, 0xBCADC4)
-#define gD3DListA VAR(int *, 0xBCADE8)
+extern float gViewX;
+extern float gViewY;
+extern float gScreenW;
+extern float gScreenH;
+extern float gD3DUnkBCABEC;
+extern DynVB gVBTL;
+extern int *gD3DListB;
+extern float gD3DViewMaxZ;
+extern float gD3DMinZ;
+extern int *gD3DListC;
+extern float gD3DViewMinZ;
+extern float gNearPlane;
+extern int *gD3DStateList;
+extern int *gD3DListA;
 
 /* method idx of a COM object */
 #define COM(obj, idx, type) ((type)(*(void ***)(obj))[idx])

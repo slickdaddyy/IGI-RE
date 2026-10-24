@@ -47,7 +47,7 @@ typedef struct Gunx2 {
 _Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 _Static_assert(sizeof(Gunx2) == 0x138, "Gunx2");
 
-#define gGunx2Type VAR(uint16_t, 0x53FE68)
+extern uint16_t gGunx2Type;
 
 void Gunx2_Create(Gunx2 *t, PartCreateArg *a);
 void Gunx2_Run(Gunx2 *t);

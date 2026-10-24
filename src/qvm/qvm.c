@@ -37,8 +37,8 @@ ORIG(0x4B63D0, void, Resource_Flush, (void *data));
 ORIG(0x4BAB80, const char *, Script_FindSymbol, (const char *name, ScriptSymbol **out));
 ORIG(0x4BACA0, void, Script_UnrefSymbol, (void *ref));
 
-#define gQvmSavedTsp VAR(int, 0xA44304)
-#define gQvmSavedSp VAR(int, 0xA442F0)
+extern int gQvmSavedTsp;
+extern int gQvmSavedSp;
 
 typedef struct QvmHeader {
     char magic[4];      /* "LOOP" */

@@ -21,9 +21,9 @@ ORIG(0x4D67A0, void, BoneObj_Load, (const char *path));
 #define MTP_PALF 0x50414C46
 #define MTP_BANM 0x42414E4D
 
-#define gModelPath ((char *)0xA4EC6C)
-#define gModelDir ((char *)0xA4ED6C)
-#define gModelAnimDir ((char *)0xA4EDF8)
+extern char gModelPath[];
+extern char gModelDir[];
+extern char gModelAnimDir[];
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
 
 /* Palettes named in the PALF chunk, 0xC bytes each at f->unk3C. */

@@ -106,14 +106,14 @@ ORIG(0x4F2020, uint8_t, Weapon_GetSelectEvent, (void));
 ORIG(0x4F2030, uint8_t, Weapon_GetDeselectEvent, (void));
 ORIG(0x4F2040, uint8_t, Weapon_GetEvent7b, (void));
 
-#define gGunParams VAR(void *, 0x5BE3C0)
-#define gGunCasingType VAR(uint16_t, 0x5BE3C4)
-#define gGunType VAR(uint16_t, 0x5BE3C6)
-#define gGunEvents ((uint8_t *)0x5407B8)
+extern void *gGunParams;
+extern uint16_t gGunCasingType;
+extern uint16_t gGunType;
+extern uint8_t gGunEvents[];
 
-#define kCasingGravity VAR(float, 0x53346C)
-#define kTwoPi VAR(float, 0x5334A8)
-#define kSpinStep VAR(float, 0x5334BC)    /* 1/45 */
+extern float kCasingGravity;
+extern float kTwoPi;
+extern float kSpinStep;    /* 1/45 */
 
 #define Task_NullHandler (FN(0x4D3710, Task_Nothing))
 #define Task_FalseHandler (FN(0x45F920, Task_FalseHandler))

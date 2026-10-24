@@ -177,17 +177,17 @@ typedef struct OrientData {
     Quat q;
 } OrientData;
 
-#define gSkeletons ((Skeleton *)0xA542F0)
-#define gAnimSets ((AnimSet *)0xA538F0)
-#define gRootQuat VAR(Quat *, 0xA538E8)
-#define gRootMatrix VAR(Matrix *, 0xA538EC)
-#define gSourcePool VAR(Pool, 0xA545F0)
-#define gOrientPool VAR(Pool, 0xA54608)
-#define gInstPool VAR(Pool, 0xA54620)
-#define gFadePool VAR(Pool, 0xA54640)
-#define gNodePool VAR(Pool, 0xA54660)
-#define gTicksPerFrame VAR(float, 0xA54658)
-#define gBoneSmoothAnims VAR(int, 0xA54678)
+extern Skeleton gSkeletons[];
+extern AnimSet gAnimSets[];
+extern Quat *gRootQuat;
+extern Matrix *gRootMatrix;
+extern Pool gSourcePool;
+extern Pool gOrientPool;
+extern Pool gInstPool;
+extern Pool gFadePool;
+extern Pool gNodePool;
+extern float gTicksPerFrame;
+extern int gBoneSmoothAnims;
 
 static inline void *pool_get(Pool *p)
 {

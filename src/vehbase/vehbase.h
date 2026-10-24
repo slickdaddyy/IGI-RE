@@ -189,8 +189,8 @@ _Static_assert(sizeof(VehicleState) == 0x70, "VehicleState");
 _Static_assert(offsetof(ObjInfo, unk50) == 0x50, "ObjInfo");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))

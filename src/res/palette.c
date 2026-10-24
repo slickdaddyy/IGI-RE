@@ -10,9 +10,9 @@ ORIG(0x4B0F80, int, RenderMode_GetCurrent, (void));
 ORIG(0x4B1000, void, RenderMode_Call, (int device, int id, void *arg));
 
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
-#define gAllocPalette VAR(int, 0xA84A48)
-#define gDeAllocPalette VAR(int, 0xA84A40)
-#define gDownloadPalette VAR(int, 0xA84A44)
+extern int gAllocPalette;
+extern int gDeAllocPalette;
+extern int gDownloadPalette;
 
 void Palette_Register(void)
 {

@@ -10,7 +10,7 @@ ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 
-#define gEditorRigidObjType VAR(uint16_t, 0x54E634)
+extern uint16_t gEditorRigidObjType;
 
 void EditorRigidObj_Open(void)
 {

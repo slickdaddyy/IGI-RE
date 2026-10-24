@@ -413,19 +413,19 @@ _Static_assert(sizeof(HumanAI) == 0x3ED0, "HumanAI");
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 /* event slots allocated by HumanAI */
-#define gAIEventSlot VAR(uint8_t, 0x53C922)
-#define gAIDoorSlot VAR(uint8_t, 0x53C923)
-#define gAIEvent3Slot VAR(uint8_t, 0x53C924)
+extern uint8_t gAIEventSlot;
+extern uint8_t gAIDoorSlot;
+extern uint8_t gAIEvent3Slot;
 
 /* the AI a script is running for, and where its actions go */
-#define gAICurrent VAR(HumanAI *, 0x5BDA58)
-#define gAIActionList VAR(List *, 0x5BDA5C)
-#define gAIEventList VAR(List *, 0x5BDA60)
-#define gAIEventIndex VAR(int, 0x5BDA64)
+extern HumanAI *gAICurrent;
+extern List *gAIActionList;
+extern List *gAIEventList;
+extern int gAIEventIndex;
 
 #define gAIMoveFree (*(List *)0x58A9C8)
 #define gAITargets (*(List *)0x58A9D8)
-#define gAITargetPool ((AITarget *)0x57D838)
+extern AITarget gAITargetPool[];
 #define AI_TARGETS 8
 
 /* fistp with the current rounding mode, like the original */

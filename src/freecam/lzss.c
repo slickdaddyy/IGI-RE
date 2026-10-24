@@ -26,8 +26,8 @@ typedef struct Codec Codec;
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, int align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 
-#define gCodecs ((Codec **)0xA845D8)
-#define gLzssCodec ((Codec *)0x54F778)
+extern Codec *gCodecs[];
+extern Codec gLzssCodec;
 
 void Lzss_InitTree(LzssNode *tree, short r);
 void Lzss_DeleteString(LzssNode *tree, short p);
@@ -227,7 +227,7 @@ HOOK(0x530740, Lzss_Decompress);
 
 void Lzss_Register(void)
 {
-    Codec_Register(0, gLzssCodec);
+    Codec_Register(0, &gLzssCodec);
 }
 HOOK(0x530800, Lzss_Register);
 

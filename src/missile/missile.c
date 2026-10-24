@@ -95,25 +95,25 @@ ORIG(0x4FE5D0, void, Particle2D_SetAutoDelete, (void *smoke, int on));
 ORIG(0x4FE6B0, char *, TagItem_AddString16, (void *task, const char *name, const char *def));
 ORIG(0x4FE730, char *, TagItem_Find, (void *task, const char *name));
 
-#define gMissileType VAR(uint16_t, 0x53BB8C)
-#define gMissileParams VAR(void *, 0x57BC94)
+extern uint16_t gMissileType;
+extern void *gMissileParams;
 #define gMissileRandom ((void *)0x57BC88)
-#define gUnkBC2360 VAR(char *, 0xBC2360)
+extern char *gUnkBC2360;
 
 #define Missile_UnkHandlerC (FN(0x45F920, Task_FalseHandler))
 
-#define kSmokeSize VAR(float, 0x5336A4)      /* 0.3 */
-#define kSmokeMin VAR(float, 0x533598)       /* 0.15 */
-#define kSmokeLife VAR(float, 0x5336A0)      /* 3 */
-#define kSmokeFade VAR(float, 0x53369C)      /* 0.6 */
-#define kSmokeSpin VAR(float, 0x533698)
-#define kEighth VAR(double, 0x5336A8)
-#define kAntitankNear VAR(double, 0x5336B0) /* 122880 */
-#define kAntitankUp VAR(double, 0x533540)   /* 102400 */
-#define kForward VAR(double, 0x533548)      /* 4096000 */
-#define kSpeedScale VAR(float, 0x533680)
-#define kBurnScale VAR(float, 0x533678)     /* 1/30 */
-#define kThrustScale VAR(float, 0x53346C)
+extern float kSmokeSize;      /* 0.3 */
+extern float kSmokeMin;       /* 0.15 */
+extern float kSmokeLife;      /* 3 */
+extern float kSmokeFade;      /* 0.6 */
+extern float kSmokeSpin;
+extern double kEighth;
+extern double kAntitankNear; /* 122880 */
+extern double kAntitankUp;   /* 102400 */
+extern double kForward;      /* 4096000 */
+extern float kSpeedScale;
+extern float kBurnScale;     /* 1/30 */
+extern float kThrustScale;
 
 /* collision filter: msg is {collide, missile, owner, target}; the missile hits
    anything but those three and other missiles */

@@ -20,12 +20,12 @@ typedef struct Cursor {
 
 _Static_assert(sizeof(Cursor) == 0x40, "Cursor");
 
-#define gCursorType VAR(uint16_t, 0x57BC60)
-#define gCursorWindowX VAR(int, 0x57BC58)
-#define gCursorWindowY VAR(int, 0x57BC5C)
-#define gMouseDX VAR(float, 0xBC20F4)
-#define gMouseDY VAR(float, 0xBC20F8)
-#define gMouseButtons VAR(unsigned int, 0xC28F8C)
+extern uint16_t gCursorType;
+extern int gCursorWindowX;
+extern int gCursorWindowY;
+extern float gMouseDX;
+extern float gMouseDY;
+extern unsigned int gMouseButtons;
 
 static const float kSpeedX = 320.0f;
 static const float kSpeedY = 240.0f;

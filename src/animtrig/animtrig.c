@@ -35,13 +35,13 @@ typedef struct FileInfo {
     char isDir;
 } FileInfo;
 
-#define gAnimTriggers ((AnimTrigger *)0xA5EC80)
-#define gAnimTriggerCount VAR(int, 0xA5EF84)
-#define gAnimTriggerFireEvent VAR(uint8_t, 0x54DB80)
-#define gAnimTriggerSizeEvent VAR(uint8_t, 0x54DB81)
-#define gAnimTriggerParseEvent VAR(uint8_t, 0x54DB82)
-#define gUnkA5EF88 VAR(uint8_t, 0xA5EF88)
-#define gUnkA5EF90 VAR(int, 0xA5EF90)
+extern AnimTrigger gAnimTriggers[];
+extern int gAnimTriggerCount;
+extern uint8_t gAnimTriggerFireEvent;
+extern uint8_t gAnimTriggerSizeEvent;
+extern uint8_t gAnimTriggerParseEvent;
+extern uint8_t gUnkA5EF88;
+extern int gUnkA5EF90;
 
 void AnimTrigger_ParseConfigFile(const char *path);
 

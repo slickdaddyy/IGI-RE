@@ -61,10 +61,10 @@ _Static_assert(sizeof(SyncBlit) == 0x28, "SyncBlit");
 _Static_assert(offsetof(Sync, lists[1]) == 0x348, "Sync.lists");
 _Static_assert(sizeof(Sync) == 0x994, "Sync");
 
-#define gSyncEvent0 VAR(uint8_t, 0x54E830)
-#define gSyncEvent1 VAR(uint8_t, 0x54E831)
-#define gSyncType VAR(uint16_t, 0xA7B298)
-#define gSync VAR(Sync *, 0xA7B2A0)
+extern uint8_t gSyncEvent0;
+extern uint8_t gSyncEvent1;
+extern uint16_t gSyncType;
+extern Sync *gSync;
 
 void Sync_Create(Sync *s);
 void Sync_Delete(Sync *s);

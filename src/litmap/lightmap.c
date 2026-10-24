@@ -146,19 +146,19 @@ typedef struct ScanEntry {
     char isDir;
 } ScanEntry;
 
-#define gLightmapBufA VAR(void *, 0xA839D0)
-#define gLightmapBufB VAR(void *, 0xA839F0)
-#define gLightmapBufC VAR(void *, 0xA83C54)
-#define gLightmapBufD VAR(void *, 0xA839CC)
-#define gLightmapBufCount VAR(int, 0xA83D24)
-#define gLightmapBufCount2 VAR(int, 0xA83D28)
-#define gLightmapDir ((char *)0xA83A20)
-#define gLightmapResPath ((char *)0xA83B54)
-#define gLightmapInfoPool VAR(SlotPool, 0xA83A00)
-#define gLightmapScanName VAR(const char *, 0xA83B24)
-#define gLightmapFileFound VAR(int, 0xA83978)
-#define gHemicubeTopMax VAR(float, 0xA83B40)
-#define gHemicubeSideMax VAR(float, 0xA83B2C)
+extern void *gLightmapBufA;
+extern void *gLightmapBufB;
+extern void *gLightmapBufC;
+extern void *gLightmapBufD;
+extern int gLightmapBufCount;
+extern int gLightmapBufCount2;
+extern char gLightmapDir[];
+extern char gLightmapResPath[];
+extern SlotPool gLightmapInfoPool;
+extern const char *gLightmapScanName;
+extern int gLightmapFileFound;
+extern float gHemicubeTopMax;
+extern float gHemicubeSideMax;
 
 static const float kInfoUnk94 = 100.0f;
 

@@ -29,8 +29,8 @@ _Static_assert(offsetof(MoveRigidObj, key) == 0xF0, "key");
 _Static_assert(offsetof(MoveRigidObj, angle) == 0x150, "angle");
 _Static_assert(offsetof(MoveRigidObj, expr) == 0x1B4, "expr");
 
-#define gMoveRigidObjType VAR(uint16_t, 0xA837CC)
-#define gMoveRigidObjParams VAR(void *, 0xA837D0)
+extern uint16_t gMoveRigidObjType;
+extern void *gMoveRigidObjParams;
 
 /* jumps to the last key that was edited */
 void MoveRigidObj_Changed(MoveRigidObj *m, const char *arg)

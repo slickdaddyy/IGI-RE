@@ -41,9 +41,9 @@ typedef struct GunCAMsg {
 _Static_assert(sizeof(GunCAPart) == 0x138, "GunCAPart");
 _Static_assert(offsetof(GunCAArgs, unk88) == 0x88, "GunCAArgs");
 
-#define gGunCAClipType VAR(uint16_t, 0x5402FC)
-#define gGunCABarrelType VAR(uint16_t, 0x5402FE)
-#define gGunCAMagic VAR(float, 0x534130)
+extern uint16_t gGunCAClipType;
+extern uint16_t gGunCABarrelType;
+extern float gGunCAMagic;
 
 #define HANDLER_45E3D0 (FN(0x45E3D0, Human_ClearResult))
 #define HANDLER_477B10 (FN(0x477B10, GunMovingPart_RenderHandler))

@@ -39,9 +39,9 @@ typedef struct OffscreenBuffer {
     unsigned *pixels;
 } OffscreenBuffer;
 
-#define gOffscreenTarget VAR(OffscreenBuffer, 0xBCAAA0)
-#define gOffscreenClip ((float *)0xBCAAC0)
-#define gFPUControlWord VAR(unsigned short, 0x6E5BC4)
+extern OffscreenBuffer gOffscreenTarget;
+extern float gOffscreenClip[];
+extern unsigned short gFPUControlWord;
 
 void OffscreenBuffer_New(OffscreenBuffer *b, int width, int height)
 {

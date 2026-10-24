@@ -42,15 +42,15 @@ ORIG(0x4BBC80, void, QvmAsm_Init, (void));
 ORIG(0x4C0250, void, QvmDis_Init, (void));
 ORIG(0x4C1780, void, Debug_Log, (void));
 
-#define gScriptWarningSp VAR(int, 0xA9659C)
-#define gScriptWarningStack ((int *)0xA965C0)
-#define gScriptLineSize VAR(int, 0xA969C4)
-#define gScriptUnkA43E60 VAR(int, 0xA43E60)
-#define gScriptUnkA43E64 VAR(int, 0xA43E64)
-#define gScriptErrorContext VAR(void *, 0xA43E68)
-#define gScriptUnkA43E6C VAR(int, 0xA43E6C)
-#define gScriptErrorHandler VAR(void *, 0xA43E70)
-#define gScriptUnkA43E74 VAR(int, 0xA43E74)
+extern int gScriptWarningSp;
+extern int gScriptWarningStack[];
+extern int gScriptLineSize;
+extern int gScriptUnkA43E60;
+extern int gScriptUnkA43E64;
+extern void *gScriptErrorContext;
+extern int gScriptUnkA43E6C;
+extern void *gScriptErrorHandler;
+extern int gScriptUnkA43E74;
 
 static void Path_SetExtension(char *path, const char *ext)
 {

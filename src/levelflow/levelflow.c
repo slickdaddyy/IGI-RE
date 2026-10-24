@@ -45,14 +45,14 @@ typedef struct LevelFlow {
 _Static_assert(offsetof(LevelFlow, complete) == 0x7C, "LevelFlow");
 _Static_assert(sizeof(LevelFlow) == 0x128, "LevelFlow");
 
-#define gLevelFlow VAR(LevelFlow *, 0xBC2360)
-#define gLevelFlowType VAR(uint16_t, 0x5C8AB8)
-#define gLevelFlowParams VAR(ParamTable *, 0x5C8AA4)
-#define gLevelFlowModel VAR(void *, 0x5C8AB4)
-#define gKeyPressed ((char *)0x5C8AA8)
-#define gKeys ((uint8_t *)0xC28C62)
-#define kSecondsPerHour VAR(float, 0x53422C)
-#define kMinusFps VAR(float, 0x5339B8)
+extern LevelFlow *gLevelFlow;
+extern uint16_t gLevelFlowType;
+extern ParamTable *gLevelFlowParams;
+extern void *gLevelFlowModel;
+extern char gKeyPressed[];
+extern uint8_t gKeys[];
+extern float kSecondsPerHour;
+extern float kMinusFps;
 
 void LevelFlow_Create(LevelFlow *lf);
 void LevelFlow_Run(LevelFlow *lf);

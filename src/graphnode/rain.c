@@ -7,10 +7,10 @@ ORIG(0x4F65E0, char *, RainObj_FindCell, (void *rain, const Vec3d *pos));
 
 #define RAIN_MAX 8
 
-#define gRainParams VAR(void *, 0xA76CCC)
-#define gRainObjType VAR(uint16_t, 0x54E2CC)
-#define gRainObjs ((char **)0xA76CA4)
-#define gRainCallback VAR(void *, 0xA76CC4)
+extern void *gRainParams;
+extern uint16_t gRainObjType;
+extern char *gRainObjs[];
+extern void *gRainCallback;
 
 static const float kOne = 1.0f;
 static const float kZero = 0.0f;

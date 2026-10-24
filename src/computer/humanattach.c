@@ -43,7 +43,7 @@ typedef struct DetectQuery {
     Task *b;
 } DetectQuery;
 
-#define gHumanAttachType VAR(uint16_t, 0x5BDC48)
+extern uint16_t gHumanAttachType;
 
 void HumanAttach_Create(HumanAttach *h, void *arg);
 void HumanAttach_Run(HumanAttach *h);

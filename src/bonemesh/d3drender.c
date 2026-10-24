@@ -118,34 +118,34 @@ typedef struct ExcludeArg {
     int outside;
 } ExcludeArg;
 
-#define gLayerFov ((float *)0xB81700)
-#define gBoneClipDepth VAR(int, 0x7AF1E0)
-#define gRigidClipVerts ((ClipVertex *)0x7AF1E8)
-#define gLightmapClipVerts ((ClipVertex *)0x8AD068)
-#define gNearPlane VAR(float, 0xBCADC0)
-#define gVertexBuffer VAR(void *, 0xBCAD90)
-#define gClipOnIndex VAR(int, 0xBCACEC)
-#define gClipOffIndex VAR(int, 0xBCADE0)
-#define gNearZ VAR(float, 0xBCADDC)
-#define gFarZ VAR(float, 0xBCADCC)
-#define gStateA0 VAR(int, 0x7205B0)
-#define gStateA1 VAR(int, 0x723504)
-#define gStateB0 VAR(int, 0x7AC09C)
-#define gStateB1 VAR(int, 0x7205B8)
-#define gStateC0 VAR(int, 0x7234B8)
-#define gStateC1 VAR(int, 0x7ADDD4)
-#define gStateC2 VAR(int, 0x7205BC)
-#define gStateC3 VAR(int, 0x723508)
+extern float gLayerFov[];
+extern int gBoneClipDepth;
+extern ClipVertex gRigidClipVerts[];
+extern ClipVertex gLightmapClipVerts[];
+extern float gNearPlane;
+extern void *gVertexBuffer;
+extern int gClipOnIndex;
+extern int gClipOffIndex;
+extern float gNearZ;
+extern float gFarZ;
+extern int gStateA0;
+extern int gStateA1;
+extern int gStateB0;
+extern int gStateB1;
+extern int gStateC0;
+extern int gStateC1;
+extern int gStateC2;
+extern int gStateC3;
 
 /* view frustum planes as x = k * z (0xB46CE4 ...), and their scales */
-#define gFrustumL VAR(float, 0xB46CE4)
-#define gFrustumLScale VAR(float, 0xB817A4)
-#define gFrustumR VAR(float, 0xB46D1C)
-#define gFrustumRScale VAR(float, 0xB46D20)
-#define gFrustumB VAR(float, 0xB816FC)
-#define gFrustumBScale VAR(float, 0xB46D18)
-#define gFrustumT VAR(float, 0xB8179C)
-#define gFrustumTScale VAR(float, 0xB46CE8)
+extern float gFrustumL;
+extern float gFrustumLScale;
+extern float gFrustumR;
+extern float gFrustumRScale;
+extern float gFrustumB;
+extern float gFrustumBScale;
+extern float gFrustumT;
+extern float gFrustumTScale;
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);

@@ -29,8 +29,8 @@ ORIG(0x4E4530, void, SplineObjSegment_Setup, (void *o, Vec3d *from, Vec3d *to, f
 #define SplineObjSegment_Hit (FN(0x4E16E0, SplineObjSegment_Hit))
 
 typedef void (*RenderFn)(void *arg);
-#define gRenderFuncs ((RenderFn *)0xA94E84)
-#define gSplineObjSegmentType VAR(uint16_t, 0xA5E3F4)
+extern RenderFn gRenderFuncs[];
+extern uint16_t gSplineObjSegmentType;
 
 /* a collision mesh part */
 typedef struct MeshPart {
@@ -123,11 +123,11 @@ typedef struct SphereMesh {
     uint16_t (*tris)[4];
 } SphereMesh;
 
-#define gSphereVerts VAR(float *, 0xA5E3EC)
-#define gSphereNodes VAR(SphereNode **, 0xA5E3F0)
-#define gSphereMesh VAR(SphereMesh *, 0xA5E3F8)
-#define gSphereStack ((SphereNode **)0xA5E374)
-#define gSphereDepth VAR(int, 0xA5E400)
+extern float *gSphereVerts;
+extern SphereNode **gSphereNodes;
+extern SphereMesh *gSphereMesh;
+extern SphereNode *gSphereStack[];
+extern int gSphereDepth;
 
 void SplineObjSegment_Delete(SplineObjSegment *o)
 {

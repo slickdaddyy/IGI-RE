@@ -94,14 +94,14 @@ _Static_assert(sizeof(WeaponConfig) == 0x708, "WeaponConfig");
 
 #define WEAPON_CONFIG_SIZE (sizeof(WeaponConfig) - sizeof(TaskHeader))
 
-#define gWeaponConfigContainerType VAR(uint16_t, 0x5384C0)
-#define gWeaponConfigType VAR(uint16_t, 0x5384C2)
-#define gWeaponConfigEvent VAR(uint8_t, 0x5690D8)
-#define gDetectionRanges VAR(char, 0x5690E0)
-#define gWeaponConfigPath ((char *)0x5690F0)
-#define gTaskTypeEnum VAR(char, 0x5691F0)
-#define gWeaponConfigContainerParams VAR(ParamTable *, 0x569204)
-#define gWeaponConfigParams VAR(ParamTable *, 0x569208)
+extern uint16_t gWeaponConfigContainerType;
+extern uint16_t gWeaponConfigType;
+extern uint8_t gWeaponConfigEvent;
+extern char gDetectionRanges;
+extern char gWeaponConfigPath[];
+extern char gTaskTypeEnum;
+extern ParamTable *gWeaponConfigContainerParams;
+extern ParamTable *gWeaponConfigParams;
 #define gTaskTypeUsed(i) VAR(char, 0xAF5F05 + (i) * 0x30)
 
 void WeaponConfigContainer_Create(WeaponConfigContainer *c);

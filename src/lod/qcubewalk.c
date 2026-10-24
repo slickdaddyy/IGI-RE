@@ -89,31 +89,31 @@ _Static_assert(sizeof(WTerrainCell) == 0x30, "WTerrainCell");
 typedef void (*WHandler)(WTask *task, void *arg);
 
 #define gWalkHandlers ((WHandler (*)[0x180])0xA96AE0)
-#define gWalkWorld VAR(char *, 0xA44344)
-#define gDisplayFrame VAR(int, 0xC10380)
-#define gWalkOut VAR(WEntry *, 0xB12C58)
-#define gWalkCount VAR(int, 0xB12C20)
-#define gWalkCache ((WCache *)0xB04340)
-#define gWalkPool0 VAR(Pool, 0xB12B60)
-#define gWalkPool1 VAR(Pool, 0xB12C40)
-#define gWalkPool2 VAR(Pool, 0xB16CC0)
-#define gWalkMinSize VAR(int, 0xB16C6C)
-#define gWalkOrigin ((int *)0xB12BC0)
-#define gWalkChildOrder ((uint8_t *)0xB12BE0)
-#define gWalkCollChildTable ((int *)0x548060)
-#define gWalkTreeIndex ((signed char *)0x548444)
-#define gWalkSavedRoots ((WCube *)0xA4EF38)
-#define gWalkFakeRoots ((WCube *)0xA53740)
-#define gQCubeSkipCells VAR(int, 0xB12BB8)
-#define gWalkOverflow VAR(int, 0xB12B80)
-#define gTerrainCells ((WTerrainCell *)0xB16CE0)
-#define gTerrainCellCount VAR(int, 0xB16CA4)
-#define gTerrainMeshes ((char **)0xB12C60)
-#define gTerrainMeshCount VAR(int, 0xB16C9C)
-#define gVisibleLightMapCount VAR(int, 0xB97D24)
-#define gVisibleLightMaps ((int *)0xB97B20)
-#define gCollBumpCount VAR(int, 0xBA2058)
-#define gCollHoleBits VAR(int, 0xBA5060)
+extern char *gWalkWorld;
+extern int gDisplayFrame;
+extern WEntry *gWalkOut;
+extern int gWalkCount;
+extern WCache gWalkCache[];
+extern Pool gWalkPool0;
+extern Pool gWalkPool1;
+extern Pool gWalkPool2;
+extern int gWalkMinSize;
+extern int gWalkOrigin[];
+extern uint8_t gWalkChildOrder[];
+extern int gWalkCollChildTable[];
+extern signed char gWalkTreeIndex[];
+extern WCube gWalkSavedRoots[];
+extern WCube gWalkFakeRoots[];
+extern int gQCubeSkipCells;
+extern int gWalkOverflow;
+extern WTerrainCell gTerrainCells[];
+extern int gTerrainCellCount;
+extern char *gTerrainMeshes[];
+extern int gTerrainMeshCount;
+extern int gVisibleLightMapCount;
+extern int gVisibleLightMaps[];
+extern int gCollBumpCount;
+extern int gCollHoleBits;
 
 F32(kSlope, 0x3fddb574);     /* 1.7321 */
 F32(kFixedOne, 0x4e800000);  /* 2^30 */

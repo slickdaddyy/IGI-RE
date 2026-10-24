@@ -15,8 +15,8 @@ typedef struct MenuScreen {
 
 _Static_assert(sizeof(MenuScreen) == 0x1A4, "MenuScreen");
 
-#define gMenuScreenType VAR(uint16_t, 0x53B800)
-#define gMenuScreenParams VAR(void *, 0x57BC04)
+extern uint16_t gMenuScreenType;
+extern void *gMenuScreenParams;
 
 void MenuScreen_Run(MenuScreen *ms)
 {

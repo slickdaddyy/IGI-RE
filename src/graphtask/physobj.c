@@ -34,9 +34,9 @@ ORIG(0x4EE100, uint8_t, PhysicsObjType_GetFreeEvent, (void));
 ORIG(0x4EE1B0, float *, PhysicsObjType_GetSize, (PhysType *t));
 ORIG(0x4F4390, void, Vehicle_CollFilter, (void *task, void *arg));
 
-#define gPhysicsObjType VAR(uint16_t, 0xA774B0)
-#define gPhysicsObjUnkA774B8 VAR(int, 0xA774B8)
-#define gPhysicsObjEvents ((uint8_t *)0x54E4CC)
+extern uint16_t gPhysicsObjType;
+extern int gPhysicsObjUnkA774B8;
+extern uint8_t gPhysicsObjEvents[];
 
 F32(kOne, 0x3F800000);
 F32(kMinusOne, 0xBF800000);

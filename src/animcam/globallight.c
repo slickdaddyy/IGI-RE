@@ -85,14 +85,14 @@ ORIG(0x50FE40, void, TerrainMesh_SetAmbient, (Vec3f *color));
 ORIG(0x5196D0, void, Water_SetTint, (Vec3f *colors));
 ORIG(0x52D400, void, Sky_SetTint, (Vec3f *colors));
 
-#define gGlobalLightType VAR(uint16_t, 0xA8408C)
-#define gGlobalLightParams VAR(void *, 0xA84088)
-#define gKeyframeType VAR(uint16_t, 0xA84374)
-#define gKeyframeParams VAR(void *, 0xA83F44)
-#define gKeyframeTemplate ((GlobalLightKeyframe *)0xA84130)
-#define gCurrentGlobalLight VAR(GlobalLight *, 0xA8437C)
-#define gChangedKeyframe VAR(GlobalLightKeyframe *, 0xA84380)
-#define gKeyframeTime VAR(float, 0xA83EA0)
+extern uint16_t gGlobalLightType;
+extern void *gGlobalLightParams;
+extern uint16_t gKeyframeType;
+extern void *gKeyframeParams;
+extern GlobalLightKeyframe gKeyframeTemplate[];
+extern GlobalLight *gCurrentGlobalLight;
+extern GlobalLightKeyframe *gChangedKeyframe;
+extern float gKeyframeTime;
 #define gTexGammaRange ((void *)0x534CA0)
 
 /* parameter names, one per light set */
@@ -105,12 +105,12 @@ ORIG(0x52D400, void, Sky_SetTint, (Vec3f *colors));
 #define gLinkNames ((char (*)[32])0xA83D60)
 
 /* what the renderer uses, one per light set */
-#define gAmbientColors ((Vec3f *)0xB818A0)
-#define gFogColors ((Vec3f *)0xB818E0)
-#define gFogDensities ((float *)0xB46D00)
-#define gColorMatrix0 ((Vec3f *)0xB816C0)
-#define gColorMatrix1 ((Vec3f *)0xB81720)
-#define gColorMatrix2 ((Vec3f *)0xB81760)
+extern Vec3f gAmbientColors[];
+extern Vec3f gFogColors[];
+extern float gFogDensities[];
+extern Vec3f gColorMatrix0[];
+extern Vec3f gColorMatrix1[];
+extern Vec3f gColorMatrix2[];
 
 static const float kFogScale = 0x1.0624dep-11f;
 

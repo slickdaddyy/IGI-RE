@@ -15,14 +15,14 @@ ORIG(0x4BADA0, void, Script_FreeRefBlock, (void *node));
 ORIG(0x4B1020, int, File_ResolvePath, (char *out, const char *path, int index));
 ORIG(0x4B11A0, int, Device_Find, (const char *path));
 
-#define gDevices ((Device *)0x9436B0)
-#define gOpenPath ((char *)0x9435B0)
-#define gDeletePath ((char *)0x943A98)
-#define gNullFile ((File *)0x943980)
-#define gExpandedPath ((char *)0x943A18)
-#define gLoadedFiles VAR(LoadedFile *, 0x943970)
-#define gModeNames ((const char **)0x546F04)
-#define gModeValues ((const int *)0x534A70)
+extern Device gDevices[];
+extern char gOpenPath[];
+extern char gDeletePath[];
+extern File gNullFile[];
+extern char gExpandedPath[];
+extern LoadedFile *gLoadedFiles;
+extern const char *gModeNames[];
+extern const int gModeValues[];
 
 /* The part of an expanded path after "DEVICE:". */
 static char *AfterDevice(char *path)

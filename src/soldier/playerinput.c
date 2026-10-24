@@ -70,11 +70,11 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *extra));
 ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 
-#define gHumanPlayerInputType VAR(uint16_t, 0x5BDAC4)
-#define gHumanPlayerInputParams VAR(void *, 0x5BDAC8)
-#define gMouseDX VAR(float, 0xBC20F4)
-#define gMouseDY VAR(float, 0xBC20F8)
-#define gControls VAR(uint32_t, 0xBC210C)
+extern uint16_t gHumanPlayerInputType;
+extern void *gHumanPlayerInputParams;
+extern float gMouseDX;
+extern float gMouseDY;
+extern uint32_t gControls;
 
 static const float kMouseSpeedMin = 0x1.99999ap-5f;
 static const float kMouseSpeedMax = 1.0f;

@@ -43,18 +43,18 @@ typedef struct PtrList {
     void (*items[1])(void);
 } PtrList;
 
-#define gView VAR(View, 0xBCAAE0)
-#define gViewPos VAR(Vec3d, 0xBCAB08)
-#define gNearPlaneScale VAR(float, 0xBCABEC)
-#define gD3DTnL VAR(int, 0xBCAD74)
-#define gD3DZEnable VAR(int, 0xBCAD78)
-#define gD3DListA VAR(PtrList *, 0xBCADE8)
-#define gD3DListB VAR(PtrList *, 0xBCAD7C)
-#define gD3DListC VAR(PtrList *, 0xBCADAC)
-#define gD3DStateList VAR(PtrList *, 0xBCADC4)
-#define gD3D VAR(IDirect3D7 *, 0x5CA110)
-#define gD3DDevice VAR(IDirect3DDevice7 *, 0x5CA114)
-#define gDynCubeObjType VAR(uint16_t, 0x54875C)
+extern View gView;
+extern Vec3d gViewPos;
+extern float gNearPlaneScale;
+extern int gD3DTnL;
+extern int gD3DZEnable;
+extern PtrList *gD3DListA;
+extern PtrList *gD3DListB;
+extern PtrList *gD3DListC;
+extern PtrList *gD3DStateList;
+extern IDirect3D7 *gD3D;
+extern IDirect3DDevice7 *gD3DDevice;
+extern uint16_t gDynCubeObjType;
 #define gTaskHandlers ((void (*(*)[0x180])(void *, void *))0xA96AE0)
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
 

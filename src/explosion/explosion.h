@@ -256,8 +256,8 @@ _Static_assert(sizeof(Fragment) == 0x118, "Fragment");
 _Static_assert(sizeof(FlashNoise) == 0x1C, "FlashNoise");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 #define TASK_NOTHING ((TaskFn)FN(0x4D3710, Task_Nothing))
 #define TASK_FALSE ((TaskFn)FN(0x45F920, Task_FalseHandler))
@@ -265,14 +265,14 @@ _Static_assert(sizeof(FlashNoise) == 0x1C, "FlashNoise");
 /* exe constants, read in place */
 #define K(type, addr) VAR(const type, addr)
 
-#define gHoleEvent VAR(uint8_t, 0x540904)
-#define gHoleType VAR(uint16_t, 0x5C1138)
-#define gHolePool VAR(Pool, 0x5C1108)
-#define gHolePolyPool VAR(Pool, 0x5C1120)
-#define gFlashEvent VAR(uint8_t, 0x540914)
-#define gFlashType VAR(uint16_t, 0x5C1144)
-#define gFlashTexture VAR(char *, 0x5C1148)
-#define gFlashSprite VAR(char *, 0x5C114C)
+extern uint8_t gHoleEvent;
+extern uint16_t gHoleType;
+extern Pool gHolePool;
+extern Pool gHolePolyPool;
+extern uint8_t gFlashEvent;
+extern uint16_t gFlashType;
+extern char *gFlashTexture;
+extern char *gFlashSprite;
 
 /* fistp with the current rounding mode, like the original */
 static inline int round_int(long double f)

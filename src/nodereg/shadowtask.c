@@ -23,8 +23,8 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, int type, int flags, void *extra));
 
-#define gShadowTaskType VAR(uint16_t, 0x54ED3C)
-#define gShadowTaskParams VAR(void *, 0xA83744)
+extern uint16_t gShadowTaskType;
+extern void *gShadowTaskParams;
 
 void ShadowTask_GetParamTable(ShadowTask *s, ParamTable *out);
 

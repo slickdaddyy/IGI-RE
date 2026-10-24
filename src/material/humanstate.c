@@ -87,7 +87,7 @@ ORIG(0x4C3440, int, DynCubeObj_GetPosition, (HumanPlayer *p));
 ORIG(0x450CE0, void, HumanAI_Broadcast, (HumanNoise *e));
 ORIG(0x40AEF0, void, HumanPlayer_RunForwardLeftUpdate, (HumanStateMachine *sm, HumanPlayer *p));
 
-#define gHumanAirSpeed VAR(float, 0x56E1F4)
+extern float gHumanAirSpeed;
 
 void HumanPlayer_CheckDeath(HumanPlayer *p)
 {

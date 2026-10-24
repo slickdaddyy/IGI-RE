@@ -14,7 +14,7 @@ ORIG(0x4BFC70, int, Lexer_Next, (ScriptLexer *lex, void *token));
 ORIG(0x4C0230, int, Lexer_TextLine, (ScriptLexer *lex));
 ORIG(0x4C0240, char *, Lexer_LineText, (ScriptLexer *lex));
 
-#define gExprInTernary VAR(int, 0xA43E80)
+extern int gExprInTernary;
 
 /* x87 status bits after "fcom": C0 for below, C3 for equal, both when unordered */
 #define FPU_C0 0x01

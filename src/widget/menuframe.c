@@ -22,9 +22,9 @@ typedef struct MenuFrame {
 
 _Static_assert(sizeof(MenuFrame) == 0xB4, "MenuFrame");
 
-#define gMenuFrameType VAR(uint16_t, 0x53B838)
-#define gMenuFrameParams VAR(void *, 0x57BC10)
-#define gMenuFrameRange VAR(IntRange, 0x57BC18)
+extern uint16_t gMenuFrameType;
+extern void *gMenuFrameParams;
+extern IntRange gMenuFrameRange;
 
 void MenuFrame_Run(MenuFrame *mf);
 void MenuFrame_Draw(MenuFrame *mf);

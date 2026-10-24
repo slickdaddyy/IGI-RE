@@ -58,13 +58,13 @@ typedef struct MagicCreateArg {
 
 _Static_assert(offsetof(MagicCreateArg, unk88) == 0x88, "MagicCreateArg");
 
-#define gLadderType VAR(uint16_t, 0x57C15C)
+extern uint16_t gLadderType;
 
-#define kClimbTime VAR(float, 0x533528)    /* 6 */
-#define kRungScale VAR(double, 0x533860)   /* 1 / 1228.8 */
-#define kReachMin VAR(double, 0x533868)    /* -2867.2 */
-#define kReachMax VAR(double, 0x533440)    /* 2867.2 */
-#define kLadderAngle VAR(float, 0x5337C0)  /* pi / 4 */
+extern float kClimbTime;    /* 6 */
+extern double kRungScale;   /* 1 / 1228.8 */
+extern double kReachMin;    /* -2867.2 */
+extern double kReachMax;    /* 2867.2 */
+extern float kLadderAngle;  /* pi / 4 */
 
 #define HUMAN_LADDER_TOP(h) (((char *)(h))[0xD7B])
 

@@ -37,8 +37,8 @@ ORIG(0x4C3440, double *, DynCubeObj_GetPosition, (void *obj));
 ORIG(0x4D2FB0, void, BoneObj_GetRootMotion, (void *a, float *delta, void *anim));
 ORIG(0x4EC1E0, void, StateMachine_Update, (SoldierSM *sm, Soldier *h));
 
-#define gSoldierFemaleList VAR(void *, 0x5BDA84)
-#define gSoldierFemaleType VAR(uint16_t, 0x5BDA88)
+extern void *gSoldierFemaleList;
+extern uint16_t gSoldierFemaleType;
 
 static const float kShakeAmount = 0x1.99999ap+7f;
 static const float kShakeAngle = 0x1.aceea0p-6f;

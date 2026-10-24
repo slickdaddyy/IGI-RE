@@ -27,11 +27,11 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, int type, int flags, void *extra));
 
-#define gDynCubeObjType VAR(uint16_t, 0x54875C)
-#define gSplinePathNodeType VAR(uint16_t, 0x54ED4C)
-#define gSplinePathType VAR(uint16_t, 0x54ED4E)
-#define gSplinePathNodeParams VAR(void *, 0xA8374C)
-#define gSplinePathParams VAR(void *, 0xA83750)
+extern uint16_t gDynCubeObjType;
+extern uint16_t gSplinePathNodeType;
+extern uint16_t gSplinePathType;
+extern void *gSplinePathNodeParams;
+extern void *gSplinePathParams;
 
 static const double kOne = 1.0;
 static const double kHalf = 0.5;

@@ -79,14 +79,14 @@ _Static_assert(offsetof(Game, players) == 0xC0, "Game.players");
 _Static_assert(offsetof(Game, music) == 0xF0, "Game.music");
 _Static_assert(sizeof(Game) == 0x158, "Game");
 
-#define gGame VAR(Game *, 0x57BABC)
+extern Game *gGame;
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
 #define gTaskHandlers1 ((TaskFn1 (*)[0x180])0xA96AE0)
-#define gTaskStack ((GameNode **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gScriptEmptyString ((const char *)0x567C74)
-#define gKeys ((uint8_t *)0xC28C62)
-#define gKeysPrev ((uint8_t *)0xC28D62)
+extern GameNode *gTaskStack[];
+extern int gTaskStackTop;
+extern const char gScriptEmptyString[];
+extern uint8_t gKeys[];
+extern uint8_t gKeysPrev[];
 
 /* what every script function in the game returns: the number 1 */
 static inline ScriptValue *Game_ReturnOne(ScriptValue *out, int i, double d)

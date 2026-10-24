@@ -111,29 +111,29 @@ ORIG(0x517F00, void, Pixel_Copy32, (uint32_t *dst, int w, int h, const void *src
 ORIG(0x517DD0, void, Pixel_565To32, (uint32_t *dst, int w, int h, const void *src, int pitch, int rows, int unk));
 ORIG(0x517B00, void, Pixel_Halve32, (uint32_t *dst, const uint32_t *src, int w, int h));
 
-#define gAllocTextureId VAR(int, 0x546FA8)
-#define gDeAllocTextureId VAR(int, 0x546FAC)
-#define gDownloadTextureId VAR(int, 0x546FB0)
-#define gGetTMUsId VAR(int, 0x546FB4)
-#define gSetActiveTMUId VAR(int, 0x546FB8)
-#define gGetActiveTMUId VAR(int, 0x546FBC)
-#define gDeAllocPaletteId VAR(int, 0xA84A40)
-#define gDownloadPaletteId VAR(int, 0xA84A44)
-#define gAllocPaletteId VAR(int, 0xA84A48)
+extern int gAllocTextureId;
+extern int gDeAllocTextureId;
+extern int gDownloadTextureId;
+extern int gGetTMUsId;
+extern int gSetActiveTMUId;
+extern int gGetActiveTMUId;
+extern int gDeAllocPaletteId;
+extern int gDownloadPaletteId;
+extern int gAllocPaletteId;
 
-#define gDDraw VAR(IDirectDraw7 *, 0x5CA10C)
-#define gD3DDevice VAR(IDirect3DDevice7 *, 0x5CA114)
-#define gTexturesCreated VAR(int, 0x5CA124)
-#define gTextureBytes VAR(int, 0x5CA128)
-#define gD3DDeviceDesc VAR(D3DDEVICEDESC7, 0xBCAC00)
-#define gTexPool VAR(Pool, 0xA7C128)
-#define gTexFormats ((TexFormat *)0xA7C140)
-#define gActiveTMU VAR(int, 0xA7CEAC)
-#define gTexLOD VAR(int, 0xA7CEB0)
-#define gTexCount VAR(int, 0xA7CEB4)
-#define gTexBytes VAR(int, 0xA7CEB8)
-#define gTexFormatCount VAR(int, 0xA7CEBC)
-#define gTexReleaseTime VAR(LONGLONG, 0xA7CEC0)
+extern IDirectDraw7 *gDDraw;
+extern IDirect3DDevice7 *gD3DDevice;
+extern int gTexturesCreated;
+extern int gTextureBytes;
+extern D3DDEVICEDESC7 gD3DDeviceDesc;
+extern Pool gTexPool;
+extern TexFormat gTexFormats[];
+extern int gActiveTMU;
+extern int gTexLOD;
+extern int gTexCount;
+extern int gTexBytes;
+extern int gTexFormatCount;
+extern LONGLONG gTexReleaseTime;
 
 #define DX_ERROR "%s\n\nDirectX error message: %s"
 #define FMT_NO_ALPHA 0x20000000

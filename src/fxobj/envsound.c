@@ -71,9 +71,9 @@ _Static_assert(offsetof(Listener, pos) == 0x28, "Listener");
 _Static_assert(offsetof(SoundTask, name) == 0xFF, "SoundTask");
 _Static_assert(sizeof(Hit) == 0x70, "Hit");
 
-#define gEnvSoundParams VAR(void *, 0x57BDA8)
-#define gEnvSoundListener VAR(Listener *, 0x57BDAC)
-#define gEnvSoundType VAR(uint16_t, 0x57BDB0)
+extern void *gEnvSoundParams;
+extern Listener *gEnvSoundListener;
+extern uint16_t gEnvSoundType;
 
 static const float kZeroF = 0.0f;
 static const float kOneF = 1.0f;

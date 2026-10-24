@@ -109,11 +109,11 @@ ORIG(0x4C0750, void, QvmLex_Free, (void *lexer));
 ORIG(0x4C0900, void, QvmAsm_RegisterOps, (void));
 ORIG(0x4F1D80, void, ParamEnum_Free, (List *list));
 
-#define gAsmErrorContext VAR(void *, 0xA43EC0)
-#define gQvmAsmLogData VAR(void *, 0xA43EC8)
-#define gAsmErrorCount VAR(int, 0xA43ED0)
-#define gQvmAsmLogFn VAR(QvmAsmCallback, 0xA43ED4)
-#define gAsmErrorHandler VAR(QvmAsmCallback, 0xA43ED8)
+extern void *gAsmErrorContext;
+extern void *gQvmAsmLogData;
+extern int gAsmErrorCount;
+extern QvmAsmCallback gQvmAsmLogFn;
+extern QvmAsmCallback gAsmErrorHandler;
 
 void QvmAsm_Log(const char *fmt, ...);
 

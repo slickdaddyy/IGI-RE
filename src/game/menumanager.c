@@ -103,11 +103,11 @@ _Static_assert(offsetof(MenuManager, backgroundFX) == 0x27E0, "MenuManager.backg
 _Static_assert(offsetof(MenuManager, screenStack) == 0x27EC, "MenuManager.screenStack");
 _Static_assert(sizeof(MenuManager) == 0x2898, "MenuManager");
 
-#define gMenuManagerType VAR(uint16_t, 0x539824)
-#define gMenuManagerParams VAR(void *, 0x57BAE0)
-#define gUnkBC20A0 VAR(int, 0xBC20A0)
-#define gUnkC28C61 VAR(char, 0xC28C61)
-#define gUnkC28F80 VAR(char, 0xC28F80)
+extern uint16_t gMenuManagerType;
+extern void *gMenuManagerParams;
+extern int gUnkBC20A0;
+extern char gUnkC28C61;
+extern char gUnkC28F80;
 
 #define FIELD(name) ((void *)offsetof(MenuManager, name))
 

@@ -4,8 +4,8 @@
 #include "igi.h"
 #include "define/define.h"
 
-#define gSoundDefGraphType VAR(uint16_t, 0x54DAD8)
-#define gSoundDefGraphType2 VAR(uint16_t, 0x54DADA)
+extern uint16_t gSoundDefGraphType;
+extern uint16_t gSoundDefGraphType2;
 
 ORIG(0x4EAEB0, void, SoundDefGraph_Update, (SoundDefGraph *s));
 

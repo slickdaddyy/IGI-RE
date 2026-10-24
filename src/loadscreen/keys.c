@@ -2,10 +2,10 @@
 #include "igi.h"
 
 /* typed keys for the menus: a ring of 32 entries, WM_CHAR codes or negative KEY_* values */
-#define gKeyQueue ((int *)0x5C8B20)
-#define gKeysStart VAR(int, 0x5C8BA0)
-#define gKeysCount VAR(int, 0x5C8BA4)
-#define gKeysActive VAR(char, 0x5C8BA8)
+extern int gKeyQueue[];
+extern int gKeysStart;
+extern int gKeysCount;
+extern char gKeysActive;
 
 enum {
     KEY_LEFT = -1,

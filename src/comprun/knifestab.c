@@ -44,7 +44,7 @@ typedef struct StabHit {
     int unk1C;
 } StabHit;
 
-#define gKnifeStabType VAR(uint16_t, 0x53FE84)
+extern uint16_t gKnifeStabType;
 
 static const double kReach = 8192.0;
 static const float kStep = 0x1.657186p-3f;

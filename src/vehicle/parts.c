@@ -60,11 +60,11 @@ _Static_assert(offsetof(VehiclePart, owner) == 0x130, "VehiclePart");
 _Static_assert(offsetof(VehiclePart, open) == 0x140, "VehiclePart");
 _Static_assert(offsetof(Vehicle, targets) == 0x8D8, "Vehicle");
 
-#define gCarDoorType VAR(uint16_t, 0x53BABC)
-#define gHeliWheelType VAR(uint16_t, 0x57BC7C)
-#define gHeliDoorType VAR(uint16_t, 0x53BB18)
-#define gRocketPodType VAR(uint16_t, 0x53BB3C)
-#define gHitZoneType VAR(uint16_t, 0x53BB6C)
+extern uint16_t gCarDoorType;
+extern uint16_t gHeliWheelType;
+extern uint16_t gHeliDoorType;
+extern uint16_t gRocketPodType;
+extern uint16_t gHitZoneType;
 
 #define HANDLER_42D9B0 (FN(0x42D9B0, Rotor_ForwardEvent9))
 #define HANDLER_45F920 (FN(0x45F920, Task_FalseHandler))

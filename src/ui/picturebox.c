@@ -24,9 +24,9 @@ typedef struct PictureBox {
 
 _Static_assert(sizeof(PictureBox) == 0x9FC, "PictureBox");
 
-#define gPictureBoxType VAR(uint16_t, 0x53B58C)
-#define gPictureBoxParams VAR(void *, 0x57BBA8)
-#define gPictureBoxFilling VAR(PictureBox *, 0x57BBA4)
+extern uint16_t gPictureBoxType;
+extern void *gPictureBoxParams;
+extern PictureBox *gPictureBoxFilling;
 
 void PictureBox_Create(PictureBox *pb, void *arg);
 void PictureBox_Delete(PictureBox *pb);

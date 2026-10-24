@@ -72,10 +72,10 @@ typedef struct SubtitleDef {
     char centered;
 } SubtitleDef;
 
-#define gIntroScreenType VAR(uint16_t, 0x57B198)
-#define gIntroMoviesEU ((const char **)0x5393E8)
-#define gIntroMoviesUS ((const char **)0x5393F8)
-#define gOutroMovies ((const char **)0x539408)
+extern uint16_t gIntroScreenType;
+extern const char *gIntroMoviesEU[];
+extern const char *gIntroMoviesUS[];
+extern const char *gOutroMovies[];
 
 #define KEY_ESCAPE 0x01
 

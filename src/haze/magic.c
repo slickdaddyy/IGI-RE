@@ -32,9 +32,9 @@ ORIG(0x4D0950, long double, VirModel_GetRadius_, (void **model, int unk));
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 #define VEHICLEPART_DELETE (FN(0x426860, VehiclePart_Delete))
 
-#define gMagicType VAR(uint16_t, 0x548648)
-#define gMagicMoveEvent VAR(uint8_t, 0x54864A)
-#define gMagicEvent1 VAR(uint8_t, 0x54864B)
+extern uint16_t gMagicType;
+extern uint8_t gMagicMoveEvent;
+extern uint8_t gMagicEvent1;
 
 void MagicObj_RunHandler(MagicObj *o);
 void MagicObj_EnterHandler(MagicObj *o);

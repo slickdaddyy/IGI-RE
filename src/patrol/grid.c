@@ -86,15 +86,15 @@ ORIG(0x4F9770, void, Graph_GetNodePos, (Vec3d *out, GraphNode *node));
 ORIG(0x4F98A0, void, Graph_GetNodeMatrix, (Matrix *out, GraphNode *node, int unk));
 ORIG(0x5096F0, void, AIGraph_FindNearest, (GraphNode **out, Graph *graph, const Vec3d *pos));
 
-#define gAITypeNames ((const char **)0x53C9C0)
-#define gGridStamp ((const GridStamp *)0x53CA98)
-#define gGridsUsed VAR(List, 0x57D768)
-#define gGridsFree VAR(List, 0x58A9E8)
-#define gMonitorGraphsUsed VAR(List, 0x58AA18)
-#define gMonitorGraphsFree VAR(List, 0x57C748)
-#define gMonitorTargetsFree VAR(List, 0x57E1B8)
-#define gClaimsUsed VAR(List, 0x5BDA28)
-#define gClaimsFree VAR(List, 0x57D758)
+extern const char *gAITypeNames[];
+extern const GridStamp gGridStamp[];
+extern List gGridsUsed;
+extern List gGridsFree;
+extern List gMonitorGraphsUsed;
+extern List gMonitorGraphsFree;
+extern List gMonitorTargetsFree;
+extern List gClaimsUsed;
+extern List gClaimsFree;
 
 static const float kFrames = 30.0f;
 static const double kAhead = 0x1.199999999999ap+0;

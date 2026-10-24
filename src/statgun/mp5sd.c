@@ -3,15 +3,15 @@
 #include "hook.h"
 #include "statgun/statgun.h"
 
-#define gMp5sdType VAR(uint16_t, 0x5BE374)
+extern uint16_t gMp5sdType;
 
-#define kZero VAR(float, 0x5333EC)
-#define kAngle45 VAR(double, 0x5335E8)
-#define kAngle30 VAR(double, 0x5339C0)
-#define kZoomOut VAR(float, 0x533520)
-#define kZoomIn VAR(float, 0x5336CC)
-#define kHalf VAR(float, 0x533504)
-#define kDegToRad VAR(float, 0x53367C)
+extern float kZero;
+extern double kAngle45;
+extern double kAngle30;
+extern float kZoomOut;
+extern float kZoomIn;
+extern float kHalf;
+extern float kDegToRad;
 
 ORIG(0x4F2030, int, Weapon_GetDeselectEvent, (void));
 

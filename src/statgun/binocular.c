@@ -25,11 +25,11 @@ typedef struct BinocularHolder {
 _Static_assert(offsetof(BinocularOverlay, unk7C) == 0x7C, "BinocularOverlay");
 _Static_assert(sizeof(BinocularHolder) == 0x78, "BinocularHolder");
 
-#define gBinocularOverlayType VAR(uint16_t, 0x5401F8)
-#define gBinocularHolderType VAR(uint16_t, 0x5401FA)
-#define gBinocularHolderParams VAR(void *, 0x5BE348)
-#define gViewPos VAR(Vec3d, 0xBCAB08)
-#define gViewUnkBCAAF8 VAR(Vec3f, 0xBCAAF8)
+extern uint16_t gBinocularOverlayType;
+extern uint16_t gBinocularHolderType;
+extern void *gBinocularHolderParams;
+extern Vec3d gViewPos;
+extern Vec3f gViewUnkBCAAF8;
 
 ORIG(0x4F1400, void, VarString_Bind, (VarString *v, void *task));
 ORIG(0x471480, void, BinocularOverlay_Draw, (BinocularOverlay *o));

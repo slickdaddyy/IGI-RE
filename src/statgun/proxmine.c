@@ -42,12 +42,12 @@ typedef struct CollQuery {
 
 _Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 
-#define gProxMineType VAR(uint16_t, 0x5BE394)
+extern uint16_t gProxMineType;
 
-#define kZero VAR(float, 0x5333EC)
-#define kOneD VAR(double, 0x5333F8)
-#define kRangeScale VAR(float, 0x5333B8)
-#define kTicksPerSecond VAR(float, 0x5333BC)
+extern float kZero;
+extern double kOneD;
+extern float kRangeScale;
+extern float kTicksPerSecond;
 
 #define HANDLER_429910 (FN(0x429910, Missile_GetModelSize))
 

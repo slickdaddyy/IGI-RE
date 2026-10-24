@@ -32,10 +32,10 @@ typedef struct SpriteSheet {
 
 typedef void (*DrawFunc)(DrawCmd *cmd);
 
-#define gDrawUnkA84A50 VAR(int, 0xA84A50)
-#define gQVertexStrip VAR(int, 0xA84A54)
-#define gDrawUnkA84A58 VAR(int, 0xA84A58)
-#define gRenderFuncs ((DrawFunc *)0xA94E84)
+extern int gDrawUnkA84A50;
+extern int gQVertexStrip;
+extern int gDrawUnkA84A58;
+extern DrawFunc gRenderFuncs[];
 
 #define COLOR_SCALE (1.0f / 128)
 

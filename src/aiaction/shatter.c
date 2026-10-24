@@ -35,16 +35,16 @@ typedef struct TriMesh {
 
 _Static_assert(sizeof(GlassShatter) == 0x2B048, "GlassShatter");
 
-#define gShatterColor VAR(const float *, 0x57C228)
-#define gShatterSpeed VAR(float, 0x57C23C)
-#define gShatterType VAR(uint16_t, 0x57C240)
-#define gShatter244 VAR(int, 0x57C244)
-#define gShatterTask VAR(GlassShatter *, 0x57C25C)
-#define gShatterPolys VAR(void *, 0x57C26C)
-#define gShatterHit VAR(Vec3f, 0x57C270)
-#define gShatterShards VAR(void *, 0x57C27C)
+extern const float *gShatterColor;
+extern float gShatterSpeed;
+extern uint16_t gShatterType;
+extern int gShatter244;
+extern GlassShatter *gShatterTask;
+extern void *gShatterPolys;
+extern Vec3f gShatterHit;
+extern void *gShatterShards;
 
-#define gShardColor2 ((const float *)0x53C8F0) /* 0.7, 0.7, 0.7 */
+extern const float gShardColor2[]; /* 0.7, 0.7, 0.7 */
 
 #define kZero K(float, 0x5333EC)
 #define kOne K(float, 0x5333E0)

@@ -77,12 +77,12 @@ _Static_assert(offsetof(EditCamera, filterName) == 0xA9, "EditCamera.filterName"
 _Static_assert(offsetof(EditCamera, filter) == 0xCC, "EditCamera.filter");
 _Static_assert(offsetof(ObjInfo, name) == 0x50, "ObjInfo");
 
-#define gEditCameraType VAR(uint16_t, 0xA7B260)
+extern uint16_t gEditCameraType;
 #define gEditCameraFilterEnum ((void *)0xA7B268)
-#define gEditCameraParams VAR(void *, 0xA7B278)
-#define gEditCameraLevelRange ((float *)0xA7B280)
-#define gEditCameraShakeRange ((float *)0xA7B288)
-#define gEditCameraModel VAR(void *, 0xA7B290)
+extern void *gEditCameraParams;
+extern float gEditCameraLevelRange[];
+extern float gEditCameraShakeRange[];
+extern void *gEditCameraModel;
 
 static const float kMinFov = 0.001f;
 static const float kMaxFov = 3.0f;

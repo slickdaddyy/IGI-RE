@@ -14,7 +14,7 @@ ORIG(0x50DC30, void, D3DQVertex_Init, (void));
 void D3DTex_Init(void);
 void D3DTex_Shutdown(void);
 
-#define gQVertexDrawStrip VAR(int, 0x54E890)
+extern int gQVertexDrawStrip;
 
 void D3DTex_Register(void)
 {

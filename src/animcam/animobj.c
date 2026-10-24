@@ -53,8 +53,8 @@ ORIG(0x4F4110, uint8_t, Vehicle_GetStateSizeEvent, (void));
 ORIG(0x4F4120, uint8_t, Vehicle_GetSaveEvent, (void));
 ORIG(0x4F4130, uint8_t, Vehicle_GetLoadEvent, (void));
 
-#define gAnimObjType VAR(uint16_t, 0x54F498)
-#define gAnimObjInputs ((const AnimInput *)0x54F4A0)
+extern uint16_t gAnimObjType;
+extern const AnimInput gAnimObjInputs[];
 
 #define ANIMOBJ_INPUTS 22
 

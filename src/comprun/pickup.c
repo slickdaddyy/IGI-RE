@@ -143,16 +143,16 @@ _Static_assert(sizeof(AmmoPickup) == 0x138, "AmmoPickup");
 _Static_assert(offsetof(AddAmmo, count) == 0x44, "AddAmmo.count");
 _Static_assert(sizeof(AddAmmo) == 0x48, "AddAmmo");
 
-#define gGenericPickupType VAR(uint16_t, 0x5BE2D0)
-#define gGenericPickupParams VAR(void *, 0x5BE2D4)
-#define gGunPickupType VAR(uint16_t, 0x5BE2E0)
-#define gGunPickupEvent VAR(uint8_t, 0x53FDE0)
-#define gGunPickupParams VAR(void *, 0x5BE2F8)
-#define gAmmoPickupType VAR(uint16_t, 0x5BE300)
-#define gAmmoPickupEvent VAR(uint8_t, 0x53FE28)
-#define gAmmoPickupParams VAR(void *, 0x5BE304)
-#define gAddAmmoType VAR(uint16_t, 0x5BE30C)
-#define gAddAmmoParams VAR(void *, 0x5BE310)
+extern uint16_t gGenericPickupType;
+extern void *gGenericPickupParams;
+extern uint16_t gGunPickupType;
+extern uint8_t gGunPickupEvent;
+extern void *gGunPickupParams;
+extern uint16_t gAmmoPickupType;
+extern uint8_t gAmmoPickupEvent;
+extern void *gAmmoPickupParams;
+extern uint16_t gAddAmmoType;
+extern void *gAddAmmoParams;
 
 static const double kMinTouch = 2867.2;
 static const double kTouchHeight = 4096.0;

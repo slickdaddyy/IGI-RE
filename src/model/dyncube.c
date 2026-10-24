@@ -16,14 +16,14 @@ ORIG(0x4E5C90, void, CellMask_Enable, (void));
 ORIG(0x4E5CA0, void, CellMask_Disable, (void));
 ORIG(0x50FAE0, void, TerrainMesh_SetupLighting, (Terrain *t, int unk));
 
-#define gTaskTypes ((TaskType *)0xAF5EE0)
+extern TaskType gTaskTypes[];
 #define gTaskHandlers ((TaskHandler (*)[TASK_MAX_TYPES])0xA96AE0)
-#define gTaskHandlerChanges VAR(int, 0x536148)
-#define gPixelCenter VAR(const float, 0x533504)
-#define gZero VAR(const float, 0x5333EC)
-#define gCollSightCalls VAR(int, 0xA44394)
-#define gCellMaskEnabled VAR(int, 0x54876C)
-#define gWorldEvents ((const uint8_t *)0x548176)
+extern int gTaskHandlerChanges;
+extern const float gPixelCenter;
+extern const float gZero;
+extern int gCollSightCalls;
+extern int gCellMaskEnabled;
+extern const uint8_t gWorldEvents[];
 
 void DynCube_UpdateSlotCounts(Terrain *t, int tree);
 void DynCube_UpdateStart(Terrain *t, int tree);

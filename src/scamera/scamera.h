@@ -230,12 +230,12 @@ _Static_assert(offsetof(DrawerArg, cabinet) == 0x88, "DrawerArg");
 _Static_assert(sizeof(Drawer) == 0x160, "Drawer");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 /* the frame counter lives at +0x68 */
-#define gTickInfo VAR(char *, 0xBC2360)
+extern char *gTickInfo;
 #define gTick (*(int *)(gTickInfo + 0x68))
 
 /* Calls the slot handler of each child of t (not deeper), keeping the next

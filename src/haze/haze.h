@@ -109,9 +109,9 @@ typedef struct AnimSet {
     int count;
 } AnimSet;
 
-#define gSkeletons ((Skeleton *)0xA542F0)
-#define gAnimSets ((AnimSet *)0xA538F0)
-#define gBoneSmoothAnims VAR(int, 0xA54678)
+extern Skeleton gSkeletons[];
+extern AnimSet gAnimSets[];
+extern int gBoneSmoothAnims;
 
 /* --- task types --- */
 
@@ -219,9 +219,9 @@ _Static_assert(sizeof(Camera) == 0x60, "Camera");
 _Static_assert(sizeof(HazeLayer) == 0x90, "HazeLayer");
 
 #define gTaskHandlers ((HzHandler (*)[0x180])0xA96AE0)
-#define gTaskStack ((HzNode **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gWorld VAR(void *, 0xA44344)
+extern HzNode *gTaskStack[];
+extern int gTaskStackTop;
+extern void *gWorld;
 
 uint8_t Camera_GetChangedEvent(void);
 QTaskList *Camera_GetListeners(void);

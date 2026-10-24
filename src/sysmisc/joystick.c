@@ -43,18 +43,18 @@ ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x48F090, HINSTANCE, AppContext_GethInstance, (void));
 ORIG(0x48F0A0, HWND, AppContext_GethWnd, (void));
 
-#define gJoyDev ((IDirectInputDeviceA **)0xA7B2E0)
-#define gJoyState ((DIJOYSTATE *)0xA7B2F0)
-#define gJoyCaps ((DIDEVCAPS *)0xA7B430)
-#define gJoyDev2 ((IDirectInputDevice2A **)0xA7B4E0)
-#define gJoyDI VAR(IDirectInputA *, 0xA7B4F0)
-#define gJoyPrevState ((DIJOYSTATE *)0xA7B4F8)
-#define gJoyCount VAR(int, 0xA7B638)
-#define gJoyDeadZone VAR(DWORD, 0xA7B63C)
-#define gJoyAxes ((JoyAxis *)0x54E8A8)
-#define gJoyInput ((JoyInput *)0xBCAA00)
-#define gIID_IDirectInputDevice2A VAR(GUID, 0x5349C0)
-#define gDfDIJoystick VAR(DIDATAFORMAT, 0x534C38)
+extern IDirectInputDeviceA *gJoyDev[];
+extern DIJOYSTATE gJoyState[];
+extern DIDEVCAPS gJoyCaps[];
+extern IDirectInputDevice2A *gJoyDev2[];
+extern IDirectInputA *gJoyDI;
+extern DIJOYSTATE gJoyPrevState[];
+extern int gJoyCount;
+extern DWORD gJoyDeadZone;
+extern JoyAxis gJoyAxes[];
+extern JoyInput gJoyInput[];
+extern GUID gIID_IDirectInputDevice2A;
+extern DIDATAFORMAT gDfDIJoystick;
 
 static const double kAxisScale = 1.0 / 128.0;
 

@@ -51,11 +51,11 @@ typedef struct Color {
     float r, g, b;
 } Color;
 
-#define gTypeWriterBoxType VAR(uint16_t, 0x539C40)
-#define gTypeLines ((TypeLine *)0x539C48)
-#define gMenuColors ((const Color *)0x53B778)
-#define gTypeWriterBoxParams VAR(void *, 0x57BB90)
-#define gKeys ((unsigned char *)0xC28C62)
+extern uint16_t gTypeWriterBoxType;
+extern TypeLine gTypeLines[];
+extern const Color gMenuColors[];
+extern void *gTypeWriterBoxParams;
+extern unsigned char gKeys[];
 
 void TypeWriterBox_Run(TypeWriterBox *tw);
 void TypeWriterBox_DrawHandler(TypeWriterBox *tw);

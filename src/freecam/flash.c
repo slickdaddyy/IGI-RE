@@ -40,8 +40,8 @@ ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
 
-#define gFlashTaskType VAR(uint16_t, 0x54F7A0)
-#define gFlashTaskReady VAR(char, 0xA845EC)
+extern uint16_t gFlashTaskType;
+extern char gFlashTaskReady;
 
 void FlashTask_Run(FlashTask *t);
 void FlashTask_Delete(FlashTask *t);

@@ -33,11 +33,11 @@ typedef struct ModelViewBox {
 
 _Static_assert(sizeof(ModelViewBox) == 0xC8, "ModelViewBox");
 
-#define gModelViewBoxType VAR(uint16_t, 0x53B854)
-#define gModelViewBoxParams VAR(void *, 0x57BC28)
-#define gModelViewBoxRange VAR(IntRange, 0x57BC30)
-#define gLightColor ((float *)0xB818AC)
-#define gQuarterPi VAR(const double, 0x5335E8)
+extern uint16_t gModelViewBoxType;
+extern void *gModelViewBoxParams;
+extern IntRange gModelViewBoxRange;
+extern float gLightColor[];
+extern const double gQuarterPi;
 
 void ModelViewBox_Run(ModelViewBox *mv);
 void ModelViewBox_Draw(ModelViewBox *mv);

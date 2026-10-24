@@ -124,8 +124,8 @@ _Static_assert(offsetof(SectorMesh, portals) == 0x98, "SectorMesh");
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
-#define kZero VAR(const float, 0x5333EC)
-#define kOne VAR(const float, 0x5333E0)
+extern const float kZero;
+extern const float kOne;
 
 ORIG(0x4B0B00, void, Pool_Init, (Pool *pool, int size, int count, unsigned int align));
 ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));

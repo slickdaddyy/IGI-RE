@@ -20,12 +20,12 @@ ORIG(0x4B66A0, void, Sprite_Free, (void *s));
 ORIG(0x4B6720, int, Sprite_Load, (void *s, const char *name));
 ORIG(0x4C1780, void, Debug_Log, (void));
 
-#define gStatusScreenType VAR(uint16_t, 0x5C8A74)
-#define gStatusScreenEvent VAR(uint8_t, 0x540B5C)
-#define gStatusScreen VAR(StatusScreen *, 0x5C8A48)
-#define gStatusPortraitNames ((const char **)0x540B60)
-#define gStatusActionNames ((const char **)0x540B70)
-#define gStatusActionSprites ((const char **)0x5C8A4C)
+extern uint16_t gStatusScreenType;
+extern uint8_t gStatusScreenEvent;
+extern StatusScreen *gStatusScreen;
+extern const char *gStatusPortraitNames[];
+extern const char *gStatusActionNames[];
+extern const char *gStatusActionSprites[];
 
 static const float kBlinkStep = 0x1.111112p-4f; /* 1/15 */
 static const float kOne = 1.0f;

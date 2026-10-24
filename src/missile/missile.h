@@ -201,27 +201,27 @@ _Static_assert(sizeof(Missile) == 0x898, "Missile");
 _Static_assert(offsetof(Train, model) == 0x780, "model");
 _Static_assert(sizeof(Train) == 0x8E0, "Train");
 
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((void **)0xA96AE0)[(slot) * 0x180 + (type)])
-#define gKeys ((uint8_t *)0xC28C62)
-#define gKeysPrev ((uint8_t *)0xC28D62)
+extern uint8_t gKeys[];
+extern uint8_t gKeysPrev[];
 
 /* exe constants, read in place so the x87 code sees the same values */
-#define kZero VAR(float, 0x5333EC)
-#define kOne VAR(float, 0x5333E0)
-#define kFixed VAR(float, 0x5333B8)      /* 4096 */
-#define kThirty VAR(float, 0x5333BC)
-#define kTenth VAR(float, 0x5333C8)
-#define kOneD VAR(double, 0x5333F8)
-#define kMinusOneD VAR(double, 0x5336B8)
-#define kHalf VAR(float, 0x533504)
-#define kTwoPi VAR(float, 0x5334A8)
-#define kKmh VAR(float, 0x5334A4)
-#define kPerFrameHour VAR(float, 0x5334A0)
-#define kDegToRad VAR(float, 0x53367C)
-#define kMilli VAR(float, 0x5336C0)
-#define kSevenTenths VAR(float, 0x5336C4)
+extern float kZero;
+extern float kOne;
+extern float kFixed;      /* 4096 */
+extern float kThirty;
+extern float kTenth;
+extern double kOneD;
+extern double kMinusOneD;
+extern float kHalf;
+extern float kTwoPi;
+extern float kKmh;
+extern float kPerFrameHour;
+extern float kDegToRad;
+extern float kMilli;
+extern float kSevenTenths;
 
 static inline Task *next_sibling(Task *t)
 {

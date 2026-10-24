@@ -69,9 +69,9 @@ _Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(sizeof(ScriptValue) == 0x18, "ScriptValue");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gEmptyString ((const char *)0x567C74)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
+extern const char gEmptyString[];
 
 /* exe constants, read in place */
 #define K(type, addr) VAR(const type, addr)

@@ -21,19 +21,19 @@ ORIG(0x4B8A80, char *, Script_GetArgString, (void *args, int i, char *buf, int s
 ORIG(0x4F1CD0, void, ParamEnum_Init, (void *e));
 ORIG(0x4F1DB0, void, ParamEnum_AddConstants, (void *e, const char *pattern));
 
-#define gWeaponSizeEvent VAR(uint8_t, 0x5391AC)
-#define gWeaponInitEvent VAR(uint8_t, 0x5391AD)
-#define gWeaponFireEvent VAR(uint8_t, 0x5391AE)
-#define gWeaponSizeEvent2 VAR(uint8_t, 0x5391AF)
-#define gWeaponInitEvent2 VAR(uint8_t, 0x5391B0)
-#define gWeaponTypeEvent VAR(uint8_t, 0x5391B1)
-#define gWeaponEventB2 VAR(uint8_t, 0x5391B2)
-#define gWeaponMaxId VAR(int, 0x5391B4)
+extern uint8_t gWeaponSizeEvent;
+extern uint8_t gWeaponInitEvent;
+extern uint8_t gWeaponFireEvent;
+extern uint8_t gWeaponSizeEvent2;
+extern uint8_t gWeaponInitEvent2;
+extern uint8_t gWeaponTypeEvent;
+extern uint8_t gWeaponEventB2;
+extern int gWeaponMaxId;
 #define gWeaponCategoryEnum ((void *)0x56E248)
 #define gWeaponSightEnum ((void *)0x56E238)
 #define gWeaponAmmoEnum ((void *)0x56E218)
 #define gWeaponIdEnum ((void *)0x56E228)
-#define gScriptEmptyString ((const char *)0x567C74)
+extern const char gScriptEmptyString[];
 
 typedef struct DirEntry {
     char *name;

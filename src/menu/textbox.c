@@ -24,8 +24,8 @@ typedef struct TextBox {
 
 _Static_assert(sizeof(TextBox) == 0x2244, "TextBox");
 
-#define gTextBoxType VAR(uint16_t, 0x53B580)
-#define gTextBoxParams VAR(void *, 0x57BB98)
+extern uint16_t gTextBoxType;
+extern void *gTextBoxParams;
 
 /* the handlers are not rewritten yet */
 #define TextBox_Create (FN(0x41ACA0, TextBox_Create))

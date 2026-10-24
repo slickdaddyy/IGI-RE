@@ -47,8 +47,8 @@ typedef struct SkyTask {
 
 _Static_assert(sizeof(SkyTask) == 0x78, "SkyTask");
 
-#define gSkyTaskType VAR(uint16_t, 0x54F6E4)
-#define gSkyTaskParams VAR(void *, 0xA84558)
+extern uint16_t gSkyTaskType;
+extern void *gSkyTaskParams;
 
 void SkyTask_Render(SkyTask *t);
 void SkyTask_Create(SkyTask *t);
@@ -118,9 +118,9 @@ typedef struct LevelScriptStep {
 
 _Static_assert(sizeof(LevelScript) == 0x28, "LevelScript");
 
-#define gLevelScriptType VAR(uint16_t, 0x54F6F0)
-#define gLevelScriptEvent VAR(uint8_t, 0x54F6F2)
-#define gLevelScriptParams VAR(void *, 0xA84564)
+extern uint16_t gLevelScriptType;
+extern uint8_t gLevelScriptEvent;
+extern void *gLevelScriptParams;
 
 void LevelScript_Create(LevelScript *ls);
 void LevelScript_Run(LevelScript *ls);
@@ -188,7 +188,7 @@ HOOK(0x52CA00, LevelScript_Shutdown);
 
 /* ---- SimBoneDynCubeObj ---- */
 
-#define gSimBoneDynCubeObjType VAR(uint16_t, 0x54F700)
+extern uint16_t gSimBoneDynCubeObjType;
 
 void SimBoneDynCubeObj_Init(void)
 {
@@ -216,7 +216,7 @@ typedef struct PushButton {
 
 _Static_assert(sizeof(PushButton) == 0x7C, "PushButton");
 
-#define gPushButtonType VAR(uint16_t, 0x54F718)
+extern uint16_t gPushButtonType;
 
 void PushButton_Draw(PushButton *b);
 void PushButton_AddToList(PushButton *b, void *list);

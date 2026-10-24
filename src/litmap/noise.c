@@ -57,8 +57,8 @@ _Static_assert(offsetof(NoiseQTask, base) == 0x88, "base");
 _Static_assert(offsetof(NoiseQTask, expr) == 0xD8, "expr");
 _Static_assert(sizeof(NoiseQTask) == 0x130, "NoiseQTask");
 
-#define gNoiseQTaskType VAR(uint16_t, 0xA83838)
-#define gNoiseQTaskParams VAR(void *, 0xA8383C)
+extern uint16_t gNoiseQTaskType;
+extern void *gNoiseQTaskParams;
 #define gNoiseRandom ((void *)0xA83840)
 
 void NoiseQTask_Create(NoiseQTask *n);

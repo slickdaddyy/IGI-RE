@@ -135,13 +135,13 @@ ORIG(0x4FE120, void, Particle2D_Add, (Task *ps, double *pos, float *dir, float s
 ORIG(0x4FE210, void, Particle2D_Emit, (Task *ps, double *pos, float *dir, float spread, float a, float b, float c,
                                   float d, int e, float f, int g, int h));
 
-#define gFootstepSounds ((const int *)0x53F318)
-#define gBloodSprite1 VAR(char *, 0x5BDAD4)
-#define gBloodSprite2 VAR(char *, 0x5BDAD0)
-#define gBloodHole1 VAR(char *, 0x5BDB08)
-#define gBloodHole2 VAR(char *, 0x5BDB10)
-#define gBloodHole3 VAR(char *, 0x5BDB14)
-#define gBloodHole4 VAR(char *, 0x5BDB04)
+extern const int gFootstepSounds[];
+extern char *gBloodSprite1;
+extern char *gBloodSprite2;
+extern char *gBloodHole1;
+extern char *gBloodHole2;
+extern char *gBloodHole3;
+extern char *gBloodHole4;
 
 #define ANIM_WALK 0x3F2
 

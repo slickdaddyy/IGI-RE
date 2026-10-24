@@ -44,10 +44,10 @@ typedef struct Color {
     float r, g, b;
 } Color;
 
-#define gScrollListBoxType VAR(uint16_t, 0x53B59C)
-#define gScrollListBoxParams VAR(void *, 0x57BBB4)
-#define gScrollListBoxFilling VAR(ScrollListBox *, 0x57BBB0)
-#define gMenuColors ((const Color *)0x53B778)
+extern uint16_t gScrollListBoxType;
+extern void *gScrollListBoxParams;
+extern ScrollListBox *gScrollListBoxFilling;
+extern const Color gMenuColors[];
 
 void ScrollListBox_Create(ScrollListBox *lb, void *arg);
 void ScrollListBox_Clear(ScrollListBox *lb);

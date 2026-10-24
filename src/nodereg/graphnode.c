@@ -47,10 +47,10 @@ ORIG(0x4F9270, uint8_t, Graph_GetEvent371, (void));
 ORIG(0x4F9720, void *, Graph_GetNode, (void *graph, int id));
 ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
-#define gGraphNodeType VAR(uint16_t, 0x54EC9C)
-#define gGraphNodeModel VAR(void *, 0xA800F0)
-#define gNodeCriteria ((NodeCriteria *)0xA800F8)
-#define gGraphNodeParams VAR(void *, 0xA801FC)
+extern uint16_t gGraphNodeType;
+extern void *gGraphNodeModel;
+extern NodeCriteria gNodeCriteria[];
+extern void *gGraphNodeParams;
 
 int NodeCriteria_Register(const char *name)
 {

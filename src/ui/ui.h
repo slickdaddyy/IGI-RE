@@ -82,9 +82,9 @@ _Static_assert(sizeof(MenuWindow) == 0x54, "MenuWindow");
 _Static_assert(sizeof(VarString) == 0x50, "VarString");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gEmptyString ((char *)0x567C74)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
+extern char gEmptyString[];
 
 /* the handler a task type has for a slot */
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

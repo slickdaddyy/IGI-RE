@@ -29,9 +29,9 @@ ORIG(0x4B85B0, void, Script_Run, (void *s));
 ORIG(0x4D0EE0, void, Mesh3D_SetLodScale, (float v));
 ORIG(0x4D2C20, void, QCube_SetDetail, (int v));
 
-#define gDriverCount VAR(int, 0x567C90)
-#define gDrivers ((D3DDriver *)0x567C98)
-#define gLanguageAliasSet VAR(char, 0x537B90)
+extern int gDriverCount;
+extern D3DDriver gDrivers[];
+extern char gLanguageAliasSet;
 #define gRenderFuncs ((void (**)(int *))0xA94E84)
 
 _Static_assert(sizeof(PlayerProfile) == 0x564, "PlayerProfile");

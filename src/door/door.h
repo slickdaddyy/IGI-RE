@@ -169,18 +169,18 @@ _Static_assert(offsetof(Door, lastPos) == 0x2C8, "Door");
 _Static_assert(sizeof(Door) == 0x328, "Door");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 /* the frame counter lives at +0x68 */
-#define gTickInfo VAR(char *, 0xBC2360)
+extern char *gTickInfo;
 #define gTick (*(int *)(gTickInfo + 0x68))
 
-#define kZero VAR(float, 0x5333EC)
-#define kZeroD VAR(double, 0x5333B0)
-#define kOneD VAR(double, 0x5333F8)
-#define kFps VAR(float, 0x5333BC)
+extern float kZero;
+extern double kZeroD;
+extern double kOneD;
+extern float kFps;
 
 /* copies 4 bytes without going through the FPU, like the original */
 #define MOV32(dst, src) memcpy(&(dst), &(src), 4)
@@ -218,7 +218,7 @@ static inline long long round_ll(long double f)
 ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int i));
 ORIG(0x416AD0, char, UseQuery_Consider, (UseQuery *q, void *obj, const Vec3d *pos));
 
-#define kUseWidth VAR(double, 0x533890)
+extern double kUseWidth;
 
 /* offers o to the human when it stands in front of model point 0 */
 static inline void check_use(Obj *o, UseQuery *q)

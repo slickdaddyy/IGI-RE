@@ -106,18 +106,18 @@ typedef struct DoorMoveMsg {
 
 _Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 
-#define gDoorType VAR(uint16_t, 0x57C1C0)
-#define gDoorSlideRange VAR(RangeF, 0x57C1C8)
-#define gDoorTimeRange VAR(RangeF, 0x57C1D0)
-#define gDoorAngleRange VAR(RangeF, 0x57C1D8)
-#define gDoorUnitRange VAR(RangeF, 0x57C1E0)
-#define gDoorParams VAR(void *, 0x57C1E8)
+extern uint16_t gDoorType;
+extern RangeF gDoorSlideRange;
+extern RangeF gDoorTimeRange;
+extern RangeF gDoorAngleRange;
+extern RangeF gDoorUnitRange;
+extern void *gDoorParams;
 
-#define kSlideScale VAR(float, 0x5333B8)
-#define kDegToRad VAR(float, 0x53367C)
-#define kUseMin VAR(double, 0x5338B0)
-#define kUseMaxX VAR(double, 0x5338A8)
-#define kUseMaxY VAR(double, 0x533498)
+extern float kSlideScale;
+extern float kDegToRad;
+extern double kUseMin;
+extern double kUseMaxX;
+extern double kUseMaxY;
 
 #define Terminal_MapHandler (FN(0x443DC0, Terminal_MapHandler))
 #define sub_4EFB00 (FN(0x4EFB00, Param_Three))

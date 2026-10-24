@@ -257,12 +257,12 @@ enum { POSE_STAND, POSE_KNEEL, POSE_LIE, POSE_ANIM, POSE_GUN };
 #define CTRL_RELOAD 8
 
 /* per AI type: channel -> HumanAI.ctrl index, pose -> human state (-1 none) */
-#define gAIChannelMap ((const int *const *)0x54151C)
-#define gAIPoseMap ((const int *const *)0x541658)
-#define gQObjType VAR(uint16_t, 0x548638)
-#define kFps VAR(float, 0x5333BC)
-#define kMinusFps VAR(float, 0x5339B8)
-#define kUnit VAR(double, 0x533498)
+extern const int *const gAIChannelMap[];
+extern const int *const gAIPoseMap[];
+extern uint16_t gQObjType;
+extern float kFps;
+extern float kMinusFps;
+extern double kUnit;
 
 static const float kFaceTol = 0x1.1df46ap-5f;
 static const float kLookTol = 0x1.aceea0p-5f;

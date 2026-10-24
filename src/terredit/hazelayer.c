@@ -46,8 +46,8 @@ typedef struct EditHazeLayer {
 
 _Static_assert(sizeof(EditHazeLayer) == 0x88, "EditHazeLayer");
 
-#define gEditHazeLayerType VAR(uint16_t, 0xA84398)
-#define gEditHazeLayerParams VAR(void *, 0xA8439C)
+extern uint16_t gEditHazeLayerType;
+extern void *gEditHazeLayerParams;
 
 void EditHazeLayer_Delete(EditHazeLayer *e);
 void EditHazeLayer_Changed(EditHazeLayer *e);

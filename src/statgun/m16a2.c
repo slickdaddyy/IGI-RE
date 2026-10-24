@@ -18,11 +18,11 @@ typedef struct HudMsg {
 
 _Static_assert(sizeof(M203Data) == 0x1C, "M203Data");
 
-#define gM16A2Type VAR(uint16_t, 0x5BE36C)
+extern uint16_t gM16A2Type;
 
-#define kKmh VAR(float, 0x5334A4)
-#define kVelScale VAR(float, 0x5334A0)
-#define kIconGap VAR(float, 0x534114)
+extern float kKmh;
+extern float kVelScale;
+extern float kIconGap;
 
 ORIG(0x414A60, void, Matrix_SetYAxis, (Matrix *m, const Vec3f *dir));
 ORIG(0x476670, void, M203_New, (void *a, void *gun, void *owner, Vec3d *pos, Matrix *m, Vec3f *vel,

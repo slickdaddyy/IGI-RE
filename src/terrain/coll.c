@@ -29,8 +29,8 @@ ORIG(0x4B3100, void, Vec3d_Normalize, (Vec3d *v));
 ORIG(0x4B3190, void, Vec3d_Cross, (Vec3d *out, const Vec3d *a, const Vec3d *b));
 
 /* entry 0 overlaps the count, so the current bump is gCollBumps[count] */
-#define gCollBumps ((const CollBump *)0xBA2030)
-#define gCollBumpCount VAR(int, 0xBA2058)
+extern const CollBump gCollBumps[];
+extern int gCollBumpCount;
 
 static inline int fistp(long double x)
 {

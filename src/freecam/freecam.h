@@ -45,16 +45,16 @@ typedef struct Vec3d {
 
 typedef void (*TaskHandler)();
 
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((TaskHandler *)0xA96AE0)[(slot) * 0x180 + (type)])
-#define gWorld VAR(void *, 0xA44344)
-#define gDynCubeObjType VAR(uint16_t, 0x54875C)
-#define gCamPos VAR(Vec3d, 0xBCAB08)
+extern void *gWorld;
+extern uint16_t gDynCubeObjType;
+extern Vec3d gCamPos;
 
 /* exe constants, read in place so the x87 code sees the same values */
-#define kZero VAR(float, 0x5333EC)
-#define kOneD VAR(double, 0x5333F8)
+extern float kZero;
+extern double kOneD;
 
 static inline Task *fc_next_sibling(Task *t)
 {

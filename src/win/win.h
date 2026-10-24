@@ -52,7 +52,7 @@ typedef struct AppContext {
     char country[0x100];
 } AppContext;
 
-#define gApp VAR(AppContext, 0x5C8BC0)
+extern AppContext gApp;
 
 /* A screen mode. The active one is at 0xC28B40. */
 typedef struct DisplayMode {
@@ -115,8 +115,8 @@ void AppMain_AddWinProcCallback(WinProcCallback fn);
 void AppMain_RemoveWinProcCallback(WinProcCallback fn);
 int Timer_GetMs(void);
 
-#define gDisplayPrefDesc VAR(const char *, 0x5C9F9C)
-#define gDisplayPrefDevice VAR(const char *, 0x5C9FA0)
+extern const char *gDisplayPrefDesc;
+extern const char *gDisplayPrefDevice;
 
 int Display_FindModes(DisplayMode *mode, int flags, void (*fn)(DisplayMode *mode));
 void Display_SetMode(DisplayMode *mode);

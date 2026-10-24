@@ -30,8 +30,8 @@ typedef struct Building {
 _Static_assert(offsetof(Building, model) == 0x1C8, "Building");
 _Static_assert(sizeof(Building) == 0x1F0, "Building");
 
-#define gBuildingType VAR(uint16_t, 0x57C200)
-#define gBuildingParams VAR(void *, 0x57C204)
+extern uint16_t gBuildingType;
+extern void *gBuildingParams;
 
 #define Game_CollFilterSkip (FN(0x416AB0, Game_CollFilterSkip))
 #define Terminal_MapHandler (FN(0x443DC0, Terminal_MapHandler))

@@ -63,13 +63,13 @@ ORIG(0x508F70, uint8_t, Sync_GetEvent1, (void));
 #define MENUITEM_IDENTIFY (FN(0x505840, MenuItem_Identify))
 #define MENUITEM_FORWARDPOINTER (FN(0x505850, MenuItem_ForwardPointer))
 
-#define gMenuItemTaskType VAR(uint16_t, 0x54E708)
-#define gMenuItemTaskPointerEvent VAR(uint8_t, 0x54E70A)
-#define gMenuItemTaskListEvent VAR(uint8_t, 0x54E70B)
-#define gMenuItemCommitEvent VAR(uint8_t, 0x54E71C)
-#define gMenuItemSelectEvent VAR(uint8_t, 0x54E71D)
-#define gMenuItemFindEvent VAR(uint8_t, 0x54E71E)
-#define gMenuItemType VAR(uint16_t, 0x54E720)
+extern uint16_t gMenuItemTaskType;
+extern uint8_t gMenuItemTaskPointerEvent;
+extern uint8_t gMenuItemTaskListEvent;
+extern uint8_t gMenuItemCommitEvent;
+extern uint8_t gMenuItemSelectEvent;
+extern uint8_t gMenuItemFindEvent;
+extern uint16_t gMenuItemType;
 
 /* list event handler of the items: adds node to the panel's list */
 void MenuItemTask_AddToList(ItemList **list, ItemNode *node)

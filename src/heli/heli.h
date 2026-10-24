@@ -321,39 +321,39 @@ _Static_assert(sizeof(Heli) == 0x2D00, "Heli");
 _Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 _Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((void **)0xA96AE0)[(slot) * 0x180 + (type)])
-#define gKeys ((uint8_t *)0xC28C62)
-#define gKeysPrev ((uint8_t *)0xC28D62)
+extern uint8_t gKeys[];
+extern uint8_t gKeysPrev[];
 
 /* exe constants, read in place so the x87 code sees the same values */
-#define kFixed VAR(float, 0x5333B8)      /* 4096 */
-#define kTenth VAR(float, 0x5333C8)
-#define kOne VAR(float, 0x5333E0)
-#define kZero VAR(float, 0x5333EC)
-#define kZeroD VAR(double, 0x5333B0)
-#define kOneD VAR(double, 0x5333F8)
-#define kThrustScale VAR(float, 0x53346C) /* 44.6 */
-#define kHalf VAR(float, 0x533504)
-#define kQuarter VAR(float, 0x533518)
-#define kHeliDamp VAR(float, 0x533574)       /* 0.95 */
-#define kTwo VAR(float, 0x533588)
-#define kTwentieth VAR(float, 0x5335AC)
-#define kFour VAR(float, 0x5335C8)
-#define kDegToRad VAR(float, 0x53367C)
-#define kSixTenths VAR(float, 0x53369C)
-#define kThreeTenths VAR(float, 0x5336A4)
-#define kMilli VAR(float, 0x5336C0)
-#define kSevenTenths VAR(float, 0x5336C4)
-#define kDamp98 VAR(float, 0x5336DC)
-#define kTwoHundredth VAR(float, 0x533700)
-#define kHundredth VAR(float, 0x533714)
-#define kMinusHundredth VAR(float, 0x533734)
-#define kGripLimit VAR(float, 0x533730)  /* 40.96 */
-#define kGrip VAR(float, 0x533738)       /* 0.24 */
-#define kSpeedStep VAR(double, 0x533720) /* 0.01 */
-#define kTwoPiD VAR(double, 0x533728)
+extern float kFixed;      /* 4096 */
+extern float kTenth;
+extern float kOne;
+extern float kZero;
+extern double kZeroD;
+extern double kOneD;
+extern float kThrustScale; /* 44.6 */
+extern float kHalf;
+extern float kQuarter;
+extern float kHeliDamp;       /* 0.95 */
+extern float kTwo;
+extern float kTwentieth;
+extern float kFour;
+extern float kDegToRad;
+extern float kSixTenths;
+extern float kThreeTenths;
+extern float kMilli;
+extern float kSevenTenths;
+extern float kDamp98;
+extern float kTwoHundredth;
+extern float kHundredth;
+extern float kMinusHundredth;
+extern float kGripLimit;  /* 40.96 */
+extern float kGrip;       /* 0.24 */
+extern double kSpeedStep; /* 0.01 */
+extern double kTwoPiD;
 
 static inline Task *next_sibling(Task *t)
 {

@@ -137,18 +137,18 @@ _Static_assert(offsetof(MeshHeader, radius) == 0x3C, "MeshHeader");
 _Static_assert(sizeof(TransCtx) == 0xA8, "TransCtx");
 _Static_assert(offsetof(SceneArea, maxY) == 0x3C, "SceneArea");
 
-#define gDevice VAR(void *, 0x5CA114)
-#define gTransCtx VAR(TransCtx, 0xBCAAE0)
-#define gSceneArea VAR(SceneArea, 0xBCABA0)
-#define gNearPlaneScale VAR(float, 0xBCABEC)
+extern void *gDevice;
+extern TransCtx gTransCtx;
+extern SceneArea gSceneArea;
+extern float gNearPlaneScale;
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
 #define gTaskHandlers ((TaskHandler (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gStateListA VAR(StateList *, 0xBCADE8)
-#define gStateListB VAR(StateList *, 0xBCAD7C)
-#define gStateListC VAR(StateList *, 0xBCADAC)
-#define gStateListD VAR(StateList *, 0xBCADC4)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
+extern StateList *gStateListA;
+extern StateList *gStateListB;
+extern StateList *gStateListC;
+extern StateList *gStateListD;
 
 /* method idx of a COM object */
 #define COM(obj, idx, type) ((type)(*(void ***)(obj))[idx])

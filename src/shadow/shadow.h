@@ -122,22 +122,22 @@ typedef struct Shadow {
 } Shadow;
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
-#define gSectorType VAR(uint16_t, 0x548694)
-#define gSectorObjectType VAR(uint16_t, 0x548696)
-#define gSectorInteriorObjectType VAR(uint16_t, 0x548698)
-#define gSectorLinks VAR(Pool, 0xA5E318)
-#define gVisSectors VAR(Pool, 0xA5E338)
-#define gCurrentWorld VAR(void *, 0xA44344)
+extern uint16_t gSectorType;
+extern uint16_t gSectorObjectType;
+extern uint16_t gSectorInteriorObjectType;
+extern Pool gSectorLinks;
+extern Pool gVisSectors;
+extern void *gCurrentWorld;
 
 /* exe constants, read in place */
-#define kZero VAR(float, 0x5333EC)
-#define kOne VAR(float, 0x5333E0)
-#define kOneD VAR(double, 0x5333F8)
-#define kHalf VAR(float, 0x533504)
+extern float kZero;
+extern float kOne;
+extern double kOneD;
+extern float kHalf;
 
 /* Calls the slot handler of each child of t, keeping the next child on
    gTaskStack so handlers may delete tasks. slot is evaluated after the

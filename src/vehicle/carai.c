@@ -78,8 +78,8 @@ typedef struct CarControl {
 _Static_assert(offsetof(Car, attacker) == 0x2ED0, "Car");
 _Static_assert(sizeof(CarAI) == 0x84, "CarAI");
 
-#define gCarAIType VAR(uint16_t, 0x53BA50)
-#define gCarAIParams VAR(void *, 0x57BC74)
+extern uint16_t gCarAIType;
+extern void *gCarAIParams;
 
 static const double kFar = 1677721600.0;
 static const double kFarChase = 3288334336.0;

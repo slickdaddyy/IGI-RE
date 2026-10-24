@@ -53,8 +53,8 @@ _Static_assert(offsetof(AlarmControl, unk240) == 0x240, "unk240");
 _Static_assert(offsetof(AlarmControl, trigger) == 0x2AC, "trigger");
 _Static_assert(sizeof(AlarmControl) == 0x350, "AlarmControl");
 
-#define gAlarmControlType VAR(uint16_t, 0x57C164)
-#define gAlarmControlParams VAR(void *, 0x57C168)
+extern uint16_t gAlarmControlType;
+extern void *gAlarmControlParams;
 
 void AlarmControl_Create(AlarmControl *a, void *arg);
 void AlarmControl_Run(AlarmControl *a);

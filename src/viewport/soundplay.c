@@ -53,14 +53,14 @@ typedef void (*TaskFn2)(Task *task, void *arg);
 _Static_assert(sizeof(SoundParams) == 0x58, "SoundParams");
 _Static_assert(sizeof(SoundInst) == 0x78, "SoundInst");
 
-#define gUnkA5E5E8 VAR(int, 0xA5E5E8)
-#define gSoundFree VAR(SoundInst *, 0xA5E5EC)
-#define gSoundActive VAR(SoundInst *, 0xA5E5F4)
-#define gSoundNextId VAR(int, 0xA5E5F8)
-#define gSoundDisabled VAR(char, 0xA5E60A)
-#define gSoundSilent VAR(char, 0xA5E60B)
-#define gSoundTasks VAR(QTaskList *, 0xA5E60C)
-#define gSoundDefs VAR(QTaskList *, 0xA5E610)
+extern int gUnkA5E5E8;
+extern SoundInst *gSoundFree;
+extern SoundInst *gSoundActive;
+extern int gSoundNextId;
+extern char gSoundDisabled;
+extern char gSoundSilent;
+extern QTaskList *gSoundTasks;
+extern QTaskList *gSoundDefs;
 
 ORIG(0x4C17C0, void, QTaskList_Remove, (void *list, void *item));
 ORIG(0x496650, void, Voice_Free, (void *voice));

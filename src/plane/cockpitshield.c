@@ -23,7 +23,7 @@ ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
 #define PART_DEF_SIZE_4 (FN(0x427D70, RocketPod_GetArgSize))
 #define HATCH_PARSE_DEF (FN(0x436090, Hatch_ParseDef))
 
-#define gCockpitShieldType VAR(uint16_t, 0x57BD5C)
+extern uint16_t gCockpitShieldType;
 
 void CockpitShield_SetMatrix(Part *o, Matrix *parent);
 

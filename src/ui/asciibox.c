@@ -30,8 +30,8 @@ typedef struct AsciiBox {
 
 _Static_assert(sizeof(AsciiBox) == 0xF8, "AsciiBox");
 
-#define gAsciiBoxType VAR(uint16_t, 0x53B5F4)
-#define gAsciiBoxParams VAR(void *, 0x57BBBC)
+extern uint16_t gAsciiBoxType;
+extern void *gAsciiBoxParams;
 
 void AsciiBox_Create(AsciiBox *ab, void *arg);
 void AsciiBox_Delete(AsciiBox *ab);

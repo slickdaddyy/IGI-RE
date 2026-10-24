@@ -79,11 +79,11 @@ _Static_assert(offsetof(AlarmLight, cond) == 0x1A4, "AlarmLight.cond");
 _Static_assert(offsetof(Reflector, light) == 0x130, "Reflector.light");
 _Static_assert(sizeof(Reflector) == 0x140, "Reflector");
 
-#define gAlarmLightParams VAR(void *, 0x57BE9C)
-#define gAlarmLightReflectorType VAR(uint16_t, 0x57BEA0)
-#define gAlarmLightType VAR(uint16_t, 0x57BEA2)
-#define gAlarmSprite VAR(char *, 0x57BEA4)
-#define gViewPos VAR(Vec3d, 0xBCAB08)
+extern void *gAlarmLightParams;
+extern uint16_t gAlarmLightReflectorType;
+extern uint16_t gAlarmLightType;
+extern char *gAlarmSprite;
+extern Vec3d gViewPos;
 
 static const float kTurn = 0x1.aceeap-4f;
 static const double kZero = 0.0;

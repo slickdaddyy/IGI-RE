@@ -22,8 +22,8 @@ typedef struct Siren {
 _Static_assert(offsetof(Siren, sound) == 0x2C8, "Siren");
 _Static_assert(sizeof(Siren) == 0x2D8, "Siren");
 
-#define gSirenType VAR(uint16_t, 0x57C214)
-#define gSirenParams VAR(void *, 0x57C21C)
+extern uint16_t gSirenType;
+extern void *gSirenParams;
 
 void Siren_Create(Siren *s, void *arg);
 void Siren_Run(Siren *s);

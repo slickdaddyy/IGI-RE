@@ -83,8 +83,8 @@ _Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 _Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 

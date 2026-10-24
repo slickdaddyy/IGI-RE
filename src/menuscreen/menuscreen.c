@@ -44,9 +44,9 @@ typedef struct MenuScreen {
 
 _Static_assert(sizeof(MenuScreen) == 0x1A4, "MenuScreen");
 
-#define gMenuScreenType VAR(uint16_t, 0x53B800)
-#define gMenuScreenParams VAR(void *, 0x57BC04)
-#define gLogoOffset VAR(int, 0x57BC0C)
+extern uint16_t gMenuScreenType;
+extern void *gMenuScreenParams;
+extern int gLogoOffset;
 
 void MenuScreen_DrawHandler(MenuScreen *ms);
 void MenuScreen_Create(MenuScreen *ms, void *arg);

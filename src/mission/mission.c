@@ -40,8 +40,8 @@ ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4B8A80, char *, Script_GetArgString, (void *args, int i, char *buf, int size));
 ORIG(0x516770, char *, crt_strlwr, (char *s));
 
-#define gMissions ((Mission *)0x5C1590)
-#define gMissionCount VAR(int, 0x5C89FC)
+extern Mission gMissions[];
+extern int gMissionCount;
 
 ScriptValue *DefineMission(ScriptValue *out, void *data, void *args);
 void Mission_LoadAll(void);

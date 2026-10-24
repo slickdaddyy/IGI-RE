@@ -63,19 +63,19 @@ _Static_assert(offsetof(StatGun, model) == 0x1B0, "StatGun");
 _Static_assert(offsetof(StatGun, user) == 0x208, "StatGun");
 _Static_assert(sizeof(StatGun) == 0x220, "StatGun");
 
-#define gStatGunType VAR(uint16_t, 0x5BE388)
-#define gStatGunParams VAR(void *, 0x5BE38C)
-#define gStatGunAmmoRange ((int *)0x5BE380)
+extern uint16_t gStatGunType;
+extern void *gStatGunParams;
+extern int gStatGunAmmoRange[];
 
-#define kZero VAR(float, 0x5333EC)
-#define kZeroD VAR(double, 0x5333B0)
-#define kPi VAR(float, 0x533400)
-#define kDegToRad VAR(float, 0x53367C)
-#define kTurnStep VAR(float, 0x53387C)
-#define kRecoilFade VAR(float, 0x5335A8)
-#define kTwoPiD VAR(double, 0x533728)
-#define kEyeUp VAR(float, 0x534134)
-#define kEyeBack VAR(float, 0x533688)
+extern float kZero;
+extern double kZeroD;
+extern float kPi;
+extern float kDegToRad;
+extern float kTurnStep;
+extern float kRecoilFade;
+extern double kTwoPiD;
+extern float kEyeUp;
+extern float kEyeBack;
 
 ORIG(0x4168A0, void *, Game_GetTaskList0, (void));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model));

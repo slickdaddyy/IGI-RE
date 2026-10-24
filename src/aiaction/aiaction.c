@@ -235,14 +235,14 @@ typedef struct CombatData {
 _Static_assert(offsetof(EventData, ref) == 0x28, "EventData");
 _Static_assert(offsetof(CombatData, unk28) == 0x28, "CombatData");
 
-#define gHumanAIType VAR(uint16_t, 0x53C920)
-#define gAIScriptNames ((const char **)0x53C928)
-#define gAIScriptOfType ((const int *)0x53C94C)
-#define gAITypeNames ((const char **)0x53C9C0)
-#define gHumanAIParams VAR(void *, 0x58A9D4)
-#define gAIScripts ((void **)0x58A9F4)
-#define gAICurrent VAR(HumanAI *, 0x5BDA58)
-#define gAIEventList VAR(List *, 0x5BDA60)
+extern uint16_t gHumanAIType;
+extern const char *gAIScriptNames[];
+extern const int gAIScriptOfType[];
+extern const char *gAITypeNames[];
+extern void *gHumanAIParams;
+extern void *gAIScripts[];
+extern HumanAI *gAICurrent;
+extern List *gAIEventList;
 
 static const double kFps = 30.0;
 static const double kViewScale = 4096.0;

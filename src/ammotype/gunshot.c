@@ -139,26 +139,26 @@ ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
 ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 
-#define gGunShotEvent VAR(uint8_t, 0x5BE3CC)
-#define gGunShotType VAR(uint16_t, 0x5BE3CE)
-#define gRicochetTime VAR(int, 0x540834)
-#define gRicochetDelay VAR(int, 0x5BE3D4)
-#define gRicochetSounds ((const char **)0x54083C)
+extern uint8_t gGunShotEvent;
+extern uint16_t gGunShotType;
+extern int gRicochetTime;
+extern int gRicochetDelay;
+extern const char *gRicochetSounds[];
 #define gRenderHandlers ((void (**)(void *task, void *arg))0xA982E0)
 
-#define kZero VAR(const float, 0x5333EC)
-#define kOne VAR(const float, 0x5333E0)
-#define kHalf VAR(const float, 0x533504)
-#define k4096 VAR(const float, 0x5333B8)    /* 4096 */
-#define kNearPad VAR(const double, 0x534170)      /* 2^28 */
-#define kNearDist VAR(const double, 0x534168)     /* 16384 */
-#define kOneD VAR(const double, 0x5333F8)
-#define kTrailWidth VAR(const float, 0x534178)    /* 286.72 */
-#define kColorScale VAR(const float, 0x534160)    /* 1/255 */
-#define kMaxDepth VAR(const float, 0x53415C)      /* 2048000 */
-#define kDepthFade VAR(const float, 0x534158)
-#define kDepthFade2 VAR(const float, 0x5333C8)    /* 0.1 */
-#define kMinAlpha VAR(const float, 0x5333C4)      /* 0.2 */
+extern const float kZero;
+extern const float kOne;
+extern const float kHalf;
+extern const float k4096;    /* 4096 */
+extern const double kNearPad;      /* 2^28 */
+extern const double kNearDist;     /* 16384 */
+extern const double kOneD;
+extern const float kTrailWidth;    /* 286.72 */
+extern const float kColorScale;    /* 1/255 */
+extern const float kMaxDepth;      /* 2048000 */
+extern const float kDepthFade;
+extern const float kDepthFade2;    /* 0.1 */
+extern const float kMinAlpha;      /* 0.2 */
 
 #define GUN_AMMO(gun) (*(AmmoType **)((char *)(gun) + 0x12C))
 

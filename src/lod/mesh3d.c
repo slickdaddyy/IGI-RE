@@ -84,44 +84,44 @@ _Static_assert(offsetof(RigidMeshObj, scale) == 0x98, "RigidMeshObj");
 _Static_assert(offsetof(BoneMeshObj, radius) == 0xA0, "BoneMeshObj");
 _Static_assert(offsetof(SplineMeshObj, bound) == 0x5A0, "SplineMeshObj");
 
-#define gDrawRigidMeshMethod VAR(int, 0xB46D14)
-#define gDrawBoneMeshMethod VAR(int, 0xB81880)
-#define gDrawSplineMeshMethod VAR(int, 0xB46CE0)
-#define gDrawLightmapMeshMethod VAR(int, 0xB818DC)
-#define gExcludeObjectMethod VAR(int, 0xA4EE78)
-#define gGenericUVFromRenderModeUVMethod VAR(int, 0xB817A0)
-#define gRenderModeUVFromGenericUVMethod VAR(int, 0xB8170C)
-#define gMesh3DEvent0 VAR(uint8_t, 0x548364)
-#define gMesh3DEvent1 VAR(uint8_t, 0x548367)
-#define gMesh3DEvent2 VAR(uint8_t, 0x548366)
-#define gMesh3DEvent3 VAR(uint8_t, 0x548365)
-#define gMesh3DEvent4 VAR(uint8_t, 0x548368)
-#define gMesh3DEvent5 VAR(int, 0x54836C)
+extern int gDrawRigidMeshMethod;
+extern int gDrawBoneMeshMethod;
+extern int gDrawSplineMeshMethod;
+extern int gDrawLightmapMeshMethod;
+extern int gExcludeObjectMethod;
+extern int gGenericUVFromRenderModeUVMethod;
+extern int gRenderModeUVFromGenericUVMethod;
+extern uint8_t gMesh3DEvent0;
+extern uint8_t gMesh3DEvent1;
+extern uint8_t gMesh3DEvent2;
+extern uint8_t gMesh3DEvent3;
+extern uint8_t gMesh3DEvent4;
+extern int gMesh3DEvent5;
 #define gMesh3DFade ((float (*)[3])0xB817C0)
-#define gLayerFov ((float *)0xB81700)
+extern float gLayerFov[];
 
 /* LOD settings, see notes/lod.md */
-#define gLodScale VAR(float, 0x548370)
-#define gLodBlend VAR(float, 0x54835C)
-#define gLodRange VAR(float, 0xA4EE98)
-#define gLodRigidDetail VAR(float, 0xA4EE80)
-#define gLodBoneDetail VAR(float, 0xA4EE84)
-#define gLodSplineDetail VAR(float, 0xA4EE88)
-#define gLodRigidCull VAR(float, 0xA4EE8C)
-#define gLodBoneCull VAR(float, 0xA4EE90)
-#define gLodSplineCull VAR(float, 0xA4EE94)
+extern float gLodScale;
+extern float gLodBlend;
+extern float gLodRange;
+extern float gLodRigidDetail;
+extern float gLodBoneDetail;
+extern float gLodSplineDetail;
+extern float gLodRigidCull;
+extern float gLodBoneCull;
+extern float gLodSplineCull;
 
 /* Screen edges for the exclusion test, redone when the camera or scene changes */
-#define gExclSelectCount VAR(int, 0xA4EEA0)
-#define gExclSceneVersion VAR(int, 0xA4EE9C)
-#define gExclLeft VAR(float, 0xB46CE4)
-#define gExclRight VAR(float, 0xB46D1C)
-#define gExclTop VAR(float, 0xB816FC)
-#define gExclBottom VAR(float, 0xB8179C)
-#define gExclLeftCos VAR(float, 0xB817A4)
-#define gExclRightCos VAR(float, 0xB46D20)
-#define gExclTopCos VAR(float, 0xB46D18)
-#define gExclBottomCos VAR(float, 0xB46CE8)
+extern int gExclSelectCount;
+extern int gExclSceneVersion;
+extern float gExclLeft;
+extern float gExclRight;
+extern float gExclTop;
+extern float gExclBottom;
+extern float gExclLeftCos;
+extern float gExclRightCos;
+extern float gExclTopCos;
+extern float gExclBottomCos;
 
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
 

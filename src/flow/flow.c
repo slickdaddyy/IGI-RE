@@ -53,19 +53,19 @@ ORIG(0x4EE030, void, PhysicsObjLoad, (const char *path));
 ORIG(0x4EE3B0, void, PhysicsObjType_FreeAll, (void));
 ORIG(0x4EE940, char, ScreenGrab_IsActive, (void));
 
-#define gFlow VAR(Flow *, 0x567C8C)
-#define gFlowType VAR(uint16_t, 0x567C7C)
-#define gFlowPauseStart VAR(int, 0x567C78)
-#define gFlowPauseDepth VAR(int, 0x567C80)
+extern Flow *gFlow;
+extern uint16_t gFlowType;
+extern int gFlowPauseStart;
+extern int gFlowPauseDepth;
 #define gTaskHandlers ((void (*(*)[TASK_MAX_TYPES])(Task *))0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gUnk5C8E00 VAR(char, 0x5C8E00)
-#define gUnkA4438C ((int *)0xA4438C)
-#define gUnkBC20A0 VAR(int, 0xBC20A0)
-#define gUnkC28C5C VAR(int, 0xC28C5C)
-#define gUnkC28C61 VAR(char, 0xC28C61)
-#define gUnkC28F80 VAR(char, 0xC28F80)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
+extern char gUnk5C8E00;
+extern int gUnkA4438C[];
+extern int gUnkBC20A0;
+extern int gUnkC28C5C;
+extern char gUnkC28C61;
+extern char gUnkC28F80;
 #define gScriptNumberType ((void *)0x567C74)
 
 void Flow_Open(void)

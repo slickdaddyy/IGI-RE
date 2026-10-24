@@ -27,11 +27,11 @@ typedef struct SortTask {
     SortList *list;
 } SortTask;
 
-#define gSortTask VAR(int, 0x943E48)
-#define gSortData ((char *)0x943E4C)
-#define gSortList VAR(SortList *, 0xA43E50)
-#define gSortDataUsed VAR(int, 0xA43E54)
-#define gSortActive VAR(int, 0xA84A4C)
+extern int gSortTask;
+extern char gSortData[];
+extern SortList *gSortList;
+extern int gSortDataUsed;
+extern int gSortActive;
 
 void SortRender_Sort(SortItem *items, int count);
 

@@ -68,38 +68,38 @@ typedef struct StripState {
     QTexture *texture;
 } StripState;
 
-#define gD3DDevice VAR(IDirect3DDevice7 *, 0x5CA114)
-#define gVBTL VAR(IDirect3DVertexBuffer7 *, 0xBCAD00)
-#define gVBTLSize VAR(int, 0xBCAD04)
-#define gVBTLUsed VAR(int, 0xBCAD08)
-#define gD3DZEnable VAR(DWORD, 0xBCAD78)
-#define gD3DClippingOnIndex VAR(int, 0xBCACEC)
-#define gD3DStatesA VAR(PtrList *, 0xBCADE8)
-#define gD3DStatesB VAR(PtrList *, 0xBCAD7C)
-#define gD3DStatesC VAR(PtrList *, 0xBCADAC)
-#define gD3DStatesD VAR(PtrList *, 0xBCADC4)
-#define gD3DViewMaxZ VAR(float, 0xBCAD8C)
-#define gD3DMinZ VAR(float, 0xBCADA0)
-#define gD3DViewMinZ VAR(float, 0xBCADB4)
-#define gD3DMaxZ VAR(float, 0xBCADC8)
-#define gNearPlane VAR(float, 0xBCADC0)
-#define gNearPlaneScale VAR(float, 0xBCABEC)
-#define gProj33 VAR(float, 0xBCAB6C)
-#define gSceneMinX VAR(float, 0xBCABD0)
-#define gSceneMinY VAR(float, 0xBCABD4)
-#define gSceneMaxX VAR(float, 0xBCABD8)
-#define gSceneMaxY VAR(float, 0xBCABDC)
-#define gTransContextValid VAR(int, 0x6E5BB0)
-#define gSortActive VAR(int, 0xA84A4C)
+extern IDirect3DDevice7 *gD3DDevice;
+extern IDirect3DVertexBuffer7 *gVBTL;
+extern int gVBTLSize;
+extern int gVBTLUsed;
+extern DWORD gD3DZEnable;
+extern int gD3DClippingOnIndex;
+extern PtrList *gD3DStatesA;
+extern PtrList *gD3DStatesB;
+extern PtrList *gD3DStatesC;
+extern PtrList *gD3DStatesD;
+extern float gD3DViewMaxZ;
+extern float gD3DMinZ;
+extern float gD3DViewMinZ;
+extern float gD3DMaxZ;
+extern float gNearPlane;
+extern float gNearPlaneScale;
+extern float gProj33;
+extern float gSceneMinX;
+extern float gSceneMinY;
+extern float gSceneMaxX;
+extern float gSceneMaxY;
+extern int gTransContextValid;
+extern int gSortActive;
 
-#define gQVStripBuffer ((StripNode *)0xA7CEDC)
-#define gQVTextureStatesIndex VAR(int, 0xA7CED8)
-#define gQVRenderStatesIndex VAR(int, 0xA7D9F4)
-#define gQVBlendStatesIndex VAR(int, 0xA7D9F8)
-#define gQVLastFlags VAR(unsigned int, 0xA7DA00)
-#define gQVLastTexture VAR(QTexture *, 0xA7DA04)
-#define gClipDepth VAR(int, 0xA7DA08)
-#define gKeys ((const uint8_t *)0xC28C62)
+extern StripNode gQVStripBuffer[];
+extern int gQVTextureStatesIndex;
+extern int gQVRenderStatesIndex;
+extern int gQVBlendStatesIndex;
+extern unsigned int gQVLastFlags;
+extern QTexture *gQVLastTexture;
+extern int gClipDepth;
+extern const uint8_t gKeys[];
 
 QV_F32(kZero, 0x00000000);
 QV_F32(kOne, 0x3F800000);

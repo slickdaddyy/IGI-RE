@@ -37,25 +37,25 @@ typedef struct FlatSky {
 
 _Static_assert(sizeof(FlatSky) == 0xD0, "FlatSky");
 
-#define gFlatSkyLayerType VAR(uint16_t, 0xBA1FDC)
-#define gFlatSkyType VAR(uint16_t, 0xBA1FDE)
-#define gFlatSkyLayerParams VAR(void *, 0xBA1FE0)
-#define gFlatSkyParams VAR(void *, 0xBA1FE4)
+extern uint16_t gFlatSkyLayerType;
+extern uint16_t gFlatSkyType;
+extern void *gFlatSkyLayerParams;
+extern void *gFlatSkyParams;
 
-#define kSkyRange01 ((const float *)0x54EEB0)
-#define kSkyRange11 ((const float *)0x54EEB8)
-#define kRange90 ((const float *)0x54EEC0)
-#define k255 VAR(float, 0x5336D4)
-#define kPi VAR(float, 0x533400)
-#define k180th VAR(float, 0x534C88)
+extern const float kSkyRange01[];
+extern const float kSkyRange11[];
+extern const float kRange90[];
+extern float k255;
+extern float kPi;
+extern float k180th;
 
-#define kHalf VAR(float, 0x533504)
-#define k4096 VAR(float, 0x5333B8)
-#define kNear VAR(float, 0x5338D0) /* 409.6 */
-#define kAlmostOne VAR(float, 0x534B18)
-#define kStripStep VAR(float, 0x534C84) /* 1/12 and a bit */
-#define kStripGrow VAR(float, 0x534C80) /* 1.001 */
-#define k16 VAR(float, 0x534C10)
+extern float kHalf;
+extern float k4096;
+extern float kNear; /* 409.6 */
+extern float kAlmostOne;
+extern float kStripStep; /* 1/12 and a bit */
+extern float kStripGrow; /* 1.001 */
+extern float k16;
 
 #define SKY_ROWS 13
 

@@ -24,27 +24,27 @@ ORIG(0x4F0FD0, int, Param_String16, (void));
 ORIG(0x4F0FE0, int, Param_String32, (void));
 ORIG(0x4F0FF0, int, Param_String256, (void));
 
-#define gParamEventUsed ((char *)0xA758C8)
-#define gParamTypes ((ParamType *)0xA758E0)
+extern char gParamEventUsed[];
+extern ParamType gParamTypes[];
 
-#define gParamTableEvent VAR(uint8_t, 0x54E0E4)
-#define gParamChangedEvent VAR(uint8_t, 0x54E0E5)
-#define gParamOpArgCount VAR(char, 0x54E0E6)
-#define gParamOpCopy VAR(char, 0x54E0E7)
-#define gParamOpPaste VAR(char, 0x54E0E8)
-#define gParamOpSize VAR(char, 0x54E0E9)
-#define gParamOpParse VAR(char, 0x54E0EA)
-#define gParamOpFormat VAR(char, 0x54E0EB)
+extern uint8_t gParamTableEvent;
+extern uint8_t gParamChangedEvent;
+extern char gParamOpArgCount;
+extern char gParamOpCopy;
+extern char gParamOpPaste;
+extern char gParamOpSize;
+extern char gParamOpParse;
+extern char gParamOpFormat;
 
-#define gParamEnumReal32 VAR(int, 0x54E150)
-#define gParamEnumString16 VAR(int, 0x54E154)
-#define gParamEnumString32 VAR(int, 0x54E158)
-#define gParamEnumString256 VAR(int, 0x54E15C)
-#define gParamEnumInt32 VAR(int, 0x54E160)
+extern int gParamEnumReal32;
+extern int gParamEnumString16;
+extern int gParamEnumString32;
+extern int gParamEnumString256;
+extern int gParamEnumInt32;
 
-#define gParamRange01 VAR(ParamRange, 0xA76BE0)
-#define gParamRange0100 VAR(ParamRange, 0xA76BE8)
-#define gParamRange02 VAR(ParamRange, 0xA76BF0)
+extern ParamRange gParamRange01;
+extern ParamRange gParamRange0100;
+extern ParamRange gParamRange02;
 
 /* the enum list callback keeps the original address, hooked below */
 #define ParamEnumForEachConstant ((void (*)(void *))FN(0x4F1CF0, ParamEnum_ForEachConstant))

@@ -193,17 +193,17 @@ void View_ScaleSize(View *v, float *out, const float *size, float depth);
 #define BINOCULARHOLDER_GETPARAMS (FN(0x4723D0, BinocularHolder_GetParams))
 #define BINOCULARHOLDER_CHANGED (FN(0x4723E0, BinocularHolder_Changed))
 
-#define gBinocularOverlayType VAR(uint16_t, 0x5401F8)
-#define gBinocularHolderType VAR(uint16_t, 0x5401FA)
-#define gBinocularSprite VAR(char *, 0x5BE344)
-#define gBinocularHolderParams VAR(void *, 0x5BE348)
-#define gGridTemplate ((const int *)0x534038)
-#define gMarkerShape ((const float *)0x534070)
-#define gTargetShape ((const float *)0x5340B0)
+extern uint16_t gBinocularOverlayType;
+extern uint16_t gBinocularHolderType;
+extern char *gBinocularSprite;
+extern void *gBinocularHolderParams;
+extern const int gGridTemplate[];
+extern const float gMarkerShape[];
+extern const float gTargetShape[];
 #define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
-#define gQVertexTexture VAR(void *, 0xA84A50)
-#define gQVertexStrip VAR(int, 0xA84A54)
-#define gScriptEmptyString ((const char *)0x567C74)
+extern void *gQVertexTexture;
+extern int gQVertexStrip;
+extern const char gScriptEmptyString[];
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);

@@ -28,9 +28,9 @@ typedef struct ComputerLimit {
 
 _Static_assert(sizeof(ComputerLimit) == 0x40, "ComputerLimit");
 
-#define gLimitParams VAR(void *, 0x5BDC5C)
-#define gLimitType VAR(uint16_t, 0x5BDC60)
-#define gLimit VAR(ComputerLimit *, 0x5BDC68)
+extern void *gLimitParams;
+extern uint16_t gLimitType;
+extern ComputerLimit *gLimit;
 
 void ComputerLimit_Create(ComputerLimit *l);
 void ComputerLimit_Delete(void);

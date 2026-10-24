@@ -54,9 +54,9 @@ ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, Vec3d *starts, Vec3d *ends, int count, uint8_t event,
                                   CollFilter *filter, int flags));
 
-#define gHumanCameraType VAR(uint16_t, 0x540990)
-#define gHumanCameraEvent VAR(uint8_t, 0x540992)
-#define gHumanCameraList ((HumanCameraEntry *)0x5C1188)
+extern uint16_t gHumanCameraType;
+extern uint8_t gHumanCameraEvent;
+extern HumanCameraEntry gHumanCameraList[];
 
 #define HUMAN_LIST_SIZE 128
 

@@ -262,8 +262,8 @@ _Static_assert(sizeof(Car) == 0x2ED8, "Car");
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 

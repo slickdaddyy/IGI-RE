@@ -89,16 +89,16 @@ _Static_assert(offsetof(HeightMap, slot) == 0xF8, "HeightMap.slot");
 _Static_assert(sizeof(CollBump) == 0x30, "CollBump");
 
 #define gHeightMapRandom ((void *)0xA7B138)
-#define gHeightMaps ((HeightMap **)0xA7AD10)
-#define gHeightMapParams VAR(void *, 0xA7B244)
-#define gHeightMapType VAR(uint16_t, 0xA7B248)
-#define gHeightMapCount VAR(int, 0xA7B250)
-#define gHmpResident ((char *)0xB81920)
-#define gCollWalkTasks VAR(int, 0xB97D20)
-#define gCollBumpList ((int *)0xB97D40)
-#define gCollBumpDepth VAR(int, 0xB97DF4)
-#define gCollBumpCount VAR(int, 0xBA2058)
-#define gCollBumps ((CollBump *)0xBA2030)
+extern HeightMap *gHeightMaps[];
+extern void *gHeightMapParams;
+extern uint16_t gHeightMapType;
+extern int gHeightMapCount;
+extern char gHmpResident[];
+extern int gCollWalkTasks;
+extern int gCollBumpList[];
+extern int gCollBumpDepth;
+extern int gCollBumpCount;
+extern CollBump gCollBumps[];
 #define gSlotBumps (gCollBumps + 1) /* slots count from 1 */
 
 static const double kLiftZ = 268435456.0;

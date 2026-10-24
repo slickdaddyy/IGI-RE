@@ -23,16 +23,16 @@ ORIG(0x4CF870, void, ModelFile_LoadPalettes, (ModelFile *f));
 ORIG(0x4CF910, void, ModelFile_LoadAnims, (ModelFile *f));
 ORIG(0x4CF9D0, void, ModelFile_Free, (ModelFile *f));
 
-#define gModelInitMethod VAR(int, 0x548200)
-#define gModelDeinitMethod VAR(int, 0x548204)
-#define gModelLoadMethod VAR(int, 0x548208)
-#define gModelUnloadMethod VAR(int, 0x54820C)
-#define gVirModels ((VirModel *)0xA443A0)
-#define gModelFiles VAR(List, 0xA4EC60)
-#define gModelPath ((char *)0xA4EC6C)
-#define gModelDir ((char *)0xA4ED6C)
-#define gVirModelCount VAR(int, 0xA4EDEC)
-#define gVirModelSaved VAR(int, 0xA4EDF0)
+extern int gModelInitMethod;
+extern int gModelDeinitMethod;
+extern int gModelLoadMethod;
+extern int gModelUnloadMethod;
+extern VirModel gVirModels[];
+extern List gModelFiles;
+extern char gModelPath[];
+extern char gModelDir[];
+extern int gVirModelCount;
+extern int gVirModelSaved;
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
 
 _Static_assert(sizeof(VirModel) == 0x48, "VirModel");

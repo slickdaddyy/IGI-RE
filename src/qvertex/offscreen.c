@@ -18,22 +18,22 @@ ORIG(0x498370, int, Offscreen_GetMode, (void));
 /* the shared do-nothing function */
 #define NOTHING (FN(0x4D3710, Task_Nothing))
 
-#define gAllocTextureId VAR(int, 0x546FA8)
-#define gDeAllocTextureId VAR(int, 0x546FAC)
-#define gDownloadTextureId VAR(int, 0x546FB0)
-#define gDeAllocPalette VAR(int, 0xA84A40)
-#define gDownloadPalette VAR(int, 0xA84A44)
-#define gAllocPalette VAR(int, 0xA84A48)
+extern int gAllocTextureId;
+extern int gDeAllocTextureId;
+extern int gDownloadTextureId;
+extern int gDeAllocPalette;
+extern int gDownloadPalette;
+extern int gAllocPalette;
 
-#define gOffscreenWidth VAR(int, 0xBCAAA0)
-#define gOffscreenPixels VAR(uint32_t *, 0xBCAAA8)
-#define gOffscreenClip ((float *)0xBCAAC0)
+extern int gOffscreenWidth;
+extern uint32_t *gOffscreenPixels;
+extern float gOffscreenClip[];
 
 /* One palette slot only: slot n is byte n - 1. */
-#define gPaletteSlots ((char *)0xA7CEC8)
-#define gPaletteSlotWords ((uint32_t *)0xA7CEC8)
-#define gPaletteColors ((uint8_t *)0xBC8A00)
-#define gPalette565 ((uint16_t *)0xBC7A00)
+extern char gPaletteSlots[];
+extern uint32_t gPaletteSlotWords[];
+extern uint8_t gPaletteColors[];
+extern uint16_t gPalette565[];
 
 QV_F32(kZero, 0x00000000);
 QV_F32(kOne, 0x3F800000);

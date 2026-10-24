@@ -110,10 +110,10 @@ ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (void *obj));
 
 void Car_CollFilter(Task *t, char *msg);
 
-#define gHeliType VAR(uint16_t, 0x53BE58)
-#define gHeliParams VAR(void *, 0x57BD40)
-#define gHeliRange ((float *)0x57BD38)
-#define gHeliControls ((ControlInfo *)0x53BE60)
+extern uint16_t gHeliType;
+extern void *gHeliParams;
+extern float gHeliRange[];
+extern ControlInfo gHeliControls[];
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 #define HELI_LOAD_STATE (FN(0x432F20, Heli_LoadState))
@@ -124,16 +124,16 @@ void Car_CollFilter(Task *t, char *msg);
 #define HELI_HANDLER_433000 (FN(0x433000, Heli_GetSoundInfo))
 #define TASK_HANDLER_4E4280 (FN(0x4E4280, Task_YesHandler))
 
-#define kAccelSpeed VAR(double, 0x533758)  /* 0.8 */
-#define kMaxThrottle VAR(double, 0x533770) /* 1.25 */
-#define kTwoMetersD VAR(double, 0x533708)  /* 8192 */
-#define kTwoMeters VAR(float, 0x533768)
-#define kPitchScale VAR(double, 0x533740)
-#define kPitchDown VAR(float, 0x533748)    /* -0.7 */
-#define kYawForce VAR(float, 0x533750)     /* -0.8 */
-#define kRollForce VAR(float, 0x53374C)    /* 0.08 */
-#define kLift VAR(float, 0x533764)         /* 11.15 */
-#define kDampZ VAR(float, 0x533760)        /* 0.97 */
+extern double kAccelSpeed;  /* 0.8 */
+extern double kMaxThrottle; /* 1.25 */
+extern double kTwoMetersD;  /* 8192 */
+extern float kTwoMeters;
+extern double kPitchScale;
+extern float kPitchDown;    /* -0.7 */
+extern float kYawForce;     /* -0.8 */
+extern float kRollForce;    /* 0.08 */
+extern float kLift;         /* 11.15 */
+extern float kDampZ;        /* 0.97 */
 
 static float radius(Heli *h)
 {

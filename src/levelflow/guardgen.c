@@ -50,8 +50,8 @@ typedef struct GuardGenerator {
 _Static_assert(sizeof(GuardTemplate) == 0x2C, "GuardTemplate");
 _Static_assert(sizeof(GuardGenerator) == 0x80, "GuardGenerator");
 
-#define gGuardGeneratorType VAR(uint16_t, 0x541094)
-#define gGuardGeneratorParams VAR(ParamTable *, 0x5C8A88)
+extern uint16_t gGuardGeneratorType;
+extern ParamTable *gGuardGeneratorParams;
 
 void GuardGenerator_Create(GuardGenerator *g);
 void GuardGenerator_Run(GuardGenerator *g);

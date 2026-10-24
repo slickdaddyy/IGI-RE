@@ -37,8 +37,8 @@ _Static_assert(sizeof(SlideBar) == 0x250, "SlideBar");
 _Static_assert(offsetof(SlideBar, value) == 0xA0, "SlideBar.value");
 _Static_assert(offsetof(SlideBar, steps) == 0x248, "SlideBar.steps");
 
-#define gSlideBarType VAR(uint16_t, 0x53B6BC)
-#define gSlideBarParams VAR(void *, 0x57BBE4)
+extern uint16_t gSlideBarType;
+extern void *gSlideBarParams;
 
 void SlideBar_Run(SlideBar *sb);
 void SlideBar_Draw(SlideBar *sb);

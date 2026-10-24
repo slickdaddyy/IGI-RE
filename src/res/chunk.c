@@ -2,7 +2,7 @@
 #include "igi.h"
 #include "res/resource.h"
 
-#define gChunkError VAR(int, 0xA43E5C)
+extern int gChunkError;
 
 #define IS_POW2(x) ((~((x) - 1) & (x)) == (x))
 

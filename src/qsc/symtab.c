@@ -19,8 +19,8 @@ typedef int (*SymbolFilter)(const char *name, void *value, void *data);
 
 ORIG(0x4C04B0, char, SymbolTable_Find, (SymbolTable *table, Symbol **out, const char *name));
 
-#define gSymbolFilter VAR(SymbolFilter, 0xA44314)
-#define gSymbolFilterData VAR(void *, 0xA44318)
+extern SymbolFilter gSymbolFilter;
+extern void *gSymbolFilterData;
 
 void SymbolTable_ForEach(SymbolTable *table, SymbolFunc fn, void *data)
 {

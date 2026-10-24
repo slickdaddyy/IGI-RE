@@ -18,11 +18,11 @@ typedef struct WinProcEntry {
     WinProcCallback fn;
 } WinProcEntry;
 
-#define gWinProcs ((WinProcEntry *)0x5C8D28)
-#define gWinProcList VAR(WinList, 0x5C8DF0)
-#define gRunning VAR(char, 0x5C8DE8)
-#define gAltDown VAR(int, 0x5C8E04)
-#define gClassName VAR(const char *, 0x541D68)
+extern WinProcEntry gWinProcs[];
+extern WinList gWinProcList;
+extern char gRunning;
+extern int gAltDown;
+extern const char *gClassName;
 
 static void Main_ParseWindowCB(const char *rest)
 {

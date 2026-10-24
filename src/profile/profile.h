@@ -82,17 +82,17 @@ typedef struct TaskHeader {
 typedef void (*TaskHandler)(void *task, void *arg);
 
 #define gTaskHandlers ((TaskHandler (*)[0x180])0xA96AE0)
-#define gTaskStack ((TaskHeader **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern TaskHeader *gTaskStack[];
+extern int gTaskStackTop;
 
-#define gProfileCount VAR(int, 0xBC2380)
-#define gActiveProfile VAR(int, 0xBC2384)
-#define gProfiles ((PlayerProfile *)0xBC2388)
-#define gContentControlPassword ((char *)0xBC79C8)
-#define gDefaultKeys ((KeyBinding *)0x536410)
-#define gInputActions ((ConfigName *)0x536558)
-#define gInputDevices ((ConfigName *)0x536928)
-#define gInputKeys ((ConfigName *)0x536998)
+extern int gProfileCount;
+extern int gActiveProfile;
+extern PlayerProfile gProfiles[];
+extern char gContentControlPassword[];
+extern KeyBinding gDefaultKeys[];
+extern ConfigName gInputActions[];
+extern ConfigName gInputDevices[];
+extern ConfigName gInputKeys[];
 #define gLanguageNames ((char (*)[16])0x53331C)
 #define gDifficultyNames ((char (*)[16])0x53337C)
 

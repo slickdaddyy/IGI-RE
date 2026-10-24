@@ -65,13 +65,13 @@ typedef struct MaterialImpact {
     int unk14;
 } MaterialImpact;
 
-#define gMaterialSizeEvent VAR(unsigned char, 0x538518)
-#define gMaterialParseEvent VAR(unsigned char, 0x538519)
-#define gMaterialImpactEvent VAR(unsigned char, 0x53851A)
-#define gMaterialActive VAR(int, 0x53851C)
-#define gMaterials ((GameMaterial *)0x569210)
+extern unsigned char gMaterialSizeEvent;
+extern unsigned char gMaterialParseEvent;
+extern unsigned char gMaterialImpactEvent;
+extern int gMaterialActive;
+extern GameMaterial gMaterials[];
 #define gTaskHandlers ((TaskHandler (*)[0x180])0xA96AE0)
-#define gScriptNumberType ((const char *)0x567C74)
+extern const char gScriptNumberType[];
 
 static ScriptValue *Material_Return(ScriptValue *out)
 {

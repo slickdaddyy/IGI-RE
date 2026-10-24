@@ -42,7 +42,7 @@ ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 
 #define TASK_DEBUG_LOG (FN(0x4C1780, Debug_Log))
 
-#define gAnimSoundType VAR(uint16_t, 0xA83764)
+extern uint16_t gAnimSoundType;
 
 void AnimSound_Parse(Task *t, AnimSoundParse *p);
 void AnimSound_GetSize(Task *t, int *size);

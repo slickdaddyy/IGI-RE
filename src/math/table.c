@@ -5,9 +5,9 @@
 
 ORIG(0x4B27D0, long double, Math_ASinF, (float x));
 
-#define gSinTable ((float *)0xA88A60)
-#define gCosTable ((float *)0xA84A60)
-#define gAsinTable ((float *)0xA8CA60)
+extern float gSinTable[];
+extern float gCosTable[];
+extern float gAsinTable[];
 
 /* sin and cos over a full turn in 4096 steps, asin over [-1, 1] in 8192 steps */
 void Math_InitTables(void)

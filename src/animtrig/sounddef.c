@@ -127,10 +127,10 @@ _Static_assert(sizeof(SoundDefGraph) == 0x188, "SoundDefGraph");
 _Static_assert(sizeof(SoundDefGroup) == 0x60, "SoundDefGroup");
 _Static_assert(sizeof(SoundSysMicrophone) == 0x68, "SoundSysMicrophone");
 
-#define gSoundDefGroupType VAR(uint16_t, 0x54DB48)
-#define gSoundDefGroupType2 VAR(uint16_t, 0x54DB4A)
-#define gSoundSysMicrophoneType VAR(uint16_t, 0x54DB68)
-#define gSoundSysMicrophonePlayEvent VAR(uint8_t, 0x54DB6A)
+extern uint16_t gSoundDefGroupType;
+extern uint16_t gSoundDefGroupType2;
+extern uint16_t gSoundSysMicrophoneType;
+extern uint8_t gSoundSysMicrophonePlayEvent;
 
 static const float kZero = 0.0f;
 static const float kOne = 1.0f;

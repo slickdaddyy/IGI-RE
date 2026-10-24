@@ -67,7 +67,7 @@ _Static_assert(offsetof(ExplodeCreateArg, params) == 0x8C, "ExplodeCreateArg");
 _Static_assert(offsetof(ExplodeMagicObj, params) == 0x138, "ExplodeMagicObj");
 _Static_assert(sizeof(ExplodeMagicObj) == 0x150, "ExplodeMagicObj");
 
-#define gExplodeMagicObjType VAR(uint16_t, 0x57BF7C)
+extern uint16_t gExplodeMagicObjType;
 
 static const float kUnits = 4096.0f;
 

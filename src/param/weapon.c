@@ -6,15 +6,15 @@ ORIG(0x401810, int, TaskEvent_Alloc2, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x4018E0, void, TaskEvent_Free2, (int index));
 
-#define gWeaponSelectEvent VAR(int, 0xA76BFC)
-#define gWeaponTriggerEvent VAR(uint8_t, 0xA76C00)
-#define gWeaponUseAmmoEvent VAR(uint8_t, 0xA76C01)
-#define gWeaponSlotsEvent VAR(uint8_t, 0xA76C02)
-#define gWeaponStateEvent VAR(uint8_t, 0xA76C03)
-#define gWeaponDeselectEvent VAR(int, 0xA76C04)
-#define gWeaponDropEvent VAR(uint8_t, 0xA76C08)
-#define gWeaponMoveEvent VAR(uint8_t, 0xA76C09)
-#define gWeaponAmmoEvent VAR(uint8_t, 0xA76C10)
+extern int gWeaponSelectEvent;
+extern uint8_t gWeaponTriggerEvent;
+extern uint8_t gWeaponUseAmmoEvent;
+extern uint8_t gWeaponSlotsEvent;
+extern uint8_t gWeaponStateEvent;
+extern int gWeaponDeselectEvent;
+extern uint8_t gWeaponDropEvent;
+extern uint8_t gWeaponMoveEvent;
+extern uint8_t gWeaponAmmoEvent;
 
 void Weapon_InitEvents(void)
 {

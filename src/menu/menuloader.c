@@ -28,9 +28,9 @@ typedef struct Game {
     Task *root;
 } Game;
 
-#define gMenuLoaderType VAR(uint16_t, 0x539ADC)
-#define gMenuLoaderParams VAR(void *, 0x57BAF4)
-#define gMenuLoaderPath ((char *)0x57BAF8)
+extern uint16_t gMenuLoaderType;
+extern void *gMenuLoaderParams;
+extern char gMenuLoaderPath[];
 
 void MenuLoader_Create(MenuLoader *ml);
 void MenuLoader_GetParams(void *task, void **out);

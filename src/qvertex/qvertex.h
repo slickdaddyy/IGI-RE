@@ -37,10 +37,10 @@ typedef struct QPalette {
     uint16_t *colors;
 } QPalette;
 
-#define gQVertexTexture VAR(QTexture *, 0xA84A50)
-#define gQVertexStrip VAR(int, 0xA84A54)
-#define gQVertexPalette VAR(QPalette *, 0xA84A58)
-#define gQVertexDrawStrip VAR(int, 0x54E890)
+extern QTexture *gQVertexTexture;
+extern int gQVertexStrip;
+extern QPalette *gQVertexPalette;
+extern int gQVertexDrawStrip;
 
 /* a float constant from the exe, bit exact */
 #define QV_F32(name, bits) static const union { uint32_t u; float f; } name = { bits }

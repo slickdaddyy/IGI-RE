@@ -83,38 +83,38 @@ typedef struct Sound {
     void *data;
 } Sound;
 
-#define gCDDeviceID VAR(MCIDEVICEID, 0x5CA130)
-#define gSoundVoiceCount VAR(int, 0x5CA134)
-#define gMixerCount VAR(int, 0x5CA150)
-#define gDSPrimary VAR(IDirectSoundBuffer *, 0x5CA154)
-#define gCDUnk5CA188 VAR(char, 0x5CA188)
-#define gStreamBuffer VAR(IDirectSoundBuffer *, 0x5CA190)
-#define gStreamFile VAR(void *, 0x5CA194)
-#define gStreamHalf VAR(DWORD, 0x5CA198)
-#define gStreamEnd VAR(DWORD, 0x5CA19C)
-#define gStreamPos VAR(DWORD, 0x5CA1A0)
-#define gStreamHalfSize VAR(DWORD, 0x5CA1A4)
-#define gStreamLoop VAR(int, 0x5CA1B0)
-#define gStreamReady VAR(char, 0x5CA1B4)
-#define gSoundLists ((SoundList *)0x5CA1B8)
-#define gSoundStereo VAR(char, 0x543900)
-#define gMusicVolume VAR(float, 0x543904)
-#define gMasterVolume VAR(float, 0x543908)
-#define gSfxVolume VAR(float, 0x54390C)
-#define gCDTrack VAR(int, 0x543918)
-#define gUnk54391C VAR(int, 0x54391C)
-#define gCDUnk676AB4 VAR(char, 0x676AB4)
-#define gSoundUnk676E50 VAR(int, 0x676E50)
-#define gMixers ((Mixer *)0x676E58)
-#define gDSound VAR(IDirectSound *, 0x67A498)
-#define gDSListener VAR(IUnknown *, 0x67A49C)
-#define gVolumeTable ((int *)0x67A4A0)
-#define gCDAudioOpen VAR(char, 0x6840E8)
-#define gSoundReady VAR(char, 0x6840E9)
-#define gSound3D VAR(char, 0x6840EA)
-#define gSoundVoices VAR(char *, 0x6840F0)
-#define gSoundUnk6840F4 VAR(int, 0x6840F4)
-#define gSoundFreeVoices VAR(SoundNode *, 0x6840F8)
+extern MCIDEVICEID gCDDeviceID;
+extern int gSoundVoiceCount;
+extern int gMixerCount;
+extern IDirectSoundBuffer *gDSPrimary;
+extern char gCDUnk5CA188;
+extern IDirectSoundBuffer *gStreamBuffer;
+extern void *gStreamFile;
+extern DWORD gStreamHalf;
+extern DWORD gStreamEnd;
+extern DWORD gStreamPos;
+extern DWORD gStreamHalfSize;
+extern int gStreamLoop;
+extern char gStreamReady;
+extern SoundList gSoundLists[];
+extern char gSoundStereo;
+extern float gMusicVolume;
+extern float gMasterVolume;
+extern float gSfxVolume;
+extern int gCDTrack;
+extern int gUnk54391C;
+extern char gCDUnk676AB4;
+extern int gSoundUnk676E50;
+extern Mixer gMixers[];
+extern IDirectSound *gDSound;
+extern IUnknown *gDSListener;
+extern int gVolumeTable[];
+extern char gCDAudioOpen;
+extern char gSoundReady;
+extern char gSound3D;
+extern char *gSoundVoices;
+extern int gSoundUnk6840F4;
+extern SoundNode *gSoundFreeVoices;
 
 void CD_Open(void);
 void Mixer_Init(void);

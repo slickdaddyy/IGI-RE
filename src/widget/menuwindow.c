@@ -29,13 +29,13 @@ typedef struct ChildSize {
     int w, h;
 } ChildSize;
 
-#define gMenuWindowType VAR(uint16_t, 0x53B90C)
-#define gEvent910 VAR(int, 0x53B910)
-#define gEvent914 VAR(int, 0x53B914)
-#define gEvent918 VAR(int, 0x53B918)
-#define gEvent91C VAR(int, 0x53B91C)
-#define gPlaceEvent VAR(uint8_t, 0x53B920)
-#define gSizeEvent VAR(uint8_t, 0x53B921)
+extern uint16_t gMenuWindowType;
+extern int gEvent910;
+extern int gEvent914;
+extern int gEvent918;
+extern int gEvent91C;
+extern uint8_t gPlaceEvent;
+extern uint8_t gSizeEvent;
 
 enum {
     LINEUPMODE_NONE,

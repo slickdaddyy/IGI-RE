@@ -53,17 +53,17 @@ _Static_assert(sizeof(TgaHeader) == 0x12, "TgaHeader");
 
 #define STEP_RESET 100000
 
-#define gScreenGrabType VAR(uint16_t, 0x54DCB8)
-#define gScreenGrabStep VAR(int, 0x54DCBC)
-#define gScreenGrabHeader VAR(TgaHeader, 0xA70C48)
-#define gScreenGrabSingle VAR(char, 0xA70C5A)
-#define gScreenGrabRecording VAR(char, 0xA70C5B)
-#define gScreenGrabParams VAR(void *, 0xA70C60)
-#define gScreenGrabFrame VAR(int, 0xA70C64)
+extern uint16_t gScreenGrabType;
+extern int gScreenGrabStep;
+extern TgaHeader gScreenGrabHeader;
+extern char gScreenGrabSingle;
+extern char gScreenGrabRecording;
+extern void *gScreenGrabParams;
+extern int gScreenGrabFrame;
 
 /* DirectInput key tables, now and last frame */
-#define gKeys ((uint8_t *)0xC28C62)
-#define gKeysPrev ((uint8_t *)0xC28D62)
+extern uint8_t gKeys[];
+extern uint8_t gKeysPrev[];
 #define DIK_LCONTROL 0x1D
 #define DIK_LSHIFT 0x2A
 #define DIK_LMENU 0x38

@@ -59,7 +59,7 @@ ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (void *obj, void *phys));
 
 #define MAGICOBJ_RUN (FN(0x4D9970, MagicObj_RunHandler))
 
-#define gPhysicsMagicObjType VAR(uint16_t, 0x54E66C)
+extern uint16_t gPhysicsMagicObjType;
 
 void PhysicsMagicObj_Create(PhysicsMagicObj *o, MagicCreateArg *arg);
 void PhysicsMagicObj_Move(PhysicsMagicObj *o, MoveArg *arg);

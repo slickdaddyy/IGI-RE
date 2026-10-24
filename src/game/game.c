@@ -212,25 +212,25 @@ typedef struct Falloff {
     float range;
 } Falloff;
 
-#define gMission VAR(int, 0x539560)
-#define gMathPi ((const double *)0x539550)
-#define gWorldMeter ((const double *)0x539558)
-#define gGameEvents ((uint8_t *)0x539540)
-#define gRaining VAR(signed char, 0x57B1A0)
-#define gGameType VAR(uint16_t, 0x57B1A2)
-#define gGameSprites ((GameSprite *)0x57B1A8)
-#define gMissionPath ((char *)0x57B568)
-#define gGameTextures ((GameTexture *)0x57B5E8)
-#define gGameTaskLists ((void **)0x57BA9C)
-#define gCutsceneList VAR(QTaskList *, 0x57BAB0)
-#define gGameTextureCount VAR(int, 0x57BAB4)
-#define gGameSpriteCount VAR(int, 0x57BAB8)
-#define gMusicEnabled VAR(char, 0x57BAC0)
-#define gCurrentWorld VAR(void *, 0xA44344)
+extern int gMission;
+extern const double gMathPi[];
+extern const double gWorldMeter[];
+extern uint8_t gGameEvents[];
+extern signed char gRaining;
+extern uint16_t gGameType;
+extern GameSprite gGameSprites[];
+extern char gMissionPath[];
+extern GameTexture gGameTextures[];
+extern void *gGameTaskLists[];
+extern QTaskList *gCutsceneList;
+extern int gGameTextureCount;
+extern int gGameSpriteCount;
+extern char gMusicEnabled;
+extern void *gCurrentWorld;
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
-#define gUnkBC20A0 VAR(int, 0xBC20A0)
-#define gUnkC28C61 VAR(char, 0xC28C61)
-#define gUnkC28F80 VAR(char, 0xC28F80)
+extern int gUnkBC20A0;
+extern char gUnkC28C61;
+extern char gUnkC28F80;
 
 #define KEY_R 0x13
 #define KEY_I 0x17

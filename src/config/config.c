@@ -31,16 +31,16 @@ ORIG(0x41C690, void, ScrollListBox_AddItem, (const char *text, int id));
 ORIG(0x41B870, void, PictureBox_AddItem, (const char *text, int id));
 ORIG(0x41B290, void, TextBox_AddItem, (const char *text, int id));
 
-#define gScriptEmptyString ((const char *)0x567C74)
-#define gLanguageAliasSet VAR(char, 0x537B90)
-#define gPerfLevelFlags ((int *)0x537B74)
-#define gDefaultKeys ((InputRemap *)0x536410)
-#define gInputActions ((ConfigConstant *)0x536558)
-#define gInputActionsEnd ((ConfigConstant *)0x536924)
-#define gInputDevices ((ConfigConstant *)0x536928)
-#define gInputDevicesEnd ((ConfigConstant *)0x536994)
-#define gInputKeys ((ConfigConstant *)0x536998)
-#define gInputKeysEnd ((ConfigConstant *)0x537B74)
+extern const char gScriptEmptyString[];
+extern char gLanguageAliasSet;
+extern int gPerfLevelFlags[];
+extern InputRemap gDefaultKeys[];
+extern ConfigConstant gInputActions[];
+extern ConfigConstant gInputActionsEnd[];
+extern ConfigConstant gInputDevices[];
+extern ConfigConstant gInputDevicesEnd[];
+extern ConfigConstant gInputKeys[];
+extern ConfigConstant gInputKeysEnd[];
 #define gLanguageNames ((char (*)[16])0x53331C)
 #define gDifficultyNames ((char (*)[16])0x53337C)
 
@@ -838,14 +838,15 @@ HOOK(0x405300, Config_ResetProfiles);
 ScriptValue *Config_DeletePlayerProfile(ScriptValue *out, void *data, void *args)
 {
     int i = Script_GetArgInt(args, 0);
+    volatile int *count = &gProfileCount; /* i = -1 copies a profile over it, as in the original */
 
     if (i >= gProfileCount)
         return ret_int(out, 0);
     if (gActiveProfile >= i)
         gActiveProfile--;
-    for (i++; i < gProfileCount; i++)
+    for (i++; i < *count; i++)
         gProfiles[i - 1] = gProfiles[i];
-    gProfileCount--;
+    (*count)--;
     return ret_int(out, 1);
 }
 HOOK(0x405400, Config_DeletePlayerProfile);

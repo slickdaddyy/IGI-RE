@@ -8,10 +8,10 @@ ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x504E00, uint8_t, MenuItemTask_GetPointerEvent, (void));
 
-#define gMenuItemCommitEvent VAR(uint8_t, 0x54E71C)
-#define gMenuItemSelectEvent VAR(uint8_t, 0x54E71D)
-#define gMenuItemFindEvent VAR(uint8_t, 0x54E71E)
-#define gMenuItemType VAR(uint16_t, 0x54E720)
+extern uint8_t gMenuItemCommitEvent;
+extern uint8_t gMenuItemSelectEvent;
+extern uint8_t gMenuItemFindEvent;
+extern uint16_t gMenuItemType;
 
 typedef void (*MenuItemFn)(MenuItem *item, void *ctx);
 

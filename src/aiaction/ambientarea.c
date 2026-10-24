@@ -44,9 +44,9 @@ typedef struct AmbientArea {
 
 _Static_assert(sizeof(AmbientArea) == 0x210, "AmbientArea");
 
-#define gAmbientAreaType VAR(uint16_t, 0x57C734)
-#define gAmbientAreaParams VAR(void *, 0x57C738)
-#define gAmbientAreaModel VAR(void *, 0x57C73C)
+extern uint16_t gAmbientAreaType;
+extern void *gAmbientAreaParams;
+extern void *gAmbientAreaModel;
 
 static const double kHalfSize = 4096.0;
 static const double kNegHalfSize = -4096.0;

@@ -121,16 +121,16 @@ ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
 ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 
-#define gImpactSoundTime VAR(int, 0x540838)
-#define gImpactSoundDelay VAR(int, 0x5BE3D8)
+extern int gImpactSoundTime;
+extern int gImpactSoundDelay;
 
-#define kBZero VAR(const float, 0x5333EC)
-#define kBOne VAR(const float, 0x5333E0)
-#define kBOneD VAR(const double, 0x5333F8)
-#define kDegToRad VAR(const float, 0x53367C)
-#define kHalfPi VAR(const float, 0x533468)
-#define kPierceChance VAR(const float, 0x53369C) /* 0.6 */
-#define kSurfaceGap VAR(const float, 0x534148)   /* 20.48 */
+extern const float kBZero;
+extern const float kBOne;
+extern const double kBOneD;
+extern const float kDegToRad;
+extern const float kHalfPi;
+extern const float kPierceChance; /* 0.6 */
+extern const float kSurfaceGap;   /* 20.48 */
 
 static inline long double Bullet_Cos(long double x)
 {

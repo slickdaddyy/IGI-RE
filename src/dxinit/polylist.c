@@ -99,30 +99,30 @@ ORIG(0x4D97E0, uint8_t, QObj_GetEvent, (void));
 
 #define Direct3D_Nothing (FN(0x4D3710, Task_Nothing))
 
-#define gPolyListType VAR(uint16_t, 0x543C64)
-#define gPolyListPrim VAR(int, 0xC311BC)
-#define gPolyListStageState VAR(int, 0x72057C)
-#define gPolyListNothingB VAR(int, 0x7205A4)
-#define gPolyListLightState VAR(int, 0x7205A8)
-#define gPolyListNothingD VAR(int, 0x7205A0)
+extern uint16_t gPolyListType;
+extern int gPolyListPrim;
+extern int gPolyListStageState;
+extern int gPolyListNothingB;
+extern int gPolyListLightState;
+extern int gPolyListNothingD;
 #define gPolyListRandom ((void *)0x720570)
-#define gLights VAR(char *, 0xB041E0)
-#define gLightIndex VAR(int *, 0xB041E4)
-#define gLightCount VAR(int, 0xB041E8)
-#define gLightStride VAR(int, 0xB041F0)
-#define gLightColor ((float *)0xB818AC)
-#define gFogColor ((float *)0xB818EC)
-#define gFogDensity VAR(float, 0xB46D04)
-#define gFogEnable VAR(int, 0x5470B4)
-#define gNearPlane VAR(float, 0xBCADC0)
-#define gVBLit VAR(DynVB, 0xBCAD80)
+extern char *gLights;
+extern int *gLightIndex;
+extern int gLightCount;
+extern int gLightStride;
+extern float gLightColor[];
+extern float gFogColor[];
+extern float gFogDensity;
+extern int gFogEnable;
+extern float gNearPlane;
+extern DynVB gVBLit;
 
-#define kZero VAR(const float, 0x5333EC)
-#define kOne VAR(const float, 0x5333E0)
-#define kHalfF VAR(const float, 0x533504)
-#define k255 VAR(const float, 0x5336D4)
-#define kMinus255 VAR(const float, 0x5342D8)
-#define kNearScale VAR(const float, 0x5342DC)
+extern const float kZero;
+extern const float kOne;
+extern const float kHalfF;
+extern const float k255;
+extern const float kMinus255;
+extern const float kNearScale;
 
 static Light *Light_Get(int i)
 {

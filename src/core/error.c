@@ -8,13 +8,13 @@
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4A5702, int, crt_vsprintf, (char *buf, const char *fmt, va_list ap));
 
-#define gErrorHandler VAR(ErrorHandler, 0x936268)
-#define gErrorExitHandler VAR(ErrorHandler, 0x93626C)
-#define gWarningHandler VAR(ErrorHandler, 0x936274)
-#define gUnk93625C VAR(void *, 0x93625C)
-#define gUnk936270 VAR(void *, 0x936270)
-#define gUnk93627C VAR(int, 0x93627C)
-#define gErrorText ((char *)0xA84640)
+extern ErrorHandler gErrorHandler;
+extern ErrorHandler gErrorExitHandler;
+extern ErrorHandler gWarningHandler;
+extern void *gUnk93625C;
+extern void *gUnk936270;
+extern int gUnk93627C;
+extern char gErrorText[];
 
 void Error_Show(const char *fmt, ...)
 {

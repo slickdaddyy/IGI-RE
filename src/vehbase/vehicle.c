@@ -29,11 +29,10 @@ ORIG(0x5042B0, char, AreaActivate_Contains, (void *criteria, Vec3d *pos));
 ORIG(0x504A30, void *, AreaActivate_AddCriteria, (const char *name, void *fn));
 ORIG(0x504A90, void, AreaActivate_RemoveCriteria, (void *criteria));
 
-#define gVehicleType VAR(uint16_t, 0x54E200)
-#define gVehicleExplodeEvent VAR(uint8_t, 0x54E202)
-#define gVehicleEvent203 VAR(uint8_t, 0x54E203)
-#define gVehicleCriteria VAR(void *, 0xA76C48)
-#define gVehicles VAR(VehicleList *, 0xA76C40)
+extern uint16_t gVehicleType;
+extern uint8_t gVehicleExplodeEvent;
+extern uint8_t gVehicleEvent203;
+extern void *gVehicleCriteria;
 
 /* every vehicle, kept by 0x4F4870 */
 typedef struct VehicleList {
@@ -41,6 +40,7 @@ typedef struct VehicleList {
     int unk4;
     Vehicle *items[];
 } VehicleList;
+extern VehicleList *gVehicles;
 
 /* PhysType arguments event */
 typedef struct ParseMsg {

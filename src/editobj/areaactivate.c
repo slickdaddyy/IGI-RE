@@ -70,10 +70,10 @@ uint16_t EditorRigidObj_GetType(void);
 
 #define AREA_CRITERIA_COUNT 31
 
-#define gAreaActivateType VAR(uint16_t, 0x54E69C)
-#define gAreaActivateEvent VAR(uint8_t, 0x54E69E)
-#define gAreaCriteria ((Criteria *)0xA7A640)
-#define gAreaActivateParams VAR(void *, 0xA7A7B4)
+extern uint16_t gAreaActivateType;
+extern uint8_t gAreaActivateEvent;
+extern Criteria gAreaCriteria[];
+extern void *gAreaActivateParams;
 
 static const float kHalf = 0.5f;
 static const double kNoMax = -0x1.fffffffffffffp+1023;

@@ -22,17 +22,17 @@ typedef struct DisplayMode {
     int height;
 } DisplayMode;
 
-#define gDebugTextOwnScene VAR(char, 0x5488D8)
+extern char gDebugTextOwnScene;
 #define gDebugFontData ((void *)0x5488DC)
-#define gDebugTextTask VAR(Task *, 0xA5EA70)
-#define gDebugTextDirty VAR(char, 0xA5EA74)
-#define gDebugTextEnabled VAR(char, 0xA5EA75)
-#define gDebugTextType VAR(uint16_t, 0xA5EA76)
-#define gDebugTextBuf ((char *)0xA5EA78)
-#define gDebugTextScene VAR(Scene, 0xA5EB80)
-#define gDebugTextReady VAR(char, 0xA5EBCC)
-#define gDebugTextWin VAR(TextWin *, 0xA5EBD0)
-#define gDebugTextFont VAR(void *, 0xA5EBD4)
+extern Task *gDebugTextTask;
+extern char gDebugTextDirty;
+extern char gDebugTextEnabled;
+extern uint16_t gDebugTextType;
+extern char gDebugTextBuf[];
+extern Scene gDebugTextScene;
+extern char gDebugTextReady;
+extern TextWin *gDebugTextWin;
+extern void *gDebugTextFont;
 
 ORIG(0x48F1F0, char, AppContext_GetDebugText, (void));
 ORIG(0x491630, void, Display_AddSetModeCallback, (void (*fn)(void)));

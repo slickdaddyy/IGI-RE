@@ -41,9 +41,9 @@ ORIG(0x4F4800, void, Vehicle_NewParts, (void *v));
 ORIG(0x4F4820, void, Vehicle_DeleteParts, (void *v));
 ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (void *v, PhysType *phys));
 
-#define gCarType VAR(uint16_t, 0x53BDA8)
-#define gCarParams VAR(void *, 0x57BD28)
-#define gCarControls ((ControlInfo *)0x53BDB0)
+extern uint16_t gCarType;
+extern void *gCarParams;
+extern ControlInfo gCarControls[];
 
 static float radius(void *obj)
 {

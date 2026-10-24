@@ -66,8 +66,8 @@ typedef struct WeaponInitArgs {
 typedef void (*TaskHandler)(void *task, void *arg);
 
 #define gTaskHandlers ((TaskHandler (*)[0x180])0xA96AE0)
-#define gWeaponTypes ((WeaponType *)0x56E258)
-#define gWeaponTypeCount VAR(int, 0x57B18C)
+extern WeaponType gWeaponTypes[];
+extern int gWeaponTypeCount;
 
 WeaponType *Weapon_GetType(void *task);
 void *Task_FindWeapon(void *task, int id);

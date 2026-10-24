@@ -4,7 +4,7 @@
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 
-#define gControllerEvent VAR(uint8_t, 0xA7B254)
+extern uint8_t gControllerEvent;
 
 /* the state a controller handler fills each update */
 typedef struct Controller {

@@ -4,8 +4,8 @@
 #include "igi.h"
 #include "define/define.h"
 
-#define gSoundDefSoundType VAR(uint16_t, 0x54D9B4)
-#define gSoundDefSoundType2 VAR(uint16_t, 0x54D9B6)
+extern uint16_t gSoundDefSoundType;
+extern uint16_t gSoundDefSoundType2;
 
 void SoundDef_SetPos(void *t, const Vec3d *pos);
 void SoundDef_SetGlobal(void *t, const char *on);

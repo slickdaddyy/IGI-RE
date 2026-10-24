@@ -68,24 +68,24 @@ typedef struct SortDraw {
     ComputerStartup *task;
 } SortDraw;
 
-#define gStartupType VAR(uint16_t, 0x53F520)
-#define gStartupDraw VAR(int, 0x5BDC50)
-#define gStartupMethod VAR(int, 0x5BDC54)
-#define gD3D VAR(void *, 0x5CA110)
+extern uint16_t gStartupType;
+extern int gStartupDraw;
+extern int gStartupMethod;
+extern void *gD3D;
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
-#define gScreenW VAR(float, 0xBCABC0)
-#define gScreenH VAR(float, 0xBCABC4)
-#define gDevice VAR(void *, 0x5CA114)
-#define gViewX VAR(float, 0xBCABB8)
-#define gViewY VAR(float, 0xBCABBC)
-#define gD3DUnkBCABEC VAR(float, 0xBCABEC)
-#define gD3DMinZ VAR(float, 0xBCADA0)
-#define gD3DViewMinZ VAR(float, 0xBCADB4)
-#define gD3DViewMaxZ VAR(float, 0xBCAD8C)
-#define gD3DListA VAR(int *, 0xBCADE8)
-#define gD3DListB VAR(int *, 0xBCAD7C)
-#define gD3DListC VAR(int *, 0xBCADAC)
-#define gD3DStateList VAR(int *, 0xBCADC4)
+extern float gScreenW;
+extern float gScreenH;
+extern void *gDevice;
+extern float gViewX;
+extern float gViewY;
+extern float gD3DUnkBCABEC;
+extern float gD3DMinZ;
+extern float gD3DViewMinZ;
+extern float gD3DViewMaxZ;
+extern int *gD3DListA;
+extern int *gD3DListB;
+extern int *gD3DListC;
+extern int *gD3DStateList;
 
 /* method idx of a COM object */
 #define COM(obj, idx, type) ((type)(*(void ***)(obj))[idx])

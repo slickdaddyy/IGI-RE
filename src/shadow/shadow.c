@@ -18,13 +18,13 @@ ORIG(0x49A450, Task *, PolyList_New, (void *world, void *owner, Vec3d *pos, cons
 ORIG(0x4B4010, void, Matrix_SetDirection, (Matrix *m, void *dir));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
 
-#define gMagicObjContainerType VAR(uint16_t, 0xA5E364)
-#define gShadowType VAR(uint16_t, 0xA5E36C)
-#define gShadowColor ((float *)0x548708)
-#define gIdentity VAR(Matrix, 0x548718)
-#define kShadowFade VAR(float, 0x5336CC)
-#define kShadowMinFade VAR(float, 0x5336A4)
-#define kShadowDepth VAR(float, 0x533480)
+extern uint16_t gMagicObjContainerType;
+extern uint16_t gShadowType;
+extern float gShadowColor[];
+extern Matrix gIdentity;
+extern float kShadowFade;
+extern float kShadowMinFade;
+extern float kShadowDepth;
 
 #define SubLevel_Run (FN(0x488700, SubLevel_Run))
 #define sub_4D3710 (FN(0x4D3710, Task_Nothing))

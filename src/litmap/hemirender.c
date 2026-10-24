@@ -124,7 +124,7 @@ ORIG(0x521960, void, Hemicube_ClipTriangle, (int *color, float *depth, int pitch
                                              float *t1, float *t2, int affine));
 
 /* ids drawn for back faces: 0x10000 times -1 */
-#define gLightmapBuffer VAR(int *, 0xA83B28)
+extern int *gLightmapBuffer;
 
 #define MAX_VERTS 20000
 

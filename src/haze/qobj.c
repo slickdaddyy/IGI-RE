@@ -12,10 +12,10 @@ ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4C1800, QTaskList *, QTaskList_New, (int max));
 ORIG(0x4C1830, void, QTaskList_Free, (QTaskList *list));
 
-#define gQObjType VAR(uint16_t, 0x548638)
-#define gQObjEvent VAR(uint8_t, 0x54863A)
-#define gCameraEvent VAR(uint8_t, 0x548644)
-#define gCameraListeners VAR(QTaskList *, 0xA54690)
+extern uint16_t gQObjType;
+extern uint8_t gQObjEvent;
+extern uint8_t gCameraEvent;
+extern QTaskList *gCameraListeners;
 
 void QObj_Open(void)
 {

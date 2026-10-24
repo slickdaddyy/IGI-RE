@@ -57,9 +57,9 @@ ORIG(0x4E6C00, void, Sound_Stop, (Task *sound));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
 ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 
-#define gAlarmLightSprite VAR(char *, 0x57C17C)
-#define gSCameraType VAR(uint16_t, 0x57C180)
-#define gLensList VAR(void *, 0x57C18C)
+extern char *gAlarmLightSprite;
+extern uint16_t gSCameraType;
+extern void *gLensList;
 
 typedef struct QVertex {
     float x, y, z;
@@ -76,9 +76,9 @@ typedef struct QVertexStrip {
 } QVertexStrip;
 
 #define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
-#define gQVertexTexture VAR(void *, 0xA84A50)
-#define gQVertexStrip VAR(int, 0xA84A54)
-#define gQVertexPalette VAR(void *, 0xA84A58)
+extern void *gQVertexTexture;
+extern int gQVertexStrip;
+extern void *gQVertexPalette;
 
 typedef struct CollHit {
     Task *task;
@@ -92,19 +92,19 @@ typedef struct CollHit {
     char unk5C[0x14];
 } CollHit;
 
-#define kZero VAR(float, 0x5333EC)
-#define kHalf VAR(float, 0x533504)
-#define kThirty VAR(float, 0x5333BC)
-#define kFixed VAR(float, 0x5333B8)       /* 4096, one meter */
-#define kDegToRad VAR(float, 0x53367C)
-#define kThirtieth VAR(float, 0x533678)
-#define kPitchStep VAR(float, 0x533870)   /* 2.5 degrees */
-#define kPitchRest VAR(float, 0x533874)   /* -75 degrees */
-#define kTrackMin VAR(float, 0x533878)    /* -0.75 degrees */
-#define kTrackMax VAR(float, 0x533514)    /* 0.75 degrees */
-#define kTrackDead VAR(float, 0x53387C)   /* 5 degrees */
-#define kTwelfth VAR(float, 0x533888)
-#define kGlassStep VAR(double, 0x533880)  /* 20.48 */
+extern float kZero;
+extern float kHalf;
+extern float kThirty;
+extern float kFixed;       /* 4096, one meter */
+extern float kDegToRad;
+extern float kThirtieth;
+extern float kPitchStep;   /* 2.5 degrees */
+extern float kPitchRest;   /* -75 degrees */
+extern float kTrackMin;    /* -0.75 degrees */
+extern float kTrackMax;    /* 0.75 degrees */
+extern float kTrackDead;   /* 5 degrees */
+extern float kTwelfth;
+extern double kGlassStep;  /* 20.48 */
 
 void SCameraLens_UpdateSounds(SCameraLens *l);
 void SCameraLens_Track(SCameraLens *l);

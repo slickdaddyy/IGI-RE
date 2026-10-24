@@ -24,9 +24,9 @@ typedef struct IntRange {
     int min, max;
 } IntRange;
 
-#define gDialogWindowType VAR(uint16_t, 0x539C28)
-#define gDialogRange VAR(IntRange, 0x57BB80)
-#define gDialogWindowParams VAR(void *, 0x57BB88)
+extern uint16_t gDialogWindowType;
+extern IntRange gDialogRange;
+extern void *gDialogWindowParams;
 #define MenuWindow_SetLayout (FN(0x424300, MenuWindow_ForwardEvent914))
 
 void DialogWindow_Run(DialogWindow *dw);

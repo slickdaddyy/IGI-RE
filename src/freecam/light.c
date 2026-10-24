@@ -39,10 +39,10 @@ ORIG(0x4DA950, void, Light_PushSpot, (const Vec3d *pos, const float *color, floa
                                       float cone));
 ORIG(0x4DAA00, void, Light_Pop, (void));
 
-#define gPointLightType VAR(uint16_t, 0x54F800)
-#define gSpotLightType VAR(uint16_t, 0x54F802)
-#define gPointLightPool VAR(Pool, 0xAFA800)
-#define gSpotLightPool VAR(Pool, 0xAFA820)
+extern uint16_t gPointLightType;
+extern uint16_t gSpotLightType;
+extern Pool gPointLightPool;
+extern Pool gSpotLightPool;
 
 void PointLightObj_Push(PointLightObj *l)
 {

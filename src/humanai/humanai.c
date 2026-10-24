@@ -50,11 +50,11 @@ ORIG(0x48A340, float *, Human_GetBonePos, (float *out, Human *h, int unk));
 ORIG(0x4B47C0, int, Random_Int, (void *r, int n));
 ORIG(0x4B32B0, long double, Vec3d_Distance, (const Vec3d *a, const Vec3d *b));
 
-#define gHumanAIType VAR(uint16_t, 0x53C920)
-#define gHumanAIParams VAR(void *, 0x58A9D4)
-#define gAITypeNames ((const char **)0x53C9C0)
-#define gAIEventNames ((const char **)0x53CA38)
-#define gAIScripts ((void **)0x58A9F4)
+extern uint16_t gHumanAIType;
+extern void *gHumanAIParams;
+extern const char *gAITypeNames[];
+extern const char *gAIEventNames[];
+extern void *gAIScripts[];
 
 /* what the AI hands its human each frame */
 typedef struct AIControlMsg {

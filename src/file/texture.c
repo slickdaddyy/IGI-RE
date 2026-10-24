@@ -85,21 +85,21 @@ ORIG(0x509910, void, D3DTex_Register, (void));
 ORIG(0x509920, void, D3DTex_Unregister, (void));
 
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
-#define gTexFromFile VAR(char, 0x943B3C)
-#define gTexParams ((float *)0x943B20)
+extern char gTexFromFile;
+extern float gTexParams[];
 
-#define gSetLODId VAR(int, 0x546F90)
-#define gGetTextureSizeId VAR(int, 0x546F94)
-#define gReloadTextureId VAR(int, 0x546F98)
-#define gRefreshTextureId VAR(int, 0x546F9C)
-#define gBeginTextureListId VAR(int, 0x546FA0)
-#define gEndTextureListId VAR(int, 0x546FA4)
-#define gAllocTextureId VAR(int, 0x546FA8)
-#define gDeAllocTextureId VAR(int, 0x546FAC)
-#define gDownloadTextureId VAR(int, 0x546FB0)
-#define gGetTMUsId VAR(int, 0x546FB4)
-#define gSetActiveTMUId VAR(int, 0x546FB8)
-#define gGetActiveTMUId VAR(int, 0x546FBC)
+extern int gSetLODId;
+extern int gGetTextureSizeId;
+extern int gReloadTextureId;
+extern int gRefreshTextureId;
+extern int gBeginTextureListId;
+extern int gEndTextureListId;
+extern int gAllocTextureId;
+extern int gDeAllocTextureId;
+extern int gDownloadTextureId;
+extern int gGetTMUsId;
+extern int gSetActiveTMUId;
+extern int gGetActiveTMUId;
 
 void Texture_Create(Texture *tex, int a2, int pitch, int width, int height, int format, int a7, int a8, void *data);
 

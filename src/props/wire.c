@@ -66,15 +66,15 @@ typedef struct Wire {
 
 _Static_assert(sizeof(Wire) == 0x138, "Wire");
 
-#define gWireType VAR(uint16_t, 0x57C144)
-#define gWireParams VAR(void *, 0x57C148)
-#define gRoom VAR(void *, 0xA44344)
+extern uint16_t gWireType;
+extern void *gWireParams;
+extern void *gRoom;
 
 #define sub_45E3D0 (FN(0x45E3D0, Human_ClearResult))
 
-#define kWireScale VAR(double, 0x5334B0) /* 1/4096 */
-#define kHalfD VAR(double, 0x5335C0)
-#define kWireSlope VAR(float, 0x533834)  /* 2 degrees */
+extern double kWireScale; /* 1/4096 */
+extern double kHalfD;
+extern float kWireSlope;  /* 2 degrees */
 
 void Wire_Create(Wire *w);
 void Wire_Run(Wire *w);

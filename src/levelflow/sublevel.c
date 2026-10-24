@@ -17,8 +17,8 @@ typedef struct SubLevel {
 
 _Static_assert(sizeof(SubLevel) == 0x120, "SubLevel");
 
-#define gSubLevelType VAR(uint16_t, 0x5C8A90)
-#define gSubLevelParams VAR(ParamTable *, 0x5C8A94)
+extern uint16_t gSubLevelType;
+extern ParamTable *gSubLevelParams;
 
 void SubLevel_Create(SubLevel *s);
 void SubLevel_Run(SubLevel *s);

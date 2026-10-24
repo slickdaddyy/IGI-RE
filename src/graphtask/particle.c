@@ -112,20 +112,20 @@ ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, Vec3d *starts, Vec
                                   void *msg, int flags));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 
-#define gDynCubeObjType VAR(uint16_t, 0x54875C)
-#define gParticle2DType VAR(uint16_t, 0x54E568)
-#define gParticle2DEvent VAR(uint8_t, 0x54E56A)
-#define gParticle2DTrails ((Particle2DTrail *)0xA774C0)
+extern uint16_t gDynCubeObjType;
+extern uint16_t gParticle2DType;
+extern uint8_t gParticle2DEvent;
+extern Particle2DTrail gParticle2DTrails[];
 #define gParticle2DRandom ((void *)0xA7A4C0)
-#define gParticle2DMem VAR(int, 0xA7A4D0)
-#define gParticle2DMemMax VAR(int, 0xA7A4D4)
-#define gParticle2DTrailIdx VAR(int, 0xA7A4D8)
-#define gParticle2DTimer VAR(int16_t, 0xA7A4DC)
-#define gLights VAR(char *, 0xB041E0)
-#define gLightIndex VAR(int *, 0xB041E4)
-#define gLightCount VAR(int, 0xB041E8)
-#define gLightStride VAR(int, 0xB041F0)
-#define gAmbient ((float *)0xB818A0)
+extern int gParticle2DMem;
+extern int gParticle2DMemMax;
+extern int gParticle2DTrailIdx;
+extern int16_t gParticle2DTimer;
+extern char *gLights;
+extern int *gLightIndex;
+extern int gLightCount;
+extern int gLightStride;
+extern float gAmbient[];
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);

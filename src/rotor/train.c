@@ -24,10 +24,10 @@ typedef struct Train {
 
 _Static_assert(offsetof(Train, unk88C) == 0x88C, "Train");
 
-#define gTrainRelPos VAR(Vec3d, 0x57BCA0)
-#define gTrainType VAR(uint16_t, 0x57BCB8)
-#define gTrainParams VAR(void *, 0x57BCBC)
-#define gTrainMatrix VAR(Matrix, 0x57BCC0)
+extern Vec3d gTrainRelPos;
+extern uint16_t gTrainType;
+extern void *gTrainParams;
+extern Matrix gTrainMatrix;
 
 void Train_GetFrame(Train *t, void **out)
 {

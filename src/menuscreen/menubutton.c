@@ -5,8 +5,8 @@
 ORIG(0x4B50B0, void, QVertex_DrawFrame, (Sprite *s, float x, float y, float r, float g, float b, float alpha, float z,
                                          int frame, unsigned int flags, int unk20));
 
-#define gMenuButtonType VAR(uint16_t, 0x53B7F0)
-#define gMenuButtonParams VAR(void *, 0x57BBFC)
+extern uint16_t gMenuButtonType;
+extern void *gMenuButtonParams;
 
 void MenuButton_Run(MenuButton *mb);
 void MenuButton_Draw(MenuButton *mb);

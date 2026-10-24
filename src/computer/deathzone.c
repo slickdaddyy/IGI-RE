@@ -73,8 +73,8 @@ typedef struct MoveArg {
     float *matrix;
 } MoveArg;
 
-#define gDeathZoneType VAR(uint16_t, 0x53F4FC)
-#define gDeathZoneEvent VAR(uint8_t, 0x53F4FE)
+extern uint16_t gDeathZoneType;
+extern uint8_t gDeathZoneEvent;
 
 static const float kZero = 0.0f;
 

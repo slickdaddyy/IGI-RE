@@ -104,10 +104,10 @@ _Static_assert(offsetof(GunHolder, activeExpr) == 0x25F4, "activeExpr");
 _Static_assert(offsetof(GunHolder, team) == 0x2694, "team");
 _Static_assert(sizeof(GunHolder) == 0x26A0, "GunHolder");
 
-#define gGunHolderType VAR(uint16_t, 0x5BE318)
-#define gGunHolderRange ((float *)0x5BE320)
-#define gGunHolderParams VAR(void *, 0x5BE328)
-#define gGunHolderList VAR(void *, 0x5BE330)
+extern uint16_t gGunHolderType;
+extern float gGunHolderRange[];
+extern void *gGunHolderParams;
+extern void *gGunHolderList;
 
 static const float kDegToRad = 0x1.1df46ap-6f;
 static const float kRangeScale = 4096.0f;

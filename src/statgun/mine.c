@@ -24,9 +24,9 @@ typedef struct Mine {
 _Static_assert(offsetof(Mine, unk238) == 0x238, "Mine");
 _Static_assert(sizeof(Mine) == 0x250, "Mine");
 
-#define gMineType VAR(uint16_t, 0x5BE3A0)
-#define gMineParams VAR(void *, 0x5BE39C)
-#define gMineList VAR(void *, 0x5BE3A8)
+extern uint16_t gMineType;
+extern void *gMineParams;
+extern void *gMineList;
 
 #define HANDLER_475CC0 (FN(0x475CC0, Mine_RunHandler))
 #define HANDLER_475D30 (FN(0x475D30, Mine_DeleteHandler))

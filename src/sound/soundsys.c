@@ -98,34 +98,34 @@ typedef struct ResourceEntry {
 _Static_assert(sizeof(SoundInst) == 0x78, "SoundInst");
 _Static_assert(sizeof(SoundSysDef) == 0xA0, "SoundSysDef");
 
-#define gSoundFree VAR(SoundInst *, 0xA5E5EC)
-#define gSoundInstCount VAR(int, 0xA5E5F0)
-#define gSoundActive VAR(SoundInst *, 0xA5E5F4)
-#define gSoundNextId VAR(int, 0xA5E5F8)
-#define gSoundUpdateRate VAR(int, 0xA5E5FC)
-#define gSoundInsts VAR(SoundInst *, 0xA5E600)
-#define gUnkA5E608 VAR(char, 0xA5E608)
-#define gSoundDisabled VAR(char, 0xA5E60A)
-#define gSoundTasks VAR(QTaskList *, 0xA5E60C)
-#define gSoundDefs VAR(QTaskList *, 0xA5E610)
+extern SoundInst *gSoundFree;
+extern int gSoundInstCount;
+extern SoundInst *gSoundActive;
+extern int gSoundNextId;
+extern int gSoundUpdateRate;
+extern SoundInst *gSoundInsts;
+extern char gUnkA5E608;
+extern char gSoundDisabled;
+extern QTaskList *gSoundTasks;
+extern QTaskList *gSoundDefs;
 
-#define gSoundSysControllerType VAR(uint16_t, 0x548808)
-#define gSoundSysDefType VAR(uint16_t, 0x54880A)
-#define gSoundSysDefType2 VAR(uint16_t, 0x54880C)
-#define gSoundSysDefParentType VAR(uint16_t, 0x54880E)
-#define gSoundSysDefParentType2 VAR(uint16_t, 0x548810)
+extern uint16_t gSoundSysControllerType;
+extern uint16_t gSoundSysDefType;
+extern uint16_t gSoundSysDefType2;
+extern uint16_t gSoundSysDefParentType;
+extern uint16_t gSoundSysDefParentType2;
 
-#define gSoundListEvent VAR(uint8_t, 0x548812)
-#define gSoundInfoEvent VAR(uint8_t, 0x548813)
-#define gSoundFindEvent VAR(uint8_t, 0x548814)
-#define gSoundNameEvent VAR(uint8_t, 0x548815)
-#define gSoundSetPosEvent VAR(uint8_t, 0x548816)
-#define gSoundSetVolumeEvent VAR(uint8_t, 0x548817)
-#define gSoundSetPitchEvent VAR(uint8_t, 0x548818)
-#define gSoundRangeEvent VAR(uint8_t, 0x548819)
-#define gSoundDurationEvent VAR(uint8_t, 0x54881A)
-#define gSoundSetGlobalEvent VAR(uint8_t, 0x54881B)
-#define gSoundStopEvent VAR(int, 0x54881C)
+extern uint8_t gSoundListEvent;
+extern uint8_t gSoundInfoEvent;
+extern uint8_t gSoundFindEvent;
+extern uint8_t gSoundNameEvent;
+extern uint8_t gSoundSetPosEvent;
+extern uint8_t gSoundSetVolumeEvent;
+extern uint8_t gSoundSetPitchEvent;
+extern uint8_t gSoundRangeEvent;
+extern uint8_t gSoundDurationEvent;
+extern uint8_t gSoundSetGlobalEvent;
+extern int gSoundStopEvent;
 
 static const float kZero = 0.0f;
 

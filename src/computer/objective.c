@@ -40,9 +40,9 @@ typedef struct ComputerObjective {
 _Static_assert(sizeof(Objective) == 0xCC, "Objective");
 _Static_assert(sizeof(ComputerObjective) == 0x538, "ComputerObjective");
 
-#define gObjectiveParams VAR(void *, 0x5BDC6C)
-#define gObjectiveType VAR(uint16_t, 0x5BDC70)
-#define gObjective VAR(ComputerObjective *, 0x5BDC78)
+extern void *gObjectiveParams;
+extern uint16_t gObjectiveType;
+extern ComputerObjective *gObjective;
 
 void ComputerObjective_Create(ComputerObjective *c);
 void ComputerObjective_Run(ComputerObjective *c);

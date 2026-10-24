@@ -104,15 +104,15 @@ ORIG(0x5186C0, int, NodeCriteria_Register, (const char *name));
 ORIG(0x518720, void, NodeCriteria_Unregister, (int mask));
 ORIG(0x518550, void, TaskTypes_Close, (void));
 
-#define gAIGraphType VAR(uint16_t, 0x54E83C)
-#define gAIGraphEvent VAR(uint8_t, 0x54E83E)
+extern uint16_t gAIGraphType;
+extern uint8_t gAIGraphEvent;
 /* min and max of two params */
-#define gRangeA8 ((double *)0xA7B2A8)
-#define gRange98 ((double *)0xA7B2B8)
-#define gAIGraphParams VAR(void *, 0xA7B2CC)
-#define gCriteriaDoor VAR(int, 0xA7B2D0)
-#define gCriteriaView VAR(int, 0xA7B2D4)
-#define gCriteriaStair VAR(int, 0xA7B2D8)
+extern double gRangeA8[];
+extern double gRange98[];
+extern void *gAIGraphParams;
+extern int gCriteriaDoor;
+extern int gCriteriaView;
+extern int gCriteriaStair;
 #define gTaskHandlers ((void (**)(void *))0xA96AE0)
 #define TASK_HANDLER(slot, type) gTaskHandlers[(slot) * 0x180 + (type)]
 

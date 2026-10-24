@@ -61,15 +61,15 @@ typedef struct Joypad {
 _Static_assert(sizeof(InputPort) == 0xB0, "InputPort");
 _Static_assert(sizeof(Joypad) == 0x28, "Joypad");
 
-#define gInputPorts ((InputPort *)0xBC20A0)
-#define gInputPortIndex VAR(int, 0xA5EF9C)
-#define gInputPortType VAR(uint16_t, 0xA5EFA0)
-#define gUnkA5EF98 VAR(int, 0xA5EF98)
-#define gJoypads ((Joypad *)0xBCAA08)
-#define gKeys ((uint8_t *)0xC28C62)
-#define gMouseX VAR(float, 0xC28F84)
-#define gMouseY VAR(float, 0xC28F88)
-#define gMouseButtons VAR(uint32_t, 0xC28F8C)
+extern InputPort gInputPorts[];
+extern int gInputPortIndex;
+extern uint16_t gInputPortType;
+extern int gUnkA5EF98;
+extern Joypad gJoypads[];
+extern uint8_t gKeys[];
+extern float gMouseX;
+extern float gMouseY;
+extern uint32_t gMouseButtons;
 
 static const float kZero = 0.0f;
 static const float kOne = 1.0f;

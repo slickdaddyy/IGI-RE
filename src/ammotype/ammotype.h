@@ -34,8 +34,8 @@ typedef struct Vec3f {
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
 #define HANDLER(slot, type) (gTaskHandlers[(uint8_t)(slot)][(uint16_t)(type)])
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 
 /* One DefineAmmoType() call from ammo/<name>/ammo.qsc, 0x168 bytes. */
 typedef struct AmmoType {

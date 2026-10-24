@@ -28,11 +28,11 @@ ORIG(0x4C0460, void, SymbolTable_Remove, (SymbolTable *table, const char *name))
 #define StringValueHandler (FN(0x4B8060, Script_StringValue))
 #define ConstantValueHandler (FN(0x4B8830, Script_ConstantValue))
 
-#define gScriptRefCount VAR(unsigned int, 0xA43E8C)
-#define gScriptRefs VAR(List, 0xA43E90)
-#define gScriptRefBlocks VAR(List, 0xA43EA0)
-#define gScriptRefPeak VAR(unsigned int, 0xA43EAC)
-#define gScriptRefFree VAR(List, 0xA43EB0)
+extern unsigned int gScriptRefCount;
+extern List gScriptRefs;
+extern List gScriptRefBlocks;
+extern unsigned int gScriptRefPeak;
+extern List gScriptRefFree;
 
 void Script_RegisterInt(const char *name, int *var)
 {

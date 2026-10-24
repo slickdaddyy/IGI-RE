@@ -217,24 +217,24 @@ ORIG(0x4F1FF0, uint8_t, Weapon_GetTriggerEvent, (void));
 ORIG(0x4F2060, Task *, WeaponSlots_Get, (void *slots, int i));
 ORIG(0x4F2350, void, Weapon_UseAmmo, (Gun *g, char unlimited));
 
-#define gGunParams VAR(void *, 0x5BE3C0)
-#define gGunCasingType VAR(uint16_t, 0x5BE3C4)
-#define gGunType VAR(uint16_t, 0x5BE3C6)
-#define gGunEvents ((uint8_t *)0x5407B8)
-#define gQVertexTexture VAR(void *, 0xA84A50)
-#define gQVertexStrip VAR(int, 0xA84A54)
-#define gQVertexPalette VAR(void *, 0xA84A58)
+extern void *gGunParams;
+extern uint16_t gGunCasingType;
+extern uint16_t gGunType;
+extern uint8_t gGunEvents[];
+extern void *gQVertexTexture;
+extern int gQVertexStrip;
+extern void *gQVertexPalette;
 #define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
 
-#define kHalf VAR(const float, 0x533504)
-#define kOne VAR(const float, 0x5333E0)
-#define kTwo VAR(const float, 0x533588)
-#define kThree VAR(const float, 0x53352C)
-#define kFour VAR(const float, 0x5335C8)
-#define kEight VAR(const float, 0x534114)
-#define kDegToRad VAR(const float, 0x53367C)
-#define kHudRight VAR(const float, 0x534154)  /* 0.984375 */
-#define kHudBottom VAR(const float, 0x533924) /* 0.8958333 */
+extern const float kHalf;
+extern const float kOne;
+extern const float kTwo;
+extern const float kThree;
+extern const float kFour;
+extern const float kEight;
+extern const float kDegToRad;
+extern const float kHudRight;  /* 0.984375 */
+extern const float kHudBottom; /* 0.8958333 */
 
 static const float kGray = 128.0f;
 
@@ -427,11 +427,11 @@ void Gun_GetTypeHandler(Gun *g, WeaponType **out)
 }
 HOOK(0x479C80, Gun_GetTypeHandler);
 
-#define kOff0X VAR(const float, 0x534150) /* 143.36 */
-#define kOff0Y VAR(const float, 0x53414C) /* 389.12 */
-#define kOff0Z VAR(const float, 0x534148) /* 20.48 */
-#define kOff1X VAR(const float, 0x5338D0) /* 409.6 */
-#define kOff1Z VAR(const float, 0x533730) /* 40.96 */
+extern const float kOff0X; /* 143.36 */
+extern const float kOff0Y; /* 389.12 */
+extern const float kOff0Z; /* 20.48 */
+extern const float kOff1X; /* 409.6 */
+extern const float kOff1Z; /* 40.96 */
 
 void Gun_Handler479CA0(void *obj, float *out)
 {

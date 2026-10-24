@@ -75,12 +75,12 @@ _Static_assert(offsetof(Elevator, lastUp) == 0x5D4, "Elevator");
 _Static_assert(offsetof(Elevator, moving) == 0x63C, "Elevator");
 _Static_assert(sizeof(Elevator) == 0x648, "Elevator");
 
-#define gElevatorType VAR(uint16_t, 0x57C108)
-#define gElevatorParams VAR(void *, 0x57C0E0)
+extern uint16_t gElevatorType;
+extern void *gElevatorParams;
 #define gElevatorFloorNames ((char (*)[32])0x57BF90)
-#define gElevatorMaxSpeedRange VAR(RangeF, 0x57C0D0)
-#define gElevatorAccelRange VAR(RangeF, 0x57C0D8)
-#define gElevator188Range VAR(RangeF, 0x57C0E8)
+extern RangeF gElevatorMaxSpeedRange;
+extern RangeF gElevatorAccelRange;
+extern RangeF gElevator188Range;
 
 static const float kZero = 0.0f;
 static const float kNear = 16384.0f;

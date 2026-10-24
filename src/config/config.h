@@ -93,12 +93,12 @@ typedef struct ConfigConstant {
 #define CONFIG_MAX_DEVICES 5
 #define CONFIG_LANG_USA 5
 
-#define gProfileCount VAR(int, 0xBC2380)
-#define gActiveProfile VAR(int, 0xBC2384)
-#define gProfiles ((PlayerProfile *)0xBC2388)
-#define gContentControlPassword ((char *)0xBC79C8)
-#define gDriverCount VAR(int, 0x567C90)
-#define gDrivers ((ConfigDevice *)0x567C98)
+extern int gProfileCount;
+extern int gActiveProfile;
+extern PlayerProfile gProfiles[];
+extern char gContentControlPassword[];
+extern int gDriverCount;
+extern ConfigDevice gDrivers[];
 
 typedef ScriptValue *ScriptFn(ScriptValue *out, void *data, void *args);
 

@@ -17,12 +17,12 @@ ORIG(0x4E54E0, void, CellMask_Free, (void *p));
 ORIG(0x4E5580, int, CellMask_Test, (const void *mask, int x, int y));
 ORIG(0x4E5BA0, int, CellMask_TestRect, (const void *mask, float x, float y, float w, float h));
 
-#define gTaskTypes ((TaskType *)0xAF5EE0)
+extern TaskType gTaskTypes[];
 #define gTaskHandlers ((TaskHandler (*)[TASK_MAX_TYPES])0xA96AE0)
-#define gTaskSlotEvent ((const signed char *)0xA969E0)
+extern const signed char gTaskSlotEvent[];
 #define gDynCubeChildDir ((const int (*)[3])0x548000)
-#define gPixelCenter VAR(const float, 0x533504)
-#define gSqrt3 VAR(const float, 0x534AC8)
+extern const float gPixelCenter;
+extern const float gSqrt3;
 
 /* Visibility bitmap a node may carry in unk3C. */
 typedef struct CellMask {

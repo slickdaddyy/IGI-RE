@@ -68,10 +68,10 @@ _Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 
-#define gScriptEmptyString ((const char *)0x567C74)
+extern const char gScriptEmptyString[];
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* calls fn(child, arg) on each child of t (not deeper), with fn read from the

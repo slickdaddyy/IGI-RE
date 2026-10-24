@@ -165,13 +165,13 @@ _Static_assert(offsetof(MenuManager, screenStack) == 0x27EC, "MenuManager.screen
 _Static_assert(sizeof(MenuManager) == 0x2898, "MenuManager");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
-#define gQVertexTexture VAR(void *, 0xA84A50)
-#define gQVertexStrip VAR(int, 0xA84A54)
-#define gQVertexPalette VAR(void *, 0xA84A58)
-#define gEmptyString ((char *)0x567C74)
+extern void *gQVertexTexture;
+extern int gQVertexStrip;
+extern void *gQVertexPalette;
+extern char gEmptyString[];
 
 /* the handler a task type has for a slot */
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

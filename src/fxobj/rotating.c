@@ -54,8 +54,8 @@ _Static_assert(offsetof(RotatingObject, start) == 0x188, "start");
 _Static_assert(offsetof(RotatingObject, cond) == 0x1AC, "cond");
 _Static_assert(sizeof(RotatingObject) == 0x200, "RotatingObject");
 
-#define gRotatingParams VAR(void *, 0x57BE90)
-#define gRotatingType VAR(uint16_t, 0x57BE98)
+extern void *gRotatingParams;
+extern uint16_t gRotatingType;
 
 static const float kPerFrame = 0x1.111112p-5f;
 static const float kFull = 360.0f;

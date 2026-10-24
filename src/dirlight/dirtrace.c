@@ -15,7 +15,7 @@ ORIG(0x521E40, void, Hemicube_DrawLightmapSet, (LightmapInfo *info, const Vec3d 
                                   int w, int h, float centerX, float centerY, int pass, int unk1, int unk2, int unk3,
                                   float radius, int unk4));
 
-#define gCurrentWorld VAR(void *, 0xA44344)
+extern void *gCurrentWorld;
 
 static const float kOne = 1.0f;
 static const float kHalf = 0.5f;

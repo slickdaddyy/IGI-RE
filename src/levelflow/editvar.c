@@ -17,8 +17,8 @@ typedef struct EditVariable {
 
 _Static_assert(sizeof(EditVariable) == 0xE0, "EditVariable");
 
-#define gEditVariableType VAR(uint16_t, 0x5410D0)
-#define gEditVariableParams VAR(ParamTable *, 0x5C8A9C)
+extern uint16_t gEditVariableType;
+extern ParamTable *gEditVariableParams;
 
 void EditVariable_Create(EditVariable *v);
 void EditVariable_Run(EditVariable *v);

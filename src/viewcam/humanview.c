@@ -90,8 +90,8 @@ ORIG(0x4EC0E0, void, AnimTrigger_Fire, (int bone, void *obj, double *pos));
 ORIG(0x4F2060, Task *, WeaponSlots_Get, (Task **slots, int i));
 ORIG(0x4F2310, void, Weapon_Move, (Task *w, double *pos, Rot *m));
 
-#define gHumanViewType VAR(uint16_t, 0x5BDC40)
-#define gHumanMaskType VAR(int, 0x5BDC3C)
+extern uint16_t gHumanViewType;
+extern int gHumanMaskType;
 
 #define TASK_RUN_CHILDREN (FN(0x488700, SubLevel_Run))
 #define HANDLER_45F920 (FN(0x45F920, Task_FalseHandler))

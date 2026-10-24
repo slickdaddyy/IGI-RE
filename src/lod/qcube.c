@@ -98,39 +98,39 @@ _Static_assert(offsetof(QEnclosing, radius) == 0x28, "QEnclosing");
 
 typedef void (*QHandler)(QTask *task, void *arg);
 
-#define gTaskHandlers ((QHandler *)0xA96AE0)
+extern QHandler gTaskHandlers[];
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
-#define gQCubeList VAR(QEntry *, 0xB16C98)
-#define gQCubeOut VAR(QEntry *, 0xB12C58)
-#define gQCubeCount VAR(int, 0xB12C20)
-#define gQCubeCache ((QCacheEntry *)0xB04340)
-#define gQCubePool0 VAR(Pool, 0xB12B60)
-#define gQCubePool1 VAR(Pool, 0xB12C40)
-#define gQCubePool2 VAR(Pool, 0xB16CC0)
-#define gQCubeCallbacks VAR(QCallback *, 0xA538E4)
-#define gQCubeCallbackSlots ((QCallback *)0xA4EEA8)
-#define gQCubeEnclosingEvent VAR(uint8_t, 0x548441)
-#define gQCubeNearClipEvent VAR(uint8_t, 0x548440)
-#define gQCubeDetail VAR(int, 0x54844C)
-#define gQCubeMinSize VAR(int, 0xB16C6C)
-#define gQCubeWorld VAR(QWorld *, 0xB16CA0)
-#define gQCubeOrigin ((int *)0xB12BC0)
-#define gQCubeOriginF ((float *)0xB16C70)
-#define gQCubeOriginD ((double *)0xB12BA0)
-#define gQCubeDrawOutside VAR(int, 0x54843C)
-#define gQCubeInside VAR(int, 0xA538CC)
-#define gQCubeEnclosing VAR(QTask *, 0xA538D0)
-#define gViewSector VAR(int, 0xA538D4)
-#define gQCubeEnclosingBox ((double *)0xB16C80)
-#define gQCubeEnclosingRadius VAR(float, 0xB04264)
-#define gQCubeNeighbourBits ((int *)0xA50FFC)
+extern QEntry *gQCubeList;
+extern QEntry *gQCubeOut;
+extern int gQCubeCount;
+extern QCacheEntry gQCubeCache[];
+extern Pool gQCubePool0;
+extern Pool gQCubePool1;
+extern Pool gQCubePool2;
+extern QCallback *gQCubeCallbacks;
+extern QCallback gQCubeCallbackSlots[];
+extern uint8_t gQCubeEnclosingEvent;
+extern uint8_t gQCubeNearClipEvent;
+extern int gQCubeDetail;
+extern int gQCubeMinSize;
+extern QWorld *gQCubeWorld;
+extern int gQCubeOrigin[];
+extern float gQCubeOriginF[];
+extern double gQCubeOriginD[];
+extern int gQCubeDrawOutside;
+extern int gQCubeInside;
+extern QTask *gQCubeEnclosing;
+extern int gViewSector;
+extern double gQCubeEnclosingBox[];
+extern float gQCubeEnclosingRadius;
+extern int gQCubeNeighbourBits[];
 #define gQCubeChildOrder ((uint8_t (*)[8])0xB12BE0)
 #define gQCubeBitPerm ((uint8_t (*)[256])0xB12340)
-#define gQCubeOctantMask ((uint8_t *)0xA4EF14)
-#define gCollChildTable ((int *)0x548060)
-#define gQCubeOutsideMin ((float *)0xB12B78)
-#define gQCubeOutsideMax ((float *)0xB16C60)
-#define gNearClipText ((char *)0xC103A0)
+extern uint8_t gQCubeOctantMask[];
+extern int gCollChildTable[];
+extern float gQCubeOutsideMin[];
+extern float gQCubeOutsideMax[];
+extern char gNearClipText[];
 
 static const float kOne = 1.0f;
 static const double kHalf = 0.5;

@@ -24,8 +24,8 @@ typedef struct ToggleBox {
 
 _Static_assert(sizeof(ToggleBox) == 0x14C, "ToggleBox");
 
-#define gToggleBoxType VAR(uint16_t, 0x53B674)
-#define gToggleBoxParams VAR(void *, 0x57BBD0)
+extern uint16_t gToggleBoxType;
+extern void *gToggleBoxParams;
 
 void ToggleBox_Create(ToggleBox *tb, void *arg);
 void ToggleBox_Delete(ToggleBox *tb);

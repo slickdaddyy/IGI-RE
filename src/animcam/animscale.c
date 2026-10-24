@@ -73,8 +73,8 @@ ORIG(0x4F40F0, void *, AnimData_GetType, (void));
 ORIG(0x4F4100, uint16_t, AnimTask_GetType, (void));
 ORIG(0x4F4150, void *, AnimTask_GetList, (void));
 
-#define gAnimScaleTaskType VAR(uint16_t, 0x54F68C)
-#define gAnimScaleTaskParams VAR(void *, 0xA84394)
+extern uint16_t gAnimScaleTaskType;
+extern void *gAnimScaleTaskParams;
 
 static const float kTickStep = 0x1.99999ap-4f;
 

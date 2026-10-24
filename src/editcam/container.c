@@ -23,7 +23,7 @@ ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 #define GuardGenerator_WorldRemove (FN(0x487E20, GuardGenerator_WorldRemove))
 #define GuardGenerator_WorldAdd (FN(0x487D90, GuardGenerator_WorldAdd))
 
-#define gContainerType VAR(uint16_t, 0xA7A7BC)
+extern uint16_t gContainerType;
 
 /* a plain task that runs its children and passes world events on */
 void Container_Init(void)

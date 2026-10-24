@@ -13,12 +13,12 @@ ORIG(0x5098D0, void, LocalDevice_Unregister, (void));
 ORIG(0x4BADA0, void, Script_FreeRefBlock, (Node *file));
 ORIG(0x4B1DE0, const char *, Device_GetName, (int device));
 
-#define gAliases ((FileAlias *)0x942330)
-#define gDevices ((FileDevice *)0x9436B0)
-#define gDeviceCount VAR(int, 0x94396C)
-#define gLoadedFiles VAR(List, 0x943970)
-#define gUnk943988 VAR(int, 0x943988)
-#define gExpandedPath ((char *)0x943A18)
+extern FileAlias gAliases[];
+extern FileDevice gDevices[];
+extern int gDeviceCount;
+extern List gLoadedFiles;
+extern int gUnk943988;
+extern char gExpandedPath[];
 
 /* Expands an alias at the start of path into its index'th path. Returns the
    next index to try, or 0 when this was the last one. */

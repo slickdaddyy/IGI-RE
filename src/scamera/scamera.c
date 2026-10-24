@@ -66,14 +66,14 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 
-#define gWorld VAR(void *, 0xA44344)
-#define gAlarmLightSprite VAR(void *, 0x57C17C)
-#define gSCameraType VAR(uint16_t, 0x57C180)
-#define gSCameraParams VAR(void *, 0x57C184)
-#define gViewConeType VAR(uint16_t, 0x57C188)
-#define gLensList VAR(void *, 0x57C18C)
-#define gLensType VAR(uint16_t, 0x57C190)
-#define gSCameraDetectMask VAR(int, 0x57C198)
+extern void *gWorld;
+extern void *gAlarmLightSprite;
+extern uint16_t gSCameraType;
+extern void *gSCameraParams;
+extern uint16_t gViewConeType;
+extern void *gLensList;
+extern uint16_t gLensType;
+extern int gSCameraDetectMask;
 
 /* handlers that live outside this folder */
 #define sub_42FC50 (FN(0x42FC50, Car_CollFilter))

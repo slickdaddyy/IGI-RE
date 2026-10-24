@@ -36,9 +36,9 @@ typedef struct ListBox {
 _Static_assert(sizeof(ListBox) == 0xD38, "ListBox");
 _Static_assert(offsetof(ListBox, count) == 0xBE0, "ListBox.count");
 
-#define gListBoxType VAR(uint16_t, 0x53B694)
-#define gListBoxParams VAR(void *, 0x57BBDC)
-#define gListBoxFilling VAR(ListBox *, 0x57BBD8)
+extern uint16_t gListBoxType;
+extern void *gListBoxParams;
+extern ListBox *gListBoxFilling;
 
 void ListBox_Run(ListBox *lb);
 void ListBox_Draw(ListBox *lb);

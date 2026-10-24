@@ -54,8 +54,8 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, int type, int flags, void *extra));
 ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
-#define gLevelTimerType VAR(uint16_t, 0xA83774)
-#define gLevelTimerParams VAR(void *, 0xA83778)
+extern uint16_t gLevelTimerType;
+extern void *gLevelTimerParams;
 
 void LevelTimer_Create(LevelTimer *t);
 void LevelTimer_Register(LevelTimer *t);

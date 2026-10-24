@@ -187,33 +187,33 @@ _Static_assert(sizeof(LightmapRef) == 0x24, "LightmapRef");
 _Static_assert(sizeof(LightmapSet) == 0x18, "LightmapSet");
 
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
-#define gQCubeInside VAR(int, 0xA538CC)
-#define gQCubeEnclosing VAR(SectorObject *, 0xA538D0)
-#define gViewSector VAR(Sector *, 0xA538D4)
-#define gSectorFogCount VAR(int, 0xA5E310)
-#define gSectorLinks VAR(Pool, 0xA5E318)
-#define gSectorFog VAR(int *, 0xA5E330)
-#define gSectorLightCount VAR(int, 0xA5E334)
-#define gVisSectors VAR(Pool, 0xA5E338)
-#define gPortalClipDepth VAR(int, 0xA5E350)
-#define gCurrentSectorObj VAR(SectorObject *, 0xA5E354)
-#define gVisFrame VAR(int, 0xA5E358)
-#define gSectorLights VAR(int *, 0xA5E35C)
-#define gQCubeDrawOutside VAR(int, 0x54843C)
-#define gSectorType VAR(uint16_t, 0x548694)
-#define gSectorObjectType VAR(uint16_t, 0x548696)
-#define gSectorInteriorObjectType VAR(uint16_t, 0x548698)
-#define gQCubeOutsideMin ((float *)0xB12B78)
-#define gQCubeOutsideMax ((float *)0xB16C60)
-#define gView VAR(TransCtx, 0xBCAAE0)
+extern int gQCubeInside;
+extern SectorObject *gQCubeEnclosing;
+extern Sector *gViewSector;
+extern int gSectorFogCount;
+extern Pool gSectorLinks;
+extern int *gSectorFog;
+extern int gSectorLightCount;
+extern Pool gVisSectors;
+extern int gPortalClipDepth;
+extern SectorObject *gCurrentSectorObj;
+extern int gVisFrame;
+extern int *gSectorLights;
+extern int gQCubeDrawOutside;
+extern uint16_t gSectorType;
+extern uint16_t gSectorObjectType;
+extern uint16_t gSectorInteriorObjectType;
+extern float gQCubeOutsideMin[];
+extern float gQCubeOutsideMax[];
+extern TransCtx gView;
 #define gScene ((void *)0xBCABA0)
-#define gSceneArea VAR(SceneArea, 0xBCABA0)
+extern SceneArea gSceneArea;
 
-#define kOneD VAR(const double, 0x5333F8)
-#define kHalf VAR(const float, 0x533504)
-#define kRaise VAR(const float, 0x5338D0)       /* 409.6 */
-#define kNearZ VAR(const float, 0x534B2C)       /* 0.04096 */
-#define kPortalDist2 VAR(const float, 0x534B30)
+extern const double kOneD;
+extern const float kHalf;
+extern const float kRaise;       /* 409.6 */
+extern const float kNearZ;       /* 0.04096 */
+extern const float kPortalDist2;
 
 void Portal_ClipTriangle(ClipVertex a, ClipVertex b, ClipVertex c, float **rect, float nearZ);
 void Sector_FloodPortals(Sector *s, float *min, float *max, int lod);

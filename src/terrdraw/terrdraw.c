@@ -17,15 +17,15 @@ ORIG(0x495170, void, Direct3D_AddSetModeCallback, (void (*fn)(void)));
 ORIG(0x4951E0, void, Direct3D_AddUnsetModeCallback, (void (*fn)(void)));
 ORIG(0x495200, void, Direct3D_AddRestoreCallback, (void (*fn)(void)));
 
-#define gD3D VAR(IDirect3D7 *, 0x5CA110)
-#define gD3DDevice VAR(IDirect3DDevice7 *, 0x5CA114)
-#define gFogEnable VAR(DWORD, 0x5470B4)
-#define gTerrainFogColorD3D VAR(DWORD, 0xA7E068)
-#define gChunkHash ((TerrList *)0xA7E080)
-#define gChunkHashEnd ((TerrList *)0xA7F85C)
-#define gTerrainChunkPool VAR(TerrPool, 0xA7F878)
-#define gTerrainVB VAR(IDirect3DVertexBuffer7 *, 0xA7F890)
-#define gD3DTnL VAR(int, 0xBCAD74)
+extern IDirect3D7 *gD3D;
+extern IDirect3DDevice7 *gD3DDevice;
+extern DWORD gFogEnable;
+extern DWORD gTerrainFogColorD3D;
+extern TerrList gChunkHash[];
+extern TerrList gChunkHashEnd[];
+extern TerrPool gTerrainChunkPool;
+extern IDirect3DVertexBuffer7 *gTerrainVB;
+extern int gD3DTnL;
 
 #define CHUNK_HASH_SIZE 0x1FD
 

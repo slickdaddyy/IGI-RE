@@ -39,27 +39,27 @@ typedef struct WaterState {
     float color[3]; /* average of the layer colors */
 } WaterState;
 
-#define gWaterState VAR(WaterState, 0xBA2000)
-#define gFlatWaterLayerType VAR(uint16_t, 0xBA2018)
-#define gFlatWaterParams VAR(void *, 0xBA201C)
-#define gFlatWaterType VAR(uint16_t, 0xBA2020)
-#define gFlatWaterLayerParams VAR(void *, 0xBA2024)
+extern WaterState gWaterState;
+extern uint16_t gFlatWaterLayerType;
+extern void *gFlatWaterParams;
+extern uint16_t gFlatWaterType;
+extern void *gFlatWaterLayerParams;
 
-#define kRange01 ((const float *)0x54EE68)
-#define kRange11 ((const float *)0x54EE70)
+extern const float kRange01[];
+extern const float kRange11[];
 
-#define gCamZ VAR(double, 0xBCAB18)
-#define gTerrainFogScale VAR(float, 0xA7DA18)
-#define k4096 VAR(float, 0x5333B8)
-#define kNear VAR(float, 0x5338D0) /* 409.6 */
-#define kHalf VAR(float, 0x533504)
-#define kFlatTenth VAR(float, 0x534B5C)
-#define kFltMax VAR(float, 0x534B3C)
-#define kFltMaxNeg VAR(float, 0x534B38)
-#define kFogBias VAR(float, 0x534B1C) /* 130 */
-#define k2000 VAR(float, 0x534C70)
-#define k256th VAR(double, 0x534C50)
-#define k2Pow30 VAR(double, 0x534C78)
+extern double gCamZ;
+extern float gTerrainFogScale;
+extern float k4096;
+extern float kNear; /* 409.6 */
+extern float kHalf;
+extern float kFlatTenth;
+extern float kFltMax;
+extern float kFltMaxNeg;
+extern float kFogBias; /* 130 */
+extern float k2000;
+extern double k256th;
+extern double k2Pow30;
 
 #define WATER_ROWS 10
 #define WATER_MAX 1000

@@ -73,10 +73,10 @@ ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (void *obj, PhysType *phys));
 ORIG(0x4FEC10, void, SplineObj_GetPoints, (int path, int unk, Vec3d *out, char *found, float dist, int count,
                                        float *offsets, int unk2));
 
-#define gTrainType VAR(uint16_t, 0x57BCB8)
-#define gTrainParams VAR(void *, 0x57BCBC)
-#define gTrainOffsetRange ((float *)0x57BCE8)
-#define gTrainChannels ((char *)0x53BCE8)
+extern uint16_t gTrainType;
+extern void *gTrainParams;
+extern float gTrainOffsetRange[];
+extern char gTrainChannels[];
 
 /* handlers of the Train type that live outside this file */
 #define sub_4EFF20 (FN(0x4EFF20, ParamQuat32_Size))
@@ -84,9 +84,9 @@ ORIG(0x4FEC10, void, SplineObj_GetPoints, (int path, int unk, Vec3d *out, char *
 #define sub_42BB60 (FN(0x42BB60, Train_OnWorldEvent0))
 #define sub_42BBA0 (FN(0x42BBA0, Train_OnWorldEvent1))
 
-#define kKmhToFrame VAR(float, 0x5336C8)
-#define kSoundMin VAR(float, 0x5336CC) /* 0.8 */
-#define kSoundScale VAR(float, 0x5336D0) /* 5 */
+extern float kKmhToFrame;
+extern float kSoundMin; /* 0.8 */
+extern float kSoundScale; /* 5 */
 
 static Train *head_of(Train *t)
 {

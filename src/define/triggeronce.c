@@ -4,8 +4,8 @@
 #include "igi.h"
 #include "define/define.h"
 
-#define gSoundDefTriggerOnceType VAR(uint16_t, 0x54DA60)
-#define gSoundDefTriggerOnceType2 VAR(uint16_t, 0x54DA62)
+extern uint16_t gSoundDefTriggerOnceType;
+extern uint16_t gSoundDefTriggerOnceType2;
 
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));

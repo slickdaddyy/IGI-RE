@@ -33,13 +33,13 @@ ORIG(0x4B4720, void, Random_Init, (void *r));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4C6840, void, DynCube_ListRemove, (void *world, void *obj, int list));
 
-#define gParticleSystemType VAR(uint16_t, 0x54F7B0)
-#define gSpriteParticleSystemType VAR(uint16_t, 0xA84608)
-#define gSpriteParticleSystemReady VAR(int, 0xA84610)
+extern uint16_t gParticleSystemType;
+extern uint16_t gSpriteParticleSystemType;
+extern int gSpriteParticleSystemReady;
 #define gParticleRandom ((void *)0xA845F8)
-#define gCamMatrix ((const float *)0xBCAAE0)
-#define gCamTanX VAR(float, 0xBCAB20)
-#define gCamTanY VAR(float, 0xBCAB24)
+extern const float gCamMatrix[];
+extern float gCamTanX;
+extern float gCamTanY;
 
 void ParticleSystem_Draw(ParticleSystem *ps);
 void ParticleSystem_Delete(ParticleSystem *ps);

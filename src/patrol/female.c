@@ -255,14 +255,14 @@ ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 #define Human_DeadRun ((SoldierStateFn)FN(0x45C740, Human_DeadRun))
 #define Human_UseRun ((SoldierStateFn)FN(0x45CA80, Human_UseRun))
 
-#define gFemaleFootstepSounds ((const int *)0x53E470)
-#define gSoldierFemaleStates ((SoldierStateFn *)0x53E400)
+extern const int gFemaleFootstepSounds[];
+extern SoldierStateFn gSoldierFemaleStates[];
 #define gSoldierFemaleCombos ((void *)0x53E468)
 #define gSoldierFemaleAnimSlots ((void *)0x53E4A0)
 #define gSoldierFemaleSpeeds ((void *)0x53E508)
-#define gSoldierFemaleParams VAR(void *, 0x5BDA84)
-#define gSoldierFemaleType VAR(uint16_t, 0x5BDA88)
-#define gSoldierFemaleUnk5BDA90 VAR(int, 0x5BDA90)
+extern void *gSoldierFemaleParams;
+extern uint16_t gSoldierFemaleType;
+extern int gSoldierFemaleUnk5BDA90;
 
 #define ANIM_WALK_CYCLE 0x3F2
 #define ANIM_DEFAULT 6

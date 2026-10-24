@@ -94,65 +94,65 @@ typedef struct TaskNote {
 typedef void (*TaskFn)(Task *task);
 
 #define gTaskHandlers ((void *(*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 
 #define LEVEL_MAX_IDS 0x1000
 #define LEVEL_NOTE_LISTS 251
 
-#define gLevelTaskIds ((Task ***)0xA71890)
-#define gTaskNotes ((List *)0xA70CA8)
-#define gLevel VAR(Level *, 0xA758A4)
-#define gLevelFirstTask VAR(Task *, 0xA758A8)
-#define gLevelDynamic VAR(Task *, 0xA758AC)
-#define gLevelStatic VAR(Task *, 0xA758B0)
-#define gLevelIdle VAR(Task *, 0xA758B4)
-#define gLevelCameraBase VAR(Task *, 0xA758B8)
-#define gLevelInsertHead VAR(char, 0xA758BC)
-#define gLevelPaused VAR(char, 0xA758BD)
-#define gLevelModels VAR(void *, 0xA70C94)
-#define gLevelScriptFile VAR(const char *, 0xA70C98)
-#define gLevelScriptLine VAR(int, 0xA70C74)
-#define gLevelTaskNewEnabled VAR(char, 0x54DD16)
+extern Task **gLevelTaskIds[];
+extern List gTaskNotes[];
+extern Level *gLevel;
+extern Task *gLevelFirstTask;
+extern Task *gLevelDynamic;
+extern Task *gLevelStatic;
+extern Task *gLevelIdle;
+extern Task *gLevelCameraBase;
+extern char gLevelInsertHead;
+extern char gLevelPaused;
+extern void *gLevelModels;
+extern const char *gLevelScriptFile;
+extern int gLevelScriptLine;
+extern char gLevelTaskNewEnabled;
 
-#define gLevelType VAR(uint16_t, 0x54DD0C)
-#define gStaticType VAR(uint16_t, 0x54DD0E)
-#define gDynamicType VAR(uint16_t, 0x54DD10)
-#define gIdleType VAR(uint16_t, 0x54DD12)
-#define gCameraBaseType VAR(uint16_t, 0x54DD14)
-#define gLevelEvent0 VAR(uint8_t, 0x54DDA4)
-#define gLevelNameEvent VAR(uint8_t, 0x54DDA5)
-#define gLevelEventDA8 VAR(int, 0x54DDA8)
-#define gLevelEventDAC VAR(int, 0x54DDAC)
-#define gLevelEventDB0 VAR(int, 0x54DDB0)
+extern uint16_t gLevelType;
+extern uint16_t gStaticType;
+extern uint16_t gDynamicType;
+extern uint16_t gIdleType;
+extern uint16_t gCameraBaseType;
+extern uint8_t gLevelEvent0;
+extern uint8_t gLevelNameEvent;
+extern int gLevelEventDA8;
+extern int gLevelEventDAC;
+extern int gLevelEventDB0;
 
 /* parameter type ids */
-#define gParamReal32x3 VAR(int, 0xA70C68)
-#define gParamReal32x9 VAR(int, 0xA70C6C)
-#define gParamDropDownCombo VAR(int, 0xA70C70)
-#define gParamInt16 VAR(int, 0xA70C78)
-#define gParamInt32 VAR(int, 0xA70C7C)
-#define gParamGraphEnvelope VAR(int, 0xA70C80)
-#define gParamAngle VAR(int, 0xA70C84)
-#define gParamObjectPos VAR(int, 0xA70C88)
-#define gParamScriptFile VAR(int, 0xA70C8C)
-#define gParamBool8 VAR(int, 0xA70C90)
-#define gParamVarString VAR(int, 0xA70C9C)
-#define gParamGraph VAR(int, 0xA70CA0)
-#define gParamDegrees VAR(int, 0xA70CA4)
-#define gParamString256 VAR(int, 0xA7186C)
-#define gParamReal32 VAR(int, 0xA71870)
-#define gParamReal64 VAR(int, 0xA71874)
-#define gParamQuat32 VAR(int, 0xA71878)
-#define gParamPitchGraph VAR(int, 0xA7187C)
-#define gParamRGB VAR(int, 0xA71880)
-#define gParamString16 VAR(int, 0xA71884)
-#define gParamString32 VAR(int, 0xA71888)
-#define gParamLevelExpression VAR(int, 0xA7188C)
-#define gParamReal64x3 VAR(int, 0xA75890)
-#define gParamQTaskNote VAR(int, 0xA75894)
-#define gParamPushButton VAR(int, 0xA75898)
-#define gParamBitfield VAR(int, 0xA758A0)
+extern int gParamReal32x3;
+extern int gParamReal32x9;
+extern int gParamDropDownCombo;
+extern int gParamInt16;
+extern int gParamInt32;
+extern int gParamGraphEnvelope;
+extern int gParamAngle;
+extern int gParamObjectPos;
+extern int gParamScriptFile;
+extern int gParamBool8;
+extern int gParamVarString;
+extern int gParamGraph;
+extern int gParamDegrees;
+extern int gParamString256;
+extern int gParamReal32;
+extern int gParamReal64;
+extern int gParamQuat32;
+extern int gParamPitchGraph;
+extern int gParamRGB;
+extern int gParamString16;
+extern int gParamString32;
+extern int gParamLevelExpression;
+extern int gParamReal64x3;
+extern int gParamQTaskNote;
+extern int gParamPushButton;
+extern int gParamBitfield;
 
 Task *Task_FindById(int id);
 int Task_GetId(Task *task);

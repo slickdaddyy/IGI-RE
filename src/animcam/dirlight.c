@@ -41,11 +41,11 @@ ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x5269C0, void, Dirlight_Update, (Dirlight *d));
 
-#define gDirlightParams VAR(void *, 0xA83D30)
-#define gDirlightType VAR(uint16_t, 0xA83D34)
-#define gDirlightKeyframeParams VAR(void *, 0xA83D48)
-#define gDirlightKeyframeType VAR(uint16_t, 0xA83D4C)
-#define gDirlightPool VAR(Pool, 0xBA1E00)
+extern void *gDirlightParams;
+extern uint16_t gDirlightType;
+extern void *gDirlightKeyframeParams;
+extern uint16_t gDirlightKeyframeType;
+extern Pool gDirlightPool;
 
 void DirlightKeyframe_GetParams(void *task, void **out)
 {

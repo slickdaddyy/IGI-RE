@@ -201,40 +201,40 @@ ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 #define gTaskHandlers ((void **(*)[0x180])0xA96AE0)
 #define TASK_HANDLER(slot, type) (((void **)0xA96AE0)[(slot) * 0x180 + (type)])
 
-#define gHumanPlayerType VAR(uint16_t, 0x5385B0)
-#define gBodyStates ((StateFn *)0x5385B4)
-#define gWeaponStates ((StateFn *)0x538678)
+extern uint16_t gHumanPlayerType;
+extern StateFn gBodyStates[];
+extern StateFn gWeaponStates[];
 #define gBodyCombos ((void *)0x538710)
 #define gAnimSlots ((void *)0x538870)
-#define gMoveSpeeds ((float *)0x5389F8)
-#define gTurnSpeeds ((float *)0x538B08)
-#define gWeaponCycleCount VAR(int, 0x56DF18)
-#define gWeaponCycle ((int *)0x56DF1C)
-#define gShowPosition VAR(char, 0x56DF94)
-#define gAmmoLimitCount VAR(int, 0x56DF98)
-#define gAmmoLimits ((AmmoLimit *)0x56DF9C)
-#define gUnk56E09C VAR(void *, 0x56E09C)
-#define gWeaponCategories ((WeaponCategory *)0x56E0A0)
-#define gMoveScale VAR(float, 0x56E1E8)
-#define gJumpSpeed VAR(float, 0x56E1EC)
-#define gJumpUp VAR(float, 0x56E1F0)
-#define gHumanAirSpeed VAR(float, 0x56E1F4)
-#define gLeanSide VAR(float, 0x56E1F8)
-#define gLeanUp VAR(float, 0x56E1FC)
-#define gLeanFrames VAR(int, 0x56E200)
-#define gMaxDamage VAR(float, 0x56E204)
-#define gUnk56E208 VAR(float, 0x56E208)
-#define gHumanPlayerList VAR(QTaskList *, 0x56E210)
-#define gUnlimitedAmmo VAR(char, 0x56E214)
+extern float gMoveSpeeds[];
+extern float gTurnSpeeds[];
+extern int gWeaponCycleCount;
+extern int gWeaponCycle[];
+extern char gShowPosition;
+extern int gAmmoLimitCount;
+extern AmmoLimit gAmmoLimits[];
+extern void *gUnk56E09C;
+extern WeaponCategory gWeaponCategories[];
+extern float gMoveScale;
+extern float gJumpSpeed;
+extern float gJumpUp;
+extern float gHumanAirSpeed;
+extern float gLeanSide;
+extern float gLeanUp;
+extern int gLeanFrames;
+extern float gMaxDamage;
+extern float gUnk56E208;
+extern QTaskList *gHumanPlayerList;
+extern char gUnlimitedAmmo;
 #define gScriptNumberType ((void *)0x567C74)
 
-#define kKmhToUnits VAR(float, 0x5334A4)
-#define kPerFrameHour VAR(float, 0x5334A0)
-#define kFlySpeedD VAR(double, 0x533478)
-#define kTwoPi VAR(float, 0x5334A8)
-#define kRadToDeg VAR(float, 0x5334AC)
-#define kUnitsToMeters VAR(double, 0x5334B0)
-#define kUnitsToMetersF VAR(float, 0x5333E8)
+extern float kKmhToUnits;
+extern float kPerFrameHour;
+extern double kFlySpeedD;
+extern float kTwoPi;
+extern float kRadToDeg;
+extern double kUnitsToMeters;
+extern float kUnitsToMetersF;
 
 #define BLEND 0x1.99999ap-3f
 #define WEAPON_DOWN_X -0x1.38c354p-1f

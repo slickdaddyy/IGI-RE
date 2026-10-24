@@ -44,8 +44,8 @@ typedef struct ScriptRef {
     ScriptSymbol *sym;
 } ScriptRef;
 
-#define gScriptSymbols VAR(SymbolTable *, 0xA43E88)
-#define gScriptEmptyString ((const char *)0x567C74)
+extern SymbolTable *gScriptSymbols;
+extern const char gScriptEmptyString[];
 
 /* fistp with the current rounding mode, low 32 bits of the 64 bit result */
 static inline int Script_Round(long double d)

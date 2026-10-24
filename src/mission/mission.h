@@ -155,10 +155,10 @@ _Static_assert(offsetof(StatusScreen, timeText) == 0x4DC, "StatusScreen.timeText
 _Static_assert(sizeof(StatusScreen) == 0x4F0, "StatusScreen");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gScriptEmptyString ((const char *)0x567C74)
-#define gTickInfo VAR(char *, 0xBC2360)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
+extern const char gScriptEmptyString[];
+extern char *gTickInfo;
 #define TICKS (*(int *)(gTickInfo + 0x68))
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

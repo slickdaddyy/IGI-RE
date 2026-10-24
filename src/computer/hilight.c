@@ -67,10 +67,10 @@ typedef struct EnumDesc {
     char **names;
 } EnumDesc;
 
-#define gHilightType VAR(uint16_t, 0x53F6D0)
-#define gHilightList VAR(void *, 0x5BDC80)
-#define gHilightParams VAR(void *, 0x5BDC84)
-#define gHilightIcons VAR(EnumDesc, 0x5BDC90)
+extern uint16_t gHilightType;
+extern void *gHilightList;
+extern void *gHilightParams;
+extern EnumDesc gHilightIcons;
 
 void ComputerHilight_Create(ComputerHilight *h);
 void ComputerHilight_Delete(ComputerHilight *h);

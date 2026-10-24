@@ -82,40 +82,40 @@ ORIG(0x435C40, uint16_t, Gear_GetType, (void));
 
 #define HANDLER_432BD0 (FN(0x432BD0, Heli_GetStateSize))
 
-#define gPlaneType VAR(uint16_t, 0x53BEE8)
-#define gPlaneInputs ((char *)0x53BEF0) /* {name, 0, min, max} for each PlaneInput field */
-#define gPlaneParams VAR(void *, 0x57BD54)
+extern uint16_t gPlaneType;
+extern char gPlaneInputs[]; /* {name, 0, min, max} for each PlaneInput field */
+extern void *gPlaneParams;
 #define gPlaneRandom ((void *)0x57BD48)
-#define gKeys ((uint8_t *)0xC28C62)
-#define gKeysPrev ((uint8_t *)0xC28D62)
+extern uint8_t gKeys[];
+extern uint8_t gKeysPrev[];
 
-#define kKmhToFrame VAR(float, 0x5336C8)
-#define kSlow VAR(float, 0x5336CC)          /* 0.8 */
-#define kGroundThrust VAR(float, 0x53369C)  /* 0.6 */
-#define kMilli VAR(float, 0x5336C0)
-#define kDamp VAR(float, 0x533790)          /* 0.995 */
-#define kDampSpeed VAR(float, 0x533794)
-#define kFlySpeed VAR(float, 0x533480)      /* 10 */
-#define kHalfDegToRad VAR(float, 0x53378C)
-#define kBrakeTail VAR(float, 0x53352C)     /* 3 */
-#define kBrakeFlap VAR(float, 0x533558)     /* 0.375 */
-#define kBrakeWing VAR(float, 0x53351C)     /* 0.75 */
-#define kCatapult VAR(float, 0x533788)
-#define kThrust VAR(float, 0x53346C)
-#define kYaw VAR(double, 0x533780)
-#define kPartsSpeed VAR(float, 0x53377C)
-#define kThrustStep VAR(double, 0x533720)   /* 0.01 */
-#define kThrustMin VAR(double, 0x533758)    /* 0.8 */
-#define kThrustMax VAR(double, 0x533770)    /* 1.25 */
-#define kHalf VAR(float, 0x533504)
-#define kWheelUp VAR(double, 0x533708)      /* 8192 */
-#define kZeroD VAR(double, 0x5333B0)
-#define kWheelNear VAR(double, 0x5337B8)    /* 7577.6 */
-#define kWheelNearF VAR(float, 0x5337B0)
-#define kWheelSpring VAR(float, 0x5337AC)
-#define kWheelFar VAR(double, 0x5337A0)
-#define kWheelForce VAR(float, 0x5337A8)
-#define kWheelDrag VAR(float, 0x533798)     /* 0.8 */
+extern float kKmhToFrame;
+extern float kSlow;          /* 0.8 */
+extern float kGroundThrust;  /* 0.6 */
+extern float kMilli;
+extern float kDamp;          /* 0.995 */
+extern float kDampSpeed;
+extern float kFlySpeed;      /* 10 */
+extern float kHalfDegToRad;
+extern float kBrakeTail;     /* 3 */
+extern float kBrakeFlap;     /* 0.375 */
+extern float kBrakeWing;     /* 0.75 */
+extern float kCatapult;
+extern float kThrust;
+extern double kYaw;
+extern float kPartsSpeed;
+extern double kThrustStep;   /* 0.01 */
+extern double kThrustMin;    /* 0.8 */
+extern double kThrustMax;    /* 1.25 */
+extern float kHalf;
+extern double kWheelUp;      /* 8192 */
+extern double kZeroD;
+extern double kWheelNear;    /* 7577.6 */
+extern float kWheelNearF;
+extern float kWheelSpring;
+extern double kWheelFar;
+extern float kWheelForce;
+extern float kWheelDrag;     /* 0.8 */
 
 #define FIELD(name) ((void *)offsetof(Plane, name))
 

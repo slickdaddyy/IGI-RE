@@ -23,7 +23,7 @@ ORIG(0x4D0A50, void, Mesh3D_GetWorldVertex, (void *out, Task *task, int i));
 ORIG(0x4D0D20, int, ModelLod_GetVertexCount, (void *model));
 ORIG(0x4D9610, uint16_t, BoneDynCubeObj_GetType, (void));
 
-#define gCheatsEnabled VAR(int, 0x57B194)
+extern int gCheatsEnabled;
 
 #define KEY_LCONTROL 0x1D
 #define KEY_LSHIFT 0x2A

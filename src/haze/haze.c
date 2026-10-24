@@ -18,12 +18,12 @@ ORIG(0x4C7350, void, DynCube_AddBox, (void *world, void *obj, Vec3d *center, con
                                   int unk));
 ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *obj));
 
-#define gQObjType VAR(uint16_t, 0x548638)
-#define gHazeType VAR(uint16_t, 0xA5E304)
-#define gHazeVisible ((HazeLayer **)0xA54694)
-#define gHazeVisibleCount VAR(int, 0xA5E2FC)
-#define gHazeFrame ((HazeLayer **)0xA546BC)
-#define gHazeFrameUsed VAR(int, 0xA5E300)
+extern uint16_t gQObjType;
+extern uint16_t gHazeType;
+extern HazeLayer *gHazeVisible[];
+extern int gHazeVisibleCount;
+extern HazeLayer *gHazeFrame[];
+extern int gHazeFrameUsed;
 
 static const double kHalfD = 0.5;
 static const float kZero = 0.0f;

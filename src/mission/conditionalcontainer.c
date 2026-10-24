@@ -44,8 +44,8 @@ ORIG(0x505D40, uint16_t, Container_GetType, (void));
 #define ConditionalContainer_Removed (FN(0x487B20, ConditionalContainer_WorldRemove))
 #define ConditionalContainer_Added (FN(0x487A70, ConditionalContainer_WorldAdd))
 
-#define gConditionalContainerType VAR(uint16_t, 0x5C8A80)
-#define gConditionalContainerParams VAR(void *, 0x5C8A7C)
+extern uint16_t gConditionalContainerType;
+extern void *gConditionalContainerParams;
 
 void ConditionalContainer_Create(ConditionalContainer *c);
 void ConditionalContainer_Run(ConditionalContainer *c);

@@ -62,16 +62,16 @@ _Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 _Static_assert(sizeof(MoveRigidObj) == 0x208, "MoveRigidObj");
 
 #define gMoveBetaNames ((char (*)[16])0xA837AC)
-#define gMoveRigidObjType VAR(uint16_t, 0xA837CC)
-#define gMoveRigidObjParams VAR(void *, 0xA837D0)
+extern uint16_t gMoveRigidObjType;
+extern void *gMoveRigidObjParams;
 #define gMoveAlphaNames ((char (*)[16])0xA837D4)
 #define gMoveGammaNames ((char (*)[16])0xA837F4)
 #define gMovePosNames ((char (*)[16])0xA83814)
 
-#define kOne VAR(float, 0x5333E0)
-#define kZero64 VAR(double, 0x5333B0)
-#define kOne64 VAR(double, 0x5333F8)
-#define kTwo64 VAR(double, 0x533928)
+extern float kOne;
+extern double kZero64;
+extern double kOne64;
+extern double kTwo64;
 
 #define MOVERIGID_PARAMS_CHANGED (FN(0x51FD60, MoveRigidObj_Changed))
 

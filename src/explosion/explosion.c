@@ -58,14 +58,14 @@ ORIG(0x503BF0, uint16_t, SimpointObj_GetType, (void));
 ORIG(0x503CC0, Fragment *, SimpointObjContainer_Add, (void *group, uint16_t type, Vec3d *pos, Matrix *m, Vec3f *vel));
 ORIG(0x503D50, void, SimpointObjContainer_SetAutoDelete, (void *group, int a));
 
-#define gExplosionType VAR(uint16_t, 0x5C1154)
-#define gFragmentType VAR(uint16_t, 0x5C1156)
-#define gFireballSprite VAR(char *, 0x5C1158)
-#define gExplosionSmokeType VAR(uint16_t, 0x5C115C)
-#define gSmoke2Sprite VAR(char *, 0x5C1160)
-#define gBurnTexture VAR(char *, 0x5C1164)
-#define gFireBallType VAR(uint16_t, 0x5C1168)
-#define gViewPos VAR(Vec3d, 0xBCAB08)
+extern uint16_t gExplosionType;
+extern uint16_t gFragmentType;
+extern char *gFireballSprite;
+extern uint16_t gExplosionSmokeType;
+extern char *gSmoke2Sprite;
+extern char *gBurnTexture;
+extern uint16_t gFireBallType;
+extern Vec3d gViewPos;
 #define gRenderFuncs ((void (**)(RenderArg *))0xA94E84)
 
 #define Explosion_Create (FN(0x480F30, Explosion_CreateHandler))

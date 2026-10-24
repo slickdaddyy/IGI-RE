@@ -142,26 +142,26 @@ ORIG(0x4FDEF0, uint8_t, Particle2D_GetCollideEvent, (void));
 ORIG(0x504A30, int, AreaActivate_AddCriteria, (const char *name, void *fn));
 ORIG(0x5096A0, uint8_t, AIGraph_GetEvent, (void));
 
-#define gHumanType VAR(uint16_t, 0x5BDAF8)
-#define gHumanGunshotEvent VAR(uint8_t, 0x53F316)
-#define gHumanPunchEvent VAR(uint8_t, 0x53F317)
-#define gHumanList VAR(void *, 0x5BDC24)
-#define gHumanParams VAR(void *, 0x5BDC18)
-#define gHumanCriteria VAR(int, 0x5BDB00)
-#define gHumanTeamCriteria ((int *)0x5BDAD8)
+extern uint16_t gHumanType;
+extern uint8_t gHumanGunshotEvent;
+extern uint8_t gHumanPunchEvent;
+extern void *gHumanList;
+extern void *gHumanParams;
+extern int gHumanCriteria;
+extern int gHumanTeamCriteria[];
 #define gHumanCriteriaNames ((char (*)[0x20])0x5BDB18)
-#define gHumanTeamNames ((const char **)0x53F348)
-#define gHumanUnk5BDC28 ((int *)0x5BDC28)
-#define gShadowTex VAR(int, 0x5BDB0C)
-#define gBloodHole1 VAR(int, 0x5BDB08)
-#define gBloodHole2 VAR(int, 0x5BDB10)
-#define gBloodHole3 VAR(int, 0x5BDB14)
-#define gBloodHole4 VAR(int, 0x5BDB04)
-#define gBloodSprite1 VAR(int, 0x5BDAD4)
-#define gBloodSprite2 VAR(int, 0x5BDAD0)
-#define gHumanMaskType VAR(int, 0x5BDC3C)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern const char *gHumanTeamNames[];
+extern int gHumanUnk5BDC28[];
+extern int gShadowTex;
+extern int gBloodHole1;
+extern int gBloodHole2;
+extern int gBloodHole3;
+extern int gBloodHole4;
+extern int gBloodSprite1;
+extern int gBloodSprite2;
+extern int gHumanMaskType;
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define gScriptNumberType ((void *)0x567C74)
 
 /* handlers of the Human type that live after this file */

@@ -22,11 +22,11 @@ ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
 ORIG(0x4CE3D0, void, Terrain_InvalidateLighting, (Terrain *t));
 ORIG(0x4D11C0, void, QCube_Reset, (void));
 
-#define gScriptEmptyString ((const char *)0x567C74)
-#define gHmpResident ((char *)0xB81920)
-#define gBitResident ((char *)0xB81A20)
-#define gLightmaps ((TerrainLightmap *)0xB81B20)
-#define gTerrainMaterials ((TerrainMaterial *)0xC28FE0)
+extern const char gScriptEmptyString[];
+extern char gHmpResident[];
+extern char gBitResident[];
+extern TerrainLightmap gLightmaps[];
+extern TerrainMaterial gTerrainMaterials[];
 #define gTerrainTileMaps ((uint8_t (*)[64])0xC30080)
 
 _Static_assert(offsetof(Terrain, slot_count) == 0x118, "Terrain");

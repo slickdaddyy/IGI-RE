@@ -11,7 +11,7 @@ ORIG(0x4F11F0, uint8_t, Level_GetEventDA4, (void));
 
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
 #define gGFXCaps ((void *)0xA81028)
-#define gGFXCapsViewerType VAR(uint16_t, 0xBA2028)
+extern uint16_t gGFXCapsViewerType;
 
 void GFXCapsViewer_GetCaps(Task *t, void **out)
 {

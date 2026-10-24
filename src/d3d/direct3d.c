@@ -44,12 +44,12 @@ ORIG(0x4D3710, void, Task_Nothing, (void));
 /* the exe's import thunk; DDRAW.dll is not linked into our DLL */
 ORIG_STD(0x4AF752, HRESULT, DirectDrawCreateEx_, (GUID *guid, void **out, REFIID iid, IUnknown *outer));
 
-#define IID_IDirect3DTnLHalDevice_ ((const GUID *)0x5349E0)
-#define IID_IDirect3DRefDevice_ ((const GUID *)0x5349F0)
-#define IID_IDirect3DHALDevice_ ((const GUID *)0x534A00)
-#define IID_IDirect3DRGBDevice_ ((const GUID *)0x534A10)
-#define IID_IDirect3D7_ ((const GUID *)0x534A20)
-#define IID_IDirectDraw7_ ((const GUID *)0x534A50)
+extern const GUID IID_IDirect3DTnLHalDevice_[];
+extern const GUID IID_IDirect3DRefDevice_[];
+extern const GUID IID_IDirect3DHALDevice_[];
+extern const GUID IID_IDirect3DRGBDevice_[];
+extern const GUID IID_IDirect3D7_[];
+extern const GUID IID_IDirectDraw7_[];
 
 typedef struct DynVB {
     IDirect3DVertexBuffer7 *vb;
@@ -101,47 +101,47 @@ typedef struct ZBufferSearch {
     unsigned maxDepth;
 } ZBufferSearch;
 
-#define gScreenHeight VAR(int, 0x5CA044)
-#define gDisplayEnumMode VAR(int, 0x5CA048)
-#define gScreenWidth VAR(int, 0x5CA0D8)
-#define gD3DRenderMode VAR(int, 0x5CA0E0)
-#define gD3DReady VAR(char, 0x5CA0F8)
-#define gD3DPrimary VAR(IDirectDrawSurface7 *, 0x5CA0FC)
-#define gD3DBack VAR(IDirectDrawSurface7 *, 0x5CA100)
-#define gD3DZBuffer VAR(IDirectDrawSurface7 *, 0x5CA104)
-#define gD3DFogTable VAR(int, 0x5CA108)
-#define gDDraw VAR(IDirectDraw7 *, 0x5CA10C)
-#define gD3D VAR(IDirect3D7 *, 0x5CA110)
-#define gD3DDevice VAR(IDirect3DDevice7 *, 0x5CA114)
-#define gD3DSetModeCallbacks VAR(D3DCallback *, 0x5CA118)
-#define gD3DUnsetModeCallbacks VAR(D3DCallback *, 0x5CA11C)
-#define gD3DRestoreCallbacks VAR(D3DCallback *, 0x5CA120)
-#define gTexturesCreated VAR(int, 0x5CA124)
-#define gTextureBytes VAR(int, 0x5CA128)
-#define gBytesToMb VAR(float, 0x5333C0)
-#define gD3DDeviceDesc VAR(D3DDEVICEDESC7, 0xBCAC00)
-#define gD3DFoundHAL VAR(int, 0xBCACF4)
-#define gD3DTnL VAR(int, 0xBCAD74)
-#define gD3DZ24 VAR(int, 0xBCADA4)
-#define gVBTL VAR(DynVB, 0xBCAD00)
-#define gVBLit VAR(DynVB, 0xBCAD80)
-#define gVBNormal VAR(DynVB, 0xBCAD90)
-#define gD3DCallbackPool ((D3DCallback *)0xBCAD20)
-#define gClearRed VAR(int, 0xBCADF0)
-#define gClearGreen VAR(int, 0xBCADF4)
-#define gClearBlue VAR(int, 0xBCADF8)
-#define gDisplayModes ((DisplayMode *)0xBCAE20)
-#define gDisplayModeCount VAR(int, 0xC10384)
-#define gD3DListA VAR(int *, 0xBCADE8)
-#define gD3DListB VAR(int *, 0xBCAD7C)
-#define gD3DListC VAR(int *, 0xBCADAC)
-#define gD3DStateList VAR(int *, 0xBCADC4)
-#define gD3DClippingOnIndex VAR(int, 0xBCACEC)
-#define gD3DClippingOffIndex VAR(int, 0xBCADE0)
-#define gD3DMinZ VAR(float, 0xBCADA0)
-#define gD3DMaxZ VAR(float, 0xBCADC8)
-#define gD3DViewMinZ VAR(float, 0xBCADB4)
-#define gD3DViewMaxZ VAR(float, 0xBCAD8C)
+extern int gScreenHeight;
+extern int gDisplayEnumMode;
+extern int gScreenWidth;
+extern int gD3DRenderMode;
+extern char gD3DReady;
+extern IDirectDrawSurface7 *gD3DPrimary;
+extern IDirectDrawSurface7 *gD3DBack;
+extern IDirectDrawSurface7 *gD3DZBuffer;
+extern int gD3DFogTable;
+extern IDirectDraw7 *gDDraw;
+extern IDirect3D7 *gD3D;
+extern IDirect3DDevice7 *gD3DDevice;
+extern D3DCallback *gD3DSetModeCallbacks;
+extern D3DCallback *gD3DUnsetModeCallbacks;
+extern D3DCallback *gD3DRestoreCallbacks;
+extern int gTexturesCreated;
+extern int gTextureBytes;
+extern float gBytesToMb;
+extern D3DDEVICEDESC7 gD3DDeviceDesc;
+extern int gD3DFoundHAL;
+extern int gD3DTnL;
+extern int gD3DZ24;
+extern DynVB gVBTL;
+extern DynVB gVBLit;
+extern DynVB gVBNormal;
+extern D3DCallback gD3DCallbackPool[];
+extern int gClearRed;
+extern int gClearGreen;
+extern int gClearBlue;
+extern DisplayMode gDisplayModes[];
+extern int gDisplayModeCount;
+extern int *gD3DListA;
+extern int *gD3DListB;
+extern int *gD3DListC;
+extern int *gD3DStateList;
+extern int gD3DClippingOnIndex;
+extern int gD3DClippingOffIndex;
+extern float gD3DMinZ;
+extern float gD3DMaxZ;
+extern float gD3DViewMinZ;
+extern float gD3DViewMaxZ;
 
 #define DX_ERROR "%s\n\nDirectX error message: %s"
 
@@ -519,23 +519,23 @@ const char *DDraw_GetErrorString(HRESULT hr)
 }
 HOOK(0x492BE0, DDraw_GetErrorString);
 
-#define gD3DUnkBCABEC VAR(float, 0xBCABEC)
-#define gD3DUnkBCABF0 VAR(float, 0xBCABF0)
-#define gD3DUnkBCACF0 VAR(float, 0xBCACF0)
-#define gD3DUnkBCAD70 VAR(float, 0xBCAD70)
-#define gD3DUnkBCAD78 VAR(int, 0xBCAD78)
-#define gD3DUnkBCAD9C VAR(float, 0xBCAD9C)
-#define gD3DUnkBCADA8 VAR(float, 0xBCADA8)
-#define gD3DUnkBCADB0 VAR(float, 0xBCADB0)
-#define gD3DUnkBCADB8 VAR(float, 0xBCADB8)
-#define gD3DUnkBCADBC VAR(float, 0xBCADBC)
-#define gNearPlane VAR(float, 0xBCADC0)
-#define gD3DUnkBCADCC VAR(float, 0xBCADCC)
-#define gD3DUnkBCADD0 VAR(float, 0xBCADD0)
-#define gD3DUnkBCADD4 VAR(float, 0xBCADD4)
-#define gD3DUnkBCADD8 VAR(float, 0xBCADD8)
-#define gD3DUnkBCADDC VAR(float, 0xBCADDC)
-#define gD3DUnkBCADE4 VAR(float, 0xBCADE4)
+extern float gD3DUnkBCABEC;
+extern float gD3DUnkBCABF0;
+extern float gD3DUnkBCACF0;
+extern float gD3DUnkBCAD70;
+extern int gD3DUnkBCAD78;
+extern float gD3DUnkBCAD9C;
+extern float gD3DUnkBCADA8;
+extern float gD3DUnkBCADB0;
+extern float gD3DUnkBCADB8;
+extern float gD3DUnkBCADBC;
+extern float gNearPlane;
+extern float gD3DUnkBCADCC;
+extern float gD3DUnkBCADD0;
+extern float gD3DUnkBCADD4;
+extern float gD3DUnkBCADD8;
+extern float gD3DUnkBCADDC;
+extern float gD3DUnkBCADE4;
 
 int Direct3D_DisplayOpen(void);
 void Direct3D_SetMode(DisplayMode *mode);

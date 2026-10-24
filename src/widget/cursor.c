@@ -20,7 +20,7 @@ typedef struct Cursor {
 
 _Static_assert(sizeof(Cursor) == 0x40, "Cursor");
 
-#define gCursorType VAR(uint16_t, 0x57BC60)
+extern uint16_t gCursorType;
 
 void Cursor_CreateHandler(Cursor *c, void *owner);
 void Cursor_Draw(Cursor *c);

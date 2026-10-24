@@ -41,22 +41,22 @@ typedef struct StateList {
 
 _Static_assert(sizeof(SkyDome) == 0xEDC, "SkyDome");
 
-#define gD3D VAR(IDirect3D7 *, 0x5CA110)
-#define gD3DDevice VAR(IDirect3DDevice7 *, 0x5CA114)
-#define gSkyDome VAR(SkyDome *, 0xA84568)
-#define gSkyModel VAR(void *, 0xA84570)
-#define gSkyUnk54F720 ((uint32_t *)0x54F720)
-#define gLightBase VAR(char *, 0xB041E0)
-#define gLightIndex VAR(int *, 0xB041E4)
-#define gLightCount VAR(int, 0xB041E8)
-#define gLightStride VAR(int, 0xB041F0)
-#define gWorldScale VAR(float, 0xBCABEC)
-#define gD3DTnL VAR(int, 0xBCAD74)
-#define gD3DListB VAR(StateList *, 0xBCAD7C)
-#define gD3DListC VAR(StateList *, 0xBCADAC)
-#define gSkyRadius VAR(float, 0xBCADBC)
-#define gD3DStateList VAR(StateList *, 0xBCADC4)
-#define gD3DListA VAR(StateList *, 0xBCADE8)
+extern IDirect3D7 *gD3D;
+extern IDirect3DDevice7 *gD3DDevice;
+extern SkyDome *gSkyDome;
+extern void *gSkyModel;
+extern uint32_t gSkyUnk54F720[];
+extern char *gLightBase;
+extern int *gLightIndex;
+extern int gLightCount;
+extern int gLightStride;
+extern float gWorldScale;
+extern int gD3DTnL;
+extern StateList *gD3DListB;
+extern StateList *gD3DListC;
+extern float gSkyRadius;
+extern StateList *gD3DStateList;
+extern StateList *gD3DListA;
 
 static const float kHalfPi = 0x1.921fb6p+0f;
 static const float kRingStep = 0x1.aceeap-4f;

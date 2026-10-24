@@ -15,23 +15,23 @@ ORIG(0x4B0D60, void, Mem_PushMode, (char mode));
 ORIG(0x4B0D90, void, Mem_PopMode, (void));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 
-#define gTaskTypes ((TaskType *)0xAF5EE0)
+extern TaskType gTaskTypes[];
 #define gTaskHandlers ((TaskHandler (*)[TASK_MAX_TYPES])0xA96AE0)
 #define gTaskHandlerSet ((char (*)[TASK_MAX_TYPES])0x54FF34)
-#define gTaskEvents ((TaskEvent *)0x54F930)
-#define gTaskEventSlot ((uint8_t *)0x54FF24)
-#define gTaskSlotEvent ((uint8_t *)0xA969E0)
-#define gTaskRootType VAR(uint16_t, 0x54F928)
-#define gTaskUnk54F92C VAR(int, 0x54F92C)
-#define gTaskCount VAR(int, 0x567C58)
-#define gTaskGlobalFlags VAR(uint32_t, 0x567C5C)
-#define gTaskUnk567C60 VAR(int, 0x567C60)
-#define gTaskSetDepth VAR(int, 0x567C6C)
-#define gTaskSetDepth2 VAR(int, 0x567C70)
-#define gTaskHandlerChanges VAR(int, 0x536148)
-#define gTaskRefs VAR(Pool, 0x567C38)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern TaskEvent gTaskEvents[];
+extern uint8_t gTaskEventSlot[];
+extern uint8_t gTaskSlotEvent[];
+extern uint16_t gTaskRootType;
+extern int gTaskUnk54F92C;
+extern int gTaskCount;
+extern uint32_t gTaskGlobalFlags;
+extern int gTaskUnk567C60;
+extern int gTaskSetDepth;
+extern int gTaskSetDepth2;
+extern int gTaskHandlerChanges;
+extern Pool gTaskRefs;
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 
 typedef void (*TaskDeleteHandler)(Task *task);
 

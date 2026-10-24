@@ -59,16 +59,16 @@ typedef struct LensflareSlot {
 
 #define LENSFLARE_TEXTURES 10
 
-#define gLensflareType VAR(uint16_t, 0xA83894)
-#define gLensflareItemType VAR(uint16_t, 0xA83968)
-#define gLensflareParams VAR(void *, 0xA8389C)
-#define gLensflareItemParams VAR(void *, 0xA83970)
-#define gRangeReal32Type VAR(int, 0xA83898)
+extern uint16_t gLensflareType;
+extern uint16_t gLensflareItemType;
+extern void *gLensflareParams;
+extern void *gLensflareItemParams;
+extern int gRangeReal32Type;
 #define gLensflareRandom ((void *)0xA83888)
-#define gLensflareTextureUsed ((int *)0xBA1E20)
-#define gLensflareTextures ((char *)0xBA1E60)
-#define gLensflareSlots ((LensflareSlot *)0xA838A8)
-#define gLensflareUnk ((int *)0xA83860)
+extern int gLensflareTextureUsed[];
+extern char gLensflareTextures[];
+extern LensflareSlot gLensflareSlots[];
+extern int gLensflareUnk[];
 
 static const float kItemSize = 64.0f;
 

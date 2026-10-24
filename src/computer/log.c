@@ -18,7 +18,7 @@ ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 #define LOG_DELETE (FN(0x468BB0, ComputerLog_Delete))
 #define LOG_DRAW (FN(0x468BC0, ComputerLog_Draw))
 
-#define gComputerLogType VAR(uint16_t, 0x5BDC98)
+extern uint16_t gComputerLogType;
 
 void ComputerLog_Open(void)
 {

@@ -45,9 +45,9 @@ typedef struct LoadingScreen {
     Bitmap bar;
 } LoadingScreen;
 
-#define gClearR VAR(int, 0xBCADF0)
-#define gClearG VAR(int, 0xBCADF4)
-#define gClearB VAR(int, 0xBCADF8)
+extern int gClearR;
+extern int gClearG;
+extern int gClearB;
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));

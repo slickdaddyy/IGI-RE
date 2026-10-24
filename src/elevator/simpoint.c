@@ -35,13 +35,13 @@ typedef struct SimpointObjGenerator {
 _Static_assert(offsetof(SimpointObjGenerator, group) == 0x138, "SimpointObjGenerator");
 _Static_assert(sizeof(SimpointObjGenerator) == 0x158, "SimpointObjGenerator");
 
-#define gSimpointObjGeneratorType VAR(uint16_t, 0x53C31C)
-#define gSimpointObjGeneratorParams VAR(void *, 0x57BF60)
-#define gSimpointObjGenerator12CRange VAR(RangeF, 0x57BF48)
-#define gSimpointObjGeneratorIntervalRange VAR(RangeI, 0x57BF50)
-#define gSimpointObjGenerator124Range VAR(RangeI, 0x57BF58)
-#define gSimpointObjGenerator130Range VAR(RangeF, 0x57BF68)
-#define gSimpointObjGenerator134Range VAR(RangeF, 0x57BF70)
+extern uint16_t gSimpointObjGeneratorType;
+extern void *gSimpointObjGeneratorParams;
+extern RangeF gSimpointObjGenerator12CRange;
+extern RangeI gSimpointObjGeneratorIntervalRange;
+extern RangeI gSimpointObjGenerator124Range;
+extern RangeF gSimpointObjGenerator130Range;
+extern RangeF gSimpointObjGenerator134Range;
 
 static const float kUnits = 4096.0f;
 static const float kSpread = 0x1.64ce9ep+5f;

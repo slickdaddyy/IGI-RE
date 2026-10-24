@@ -120,33 +120,33 @@ ORIG(0x52F630, void, WaterMesh_DrawSplitTri, (WaterMesh *w, WaterNode *node, Wat
 ORIG(0x52F3D0, void, WaterMesh_CalcEnvUV, (WaterMesh *w, float *uv, const Vec3d *pos, const float *normal));
 ORIG(0x5116D0, void, TerrainMesh_DrawTriangle, (WaterTri *t));
 
-#define gWaterPrimitive VAR(int, 0xA84578)
-#define gLightData VAR(char *, 0xB041E0)
-#define gLightIndex VAR(int *, 0xB041E4)
-#define gLightCount VAR(int, 0xB041E8)
-#define gLightStride VAR(int, 0xB041F0)
-#define gWaterName ((const char *)0x54F75C)
-#define gWaterSplits ((uint32_t *)0xA84584)
-#define gWaterUnk7C VAR(int, 0xA8457C)
-#define gWaterUnk80 VAR(int, 0xA84580)
-#define gCamPos VAR(Vec3d, 0xBCAB08)
-#define gCamDir ((const float *)0xBCAAF8)
+extern int gWaterPrimitive;
+extern char *gLightData;
+extern int *gLightIndex;
+extern int gLightCount;
+extern int gLightStride;
+extern const char gWaterName[];
+extern uint32_t gWaterSplits[];
+extern int gWaterUnk7C;
+extern int gWaterUnk80;
+extern Vec3d gCamPos;
+extern const float gCamDir[];
 
-#define kZero VAR(float, 0x5333EC)
-#define kOne VAR(float, 0x5333E0)
-#define kOneD VAR(double, 0x5333F8)
-#define kHalf VAR(float, 0x533504)
-#define kOneHalf VAR(float, 0x53353C)
-#define kTenth VAR(float, 0x5333C8)
-#define kTwoPiF VAR(float, 0x5334A8)
-#define kWaterTwoPi VAR(double, 0x534CC0)
-#define kPeriodScale VAR(float, 0x534CC8)
-#define kGridMin VAR(double, 0x534170)
-#define kGridScale VAR(double, 0x534CB8)
-#define kZeroD VAR(double, 0x5333B0)
-#define kMinusTwoD VAR(double, 0x534CD0)
-#define kFinestSize VAR(double, 0x534CD8)
-#define kHalfD VAR(double, 0x5335C0)
+extern float kZero;
+extern float kOne;
+extern double kOneD;
+extern float kHalf;
+extern float kOneHalf;
+extern float kTenth;
+extern float kTwoPiF;
+extern double kWaterTwoPi;
+extern float kPeriodScale;
+extern double kGridMin;
+extern double kGridScale;
+extern double kZeroD;
+extern double kMinusTwoD;
+extern double kFinestSize;
+extern double kHalfD;
 
 /* x87 "not equal" (C3 clear): false for NaN */
 static inline int fne(long double a)

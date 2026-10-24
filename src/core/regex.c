@@ -10,16 +10,16 @@ ORIG(0x4AD73D, int, crt_toupper, (int c));
 #define REGEX_MAX_CLASSES 32
 #define REGEX_MAX_GROUPS 10
 
-#define gRegexMatchClasses ((char *)0x936280)
-#define gRegexFindProg ((RegexState *)0x938280)
-#define gRegexGroups ((RegexGroup *)0x93AA88)
-#define gRegexMaxFrames VAR(int, 0x93AAD8)
-#define gRegexMatchProg ((RegexState *)0x93AAE0)
-#define gRegexCounters ((int *)0x93D2E0)
-#define gRegexStack ((RegexFrame *)0x93DAE0)
-#define gRegexFindClasses ((char *)0x9402E0)
-#define gRegexResult VAR(RegexGroup *, 0x9422E0)
-#define gRegexResultCount VAR(int, 0x9422E4)
+extern char gRegexMatchClasses[];
+extern RegexState gRegexFindProg[];
+extern RegexGroup gRegexGroups[];
+extern int gRegexMaxFrames;
+extern RegexState gRegexMatchProg[];
+extern int gRegexCounters[];
+extern RegexFrame gRegexStack[];
+extern char gRegexFindClasses[];
+extern RegexGroup *gRegexResult;
+extern int gRegexResultCount;
 
 /* Bytes >= 0x80 inside [...] index the class table with a negative
    offset in the original, which overwrites its own locals. Those are

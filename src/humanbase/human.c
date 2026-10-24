@@ -132,22 +132,22 @@ ORIG(0x504A90, void, AreaActivate_RemoveCriteria, (void *criteria));
 ORIG(0x504AC0, unsigned int, AreaActivate_GetMask, (void *criteria));
 ORIG(0x462BA0, void, Human_AvoidHumans, (Human *h, double *pos, double *to, float *vel));
 
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gViewMatrix ((float *)0xBCAAE0)
-#define gViewPos ((double *)0xBCAB08)
-#define gHumanEvent0 VAR(uint8_t, 0x53F314)
-#define gHumanEvent1 VAR(uint8_t, 0x53F315)
-#define gHumanGunshotEvent VAR(uint8_t, 0x53F316)
-#define gHumanPunchEvent VAR(uint8_t, 0x53F317)
-#define gHumanTeamNames ((const char **)0x53F348)
-#define gHumanTeamCriteria ((void **)0x5BDAD8)
-#define gHumanType VAR(uint16_t, 0x5BDAF8)
-#define gHumanDebugTime VAR(int, 0x5BDAFC)
-#define gHumanCriteria VAR(void *, 0x5BDB00)
-#define gHumanParams VAR(void *, 0x5BDC18)
-#define gHumanDebug VAR(int, 0x5BDC1C)
-#define gHumanList VAR(void *, 0x5BDC24)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
+extern float gViewMatrix[];
+extern double gViewPos[];
+extern uint8_t gHumanEvent0;
+extern uint8_t gHumanEvent1;
+extern uint8_t gHumanGunshotEvent;
+extern uint8_t gHumanPunchEvent;
+extern const char *gHumanTeamNames[];
+extern void *gHumanTeamCriteria[];
+extern uint16_t gHumanType;
+extern int gHumanDebugTime;
+extern void *gHumanCriteria;
+extern void *gHumanParams;
+extern int gHumanDebug;
+extern void *gHumanList;
 
 static const float kZero = 0.0f;
 static const float kOne = 1.0f;

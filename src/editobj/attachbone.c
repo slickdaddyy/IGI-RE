@@ -43,8 +43,8 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 
 #define MAGICOBJ_DELETE (FN(0x51B940, EditorMagicObj_Delete))
 
-#define gAttachedToBoneParams VAR(void *, 0xBA8080)
-#define gAttachedToBoneType VAR(uint16_t, 0xBA8084)
+extern void *gAttachedToBoneParams;
+extern uint16_t gAttachedToBoneType;
 
 void EditRigidObjAttachedToBone_Create(EditRigidObjAttachedToBone *o)
 {

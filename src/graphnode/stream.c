@@ -19,9 +19,9 @@ ORIG(0x4C1780, void, Debug_Log, (void *task, int level));
 ORIG(0x4CE400, void *, Terrain_GetMaterial, (void *world, int index));
 ORIG(0x4FAA10, int, GraphStream_PeekByte, (GraphStream *s));
 
-#define gStreamHandlers VAR(List, 0xA774A0)
-#define gStreamHandlersFree VAR(List, 0xA76D18)
-#define gCurrentWorld VAR(void *, 0xA44344)
+extern List gStreamHandlers;
+extern List gStreamHandlersFree;
+extern void *gCurrentWorld;
 
 #define GRAPH_MAGIC 0xFFEEDDCC
 

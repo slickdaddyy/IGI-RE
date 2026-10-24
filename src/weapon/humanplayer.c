@@ -92,21 +92,21 @@ ORIG(0x4E6C60, void, Sound_SetVolume, (int sound, float unk, float level));
 ORIG(0x4E7C30, char, DebugText_IsEnabled, (void));
 ORIG(0x4F2060, void *, WeaponSlots_Get, (void **slots, int i));
 
-#define gHumanPlayerType VAR(uint16_t, 0x5385B0)
+extern uint16_t gHumanPlayerType;
 #define gInputChannels ((char (*)[16])0x538720)
-#define gTaskType548638 VAR(uint16_t, 0x548638)
-#define gUnk56E09C VAR(void *, 0x56E09C)
-#define gWeaponCategories ((WeaponCategory *)0x56E0A0)
-#define gMoveScale VAR(float, 0x56E1E8)
-#define gFenceDamage VAR(float, 0x56E208)
-#define gHumanPlayerList VAR(void *, 0x56E210)
+extern uint16_t gTaskType548638;
+extern void *gUnk56E09C;
+extern float gMoveScale;
+extern float gFenceDamage;
+extern void *gHumanPlayerList;
 #define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
-#define gQVertexStrip VAR(int, 0xA84A54)
+extern int gQVertexStrip;
 
 typedef struct WeaponCategory {
     int count;
     int ids[8];
 } WeaponCategory;
+extern WeaponCategory gWeaponCategories[];
 
 typedef struct QVertex {
     float x, y, z;

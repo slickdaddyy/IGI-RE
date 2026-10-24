@@ -42,7 +42,7 @@ uint16_t Car_GetType(void);
 long double Car_GetTrackFactor(Car *c, int joint);
 void Car_LiftJoint(Car *c, int joint, float amount, float max);
 
-#define gWheelType VAR(uint16_t, 0x57BD30)
+extern uint16_t gWheelType;
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 #define ROTOR_FREE_DEF (FN(0x42DA70, Rotor_FreeDef))

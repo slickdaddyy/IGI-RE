@@ -159,8 +159,8 @@ void TransparencyList_Init(void);
 void TransparencyList_Shutdown(void);
 void WaterMesh_Close(void);
 
-#define gEventA845E0 VAR(uint8_t, 0xA845E0)
-#define gEventA845E1 VAR(uint8_t, 0xA845E1)
+extern uint8_t gEventA845E0;
+extern uint8_t gEventA845E1;
 
 void ViewModules_Init(void);
 void ViewModules_Shutdown(void);

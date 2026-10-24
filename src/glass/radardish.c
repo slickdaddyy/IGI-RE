@@ -46,9 +46,9 @@ typedef struct DefArg {
     int index;
 } DefArg;
 
-#define gRadarDishType VAR(uint16_t, 0x57C20C)
+extern uint16_t gRadarDishType;
 
-#define k360 VAR(float, 0x533818)
+extern float k360;
 
 #define sub_4EFCD0 (FN(0x4EFCD0, ParamReal32x9_Size))
 

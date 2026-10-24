@@ -34,13 +34,13 @@ _Static_assert(offsetof(SplineObj, start) == 0xFC, "start");
 _Static_assert(offsetof(SplineObj, segRot) == 0x200, "segRot");
 _Static_assert(offsetof(SplineObj, rigid) == 0x5B4, "rigid");
 
-#define gSplineVerts ((float *)0xB46D40)
-#define gSplineCache ((void **)0x720558)
-#define gSplineCacheData ((int *)0x720560)
+extern float gSplineVerts[];
+extern void *gSplineCache[];
+extern int gSplineCacheData[];
 
-#define kZero VAR(const float, 0x5333EC)
-#define kOne VAR(const float, 0x5333E0)
-#define kHalfF VAR(const float, 0x533504)
+extern const float kZero;
+extern const float kOne;
+extern const float kHalfF;
 
 /* exponent and top three mantissa bits of a float >= 1 (8 * log2 x, roughly), else 0 */
 unsigned Float_Log2(int bits)

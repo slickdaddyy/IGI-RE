@@ -36,8 +36,8 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, int 
 #define SOUNDMANAGER_CHANGED (FN(0x51C100, SoundManager_ParamsChanged))
 #define SOUNDMANAGER_TABLE (FN(0x51C280, SoundManager_GetParams))
 
-#define gSoundManagerType VAR(uint16_t, 0x54EE3C)
-#define gSoundManagerParams VAR(void *, 0xA83780)
+extern uint16_t gSoundManagerType;
+extern void *gSoundManagerParams;
 
 void SoundManager_Open(void)
 {

@@ -63,12 +63,12 @@ typedef struct ControlsMenu {
 
 _Static_assert(sizeof(ControlsMenu) == 0x364, "ControlsMenu");
 
-#define gControlsMenuType VAR(uint16_t, 0x53B874)
-#define gControlsMenuParams VAR(void *, 0x57BC40)
-#define gControlsRandom VAR(Random, 0x57BC48)
-#define gKeys ((uint8_t *)0xC28C62)
-#define gJoyButton VAR(int, 0xC28F8C)
-#define gHalf VAR(const float, 0x533504)
+extern uint16_t gControlsMenuType;
+extern void *gControlsMenuParams;
+extern Random gControlsRandom;
+extern uint8_t gKeys[];
+extern int gJoyButton;
+extern const float gHalf;
 
 #define KEY_ESCAPE 1
 #define KEY_LWIN 0xDB

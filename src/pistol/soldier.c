@@ -42,7 +42,7 @@ ORIG(0x4F2060, void *, WeaponSlots_Get, (void **slots, int i));
 ORIG(0x4F2350, void, Weapon_UseAmmo, (void *weapon, int n));
 ORIG(0x4F23D0, void, Weapon_GetAmmo, (void *weapon, int *out));
 
-#define gSoldierFootsteps ((const int *)0x53ECE0)
+extern const int gSoldierFootsteps[];
 
 /* updates that live with the HumanSoldierPistol states */
 #define SoldierPistol_StandUpdate ((SoldierStateFn)FN(0x457A00, SoldierPistol_StandUpdate))

@@ -13,8 +13,8 @@ ORIG(0x4F46E0, void, Vehicle_SaveState, (void *obj, void **msg));
 ORIG(0x4F4780, void, Vehicle_LoadState, (void *obj, void **msg));
 ORIG(0x5031F0, void, Vehicle_ParseConfig, (VehicleConfig *cfg, int *next, void *args));
 
-#define gHeliType VAR(uint16_t, 0x53BE58)
-#define gHeliParams VAR(void *, 0x57BD40)
+extern uint16_t gHeliType;
+extern void *gHeliParams;
 
 void Heli_LoadState(Heli *h, void **msg)
 {

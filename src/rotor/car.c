@@ -130,9 +130,9 @@ ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (Car *o));
 #define CAR_HANDLER_432BD0 (FN(0x432BD0, Heli_GetStateSize))
 #define TASK_HANDLER_4E4280 (FN(0x4E4280, Task_YesHandler))
 
-#define gCarType VAR(uint16_t, 0x53BDA8)
-#define gCarRange ((float *)0x57BD20)
-#define gCarParams VAR(void *, 0x57BD28)
+extern uint16_t gCarType;
+extern float gCarRange[];
+extern void *gCarParams;
 
 /* one result of Coll_Lines (0x70 bytes) */
 typedef struct CollHit {

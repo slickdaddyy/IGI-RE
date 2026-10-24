@@ -36,24 +36,24 @@ ORIG(0x5175A0, void *, TexSet_Load, (const char *path));
 ORIG(0x5177F0, void, TexSet_Free, (void *p));
 
 #define gTaskHandlers ((MagicHandler (*)[0x180])0xA96AE0)
-#define gTaskStack ((MagicNode **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gTaskHandlerDepth VAR(int, 0x536148)
-#define gDynCubeObjType VAR(uint16_t, 0x54875C)
-#define gWorldEvents ((char *)0x548176)
-#define gWorldUnkA44348 ((int *)0xA44348)
-#define gWorldName ((char *)0xB97C20)
-#define gLightmaps ((Lightmap *)0xB81B20)
+extern MagicNode *gTaskStack[];
+extern int gTaskStackTop;
+extern int gTaskHandlerDepth;
+extern uint16_t gDynCubeObjType;
+extern char gWorldEvents[];
+extern int gWorldUnkA44348[];
+extern char gWorldName[];
+extern Lightmap gLightmaps[];
 #define gLightmapCount 0x800
-#define gUnkB81920 ((char *)0xB81920)
-#define gUnkB81A20 ((char *)0xB81A20)
-#define gUnkB97D20 VAR(int, 0xB97D20)
-#define gCounterA VAR(int, 0xB97DF4)
-#define gCounterB VAR(int, 0xB97D24)
-#define gCounterC VAR(int, 0xB97DF8)
-#define gCounterD VAR(int, 0xBA2058)
-#define gCounterE VAR(int, 0xBA5060)
-#define gSavedCounters ((int *)0xB97D80)
+extern char gUnkB81920[];
+extern char gUnkB81A20[];
+extern int gUnkB97D20;
+extern int gCounterA;
+extern int gCounterB;
+extern int gCounterC;
+extern int gCounterD;
+extern int gCounterE;
+extern int gSavedCounters[];
 
 void Coll_ResetMods(void)
 {

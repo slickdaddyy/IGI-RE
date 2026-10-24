@@ -25,14 +25,14 @@ ORIG(0x4B0B70, void, Pool_Free, (TerrPool *pool));
 ORIG(0x512820, void, Glow_Init, (void));
 ORIG(0x512920, void, Glow_Shutdown, (void));
 
-#define gViewSlotCurrent VAR(int, 0xA800BC)
-#define gViewSlotUsed ((char *)0xA800C0)
-#define gFlarePool VAR(TerrPool, 0xA800D0)
-#define gGlowPool VAR(TerrPool, 0xB015A0)
-#define gViewX VAR(float, 0xBCABB8)
-#define gViewY VAR(float, 0xBCABBC)
-#define gViewW VAR(float, 0xBCABC0)
-#define gViewH VAR(float, 0xBCABC4)
+extern int gViewSlotCurrent;
+extern char gViewSlotUsed[];
+extern TerrPool gFlarePool;
+extern TerrPool gGlowPool;
+extern float gViewX;
+extern float gViewY;
+extern float gViewW;
+extern float gViewH;
 
 static const union {
     uint64_t u;

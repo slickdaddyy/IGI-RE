@@ -140,10 +140,10 @@ ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 #define SoldierPistol_PunchHandler (FN(0x45A5E0, SoldierPistol_PunchHandler))
 #define Human_Handler4D3710 (FN(0x4D3710, Task_Nothing))
 
-#define gSoldierParams VAR(void *, 0x5BDAB4)
-#define gSoldierType VAR(uint16_t, 0x5BDABC)
-#define gSoldierUnk5BDAC0 VAR(int, 0x5BDAC0)
-#define gSoldierStates ((HumanStateFn *)0x53EC10)
+extern void *gSoldierParams;
+extern uint16_t gSoldierType;
+extern int gSoldierUnk5BDAC0;
+extern HumanStateFn gSoldierStates[];
 #define gSoldierCombos ((void *)0x53ECD8)
 #define gSoldierAnimSlots ((void *)0x53ED10)
 #define gSoldierAnimSlotsCrouch ((void *)0x53EE40)

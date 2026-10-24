@@ -164,18 +164,18 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 /* MSVC _CIfmod: fmod(st1, st0), both popped */
 #define CRT_CIFMOD FN(0x4A56DA, crt_CIfmod)
 
-#define gCurrentWorld VAR(void *, 0xA44344)
-#define gDynCubeObjType VAR(uint16_t, 0x54875C)
-#define gRainObjType VAR(uint16_t, 0x54E2CC)
-#define gRainVisibleCubes VAR(int, 0xA76C88)
-#define gRainLineId VAR(int, 0xA76C8C)
+extern void *gCurrentWorld;
+extern uint16_t gDynCubeObjType;
+extern uint16_t gRainObjType;
+extern int gRainVisibleCubes;
+extern int gRainLineId;
 #define gRainRandom ((void *)0xA76C90)
-#define gRainMemory VAR(int, 0xA76C9C)
-#define gRainObjs ((RainObj **)0xA76CA4)
-#define gRainCallback VAR(RainCallback, 0xA76CC4)
-#define gRainParams VAR(void *, 0xA76CCC)
-#define gViewMatrix VAR(Matrix, 0xBCAAE0)
-#define gViewPos VAR(Vec3d, 0xBCAB08)
+extern int gRainMemory;
+extern RainObj *gRainObjs[];
+extern RainCallback gRainCallback;
+extern void *gRainParams;
+extern Matrix gViewMatrix;
+extern Vec3d gViewPos;
 
 #define RAIN_CELLS (7 * 7 * 7)
 #define RAIN_DROPS 20

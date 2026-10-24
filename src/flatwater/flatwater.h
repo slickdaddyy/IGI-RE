@@ -43,10 +43,10 @@ typedef void (*TaskFn1)(void *task);
 typedef void (*TaskFn2)(void *task, void *arg);
 
 #define gTaskHandlers ((void *(*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gWorld VAR(char *, 0xA44344)
-#define gScriptEmptyString ((const char *)0x567C74)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
+extern char *gWorld;
+extern const char gScriptEmptyString[];
 
 #define TASK_HANDLER(slot, type) (gTaskHandlers[slot][type])
 #define SUBLEVEL_RUN (FN(0x488700, SubLevel_Run))
@@ -133,16 +133,16 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, const void *range));
 
 /* the current view: rotation rows, screen rectangle and projection scale */
-#define gViewM ((float *)0xBCAAE0)
-#define gViewScaleX VAR(float, 0xBCAB28)
-#define gViewScaleY VAR(float, 0xBCAB2C)
-#define gViewX VAR(float, 0xBCABB8)
-#define gViewY VAR(float, 0xBCABBC)
-#define gViewW VAR(float, 0xBCABC0)
-#define gViewH VAR(float, 0xBCABC4)
-#define gViewCX VAR(float, 0xBCABC8)
-#define gViewCY VAR(float, 0xBCABCC)
-#define gCamPos ((double *)0xBCAB08)
+extern float gViewM[];
+extern float gViewScaleX;
+extern float gViewScaleY;
+extern float gViewX;
+extern float gViewY;
+extern float gViewW;
+extern float gViewH;
+extern float gViewCX;
+extern float gViewCY;
+extern double gCamPos[];
 
 typedef struct QVertex {
     float x, y, z, u, v, a, r, g, b;
@@ -156,13 +156,13 @@ typedef struct QVertexStrip {
     QVertex *verts;
 } QVertexStrip;
 
-#define gQVertexTexture VAR(void *, 0xA84A50)
-#define gQVertexStrip VAR(int, 0xA84A54)
+extern void *gQVertexTexture;
+extern int gQVertexStrip;
 #define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
 
-#define kZero VAR(float, 0x5333EC)
-#define kOne VAR(float, 0x5333E0)
-#define kOne64 VAR(double, 0x5333F8)
+extern float kZero;
+extern float kOne;
+extern double kOne64;
 
 ORIG(0x498000, void, TransContext_ProjectView, (float *out, const float *in));
 

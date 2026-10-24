@@ -37,11 +37,11 @@ ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 
 #define MAGICOBJ_DELETE (FN(0x51B940, EditorMagicObj_Delete))
 
-#define gAfterburnerType VAR(uint16_t, 0x57BCF8)
+extern uint16_t gAfterburnerType;
 #define gAfterburnerRandom ((void *)0x57BD00)
-#define gAfterburnerPrim VAR(int, 0xBC2364)
-#define gViewDir ((float *)0xBCAAF8)
-#define gViewPos VAR(Vec3d, 0xBCAB08)
+extern int gAfterburnerPrim;
+extern float gViewDir[];
+extern Vec3d gViewPos;
 
 F32(kColor, 0x437F0000);        /* 255 */
 F32(kGlowStart, 0x3F4F5C29);    /* 0.81 */

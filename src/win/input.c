@@ -20,29 +20,29 @@ typedef struct Mouse {
     int buttons;
 } Mouse;
 
-#define gMouse VAR(Mouse, 0xC28F80)
-#define gMouseWheel VAR(int, 0x5C8E08)
-#define gMouseRight VAR(int, 0x5C8E0C)
-#define gMouseLeft VAR(int, 0x5C8E10)
-#define gMouseDI VAR(IDirectInput7A *, 0x5C8E14)
-#define gMouseMiddle VAR(int, 0x5C8E18)
-#define gMouseDev VAR(IDirectInputDevice7A *, 0x5C8E1C)
+extern Mouse gMouse;
+extern int gMouseWheel;
+extern int gMouseRight;
+extern int gMouseLeft;
+extern IDirectInput7A *gMouseDI;
+extern int gMouseMiddle;
+extern IDirectInputDevice7A *gMouseDev;
 
-#define gKeyboardDev VAR(IDirectInputDeviceA *, 0x5C8E24)
-#define gKeyboardDI VAR(IDirectInputA *, 0x5C8E28)
-#define gKeyboardAcquired VAR(int, 0x5C8E30)
-#define gKeyboardBlocked VAR(char, 0xC28C60)
-#define gKeyboardPresent VAR(char, 0xC28C61)
-#define gKeys ((unsigned char *)0xC28C62)
-#define gKeysPrev ((unsigned char *)0xC28D62)
-#define gWinKeys ((unsigned char *)0xC28E80)
+extern IDirectInputDeviceA *gKeyboardDev;
+extern IDirectInputA *gKeyboardDI;
+extern int gKeyboardAcquired;
+extern char gKeyboardBlocked;
+extern char gKeyboardPresent;
+extern unsigned char gKeys[];
+extern unsigned char gKeysPrev[];
+extern unsigned char gWinKeys[];
 
-#define IID_IDirectInput7A_ ((const IID *)0x5349D0)
-#define IID_IDirectInputDevice7A_ ((const IID *)0x5349B0)
-#define GUID_SysMouse_ ((const GUID *)0x534910)
-#define GUID_SysKeyboard_ ((const GUID *)0x534900)
-#define c_dfDIMouse2_ ((const DIDATAFORMAT *)0x5348B0)
-#define c_dfDIKeyboard_ ((const DIDATAFORMAT *)0x5348C8)
+extern const IID IID_IDirectInput7A_[];
+extern const IID IID_IDirectInputDevice7A_[];
+extern const GUID GUID_SysMouse_[];
+extern const GUID GUID_SysKeyboard_[];
+extern const DIDATAFORMAT c_dfDIMouse2_[];
+extern const DIDATAFORMAT c_dfDIKeyboard_[];
 
 const char *DInput_GetErrorString(HRESULT hr)
 {

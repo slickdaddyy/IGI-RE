@@ -48,13 +48,13 @@ ORIG(0x4FC0E0, void, PhysicsObj_Collide, (void *obj, float a, float b, float c, 
 ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (void *obj));
 ORIG(0x5042A0, uint16_t, PhysicsMagicObj_GetType, (void));
 
-#define gGenericPhysicsMagicObjType VAR(uint16_t, 0x53C46C)
-#define gGenericPhysicsObjType VAR(uint16_t, 0x53C4A8)
-#define gGenericPhysicsObjParams VAR(void *, 0x57C13C)
+extern uint16_t gGenericPhysicsMagicObjType;
+extern uint16_t gGenericPhysicsObjType;
+extern void *gGenericPhysicsObjParams;
 
-#define kHundred VAR(float, 0x533578)
-#define kTwoHundred VAR(float, 0x533830)
-#define kFifth VAR(float, 0x5333C4)
+extern float kHundred;
+extern float kTwoHundred;
+extern float kFifth;
 
 /* GenericPhysicsObj is PhysicsObj with two more script flags */
 typedef struct GenericPhysicsObj {

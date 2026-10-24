@@ -30,8 +30,8 @@ _Static_assert(offsetof(ElevatorFloorIndicator, offset) == 0x130, "ElevatorFloor
 _Static_assert(offsetof(ElevatorFloorIndicator, lit) == 0x1A4, "ElevatorFloorIndicator");
 _Static_assert(sizeof(ElevatorFloorIndicator) == 0x248, "ElevatorFloorIndicator");
 
-#define gElevatorFloorIndicatorType VAR(uint16_t, 0x57BF84)
-#define gElevatorFloorIndicatorParams VAR(void *, 0x57BF88)
+extern uint16_t gElevatorFloorIndicatorType;
+extern void *gElevatorFloorIndicatorParams;
 
 /* follows the elevator: offset turned by its matrix, matrix times local */
 void ElevatorFloorIndicator_Move(ElevatorFloorIndicator *f, MoveArg *arg)

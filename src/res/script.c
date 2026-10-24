@@ -6,12 +6,12 @@
 
 ORIG(0x4A5702, int, crt_vsprintf, (char *buf, const char *fmt, va_list ap));
 
-#define gScriptError VAR(int, 0xA965A8)
-#define gScriptWarningLevel VAR(int, 0xA96598)
+extern int gScriptError;
+extern int gScriptWarningLevel;
 typedef void (*ScriptErrorFn)(const char *msg, void *data);
 
-#define gScriptErrorHandler VAR(ScriptErrorFn, 0xA43E70)
-#define gScriptErrorContext VAR(void *, 0xA43E68)
+extern ScriptErrorFn gScriptErrorHandler;
+extern void *gScriptErrorContext;
 
 void Script_Error(const char *fmt, ...)
 {

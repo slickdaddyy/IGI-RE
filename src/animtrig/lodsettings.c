@@ -44,24 +44,24 @@ typedef struct ParamRange {
 _Static_assert(sizeof(LODSettings) == 0x40, "LODSettings");
 _Static_assert(sizeof(ModelLODSettings) == 0x44, "ModelLODSettings");
 
-#define gLODSettingsType VAR(uint16_t, 0x54DBDC)
-#define gModelLODSettingsType VAR(uint16_t, 0x54DBDE)
-#define gModelLODSettingsContainerType VAR(uint16_t, 0x54DBE0)
-#define gModelLodDistRange VAR(ParamRange, 0xA5EFA8)
-#define gLodBlendRange VAR(ParamRange, 0xA5EFB0)
-#define gLodCullRange VAR(ParamRange, 0xA5EFB8)
-#define gLodDetailRange VAR(ParamRange, 0xA5EFC0)
-#define gLODSettingsParams VAR(void *, 0xA5EFC8)
-#define gModelLODSettingsParams VAR(void *, 0xA5EFCC)
-#define gModelLODSettingsContainer VAR(Task *, 0xA5EFD4)
-#define gLodBlend VAR(float, 0x54835C)
-#define gLodRigidDetail VAR(float, 0xA4EE80)
-#define gLodBoneDetail VAR(float, 0xA4EE84)
-#define gLodSplineDetail VAR(float, 0xA4EE88)
-#define gLodRigidCull VAR(float, 0xA4EE8C)
-#define gLodBoneCull VAR(float, 0xA4EE90)
-#define gLodSplineCull VAR(float, 0xA4EE94)
-#define gLodRange VAR(float, 0xA4EE98)
+extern uint16_t gLODSettingsType;
+extern uint16_t gModelLODSettingsType;
+extern uint16_t gModelLODSettingsContainerType;
+extern ParamRange gModelLodDistRange;
+extern ParamRange gLodBlendRange;
+extern ParamRange gLodCullRange;
+extern ParamRange gLodDetailRange;
+extern void *gLODSettingsParams;
+extern void *gModelLODSettingsParams;
+extern Task *gModelLODSettingsContainer;
+extern float gLodBlend;
+extern float gLodRigidDetail;
+extern float gLodBoneDetail;
+extern float gLodSplineDetail;
+extern float gLodRigidCull;
+extern float gLodBoneCull;
+extern float gLodSplineCull;
+extern float gLodRange;
 
 static const float kPercent = 0x1.47ae14p-6f; /* 0.02 */
 static const float k4096 = 4096.0f;

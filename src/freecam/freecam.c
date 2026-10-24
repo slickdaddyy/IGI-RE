@@ -27,8 +27,8 @@ ORIG(0x4E75A0, int, Screen_GetFrame, (void));
 ORIG(0x4D9870, void, Camera_Set, (void *cam, const Vec3d *pos, const float *axes, float fov, float aspect,
                                   float priority, int frame, void *owner, int unk9, int unk10));
 
-#define gCamTaskType VAR(uint16_t, 0x54F768)
-#define gFreeCameraType VAR(uint16_t, 0x54F7D0)
+extern uint16_t gCamTaskType;
+extern uint16_t gFreeCameraType;
 
 void CamTask_Init(void)
 {

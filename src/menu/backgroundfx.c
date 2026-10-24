@@ -41,12 +41,12 @@ typedef struct BgShape {
     BgGrid *grid;
 } BgShape;
 
-#define gBackgroundFXType VAR(uint16_t, 0x539AF0)
-#define gBgShapes ((BgShape *)0x539BE8)
-#define gGridStep VAR(const float, 0x53357C)
-#define gCircleDetail VAR(const float, 0x533580)
-#define gTwoPi VAR(const float, 0x5334A8)
-#define gBgSpeed ((const float *)0x533584)
+extern uint16_t gBackgroundFXType;
+extern BgShape gBgShapes[];
+extern const float gGridStep;
+extern const float gCircleDetail;
+extern const float gTwoPi;
+extern const float gBgSpeed[];
 
 static int round_int(long double x)
 {

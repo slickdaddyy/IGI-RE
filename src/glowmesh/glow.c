@@ -50,13 +50,13 @@ typedef struct GlowInstancePrim {
 _Static_assert(sizeof(Glow) == 0x1C, "Glow");
 _Static_assert(sizeof(GlowInstancePrim) == 0x28, "GlowInstancePrim");
 
-#define gGlowReadPrim VAR(int, 0xA7DBD8)
+extern int gGlowReadPrim;
 #define gGlowDirs ((float (*)[2])0xA7DBE0)
-#define gGlowInstancePrim VAR(int, 0xA7DC60)
-#define gGlowMask ((char *)0xA7DC64)
-#define gGlowCount VAR(int, 0xA800EC)
-#define gGlows ((Glow *)0xAFA840)
-#define gGlowPool VAR(Pool, 0xB015A0)
+extern int gGlowInstancePrim;
+extern char gGlowMask[];
+extern int gGlowCount;
+extern Glow gGlows[];
+extern Pool gGlowPool;
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);

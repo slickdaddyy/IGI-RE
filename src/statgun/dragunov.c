@@ -3,20 +3,20 @@
 #include "hook.h"
 #include "statgun/statgun.h"
 
-#define gDragunovType VAR(uint16_t, 0x5BE358)
-#define gSniperSightY VAR(char *, 0x5BE35C)
-#define gSniperSight VAR(char *, 0x5BE360)
-#define gSniperSightX VAR(char *, 0x5BE364)
+extern uint16_t gDragunovType;
+extern char *gSniperSightY;
+extern char *gSniperSight;
+extern char *gSniperSightX;
 
 /* exe constants, read in place */
-#define kZero VAR(float, 0x5333EC)
-#define kAngle45 VAR(double, 0x5335E8)
-#define kAngle30 VAR(double, 0x5339C0)
-#define kRecoilScale VAR(float, 0x5335AC)
-#define kDragunovZoomOut VAR(float, 0x533A80)
-#define kDragunovZoomIn VAR(float, 0x5339CC)
-#define kHalf VAR(float, 0x533504)
-#define kDegToRad VAR(float, 0x53367C)
+extern float kZero;
+extern double kAngle45;
+extern double kAngle30;
+extern float kRecoilScale;
+extern float kDragunovZoomOut;
+extern float kDragunovZoomIn;
+extern float kHalf;
+extern float kDegToRad;
 
 ORIG(0x4169D0, char *, Game_AddSprite, (const char *name));
 ORIG(0x4659D0, void, HumanView_SetZoomed, (HumanView *v));

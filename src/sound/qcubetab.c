@@ -6,20 +6,20 @@
 #include "igi.h"
 #include "sound/sound.h"
 
-#define gViewFov VAR(float, 0xBCAB20)
-#define gViewFovY VAR(float, 0xBCAB24)
-#define gQCubeUnkA5E410 VAR(double, 0xA5E410)
-#define gQCubeUnkA5E418 VAR(double, 0xA5E418)
-#define gQCubeUnkA5E424 ((uint8_t *)0xA5E424)
-#define gQCubeUnkA5E464 ((int *)0xA5E464)
-#define gQCubeScaleX VAR(double, 0xB015B8)
-#define gQCubeScaleY VAR(double, 0xB015C0)
-#define gQCubeEvent VAR(uint8_t, 0xB015C8)
-#define gQCubeUnkB015E0 ((uint8_t *)0xB015E0)
-#define gQCubeUnkB017E0 ((uint8_t *)0xB017E0)
-#define gQCubeCorners ((Vec3d *)0xB04280)
-#define gQCubePermA ((const uint8_t *)0x5487A8)
-#define gQCubePermB ((const uint8_t *)0x5487D8)
+extern float gViewFov;
+extern float gViewFovY;
+extern double gQCubeUnkA5E410;
+extern double gQCubeUnkA5E418;
+extern uint8_t gQCubeUnkA5E424[];
+extern int gQCubeUnkA5E464[];
+extern double gQCubeScaleX;
+extern double gQCubeScaleY;
+extern uint8_t gQCubeEvent;
+extern uint8_t gQCubeUnkB015E0[];
+extern uint8_t gQCubeUnkB017E0[];
+extern Vec3d gQCubeCorners[];
+extern const uint8_t gQCubePermA[];
+extern const uint8_t gQCubePermB[];
 #define gQCubeFaceCorners ((const uint8_t (*)[4])0x548790)
 
 static const double kOne = 1.0;

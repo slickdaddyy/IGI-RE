@@ -34,9 +34,9 @@ typedef struct SmoothQTask {
 
 _Static_assert(sizeof(SmoothQTask) == 0x100, "SmoothQTask");
 
-#define gSmoothType VAR(uint16_t, 0xA837A0)
-#define gSmoothParams VAR(void *, 0xA837A4)
-#define kZero64 VAR(double, 0x5333B0)
+extern uint16_t gSmoothType;
+extern void *gSmoothParams;
+extern double kZero64;
 
 void SmoothQTask_Create(SmoothQTask *t);
 void SmoothQTask_Run(SmoothQTask *t);

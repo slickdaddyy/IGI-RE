@@ -134,7 +134,7 @@ typedef struct AIDetection {
     AISeenList friends;
 } AIDetection;
 
-#define gHitZones ((const int *)0x5412A4)
+extern const int gHitZones[];
 
 static const float kZero = 0.0f;
 static const float kVisible = 0.79f;

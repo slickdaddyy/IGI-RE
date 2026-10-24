@@ -38,18 +38,18 @@ typedef struct VarString {
     int refCount;
 } VarString;
 
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((void **)0xA96AE0)[(slot) * 0x180 + (type)])
-#define gCurrentWorld VAR(void *, 0xA44344)
+extern void *gCurrentWorld;
 
 /* exe constants, read in place so the x87 code sees the same values */
-#define kZero VAR(float, 0x5333EC)
-#define kOne VAR(float, 0x5333E0)
-#define kHalf VAR(float, 0x533504)
-#define kTwo VAR(float, 0x533588)
-#define kPi VAR(float, 0x533400)
-#define kZeroD VAR(double, 0x5333B0)
+extern float kZero;
+extern float kOne;
+extern float kHalf;
+extern float kTwo;
+extern float kPi;
+extern double kZeroD;
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));

@@ -31,8 +31,8 @@ _Static_assert(offsetof(Radio, cond) == 0x244, "Radio");
 _Static_assert(offsetof(Radio, offSound) == 0x2D4, "Radio");
 _Static_assert(sizeof(Radio) == 0x2E8, "Radio");
 
-#define gRadioType VAR(uint16_t, 0x53C2E0)
-#define gRadioParams VAR(void *, 0x57BEF8)
+extern uint16_t gRadioType;
+extern void *gRadioParams;
 #define gRadioSoundNames ((char (*)[15])0x57BEFC)
 
 void Radio_Create(Radio *r, void *arg);

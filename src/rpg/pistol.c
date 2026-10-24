@@ -34,7 +34,7 @@ ORIG(0x4E6C60, void, Sound_SetVolume, (void *sound, float a, float b));
 ORIG(0x4E6CA0, void, Sound_SetPitch, (void *sound, float pitch));
 ORIG(0x4F0EE0, void *, Level_GetDynamic, (const char *name));
 
-#define gFootstepSeq ((const int *)0x53E988)
+extern const int gFootstepSeq[];
 #define SoldierPistol_State2Update ((SoldierStateFn)FN(0x45AD10, Soldier_State2Update))
 #define SoldierPistol_State4Update ((SoldierStateFn)FN(0x458DD0, SoldierPistol_State13Update))
 #define SoldierPistol_State6Update ((SoldierStateFn)FN(0x45B060, Soldier_State6Update))

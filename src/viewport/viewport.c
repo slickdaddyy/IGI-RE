@@ -15,14 +15,14 @@ typedef struct DisplayMode {
 
 typedef void (*ViewportCallback)(Camera *camera);
 
-#define gFogEnable VAR(int, 0x5470B4)
-#define gViewportType VAR(uint16_t, 0x54D98C)
-#define gViewportCallbacks ((ViewportCallback *)0xA5EBE0)
-#define gViewportDrawn ((Viewport **)0xA5EC1C)
-#define gViewportCount VAR(int, 0xA5EC60)
-#define gViewportReady VAR(char, 0xA5EC64)
-#define gViewportCurrent VAR(Viewport *, 0xA5EC68)
-#define gViewportDrawnCount VAR(int, 0xA5EC6C)
+extern int gFogEnable;
+extern uint16_t gViewportType;
+extern ViewportCallback gViewportCallbacks[];
+extern Viewport *gViewportDrawn[];
+extern int gViewportCount;
+extern char gViewportReady;
+extern Viewport *gViewportCurrent;
+extern int gViewportDrawnCount;
 
 #define VIEWPORT_CALLBACKS 15
 

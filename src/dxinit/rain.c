@@ -106,33 +106,33 @@ _Static_assert(offsetof(Rain, matrix) == 0x5658, "matrix");
 _Static_assert(offsetof(Rain, last) == 0x56B0, "last");
 _Static_assert(sizeof(Rain) == 0x56D0, "Rain");
 
-#define gRainType VAR(uint16_t, 0xC311C0)
+extern uint16_t gRainType;
 #define gRainRandom ((void *)0xC311D0)
-#define gRain VAR(Rain *, 0x6E5BD0)
-#define gRainEnabled VAR(int, 0x543C58)
+extern Rain *gRain;
+extern int gRainEnabled;
 
-#define kHalfD VAR(const double, 0x5335C0)
-#define kZero VAR(const float, 0x5333EC)
-#define kOne VAR(const float, 0x5333E0)
-#define kHalfF VAR(const float, 0x533504)
-#define kFadeStep VAR(const float, 0x5334C0)
-#define kTile VAR(const double, 0x534288)
-#define kTileF VAR(const float, 0x5342D0)
-#define kTwoTiles VAR(const double, 0x534278)
-#define kTileInv VAR(const double, 0x534290)
-#define kTileInvF VAR(const float, 0x534280)
-#define kGridOrigin VAR(const double, 0x534298)
-#define kTwelve VAR(const float, 0x534118)
-#define kLayer VAR(const float, 0x5342A0)
-#define kLayerOrigin VAR(const double, 0x5342B0)
-#define kLayerInv VAR(const double, 0x5342A8)
-#define kTop VAR(const double, 0x5342C0)
-#define kTopF VAR(const float, 0x5342C8)
-#define kFlakeSize VAR(const float, 0x5342B8)
-#define kStreak VAR(const float, 0x533688)
-#define kSpawnStep VAR(const float, 0x5342CC)
-#define kSway VAR(const float, 0x5342D4)
-#define kAlphaScale VAR(const float, 0x5342D8)
+extern const double kHalfD;
+extern const float kZero;
+extern const float kOne;
+extern const float kHalfF;
+extern const float kFadeStep;
+extern const double kTile;
+extern const float kTileF;
+extern const double kTwoTiles;
+extern const double kTileInv;
+extern const float kTileInvF;
+extern const double kGridOrigin;
+extern const float kTwelve;
+extern const float kLayer;
+extern const double kLayerOrigin;
+extern const double kLayerInv;
+extern const double kTop;
+extern const float kTopF;
+extern const float kFlakeSize;
+extern const float kStreak;
+extern const float kSpawnStep;
+extern const float kSway;
+extern const float kAlphaScale;
 
 static const float kSnowSpeed = 204.8f;
 static const float kRainSpeed = 2048.0f;

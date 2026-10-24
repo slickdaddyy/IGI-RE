@@ -49,8 +49,8 @@ ORIG(0x4F2310, void, Weapon_Move, (Task *w, Vec3d *pos, Matrix *m));
 
 #define VEHICLEPART_DELETE (FN(0x426860, VehiclePart_Delete))
 
-#define gGunHolderList VAR(void *, 0x5BE330)
-#define gAIStationaryGunType VAR(uint16_t, 0x53FEC0)
+extern void *gGunHolderList;
+extern uint16_t gAIStationaryGunType;
 
 /* parsed "AIStationaryGun" MagicObj arguments (0x60 bytes) */
 typedef struct GunDef {

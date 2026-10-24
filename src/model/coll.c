@@ -30,14 +30,11 @@ ORIG(0x4C8130, void, DynCube_SendEventLines, (Terrain *t, int slot, void *query,
                                   int count, unsigned int flags, int tree));
 ORIG(0x4C9A30, int, Coll_Descend_, (Terrain *t, CollCursor *c, CollCursor *unused, const Vec3d *p, int depth));
 
-#define gCollChildTable ((const int *)0x548060)
-#define gTaskEnterHandlers ((TaskHandler *)0xA9C4E0)
-#define gTaskLeaveHandlers ((TaskHandler *)0xA9CAE0)
-#define gCollWalkTasks VAR(int, 0xB97D20)
-#define gCollBumps ((const CollBump *)0xBA2030)
-#define gCollBumpCount VAR(int, 0xBA2058)
-#define gCollLineCalls VAR(int, 0xA4438C)
-#define gCollLineCount VAR(int, 0xA44390)
+extern const int gCollChildTable[];
+extern int gCollWalkTasks;
+extern int gCollBumpCount;
+extern int gCollLineCalls;
+extern int gCollLineCount;
 
 typedef void (*TaskHandler)(CollTask *task, int arg);
 
@@ -51,6 +48,9 @@ typedef struct CollBump {
     const signed char *heights;
     int unk2C;
 } CollBump;
+extern TaskHandler gTaskEnterHandlers[];
+extern TaskHandler gTaskLeaveHandlers[];
+extern const CollBump gCollBumps[];
 
 void Coll_SendEvent(Terrain *t, uint8_t slot, void *arg, const Vec3d *p, unsigned int mask, int tree);
 int Coll_LeafLineHit(const short *leaf, const Vec3d *base, const Vec3d *s, const Vec3d *e, Vec3d *hit, int shift,

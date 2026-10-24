@@ -80,10 +80,10 @@ ORIG(0x4F0EE0, void *, Level_GetDynamic, (const char *name));
 ORIG(0x4F1030, void *, Task_FindById, (int id));
 ORIG(0x4F3380, uint16_t, EditRigidObj_GetType, (void));
 
-#define gJumpSpeed VAR(float, 0x56E1EC)
-#define gJumpUp VAR(float, 0x56E1F0)
-#define gLadderSounds ((const int *)0x538C18)
-#define gWireDragSounds ((const int *)0x538C48)
+extern float gJumpSpeed;
+extern float gJumpUp;
+extern const int gLadderSounds[];
+extern const int gWireDragSounds[];
 
 #define PI_F 0x1.921fb6p+1f
 #define HALF_PI_F 0x1.921fb6p+0f

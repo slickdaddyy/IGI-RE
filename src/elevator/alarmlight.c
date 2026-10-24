@@ -29,9 +29,9 @@ typedef struct AlarmLight {
 _Static_assert(offsetof(AlarmLight, offModel) == 0x130, "AlarmLight");
 _Static_assert(sizeof(AlarmLight) == 0x1F8, "AlarmLight");
 
-#define gAlarmLightParams VAR(void *, 0x57BE9C)
-#define gAlarmLightReflectorType VAR(uint16_t, 0x57BEA0)
-#define gAlarmLightType VAR(uint16_t, 0x57BEA2)
+extern void *gAlarmLightParams;
+extern uint16_t gAlarmLightReflectorType;
+extern uint16_t gAlarmLightType;
 
 static const float kZero = 0.0f;
 

@@ -73,8 +73,8 @@ ORIG_STD(0x4AF7A6, HRESULT, AVIStreamRead_, (PAVISTREAM s, LONG start, LONG coun
 ORIG(0x4AF7A0, DWORD, ICDecompress_, (HIC hic, DWORD flags, BITMAPINFOHEADER *infmt, void *in,
                                       BITMAPINFOHEADER *outfmt, void *out));
 
-#define gD3DBack VAR(IDirectDrawSurface7 *, 0x5CA100)
-#define gDDraw VAR(IDirectDraw7 *, 0x5CA10C)
+extern IDirectDrawSurface7 *gD3DBack;
+extern IDirectDraw7 *gDDraw;
 
 #define MOVIE_SUBTITLE_MAX 32
 #define MOVIE_LINE_MAX 8
@@ -155,8 +155,8 @@ _Static_assert(sizeof(MovieSubtitle) == 0x7C, "MovieSubtitle");
 _Static_assert(offsetof(Movie, scene) == 0x16C, "Movie.scene");
 _Static_assert(sizeof(Movie) == 0x1150, "Movie");
 
-#define gMovie VAR(Movie, 0x5C8E48)
-#define gMoviePauseStart VAR(int, 0x5C8E40)
+extern Movie gMovie;
+extern int gMoviePauseStart;
 
 static const char kDXError[] = "%s\n\nDirectX error message: %s";
 

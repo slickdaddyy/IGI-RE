@@ -22,9 +22,9 @@ ORIG(0x5210C0, const char *, Lightmap_GetDir, (void));
 ORIG(0x52D440, void, DateTime_Get, (int *time));
 ORIG(0x52D630, int, DateTime_Compare, (const int *a, const int *b));
 
-#define gLightmapCountA839F4 VAR(int, 0xA839F4)
-#define gLightmapCountA83B4C VAR(int, 0xA83B4C)
-#define gLightmapBuilt VAR(int, 0xA83D28)
+extern int gLightmapCountA839F4;
+extern int gLightmapCountA83B4C;
+extern int gLightmapBuilt;
 
 #define LIGHTMAP_MAGIC 0x3DF5C28F
 

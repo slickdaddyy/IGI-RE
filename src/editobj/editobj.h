@@ -71,9 +71,9 @@ _Static_assert(sizeof(Obj) == 0xF0, "Obj");
 _Static_assert(offsetof(ObjInfo, radius) == 0x4C, "ObjInfo");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gCurrentWorld VAR(void *, 0xA44344)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
+extern void *gCurrentWorld;
 
 /* calls handler slot of each child of t (not deeper) with the given
    arguments; slot is evaluated for each child like in the original */

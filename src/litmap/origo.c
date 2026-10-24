@@ -55,10 +55,10 @@ typedef struct BoundSphere {
 
 _Static_assert(offsetof(BoundSphere, radius) == 0x4C, "radius");
 
-#define gOrigoType VAR(uint16_t, 0xA83854)
-#define gOrigoParams VAR(void *, 0xA83850)
-#define gOrigoPlace VAR(Vec3d *, 0xBA1FC8)
-#define gOrigoDelta ((int *)0xBA1FD0)
+extern uint16_t gOrigoType;
+extern void *gOrigoParams;
+extern Vec3d *gOrigoPlace;
+extern int gOrigoDelta[];
 
 static const float kOrigoRadius = 4096.0f;
 

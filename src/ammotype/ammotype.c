@@ -44,15 +44,15 @@ ORIG(0x4F1DB0, void, ParamEnum_AddConstants, (void *e, const char *pattern));
 #define BulletHole_Delete (FN(0x47D320, BulletHole_Delete))
 #define BulletHole_Handler5188C0 (FN(0x5188C0, GraphNode_Run))
 
-#define gAmmoTypes ((AmmoType *)0x5BE3E0)
-#define gAmmoTypeCount VAR(int, 0x5C10E4)
-#define gAmmoListEvent VAR(uint8_t, 0x5C10E8)
+extern AmmoType gAmmoTypes[];
+extern int gAmmoTypeCount;
+extern uint8_t gAmmoListEvent;
 #define gAmmoIdEnum ((void *)0x5C10F0)
-#define gBulletHoleEvent VAR(uint8_t, 0x540904)
-#define gBulletHoleType VAR(uint16_t, 0x5C1138)
+extern uint8_t gBulletHoleEvent;
+extern uint16_t gBulletHoleType;
 #define gBulletHolePool ((void *)0x5C1108)
 #define gBulletHolePool2 ((void *)0x5C1120)
-#define gScriptEmptyString ((const char *)0x567C74)
+extern const char gScriptEmptyString[];
 
 typedef struct ScriptValue {
     int i;

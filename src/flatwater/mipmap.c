@@ -26,15 +26,15 @@ typedef struct D3DDevice {
 
 typedef long(__stdcall *SetTextureStageStateFn)(D3DDevice *dev, int stage, int state, uint32_t value);
 
-#define gMipMapType VAR(uint16_t, 0x54EEE0)
-#define gMipMapModeRange ((int *)0xA83788)
-#define gMipMapParams VAR(void *, 0xA83790)
-#define gMipMapBiasRange ((float *)0xA83798)
-#define gD3DDevice VAR(D3DDevice *, 0x5CA114)
-#define gRenderUnk24 VAR(uint32_t, 0xBC79E8)
-#define gRenderMipMapMode VAR(signed char, 0xBC79EC)
-#define gRenderUnk2C VAR(char, 0xBC79ED)
-#define gRenderLodBias VAR(float, 0xBC79F0)
+extern uint16_t gMipMapType;
+extern int gMipMapModeRange[];
+extern void *gMipMapParams;
+extern float gMipMapBiasRange[];
+extern D3DDevice *gD3DDevice;
+extern uint32_t gRenderUnk24;
+extern signed char gRenderMipMapMode;
+extern char gRenderUnk2C;
+extern float gRenderLodBias;
 
 #define D3DTSS_MIPMAPLODBIAS 19
 

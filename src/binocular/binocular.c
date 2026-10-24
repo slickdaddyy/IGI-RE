@@ -40,7 +40,7 @@ ORIG(0x4FE730, char *, TagItem_Find, (void *config, const char *name));
 #define WEAPON_HANDLER_4754C0 (FN(0x4754C0, ProxMine_Move))
 #define WEAPON_GETARGSIZE_51BAA0 (FN(0x51BAA0, EditorMagicObj_GetArgSize))
 
-#define gBinocularType VAR(uint16_t, 0x5BE33C)
+extern uint16_t gBinocularType;
 
 /* "Binocular" (0x1C8 bytes), a weapon */
 typedef struct Binocular {

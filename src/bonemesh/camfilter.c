@@ -99,40 +99,40 @@ _Static_assert(sizeof(WideScreenFilter) == 0x44, "WideScreenFilter");
 _Static_assert(sizeof(BandFilter) == 0x74, "BandFilter");
 _Static_assert(sizeof(HandiCamFilter) == 0x54, "HandiCamFilter");
 
-#define gLineFilterType VAR(uint16_t, 0x543D4C)
-#define gWideScreenFilterType VAR(uint16_t, 0x543D4E)
-#define gBandFilterType VAR(uint16_t, 0x543D50)
-#define gBandCamera VAR(int, 0x543D54)
-#define gHandiCamFilterType VAR(uint16_t, 0x543D58)
-#define gHandiCamDrawMethod VAR(int, 0x935BFC)
-#define gBandDrawMethod VAR(int, 0x935C00)
-#define gBandFont VAR(const char *, 0x935C04)
-#define gHandiCamFilterPrim VAR(int, 0x935C08)
-#define gBandFilterPrim VAR(int, 0x935C0C)
-#define gBandPixels ((int *)0x935C10)
+extern uint16_t gLineFilterType;
+extern uint16_t gWideScreenFilterType;
+extern uint16_t gBandFilterType;
+extern int gBandCamera;
+extern uint16_t gHandiCamFilterType;
+extern int gHandiCamDrawMethod;
+extern int gBandDrawMethod;
+extern const char *gBandFont;
+extern int gHandiCamFilterPrim;
+extern int gBandFilterPrim;
+extern int gBandPixels[];
 #define gFilterRandom ((void *)0x935BF0)
-#define gLineDrawMethod VAR(int, 0x936010)
-#define gLineFilterPrim VAR(int, 0x936014)
-#define gWideScreenPrim VAR(int, 0x936018)
-#define gBatterySprite VAR(const char *, 0x936020)
-#define gTimecodeFont VAR(const char *, 0x936024)
-#define gHandiCamSpriteX VAR(int, 0x936028)
-#define gHandiCamSpriteY VAR(int, 0x93602C)
-#define gHandiCamFontX VAR(int, 0x936030)
-#define gHandiCamFontY VAR(int, 0x936034)
-#define gTimecode VAR(float, 0x936038)
-#define gBandFontA VAR(float, 0x93603C)
-#define gBandFontB VAR(float, 0x936040)
-#define gBandFontC VAR(float, 0x936044)
-#define gBandFontD VAR(int, 0x936048)
+extern int gLineDrawMethod;
+extern int gLineFilterPrim;
+extern int gWideScreenPrim;
+extern const char *gBatterySprite;
+extern const char *gTimecodeFont;
+extern int gHandiCamSpriteX;
+extern int gHandiCamSpriteY;
+extern int gHandiCamFontX;
+extern int gHandiCamFontY;
+extern float gTimecode;
+extern float gBandFontA;
+extern float gBandFontB;
+extern float gBandFontC;
+extern int gBandFontD;
 
-#define gFilterVB VAR(void *, 0xBCAD00)
-#define gFilterVBSize VAR(int, 0xBCAD04)
-#define gFilterVBUsed VAR(int, 0xBCAD08)
-#define gD3DMinZ VAR(float, 0xBCADA0)
-#define gD3DViewMinZ VAR(float, 0xBCADB4)
-#define gD3DViewMaxZ VAR(float, 0xBCAD8C)
-#define gNearPlane VAR(float, 0xBCADC0)
+extern void *gFilterVB;
+extern int gFilterVBSize;
+extern int gFilterVBUsed;
+extern float gD3DMinZ;
+extern float gD3DViewMinZ;
+extern float gD3DViewMaxZ;
+extern float gNearPlane;
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 #define TASK_DEBUG_LOG (FN(0x4C1780, Debug_Log))

@@ -31,17 +31,17 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 
 #define HANDLER_4D3710 (FN(0x4D3710, Task_Nothing))
 
-#define gTagItemReal32Type VAR(uint16_t, 0xA7A4E0)
-#define gTagItemString16Params VAR(void *, 0xA7A4E4)
-#define gTagItemString256Type VAR(uint16_t, 0xA7A4E8)
-#define gTagItemParams VAR(void *, 0xA7A4EC)
-#define gTagItemReal32Params VAR(void *, 0xA7A4F0)
-#define gTagItemEvent VAR(uint8_t, 0xA7A4F4)
-#define gTagItemInt32Type VAR(uint16_t, 0xA7A4F6)
-#define gTagItemInt32Params VAR(void *, 0xA7A4F8)
-#define gTagItemType VAR(uint16_t, 0xA7A4FC)
-#define gTagItemString16Type VAR(uint16_t, 0xA7A4FE)
-#define gTagItemString256Params VAR(void *, 0xA7A500)
+extern uint16_t gTagItemReal32Type;
+extern void *gTagItemString16Params;
+extern uint16_t gTagItemString256Type;
+extern void *gTagItemParams;
+extern void *gTagItemReal32Params;
+extern uint8_t gTagItemEvent;
+extern uint16_t gTagItemInt32Type;
+extern void *gTagItemInt32Params;
+extern uint16_t gTagItemType;
+extern uint16_t gTagItemString16Type;
+extern void *gTagItemString256Params;
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
 

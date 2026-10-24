@@ -44,9 +44,9 @@ typedef struct Terrain {
 _Static_assert(offsetof(ObjInfo, name) == 0x50, "ObjInfo");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gCurrentWorld VAR(Terrain *, 0xA44344)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
+extern Terrain *gCurrentWorld;
 
 /* the handler a task type has for a slot */
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

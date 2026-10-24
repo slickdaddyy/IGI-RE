@@ -5,12 +5,12 @@
 #include "core/error.h"
 #include "core/rendermode.h"
 
-#define gRenderModes ((RenderMode *)0xA950A0)
-#define gRenderMethods ((RenderModeMethod *)0xA94A80)
-#define gRenderModeCurrent VAR(RenderMode, 0xA94E80)
-#define gRenderModeIndex VAR(int, 0xA94A64)
-#define gRenderModeStack ((int *)0x942308)
-#define gRenderModeStackTop VAR(int, 0x942304)
+extern RenderMode gRenderModes[];
+extern RenderModeMethod gRenderMethods[];
+extern RenderMode gRenderModeCurrent;
+extern int gRenderModeIndex;
+extern int gRenderModeStack[];
+extern int gRenderModeStackTop;
 
 void RenderMode_Init(void)
 {

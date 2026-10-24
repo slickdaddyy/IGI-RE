@@ -322,21 +322,21 @@ uint8_t Gun_GetEvent2(void);
 uint8_t Gun_GetEvent3(void);
 uint8_t Gun_GetEvent4(void);
 
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((TaskFn *)0xA96AE0)[(slot) * 0x180 + (type)])
 
 /* exe constants, read in place so the x87 code sees the same values */
-#define kZero VAR(float, 0x5333EC)
-#define kOne VAR(float, 0x5333E0)
-#define kMeter VAR(float, 0x5333B8)       /* 4096 */
-#define kFps VAR(float, 0x5333BC)         /* 30 */
-#define kZeroD VAR(double, 0x5333B0)
-#define kOneD VAR(double, 0x5333F8)
-#define kDegToRad VAR(float, 0x53367C)
-#define kDrag VAR(float, 0x534144)        /* 0.985 */
-#define kMinute VAR(double, 0x533490)     /* 60 */
-#define kFpsD VAR(double, 0x533488)       /* 30 */
+extern float kZero;
+extern float kOne;
+extern float kMeter;       /* 4096 */
+extern float kFps;         /* 30 */
+extern double kZeroD;
+extern double kOneD;
+extern float kDegToRad;
+extern float kDrag;        /* 0.985 */
+extern double kMinute;     /* 60 */
+extern double kFpsD;       /* 30 */
 
 static inline Task *next_sibling(Task *t)
 {

@@ -19,8 +19,8 @@ typedef struct SoundManager {
 
 _Static_assert(sizeof(SoundManager) == 0x44, "SoundManager");
 
-#define gSoundManagerType VAR(uint16_t, 0x54EE3C)
-#define gSoundManagerParams VAR(void *, 0xA83780)
+extern uint16_t gSoundManagerType;
+extern void *gSoundManagerParams;
 
 void SoundManager_Create(SoundManager *m)
 {

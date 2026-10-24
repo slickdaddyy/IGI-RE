@@ -7,12 +7,12 @@ ORIG(0x4AA670, void *, crt_malloc, (size_t size));
 ORIG(0x4A6A50, void, crt_free, (void *p));
 ORIG(0x4C1780, void, Debug_Log, (void));
 
-#define gMemCount VAR(int, 0x942300)
-#define gMemReady VAR(char, 0x9422FC)
-#define gMemMode VAR(char, 0x9422FD)
-#define gMemModeStack ((char *)0x9422E8)
-#define gMemModeTop VAR(int, 0xA960E0)
-#define gMemList VAR(List, 0xA960F0)
+extern int gMemCount;
+extern char gMemReady;
+extern char gMemMode;
+extern char gMemModeStack[];
+extern int gMemModeTop;
+extern List gMemList;
 
 void Mem_SetDefaultMode(void)
 {

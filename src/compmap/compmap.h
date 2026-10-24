@@ -150,26 +150,26 @@ _Static_assert(sizeof(ComputerObjectives) == 0x38, "ComputerObjectives");
 _Static_assert(sizeof(ComputerMap) == 0xAC, "ComputerMap");
 _Static_assert(sizeof(MapHit) == 0x70, "MapHit");
 
-#define gComputerLogType VAR(uint16_t, 0x5BDC98)
-#define gLogLines ((const char **)0x5BDC9C)
-#define gLog VAR(ComputerLog *, 0x5BDD68)
-#define gLogCount VAR(int, 0x5BDD6C)
-#define gObjectivesType VAR(uint16_t, 0x5BDD70)
-#define gMapPos VAR(Vec3d, 0x5BDD78)
-#define gMapType VAR(uint16_t, 0x5BDD90)
-#define gMap VAR(ComputerMap *, 0x5BDD98)
-#define gMapStartTask VAR(Task *, 0x5BDD9C)
-#define gMapZoom VAR(int16_t, 0x5BDDA0)
-#define gMenuType VAR(uint16_t, 0x5BDDA8)
-#define gComputerRes VAR(ComputerRes, 0x5BDDB0)
-#define gMenu VAR(ComputerMenu *, 0x5BE2B0)
-#define gButtonItemType VAR(uint16_t, 0x5BE2B4)
-#define gTextItemType VAR(uint16_t, 0x5BE2BC)
-#define gMapSelectEvent VAR(uint8_t, 0x53F760)
-#define gMapZoomAngle ((const float *)0x53F750)
+extern uint16_t gComputerLogType;
+extern const char *gLogLines[];
+extern ComputerLog *gLog;
+extern int gLogCount;
+extern uint16_t gObjectivesType;
+extern Vec3d gMapPos;
+extern uint16_t gMapType;
+extern ComputerMap *gMap;
+extern Task *gMapStartTask;
+extern int16_t gMapZoom;
+extern uint16_t gMenuType;
+extern ComputerRes gComputerRes;
+extern ComputerMenu *gMenu;
+extern uint16_t gButtonItemType;
+extern uint16_t gTextItemType;
+extern uint8_t gMapSelectEvent;
+extern const float gMapZoomAngle[];
 #define gItemColor ((const float (*)[3])0x53F7D0)
-#define gLevelFlow VAR(char *, 0xBC2360)
-#define gMouseButtons VAR(unsigned int, 0xC28F8C)
+extern char *gLevelFlow;
+extern unsigned int gMouseButtons;
 
 #define MENU_MANAGER() (*(void **)(gLevelFlow + 0x120))
 #define RUN_SLOT() 1

@@ -71,10 +71,10 @@ ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (void *obj));
 ORIG(0x4FE650, float *, TagItem_AddReal32, (void *table, const char *name, float value));
 ORIG(0x4FE730, float *, TagItem_Find, (void *table, const char *name));
 
-#define gGrenadeType VAR(uint16_t, 0x54066C)
-#define gGrenadeEvent VAR(uint8_t, 0x5BE3B8)
+extern uint16_t gGrenadeType;
+extern uint8_t gGrenadeEvent;
 
-#define kFuseFrames VAR(float, 0x5339B8) /* -30 */
+extern float kFuseFrames; /* -30 */
 
 #define Task_FalseHandler (FN(0x45F920, Task_FalseHandler))
 #define HitZone_GetArgSize (FN(0x427F80, HitZone_GetArgSize))

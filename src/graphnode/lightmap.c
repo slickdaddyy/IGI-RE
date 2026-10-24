@@ -115,16 +115,16 @@ typedef struct CollHit {
 #define LIGHTMAP_MAX 0x800
 
 #define gLightMapRandom ((void *)0xA76CD0)
-#define gTerrainLightMapType VAR(uint16_t, 0xA76CDC)
-#define gTerrainLightMapParams VAR(void *, 0xA76D04)
-#define gDynCubeObjType VAR(uint16_t, 0x54875C)
-#define gCurrentWorld VAR(Terrain *, 0xA44344)
-#define gVisibleLightMaps ((int *)0xB97B20)
-#define gVisibleLightMapCount VAR(int, 0xB97D24)
-#define gLightMapTasks ((TerrainLightMap **)0xBC00A0)
-#define gLightmaps ((Lightmap *)0xB81B20)
-#define gLightMapDraw ((LightMapDraw *)0xBA80A0)
-#define gWorldName ((const char *)0xB97C20)
+extern uint16_t gTerrainLightMapType;
+extern void *gTerrainLightMapParams;
+extern uint16_t gDynCubeObjType;
+extern Terrain *gCurrentWorld;
+extern int gVisibleLightMaps[];
+extern int gVisibleLightMapCount;
+extern TerrainLightMap *gLightMapTasks[];
+extern Lightmap gLightmaps[];
+extern LightMapDraw gLightMapDraw[];
+extern const char gWorldName[];
 
 static const double kLiftZ = 268435456.0;
 static const double kHalf = 0.5;

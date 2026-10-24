@@ -36,17 +36,17 @@ ORIG(0x4F1030, Task *, Task_FindById, (int id));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x501D70, void, SplineObjWaypoint_UpdateAttach, (SplineObjWaypoint *w));
 
-#define gWaypointType VAR(uint16_t, 0xA7A620)
-#define gWorld VAR(void *, 0xA44344)
-#define gScriptEmptyString VAR(char, 0x567C74)
+extern uint16_t gWaypointType;
+extern void *gWorld;
+extern char gScriptEmptyString;
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
 
-#define kDefaultSegLength VAR(const float, 0x54E5D4)
-#define kHalf VAR(const float, 0x533504)
-#define kSmallAngle VAR(const float, 0x533714)
-#define kMinusTwo VAR(const float, 0x534BA8)
-#define kPi VAR(const float, 0x533400)
-#define kTiny VAR(const double, 0x534BA0)
+extern const float kDefaultSegLength;
+extern const float kHalf;
+extern const float kSmallAngle;
+extern const float kMinusTwo;
+extern const float kPi;
+extern const double kTiny;
 
 /* segment tables by raw offset: the original also reads index -1 (the word before segLength) */
 #define SEG_POS(s, i) ((float *)((char *)(s) + 0x104 + (i) * 12))

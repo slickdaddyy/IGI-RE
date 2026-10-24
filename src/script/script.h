@@ -119,11 +119,11 @@ typedef struct Expr {
     char text[];
 } Expr;
 
-#define gScriptWarningLevel VAR(int, 0xA96598)
-#define gScriptBreakEnabled VAR(int, 0xA965A0)
-#define gScriptBreak VAR(int, 0xA965A4)
-#define gScriptError VAR(int, 0xA965A8)
-#define gScriptMaxArgs VAR(int, 0xA969C0)
+extern int gScriptWarningLevel;
+extern int gScriptBreakEnabled;
+extern int gScriptBreak;
+extern int gScriptError;
+extern int gScriptMaxArgs;
 
 Script *Script_Load(const char *path);
 void Script_Free(Script *s);

@@ -28,8 +28,8 @@ _Static_assert(offsetof(Generator, cond) == 0x240, "Generator");
 _Static_assert(offsetof(Generator, backupTimer) == 0x2B8, "Generator");
 _Static_assert(sizeof(Generator) == 0x2C0, "Generator");
 
-#define gGeneratorType VAR(uint16_t, 0x53C2FC)
-#define gGeneratorParams VAR(void *, 0x57BF3C)
+extern uint16_t gGeneratorType;
+extern void *gGeneratorParams;
 
 static const float kFrames = 30.0f;
 

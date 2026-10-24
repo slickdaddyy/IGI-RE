@@ -36,10 +36,10 @@ _Static_assert(sizeof(CubeModifier) == 0x178, "CubeModifier");
 
 #define CUBEMOD_MAX 100
 
-#define gCubeModifierParams VAR(void *, 0xA843A4)
-#define gCubeModifierType VAR(uint16_t, 0xA843A8)
-#define gCubeModifiers ((CubeModifier **)0xA843AC)
-#define gScriptEmptyString ((const char *)0x567C74)
+extern void *gCubeModifierParams;
+extern uint16_t gCubeModifierType;
+extern CubeModifier *gCubeModifiers[];
+extern const char gScriptEmptyString[];
 
 static const float kRadiusScale = 4.0f;
 

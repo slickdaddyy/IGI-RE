@@ -10,8 +10,8 @@ typedef struct CameraControl {
     Task *listener;
 } CameraControl;
 
-#define gCameraControlType VAR(uint16_t, 0x54D974)
-#define gCameraControlCurrent VAR(CameraControl *, 0xA5EBDC)
+extern uint16_t gCameraControlType;
+extern CameraControl *gCameraControlCurrent;
 
 ORIG(0x4EBBA0, Task *, SoundSysMicrophone_New, (void *parent, void *arg));
 ORIG(0x4EBBF0, void, SoundSysMicrophone_Set, (Task *listener, Camera *rot, double *pos));

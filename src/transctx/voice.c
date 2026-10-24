@@ -97,25 +97,25 @@ _Static_assert(sizeof(Sound) == 0x30, "Sound");
 _Static_assert(sizeof(Voice) == 0x4C, "Voice");
 _Static_assert(sizeof(SoundParams) == 0x58, "SoundParams");
 
-#define gSoundVoiceCount VAR(int, 0x5CA134)
-#define gListenerPos ((double *)0x5CA138)
-#define gListenerMatrix ((float *)0x5CA160)
-#define gSoundLists ((SoundList *)0x5CA1B8)
-#define gAdpcmBuffer ((unsigned char *)0x5CA674)
-#define gMusicVolume VAR(float, 0x543904)
-#define gMasterVolume VAR(float, 0x543908)
-#define gSfxVolume VAR(float, 0x54390C)
-#define gSoundSwapPan VAR(int, 0x543914)
-#define gVoiceUpdateRate VAR(int, 0x54391C)
-#define gAdpcmIndexTable ((const signed char *)0x543920)
-#define gAdpcmStepTable ((const short *)0x543930)
-#define gListenerVel ((double *)0x676AB8)
-#define gDSound VAR(IDirectSound *, 0x67A498)
-#define gVolumeTable ((int *)0x67A4A0)
-#define gSoundReady VAR(char, 0x6840E9)
-#define gActiveVoices VAR(Voice *, 0x6840F4)
-#define gFreeVoices VAR(Voice *, 0x6840F8)
-#define gTimeMs VAR(int, 0xC28C5C)
+extern int gSoundVoiceCount;
+extern double gListenerPos[];
+extern float gListenerMatrix[];
+extern SoundList gSoundLists[];
+extern unsigned char gAdpcmBuffer[];
+extern float gMusicVolume;
+extern float gMasterVolume;
+extern float gSfxVolume;
+extern int gSoundSwapPan;
+extern int gVoiceUpdateRate;
+extern const signed char gAdpcmIndexTable[];
+extern const short gAdpcmStepTable[];
+extern double gListenerVel[];
+extern IDirectSound *gDSound;
+extern int gVolumeTable[];
+extern char gSoundReady;
+extern Voice *gActiveVoices;
+extern Voice *gFreeVoices;
+extern int gTimeMs;
 
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }

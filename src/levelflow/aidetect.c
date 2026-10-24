@@ -83,16 +83,16 @@ _Static_assert(offsetof(AIView, hasSecond) == 0x70, "AIView");
 _Static_assert(sizeof(AIDetectSlot) == 0x30, "AIDetectSlot");
 _Static_assert(offsetof(AIDetector, slots) == 0x30, "AIDetector");
 
-#define gAIDetectList VAR(QTaskList *, 0x5C8AC0)
-#define gAIDetectMaskTypes ((uint16_t *)0x5C8AC4)
-#define gAIDetectPhase VAR(int, 0x5C8B08)
-#define gAIDetectUnk5C8B0C VAR(int, 0x5C8B0C)
-#define gAIDetectUnk5C8B10 VAR(int, 0x5C8B10)
-#define gAIDetectUnk5C8B14 VAR(int, 0x5C8B14)
-#define gAIDetectEvent0 VAR(uint8_t, 0x54127C)
-#define gAIDetectEvent1 VAR(uint8_t, 0x54127D)
-#define gAIDetectEvent2 VAR(uint8_t, 0x54127E)
-#define kZero VAR(float, 0x5333EC)
+extern QTaskList *gAIDetectList;
+extern uint16_t gAIDetectMaskTypes[];
+extern int gAIDetectPhase;
+extern int gAIDetectUnk5C8B0C;
+extern int gAIDetectUnk5C8B10;
+extern int gAIDetectUnk5C8B14;
+extern uint8_t gAIDetectEvent0;
+extern uint8_t gAIDetectEvent1;
+extern uint8_t gAIDetectEvent2;
+extern float kZero;
 
 void AIDetector_RemoveSlot(AIDetectSlot *s)
 {

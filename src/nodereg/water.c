@@ -165,18 +165,18 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, int type, int flags, void *extra));
 ORIG(0x52D6C0, void, WaterMesh_Init, (void **neighbors));
 
-#define gWaters ((Water **)0xA80200)
-#define gWaterLevelType VAR(int, 0xA80300)
-#define gWaterParams VAR(void *, 0xA80304)
-#define gWaterStack ((Water **)0xA80308)
-#define gWaterTypes ((WaterType *)0xA80408)
-#define gWaterType VAR(uint16_t, 0xA81014)
-#define gWaterCount VAR(int, 0xA8101C)
-#define gWaterDepth VAR(int, 0xA81020)
-#define gAmbient ((float *)0xB818A0)
-#define gWaterTint ((float *)0xBA2030)
-#define gWaterLevel VAR(double, 0xBA2040)
-#define gWorld VAR(WaterWorld *, 0xA44344)
+extern Water *gWaters[];
+extern int gWaterLevelType;
+extern void *gWaterParams;
+extern Water *gWaterStack[];
+extern WaterType gWaterTypes[];
+extern uint16_t gWaterType;
+extern int gWaterCount;
+extern int gWaterDepth;
+extern float gAmbient[];
+extern float gWaterTint[];
+extern double gWaterLevel;
+extern WaterWorld *gWorld;
 
 static const double kZero = 0.0;
 static const double kHalf = 0.5;

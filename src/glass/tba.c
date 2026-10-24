@@ -48,9 +48,9 @@ typedef struct GenericTBA {
 _Static_assert(offsetof(GenericTBA, script) == 0x258, "GenericTBA");
 _Static_assert(sizeof(GenericTBA) == 0x2A8, "GenericTBA");
 
-#define gTBAType VAR(uint16_t, 0x53C7DC)
-#define gTBAIcons VAR(ParamEnum, 0x57C1F0)
-#define gTBAParams VAR(void *, 0x57C1FC)
+extern uint16_t gTBAType;
+extern ParamEnum gTBAIcons;
+extern void *gTBAParams;
 
 /* handlers shared with the Terminal and others */
 #define Terminal_CheckUse (FN(0x443C80, Terminal_CheckUse))

@@ -22,11 +22,11 @@ typedef struct QVertexStrip {
 } QVertexStrip;
 
 #define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
-#define gQVertexTexture VAR(Texture *, 0xA84A50)
-#define gQVertexStrip VAR(int, 0xA84A54)
-#define gQVertexPalette VAR(Palette *, 0xA84A58)
-#define gColorScale VAR(const float, 0x534AB0)
-#define gPixelCenter VAR(const float, 0x533504)
+extern Texture *gQVertexTexture;
+extern int gQVertexStrip;
+extern Palette *gQVertexPalette;
+extern const float gColorScale;
+extern const float gPixelCenter;
 
 static void QVertex_Set(QVertex *v, float x, float y, float z, float u, float w, float a, float r, float g, float b)
 {

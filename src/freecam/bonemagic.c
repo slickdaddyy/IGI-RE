@@ -94,8 +94,8 @@ ORIG(0x4D38C0, void, BoneObj_Update, (float *matrix, void *anim));
 ORIG(0x4D2FB0, void, BoneObj_GetRootMotion, (void *unk, float *delta, void *anim));
 ORIG(0x4D3210, void, BoneObj_GetEvents, (void *unk, void *anim));
 
-#define gBoneMagicObjType VAR(uint16_t, 0x54F848)
-#define gBoneMagicObjTypeWord VAR(uint32_t, 0x54F848)
+extern uint16_t gBoneMagicObjType;
+extern uint32_t gBoneMagicObjTypeWord;
 #define kSomeHandler427F80 (FN(0x427F80, HitZone_GetArgSize))
 
 void BoneMagicObj_Run(BoneMagicObj *o)

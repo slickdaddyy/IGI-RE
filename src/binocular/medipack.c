@@ -28,7 +28,7 @@ ORIG(0x4FE730, char *, TagItem_Find, (void *config, const char *name));
 #define WEAPON_HANDLER_4754C0 (FN(0x4754C0, ProxMine_Move))
 #define ROCKETPOD_GETARGSIZE (FN(0x427D70, RocketPod_GetArgSize))
 
-#define gMedipackType VAR(uint16_t, 0x5BE334)
+extern uint16_t gMedipackType;
 
 void Medipack_Create(char *t, void *arg);
 void Medipack_ParseArg(void *unused, ScriptArg *a);

@@ -78,13 +78,13 @@ _Static_assert(offsetof(Elevator, wantedFloor) == 0x1C4, "wantedFloor");
 _Static_assert(offsetof(Elevator, isMoving) == 0x5D6, "isMoving");
 _Static_assert(sizeof(Elevator) == 0x648, "Elevator");
 
-#define gElevatorParams VAR(void *, 0x57C0E0)
-#define gElevatorType VAR(uint16_t, 0x57C108)
-#define gElevatorLength VAR(float, 0x57C0EC)
-#define gElevatorMove VAR(Vec3d, 0x57C0F0)
-#define gElevatorTurn VAR(Matrix, 0x57C110)
+extern void *gElevatorParams;
+extern uint16_t gElevatorType;
+extern float gElevatorLength;
+extern Vec3d gElevatorMove;
+extern Matrix gElevatorTurn;
 
-#define kTenth VAR(float, 0x5333C8)
+extern float kTenth;
 
 /* puts the elevator at its distance along the graph */
 void Elevator_UpdatePlace(Elevator *e)

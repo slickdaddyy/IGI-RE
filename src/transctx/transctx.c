@@ -21,29 +21,29 @@ ORIG(0x4B0EE0, void, RenderMode_ForEach, (void *fn, void *user));
 
 int Primitive_Register(const char *name);
 
-#define gTransContextPrim VAR(int, 0x543A68)
-#define gUnk543A64 VAR(int, 0x543A64)
-#define gSetActiveTransContextMethod VAR(int, 0x6E5BA4)
-#define gSetNearClippingPlaneMethod VAR(int, 0x6E5BA8)
-#define gTransContextValid VAR(int, 0x6E5BB0)
-#define gTransContextSelects VAR(int, 0x6E5BB4)
-#define gViewPos ((double *)0xBCAB08)
-#define gNearPlaneScale VAR(float, 0xBCABEC)
-#define gLayer0MinZ VAR(float, 0xBCABF0)
-#define gLayer0MaxZ VAR(float, 0xBCACF0)
-#define gLayer1MaxZ VAR(float, 0xBCAD8C)
-#define gLayer2MaxZ VAR(float, 0xBCAD9C)
-#define gD3DDevice VAR(IDirect3DDevice7 *, 0x5CA114)
-#define gD3DMinZ VAR(float, 0xBCADA0)
-#define gD3DZ24 VAR(int, 0xBCADA4)
-#define gLayer2Far VAR(float, 0xBCADA8)
-#define gLayer2Near VAR(float, 0xBCADB0)
-#define gLayer1MinZ VAR(float, 0xBCADB4)
-#define gLayer0Far VAR(float, 0xBCADB8)
-#define gNearPlane VAR(float, 0xBCADC0)
-#define gD3DMaxZ VAR(float, 0xBCADC8)
-#define gLayer0Near VAR(float, 0xBCADD8)
-#define gLayer2MinZ VAR(float, 0xBCADE4)
+extern int gTransContextPrim;
+extern int gUnk543A64;
+extern int gSetActiveTransContextMethod;
+extern int gSetNearClippingPlaneMethod;
+extern int gTransContextValid;
+extern int gTransContextSelects;
+extern double gViewPos[];
+extern float gNearPlaneScale;
+extern float gLayer0MinZ;
+extern float gLayer0MaxZ;
+extern float gLayer1MaxZ;
+extern float gLayer2MaxZ;
+extern IDirect3DDevice7 *gD3DDevice;
+extern float gD3DMinZ;
+extern int gD3DZ24;
+extern float gLayer2Far;
+extern float gLayer2Near;
+extern float gLayer1MinZ;
+extern float gLayer0Far;
+extern float gNearPlane;
+extern float gD3DMaxZ;
+extern float gLayer0Near;
+extern float gLayer2MinZ;
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);

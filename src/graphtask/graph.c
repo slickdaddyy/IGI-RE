@@ -125,19 +125,19 @@ ORIG(0x4F9DF0, void, GraphStream_AddHandler, (const char *name, int type, void (
 ORIG(0x4F9FF0, void, GraphOpen, (Graph *g, const char *path));
 ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
-#define gGraphType VAR(uint16_t, 0x54E364)
-#define gGraphEvents ((uint8_t *)0x54E368)
-#define gGraphParams VAR(void *, 0xA76D10)
-#define gStreamHandlersFree VAR(List, 0xA76D18)
-#define gGraphLinkCost VAR(int, 0xA76D24)
-#define gGraphHandlerSlots ((GraphStreamHandler *)0xA76D28)
-#define gGraphNodeSizes ((GraphNodeSize *)0xA77228)
-#define gGraphRefs VAR(List, 0xA77248)
-#define gGraphLinkB VAR(int, 0xA77254)
-#define gGraphLinkA VAR(int, 0xA77258)
-#define gGraphNodeTemp VAR(GraphNode, 0xA77260)
-#define gStreamHandlers VAR(List, 0xA774A0)
-#define gTerrain VAR(void *, 0xA44344)
+extern uint16_t gGraphType;
+extern uint8_t gGraphEvents[];
+extern void *gGraphParams;
+extern List gStreamHandlersFree;
+extern int gGraphLinkCost;
+extern GraphStreamHandler gGraphHandlerSlots[];
+extern GraphNodeSize gGraphNodeSizes[];
+extern List gGraphRefs;
+extern int gGraphLinkB;
+extern int gGraphLinkA;
+extern GraphNode gGraphNodeTemp;
+extern List gStreamHandlers;
+extern void *gTerrain;
 
 /* the next byte of the file, which stays unread. When nothing is read
    the result is the low byte of the stream pointer. */

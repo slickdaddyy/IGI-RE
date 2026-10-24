@@ -190,48 +190,48 @@ _Static_assert(sizeof(TerrainClipVertex) == 0x30, "TerrainClipVertex");
 ORIG(0x4A0340, void, Direct3DRender_ClipTriangleDepth, (ClipVertex a, ClipVertex b, ClipVertex c, float *minZ,
                                                         float nearZ));
 
-#define gTerrainMeshes ((TerrainMesh **)0xB12C60)
-#define gTerrainMeshCount VAR(int, 0xB16C9C)
-#define gTerrainCellCount VAR(int, 0xB16CA4)
-#define gTerrainCells ((TerrainCell *)0xB16CE0)
-#define gTerrainPool0 VAR(Pool, 0xB12B60)
-#define gTerrainPool1 VAR(Pool, 0xB12C40)
-#define gTerrainPool2 VAR(Pool, 0xB16CC0)
-#define gQCubeOriginD ((double *)0xB12BA0)
-#define gTerrainLightMaps ((TerrainLightMapInfo *)0xBA80B0)
-#define gTerrainHeightMaps ((TerrainHeightMapInfo *)0xBA2030)
-#define gTerrainMaterialMaps ((TerrainMaterialMapInfo *)0xBA5050)
+extern TerrainMesh *gTerrainMeshes[];
+extern int gTerrainMeshCount;
+extern int gTerrainCellCount;
+extern TerrainCell gTerrainCells[];
+extern Pool gTerrainPool0;
+extern Pool gTerrainPool1;
+extern Pool gTerrainPool2;
+extern double gQCubeOriginD[];
+extern TerrainLightMapInfo gTerrainLightMaps[];
+extern TerrainHeightMapInfo gTerrainHeightMaps[];
+extern TerrainMaterialMapInfo gTerrainMaterialMaps[];
 #define gTerrainTileMaps ((uint8_t (*)[8])0xC30080)
-#define gTerrainMeshRenderAll VAR(int, 0xA7DA10)
-#define gLights VAR(char *, 0xB041E0)
-#define gLightIndex VAR(int *, 0xB041E4)
-#define gLightCount VAR(int, 0xB041E8)
-#define gLightStride VAR(int, 0xB041F0)
-#define gTerrainFogScale VAR(float, 0xA7DA18)
-#define gTerrainAmbient ((float *)0xA7DA20)
-#define gTerrainFogColor ((float *)0xA7DA30)
-#define gUnkA7DA40 VAR(int, 0xA7DA40)
-#define gTerrainFog ((TerrainFog *)0xC310A0)
-#define gTerrainTextures VAR(int, 0xC30060)
-#define gTerrainBottom VAR(float, 0xC31080)
-#define gTerrainRight VAR(float, 0xC31084)
-#define gUnkC31088 VAR(int, 0xC31088)
-#define gUnkC3108C VAR(char, 0xC3108C)
-#define gUnkC31090 VAR(int, 0xC31090)
-#define gTerrainScaleY VAR(float, 0xC311A0)
-#define gTerrainScaleX VAR(float, 0xC311A4)
-#define gTerrainTop VAR(float, 0xC311A8)
-#define gTerrainLeft VAR(float, 0xC311AC)
-#define gTerrainCenterX VAR(float, 0xC311B0)
-#define gTerrainCenterY VAR(float, 0xC311B4)
-#define gTerrainInvSize VAR(float, 0xC311B8)
-#define gUnkC28FBC VAR(int, 0xC28FBC)
-#define gUnkC28FC0 VAR(float, 0xC28FC0)
-#define gTerrainView ((float *)0x943B50) /* 3x3 matrix, unk24, then the view origin */
-#define gTerrainTint ((float *)0xBA2030)
+extern int gTerrainMeshRenderAll;
+extern char *gLights;
+extern int *gLightIndex;
+extern int gLightCount;
+extern int gLightStride;
+extern float gTerrainFogScale;
+extern float gTerrainAmbient[];
+extern float gTerrainFogColor[];
+extern int gUnkA7DA40;
+extern TerrainFog gTerrainFog[];
+extern int gTerrainTextures;
+extern float gTerrainBottom;
+extern float gTerrainRight;
+extern int gUnkC31088;
+extern char gUnkC3108C;
+extern int gUnkC31090;
+extern float gTerrainScaleY;
+extern float gTerrainScaleX;
+extern float gTerrainTop;
+extern float gTerrainLeft;
+extern float gTerrainCenterX;
+extern float gTerrainCenterY;
+extern float gTerrainInvSize;
+extern int gUnkC28FBC;
+extern float gUnkC28FC0;
+extern float gTerrainView[]; /* 3x3 matrix, unk24, then the view origin */
+extern float gTerrainTint[];
 #define gTerrainClipUV ((double (*)[2])0xA7DA70)
 #define gTerrainClipPos ((double (*)[3])0xA7DAB0)
-#define gTerrainClipVerts ((TerrainClipVertex *)0xA7DB10)
+extern TerrainClipVertex gTerrainClipVerts[];
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);

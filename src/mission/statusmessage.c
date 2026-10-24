@@ -30,16 +30,16 @@ ORIG(0x4F1000, void *, Param_Bool8, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
-#define gStatusMessageType VAR(uint16_t, 0x540A8C)
-#define gStatusMessageParams VAR(void *, 0x5C8A38)
-#define gStatusDurationRange VAR(RangeF, 0x5C8A30)
-#define gStatusMessageScreenType VAR(uint16_t, 0x540B08)
-#define gMessagesRes VAR(void *, 0x5C8A40)
+extern uint16_t gStatusMessageType;
+extern void *gStatusMessageParams;
+extern RangeF gStatusDurationRange;
+extern uint16_t gStatusMessageScreenType;
+extern void *gMessagesRes;
 
 #define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
-#define gQVertexTexture VAR(void *, 0xA84A50)
-#define gQVertexStrip VAR(int, 0xA84A54)
-#define gQVertexPalette VAR(void *, 0xA84A58)
+extern void *gQVertexTexture;
+extern int gQVertexStrip;
+extern void *gQVertexPalette;
 
 static const double kZeroD = 0.0;
 static const double kLineStep = 42.0;

@@ -236,20 +236,20 @@ _Static_assert(sizeof(Part) == 0x140, "Part");
 typedef void (*TaskFn1)(void *task);
 typedef void (*TaskFn2)(void *task, void *arg);
 
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((void **)0xA96AE0)[(slot) * 0x180 + (type)])
 
 /* exe constants, read in place so the x87 code sees the same values */
-#define kZero VAR(float, 0x5333EC)
-#define kOne VAR(float, 0x5333E0)
-#define kTenth VAR(float, 0x5333C8)
-#define kHundredth VAR(float, 0x533714)
-#define kTenthD VAR(double, 0x5337C8)
-#define kDegToRad VAR(float, 0x53367C)
-#define kKeep VAR(float, 0x5336DC)      /* 0.98 */
-#define kBlend VAR(float, 0x5336D8)     /* 0.02 */
-#define kStartSpeed VAR(float, 0x533778)
+extern float kZero;
+extern float kOne;
+extern float kTenth;
+extern float kHundredth;
+extern double kTenthD;
+extern float kDegToRad;
+extern float kKeep;      /* 0.98 */
+extern float kBlend;     /* 0.02 */
+extern float kStartSpeed;
 
 static inline Task *next_sibling(Task *t)
 {

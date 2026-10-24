@@ -69,9 +69,9 @@ typedef struct WorldEventArg {
 _Static_assert(sizeof(DiscardTerrain) == 0x158, "DiscardTerrain");
 _Static_assert(offsetof(DiscardTerrain, scale) == 0x98, "DiscardTerrain.scale");
 
-#define gDiscardTerrainType VAR(uint16_t, 0xA8454C)
-#define gDiscardTerrainParams VAR(void *, 0xA84550)
-#define gQCubeSkipCells VAR(int, 0xB12BB8)
+extern uint16_t gDiscardTerrainType;
+extern void *gDiscardTerrainParams;
+extern int gQCubeSkipCells;
 
 static const float kRadius = 4096.0f;
 static const double kHalf = 0.5;

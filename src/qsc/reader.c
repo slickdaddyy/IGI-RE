@@ -5,7 +5,7 @@
 
 FN_EXTERN(Reader_ReadLine);
 
-#define gScriptLineSize VAR(int, 0xA969C4)
+extern int gScriptLineSize;
 
 Reader *Reader_Init(Reader *r, const char *src, int size, int (*refill)(Reader *r))
 {

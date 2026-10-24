@@ -47,14 +47,14 @@ ORIG(0x4E5610, void, CellMask_FillTriangle, (int target, float ax, float ay, flo
 #define DIR_CALLBACK_4C2F90 (FN(0x4C2F90, MagicObj_LoadDirEntry))
 
 #define gTaskHandlers ((MagicHandler (*)[0x180])0xA96AE0)
-#define gTaskStack ((MagicNode **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gRigidEvents ((char *)0x547F3C)
-#define gRigidType VAR(uint16_t, 0x547F42)
-#define gDynCubeObjType VAR(uint16_t, 0x54875C)
-#define gMagicObjDefs ((MagicObjDef *)0xB97E00)
-#define gMagicObjDefCount VAR(int, 0xA4433C)
-#define gWorld VAR(void *, 0xA44344)
+extern MagicNode *gTaskStack[];
+extern int gTaskStackTop;
+extern char gRigidEvents[];
+extern uint16_t gRigidType;
+extern uint16_t gDynCubeObjType;
+extern MagicObjDef gMagicObjDefs[];
+extern int gMagicObjDefCount;
+extern void *gWorld;
 #define gScriptNumberType ((void *)0x567C74)
 
 static float max_scale(const RigidDynCubeObj *o)

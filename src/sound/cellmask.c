@@ -36,13 +36,13 @@ typedef struct CellMaskDrawArg {
     float range;
 } CellMaskDrawArg;
 
-#define gDynCubeObjType VAR(uint16_t, 0x54875C)
-#define gDynCubeObjMaskVisibleEvent VAR(uint8_t, 0x54875E)
-#define gQObjType VAR(uint16_t, 0x548638)
-#define gCellMaskEnabled VAR(int, 0x54876C)
-#define gCellMaskTriX VAR(float, 0xA5E404)
-#define gCellMaskDrawEvent VAR(uint8_t, 0xA5E408)
-#define gCellMaskPool VAR(Pool, 0xB019E0)
+extern uint16_t gDynCubeObjType;
+extern uint8_t gDynCubeObjMaskVisibleEvent;
+extern uint16_t gQObjType;
+extern int gCellMaskEnabled;
+extern float gCellMaskTriX;
+extern uint8_t gCellMaskDrawEvent;
+extern Pool gCellMaskPool;
 
 static const float kFloatMax = 3.4028234663852886e+38f;
 static const float kOne = 1.0f;

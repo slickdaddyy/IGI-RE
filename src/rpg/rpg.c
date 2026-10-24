@@ -92,10 +92,10 @@ ORIG(0x4F2390, void, Weapon_Drop, (void *weapon));
 ORIG(0x4F23D0, void, Weapon_GetAmmo, (void *weapon, int *out));
 ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 
-#define gSoldierRPGType VAR(uint16_t, 0x5BDA94)
-#define gSoldierRPGList VAR(void *, 0x5BDA98)
-#define gSoldierRPGUnk VAR(int, 0x5BDAA0)
-#define gSoldierRPGStates ((SoldierStateFn *)0x53E6A8)
+extern uint16_t gSoldierRPGType;
+extern void *gSoldierRPGList;
+extern int gSoldierRPGUnk;
+extern SoldierStateFn gSoldierRPGStates[];
 #define gSoldierRPGCombos ((void *)0x53E718)
 #define gSoldierRPGAnimSlots ((void *)0x53E720)
 #define gSoldierRPGSpeeds ((void *)0x53E798)

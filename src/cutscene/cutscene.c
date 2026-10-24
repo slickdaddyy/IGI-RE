@@ -161,16 +161,16 @@ ORIG(0x508940, void, EditCamera_AttachPosition, (Vec3d *pos, Matrix *rot, void *
 ORIG(0x518130, void, Hermite_Init, (double *h, double p1, double p2, double m1, double m2));
 ORIG(0x518190, long double, Hermite_Eval, (double *h, double u));
 
-#define gVehicleClearHitEvent VAR(uint8_t, 0x54E203)
-#define gVehicles VAR(void *, 0xA76C40)
-#define gCutSceneModel VAR(void *, 0xA76C50)
-#define gCutSceneTicksPerSec VAR(int, 0xA76C54)
-#define gCutSceneParams VAR(void *, 0xA76C58)
-#define gCutSceneTimeRange ((float *)0xA76C60)
-#define gCutSceneType VAR(uint16_t, 0xA76C68)
+extern uint8_t gVehicleClearHitEvent;
+extern void *gVehicles;
+extern void *gCutSceneModel;
+extern int gCutSceneTicksPerSec;
+extern void *gCutSceneParams;
+extern float gCutSceneTimeRange[];
+extern uint16_t gCutSceneType;
 #define gCutSceneRandom ((void *)0xA76C70)
-#define gCutSceneCamera VAR(void *, 0xA76C7C)
-#define gCutSceneFilterParent VAR(void *, 0xA76C80)
+extern void *gCutSceneCamera;
+extern void *gCutSceneFilterParent;
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 

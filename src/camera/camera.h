@@ -66,8 +66,8 @@ _Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 _Static_assert(offsetof(CollHit, found) == 0x58, "CollHit.found");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 
 /* the next child of a broadcast, NULL after the last one */
 #define NEXT_CHILD(c) ((c)->next && (c)->next->next ? (c)->next : NULL)

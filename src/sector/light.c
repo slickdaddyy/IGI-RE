@@ -37,24 +37,24 @@ typedef struct Light {
 _Static_assert(sizeof(PointLight) == 0x28, "PointLight");
 _Static_assert(sizeof(SpotLight) == 0x38, "SpotLight");
 
-#define gLightFrame ((int *)0xB01A00)
-#define gLightStackCount VAR(int, 0xB03DF0)
-#define gPointLights ((PointLight *)0xB03E00)
-#define gLightNest VAR(int, 0xB03F90)
-#define gSpotLights ((SpotLight *)0xB03FA0)
-#define gLightFrameUsed VAR(int, 0xB041D0)
-#define gLightPool VAR(Pool, 0xB041E0)
-#define gLightStack ((int *)0xB04200)
-#define gSpotCount VAR(int, 0xB0425C)
-#define gPointCount VAR(int, 0xB04260)
-#define gViewPos VAR(Vec3d, 0xBCAB08)
-#define gViewFov VAR(float, 0xBCAB20)
+extern int gLightFrame[];
+extern int gLightStackCount;
+extern PointLight gPointLights[];
+extern int gLightNest;
+extern SpotLight gSpotLights[];
+extern int gLightFrameUsed;
+extern Pool gLightPool;
+extern int gLightStack[];
+extern int gSpotCount;
+extern int gPointCount;
+extern Vec3d gViewPos;
+extern float gViewFov;
 
-#define kFovScale VAR(const float, 0x534B28)    /* 0.83 */
-#define kFovBase VAR(const float, 0x534B24)     /* 0.17 */
-#define kFogScale VAR(const float, 0x534B20)    /* 1/65536 */
-#define kFogBias VAR(const float, 0x534B1C)     /* 130 */
-#define kHalf VAR(const float, 0x533504)
+extern const float kFovScale;    /* 0.83 */
+extern const float kFovBase;     /* 0.17 */
+extern const float kFogScale;    /* 1/65536 */
+extern const float kFogBias;     /* 130 */
+extern const float kHalf;
 
 static inline long double x87_cos(long double x)
 {

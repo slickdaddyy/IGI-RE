@@ -20,12 +20,12 @@ typedef struct QVertexStrip {
 } QVertexStrip;
 
 #define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
-#define gQVertexTexture VAR(void *, 0xA84A50)
-#define gQVertexStrip VAR(int, 0xA84A54)
-#define gQVertexPalette VAR(void *, 0xA84A58)
-#define gViewDir ((float *)0xBCAAF8)
-#define gViewPos VAR(Vec3d, 0xBCAB08)
-#define kNearPlane VAR(float, 0x5338D0)
+extern void *gQVertexTexture;
+extern int gQVertexStrip;
+extern void *gQVertexPalette;
+extern float gViewDir[];
+extern Vec3d gViewPos;
+extern float kNearPlane;
 
 static inline int is_zero(float f)
 {

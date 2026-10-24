@@ -13,16 +13,16 @@ typedef struct ScreenOverlay {
     int unk4;
 } ScreenOverlay;
 
-#define gScreenDrawEvent VAR(int, 0x5488C8)
-#define gScreenType VAR(uint16_t, 0xA5E618)
-#define gScreenNextMode ((char *)0xA5E620)
-#define gScreenOverlays ((ScreenOverlay *)0xA5E740)
-#define gScreenMode ((char *)0xA5E940)
-#define gScreenFrame VAR(int, 0xA5EA60)
-#define gScreenModeFlag VAR(char, 0xA5EA64)
-#define gScreenModePending VAR(char, 0xA5EA65)
-#define gScreenReady VAR(char, 0xA5EA66)
-#define gScreenOverlayCount VAR(int, 0xA5EA68)
+extern int gScreenDrawEvent;
+extern uint16_t gScreenType;
+extern char gScreenNextMode[];
+extern ScreenOverlay gScreenOverlays[];
+extern char gScreenMode[];
+extern int gScreenFrame;
+extern char gScreenModeFlag;
+extern char gScreenModePending;
+extern char gScreenReady;
+extern int gScreenOverlayCount;
 
 ORIG(0x491A90, void, Display_SetMode, (void *mode));
 ORIG(0x491D00, void, Display_NextFrame, (void));

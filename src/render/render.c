@@ -280,42 +280,42 @@ ORIG(0x4D0E50, int, ModelLod_GetTexAnimStateSize, (ModelLod *l));
 ORIG(0x4D0E60, void, ModelLod_SaveTexAnimState, (ModelLod *l, int *out));
 ORIG(0x4D0EA0, void, ModelLod_LoadTexAnimState, (ModelLod *l, const int *in));
 
-#define gD3D VAR(IDirect3D7 *, 0x5CA110)
-#define gD3DDevice VAR(IDirect3DDevice7 *, 0x5CA114)
-#define gMeshBatches ((ModelSlot *)0x7205C0)
-#define gTexStageIdx VAR(int, 0x7205B0)
-#define gAlphaBlendIdx VAR(int, 0x7205B8)
-#define gLitAlphaIdx VAR(int, 0x7205BC)
-#define gLitIdx VAR(int, 0x7234B8)
-#define gLmStageIdx VAR(int, 0x723504)
-#define gUnlitAlphaIdx VAR(int, 0x723508)
-#define gMeshVBCount VAR(int, 0x72350C)
-#define gProjVerts ((ProjVert *)0x723518)
-#define gOpaqueBlendIdx VAR(int, 0x7AC09C)
-#define gMeshVBs ((ModelVB *)0x7AC0A0)
-#define gUnlitIdx VAR(int, 0x7ADDD4)
+extern IDirect3D7 *gD3D;
+extern IDirect3DDevice7 *gD3DDevice;
+extern ModelSlot gMeshBatches[];
+extern int gTexStageIdx;
+extern int gAlphaBlendIdx;
+extern int gLitAlphaIdx;
+extern int gLitIdx;
+extern int gLmStageIdx;
+extern int gUnlitAlphaIdx;
+extern int gMeshVBCount;
+extern ProjVert gProjVerts[];
+extern int gOpaqueBlendIdx;
+extern ModelVB gMeshVBs[];
+extern int gUnlitIdx;
 #define gTaskHandlers ((void (*(*)[0x180])(void *, void *))0xA96AE0)
-#define gLightBase VAR(char *, 0xB041E0)
-#define gLightIndex VAR(int *, 0xB041E4)
-#define gLightCount VAR(int, 0xB041E8)
-#define gLightStride VAR(int, 0xB041F0)
-#define gFogDensity VAR(DWORD, 0xB46D04)
-#define gLayerFov ((float *)0xB81700)
-#define gLightColor ((float *)0xB818AC)
-#define gFogColor ((float *)0xB818EC)
-#define gView VAR(View, 0xBCAAE0)
-#define gScene VAR(Scene, 0xBCABA0)
-#define gWorldScale VAR(float, 0xBCABEC)
-#define gD3DClippingOnIndex VAR(int, 0xBCACEC)
-#define gD3DListB VAR(StateList *, 0xBCAD7C)
-#define gD3DZEnable VAR(DWORD, 0xBCAD78)
-#define gVBNormal VAR(DynVB, 0xBCAD90)
-#define gD3DListC VAR(StateList *, 0xBCADAC)
-#define gNearPlane VAR(float, 0xBCADC0)
-#define gD3DStateList VAR(StateList *, 0xBCADC4)
-#define gD3DClippingOffIndex VAR(int, 0xBCADE0)
-#define gD3DListA VAR(StateList *, 0xBCADE8)
-#define gFogEnable VAR(DWORD, 0x5470B4)
+extern char *gLightBase;
+extern int *gLightIndex;
+extern int gLightCount;
+extern int gLightStride;
+extern DWORD gFogDensity;
+extern float gLayerFov[];
+extern float gLightColor[];
+extern float gFogColor[];
+extern View gView;
+extern Scene gScene;
+extern float gWorldScale;
+extern int gD3DClippingOnIndex;
+extern StateList *gD3DListB;
+extern DWORD gD3DZEnable;
+extern DynVB gVBNormal;
+extern StateList *gD3DListC;
+extern float gNearPlane;
+extern StateList *gD3DStateList;
+extern int gD3DClippingOffIndex;
+extern StateList *gD3DListA;
+extern DWORD gFogEnable;
 
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }

@@ -66,11 +66,11 @@ ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 ORIG(0x503C00, void *, SimpointObjContainer_New, (int frames, const char *a, const char *b, float c, float d, float e,
                                               float f, float *dir, int h));
 
-#define gExplosionType VAR(uint16_t, 0x5C1154)
-#define gFragmentType VAR(uint16_t, 0x5C1156)
-#define gExplosionSmokeType VAR(uint16_t, 0x5C115C)
-#define gBurnTexture VAR(char *, 0x5C1164)
-#define gFireBallType VAR(uint16_t, 0x5C1168)
+extern uint16_t gExplosionType;
+extern uint16_t gFragmentType;
+extern uint16_t gExplosionSmokeType;
+extern char *gBurnTexture;
+extern uint16_t gFireBallType;
 
 static const double kOne = 1.0;
 static const float kHalf = 0.5f;

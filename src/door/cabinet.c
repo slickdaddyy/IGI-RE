@@ -30,9 +30,9 @@ ORIG(0x4F1220, int, Level_GetEventDAC, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 
-#define gDrawerType VAR(uint16_t, 0x57C1A4)
-#define gCabinetParams VAR(void *, 0x57C1A8)
-#define gCabinetType VAR(uint16_t, 0x57C1AC)
+extern uint16_t gDrawerType;
+extern void *gCabinetParams;
+extern uint16_t gCabinetType;
 
 /* what a human asked a cabinet to do */
 typedef struct CabinetUseArg {

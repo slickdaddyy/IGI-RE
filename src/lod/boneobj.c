@@ -57,12 +57,12 @@ typedef struct BoneBlend {
 _Static_assert(sizeof(Bone) == 0x84, "Bone");
 _Static_assert(sizeof(BoneBlend) == 0x1C, "BoneBlend");
 
-#define gBoneHierarchies ((BoneHierarchy *)0xA542F0)
+extern BoneHierarchy gBoneHierarchies[];
 #define gBoneSlots ((int (*)[10])0xA538F0)
-#define gBoneBuild VAR(BoneHierarchy *, 0xA54638)
-#define gBoneBuildBones VAR(Bone *, 0xA5467C)
-#define gBoneTicksPerFrame VAR(float, 0xA54658)
-#define gBoneSmoothAnims VAR(int, 0xA54678)
+extern BoneHierarchy *gBoneBuild;
+extern Bone *gBoneBuildBones;
+extern float gBoneTicksPerFrame;
+extern int gBoneSmoothAnims;
 
 static const float kTicksPerSecond = 4800.0f;
 

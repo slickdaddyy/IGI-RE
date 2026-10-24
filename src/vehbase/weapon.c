@@ -4,11 +4,11 @@
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 
 /* weapon events, allocated by 0x4F1EE0 */
-#define gWeaponUseAmmoEvent VAR(uint8_t, 0xA76C01)
-#define gWeaponStateEvent VAR(uint8_t, 0xA76C03)
-#define gWeaponDropEvent VAR(uint8_t, 0xA76C08)
-#define gWeaponMoveEvent VAR(uint8_t, 0xA76C09)
-#define gWeaponAmmoEvent VAR(uint8_t, 0xA76C10)
+extern uint8_t gWeaponUseAmmoEvent;
+extern uint8_t gWeaponStateEvent;
+extern uint8_t gWeaponDropEvent;
+extern uint8_t gWeaponMoveEvent;
+extern uint8_t gWeaponAmmoEvent;
 
 /* deletes every child of owner that answers the weapon state event */
 void Weapon_DeleteAll(Task *owner)

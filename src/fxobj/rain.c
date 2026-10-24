@@ -29,10 +29,10 @@ typedef struct RudderDef {
     float angle;
 } RudderDef;
 
-#define gRudderType VAR(uint16_t, 0x57BD74)
-#define gRainTexture VAR(char *, 0x57BD80)
-#define gRainEffectType VAR(uint16_t, 0x57BD84)
-#define gRainEffectParams VAR(void *, 0x57BD88)
+extern uint16_t gRudderType;
+extern char *gRainTexture;
+extern uint16_t gRainEffectType;
+extern void *gRainEffectParams;
 #define gRainLevelRange ((void *)0x57BD90)
 #define gRainSizeRange ((void *)0x57BD98)
 

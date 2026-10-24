@@ -10,9 +10,9 @@ ORIG(0x407F50, void, GameMaterial_Define, (void));
 #define MATERIAL_MAX 32
 
 #define gMaterialUsed(i) VAR(char, 0x569474 + (i) * 0x268)
-#define gMaterialEvent0 VAR(uint8_t, 0x538518)
-#define gMaterialEvent1 VAR(uint8_t, 0x538519)
-#define gMaterialEvent2 VAR(uint8_t, 0x53851A)
+extern uint8_t gMaterialEvent0;
+extern uint8_t gMaterialEvent1;
+extern uint8_t gMaterialEvent2;
 
 void Material_Init(void)
 {

@@ -83,27 +83,27 @@ _Static_assert(offsetof(GlassShatter, polys) == 0x177C0, "GlassShatter");
 _Static_assert(sizeof(GlassShatter) == 0x2B048, "GlassShatter");
 _Static_assert(offsetof(HitInfo, normal) == 0x38, "HitInfo");
 
-#define gShatterColor VAR(const float *, 0x57C228)
+extern const float *gShatterColor;
 #define gShatterRandom ((void *)0x57C230)
-#define gShatterTen VAR(float, 0x57C23C)
-#define gShatterType VAR(uint16_t, 0x57C240)
-#define gShatter244 VAR(int, 0x57C244)
-#define gShatterAlpha VAR(float, 0x57C248)
-#define gShatterHitA VAR(Vec3f, 0x57C250)
-#define gShatterTask VAR(GlassShatter *, 0x57C25C)
-#define gShatterNormal VAR(Vec3f, 0x57C260)
-#define gShatterPolys VAR(ShardPoly *, 0x57C26C)
-#define gShatterHitB VAR(Vec3f, 0x57C270)
-#define gShatterShards VAR(Shard *, 0x57C27C)
-#define gShardSpin ((Matrix *)0x57C280)
+extern float gShatterTen;
+extern uint16_t gShatterType;
+extern int gShatter244;
+extern float gShatterAlpha;
+extern Vec3f gShatterHitA;
+extern GlassShatter *gShatterTask;
+extern Vec3f gShatterNormal;
+extern ShardPoly *gShatterPolys;
+extern Vec3f gShatterHitB;
+extern Shard *gShatterShards;
+extern Matrix gShardSpin[];
 
-#define kTen VAR(float, 0x533480)
-#define kTwenty VAR(float, 0x5335B0)
-#define kForty VAR(float, 0x5338C0)
-#define kSpin VAR(float, 0x5338BC)      /* 1/900 */
-#define kFall VAR(float, 0x5338C4)      /* -44.6 */
+extern float kTen;
+extern float kTwenty;
+extern float kForty;
+extern float kSpin;      /* 1/900 */
+extern float kFall;      /* -44.6 */
 
-#define gShardColor ((const float *)0x53C8E0) /* 0.7, 0.7, 0.7 */
+extern const float gShardColor[]; /* 0.7, 0.7, 0.7 */
 #define gCrushSounds ((const char (*)[0x20])0x53C880)
 
 void GlassShatter_Run(GlassShatter *g);
@@ -316,17 +316,17 @@ void GlassShatter_PlaySound(Vec3d *pos)
 }
 HOOK(0x44A630, GlassShatter_PlaySound);
 
-#define kThird VAR(float, 0x5338CC)
-#define kHalf VAR(float, 0x533504)
-#define kThirty VAR(float, 0x5333BC)
-#define kTenth VAR(float, 0x5333C8)
-#define kSpeed VAR(float, 0x5333B8)     /* 4096 */
-#define kHalfSpeed VAR(float, 0x533688) /* 2048 */
-#define kPerFrame VAR(float, 0x5338C8)  /* 1/30 */
-#define kShatterNear VAR(float, 0x5338D8)      /* 1/5120 */
-#define kSizeScale VAR(float, 0x5338D4) /* 4505.6 */
-#define kSizeMin VAR(float, 0x5338D0)   /* 409.6 */
-#define kOneD VAR(double, 0x5333F8)
+extern float kThird;
+extern float kHalf;
+extern float kThirty;
+extern float kTenth;
+extern float kSpeed;     /* 4096 */
+extern float kHalfSpeed; /* 2048 */
+extern float kPerFrame;  /* 1/30 */
+extern float kShatterNear;      /* 1/5120 */
+extern float kSizeScale; /* 4505.6 */
+extern float kSizeMin;   /* 409.6 */
+extern double kOneD;
 
 static long double sq3(long double x, long double y, long double z)
 {

@@ -35,17 +35,17 @@ typedef struct NodeSize {
 
 #define NODESIZE_MAX 4
 
-#define gGraphParams VAR(void *, 0xA76D10)
-#define gGraphType VAR(uint16_t, 0x54E364)
-#define gGraphLoadEvent VAR(uint8_t, 0x54E36B)
-#define gGraphSaveEvent VAR(uint8_t, 0x54E36C)
-#define gGraphNodeLoadEvent VAR(uint8_t, 0x54E36D)
-#define gGraphEvent36E VAR(uint8_t, 0x54E36E)
-#define gGraphNodeAddEvent VAR(uint8_t, 0x54E36F)
-#define gGraphEvent371 VAR(uint8_t, 0x54E371)
-#define gGraphAllocEvent VAR(uint8_t, 0x54E369)
-#define gGraphRefs VAR(List, 0xA77248)
-#define gGraphNodeSizes ((NodeSize *)0xA77228)
+extern void *gGraphParams;
+extern uint16_t gGraphType;
+extern uint8_t gGraphLoadEvent;
+extern uint8_t gGraphSaveEvent;
+extern uint8_t gGraphNodeLoadEvent;
+extern uint8_t gGraphEvent36E;
+extern uint8_t gGraphNodeAddEvent;
+extern uint8_t gGraphEvent371;
+extern uint8_t gGraphAllocEvent;
+extern List gGraphRefs;
+extern NodeSize gGraphNodeSizes[];
 
 static const double kZero = 0.0;
 static const double kInside = 4096.0;

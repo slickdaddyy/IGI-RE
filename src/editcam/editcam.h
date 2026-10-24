@@ -33,10 +33,9 @@ typedef struct Task {
 typedef void (*TaskFn)(void *task, void *arg);
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gCurrentWorld VAR(Terrain *, 0xA44344)
-#define gDynCubeObjType VAR(uint16_t, 0x54875C)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
+extern uint16_t gDynCubeObjType;
 
 /* the handler a task type has for a slot */
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
@@ -99,6 +98,7 @@ typedef struct Terrain {
     char unkDD4[0xC];
     int offset[3];
 } Terrain;
+extern Terrain *gCurrentWorld;
 
 /* a task kept in the dynamic cube trees */
 typedef struct DynCubeObj {

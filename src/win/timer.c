@@ -1,7 +1,7 @@
 #include "hook.h"
 #include "win/win.h"
 
-#define gTimerStart VAR(DWORD, 0x5C8E34)
+extern DWORD gTimerStart;
 
 void Timer_Open(void)
 {

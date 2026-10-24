@@ -101,8 +101,8 @@ _Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 _Static_assert(offsetof(RefNode, active) == 0x29, "RefNode");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 
 /* the handler a task type has for a slot */
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

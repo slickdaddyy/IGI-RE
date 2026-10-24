@@ -82,8 +82,8 @@ _Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(sizeof(ScriptValue) == 0x18, "ScriptValue");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define gScriptNumberType ((void *)0x567C74)
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

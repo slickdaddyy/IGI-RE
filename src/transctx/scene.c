@@ -21,11 +21,11 @@ typedef struct SceneList {
     Scene *tailpred;
 } SceneList;
 
-#define gSceneList VAR(SceneList, 0x684100)
-#define gSceneVersion VAR(int, 0x684110)
-#define gFrameMem ((char *)0x684118)
-#define gFramePtr VAR(char *, 0x6E5B98)
-#define gFramePeak VAR(unsigned, 0x6E5BA0)
+extern SceneList gSceneList;
+extern int gSceneVersion;
+extern char gFrameMem[];
+extern char *gFramePtr;
+extern unsigned gFramePeak;
 
 F32(kHalf, 0x3F000000);
 

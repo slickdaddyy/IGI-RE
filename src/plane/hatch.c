@@ -21,9 +21,9 @@ ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
 #define MAGICOBJ_DELETE (FN(0x51B940, EditorMagicObj_Delete))
 #define PART_DEF_SIZE_4 (FN(0x427D70, RocketPod_GetArgSize))
 
-#define gHatchType VAR(uint16_t, 0x57BD6C)
-#define kHatchKeep VAR(float, 0x533760)    /* 0.97 */
-#define kHatchBlend VAR(float, 0x5337D0)   /* 0.03 */
+extern uint16_t gHatchType;
+extern float kHatchKeep;    /* 0.97 */
+extern float kHatchBlend;   /* 0.03 */
 
 void Hatch_Create(Part *o, PartCreateArg *arg)
 {

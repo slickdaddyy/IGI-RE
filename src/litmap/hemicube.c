@@ -3,10 +3,10 @@
 #include "hook.h"
 #include "litmap/litmap.h"
 
-#define kHemiNear VAR(float, 0x534BB8)
-#define kHemiAlmostOne VAR(float, 0x534C98)
-#define kAlmostOneD VAR(double, 0x534C90)
-#define kOneD VAR(double, 0x5333F8)
+extern float kHemiNear;
+extern float kHemiAlmostOne;
+extern double kAlmostOneD;
+extern double kOneD;
 
 /* where a triangle is drawn: a buffer of ids with a depth buffer next to
    it, and the texture of ids to draw from */

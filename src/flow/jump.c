@@ -10,7 +10,7 @@ typedef void (*GameRunHandler)(void *task);
 /* the game's own jmp_buf; Game_Quit jumps back into Game_Update */
 #define gGameJmpBuf ((void *)0x54F8E0)
 /* task run handlers (slot 1 of the handler table) by task type */
-#define gTaskRunHandlers ((GameRunHandler *)0xA970E0)
+extern GameRunHandler gTaskRunHandlers[];
 
 /* tail jump into the exe's _setjmp3 (0x4A5000), so it records our own frame */
 static int __attribute__((naked, noinline, returns_twice)) Crt_SetJmp3(void *buf, int count)

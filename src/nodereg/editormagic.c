@@ -78,7 +78,7 @@ ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model, int category));
 ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
 
-#define gEditorMagicObjType VAR(uint16_t, 0xA8376C)
+extern uint16_t gEditorMagicObjType;
 
 void EditorMagicObj_Create(EditorMagicObj *o, EditorMagicInit *in);
 void EditorMagicObj_Delete(EditorMagicObj *o);

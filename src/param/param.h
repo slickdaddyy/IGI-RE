@@ -139,18 +139,18 @@ typedef void (*TaskArgFn)(Task *task, void *arg);
 #define HANDLER(slot, task) (gTaskHandlers[slot][(task)->type])
 
 #define LEVEL_MAX_IDS 0x1000
-#define gLevelTaskIds ((Task ***)0xA71890)
-#define gTaskNotes ((List *)0xA70CA8)
-#define gLevel VAR(Level *, 0xA758A4)
-#define gLevelPaused VAR(char, 0xA758BD)
-#define gLevelA758BE VAR(char, 0xA758BE)
+extern Task **gLevelTaskIds[];
+extern List gTaskNotes[];
+extern Level *gLevel;
+extern char gLevelPaused;
+extern char gLevelA758BE;
 
-#define gLevelEventDA4 VAR(uint8_t, 0x54DDA4)
-#define gLevelNameEvent VAR(uint8_t, 0x54DDA5)
-#define gLevelEventDA8 VAR(int, 0x54DDA8)
-#define gLevelEventDAC VAR(int, 0x54DDAC)
-#define gLevelEventDB0 VAR(int, 0x54DDB0)
+extern uint8_t gLevelEventDA4;
+extern uint8_t gLevelNameEvent;
+extern int gLevelEventDA8;
+extern int gLevelEventDAC;
+extern int gLevelEventDB0;
 
-#define gScriptEmptyString ((char *)0x567C74)
+extern char gScriptEmptyString[];
 
 #endif

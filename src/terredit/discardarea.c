@@ -64,8 +64,8 @@ typedef struct MatQuery {
 _Static_assert(sizeof(DiscardTerrainArea) == 0x78, "DiscardTerrainArea");
 _Static_assert(offsetof(DropHit, dist) == 0x60, "DropHit");
 
-#define gDiscardAreaType VAR(uint16_t, 0xA84540)
-#define gDiscardAreaParams VAR(void *, 0xA84544)
+extern uint16_t gDiscardAreaType;
+extern void *gDiscardAreaParams;
 
 static const double kHalf = 0.5;
 static const double kStep = 4096.0;

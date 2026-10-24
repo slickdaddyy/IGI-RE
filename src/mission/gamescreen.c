@@ -26,9 +26,9 @@ ORIG(0x4E9500, void, GlowTask_New, (Task *view));
 #define Task_Nothing (FN(0x4D3710, Task_Nothing))
 #define MenuWindow_Draw (FN(0x424280, MenuWindow_Draw))
 
-#define gGameScreenType VAR(uint16_t, 0x5C8A28)
-#define gGameStatusScreen VAR(Task *, 0x5C8A20)
-#define gUnk5C8E00 VAR(char, 0x5C8E00)
+extern uint16_t gGameScreenType;
+extern Task *gGameStatusScreen;
+extern char gUnk5C8E00;
 
 void GameScreen_Create(GameScreen *s);
 

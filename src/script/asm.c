@@ -15,9 +15,9 @@ ORIG(0x4C0780, int, QvmLex_Scan, (void *lex, void *token));
 
 typedef void (*AsmErrorHandler)(const char *text, void *context);
 
-#define gAsmErrorContext VAR(void *, 0xA43EC0)
-#define gAsmErrorCount VAR(int, 0xA43ED0)
-#define gAsmErrorHandler VAR(AsmErrorHandler, 0xA43ED8)
+extern void *gAsmErrorContext;
+extern int gAsmErrorCount;
+extern AsmErrorHandler gAsmErrorHandler;
 
 typedef struct QvmAsm {
     int pc;

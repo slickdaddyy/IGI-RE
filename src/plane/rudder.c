@@ -27,7 +27,7 @@ ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
 #define RUDDER_PARSE_DEF (FN(0x436740, Rudder_ParseDef))
 #define RUDDER_DEF_SIZE (FN(0x427F80, HitZone_GetArgSize))
 
-#define gRudderType VAR(uint16_t, 0x57BD74)
+extern uint16_t gRudderType;
 
 enum {
     RUDDER_AILERON,

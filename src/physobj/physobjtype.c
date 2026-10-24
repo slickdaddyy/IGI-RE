@@ -29,11 +29,11 @@ ORIG(0x4D0970, void, Mesh3D_GetVertex, (float *out, void *obj, int point));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 
 /* the task that ran LOCAL:lod.qsc */
-#define gModelLODSettingsContainer VAR(void *, 0xA5EFD4)
+extern void *gModelLODSettingsContainer;
 
-#define gPhysicsObjTypeEvents ((uint8_t *)0x54DC30)
-#define gPhysicsObjTypeCount VAR(int, 0xA5EFD8)
-#define gPhysicsObjTypes ((PhysicsObjType *)0xA5EFE0)
+extern uint8_t gPhysicsObjTypeEvents[];
+extern int gPhysicsObjTypeCount;
+extern PhysicsObjType gPhysicsObjTypes[];
 
 /* what File_ScanDir passes to its callback */
 typedef struct DirEntry {

@@ -38,7 +38,7 @@ typedef struct Task {
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
-#define gTaskHandlers ((TaskHandler *)0xA96AE0)
+extern TaskHandler gTaskHandlers[];
 #define TASK_HANDLER(slot, type) gTaskHandlers[(slot) * 0x180 + (type)]
 #define TASK_NO_TYPE 0x181
 

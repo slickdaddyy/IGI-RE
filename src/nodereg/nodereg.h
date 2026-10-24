@@ -45,9 +45,9 @@ typedef void *ParamTable;
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gCurrentWorld VAR(void *, 0xA44344)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
+extern void *gCurrentWorld;
 
 /* calls handler slot of each child of t (not deeper); slot is evaluated
    for each child like in the original */

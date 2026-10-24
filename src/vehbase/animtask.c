@@ -54,25 +54,25 @@ ORIG(0x4F1BB0, uint8_t, ParamOp_Paste, (void));
 ORIG(0x4F1BC0, void, ParamType_SetOp, (int type, uint8_t op, void *fn));
 ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
-#define gAnimTaskType VAR(uint16_t, 0x54E1D8)
-#define gVehicleControlEvent VAR(uint8_t, 0x54E1DA)
-#define gAnimEventDB VAR(uint8_t, 0x54E1DB)
-#define gVehicleInputInfoEvent VAR(uint8_t, 0x54E1DC)
-#define gVehicleStateSizeEvent VAR(uint8_t, 0x54E1DD)
-#define gVehicleSaveEvent VAR(uint8_t, 0x54E1DE)
-#define gVehicleLoadEvent VAR(uint8_t, 0x54E1DF)
-#define gVehicleKeysEvent VAR(uint8_t, 0x54E1E0)
-#define gAnimDataType VAR(int, 0x54E1E4)
-#define gAnimTaskParams VAR(void *, 0xA76C3C)
+extern uint16_t gAnimTaskType;
+extern uint8_t gVehicleControlEvent;
+extern uint8_t gAnimEventDB;
+extern uint8_t gVehicleInputInfoEvent;
+extern uint8_t gVehicleStateSizeEvent;
+extern uint8_t gVehicleSaveEvent;
+extern uint8_t gVehicleLoadEvent;
+extern uint8_t gVehicleKeysEvent;
+extern int gAnimDataType;
+extern void *gAnimTaskParams;
 #define gAnimTasks ((void *)0xA76C28)
-#define gAnimTasksHead VAR(void *, 0xA76C28)
-#define gAnimTasksTail VAR(void *, 0xA76C2C)
-#define gAnimTasksTailPred VAR(void *, 0xA76C30)
-#define gUnkA76C20 VAR(int, 0xA76C20)
-#define gUnkA76C34 VAR(int, 0xA76C34)
+extern void *gAnimTasksHead;
+extern void *gAnimTasksTail;
+extern void *gAnimTasksTailPred;
+extern int gUnkA76C20;
+extern int gUnkA76C34;
 
-#define kZero VAR(float, 0x5333EC)
-#define kOne VAR(float, 0x5333E0)
+extern float kZero;
+extern float kOne;
 
 /* size of the state block an AnimTask saves before its vehicle's */
 #define ANIM_STATE_SIZE 0xE8

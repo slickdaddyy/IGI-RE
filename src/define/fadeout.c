@@ -25,11 +25,11 @@ typedef struct FadeOut {
 
 _Static_assert(sizeof(FadeOut) == 0x7C, "FadeOut");
 
-#define gFadeOutStartType VAR(uint16_t, 0xA5EC70)
-#define gFadeOut VAR(FadeOut *, 0xA5EC74)
-#define gFadeOutEndType VAR(uint16_t, 0xA5EC78)
-#define gGlowTaskType VAR(uint16_t, 0x54DA50)
-#define gSceneRect ((const float *)0xBCABB8)
+extern uint16_t gFadeOutStartType;
+extern FadeOut *gFadeOut;
+extern uint16_t gFadeOutEndType;
+extern uint16_t gGlowTaskType;
+extern const float gSceneRect[];
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 

@@ -50,10 +50,10 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 
-#define gWorld VAR(void *, 0xA44344)
-#define gDrawerType VAR(uint16_t, 0x57C1A4)
-#define gCabinetParams VAR(void *, 0x57C1A8)
-#define gCabinetType VAR(uint16_t, 0x57C1AC)
+extern void *gWorld;
+extern uint16_t gDrawerType;
+extern void *gCabinetParams;
+extern uint16_t gCabinetType;
 
 /* handlers that live outside this folder */
 #define Cabinet_Run (FN(0x444590, Cabinet_Run))
@@ -69,10 +69,10 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 #define Cabinet_RemoveSymbols (FN(0x444A70, Cabinet_RemoveSymbols))
 #define VehiclePart_Delete (FN(0x426860, VehiclePart_Delete))
 
-#define kDrawerOpenStep VAR(float, 0x5338A0) /* 153.6 */
-#define kDrawerOpen VAR(float, 0x53389C) /* 1843.2 */
-#define kDrawerCloseStep VAR(float, 0x533898) /* 102.4 */
-#define kZero VAR(float, 0x5333EC)
+extern float kDrawerOpenStep; /* 153.6 */
+extern float kDrawerOpen; /* 1843.2 */
+extern float kDrawerCloseStep; /* 102.4 */
+extern float kZero;
 
 void Cabinet_Create(Cabinet *c);
 void Drawer_Create(Drawer *d, DrawerArg *arg);

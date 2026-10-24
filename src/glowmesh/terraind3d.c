@@ -83,40 +83,40 @@ ORIG(0x5144E0, void, Terrain_SetBlendMode, (int mode));
 ORIG(0x514760, void, TerrDraw_ClipTriangle, (TdClipVtx a, TdClipVtx b, TdClipVtx c, TdClipOut *out));
 ORIG(0x4AF960, void, List_Remove, (TdNode *node));
 
-#define gD3DDevice VAR(IDirect3DDevice7 *, 0x5CA114)
-#define gTerrainVB VAR(IDirect3DVertexBuffer7 *, 0xA7F890)
-#define gTerrVBData VAR(TdTLVertex *, 0xA7F89C)
-#define gTerrVertCount VAR(int, 0xA7E078)
-#define gTerrainFogColorD3D VAR(uint32_t, 0xA7E068)
-#define gTerrMirror VAR(int, 0xA7E06C)
-#define gClipZBias VAR(float, 0xA7E074)
-#define gClipZScale VAR(float, 0xA7F894)
-#define gTerrViewport VAR(D3DVIEWPORT7, 0xA7F860)
-#define gTerrainChunkPool VAR(TdPool, 0xA7F878)
-#define gTerrainFogScale VAR(float, 0xA7DA18)
-#define gTerrainFogColor ((float *)0xA7DA30)
-#define gTerrainMeshes ((TdMesh **)0xB12C60)
-#define gTerrainMeshCount VAR(int, 0xB16C9C)
-#define gTerrainScaleY VAR(float, 0xC311A0)
-#define gTerrainScaleX VAR(float, 0xC311A4)
-#define gTerrainCenterX VAR(float, 0xC311B0)
-#define gTerrainCenterY VAR(float, 0xC311B4)
-#define gMorphStart VAR(int, 0xC31088)
-#define gMorphScale VAR(float, 0xC28FC0)
-#define gUnkC28FB8 VAR(int, 0xC28FB8)
-#define gTerrMeshTotal VAR(int, 0xC28FBC)
-#define gFogZScale VAR(float, 0xBCABEC)
-#define gClipRhwScale VAR(float, 0xBCAD70)
-#define gUnkBCAD78 VAR(DWORD, 0xBCAD78)
-#define gZFar VAR(float, 0xBCAD8C)
-#define gUnkBCADA0 VAR(float, 0xBCADA0)
-#define gZNear VAR(float, 0xBCADB4)
-#define gUnkBCADC8 VAR(float, 0xBCADC8)
-#define gFarPlane VAR(float, 0xBCADCC)
-#define gStateCache0 VAR(char *, 0xBCADE8)
-#define gStateCache1 VAR(char *, 0xBCAD7C)
-#define gStateCache2 VAR(char *, 0xBCADAC)
-#define gStateCache3 VAR(char *, 0xBCADC4)
+extern IDirect3DDevice7 *gD3DDevice;
+extern IDirect3DVertexBuffer7 *gTerrainVB;
+extern TdTLVertex *gTerrVBData;
+extern int gTerrVertCount;
+extern uint32_t gTerrainFogColorD3D;
+extern int gTerrMirror;
+extern float gClipZBias;
+extern float gClipZScale;
+extern D3DVIEWPORT7 gTerrViewport;
+extern TdPool gTerrainChunkPool;
+extern float gTerrainFogScale;
+extern float gTerrainFogColor[];
+extern TdMesh *gTerrainMeshes[];
+extern int gTerrainMeshCount;
+extern float gTerrainScaleY;
+extern float gTerrainScaleX;
+extern float gTerrainCenterX;
+extern float gTerrainCenterY;
+extern int gMorphStart;
+extern float gMorphScale;
+extern int gUnkC28FB8;
+extern int gTerrMeshTotal;
+extern float gFogZScale;
+extern float gClipRhwScale;
+extern DWORD gUnkBCAD78;
+extern float gZFar;
+extern float gUnkBCADA0;
+extern float gZNear;
+extern float gUnkBCADC8;
+extern float gFarPlane;
+extern char *gStateCache0;
+extern char *gStateCache1;
+extern char *gStateCache2;
+extern char *gStateCache3;
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);

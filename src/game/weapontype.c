@@ -13,9 +13,9 @@ typedef struct WeaponType {
     void *data2;
 } WeaponType;
 
-#define gWeaponTypes ((WeaponType *)0x56E258)
-#define gWeaponTypeCount VAR(int, 0x57B18C)
-#define gWeaponEvents ((uint8_t *)0x5391AC)
+extern WeaponType gWeaponTypes[];
+extern int gWeaponTypeCount;
+extern uint8_t gWeaponEvents[];
 #define gWeaponCategoryEnum ((void *)0x56E248)
 #define gWeaponSightEnum ((void *)0x56E238)
 #define gWeaponAmmoEnum ((void *)0x56E218)

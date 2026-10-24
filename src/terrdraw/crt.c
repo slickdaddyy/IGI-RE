@@ -46,12 +46,12 @@ ORIG(0x4AD4D3, int, crt_LCMapStringA, (LCID lcid, DWORD flags, const char *src, 
 ORIG(0x4ADBF9, unsigned int, crt_strgtold12, (void *ld12, const char **end, const char *s, int mult12, int scale,
                                                int decpt, int implicit_e));
 
-#define gPctype VAR(const unsigned short *, 0x544070)
-#define gMbCurMax VAR(int, 0x54427C)
-#define gFltIn VAR(CrtFltIn *, 0x54EC40)
-#define gLcHandleCtype VAR(LCID, 0x9361E4)
-#define gIsMbCodePage VAR(int, 0xC3221C)
-#define gMbCtype ((const unsigned char *)0xC32320)
+extern const unsigned short *gPctype;
+extern int gMbCurMax;
+extern CrtFltIn *gFltIn;
+extern LCID gLcHandleCtype;
+extern int gIsMbCodePage;
+extern const unsigned char gMbCtype[];
 
 #define IOREAD_ANY 0x10C
 #define IOWRITE_ANY 0x108

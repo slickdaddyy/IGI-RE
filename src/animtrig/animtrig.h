@@ -25,8 +25,8 @@ typedef struct Task {
 typedef void (*TaskFn)(void *task, void *arg);
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
@@ -76,7 +76,7 @@ typedef struct ScriptValue {
 
 typedef struct ScriptArgs ScriptArgs;
 
-#define gScriptEmptyString ((const char *)0x567C74)
+extern const char gScriptEmptyString[];
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4B0C60, void *, Mem_Alloc, (int size, int align));

@@ -86,16 +86,16 @@ _Static_assert(sizeof(TextureModifier) == 0xF0, "TextureModifier");
 _Static_assert(offsetof(TextureModifier, slot) == 0xE4, "TextureModifier.slot");
 _Static_assert(sizeof(CollHole) == 0x30, "CollHole");
 
-#define gTexModParams VAR(void *, 0xA7A8EC)
-#define gTexModType VAR(uint16_t, 0xA7A8F0)
-#define gTexMods ((TextureModifier **)0xA7A8F4)
+extern void *gTexModParams;
+extern uint16_t gTexModType;
+extern TextureModifier *gTexMods[];
 #define gTexModRandom ((void *)0xA7ACF8)
-#define gTexModCount VAR(int, 0xA7AD08)
-#define gBitResident ((char *)0xB81A20)
-#define gCollHoleList ((int *)0xB97DA0)
-#define gCollHoleCount VAR(int, 0xB97DF8)
-#define gCollHoleBits VAR(unsigned int, 0xBA5060)
-#define gCollHoles ((CollHole *)0xBA5080)
+extern int gTexModCount;
+extern char gBitResident[];
+extern int gCollHoleList[];
+extern int gCollHoleCount;
+extern unsigned int gCollHoleBits;
+extern CollHole gCollHoles[];
 
 static const double kLiftZ = 268435456.0;
 static const double kHalf = 0.5;

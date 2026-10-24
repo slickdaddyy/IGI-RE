@@ -77,54 +77,54 @@ ORIG(0x4F1BC0, void, ParamType_SetOp, (int type, uint8_t op, void *fn));
 ORIG(0x4F1C20, void, ParamCursor_Need, (ParamCursor *c, int count));
 
 /* task types and events of the level */
-#define gLevelType VAR(uint16_t, 0x54DD0C)
-#define gStaticType VAR(uint16_t, 0x54DD0E)
-#define gDynamicType VAR(uint16_t, 0x54DD10)
-#define gIdleType VAR(uint16_t, 0x54DD12)
-#define gCameraBaseType VAR(uint16_t, 0x54DD14)
-#define gLevelEventDA4 VAR(uint8_t, 0x54DDA4)
-#define gLevelNameEvent VAR(uint8_t, 0x54DDA5)
-#define gLevelEventDA8 VAR(int, 0x54DDA8)
-#define gLevelEventDAC VAR(int, 0x54DDAC)
-#define gLevelEventDB0 VAR(int, 0x54DDB0)
+extern uint16_t gLevelType;
+extern uint16_t gStaticType;
+extern uint16_t gDynamicType;
+extern uint16_t gIdleType;
+extern uint16_t gCameraBaseType;
+extern uint8_t gLevelEventDA4;
+extern uint8_t gLevelNameEvent;
+extern int gLevelEventDA8;
+extern int gLevelEventDAC;
+extern int gLevelEventDB0;
 
 /* LevelQTaskID -> task reference */
-#define gLevelTaskIds ((void **)0xA71890)
+extern void *gLevelTaskIds[];
 /* 251 buckets of task references, Amiga style lists */
-#define gTaskNotes ((void **)0xA70CA8)
-#define gTaskRefBucketsEnd ((void **)0xA7186C)
-#define gLevelPaused VAR(char, 0xA758BD)
-#define gLevelA758BE VAR(char, 0xA758BE)
-#define gLevelA758C0 VAR(int, 0xA758C0)
-#define gLevelA758C4 VAR(int, 0xA758C4)
+extern void *gTaskNotes[];
+extern void *gTaskRefBucketsEnd[];
+extern char gLevelPaused;
+extern char gLevelA758BE;
+extern int gLevelA758C0;
+extern int gLevelA758C4;
 
 /* parameter type ids */
-#define gParamQuat32 VAR(int, 0xA71878)
-#define gParamReal32 VAR(int, 0xA71870)
-#define gParamReal32x3 VAR(int, 0xA70C68)
-#define gParamReal32x9 VAR(int, 0xA70C6C)
-#define gParamReal64 VAR(int, 0xA71874)
-#define gParamReal64x3 VAR(int, 0xA75890)
-#define gParamInt32 VAR(int, 0xA70C7C)
-#define gParamInt16 VAR(int, 0xA70C78)
-#define gParamVarString VAR(int, 0xA70C9C)
-#define gParamString16 VAR(int, 0xA71884)
-#define gParamString32 VAR(int, 0xA71888)
-#define gParamString256 VAR(int, 0xA7186C)
-#define gParamLevelExpression VAR(int, 0xA7188C)
-#define gParamQTaskNote VAR(int, 0xA75894)
-#define gParamBool8 VAR(int, 0xA70C90)
-#define gParamGraph VAR(int, 0xA70CA0)
-#define gParamGraphEnvelope VAR(int, 0xA70C80)
-#define gParamScriptFile VAR(int, 0xA70C8C)
-#define gParamBitfield VAR(int, 0xA758A0)
-#define gParamPitchGraph VAR(int, 0xA7187C)
-#define gParamRGB VAR(int, 0xA71880)
-#define gParamAngle VAR(int, 0xA70C84)
-#define gParamDegrees VAR(int, 0xA70CA4)
-#define gParamObjectPos VAR(int, 0xA70C88)
-#define gParamPushButton VAR(int, 0xA75898)
-#define gParamDropDownCombo VAR(int, 0xA70C70)
+extern int gParamQuat32;
+extern int gParamReal32;
+extern int gParamReal32x3;
+extern int gParamReal32x9;
+extern int gParamReal64;
+extern int gParamReal64x3;
+extern int gParamInt32;
+extern int gParamInt16;
+extern int gParamVarString;
+extern int gParamString16;
+extern int gParamString32;
+extern int gParamString256;
+extern int gParamLevelExpression;
+extern int gParamQTaskNote;
+extern int gParamBool8;
+extern int gParamGraph;
+extern int gParamGraphEnvelope;
+extern int gParamScriptFile;
+extern int gParamBitfield;
+extern int gParamPitchGraph;
+extern int gParamRGB;
+extern int gParamAngle;
+extern int gParamDegrees;
+extern int gParamObjectPos;
+extern int gParamPushButton;
+extern int gParamDropDownCombo;
 
 static const double kTwoPi = 0x1.921fb54442d1bp+2;
 static const double kGimbal = 0x1.a36e2eb1c432dp-14;   /* 0.0001 */

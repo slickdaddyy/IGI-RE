@@ -63,7 +63,7 @@ ORIG(0x4B1DA0, void, Device_SetEnumDir, (int dev, void *fn));
 ORIG(0x4B1DC0, void, Device_SetGetTime, (int dev, void *fn));
 ORIG(0x4B1DE0, const char *, Device_GetName, (int dev));
 
-#define gLocalFiles ((LocalFile *)0xA7B640)
+extern LocalFile gLocalFiles[];
 
 int LocalDevice_Init(const char *name);
 void LocalDevice_EnumDir(int dev, const char *path, void (*fn)(DirEntry *e, void *user), void *user);

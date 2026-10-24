@@ -40,8 +40,8 @@ ORIG(0x4C1780, void, Debug_Log, (void));
 ORIG_STD(0x4AF74C, HRESULT, DirectDrawEnumerateExA_, (LPDDENUMCALLBACKEXA fn, void *ctx, DWORD flags));
 ORIG_STD(0x4AF752, HRESULT, DirectDrawCreateEx_, (GUID *guid, void **out, REFIID iid, IUnknown *outer));
 
-#define IID_IDirect3D7_ ((const GUID *)0x534A20)
-#define IID_IDirectDraw7_ ((const GUID *)0x534A50)
+extern const GUID IID_IDirect3D7_[];
+extern const GUID IID_IDirectDraw7_[];
 
 typedef struct DisplayCallback {
     struct DisplayCallback *next;
@@ -79,36 +79,36 @@ _Static_assert(sizeof(DisplayMode) == 0x11C, "DisplayMode");
 _Static_assert(sizeof(DDDriver) == 0x4F8, "DDDriver");
 _Static_assert(offsetof(DDEnumCtx, cur.d3dDesc) == 0x430, "DDEnumCtx");
 
-#define gDisplayOpen VAR(char, 0x5CA02C)
-#define gDisplayModeSet VAR(char, 0x5CA02D)
-#define gDisplayDevice ((char *)0x5C9FA8)
-#define gDisplayModes ((DisplayMode *)0xBCAE20)
-#define gDisplayModeCount VAR(int, 0xC10384)
-#define gDisplayFrame VAR(int, 0xC10380)
-#define gDisplayMode VAR(DisplayMode, 0xC28B40)
-#define gDisplayCallbacks ((DisplayCallback *)0xC28A40)
-#define gDisplaySetModeCallbacks VAR(DisplayCallback *, 0xBCADEC)
-#define gDisplayClearColor ((int *)0xBCADF0)
-#define gDisplayEndFrameCallbacks VAR(DisplayCallback *, 0xBCADFC)
-#define gDisplayFrameCallbacks VAR(DisplayCallback *, 0xBCAE00)
-#define gD3DFoundHAL VAR(int, 0xBCACF4)
-#define gD3DTnL VAR(int, 0xBCAD74)
+extern char gDisplayOpen;
+extern char gDisplayModeSet;
+extern char gDisplayDevice[];
+extern DisplayMode gDisplayModes[];
+extern int gDisplayModeCount;
+extern int gDisplayFrame;
+extern DisplayMode gDisplayMode;
+extern DisplayCallback gDisplayCallbacks[];
+extern DisplayCallback *gDisplaySetModeCallbacks;
+extern int gDisplayClearColor[];
+extern DisplayCallback *gDisplayEndFrameCallbacks;
+extern DisplayCallback *gDisplayFrameCallbacks;
+extern int gD3DFoundHAL;
+extern int gD3DTnL;
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
 
 /* RenderMode method ids */
-#define gMethodGetGFXCaps VAR(int, 0x542310)
-#define gMethodOpen VAR(int, 0x542314)
-#define gMethodClose VAR(int, 0x542318)
-#define gMethodSetMode VAR(int, 0x54231C)
-#define gMethodUnsetMode VAR(int, 0x542320)
-#define gMethodRestore VAR(int, 0x542324)
-#define gMethodVSync VAR(int, 0x542328)
-#define gMethodSwapBuffers VAR(int, 0x54232C)
-#define gMethodClear VAR(int, 0x542330)
-#define gMethodEnum VAR(int, 0x542334)
-#define gPrimBlit VAR(int, 0x542338)
-#define gPrimSnapshot VAR(int, 0x54233C)
-#define gPrimClipWindow VAR(int, 0x542340)
+extern int gMethodGetGFXCaps;
+extern int gMethodOpen;
+extern int gMethodClose;
+extern int gMethodSetMode;
+extern int gMethodUnsetMode;
+extern int gMethodRestore;
+extern int gMethodVSync;
+extern int gMethodSwapBuffers;
+extern int gMethodClear;
+extern int gMethodEnum;
+extern int gPrimBlit;
+extern int gPrimSnapshot;
+extern int gPrimClipWindow;
 
 static const char kDXError[] = "%s\n\nDirectX error message: %s";
 

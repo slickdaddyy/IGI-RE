@@ -529,8 +529,8 @@ typedef struct MagicObjDef {
     void *data;
 } MagicObjDef;
 
-#define gMagicObjDefCount VAR(int, 0xA4433C)
-#define gMagicObjDefs ((MagicObjDef *)0xB97E00)
+extern int gMagicObjDefCount;
+extern MagicObjDef gMagicObjDefs[];
 
 static inline int is_zero3(float a, float b, float c)
 {

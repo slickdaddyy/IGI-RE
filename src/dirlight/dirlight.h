@@ -23,7 +23,7 @@ typedef struct Task {
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
-#define gTaskHandlers ((TaskHandler *)0xA96AE0)
+extern TaskHandler gTaskHandlers[];
 #define TASK_HANDLER(event, type) gTaskHandlers[(event) * 0x180 + (type)]
 
 typedef struct Vec3f {
@@ -195,7 +195,7 @@ _Static_assert(offsetof(LightmapInfo, unkD0) == 0xD0, "LightmapInfo.unkD0");
 _Static_assert(sizeof(Dirlight) == 0x64, "Dirlight");
 _Static_assert(sizeof(DirlightKeyframe) == 0x54, "DirlightKeyframe");
 
-#define gLightSourcePool VAR(Pool, 0xA83CF8)
+extern Pool gLightSourcePool;
 
 /* x87 compares that treat unordered as equal, like fcomp + test ah,0x40 */
 static inline int feq(float a, float b)

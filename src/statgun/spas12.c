@@ -8,7 +8,7 @@ typedef struct ReloadMsg {
     char done;
 } ReloadMsg;
 
-#define gSpas12Type VAR(uint16_t, 0x5BE350)
+extern uint16_t gSpas12Type;
 
 ORIG(0x489F20, void, HumanPlayer_PlayAnim, (void *h, int anim, int loop, float blend));
 ORIG(0x489F50, char, HumanPlayer_AnimDone, (void *h));

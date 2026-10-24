@@ -19,12 +19,12 @@ ORIG(0x4B0EC0, void, RenderMode_SetMethod, (int mode, int method, void *fn));
 #define NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* What the OffscreenBuffer render mode draws into: 32 bit pixels in memory. */
-#define gOffscreenWidth VAR(int, 0xBCAAA0)
-#define gOffscreenHeight VAR(int, 0xBCAAA4)
-#define gOffscreenPixels VAR(uint32_t *, 0xBCAAA8)
-#define gOffscreenClip ((float *)0xBCAAC0)
-#define gOffscreenMode VAR(int, 0x6E5BB8)
-#define gOffscreenReady VAR(char, 0x6E5BBC)
+extern int gOffscreenWidth;
+extern int gOffscreenHeight;
+extern uint32_t *gOffscreenPixels;
+extern float gOffscreenClip[];
+extern int gOffscreenMode;
+extern char gOffscreenReady;
 
 F32(kZero, 0x00000000);
 

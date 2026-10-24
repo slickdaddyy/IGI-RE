@@ -39,12 +39,12 @@ typedef struct MenuTextConditional {
 _Static_assert(sizeof(MenuText) == 0x170, "MenuText");
 _Static_assert(sizeof(MenuTextConditional) == 0x218, "MenuTextConditional");
 
-#define gMenuTextCondType VAR(uint16_t, 0x53B700)
-#define gMenuTextCondParams VAR(void *, 0x57BBEC)
-#define gMenuTextCondColors ((const Color *)0x53B708)
-#define gMenuTextType VAR(uint16_t, 0x53B770)
-#define gMenuTextParams VAR(void *, 0x57BBF4)
-#define gMenuColors ((const Color *)0x53B778)
+extern uint16_t gMenuTextCondType;
+extern void *gMenuTextCondParams;
+extern const Color gMenuTextCondColors[];
+extern uint16_t gMenuTextType;
+extern void *gMenuTextParams;
+extern const Color gMenuColors[];
 
 void MenuTextConditional_Run(MenuTextConditional *mt);
 void MenuTextConditional_Draw(MenuTextConditional *mt);

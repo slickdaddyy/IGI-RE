@@ -40,9 +40,9 @@ ORIG(0x4E75A0, int, Screen_GetFrame, (void));
 ORIG(0x4E81F0, char *, Viewport_GetCurrentCamera, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 
-#define gGunFlameType VAR(uint16_t, 0x54074C)
-#define gGunClipType VAR(uint16_t, 0x54074E)
-#define gGunMovingPartType VAR(uint16_t, 0x540750)
+extern uint16_t gGunFlameType;
+extern uint16_t gGunClipType;
+extern uint16_t gGunMovingPartType;
 
 #define Task_NullHandler (FN(0x4D3710, Task_Nothing))
 #define Task_TrueHandler (FN(0x4EFA10, Param_One))

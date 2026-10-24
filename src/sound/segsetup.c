@@ -60,11 +60,11 @@ _Static_assert(offsetof(SegObj, segLength) == 0x544, "segLength");
 _Static_assert(offsetof(SegObj, segments) == 0x59C, "segments");
 _Static_assert(offsetof(SegObj, rigid) == 0x5B4, "rigid");
 
-#define gSphereVerts VAR(float *, 0xA5E3EC)
-#define gSphereNodes VAR(SegBuffer *, 0xA5E3F0)
-#define gSphereMesh VAR(char *, 0xA5E3F8)
-#define gSphereStack ((void **)0xA5E374)
-#define gSphereDepth VAR(int, 0xA5E400)
+extern float *gSphereVerts;
+extern SegBuffer *gSphereNodes;
+extern char *gSphereMesh;
+extern void *gSphereStack[];
+extern int gSphereDepth;
 
 static const double kHalfD = 0.5;
 static const float kZero = 0.0f;

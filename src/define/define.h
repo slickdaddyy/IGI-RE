@@ -183,9 +183,9 @@ _Static_assert(offsetof(SoundDefGraph, volumeGraph) == 0xE8, "SoundDefGraph");
 _Static_assert(sizeof(SoundDefGraph) == 0x188, "SoundDefGraph");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gScriptEmptyString ((const char *)0x567C74)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
+extern const char gScriptEmptyString[];
 
 #define TASK_NO_TYPE 0x181
 

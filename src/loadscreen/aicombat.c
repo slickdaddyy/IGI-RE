@@ -347,11 +347,11 @@ _Static_assert(offsetof(HumanAI, cover) == 0x3EB0, "cover");
 #define AICombat_LieDownFire ((AIStepFn)FN(0x48DDC0, AICombat_LieDownFire))
 #define AICombat_LieDownReload ((AIStepFn)FN(0x48DE00, AICombat_LieDownReload))
 
-#define gDetectedSounds ((const char **)0x5416D0)
-#define gLastDetectedTick VAR(int, 0x5416CC)
-#define gCoverFromNode VAR(int, 0x5C8BAC)
-#define gCoverTargetNode VAR(int, 0x5C8BB4)
-#define gCoverCellOrder VAR(int, 0x5C8BB8)
+extern const char *gDetectedSounds[];
+extern int gLastDetectedTick;
+extern int gCoverFromNode;
+extern int gCoverTargetNode;
+extern int gCoverCellOrder;
 
 static const float kZero = 0.0f;
 static const double kZeroD = 0.0;

@@ -37,7 +37,7 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1AF0, void, ParamType_Call, (void *field, int type, uint8_t op, void *arg));
 ORIG(0x4F1B60, uint8_t, ParamOp_Parse, (void));
 
-#define gScriptEmptyString ((const char *)0x567C74)
+extern const char gScriptEmptyString[];
 
 static const char kTaskNew[] = "Task_New";
 

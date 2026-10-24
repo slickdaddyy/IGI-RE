@@ -17,12 +17,12 @@ ORIG(0x4D0CF0, void *, ModelLod_GetAttach, (void *lod, int i));
 ORIG(0x4D0D10, int, ModelLod_GetAttachCount, (void *lod));
 
 #define gTaskHandlers ((MagicHandler (*)[0x180])0xA96AE0)
-#define gMagicObjDefs ((MagicObjDef *)0xB97E00)
-#define gMagicObjDefCount VAR(int, 0xA4433C)
-#define kZero VAR(float, 0x5333EC)
-#define kOne VAR(float, 0x5333E0)
-#define kZeroD VAR(double, 0x5333B0)
-#define kOneD VAR(double, 0x5333F8)
+extern MagicObjDef gMagicObjDefs[];
+extern int gMagicObjDefCount;
+extern float kZero;
+extern float kOne;
+extern double kZeroD;
+extern double kOneD;
 
 /* event 8 query, see Coll_LineOfSight */
 typedef struct CollLineQuery {

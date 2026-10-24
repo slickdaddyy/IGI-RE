@@ -42,15 +42,15 @@ ORIG(0x527460, void, DirlightKeyframe_GetParams, (void *kf, void **out));
 ORIG(0x527470, void, DirlightKeyframe_Delete, (void *kf));
 ORIG(0x5274D0, void, Dirlight_SetTime, (float time));
 
-#define gCurrentWorld VAR(void *, 0xA44344)
-#define gDirlightParams VAR(void *, 0xA83D30)
-#define gDirlightType VAR(uint16_t, 0xA83D34)
+extern void *gCurrentWorld;
+extern void *gDirlightParams;
+extern uint16_t gDirlightType;
 #define gDirlightRandom ((void *)0xA83D38)
-#define gDirlightKeyframeTime VAR(float, 0xA83D44)
-#define gDirlightKeyframeParams VAR(void *, 0xA83D48)
-#define gDirlightKeyframeType VAR(uint16_t, 0xA83D4C)
-#define gDirlightKeyframeChanging VAR(DirlightKeyframe *, 0xA83D54)
-#define gDirlightPool VAR(Pool, 0xBA1E00)
+extern float gDirlightKeyframeTime;
+extern void *gDirlightKeyframeParams;
+extern uint16_t gDirlightKeyframeType;
+extern DirlightKeyframe *gDirlightKeyframeChanging;
+extern Pool gDirlightPool;
 
 static const float kTwoPi = 0x1.921fb6p+2f;
 

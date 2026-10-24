@@ -79,15 +79,15 @@ ORIG(0x52E180, void, WaterMesh_Light, (WaterMesh *w, float *color, const float *
 ORIG(0x5116D0, void, TerrainMesh_DrawTriangle, (WaterTri *t));
 ORIG(0x4978E0, void, Primitive_Unregister, (int id));
 
-#define gWaterSplits ((uint32_t *)0xA84584)
-#define gWaterPrimitive VAR(int, 0xA84578)
+extern uint32_t gWaterSplits[];
+extern int gWaterPrimitive;
 
-#define kEnvLift VAR(double, 0x534CE8)
-#define kEnvAngleScale VAR(float, 0x534CE0)
-#define kEnvDistScale VAR(float, 0x5336D4)
-#define kViewAngle VAR(float, 0x534CF0)
-#define kSplitMin VAR(double, 0x534CF8)
-#define kSplitDist VAR(float, 0x53353C)
+extern double kEnvLift;
+extern float kEnvAngleScale;
+extern float kEnvDistScale;
+extern float kViewAngle;
+extern double kSplitMin;
+extern float kSplitDist;
 
 void WaterMesh_CalcEnvUV(WaterMesh *w, float *uv, const Vec3d *pos, const float *normal)
 {

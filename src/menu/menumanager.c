@@ -106,18 +106,18 @@ typedef struct Mouse {
     int buttons;
 } Mouse;
 
-#define gMenuManagerType VAR(uint16_t, 0x539824)
-#define gMenuKeepScreen VAR(int, 0x539828)
-#define gMenuLastInput VAR(MenuInput, 0x57BAC8)
-#define gMenuDemoTimer VAR(int, 0x57BADC)
-#define gMenuManagerParams VAR(void *, 0x57BAE0)
-#define gMenuLastScreen VAR(MenuWindow *, 0x57BAE4)
-#define gMenuIdleTimer VAR(int, 0x57BAE8)
-#define gMenuLastFocus VAR(MenuWindow *, 0x57BAEC)
-#define gSavedDisplay ((int *)0xBCADF0)
-#define gKeys ((unsigned char *)0xC28C62)
-#define gKeysPrev ((unsigned char *)0xC28D62)
-#define gMouse VAR(Mouse, 0xC28F80)
+extern uint16_t gMenuManagerType;
+extern int gMenuKeepScreen;
+extern MenuInput gMenuLastInput;
+extern int gMenuDemoTimer;
+extern void *gMenuManagerParams;
+extern MenuWindow *gMenuLastScreen;
+extern int gMenuIdleTimer;
+extern MenuWindow *gMenuLastFocus;
+extern int gSavedDisplay[];
+extern unsigned char gKeys[];
+extern unsigned char gKeysPrev[];
+extern Mouse gMouse;
 
 #define SOUNDS_RES "LOCAL:menusystem/sound/sounds.res"
 #define KEY_HIT(k) ((gKeys[k] & 0x80) && !(gKeysPrev[k] & 0x80))

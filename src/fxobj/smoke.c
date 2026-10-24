@@ -74,14 +74,14 @@ _Static_assert(offsetof(Smoke, local) == 0x130, "Smoke.local");
 _Static_assert(offsetof(Smoke, enabled) == 0x170, "Smoke.enabled");
 _Static_assert(sizeof(Smoke) == 0x178, "Smoke");
 
-#define gSmokeFireball VAR(char *, 0x57BDC8)
+extern char *gSmokeFireball;
 #define gSmokeRandom ((void *)0x57BDE8)
-#define gSmokeType VAR(uint16_t, 0x57BE00)
-#define gSmokeParams VAR(void *, 0x57BE10)
-#define gSmokeModel VAR(void *, 0x57BE40)
-#define gSmokeBlood VAR(char *, 0x57BE44)
-#define gSmokeSmoke2 VAR(char *, 0x57BE48)
-#define gSmokeSmoke1 VAR(char *, 0x57BE4C)
+extern uint16_t gSmokeType;
+extern void *gSmokeParams;
+extern void *gSmokeModel;
+extern char *gSmokeBlood;
+extern char *gSmokeSmoke2;
+extern char *gSmokeSmoke1;
 
 static const float kTwoPi = 0x1.921fb6p+2f;
 static const float kUnit = 4096.0f;

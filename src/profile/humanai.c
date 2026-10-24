@@ -104,15 +104,15 @@ _Static_assert(sizeof(HumanAIConfigItem) == 0x2A8, "HumanAIConfigItem");
 _Static_assert(sizeof(HumanAIConfig) == 0x180, "HumanAIConfig");
 _Static_assert(offsetof(HumanAI, unk3DC8) == 0x3DC8, "HumanAI");
 
-#define gHumanAIConfigType VAR(uint16_t, 0x5383D8)
-#define gHumanAIConfigItemType VAR(uint16_t, 0x5383DA)
-#define gHumanAIConfigParams VAR(ParamTable *, 0x5690B0)
-#define gHumanAIIntRange VAR(ParamRange, 0x5690B8)
-#define gHumanAIRealRange VAR(ParamRange, 0x5690C0)
-#define gHumanAIConfigItemParams VAR(ParamTable *, 0x5690C8)
-#define gHumanAIConfig VAR(HumanAIConfig *, 0x5690D0)
-#define gFramesPerSecond VAR(float, 0x5333BC)
-#define k4096 VAR(float, 0x5333B8)
+extern uint16_t gHumanAIConfigType;
+extern uint16_t gHumanAIConfigItemType;
+extern ParamTable *gHumanAIConfigParams;
+extern ParamRange gHumanAIIntRange;
+extern ParamRange gHumanAIRealRange;
+extern ParamTable *gHumanAIConfigItemParams;
+extern HumanAIConfig *gHumanAIConfig;
+extern float gFramesPerSecond;
+extern float k4096;
 
 void HumanAIConfig_GetParams(void *task, ParamTable **out);
 void HumanAIConfigItem_Create(HumanAIConfigItem *item, HumanAIConfigNames *names);

@@ -76,9 +76,9 @@ _Static_assert(offsetof(ObjInfo, unk50) == 0x50, "ObjInfo");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
-#define gCurrentWorld VAR(void *, 0xA44344)
-#define gKeys ((uint8_t *)0xC28C62)
-#define gKeysPrev ((uint8_t *)0xC28D62)
+extern void *gCurrentWorld;
+extern uint8_t gKeys[];
+extern uint8_t gKeysPrev[];
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 

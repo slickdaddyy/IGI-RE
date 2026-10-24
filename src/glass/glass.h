@@ -98,19 +98,19 @@ _Static_assert(sizeof(MagicPart) == 0x4C, "MagicPart");
 _Static_assert(sizeof(ExplodeObj) == 0x238, "ExplodeObj");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 /* the frame counter lives at +0x68 */
-#define gTickInfo VAR(char *, 0xBC2360)
+extern char *gTickInfo;
 #define gTick (*(int *)(gTickInfo + 0x68))
 
 /* exe constants, read in place so the x87 code sees the same values */
-#define kZero VAR(float, 0x5333EC)
-#define kOne VAR(float, 0x5333E0)
-#define kFrame VAR(float, 0x533678)     /* 1/30 */
-#define kDegToRad VAR(float, 0x53367C)
+extern float kZero;
+extern float kOne;
+extern float kFrame;     /* 1/30 */
+extern float kDegToRad;
 
 /* Calls the slot handler of each child of t (not deeper), keeping the next
    child on gTaskStack so handlers may delete tasks. slot is evaluated after

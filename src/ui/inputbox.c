@@ -19,9 +19,9 @@ typedef struct QVertexStrip {
 } QVertexStrip;
 
 #define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
-#define gQVertexTexture VAR(void *, 0xA84A50)
-#define gQVertexStrip VAR(int, 0xA84A54)
-#define gQVertexPalette VAR(void *, 0xA84A58)
+extern void *gQVertexTexture;
+extern int gQVertexStrip;
+extern void *gQVertexPalette;
 
 /* a one line text field; the script sees the text as "<name>.zData" */
 typedef struct InputBox {
@@ -42,9 +42,9 @@ typedef struct InputBox {
 
 _Static_assert(sizeof(InputBox) == 0x1A8, "InputBox");
 
-#define gInputBoxType VAR(uint16_t, 0x53B640)
-#define gInputBoxParams VAR(void *, 0x57BBC4)
-#define gInputBoxFilling VAR(InputBox *, 0x57BBCC)
+extern uint16_t gInputBoxType;
+extern void *gInputBoxParams;
+extern InputBox *gInputBoxFilling;
 
 void InputBox_Create(InputBox *ib, void *arg);
 void InputBox_Delete(InputBox *ib);

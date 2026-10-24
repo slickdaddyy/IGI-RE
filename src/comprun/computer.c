@@ -60,10 +60,10 @@ typedef struct Computer {
 _Static_assert(offsetof(Computer, camera) == 0x138, "camera");
 _Static_assert(sizeof(Computer) == 0x198, "Computer");
 
-#define gComputerType VAR(uint16_t, 0x5BE2C4)
-#define gComputer VAR(Computer *, 0x5BE2CC)
-#define gComputerMapEnabled VAR(int, 0x53FD98)
-#define gComputerSaved499 VAR(int, 0x53FD9C)
+extern uint16_t gComputerType;
+extern Computer *gComputer;
+extern int gComputerMapEnabled;
+extern int gComputerSaved499;
 
 #define Task_HandlerNothing45F920 (FN(0x45F920, Task_FalseHandler))
 

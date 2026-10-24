@@ -108,10 +108,10 @@ ORIG(0x4F2350, void, Weapon_UseAmmo, (void *weapon, int n));
 ORIG(0x4F2390, void, Weapon_Drop, (void *weapon));
 ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 
-#define gSoldierPistolList VAR(void *, 0x5BDAA4)
-#define gSoldierPistolType VAR(uint16_t, 0x5BDAA8)
-#define gSoldierPistolUnk VAR(int, 0x5BDAB0)
-#define gSoldierPistolStates ((SoldierStateFn *)0x53E8B8)
+extern void *gSoldierPistolList;
+extern uint16_t gSoldierPistolType;
+extern int gSoldierPistolUnk;
+extern SoldierStateFn gSoldierPistolStates[];
 #define gSoldierPistolCombos ((void *)0x53E980)
 #define gSoldierPistolAnimSlots ((void *)0x53E9B8)
 #define gSoldierPistolSpeeds ((void *)0x53EAE8)

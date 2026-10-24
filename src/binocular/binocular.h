@@ -137,9 +137,9 @@ _Static_assert(offsetof(View, centerY) == 0x54, "View");
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
-#define gView VAR(View, 0xBCAAE0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
+extern View gView;
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 

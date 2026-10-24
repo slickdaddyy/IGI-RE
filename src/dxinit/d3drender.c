@@ -98,18 +98,18 @@ ORIG(0x4CFC60, int, Mesh3D_GetExcludeMethod, (void));
 ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 ORIG(0x4E5350, uint16_t, SplineObjSegment_GetType, (void));
 
-#define gFogDensity VAR(float, 0xB46D04)
-#define gVBNormal VAR(DynVB, 0xBCAD90)
-#define gMeshBatches ((MeshBatch *)0x7205C0)
-#define gMeshVBs ((MeshVB *)0x7AC0A0)
-#define gMeshVBCount VAR(int, 0x72350C)
-#define gMeshFVF ((const unsigned *)0x543CB8)
-#define gMeshCaps ((const unsigned *)0x543CC4)
-#define gMeshCapsTnL ((const unsigned *)0x543CD0)
-#define gGenericUVFromRenderModeUV VAR(int, 0xB817A0)
-#define gRenderModeUVFromGenericUV VAR(int, 0xB8170C)
+extern float gFogDensity;
+extern DynVB gVBNormal;
+extern MeshBatch gMeshBatches[];
+extern MeshVB gMeshVBs[];
+extern int gMeshVBCount;
+extern const unsigned gMeshFVF[];
+extern const unsigned gMeshCaps[];
+extern const unsigned gMeshCapsTnL[];
+extern int gGenericUVFromRenderModeUV;
+extern int gRenderModeUVFromGenericUV;
 
-#define kOne VAR(const float, 0x5333E0)
+extern const float kOne;
 
 /* render functions and callbacks that live past this range */
 #define Direct3D_DrawRigidMesh (FN(0x49DF60, Direct3DRender_DrawRigidMesh))

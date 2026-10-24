@@ -91,9 +91,9 @@ ORIG(0x4F4130, uint8_t, Vehicle_GetLoadEvent, (void));
 ORIG(0x4F4140, uint8_t, Vehicle_GetKeysEvent, (void));
 ORIG(0x530260, uint16_t, CamTask_GetType, (void));
 
-#define gAnimCamType VAR(uint16_t, 0x54F198)
-#define gAnimCamParams VAR(void *, 0xA84388)
-#define gAnimCamInputs ((const AnimInput *)0x54F1A0)
+extern uint16_t gAnimCamType;
+extern void *gAnimCamParams;
+extern const AnimInput gAnimCamInputs[];
 
 #define ANIMCAM_INPUTS 22
 

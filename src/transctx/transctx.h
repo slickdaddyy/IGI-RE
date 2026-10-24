@@ -44,8 +44,8 @@ _Static_assert(sizeof(Scene) == 0x4C, "Scene");
 _Static_assert(sizeof(TransContext) == 0xA8, "TransContext");
 
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
-#define gTransContext VAR(TransContext, 0xBCAAE0)
-#define gScene VAR(Scene, 0xBCABA0)
+extern TransContext gTransContext;
+extern Scene gScene;
 
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }

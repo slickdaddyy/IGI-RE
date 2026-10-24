@@ -53,10 +53,10 @@ typedef struct TouchArg {
     int handled;
 } TouchArg;
 
-#define gGlassType VAR(uint16_t, 0x57C220)
+extern uint16_t gGlassType;
 
-#define kThreeQuarters VAR(float, 0x53351C)
-#define kHitForce VAR(float, 0x5338B8)  /* 0.007 */
+extern float kThreeQuarters;
+extern float kHitForce;  /* 0.007 */
 
 #define Task_Nothing (FN(0x4D3710, Task_Nothing))
 #define sub_427D70 (FN(0x427D70, RocketPod_GetArgSize))

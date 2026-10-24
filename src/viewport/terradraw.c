@@ -8,8 +8,8 @@ typedef struct TerraDraw {
     void *world;
 } TerraDraw;
 
-#define gTerraDrawType VAR(uint16_t, 0x54D9A0)
-#define gTerraDrawOn VAR(uint16_t, 0x54D9A2)
+extern uint16_t gTerraDrawType;
+extern uint16_t gTerraDrawOn;
 
 ORIG(0x4D2650, void, QCube_Render, (void *world, uint8_t *lists, int full));
 

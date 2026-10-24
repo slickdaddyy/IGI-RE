@@ -23,8 +23,8 @@ ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
 #define MAGICOBJ_DELETE (FN(0x51B940, EditorMagicObj_Delete))
 #define GEAR_DEF_SIZE (FN(0x4EFF20, ParamQuat32_Size))
 
-#define gGearType VAR(uint16_t, 0x57BD64)
-#define kQuarterPi VAR(float, 0x5337C0)
+extern uint16_t gGearType;
+extern float kQuarterPi;
 
 void Gear_SetMatrix(Part *o, Matrix *parent);
 

@@ -120,15 +120,15 @@ _Static_assert(sizeof(PhysObj) == 0x720, "PhysObj");
 _Static_assert(offsetof(UseQuery, range) == 0x78, "UseQuery");
 
 #define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskStack ((Task **)0xAFA6E0)
-#define gTaskStackTop VAR(int, 0xAFA7E0)
+extern Task *gTaskStack[];
+extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* exe constants, read in place */
-#define kZero VAR(float, 0x5333EC)
-#define kZeroD VAR(double, 0x5333B0)
+extern float kZero;
+extern double kZeroD;
 
 /* copies 4 bytes without going through the FPU, like the original */
 #define MOV32(dst, src) memcpy(&(dst), &(src), 4)
