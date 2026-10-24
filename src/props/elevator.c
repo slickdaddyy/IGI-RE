@@ -34,7 +34,7 @@ ORIG(0x502200, void, SplineObj_GetWaypointPos, (Vec3d *out, int id, int floor));
 
 extern void *gElevatorParams;
 extern uint16_t gElevatorType;
-extern float gElevatorLength;
+extern RangeF gElevatorStartRange;
 extern Vec3d gElevatorMove;
 extern Matrix gElevatorTurn;
 
@@ -130,16 +130,16 @@ void Elevator_ParamsChanged(Elevator *e, char *arg)
     VarString_Bind(&e->up, e);
     VarString_Bind(&e->move, e);
     len = SplineObj_GetLength(e->graph);
-    MOV32(e->height, e->unk188);
-    if (!(e->unk188 >= kZero))
+    MOV32(e->height, e->startHeight);
+    if (!(e->startHeight >= kZero))
         e->height = 0;
-    if (e->unk188 > len)
+    if (e->startHeight > len)
         MOV32(e->height, len);
     Elevator_UpdatePlace(e);
     (void)arg; /* the original copies the same thing once more when arg is set */
     e->lastPos = e->obj.pos;
     e->lastMatrix = e->obj.matrix;
-    MOV32(gElevatorLength, len);
+    MOV32(gElevatorStartRange.max, len);
     e->isStarting = 0;
     e->isStopping = 0;
     e->lastMove = 1;

@@ -30,7 +30,7 @@ extern void *gElevatorParams;
 extern char gElevatorFloorNames[][32];
 extern RangeF gElevatorMaxSpeedRange;
 extern RangeF gElevatorAccelRange;
-extern RangeF gElevator188Range;
+extern RangeF gElevatorStartRange;
 
 static const float kZero = 0.0f;
 static const float kNear = 16384.0f;
@@ -57,7 +57,7 @@ void Elevator_Init(void)
     TaskType_SetHandler2(gElevatorType, Level_GetEventDAC(), Elevator_Deactivate);
     TaskType_SetHandler(gElevatorType, RigidDynCubeObj_GetEvent4(), Elevator_MoveHandler);
     TaskType_SetHandler(gElevatorType, Game_GetEvent14(), Elevator_GetMotion);
-    gElevator188Range = (RangeF){0.0f, 10000000.0f};
+    gElevatorStartRange = (RangeF){0.0f, 10000000.0f};
     gElevatorMaxSpeedRange = (RangeF){0.0f, 10000.0f};
     gElevatorAccelRange = (RangeF){0.0f, 1.0f};
     gElevatorParams = ParamTable_New(25);
@@ -67,7 +67,7 @@ void Elevator_Init(void)
     ParamTable_Add(gElevatorParams, &e, &e.graph, Param_Int32(), 7, NULL);
     ParamTable_Add(gElevatorParams, &e, &e.unk18C, Param_Bool8(), 7, NULL);
     ParamTable_Add(gElevatorParams, &e, &e.unk18D, Param_Bool8(), 7, NULL);
-    ParamTable_Add(gElevatorParams, &e, &e.unk188, Param_Real32(), 7, &gElevator188Range);
+    ParamTable_Add(gElevatorParams, &e, &e.startHeight, Param_Real32(), 7, &gElevatorStartRange);
     ParamTable_Add(gElevatorParams, &e, &e.maxSpeed, Param_Real32(), 7, &gElevatorMaxSpeedRange);
     ParamTable_Add(gElevatorParams, &e, &e.accel, Param_Real32(), 7, &gElevatorAccelRange);
     ParamTable_Add(gElevatorParams, &e, &e.down, Param_VarString(), 7, NULL);
@@ -306,7 +306,7 @@ BSS(57BF90) RangeF gElevatorMaxSpeedRange;
 BSS(57BF90) RangeF gElevatorAccelRange;
 BSS(57BF90) void *gElevatorParams;
 PAD(igb, 57BF90, 57C0E4, 0x4);
-BSS(57BF90) RangeF gElevator188Range;
-ALIAS(gElevatorLength, gElevator188Range, 4);
+BSS(57BF90) RangeF gElevatorStartRange;
+ALIAS(gElevatorLength, gElevatorStartRange, 4);
 BSS(57C108) uint16_t gElevatorType;
 PAD(igb, 57C108, 57C10A, 0x2);

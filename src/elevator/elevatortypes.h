@@ -30,7 +30,7 @@ typedef struct Elevator {
     char model[0x10];       /* 0x170 */
     int graph;              /* 0x180 */
     float height;           /* 0x184, distance along the graph */
-    float unk188;           /* start distance */
+    float startHeight;      /* start distance */
     char unk18C;            /* straight line from the first to the last floor */
     char unk18D;            /* keep the matrix */
     char pad18E[2];
