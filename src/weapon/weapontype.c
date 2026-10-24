@@ -321,7 +321,7 @@ ScriptValue *DefineWeaponType(ScriptValue *out, void *data, void *args)
     w->sightDisplay = Script_GetArgInt(args, 6);
     w->ammoDisplay = Script_GetArgInt(args, 7);
     w->unk004 = Script_GetArgInt(args, 8);
-    w->unk63C = Script_GetArgInt(args, 9);
+    w->caliber = Script_GetArgInt(args, 9);
     for (i = 0; i < 4; i++)
         w->unk654[i] = (float)Script_GetArgReal(args, 10 + i);
     for (i = 0; i < 4; i++)
@@ -329,12 +329,12 @@ ScriptValue *DefineWeaponType(ScriptValue *out, void *data, void *args)
     for (i = 0; i < 6; i++)
         w->unk664[i] = (float)Script_GetArgReal(args, 18 + i);
     Script_GetArgString(args, 24, w->unk410, 0x100);
-    w->unk650 = (float)Script_GetArgReal(args, 25);
+    w->range = (float)Script_GetArgReal(args, 25);
     Script_GetArgString(args, 26, w->unk510, 0x100);
     w->unk008 = Script_GetArgInt(args, 27);
     w->unk00C = Script_GetArgInt(args, 28);
     Script_GetArgString(args, 29, w->key, 0x10);
-    Script_GetArgString(args, 30, w->unk62C, 0x10);
+    Script_GetArgString(args, 30, w->casing, 0x10);
     for (i = 0; i < 6; i++)
         w->anim[i] = Script_GetArgInt(args, 31 + i);
     w->anim2[0] = Script_GetArgInt(args, 37);
@@ -344,8 +344,8 @@ ScriptValue *DefineWeaponType(ScriptValue *out, void *data, void *args)
     w->anim2[2] = Script_GetArgInt(args, 41);
     w->anim2[5] = Script_GetArgInt(args, 42);
     w->anim2[6] = Script_GetArgInt(args, 43);
-    Script_GetArgString(args, 44, w->unk6B0, 0x10);
-    Script_GetArgString(args, 45, w->unk6C0, 0x10);
+    Script_GetArgString(args, 44, w->sound, 0x10);
+    Script_GetArgString(args, 45, w->sound2, 0x10);
     w->detectRange = (float)Script_GetArgReal(args, 46);
 
     /* each task type may take extra arguments after the fixed ones */

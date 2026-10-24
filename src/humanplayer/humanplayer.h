@@ -8,6 +8,7 @@
 #include "script/scripttypes.h"
 #include "loadscreen/loadscreentypes.h"
 #include "humanplayer/humanplayertypes.h"
+#include "weapon/weapontypes.h"
 
 typedef struct HumanPlayerSM HumanPlayerSM;
 typedef struct HumanPlayer HumanPlayer;
@@ -68,24 +69,6 @@ typedef struct HumanView {
     char unk1B4[0x54];
     int unk208[7];
 } HumanView;
-
-typedef struct WeaponInfo {
-    int id;
-    char unk4[0x60C];
-    int kind;
-    char unk614[8];
-    char unk61C[0x28];
-    int unk644;
-    int clip_size;
-    char unk64C[0x30];
-    int anim67C;
-    int unk680;
-    int anim684;
-    int anim688;
-    int anim68C;
-    char unk690[0x54];
-    float *heal;
-} WeaponInfo;
 
 typedef struct WeaponAmmo {
     int clip;
@@ -233,9 +216,5 @@ _Static_assert(offsetof(HumanPlayer, saved_weapon) == 0xDE4, "saved_weapon");
 _Static_assert(sizeof(HumanPlayer) == 0xDF0, "HumanPlayer size");
 _Static_assert(offsetof(HumanView, lean) == 0x19C, "lean");
 _Static_assert(offsetof(HumanView, unk208) == 0x208, "unk208");
-_Static_assert(offsetof(WeaponInfo, kind) == 0x610, "kind");
-_Static_assert(offsetof(WeaponInfo, clip_size) == 0x648, "clip_size");
-_Static_assert(offsetof(WeaponInfo, anim67C) == 0x67C, "anim67C");
-_Static_assert(offsetof(WeaponInfo, heal) == 0x6E4, "heal");
 
 #endif

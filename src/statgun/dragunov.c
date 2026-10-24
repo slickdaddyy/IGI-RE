@@ -60,7 +60,7 @@ HOOK(0x472E10, Dragunov_Create);
 void Dragunov_Use(ZoomGun *g, WeaponUseMsg *msg)
 {
     Human *h = msg->h;
-    float *minFov = g->gun.info->data;
+    float *minFov = g->gun.info->data2;
     HumanView *v = h->view;
     long double t;
 
@@ -148,18 +148,18 @@ void Dragunov_Config(void *task, WeaponConfigMsg *m)
     ConfigVar *var;
     float t;
 
-    m->info->unk668 = 0.0f;
-    m->info->unk664 = 0.0f;
-    if (m->info->data) {
-        Mem_Free(m->info->data);
-        m->info->data = NULL;
+    m->info->spread[1] = 0.0f;
+    m->info->spread[0] = 0.0f;
+    if (m->info->data2) {
+        Mem_Free(m->info->data2);
+        m->info->data2 = NULL;
     }
     var = TagItem_Find(m->config, "Zoom - Min FOV (degrees)");
     if (!var)
         var = TagItem_AddReal32(m->config, "Zoom - Min FOV (degrees)", 5.0f);
     t = x87_tan(var->v.f * kHalf * kDegToRad);
-    m->info->data = Mem_Alloc(4, 4);
-    *(float *)m->info->data = t;
+    m->info->data2 = Mem_Alloc(4, 4);
+    *(float *)m->info->data2 = t;
 }
 HOOK(0x473330, Dragunov_Config);
 

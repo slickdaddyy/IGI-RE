@@ -13,6 +13,7 @@
 #include "humanai/humanaitypes.h"
 #include "computer/computertypes.h"
 #include "guncasing/guncasingtypes.h"
+#include "weapon/weapontypes.h"
 
 typedef void (*TaskFn)();
 
@@ -22,28 +23,6 @@ typedef struct GrenadeConfig {
     float radius;       /* meters */
     float falloff;      /* meters */
 } GrenadeConfig;
-
-typedef struct WeaponType {
-    char unk0[0x618];
-    int category;       /* 0x618 */
-    char key[0x10];     /* 0x61C, model and physics type name */
-    char casing[0x10];  /* 0x62C, empty casing model */
-    int ammo;           /* 0x63C */
-    int pellets;        /* 0x640 */
-    int rate;           /* 0x644, shots per minute */
-    int rounds;         /* 0x648 */
-    int burst;          /* 0x64C */
-    char unk650[0x14];
-    float spread[2];    /* 0x664, degrees: first shots, then the rest */
-    char unk66C[0x44];
-    char sound[0x10];   /* 0x6B0 */
-    char sound2[0x10];  /* 0x6C0 */
-    char unk6D0[8];
-    uint16_t gunType;   /* 0x6D8 */
-    char unk6DA[6];
-    GrenadeConfig *grenade; /* 0x6E0 */
-    char unk6E4[4];
-} WeaponType;
 
 /* what the proximity handler gets */
 typedef struct MineProbe {
@@ -180,8 +159,8 @@ typedef struct GunCasing {
 SCHECK(RigidDynCubeObj, attached, 0xE8);
 SCHECK(WeaponType, spread, 0x664);
 SCHECK(WeaponType, sound2, 0x6C0);
-SCHECK(WeaponType, gunType, 0x6D8);
-SCHECK(WeaponType, grenade, 0x6E0);
+SCHECK(WeaponType, taskType2, 0x6D8);
+SCHECK(WeaponType, data, 0x6E0);
 SCHECK(Mine, model, 0x170);
 SCHECK(Mine, explode, 0x1E4);
 SCHECK(Mine, remote, 0x249);
@@ -196,7 +175,6 @@ _Static_assert(sizeof(Grenade) == 0x738, "Grenade");
 _Static_assert(sizeof(GunPart) == 0x140, "GunPart");
 _Static_assert(sizeof(Gun) == 0x1B0, "Gun");
 _Static_assert(sizeof(GunCasing) == 0x128, "GunCasing");
-_Static_assert(sizeof(WeaponType) == 0x6E8, "WeaponType");
 #undef SCHECK
 
 uint16_t Gun_GetType(void);

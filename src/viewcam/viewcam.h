@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "task/tasktypes.h"
 #include "qasm/qasmtypes.h"
+#include "weapon/weapontypes.h"
 
 #define VPAD(from, to) char pad##from[(to) - (from)]
 
@@ -14,14 +15,6 @@ typedef void (*TaskHandler)(void *task, void *arg);
 
 /* gTaskHandlers[slot][type] */
 extern TaskHandler gTaskHandlers[][0x180];
-
-/* rotation plus a serial number that changes with it */
-typedef struct WeaponInfo {
-    VPAD(0x0, 0x610);
-    int kind;
-    VPAD(0x614, 0x660);
-    float throwSpeed;
-} WeaponInfo;
 
 enum { WEAPON_KIND_GRENADE = 4 };
 

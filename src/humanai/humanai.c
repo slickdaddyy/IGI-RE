@@ -428,13 +428,13 @@ void HumanAI_FindWeapons(HumanAI *ai)
 
             if (!wt) {
                 Warning_Show("Weapon not initialized, human #%d", Task_GetId(h));
-            } else if (wt->kind >= 0) {
-                if (wt->kind <= 2) {
+            } else if (wt->category >= 0) {
+                if (wt->category <= 2) {
                     ai->hasGun = 1;
                     ai->gunId = wt->id;
                     WeaponSlots_Set(((Human *)h)->weapons, 0, w);
-                } else if (wt->kind == 4) {
-                    PhysType *pt = PhysicsObjType_Find(wt->name);
+                } else if (wt->category == 4) {
+                    PhysType *pt = PhysicsObjType_Find(wt->key);
 
                     ai->hasGrenade = 1;
                     ai->grenadeTime = round_int(*(float *)pt->data * 30.0f);

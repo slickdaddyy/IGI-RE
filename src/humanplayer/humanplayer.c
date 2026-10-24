@@ -72,7 +72,7 @@ ORIG(0x411AE0, void, HumanPlayer_UpdateWire, (HumanPlayer *h));
 ORIG(0x411F20, void, HumanPlayer_UpdateZipline, (HumanPlayer *h));
 ORIG(0x4137E0, void, HumanPlayer_SetWeaponAnim, (HumanPlayer *h, int anim));
 ORIG(0x413A60, void, HumanPlayer_RequestWeaponAnim, (HumanPlayer *h, int anim));
-ORIG(0x413C80, WeaponInfo *, Weapon_GetType, (Task *weapon));
+ORIG(0x413C80, WeaponType *, Weapon_GetType, (Task *weapon));
 ORIG(0x413CC0, Task *, Task_FindWeapon, (HumanPlayer *h, int id));
 ORIG(0x415020, int, Game_CheatKeyPressed, (int key));
 ORIG(0x4167E0, uint8_t, Game_GetEvent1, (void));
@@ -570,7 +570,7 @@ HOOK(0x40E9B0, HumanPlayer_WeaponIdleEnter);
 void HumanPlayer_WeaponIdleRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     Task *w, *cur, *b, *att;
-    WeaponInfo *info;
+    WeaponType *info;
     WeaponAmmo ammo;
     AmmoEntry *a;
     TaskHandler fn;
@@ -608,7 +608,7 @@ void HumanPlayer_WeaponIdleRun(HumanPlayerSM *sm, HumanPlayer *h)
         info = Weapon_GetType(w);
         Weapon_GetAmmo(w, &ammo);
         if (in & 0x200) {
-            switch (info->kind) {
+            switch (info->category) {
             case WEAPON_KIND_MELEE:
                 sm_set(sm, WEAPON_MELEE, h);
                 return;
@@ -653,7 +653,7 @@ void HumanPlayer_WeaponIdleRun(HumanPlayerSM *sm, HumanPlayer *h)
             }
         }
 no_action:
-        if (((in & 0x800) || !ammo.clip) && (ammo.reserve || gUnlimitedAmmo) && ammo.clip < info->clip_size) {
+        if (((in & 0x800) || !ammo.clip) && (ammo.reserve || gUnlimitedAmmo) && ammo.clip < info->clipSize) {
             HumanTaskViewReset(h->view);
             sm_set(sm, WEAPON_RELOAD, h);
             return;
@@ -697,7 +697,7 @@ HOOK(0x40EF60, HumanPlayer_WeaponFireEnter);
 void HumanPlayer_WeaponFireRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     Task *w = WeaponSlots_Get(h->weapons, 0);
-    WeaponInfo *info = Weapon_GetType(w);
+    WeaponType *info = Weapon_GetType(w);
     WeaponAmmo ammo;
     uint32_t in;
 
@@ -713,7 +713,7 @@ void HumanPlayer_WeaponFireRun(HumanPlayerSM *sm, HumanPlayer *h)
             return;
         }
         h->fire = 1;
-    } else if ((h->input[INPUT_RELOAD] != 0 || !ammo.clip) && ammo.reserve && ammo.clip < info->clip_size) {
+    } else if ((h->input[INPUT_RELOAD] != 0 || !ammo.clip) && ammo.reserve && ammo.clip < info->clipSize) {
         HumanTaskViewReset(h->view);
         sm_set(sm, WEAPON_RELOAD, h);
         return;
@@ -833,10 +833,10 @@ HOOK(0x40F3F0, HumanPlayer_WeaponLeanRun);
 void HumanPlayer_WeaponAltFireEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
-    WeaponInfo *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
+    WeaponType *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
 
     h->unk4D2 = 1;
-    Anim_Play(v->anim, 0, info->anim688, 0, 0);
+    Anim_Play(v->anim, 0, info->anim[3], 0, 0);
     sm->run = HumanPlayer_WeaponWaitRun;
 }
 HOOK(0x40F4A0, HumanPlayer_WeaponAltFireEnter);
@@ -844,12 +844,12 @@ HOOK(0x40F4A0, HumanPlayer_WeaponAltFireEnter);
 void HumanPlayer_WeaponThrowEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
-    WeaponInfo *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
+    WeaponType *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
     char *p;
     long double fuse;
 
-    Anim_Play(v->anim, 0, info->anim684, 0, 0);
-    p = PhysicsObjType_Find(info->unk61C);
+    Anim_Play(v->anim, 0, info->anim[2], 0, 0);
+    p = PhysicsObjType_Find(info->key);
     fuse = **(float **)(p + 0x2D4) * kFps;
     h->grenade_ticking = 0;
     h->grenade_ticks = 0;
@@ -862,7 +862,7 @@ HOOK(0x40F4F0, HumanPlayer_WeaponThrowEnter);
 void HumanPlayer_WeaponThrowRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
-    WeaponInfo *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
+    WeaponType *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
 
     if (v->unk208[1] == 4) {
         h->grenade_ticking = 1;
@@ -871,7 +871,7 @@ void HumanPlayer_WeaponThrowRun(HumanPlayerSM *sm, HumanPlayer *h)
     if (h->grenade_ticking)
         h->grenade_ticks++;
     if ((sm->input & SM_ANIM_DONE) && h->input[INPUT_FIRE] == 0) {
-        Anim_Play(v->anim, 0, info->anim688, 0, 0);
+        Anim_Play(v->anim, 0, info->anim[3], 0, 0);
         sm->run = HumanPlayer_WeaponReleaseRun;
     }
 }
@@ -881,7 +881,7 @@ void HumanPlayer_WeaponReleaseRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
     Task *w = WeaponSlots_Get(h->weapons, 0);
-    WeaponInfo *info = Weapon_GetType(w);
+    WeaponType *info = Weapon_GetType(w);
     WeaponAmmo ammo;
 
     h->grenade_ticks++;
@@ -894,7 +894,7 @@ void HumanPlayer_WeaponReleaseRun(HumanPlayerSM *sm, HumanPlayer *h)
     }
     if (!(sm->input & SM_ANIM_DONE))
         return;
-    Anim_Play(v->anim, 0, info->anim67C, 0, 0);
+    Anim_Play(v->anim, 0, info->anim[0], 0, 0);
     HumanView_SetWeaponAngles(h->view, WEAPON_DOWN_X, WEAPON_DOWN_Y);
     HumanView_SetWeaponTarget(h->view, 0, 0, WEAPON_SPEED_X, WEAPON_SPEED_Y);
     Weapon_GetAmmo(w, &ammo);
@@ -1030,9 +1030,9 @@ HOOK(0x40FA80, HumanPlayer_WeaponMeleeRun);
 void HumanPlayer_WeaponMedipackEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
-    WeaponInfo *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
+    WeaponType *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
 
-    Anim_Play(v->anim, 0, info->anim684, 0, 0);
+    Anim_Play(v->anim, 0, info->anim[2], 0, 0);
     h->medipack_delay = 0;
     sm->run = HumanPlayer_WeaponMedipackStartRun;
 }
@@ -1041,12 +1041,12 @@ HOOK(0x40FB30, HumanPlayer_WeaponMedipackEnter);
 void HumanPlayer_WeaponMedipackStartRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
-    WeaponInfo *info;
+    WeaponType *info;
 
     if (!(sm->input & SM_ANIM_DONE))
         return;
     info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
-    Anim_Play(v->anim, 0, info->anim688, 1, 0);
+    Anim_Play(v->anim, 0, info->anim[3], 1, 0);
     sm->run = HumanPlayer_WeaponMedipackRun;
 }
 HOOK(0x40FB90, HumanPlayer_WeaponMedipackStartRun);
@@ -1054,12 +1054,12 @@ HOOK(0x40FB90, HumanPlayer_WeaponMedipackStartRun);
 void HumanPlayer_WeaponMedipackRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
-    WeaponInfo *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
+    WeaponType *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
     AmmoEntry *a;
     long double t;
 
     if (h->input[INPUT_FIRE] == 0) {
-        Anim_Play(v->anim, 0, Weapon_GetType(WeaponSlots_Get(h->weapons, 0))->anim68C, 0, 0);
+        Anim_Play(v->anim, 0, Weapon_GetType(WeaponSlots_Get(h->weapons, 0))->anim[4], 0, 0);
         sm->run = HumanPlayer_WeaponWaitRun;
     }
     if (h->medipack_delay) {
@@ -1070,18 +1070,18 @@ void HumanPlayer_WeaponMedipackRun(HumanPlayerSM *sm, HumanPlayer *h)
     if (!a)
         return;
     if (!a->count || h->damage == 0) {
-        Anim_Play(v->anim, 0, Weapon_GetType(WeaponSlots_Get(h->weapons, 0))->anim68C, 0, 0);
+        Anim_Play(v->anim, 0, Weapon_GetType(WeaponSlots_Get(h->weapons, 0))->anim[4], 0, 0);
         sm->run = HumanPlayer_WeaponWaitRun;
         return;
     }
     a->count--;
-    t = h->damage - h->max_damage * *info->heal;
+    t = h->damage - h->max_damage * *(float *)info->data2;
     h->damage = t;
     if (t < 0)
         h->damage = 0;
     else if (t > h->max_damage)
         h->damage = h->max_damage;
-    h->medipack_delay = (int)llrintl(60.0 / (long double)info->unk644 * 30.0);
+    h->medipack_delay = (int)llrintl(60.0 / (long double)info->rate * 30.0);
 }
 HOOK(0x40FBE0, HumanPlayer_WeaponMedipackRun);
 

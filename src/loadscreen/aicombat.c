@@ -15,6 +15,7 @@
 #include "humanai/humanaitypes.h"
 #include "statgun/statguntypes.h"
 #include "graphnode/graphnodetypes.h"
+#include "weapon/weapontypes.h"
 
 FN_EXTERN(AICombat_End);
 FN_EXTERN(AICombat_KneelFire);
@@ -38,14 +39,6 @@ typedef struct Human {
     char unk4D8[0x7B4 - 0x4D8];
     Task **statGun;
 } Human;
-
-typedef struct WeaponType {
-    char unk0[0x610];
-    int kind;
-    char unk614[0x648 - 0x614];
-    int clip;
-    int burst;
-} WeaponType;
 
 /* one cell grid per graph node, so AIs at the same node spread out */
 typedef struct NodeGrid {
@@ -174,7 +167,6 @@ struct HumanAI {
 _Static_assert(offsetof(Human, weapons) == 0x4C4, "weapons");
 _Static_assert(offsetof(Human, aimError) == 0x4D4, "aimError");
 _Static_assert(offsetof(Human, statGun) == 0x7B4, "statGun");
-_Static_assert(offsetof(WeaponType, clip) == 0x648, "clip");
 _Static_assert(offsetof(NodeGrid, cells) == 0x20, "cells");
 _Static_assert(offsetof(AIEvent, about) == 0x2C, "about");
 _Static_assert(offsetof(AIAction, param) == 0x28, "param");
@@ -898,14 +890,14 @@ void AICombat_StartBurst(HumanAI *ai, char half)
     }
     type = Weapon_GetType(w);
     Weapon_GetAmmo(w, ammo);
-    if (type->kind >= 0) {
-        if (type->kind <= 2) {
+    if (type->category >= 0) {
+        if (type->category <= 2) {
             long double d;
 
-            if (type->burst != type->clip && type->burst > 1) {
+            if (type->burst != type->clipSize && type->burst > 1) {
                 ai->shotsLeft = type->burst;
             } else {
-                ai->shotsLeft = round_int((long double)type->clip * r);
+                ai->shotsLeft = round_int((long double)type->clipSize * r);
                 if (ai->shotsLeft < 1)
                     ai->shotsLeft = 1;
                 else if (ai->shotsLeft > ai->maxBurst)
@@ -926,7 +918,7 @@ void AICombat_StartBurst(HumanAI *ai, char half)
             }
             if (half)
                 h->aimError = h->aimError * kHalf;
-        } else if (type->kind == 4) {
+        } else if (type->category == 4) {
             ai->shotsLeft = 1;
             h->aimError = 1.0f;
         }

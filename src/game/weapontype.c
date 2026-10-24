@@ -1,17 +1,11 @@
 #include "hook.h"
 #include "igi.h"
 #include "game/game.h"
+#include "weapon/weapontypes.h"
 
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4F1D80, void, ParamEnum_Free, (void *e));
-
-/* only the tail of the 0x6E8 byte weapon type record from weapon.qsc */
-typedef struct WeaponType {
-    char unk0[0x6E0];
-    void *data;
-    void *data2;
-} WeaponType;
 
 extern WeaponType gWeaponTypes[];
 extern int gWeaponTypeCount;

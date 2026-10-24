@@ -53,7 +53,7 @@ void Mp5sd_Use(ZoomGun *g, WeaponUseMsg *msg)
 {
     Human *h = msg->h;
     HumanView *v = h->view;
-    float *minFov = g->gun.info->data;
+    float *minFov = g->gun.info->data2;
     long double fov;
     float e, t;
     int pressed;
@@ -98,16 +98,16 @@ void Mp5sd_Config(void *task, WeaponConfigMsg *m)
     ConfigVar *var;
     float t;
 
-    if (m->info->data) {
-        Mem_Free(m->info->data);
-        m->info->data = NULL;
+    if (m->info->data2) {
+        Mem_Free(m->info->data2);
+        m->info->data2 = NULL;
     }
     var = TagItem_Find(m->config, "Zoom - Min FOV (degrees)");
     if (!var)
         var = TagItem_AddReal32(m->config, "Zoom - Min FOV (degrees)", 50.0f);
     t = x87_tan(var->v.f * kHalf * kDegToRad);
-    m->info->data = Mem_Alloc(4, 4);
-    *(float *)m->info->data = t;
+    m->info->data2 = Mem_Alloc(4, 4);
+    *(float *)m->info->data2 = t;
 }
 HOOK(0x473C80, Mp5sd_Config);
 

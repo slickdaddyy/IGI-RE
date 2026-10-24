@@ -67,7 +67,7 @@ HOOK(0x4734D0, M16A2_Create);
 /* the alternate fire launches an M203 grenade */
 void M16A2_Use(Gun *g, WeaponUseMsg *msg)
 {
-    M203Data *d = g->info->data;
+    M203Data *d = g->info->data2;
     long double s;
     Matrix m;
     Vec3f vel;
@@ -147,9 +147,9 @@ void M16A2_Config(void *task, WeaponConfigMsg *m)
     ConfigVar *speed, *radius, *activate, *model;
     M203Data d;
 
-    if (m->info->data) {
-        Mem_Free(m->info->data);
-        m->info->data = NULL;
+    if (m->info->data2) {
+        Mem_Free(m->info->data2);
+        m->info->data2 = NULL;
     }
     memcpy(d.model, "108_05_1", 9);
     d.speed = 270.0f;
@@ -171,8 +171,8 @@ void M16A2_Config(void *task, WeaponConfigMsg *m)
     MOV32(d.radius, radius->v.f);
     MOV32(d.activate, activate->v.f);
     strcpy(d.model, model->v.s);
-    m->info->data = Mem_Alloc(sizeof(M203Data), 4);
-    memcpy(m->info->data, &d, sizeof(M203Data));
+    m->info->data2 = Mem_Alloc(sizeof(M203Data), 4);
+    memcpy(m->info->data2, &d, sizeof(M203Data));
 }
 HOOK(0x4737F0, M16A2_Config);
 

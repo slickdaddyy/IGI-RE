@@ -56,7 +56,7 @@ ORIG(0x401AE0, Task **, TaskRef_Add, (Task *t));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x406220, Profile *, Profile_GetActive, (void));
-ORIG(0x413C80, WeaponInfo *, Weapon_GetType, (Task *w));
+ORIG(0x413C80, WeaponType *, Weapon_GetType, (Task *w));
 ORIG(0x4167D0, uint8_t, Game_GetEvent0, (void));
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
 ORIG(0x4168B0, QTaskList *, Game_GetTaskList1, (void));
@@ -199,7 +199,7 @@ void Human_UpdateWeapon(Human *h)
     static const float kCookLinear = 0x1.99999ap-4f;    /* 0.1 */
     static const float kRecoilFade = 0x1.ccccccp-1f;    /* 0.9 */
     HumanView *v = h->view;
-    WeaponInfo *info;
+    WeaponType *info;
     WeaponUseMsg msg;
     Task *w;
     double eye[3];
@@ -219,7 +219,7 @@ void Human_UpdateWeapon(Human *h)
     vel[2] = h->throwDir[2];
     eye[1] = 0.0f + eye[1];
     eye[2] = 0.0f + eye[2];
-    if (info->kind == WEAPON_KIND_GRENADE) {
+    if (info->category == WEAPON_KIND_GRENADE) {
         long double t = h->cookTime, k;
         float tf;
 

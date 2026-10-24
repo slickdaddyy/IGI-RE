@@ -12,6 +12,7 @@
 #include "sysmisc/sysmisctypes.h"
 #include "humanai/humanaitypes.h"
 #include "graphnode/graphnodetypes.h"
+#include "weapon/weapontypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -33,14 +34,6 @@ typedef struct Human {
     char unk7C8[0x538];
     char unkD00;
 } Human;
-
-typedef struct WeaponType {
-    int id;
-    char unk4[0x60C];
-    int kind;
-    char unk614[8];
-    char name[4];
-} WeaponType;
 
 /* what the AI sees with: position, eye, body and view rotation, cone sizes */
 typedef struct AIView {
@@ -284,7 +277,6 @@ _Static_assert(offsetof(Human, unk33C) == 0x33C, "Human");
 _Static_assert(offsetof(Human, weapons) == 0x4C4, "Human");
 _Static_assert(offsetof(Human, unk7C4) == 0x7C4, "Human");
 _Static_assert(offsetof(Human, unkD00) == 0xD00, "Human");
-_Static_assert(offsetof(WeaponType, name) == 0x61C, "WeaponType");
 _Static_assert(sizeof(AIView) == 0xC0, "AIView");
 _Static_assert(sizeof(AIDetectView) == 0x78, "AIDetectView");
 _Static_assert(sizeof(AIEvent) == 0x30, "AIEvent");

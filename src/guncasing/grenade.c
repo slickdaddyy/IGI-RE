@@ -134,9 +134,9 @@ void Grenade_WeaponConfigHandler(void *type, GrenadeConfigMsg *msg)
     uint32_t f, r, d;
     GrenadeConfig *c;
 
-    if (msg->wt->grenade) {
-        Mem_Free(msg->wt->grenade);
-        msg->wt->grenade = NULL;
+    if (msg->wt->data) {
+        Mem_Free(msg->wt->data);
+        msg->wt->data = NULL;
     }
     falloff = TagItem_Find(msg->table, kFalloff);
     if (!falloff)
@@ -150,8 +150,8 @@ void Grenade_WeaponConfigHandler(void *type, GrenadeConfigMsg *msg)
     f = *(uint32_t *)&CONFIG_VALUE(falloff);
     r = *(uint32_t *)&CONFIG_VALUE(radius);
     d = *(uint32_t *)&CONFIG_VALUE(damage);
-    msg->wt->grenade = Mem_Alloc(sizeof(GrenadeConfig), 4);
-    c = msg->wt->grenade;
+    msg->wt->data = Mem_Alloc(sizeof(GrenadeConfig), 4);
+    c = msg->wt->data;
     *(uint32_t *)&c->damage = d;
     *(uint32_t *)&c->radius = r;
     *(uint32_t *)&c->falloff = f;
@@ -198,7 +198,7 @@ void Grenade_RunHandler(Grenade *g)
     dz = -2048.0;
     ev = Game_GetEvent13();
     Coll_DropPoints(Game_GetWorld(), &hit, &g->o.pos, 1, &dz, ev, &ignore, -1);
-    if (g->weapon && (c = g->weapon->grenade) != NULL) {
+    if (g->weapon && (c = g->weapon->data) != NULL) {
         if (gt->explosion == 0)
             Explosion_Spawn(&g->o.pos, 1, 1, c->damage, c->radius * kMeter, c->falloff * kMeter, 6144.0f, 3, 1,
                             &hit, "1009_01_1", "explo_02_m", 0x15, 2, 40960.0f, 0);

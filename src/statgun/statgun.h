@@ -18,21 +18,6 @@ FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)();
 
-/* the parts of a WeaponType (see weapon/weapon.h) used here */
-typedef struct WeaponInfo {
-    char unk0[0x61C];
-    char key[0x10];     /* 0x61C */
-    char unk62C[0x1C];
-    int clipSize;       /* 0x648 */
-    char unk64C[4];
-    float range;        /* 0x650 */
-    char unk654[0x10];
-    float unk664;
-    float unk668;
-    char unk66C[0x78];
-    void *data;         /* 0x6E4 */
-} WeaponInfo;
-
 /* the parts of a Human used here */
 typedef struct HumanView {
     char unk0[0xE0];
@@ -58,7 +43,7 @@ typedef struct Human {
 /* the weapon config message: parameters of the weapon's config task */
 typedef struct WeaponConfigMsg {
     void *config;
-    WeaponInfo *info;
+    WeaponType *info;
 } WeaponConfigMsg;
 
 /* an entry of a human's ammo table */
@@ -82,7 +67,7 @@ typedef struct Gun {
     char unkF0;
     char unkF1[0x13];
     char id[0x24];      /* 0x104 */
-    WeaponInfo *info;   /* 0x128 */
+    WeaponType *info;   /* 0x128 */
     int *ammoId;        /* 0x12C */
     char unk130[4];
     char unk134;
@@ -161,9 +146,6 @@ static inline float max_scale(const RigidDynCubeObj *o)
     return o->scale[0] > m ? o->scale[0] : m;
 }
 
-_Static_assert(offsetof(WeaponInfo, clipSize) == 0x648, "WeaponInfo");
-_Static_assert(offsetof(WeaponInfo, unk664) == 0x664, "WeaponInfo");
-_Static_assert(offsetof(WeaponInfo, data) == 0x6E4, "WeaponInfo");
 _Static_assert(offsetof(HumanView, fov) == 0x1E4, "HumanView");
 _Static_assert(offsetof(Human, input) == 0x1B0, "Human");
 _Static_assert(offsetof(Human, view) == 0x4EC, "Human");

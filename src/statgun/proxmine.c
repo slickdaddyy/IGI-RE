@@ -102,8 +102,8 @@ HOOK(0x4754C0, ProxMine_Move);
    and not on a human, glass, a door or a vehicle */
 void ProxMine_Use(Gun *g, WeaponUseMsg *msg)
 {
-    WeaponInfo *info = g->info;
-    ProxData *d = info->data;
+    WeaponType *info = g->info;
+    ProxData *d = info->data2;
     long double s, inv;
     ProxQuery q;
     CollHit hit;
@@ -181,9 +181,9 @@ void ProxMine_Config(void *task, WeaponConfigMsg *m)
     ConfigVar *arm, *count, *activate, *explode;
     ProxData *d;
 
-    if (m->info->data) {
-        Mem_Free(m->info->data);
-        m->info->data = NULL;
+    if (m->info->data2) {
+        Mem_Free(m->info->data2);
+        m->info->data2 = NULL;
     }
     arm = TagItem_Find(m->config, "Proximitymine - Time before arming (seconds)");
     if (!arm)
@@ -197,7 +197,7 @@ void ProxMine_Config(void *task, WeaponConfigMsg *m)
     explode = TagItem_Find(m->config, "Proximitymine - Explosion radius (meters)");
     if (!explode)
         explode = TagItem_AddReal32(m->config, "Proximitymine - Explosion radius (meters)", 3.0f);
-    m->info->data = d = Mem_Alloc(sizeof(ProxData), 4);
+    m->info->data2 = d = Mem_Alloc(sizeof(ProxData), 4);
     MOV32(d->armTime, arm->v.f);
     MOV32(d->countdown, count->v.f);
     MOV32(d->activate, activate->v.f);

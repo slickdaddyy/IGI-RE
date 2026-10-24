@@ -7,51 +7,10 @@
 #include "win/wintypes.h"
 #include "res/restypes.h"
 #include "humanai/humanaitypes.h"
+#include "weapon/weapontypes.h"
 
 /* The "Gun" task (0x1B0 bytes, 0x5BE3C6), base of the hand weapons. These
    are its handlers from 0x479780 on; the type is registered by 0x477E30. */
-
-/* own copy of the weapon type, see weapon/weapon.h */
-typedef struct WeaponType {
-    int id;
-    int unk004;
-    int unk008;
-    int unk00C;
-    char name[0x100];
-    char unk110[0x100]; /* text shown on the HUD */
-    char unk210[0x100];
-    char unk310[0x100];
-    char unk410[0x100];
-    char unk510[0x100];
-    int category;
-    int sightDisplay;
-    int ammoDisplay;
-    char key[0x10];
-    char unk62C[0x10];
-    int caliber;
-    int unk640;
-    int unk644;
-    int clipSize;
-    int unk64C;
-    float unk650;
-    float unk654[4];
-    float unk664[2];
-    float recoilPitch;     /* 0x66C, degrees */
-    float recoilYaw;       /* 0x670 */
-    float recoilPitchRand; /* 0x674 */
-    float recoilYawRand;   /* 0x678 */
-    int anim[6];
-    int anim2[7];
-    char unk6B0[0x10];
-    char unk6C0[0x10];
-    float detectRange;
-    int taskType;
-    int taskType2;
-    char unk6DC;
-    char pad6DD[3];
-    void *data;
-    void *data2;
-} WeaponType;
 
 typedef struct Gun {
     Task task;
@@ -126,8 +85,6 @@ typedef struct TaskList {
     int max;
 } TaskList;
 
-_Static_assert(sizeof(WeaponType) == 0x6E8, "WeaponType");
-_Static_assert(offsetof(WeaponType, detectRange) == 0x6D0, "WeaponType");
 _Static_assert(offsetof(Gun, inWorld) == 0xF0, "Gun");
 _Static_assert(offsetof(Gun, type) == 0x128, "Gun");
 _Static_assert(offsetof(Gun, rounds) == 0x144, "Gun");

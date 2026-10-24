@@ -29,7 +29,7 @@ HOOK(0x472A70, Spas12_Open);
 void Spas12_Reload(Gun *g, ReloadMsg *msg)
 {
     void *h = msg->h;
-    WeaponInfo *info = g->info;
+    WeaponType *info = g->info;
     int *ammoId = g->ammoId;
     Task *owner = g->obj.task.parent;
     void *list = NULL;

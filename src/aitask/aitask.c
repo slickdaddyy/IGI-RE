@@ -11,6 +11,7 @@
 #include "terrain/terraintypes.h"
 #include "humanai/humanaitypes.h"
 #include "graphnode/graphnodetypes.h"
+#include "weapon/weapontypes.h"
 
 typedef struct Human {
     Task task;
@@ -20,13 +21,6 @@ typedef struct Human {
     char unk4EC[0x7B4 - 0x4EC];
     Task **statGun;
 } Human;
-
-typedef struct WeaponType {
-    char unk0[0x610];
-    int kind;
-    char unk614[0x64C - 0x614];
-    int unk64C;
-} WeaponType;
 
 /* {path, cur, end, move, prevMove, ...}, see the patrol notes */
 typedef struct PatrolRoute {
@@ -187,7 +181,6 @@ typedef char (*AIGraphFn)(HumanAI *ai, GraphNode *node, void *ctx);
 
 _Static_assert(offsetof(Human, weapons) == 0x4C4, "Human");
 _Static_assert(offsetof(Human, statGun) == 0x7B4, "Human");
-_Static_assert(offsetof(WeaponType, unk64C) == 0x64C, "WeaponType");
 _Static_assert(sizeof(PatrolRoute) == 0x1C, "PatrolRoute");
 _Static_assert(offsetof(HumanAI, routes) == 0x1518, "routes");
 _Static_assert(offsetof(HumanAI, target) == 0x3AA8, "target");
@@ -369,14 +362,14 @@ char AICombat_Fire(HumanAI *ai)
     }
     wt = Weapon_GetType(gun);
     Weapon_GetAmmo(gun, ammo);
-    if (wt->kind < 0 || wt->kind > 2)
+    if (wt->category < 0 || wt->category > 2)
         return 0;
     if (ai->shotsLeft == 0 || ammo[0] == 0) {
         ai->unk3E50++;
         return 1;
     }
     HumanAI_SetChannel(ai, 6, 1.0f);
-    single = wt->unk64C == 1;
+    single = wt->burst == 1;
     if (ammo[0] != ai->lastAmmo) {
         ai->lastAmmo = ammo[0];
         ai->shotsLeft--;

@@ -181,7 +181,7 @@ Gun *Gun_New(void *parent, int16_t count, int id, int rounds, char unkF1)
     Mem_PushMode(1);
     wt = WeaponType_Find(id);
     if (wt)
-        type = wt->gunType;
+        type = wt->taskType2;
     else {
         Warning_Show("Unknown weapon type: %d", id);
         type = gGunType;
@@ -377,7 +377,7 @@ void Gun_RunHandler(Gun *g)
     long double step, v;
 
     if (g->rounds == -2)
-        g->rounds = wt->rounds;
+        g->rounds = wt->clipSize;
     if (g->remove) {
         Task_Delete(g);
         return;
@@ -468,7 +468,7 @@ HOOK(0x478900, Gun_HideHandler);
 /* binoculars are only drawn while they have a charge */
 void Gun_DrawHandler(Gun *g)
 {
-    if (g->rounds || g->wt->category != 5)
+    if (g->rounds || g->wt->ammoDisplay != 5)
         TASK_HANDLER(4, RigidDynCubeObj_GetType())(g, 0);
 }
 HOOK(0x478970, Gun_DrawHandler);
@@ -495,7 +495,7 @@ void Gun_ParamChangedHandler(Gun *g)
         g->ammoType = NULL;
         return;
     }
-    g->ammoType = AmmoType_FindByCaliber(wt->ammo);
+    g->ammoType = AmmoType_FindByCaliber(wt->caliber);
     model = VirModel_Find(wt->key);
     if (model)
         RigidDynCubeObj_SetModel(g, model);
