@@ -49,7 +49,7 @@ void M16A2_Open(void)
     TaskType_SetHandler(gM16A2Type, 0, M16A2_Create);
     TaskType_SetHandler2(gM16A2Type, 2, Gun_Delete);
     TaskType_SetHandler(gM16A2Type, Human_GetEvent0(), M16A2_Use);
-    TaskType_SetHandler(gM16A2Type, Human_GetRenderEvent(), M16A2_Render);
+    TaskType_SetHandler(gM16A2Type, StatusScreen_GetEvent(), M16A2_Render);
     TaskType_SetHandler(gM16A2Type, WeaponType_GetInitEvent2(), M16A2_ReadArgs);
     TaskType_SetHandler(gM16A2Type, WeaponType_GetSizeEvent2(), M16A2_GetDataSize);
     TaskType_SetHandler(gM16A2Type, WeaponConfig_GetEvent(), M16A2_Config);
@@ -81,10 +81,10 @@ void M16A2_Use(Gun *g, WeaponUseMsg *msg)
     vel.x = s * g->dir.x * kVelScale;
     vel.y = s * g->dir.y * kVelScale;
     vel.z = s * g->dir.z * kVelScale;
-    snd = Sound_Play(sub_4F0EE0(), "m203_launch_1");
+    snd = Sound_Play(Level_GetDynamic(), "m203_launch_1");
     if (snd)
         Sound_SetPos(snd, &g->muzzle);
-    M203_New(sub_4F0EE0(), g, g->obj.task.parent, &g->muzzle, &m, &vel, d->model, d->radius, d->activate);
+    M203_New(Level_GetDynamic(), g, g->obj.task.parent, &g->muzzle, &m, &vel, d->model, d->radius, d->activate);
 }
 HOOK(0x473510, M16A2_Use);
 
@@ -103,9 +103,9 @@ void M16A2_Render(Gun *g, HudMsg *msg)
 
     Display_GetMode();
     Display_GetMode();
-    HANDLER(Human_GetRenderEvent(), Gun_GetType())(g, msg);
+    HANDLER(StatusScreen_GetEvent(), Gun_GetType())(g, msg);
     owner = g->obj.task.parent;
-    fn = HANDLER(Human_GetAmmoEvent(), owner->type);
+    fn = HANDLER(AmmoList_GetEvent(), owner->type);
     if (fn)
         fn(owner, &list);
     ammo = AmmoList_Find(list, Script_EvalConst("AMMO_ID_M203"));
@@ -155,18 +155,18 @@ void M16A2_Config(void *task, WeaponConfigMsg *m)
     d.speed = 270.0f;
     d.radius = 5.0f;
     d.activate = 1.0f;
-    speed = Config_Find(m->config, "M203 - Muzzle velocity (km/h)");
+    speed = TagItem_Find(m->config, "M203 - Muzzle velocity (km/h)");
     if (!speed)
-        speed = Config_AddReal(m->config, "M203 - Muzzle velocity (km/h)", d.speed);
-    radius = Config_Find(m->config, "M203 - Explosion radius (meters)");
+        speed = TagItem_AddReal32(m->config, "M203 - Muzzle velocity (km/h)", d.speed);
+    radius = TagItem_Find(m->config, "M203 - Explosion radius (meters)");
     if (!radius)
-        radius = Config_AddReal(m->config, "M203 - Explosion radius (meters)", d.radius);
-    activate = Config_Find(m->config, "M203 - Activate radius (meters)");
+        radius = TagItem_AddReal32(m->config, "M203 - Explosion radius (meters)", d.radius);
+    activate = TagItem_Find(m->config, "M203 - Activate radius (meters)");
     if (!activate)
-        activate = Config_AddReal(m->config, "M203 - Activate radius (meters)", d.activate);
-    model = Config_Find(m->config, "M203 - Model");
+        activate = TagItem_AddReal32(m->config, "M203 - Activate radius (meters)", d.activate);
+    model = TagItem_Find(m->config, "M203 - Model");
     if (!model)
-        model = Config_AddString(m->config, "M203 - Model", d.model);
+        model = TagItem_AddString16(m->config, "M203 - Model", d.model);
     MOV32(d.speed, speed->v.f);
     MOV32(d.radius, radius->v.f);
     MOV32(d.activate, activate->v.f);

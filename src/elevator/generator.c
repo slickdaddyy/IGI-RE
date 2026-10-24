@@ -45,7 +45,7 @@ void Generator_Init(void)
 {
     Generator g;
 
-    gGeneratorType = TaskType_New("Generator", sizeof(Generator), sub_481340(), 0);
+    gGeneratorType = TaskType_New("Generator", sizeof(Generator), ExplodeObject_GetType(), 0);
     TaskType_SetHandler(gGeneratorType, 0, Generator_Create);
     TaskType_SetHandler2(gGeneratorType, 1, Generator_Run);
     TaskType_SetHandler2(gGeneratorType, 2, Generator_Delete);
@@ -53,7 +53,7 @@ void Generator_Init(void)
     TaskType_SetHandler(gGeneratorType, Param_GetChangedEvent(), Generator_Changed);
     TaskType_SetHandler2(gGeneratorType, Level_GetEventDA8(), Generator_Activate);
     TaskType_SetHandler2(gGeneratorType, Level_GetEventDAC(), Generator_Deactivate);
-    gGeneratorParams = ParamTable_Extend(sub_481350(), 5);
+    gGeneratorParams = ParamTable_Extend(ExplodeObject_GetParams(), 5);
     ParamTable_Add(gGeneratorParams, &g, g.onSound, Param_String16(), 7, NULL);
     ParamTable_Add(gGeneratorParams, &g, g.offSound, Param_String16(), 7, NULL);
     ParamTable_Add(gGeneratorParams, &g, &g.cond, Param_VarString(), 7, NULL);
@@ -64,7 +64,7 @@ HOOK(0x43B2F0, Generator_Init);
 
 void Generator_Create(Generator *g, void *arg)
 {
-    HANDLER(0, sub_481340())(g, arg);
+    HANDLER(0, ExplodeObject_GetType())(g, arg);
     g->sound = NULL;
     g->isOn = 0;
     g->registered = 0;
@@ -82,7 +82,7 @@ void Generator_Run(Generator *g)
     int wasOn = g->isOn;
     Task *s;
 
-    ((void (*)(void *))HANDLER(1, sub_481340()))(g);
+    ((void (*)(void *))HANDLER(1, ExplodeObject_GetType()))(g);
     if (g->unk190)
         g->isOn = 0;
     else if (VarString_HasExpr(&g->cond))
@@ -117,7 +117,7 @@ HOOK(0x43B500, Generator_Run);
 
 void Generator_Delete(Generator *g)
 {
-    ((void (*)(void *))HANDLER(2, sub_481340()))(g);
+    ((void (*)(void *))HANDLER(2, ExplodeObject_GetType()))(g);
     VarString_Free(&g->cond);
 }
 HOOK(0x43B650, Generator_Delete);
@@ -132,7 +132,7 @@ void Generator_Changed(Generator *g, void *arg)
 {
     int slot = Param_GetChangedEvent();
 
-    HANDLER(slot, sub_481340())(g, arg);
+    HANDLER(slot, ExplodeObject_GetType())(g, arg);
     VarString_Bind(&g->cond, g);
 }
 HOOK(0x43B690, Generator_Changed);
@@ -146,7 +146,7 @@ void Generator_Activate(Generator *g)
     if (g->registered)
         return;
     g->registered = 1;
-    base = sub_481340();
+    base = ExplodeObject_GetType();
     ((void (*)(void *))HANDLER(Level_GetEventDA8(), base))(g);
     Task_GetName(name, g);
     crt_sprintf(buf, "%s.isOn", name);
@@ -164,7 +164,7 @@ void Generator_Deactivate(Generator *g)
 
     if (!g->registered)
         return;
-    base = sub_481340();
+    base = ExplodeObject_GetType();
     ((void (*)(void *))HANDLER(Level_GetEventDAC(), base))(g);
     Task_GetName(name, g);
     crt_sprintf(buf, "%s.isOn", name);

@@ -70,7 +70,7 @@ void LevelFlow_Init(void)
     void *range;
 
     gLevelFlowModel = VirModel_Add("306_01_1");
-    gLevelFlowType = TaskType_New("LevelFlow", sizeof(LevelFlow), Position_GetType(), 0);
+    gLevelFlowType = TaskType_New("LevelFlow", sizeof(LevelFlow), EditorRigidObj_GetType(), 0);
     TaskType_SetHandler(gLevelFlowType, 0, LevelFlow_Create);
     TaskType_SetHandler2(gLevelFlowType, 1, LevelFlow_Run);
     TaskType_SetHandler2(gLevelFlowType, 2, LevelFlow_Delete);

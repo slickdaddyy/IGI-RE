@@ -136,7 +136,7 @@ void GunCABarrel_Event(GunCAPart *o, GunCAMsg *msg)
             vel.x = -o->obj.matrix.m[1] * gGunCAMagic;
             vel.y = -o->obj.matrix.m[4] * gGunCAMagic;
             vel.z = -o->obj.matrix.m[7] * gGunCAMagic;
-            GunCasing_New(sub_4F0EE0(), &pos, &vel, &o->obj.matrix, "113_01_1");
+            GunCasing_New(Level_GetDynamic(), &pos, &vel, &o->obj.matrix, "113_01_1");
         }
         RigidDynCubeObj_SetModel(o, VirModel_Find("101_02_1"));
     }

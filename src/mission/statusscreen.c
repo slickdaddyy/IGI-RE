@@ -103,8 +103,8 @@ void StatusScreen_Create(StatusScreen *s)
     int width, height, i;
     Text *t;
 
-    width = Display_Get()->width;
-    height = Display_Get()->height;
+    width = Display_GetMode()->width;
+    height = Display_GetMode()->height;
     rect[2] = width;
     rect[3] = height;
     gStatusScreen = s;
@@ -170,8 +170,8 @@ void StatusScreen_Draw(StatusScreen *s)
 
     cam = *(Task **)(Game_Get() + 0x5C);
     game = Game_Get() + 0x60;
-    width = Display_Get()->width;
-    height = Display_Get()->height;
+    width = Display_GetMode()->width;
+    height = Display_GetMode()->height;
     Scene_Select(s->scene, 1);
     CALL_CHILDREN(s, Screen_GetDrawEvent());
     if (*(Task **)(game + 0x54) == cam && !Computer_Get()) {
@@ -246,8 +246,8 @@ void StatusScreen_DrawActionIcon(StatusScreen *s, void *sprite)
     float x, y, cx, cy;
     long double v;
 
-    width = Display_Get()->width;
-    height = Display_Get()->height;
+    width = Display_GetMode()->width;
+    height = Display_GetMode()->height;
     if (!sprite)
         return;
     cx = width * kHalf;

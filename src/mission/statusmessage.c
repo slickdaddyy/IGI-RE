@@ -327,7 +327,7 @@ void StatusMessageScreen_UpdateLine(StatusMessageScreen *s, int i)
         }
     } else {
         if (l->shownTicks == 0)
-            StatusMessageScreen_WrapText(s, i, Display_Get()->width * kPlainWrap);
+            StatusMessageScreen_WrapText(s, i, Display_GetMode()->width * kPlainWrap);
         if (l->shownTicks > (int)round_ll(m->duration * kTicksPerSecond))
             StatusMessageScreen_RemoveLine(s, i);
         l->shownTicks++;
@@ -448,8 +448,8 @@ void StatusMessageScreen_Draw(StatusMessageScreen *s)
 
     Game_Get();
     Game_Get();
-    width = Display_Get()->width;
-    height = Display_Get()->height;
+    width = Display_GetMode()->width;
+    height = Display_GetMode()->height;
     x = width * kTextX;
     h = height;
     y = height * kTextY;
@@ -471,8 +471,8 @@ void StatusMessageScreen_DrawLine(StatusMessageScreen *s, int i, float x, float 
     float x0 = x, y0 = y;
     int k;
 
-    Display_Get();
-    Display_Get();
+    Display_GetMode();
+    Display_GetMode();
     l = &s->lines[i];
     if (l->portrait && l->ticks > 9)
         Draw_Sprite(l->portrait, x, y, 128.0f, 128.0f, 128.0f, 0, 0, 0);
@@ -505,8 +505,8 @@ void StatusMessageScreen_DrawBox(StatusMessageScreen *s, int i, float x, float y
     float alpha, xa, ws, x0, x1, yc, y0, y1;
     int k;
 
-    Display_Get();
-    Display_Get();
+    Display_GetMode();
+    Display_GetMode();
     l = &s->lines[i];
     fade = (9 - l->ticks) / 9;
     if (!(fade > kZero))

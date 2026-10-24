@@ -193,7 +193,7 @@ void ListBox_Run(ListBox *lb)
     }
     lb->w.key = 0;
     if (old != lb->activeId) {
-        Sound_Play("menu_high", 0, 0);
+        Sound_PlayName("menu_high", 0, 0);
         VarString_EvalReal(&lb->action, lb);
     }
     CALL_BASE(1, lb);

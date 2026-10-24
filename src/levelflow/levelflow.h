@@ -154,7 +154,7 @@ ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
 ORIG(0x4C5800, uint8_t, RigidDynCubeObj_GetEvent4, (void));
 ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
-ORIG(0x5034D0, uint16_t, Position_GetType, (void));
+ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
 #define TASK_NOTHING ((void *)0x4D3710)
 #define HANDLER_4E0890 ((void *)0x4E0890)

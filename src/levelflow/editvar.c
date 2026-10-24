@@ -30,7 +30,7 @@ void EditVariable_Deactivate(EditVariable *v);
 
 void EditVariable_Init(void)
 {
-    gEditVariableType = TaskType_New("EditVariable", sizeof(EditVariable), Position_GetType(), 0);
+    gEditVariableType = TaskType_New("EditVariable", sizeof(EditVariable), EditorRigidObj_GetType(), 0);
     TaskType_SetHandler(gEditVariableType, 0, EditVariable_Create);
     TaskType_SetHandler2(gEditVariableType, 1, EditVariable_Run);
     TaskType_SetHandler2(gEditVariableType, 2, EditVariable_Delete);

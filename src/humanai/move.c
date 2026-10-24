@@ -101,7 +101,7 @@ HOOK(0x451350, HumanAI_CanSeeTarget);
 void HumanAI_GetTargetPos(Vec3d *out, HumanAI *ai)
 {
     *out = *DynCubeObj_GetPosition(*ai->target->ref);
-    if (sub_463180(*ai->target->ref))
+    if (Human_IsCrouching(*ai->target->ref))
         out->z = out->z + 1024.0;
     else
         out->z = out->z + 2048.0;
@@ -283,7 +283,7 @@ again:
     }
     if (replan) {
         if (ai->path) {
-            sub_452C10(ai->path, ai->pathLen, ai->pathLen);
+            NodeGrid_Release(ai->path, ai->pathLen, ai->pathLen);
             ai->path = NULL;
         }
         if (pos) {

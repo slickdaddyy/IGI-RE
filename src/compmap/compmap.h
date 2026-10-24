@@ -187,11 +187,11 @@ ORIG(0x4B6D00, int, Sprite_Height, (Sprite *s));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x46C060, Computer *, Computer_Get, (void));
 ORIG(0x46C070, void *, Computer_GetView, (void));
-ORIG(0x46C090, void *, Computer_GetViewport, (void));
+ORIG(0x46C090, void *, Computer_GetCamera, (void));
 ORIG(0x46C0B0, int, Computer_IsMapEnabled, (void));
 ORIG(0x406220, char *, Profile_GetActive, (void));
-ORIG(0x505600, Task *, ComputerPanel_New, (void *parent));
-ORIG(0x4E7200, void, sub_4E7200, (const char *name, int flags, const float *params));
+ORIG(0x505600, Task *, MenuItemTask_New, (void *parent));
+ORIG(0x4E7200, void, Sound_PlayDefined, (const char *name, int flags, const float *params));
 ORIG(0x4682E0, void, ComputerObject_SetFlags, (char *obj, int flags));
 ORIG(0x4663B0, void, ComputerStartup_Start, (char *startup));
 

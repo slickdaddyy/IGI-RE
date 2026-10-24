@@ -191,9 +191,9 @@ void Elevator_RunHandler(Elevator *e)
     Task *s;
     int i;
 
-    if (e->lastTick == Timer_GetTicks())
+    if (e->lastTick == Flow_GetFrames())
         return;
-    e->lastTick = Timer_GetTicks();
+    e->lastTick = Flow_GetFrames();
     CALL_CHILDREN(&e->obj.task, 1);
     start = SplineObj_GetLengthTo(e->graph, e->wanted);
     for (i = 0; i < 10; i++) {
@@ -242,7 +242,7 @@ void Elevator_RunHandler(Elevator *e)
     e->isMoving = e->height < target || e->height > target;
     if (e->isMoving) {
         if (!e->moving) {
-            e->moving = Sound_Play(Sound_GetOwner(), e->moveSound);
+            e->moving = Sound_Play(Level_GetDynamic(), e->moveSound);
             if (e->moving)
                 Sound_SetPos(e->moving, &e->obj.pos);
         }
@@ -252,14 +252,14 @@ void Elevator_RunHandler(Elevator *e)
     }
     e->isStarting = 0;
     if (!(prev < start || prev > start) && (prev < e->height || prev > e->height)) {
-        s = Sound_Play(Sound_GetOwner(), e->startSound);
+        s = Sound_Play(Level_GetDynamic(), e->startSound);
         e->isStarting = 1;
         if (s)
             Sound_SetPos(s, &e->obj.pos);
     }
     e->isStopping = 0;
     if (!(e->height < target || e->height > target) && (prev < e->height || prev > e->height)) {
-        s = Sound_Play(Sound_GetOwner(), e->stopSound);
+        s = Sound_Play(Level_GetDynamic(), e->stopSound);
         e->isStopping = 1;
         if (s)
             Sound_SetPos(s, &e->obj.pos);

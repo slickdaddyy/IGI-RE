@@ -421,8 +421,8 @@ void MenuManager_Run(MenuManager *mm)
         in->button = buttons;
         in->pressed = (buttons != prev) & (unsigned char)buttons;
         in->released = buttons == 0 && buttons != prev;
-        in->x += 320 - (Display_Get()[1] >> 1);
-        in->y += 240 - (Display_Get()[2] >> 1);
+        in->x += 320 - (Display_GetMode()[1] >> 1);
+        in->y += 240 - (Display_GetMode()[2] >> 1);
         break;
     case MENU_PAUSED:
         in->pressed = 0;

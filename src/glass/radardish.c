@@ -85,7 +85,7 @@ void RadarDish_Create(RadarDish *r, MagicArg *arg)
     r->angle = 0;
     r->sound = NULL;
     r->m.owner = arg->owner;
-    sub_4C4950(r, r, arg->owner);
+    RigidDynCubeObj_CreateMagicObjs(r, r, arg->owner);
     r->sound_params = SoundParams_New(1);
     s = Sound_Play(r, r->m.data);
     if (s)

@@ -162,8 +162,8 @@ void FlatSky_Render(FlatSky *s)
     v1[2] = nega * r6 + u + t2;
     if (!(v0[2] >= kNear) || !(v1[2] >= kNear))
         return;
-    View_ProjectPoint(s0, v0);
-    View_ProjectPoint(s1, v1);
+    TransContext_ProjectView(s0, v0);
+    TransContext_ProjectView(s1, v1);
 
     q[0][0] = gViewX;
     q[0][1] = gViewY;

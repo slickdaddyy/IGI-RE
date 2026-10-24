@@ -117,13 +117,13 @@ void MenuScreen_UpdateInternalDataHandler(MenuScreen *ms, void *arg)
             int x = round_int(320.0f - (long double)Text_Width(ms->logo) * 0.5f);
 
             ms->logo->x = gLogoOffset + x;
-            ms->logo->y = (Display_Get()->height >> 1) - 220;
+            ms->logo->y = (Display_GetMode()->height >> 1) - 220;
             ms->logo->unk20 = 0;
         }
         if (ms->picText) {
             ms->picText->unk20 = 0;
-            ms->picText->x = (Display_Get()->width >> 1) - 320;
-            ms->picText->y = (Display_Get()->height >> 1) - 240;
+            ms->picText->x = (Display_GetMode()->width >> 1) - 320;
+            ms->picText->y = (Display_GetMode()->height >> 1) - 240;
             ms->w.w = Text_Width(ms->picText);
             ms->w.h = Text_Height(ms->picText);
         }

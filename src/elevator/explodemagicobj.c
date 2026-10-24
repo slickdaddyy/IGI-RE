@@ -91,7 +91,7 @@ void ExplodeMagicObj_Create(ExplodeMagicObj *o, ExplodeCreateArg *arg)
     o->health = arg->params->health;
     o->unk144 = arg->params->unk1C;
     o->owner = arg->owner;
-    sub_4C4950(o, o, o->owner);
+    RigidDynCubeObj_CreateMagicObjs(o, o, o->owner);
 }
 HOOK(0x43BE80, ExplodeMagicObj_Create);
 

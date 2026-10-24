@@ -130,7 +130,7 @@ void ElevatorFloorIndicator_Run(ElevatorFloorIndicator *f)
         ring = (int)round_ll(VarString_EvalReal(&f->ring, f));
     RigidDynCubeObj_SetModel(f, VirModel_Find(lit ? f->litModel : f->model));
     if (ring) {
-        s = Sound_Play(Sound_GetOwner(), f->sound);
+        s = Sound_Play(Level_GetDynamic(), f->sound);
         if (s)
             Sound_SetPos(s, &f->obj.pos);
     }

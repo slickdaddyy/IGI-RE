@@ -162,7 +162,7 @@ typedef struct QVertexStrip {
 #define kOne VAR(float, 0x5333E0)
 #define kOne64 VAR(double, 0x5333F8)
 
-ORIG(0x498000, void, View_ProjectPoint, (float *out, const float *in));
+ORIG(0x498000, void, TransContext_ProjectView, (float *out, const float *in));
 
 /* "FlatWaterLayer" and "FlatSkyLayer", 0x26C bytes: a scrolling texture */
 typedef struct FlatLayer {

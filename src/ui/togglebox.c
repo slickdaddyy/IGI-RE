@@ -159,9 +159,9 @@ void ToggleBox_Draw(ToggleBox *tb)
         int ty = (tb->w.h - Text_GetHeight(tb->yes)) / 2 + tb->w.y;
         int xYes = tb->w.w / 4 - Text_GetWidth(tb->yes) / 2 + tb->w.x;
         int xNo = tb->w.w * 3 / 4 - Text_GetWidth(tb->no) / 2 + tb->w.x;
-        int x1 = (Display_Get()->width >> 1) - 320 + xYes;
-        int x2 = (Display_Get()->width >> 1) - 320 + xNo;
-        float y = (Display_Get()->height >> 1) - 240 + ty;
+        int x1 = (Display_GetMode()->width >> 1) - 320 + xYes;
+        int x2 = (Display_GetMode()->width >> 1) - 320 + xNo;
+        float y = (Display_GetMode()->height >> 1) - 240 + ty;
 
         tb->yes->color[0] = 0;
         tb->yes->color[1] = 0;
@@ -181,7 +181,7 @@ void ToggleBox_Draw(ToggleBox *tb)
         Text_DrawAlt(tb->no);
     }
     c = tb->w.focused ? 64.0f : 0.0f;
-    Draw_RectAZ((Display_Get()->width >> 1) - 320 + sel->x, (Display_Get()->height >> 1) - 240 + sel->y, sel->w,
+    Draw_RectAZ((Display_GetMode()->width >> 1) - 320 + sel->x, (Display_GetMode()->height >> 1) - 240 + sel->y, sel->w,
                 sel->h, c, 128.0f, c, alpha, 1.0f, 0x80000, 0);
     MenuWindow_DrawEnd(tb, 0.5f, alpha, tb->w.focused);
 }

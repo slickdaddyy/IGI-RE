@@ -112,8 +112,8 @@ void PictureBox_Draw(PictureBox *pb)
 
     ((void (*)(void *))HANDLER(Screen_GetDrawEvent(), base))(pb);
     if (pb->count && (s = pb->items[pb->index].sprite) != NULL) {
-        int x = (Display_Get()->width >> 1) - 318 + pb->w.x;
-        int y = (Display_Get()->height >> 1) - 238 + pb->w.y;
+        int x = (Display_GetMode()->width >> 1) - 318 + pb->w.x;
+        int y = (Display_GetMode()->height >> 1) - 238 + pb->w.y;
         float x0 = x, y0 = y;
         float x1 = pb->w.w - 4 + x, y1 = pb->w.h - 4 + y;
 

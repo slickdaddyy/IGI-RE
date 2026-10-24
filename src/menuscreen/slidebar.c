@@ -199,14 +199,14 @@ void SlideBar_Run(SlideBar *sb)
     ((void (*)(void *))HANDLER(1, inc->w.task.type))(inc);
     if (dec->w.clicked || sb->w.key == -1) {
         if (sb->value > 0.0) {
-            Sound_Play("menu_high", 0, 0);
+            Sound_PlayName("menu_high", 0, 0);
             v = (long double)cur - step;
             changed = 1;
         }
     } else if (inc->w.clicked || sb->w.key == -2) {
         if (sb->value < 1.0) {
             changed = 1;
-            Sound_Play("menu_high", 0, 0);
+            Sound_PlayName("menu_high", 0, 0);
             v = (long double)step + cur;
         }
     } else if (sb->knob) {

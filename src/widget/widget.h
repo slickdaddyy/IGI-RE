@@ -134,7 +134,7 @@ ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F16C0, char, VarString_HasExpr, (VarString *v));
 ORIG(0x4F16E0, long double, VarString_EvalReal, (VarString *v, void *task));
-ORIG(0x491CF0, Display *, Display_Get, (void));
+ORIG(0x491CF0, Display *, Display_GetMode, (void));
 ORIG(0x419030, int, MenuManager_GetFade, (void *mm));
 ORIG(0x418FB0, MenuInput *, MenuManager_GetInput, (void *mm));
 ORIG(0x41A120, void, MenuWindow_ForwardEvent918, (void *task));
@@ -190,7 +190,7 @@ static inline Task *next_sibling(Task *t)
     } while (0)
 
 /* the window's top left corner on screen: the 640x480 layout is centred */
-#define SCREEN_X(w) ((Display_Get()->width >> 1) - 320 + (w)->x)
-#define SCREEN_Y(w) ((Display_Get()->height >> 1) - 240 + (w)->y)
+#define SCREEN_X(w) ((Display_GetMode()->width >> 1) - 320 + (w)->x)
+#define SCREEN_Y(w) ((Display_GetMode()->height >> 1) - 240 + (w)->y)
 
 #endif

@@ -181,7 +181,7 @@ ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4C1790, void, QTaskList_Add, (void *list, void *item));
 ORIG(0x4C17C0, void, QTaskList_Remove, (void *list, void *item));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, void *owner));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, void *owner));
 ORIG(0x4C56D0, uint8_t, RigidDynCubeObj_GetEvent0, (void));
 ORIG(0x4C56E0, uint8_t, RigidDynCubeObj_GetEvent1, (void));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (int world, void *obj, void **model));

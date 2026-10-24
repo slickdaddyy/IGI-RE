@@ -180,7 +180,7 @@ void ScrollListBox_Run(ScrollListBox *lb)
 
     if (lb->hasScroll) {
         CALL_OWN(1, lb->scrollBar);
-        pos = ScrollBar_GetPos(lb->scrollBar);
+        pos = SlideBar_GetPos(lb->scrollBar);
     } else {
         pos = 0;
     }
@@ -190,11 +190,11 @@ void ScrollListBox_Run(ScrollListBox *lb)
 
         if (row != lb->index && row < lb->count) {
             lb->index = row;
-            lb->lastClick = Timer_GetTicks();
+            lb->lastClick = Flow_GetFrames();
             Sound_PlayName("menu_sel2", 0, NULL);
         } else {
-            int now = Timer_GetTicks();
-            int half = round_int((long double)Timer_GetFrequency() * 0.5);
+            int now = Flow_GetFrames();
+            int half = round_int((long double)Flow_GetFps() * 0.5);
 
             /* a second click on the same item */
             if (lb->lastClick != -1 && now - lb->lastClick < half && VarString_HasExpr(&lb->action))
@@ -217,7 +217,7 @@ void ScrollListBox_Run(ScrollListBox *lb)
                 if (lb->index < lb->count - 1) {
                     lb->index++;
                     if (lb->index > pos + rows)
-                        ScrollBar_SetPos(lb->scrollBar, pos + 1);
+                        SlideBar_SetPos(lb->scrollBar, pos + 1);
                     Sound_PlayName("menu_sel2", 0, NULL);
                 }
                 break;
@@ -225,7 +225,7 @@ void ScrollListBox_Run(ScrollListBox *lb)
                 if (lb->index > 0) {
                     lb->index--;
                     if (lb->index < pos)
-                        ScrollBar_SetPos(lb->scrollBar, pos - 1);
+                        SlideBar_SetPos(lb->scrollBar, pos - 1);
                     Sound_PlayName("menu_sel2", 0, NULL);
                 }
                 break;
@@ -246,9 +246,9 @@ void ScrollListBox_Draw(ScrollListBox *lb)
     float alpha = ui_alpha(lb->w.menu);
     int rows = (lb->w.h - 4) / lb->lineHeight;
     int shown = lb->count < rows ? lb->count : rows;
-    int x = (Display_Get()->width >> 1) - 320 + lb->w.x;
-    int y = (Display_Get()->height >> 1) - 238 + lb->w.y;
-    int pos = rows < lb->count ? ScrollBar_GetPos(lb->scrollBar) : 0;
+    int x = (Display_GetMode()->width >> 1) - 320 + lb->w.x;
+    int y = (Display_GetMode()->height >> 1) - 238 + lb->w.y;
+    int pos = rows < lb->count ? SlideBar_GetPos(lb->scrollBar) : 0;
     int sel = lb->index - pos;
     int i;
 
@@ -323,7 +323,7 @@ found:
     lb->hasScroll = rows < lb->count;
     if (lb->hasScroll) {
         sw = lb->scrollBar->w;
-        ScrollBar_SetRange(lb->scrollBar, lb->w.w + lb->w.x - sw, lb->w.y, 0, h, lb->count - rows + 1);
+        SlideBar_SetRange(lb->scrollBar, lb->w.w + lb->w.x - sw, lb->w.y, 0, h, lb->count - rows + 1);
         sw += 2;
     } else {
         sw = 0;

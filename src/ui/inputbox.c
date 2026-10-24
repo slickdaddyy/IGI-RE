@@ -238,9 +238,9 @@ HOOK(0x41D6A0, InputBox_InsertChar);
 
 static int blink_on(void)
 {
-    int t = (unsigned)Timer_GetTicks() * 2;
+    int t = (unsigned)Flow_GetFrames() * 2;
 
-    return t / Timer_GetFrequency() & 1;
+    return t / Flow_GetFps() & 1;
 }
 
 void InputBox_Draw(InputBox *ib)

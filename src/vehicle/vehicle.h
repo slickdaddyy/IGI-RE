@@ -138,16 +138,16 @@ ORIG(0x4C56D0, uint8_t, RigidDynCubeObj_GetEvent0, (void));
 ORIG(0x4C56E0, uint8_t, RigidDynCubeObj_GetEvent1, (void));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (int unk68, void *o, void **model));
-ORIG(0x4C6940, void, sub_4C6940, (void *world, void *o, Vec3d *pos, float radius));
-ORIG(0x4C7140, void, sub_4C7140, (int unk, void *o, Vec3d *pos, float radius, int unk2));
-ORIG(0x4C7560, void, sub_4C7560, (int unk68, void *o));
+ORIG(0x4C6940, void, DynCube_Move, (void *world, void *o, Vec3d *pos, float radius));
+ORIG(0x4C7140, void, DynCube_Add, (int unk, void *o, Vec3d *pos, float radius, int unk2));
+ORIG(0x4C7560, void, DynCube_Remove, (int unk68, void *o));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
-ORIG(0x4D9FA0, uint16_t, RigidDynCubeObj_GetType, (void));
-ORIG(0x4D9FB0, uint8_t, RigidDynCubeObj_GetMoveEvent, (void));
-ORIG(0x489610, uint8_t, sub_489610, (void));
+ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
+ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
+ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
 
 /* calls the slot handler of each child of t (not deeper), keeping the next
    child on gTaskStack so handlers may delete tasks */

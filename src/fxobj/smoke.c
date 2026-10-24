@@ -157,11 +157,11 @@ void Smoke_Init(void)
     TaskType_SetHandler(gSmokeType, 4, NULL);
     gSmokeParams = ParamTable_New(21);
     ParamTable_Add(gSmokeParams, &s, &s.origin, Param_ObjectPos(), 7, NULL);
-    ParamTable_Add(gSmokeParams, &s, &s.pitch, sub_4F0F20(), 7, (void *)0x57BE08);
-    ParamTable_Add(gSmokeParams, &s, &s.yaw, sub_4F0F20(), 7, (void *)0x57BDD8);
+    ParamTable_Add(gSmokeParams, &s, &s.pitch, Param_Angle(), 7, (void *)0x57BE08);
+    ParamTable_Add(gSmokeParams, &s, &s.yaw, Param_Angle(), 7, (void *)0x57BDD8);
     ParamTable_Add(gSmokeParams, &s, &s.count, Param_Int32(), 7, (void *)0x57BE58);
     ParamTable_Add(gSmokeParams, &s, &s.radius, Param_Real32(), 7, (void *)0x57BE18);
-    ParamTable_Add(gSmokeParams, &s, &s.spread, sub_4F0F20(), 7, NULL);
+    ParamTable_Add(gSmokeParams, &s, &s.spread, Param_Angle(), 7, NULL);
     ParamTable_Add(gSmokeParams, &s, &s.unk88, Param_Real32(), 7, (void *)0x57BDF8);
     ParamTable_Add(gSmokeParams, &s, &s.unk8C, Param_Real32(), 7, (void *)0x57BDF8);
     ParamTable_Add(gSmokeParams, &s, &s.unk104, Param_RGB(), 7, NULL);
@@ -171,8 +171,8 @@ void Smoke_Init(void)
     ParamTable_Add(gSmokeParams, &s, &s.sprite, Param_Int32(), 7, (void *)0x57BE50);
     ParamTable_Add(gSmokeParams, &s, &s.unk84, Param_Real32(), 7, (void *)0x57BDD0);
     ParamTable_Add(gSmokeParams, &s, &s.unk114, Param_Real32(), 7, (void *)0x57BE38);
-    ParamTable_Add(gSmokeParams, &s, &s.unk120, sub_4F0F20(), 7, NULL);
-    ParamTable_Add(gSmokeParams, &s, &s.unk11C, sub_4F0F20(), 7, NULL);
+    ParamTable_Add(gSmokeParams, &s, &s.unk120, Param_Angle(), 7, NULL);
+    ParamTable_Add(gSmokeParams, &s, &s.unk11C, Param_Angle(), 7, NULL);
     ParamTable_Add(gSmokeParams, &s, &s.unk124, Param_Real32(), 7, (void *)0x57BE30);
     ParamTable_Add(gSmokeParams, &s, &s.rate, Param_Real64(), 7, (void *)0x57BE20);
     ParamTable_Add(gSmokeParams, &s, &s.expr, Param_VarString(), 7, NULL);

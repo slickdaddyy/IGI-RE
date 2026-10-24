@@ -37,9 +37,9 @@ void Dragunov_Open(void)
     TaskType_SetHandler(gDragunovType, 0, Dragunov_Create);
     TaskType_SetHandler2(gDragunovType, 2, Gun_Delete);
     TaskType_SetHandler(gDragunovType, Human_GetEvent0(), Dragunov_Use);
-    TaskType_SetHandler(gDragunovType, Human_GetRenderEvent(), Dragunov_Render);
+    TaskType_SetHandler(gDragunovType, StatusScreen_GetEvent(), Dragunov_Render);
     TaskType_SetHandler(gDragunovType, WeaponType_GetInitEvent2(), Gun_ReadZoomArg);
-    TaskType_SetHandler(gDragunovType, WeaponType_GetSizeEvent2(), sub_427D70);
+    TaskType_SetHandler(gDragunovType, WeaponType_GetSizeEvent2(), RocketPod_GetArgSize);
     TaskType_SetHandler(gDragunovType, WeaponConfig_GetEvent(), Dragunov_Config);
     Script_RegisterConstant("TASKTYPE_GUNDRAGUNOV", gDragunovType);
     gSniperSight = Game_AddSprite("snipersight.spr");
@@ -105,7 +105,7 @@ void Dragunov_Render(ZoomGun *g, void *msg)
     int n;
 
     if (!g->zoomed) {
-        HANDLER(Human_GetRenderEvent(), Gun_GetType())(g, msg);
+        HANDLER(StatusScreen_GetEvent(), Gun_GetType())(g, msg);
         return;
     }
     fw = w;
@@ -154,9 +154,9 @@ void Dragunov_Config(void *task, WeaponConfigMsg *m)
         Mem_Free(m->info->data);
         m->info->data = NULL;
     }
-    var = Config_Find(m->config, "Zoom - Min FOV (degrees)");
+    var = TagItem_Find(m->config, "Zoom - Min FOV (degrees)");
     if (!var)
-        var = Config_AddReal(m->config, "Zoom - Min FOV (degrees)", 5.0f);
+        var = TagItem_AddReal32(m->config, "Zoom - Min FOV (degrees)", 5.0f);
     t = x87_tan(var->v.f * kHalf * kDegToRad);
     m->info->data = Mem_Alloc(4, 4);
     *(float *)m->info->data = t;

@@ -33,7 +33,7 @@ void Mp5sd_Open(void)
     TaskType_SetHandler2(gMp5sdType, 2, Gun_Delete);
     TaskType_SetHandler(gMp5sdType, Human_GetEvent0(), Mp5sd_Use);
     TaskType_SetHandler(gMp5sdType, WeaponType_GetInitEvent2(), Gun_ReadZoomArg);
-    TaskType_SetHandler(gMp5sdType, WeaponType_GetSizeEvent2(), sub_427D70);
+    TaskType_SetHandler(gMp5sdType, WeaponType_GetSizeEvent2(), RocketPod_GetArgSize);
     TaskType_SetHandler(gMp5sdType, WeaponConfig_GetEvent(), Mp5sd_Config);
     TaskType_SetHandler2(gMp5sdType, Weapon_GetDeselectEvent(), Mp5sd_Unzoom);
     Script_RegisterConstant("TASKTYPE_GUNMP5SD", gMp5sdType);
@@ -102,9 +102,9 @@ void Mp5sd_Config(void *task, WeaponConfigMsg *m)
         Mem_Free(m->info->data);
         m->info->data = NULL;
     }
-    var = Config_Find(m->config, "Zoom - Min FOV (degrees)");
+    var = TagItem_Find(m->config, "Zoom - Min FOV (degrees)");
     if (!var)
-        var = Config_AddReal(m->config, "Zoom - Min FOV (degrees)", 50.0f);
+        var = TagItem_AddReal32(m->config, "Zoom - Min FOV (degrees)", 50.0f);
     t = x87_tan(var->v.f * kHalf * kDegToRad);
     m->info->data = Mem_Alloc(4, 4);
     *(float *)m->info->data = t;

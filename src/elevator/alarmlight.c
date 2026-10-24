@@ -126,7 +126,7 @@ void AlarmLight_Changed(AlarmLight *al, const char *arg)
         Task_Delete(t);
     t = MagicObjContainer_New(NULL, al);
     al->obj.unkE8 = t;
-    sub_4C4950(t, al, al);
+    RigidDynCubeObj_CreateMagicObjs(t, al, al);
     if (!arg || !*arg)
         CALL_CHILDREN(al->obj.unkE8, Param_GetChangedEvent(), NULL);
     VarString_Bind(&al->cond, al);

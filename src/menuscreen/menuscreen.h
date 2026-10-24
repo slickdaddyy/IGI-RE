@@ -135,8 +135,8 @@ ORIG(0x424B80, uint8_t, MenuWindow_GetPlaceEvent, (void));
 ORIG(0x4248A0, void, MenuWindow_HitTest, (void *w, int x, int y, int width, int height, int *mx, int *my));
 ORIG(0x424980, void, MenuWindow_DrawEnd, (void *w, float unk, float alpha, int focused));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
-ORIG(0x4E7180, void, Sound_Play, (const char *name, int unk1, int unk2));
-ORIG(0x491CF0, Display *, Display_Get, (void));
+ORIG(0x4E7180, void, Sound_PlayName, (const char *name, int unk1, int unk2));
+ORIG(0x491CF0, Display *, Display_GetMode, (void));
 ORIG(0x418D70, void, MenuManager_Free, (void *task));
 ORIG(0x418DE0, Sprite *, MenuManager_FindSprite, (void *mm, const char *name));
 ORIG(0x418E40, Sprite *, MenuManager_FindFont, (void *mm, const char *name));
@@ -225,8 +225,8 @@ static inline float fade_alpha(int fade)
 }
 
 /* screen position of a point in 640x480 menu space */
-#define SCREEN_X(x) ((Display_Get()->width >> 1) - 320 + (x))
-#define SCREEN_Y(y) ((Display_Get()->height >> 1) - 240 + (y))
+#define SCREEN_X(x) ((Display_GetMode()->width >> 1) - 320 + (x))
+#define SCREEN_Y(y) ((Display_GetMode()->height >> 1) - 240 + (y))
 
 /* an image that can be clicked, used for the arrows of ListBox and SlideBar */
 typedef struct MenuButton {

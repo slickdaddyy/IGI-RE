@@ -174,7 +174,7 @@ HOOK(0x420640, MenuTextConditional_Changed);
             MenuManager_FocusItem((mt)->w.menu, mt);                            \
         if (((mt)->w.clicked || (mt)->w.key == -7) && VarString_HasExpr(&(mt)->action)) { \
             VarString_EvalReal(&(mt)->action, mt);                              \
-            Sound_Play((mt)->sound[0] ? (mt)->sound : "menu_sel", 0, 0);        \
+            Sound_PlayName((mt)->sound[0] ? (mt)->sound : "menu_sel", 0, 0);        \
         }                                                                       \
     } while (0)
 
@@ -212,8 +212,8 @@ HOOK(0x4207E0, MenuTextConditional_Run);
             alpha *= 0.5f;                                                      \
         t_->alpha = alpha;                                                      \
         t_->flags |= 0x80000;                                                   \
-        (mt)->label->x = (Display_Get()->width >> 1) + ((mt)->w.x - 320);       \
-        (mt)->label->y = (Display_Get()->height >> 1) + ((mt)->w.y - 240);      \
+        (mt)->label->x = (Display_GetMode()->width >> 1) + ((mt)->w.x - 320);       \
+        (mt)->label->y = (Display_GetMode()->height >> 1) + ((mt)->w.y - 240);      \
         Text_DrawAlt((mt)->label);                                              \
         if (glow_) {                                                            \
             float x0_, y0_, x1_, y1_, h_;                                       \

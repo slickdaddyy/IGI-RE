@@ -124,8 +124,8 @@ void DialogWindow_DrawFrame(DialogWindow *dw, float alpha)
     long double top, right, cx, y0e;
     float left, bottom, line, cy, a1, a2, x0, x1, y0, y1;
 
-    left = rf((long double)((Display_Get()[1] >> 1) - 320) + dw->w.x);
-    top = (long double)((Display_Get()[2] >> 1) - 240) + dw->w.y;
+    left = rf((long double)((Display_GetMode()[1] >> 1) - 320) + dw->w.x);
+    top = (long double)((Display_GetMode()[2] >> 1) - 240) + dw->w.y;
     right = (long double)dw->w.w + left;
     gQVertexTexture = NULL;
     gQVertexPalette = NULL;

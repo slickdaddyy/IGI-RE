@@ -452,12 +452,12 @@ ORIG(0x4F1050, int, Task_GetId, (void *task));
 ORIG(0x463120, int, sub_463120, (Task *human));
 ORIG(0x463130, int, Human_GetTeam, (Task *human));
 ORIG(0x463170, char, Human_IsDead, (Task *human));
-ORIG(0x463180, char, sub_463180, (Task *human));
+ORIG(0x463180, char, Human_IsCrouching, (Task *human));
 ORIG(0x463190, char, sub_463190, (Task *human));
 ORIG(0x4F9720, GraphNode *, Graph_GetNode, (void *graph, int id));
 ORIG(0x4F9770, void, Graph_GetNodePos, (Vec3d *out, GraphNode *node));
 ORIG(0x4F9A40, char, Graph_IsInNode, (const Vec3d *pos, GraphNode *node, double tol, int unk));
-ORIG(0x452C10, void, sub_452C10, (void *path, int a, int b));
+ORIG(0x452C10, void, NodeGrid_Release, (void *path, int a, int b));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x4B4770, long double, Random_Float, (void *r));
 

@@ -39,8 +39,8 @@ HOOK(0x46AB60, ComputerMenu_Init);
 
 void ComputerMenu_Create(ComputerMenu *m)
 {
-    float fw = Display_Get()->width;
-    long double fh = Display_Get()->height;
+    float fw = Display_GetMode()->width;
+    long double fh = Display_GetMode()->height;
 
     gMenu = m;
     m->panel = NULL;
@@ -57,8 +57,8 @@ void ComputerMenu_Run(ComputerMenu *m)
 {
     char *in = Computer_Get()->input;
     unsigned int buttons = 0, old;
-    float fw = Display_Get()->width;
-    float fh = Display_Get()->height;
+    float fw = Display_GetMode()->width;
+    float fh = Display_GetMode()->height;
     int pos[3];
 
     if (Game_IsPaused())
@@ -123,8 +123,8 @@ void ComputerMenu_Draw(ComputerMenu *m)
     int w, h;
 
     Computer_Get();
-    w = Display_Get()->width;
-    h = Display_Get()->height;
+    w = Display_GetMode()->width;
+    h = Display_GetMode()->height;
     Draw_RectZ(0, 0, w, h, 0, 127.0f, 0, 0xC0040000, -1, kBackZ);
     CALL_CHILDREN(&m->task, Screen_GetDrawEvent);
     if (!m->dragging) {

@@ -213,7 +213,7 @@ ORIG(0x401AE0, Task **, TaskRef_Add, (void *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416D40, char *, Game_Get, (void));
-ORIG(0x491CF0, Display *, Display_Get, (void));
+ORIG(0x491CF0, Display *, Display_GetMode, (void));
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4B0D60, void, Mem_PushMode, (char mode));

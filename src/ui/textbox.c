@@ -101,8 +101,8 @@ int TextBox_DrawWrapped(int x, int y, float scale, int width, int height, const 
 void TextBox_Draw(TextBox *tb)
 {
     float alpha = ui_alpha(tb->w.menu);
-    int x = (Display_Get()->width >> 1) - 316 + tb->w.x;
-    int y = (Display_Get()->height >> 1) - 236 + tb->w.y;
+    int x = (Display_GetMode()->width >> 1) - 316 + tb->w.x;
+    int y = (Display_GetMode()->height >> 1) - 236 + tb->w.y;
     const char *s;
 
     if (tb->count && tb->sprite && tb->text && (s = tb->items[tb->index].str) != NULL)

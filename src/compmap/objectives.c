@@ -50,9 +50,9 @@ HOOK(0x468E20, ComputerObjectives_Init);
 void ComputerObjectives_Create(ComputerObjectives *o)
 {
     ComputerRes *r = ComputerRes_Get();
-    int w = Display_Get()->width;
-    int h = Display_Get()->height;
-    Task *panel = ComputerPanel_New(o);
+    int w = Display_GetMode()->width;
+    int h = Display_GetMode()->height;
+    Task *panel = MenuItemTask_New(o);
     const char *s;
     Sprite *font;
     float fw, fh;
@@ -118,8 +118,8 @@ HOOK(0x469060, ComputerObjectives_OnSelect);
 
 void ComputerObjectives_Draw(ComputerObjectives *o)
 {
-    int w = Display_Get()->width;
-    int h = Display_Get()->height;
+    int w = Display_GetMode()->width;
+    int h = Display_GetMode()->height;
     char status[64], text[256];
     int i, x, y;
 

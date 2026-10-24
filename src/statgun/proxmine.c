@@ -162,7 +162,7 @@ void ProxMine_Use(Gun *g, WeaponUseMsg *msg)
                     hit.normal.z = hit.normal.z * inv;
                 }
                 Matrix_SetYAxis(&m, &hit.normal);
-                Mine_New(sub_4F0EE0(), &hit.pos, &m, info->key, (int)round_ll(d->armTime * kTicksPerSecond),
+                Mine_New(Level_GetDynamic(), &hit.pos, &m, info->key, (int)round_ll(d->armTime * kTicksPerSecond),
                            d->countdown, d->activate, d->explode, msg->alt);
                 if (g->rounds > 0)
                     g->rounds--;
@@ -196,18 +196,18 @@ void ProxMine_Config(void *task, WeaponConfigMsg *m)
         Mem_Free(m->info->data);
         m->info->data = NULL;
     }
-    arm = Config_Find(m->config, "Proximitymine - Time before arming (seconds)");
+    arm = TagItem_Find(m->config, "Proximitymine - Time before arming (seconds)");
     if (!arm)
-        arm = Config_AddReal(m->config, "Proximitymine - Time before arming (seconds)", 2.0f);
-    count = Config_Find(m->config, "Proximitymine - Countdown time (seconds)");
+        arm = TagItem_AddReal32(m->config, "Proximitymine - Time before arming (seconds)", 2.0f);
+    count = TagItem_Find(m->config, "Proximitymine - Countdown time (seconds)");
     if (!count)
-        count = Config_AddReal(m->config, "Proximitymine - Countdown time (seconds)", 0.5f);
-    activate = Config_Find(m->config, "Proximitymine - Activate radius (meters)");
+        count = TagItem_AddReal32(m->config, "Proximitymine - Countdown time (seconds)", 0.5f);
+    activate = TagItem_Find(m->config, "Proximitymine - Activate radius (meters)");
     if (!activate)
-        activate = Config_AddReal(m->config, "Proximitymine - Activate radius (meters)", 1.5f);
-    explode = Config_Find(m->config, "Proximitymine - Explosion radius (meters)");
+        activate = TagItem_AddReal32(m->config, "Proximitymine - Activate radius (meters)", 1.5f);
+    explode = TagItem_Find(m->config, "Proximitymine - Explosion radius (meters)");
     if (!explode)
-        explode = Config_AddReal(m->config, "Proximitymine - Explosion radius (meters)", 3.0f);
+        explode = TagItem_AddReal32(m->config, "Proximitymine - Explosion radius (meters)", 3.0f);
     m->info->data = d = Mem_Alloc(sizeof(ProxData), 4);
     MOV32(d->armTime, arm->v.f);
     MOV32(d->countdown, count->v.f);

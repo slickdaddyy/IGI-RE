@@ -37,7 +37,7 @@ void Spas12_Reload(Gun *g, ReloadMsg *msg)
     TaskFn fn;
     int need;
 
-    fn = HANDLER(Human_GetAmmoEvent(), owner->type);
+    fn = HANDLER(AmmoList_GetEvent(), owner->type);
     if (fn)
         fn(owner, &list);
     ammo = AmmoList_Find(list, *ammoId);

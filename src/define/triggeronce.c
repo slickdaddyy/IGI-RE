@@ -45,7 +45,7 @@ void SoundDefTriggerOnce_Init(void)
     TaskType_SetHandler(gSoundDefTriggerOnceType, 0, SoundDefTriggerOnce_Create);
     TaskType_SetHandler2(gSoundDefTriggerOnceType, 1, SoundDefTriggerOnce_Run);
     TaskType_SetHandler2(gSoundDefTriggerOnceType, 2, SoundDefTriggerOnce_Delete);
-    TaskType_SetHandler(gSoundDefTriggerOnceType, sub_4EBDD0(), SoundDefTriggerOnce_Play);
+    TaskType_SetHandler(gSoundDefTriggerOnceType, SoundSysMicrophone_GetPlayEvent(), SoundDefTriggerOnce_Play);
     TaskType_SetHandler(gSoundDefTriggerOnceType, Sound_GetListEvent(), SoundDefTriggerOnce_Write);
     TaskType_SetHandler(gSoundDefTriggerOnceType, Sound_GetFindEvent(), SoundDefTriggerOnce_Find);
     TaskType_SetHandler(gSoundDefTriggerOnceType, Sound_GetNameEvent(), SoundDefTriggerOnce_GetName);
@@ -76,7 +76,7 @@ void SoundDefTriggerOnce_Play(SoundDefTriggerOnce *s, SoundPlayArg *a)
     if (!s->active)
         return;
     if (s->h.flags & 2) {
-        Vec3d *lp = sub_4EBDE0(a->listener);
+        Vec3d *lp = SoundSysMicrophone_GetPos(a->listener);
         double r = rd(s->range * kDistScale);
 
         if (!(r * r >= Vec3d_DistanceSq(lp, &s->pos)))
@@ -242,7 +242,7 @@ void SoundDefTriggerOnce_GetRange(SoundDefTriggerOnce *s, float *out)
     Task *p = s->task.parent;
     long double r;
 
-    if (p && p->type == SoundGroup_GetType())
+    if (p && p->type == SoundDefGroup_GetType())
         r = Vec3d_Length(&s->offset) + s->range;
     else
         r = s->range;

@@ -211,8 +211,8 @@ void FlatWater_Render(FlatWater *w)
             vb[2] = n0[2] * gViewM[8] + n0[1] * gViewM[7] + n0[0] * gViewM[6];
             if (!(va2 > kZero) || !(vb[2] > kZero))
                 continue;
-            View_ProjectPoint(&sa.x, va);
-            View_ProjectPoint(&sb.x, vb);
+            TransContext_ProjectView(&sa.x, va);
+            TransContext_ProjectView(&sb.x, vb);
             side = !(sa.x >= sb.x) ^ !(h >= kZero);
             edge.side = side;
             dx = sb.x - sa.x;

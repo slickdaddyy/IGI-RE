@@ -105,7 +105,7 @@ ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t par
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401AE0, Task **, TaskRef_Add, (void *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
-ORIG(0x4028B0, int, Timer_GetTicks, (void));
+ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x4149B0, void, Game_DropToGround, (void *task, void *pos));
 ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
 ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
@@ -116,8 +116,8 @@ ORIG(0x416C90, long double, Game_BlastFalloff, (void *blast, void *obj, Vec3d *p
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x480FE0, void, Explosion_Spawn, (Vec3d *pos, int a, int b, float c, float d, float e, float f, int g, int h,
                                        int i, const char *sprite, const char *sound, int j, int k, float l, int m));
-ORIG(0x481340, uint16_t, sub_481340, (void));
-ORIG(0x481350, void *, sub_481350, (void));
+ORIG(0x481340, uint16_t, ExplodeObject_GetType, (void));
+ORIG(0x481350, void *, ExplodeObject_GetParams, (void));
 ORIG(0x4B47C0, int, Random_Int, (void *r, int n));
 ORIG(0x4B7E80, void, Script_RegisterInt, (const char *name, int *value));
 ORIG(0x4B7EE0, void, Script_RegisterBool8, (const char *name, char *value));
@@ -132,7 +132,7 @@ ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4C3440, Vec3d *, DynCubeObj_GetPosition, (void *obj));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x4C48D0, void, RigidDynCubeObj_SetModel, (void *obj, void **model));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, void *c));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, void *c));
 ORIG(0x4C56D0, uint8_t, RigidDynCubeObj_GetEvent0, (void));
 ORIG(0x4C56E0, uint8_t, RigidDynCubeObj_GetEvent1, (void));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (int world, void *obj, void **model));
@@ -146,7 +146,7 @@ ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (Task *sound));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
-ORIG(0x4F0EE0, void *, Sound_GetOwner, (void));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 ORIG(0x4F0F50, void *, Param_Real32, (void));
 ORIG(0x4F0F60, void *, Param_Real32x3, (void));
 ORIG(0x4F0F70, void *, Param_Real32x9, (void));

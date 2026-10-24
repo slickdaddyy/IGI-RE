@@ -85,7 +85,7 @@ void Glass_Create(Glass *g, MagicArg *arg)
     g->broken = 0;
     g->m.data = arg->data;
     g->m.owner = arg->owner;
-    sub_4C4950(g, g, arg->owner);
+    RigidDynCubeObj_CreateMagicObjs(g, g, arg->owner);
 }
 HOOK(0x4497F0, Glass_Create);
 

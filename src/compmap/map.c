@@ -128,9 +128,9 @@ void ComputerMap_Create(ComputerMap *map)
     static const float off[9] = {0, 0.5f, 0.1f, 0, 0.5f, 0.1f, 0, 0.5f, 0.1f};
     const char *names[3] = {"INITIALIZING", "CONNECTING", "DOWNLOADING"};
     ComputerRes *r = ComputerRes_Get();
-    void *vp = Computer_GetViewport();
-    float fw = Display_Get()->width;
-    float fh = Display_Get()->height;
+    void *vp = Computer_GetCamera();
+    float fw = Display_GetMode()->width;
+    float fh = Display_GetMode()->height;
     float t, x, y, tx;
     int frame;
     Task *panel;
@@ -156,7 +156,7 @@ void ComputerMap_Create(ComputerMap *map)
     map->noise = LineFilter_New(map, 0, 0, 0, kViewZ, 0);
     map->noiseLevel = 1.0f;
     map->noiseTime = 60;
-    panel = ComputerPanel_New(map);
+    panel = MenuItemTask_New(map);
     ComputerMenu_SetPanel(panel);
     x = fw * kButtonX;
     y = fh * kButtonY;
@@ -248,7 +248,7 @@ void ComputerMap_OnButton(ComputerButtonItem *b, int *id)
 
     if (b->base.id != *id)
         return;
-    Computer_GetViewport();
+    Computer_GetCamera();
     down = ComputerMenu_GetButtons() & 0x10;
     b->wasPressed = b->pressed;
     b->pressed = down;
@@ -290,7 +290,7 @@ void ComputerMap_OnButton(ComputerButtonItem *b, int *id)
                 ComputerStartup_Start(map->startup);
             }
         sound:
-            sub_4E7200("mapcomp_01", 1, sound);
+            Sound_PlayDefined("mapcomp_01", 1, sound);
             break;
         }
     }
@@ -333,8 +333,8 @@ void ComputerMap_SetFov(ComputerMap *map, float fov)
     level = Random_Float(Game_GetRandom()) * kNoiseVar + kNoiseBase;
     n = Random_Int(Game_GetRandom(), 75);
     ComputerMap_SetNoise(map, level, n + 15);
-    sub_4E7200("mapcomp_05", 1, sound);
-    sub_4E7200("mapcomp_03", 1, sound);
+    Sound_PlayDefined("mapcomp_05", 1, sound);
+    Sound_PlayDefined("mapcomp_03", 1, sound);
 }
 HOOK(0x469FE0, ComputerMap_SetFov);
 
@@ -356,7 +356,7 @@ HOOK(0x46A0A0, ComputerMap_ClearTarget);
 
 void ComputerMap_Run(ComputerMap *map)
 {
-    void *vp = Computer_GetViewport();
+    void *vp = Computer_GetCamera();
     float t, level;
     int frame;
 
@@ -489,10 +489,10 @@ void ComputerMap_Trace(ComputerMap *map)
             goto done;
         cam = Viewport_GetCamera(Computer_GetView());
         aspect = Display_GetAspect();
-        t = ((double)(mx + mx) - Display_Get()->width) * cam->fov;
-        sx = t / Display_Get()->width;
-        t = ((double)(my + my) - Display_Get()->height) * (aspect * cam->fov);
-        sy = t / Display_Get()->width;
+        t = ((double)(mx + mx) - Display_GetMode()->width) * cam->fov;
+        sx = t / Display_GetMode()->width;
+        t = ((double)(my + my) - Display_GetMode()->height) * (aspect * cam->fov);
+        sy = t / Display_GetMode()->width;
         humans = Human_GetList();
         objs = Mine_GetList();
         cams = SCameraLens_GetList();

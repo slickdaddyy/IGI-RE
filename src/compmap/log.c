@@ -23,15 +23,15 @@ void ComputerLog_OnScroll(ComputerButtonItem *b, int *id);
 void ComputerLog_Create(ComputerLog *log)
 {
     ComputerRes *r = ComputerRes_Get();
-    int w = Display_Get()->width;
-    int h = Display_Get()->height;
+    int w = Display_GetMode()->width;
+    int h = Display_GetMode()->height;
     Task *panel;
     const char *s;
     Sprite *font;
     float fw, fh, x, y;
 
     gLog = log;
-    panel = ComputerPanel_New(log);
+    panel = MenuItemTask_New(log);
     ComputerMenu_SetPanel(panel);
     log->scroll = 0;
     if (Computer_IsMapEnabled()) {
@@ -97,8 +97,8 @@ HOOK(0x468BB0, ComputerLog_Delete);
 
 void ComputerLog_Draw(ComputerLog *log)
 {
-    int w = Display_Get()->width;
-    int h = Display_Get()->height;
+    int w = Display_GetMode()->width;
+    int h = Display_GetMode()->height;
     int i, x, y;
 
     Draw_RectZ(0, 0, w, h, 0, 0, 0, 0x40040000, -1, kBackZ);

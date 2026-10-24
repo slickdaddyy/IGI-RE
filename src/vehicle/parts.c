@@ -121,16 +121,16 @@ void VehiclePart_CollFilter(Task *t, SightFilter *f);
 
 void CarDoor_Init(void)
 {
-    gCarDoorType = TaskType_New("CarDoor", 0x148, RigidDynCubeObj_GetType(), 0);
+    gCarDoorType = TaskType_New("CarDoor", 0x148, MagicObj_GetType(), 0);
     TaskType_SetHandler(gCarDoorType, 0, CarDoor_Create);
     TaskType_SetHandler2(gCarDoorType, 1, HeliDoor_Run);
     TaskType_SetHandler2(gCarDoorType, 2, VehiclePart_Delete);
-    TaskType_SetHandler(gCarDoorType, RigidDynCubeObj_GetMoveEvent(), CarDoor_Move);
+    TaskType_SetHandler(gCarDoorType, MagicObj_GetMoveEvent(), CarDoor_Move);
     TaskType_SetHandler(gCarDoorType, Game_GetEvent9(), HANDLER_42D9B0);
     TaskType_SetHandler(gCarDoorType, Game_GetEvent11(), NULL);
     TaskType_SetHandler(gCarDoorType, RigidDynCubeObj_GetEvent0(), CarDoor_ParseArgs);
     TaskType_SetHandler(gCarDoorType, RigidDynCubeObj_GetEvent1(), HANDLER_51BAA0);
-    TaskType_SetHandler(gCarDoorType, sub_489610(), VehiclePart_CollFilter);
+    TaskType_SetHandler(gCarDoorType, AIDetection_GetEvent0(), VehiclePart_CollFilter);
     Script_RegisterConstant("TASKTYPE_CARDOOR", gCarDoorType);
 }
 HOOK(0x426630, CarDoor_Init);
@@ -147,7 +147,7 @@ void CarDoor_Create(VehiclePart *p, PartCreateArg *arg)
     p->offset = arg->offset;
     p->local = arg->local;
     RigidDynCubeObj_Init(arg->unk4, p, model);
-    sub_4C7140(arg->unk4, p, &arg->pos, part_radius(p), 2);
+    DynCube_Add(arg->unk4, p, &arg->pos, part_radius(p), 2);
     p->obj.matrix = arg->matrix;
     p->params = arg->params;
     p->owner = arg->owner;
@@ -158,7 +158,7 @@ HOOK(0x426740, CarDoor_Create);
 
 void VehiclePart_Delete(VehiclePart *p)
 {
-    sub_4C7560(p->obj.unk68, p);
+    DynCube_Remove(p->obj.unk68, p);
 }
 HOOK(0x426860, VehiclePart_Delete);
 
@@ -175,7 +175,7 @@ void CarDoor_Move(VehiclePart *p, PartMoveArg *arg)
     part_place(&l, arg);
     radius = part_radius(p);
     world = Game_GetWorld();
-    sub_4C6940(world, p, &l, radius);
+    DynCube_Move(world, p, &l, radius);
     axis = *(int *)p->params;
     if (axis == 0)
         Matrix_SetRotX(&r, p->angle);
@@ -246,11 +246,11 @@ void HitZone_GetArgSize(void *task, int *out);
 
 void HeliWheel_Init(void)
 {
-    gHeliWheelType = TaskType_New("HeliWheel", 0x140, RigidDynCubeObj_GetType(), 0);
+    gHeliWheelType = TaskType_New("HeliWheel", 0x140, MagicObj_GetType(), 0);
     TaskType_SetHandler(gHeliWheelType, 0, HeliWheel_Create);
     TaskType_SetHandler2(gHeliWheelType, 1, TASK_NOTHING);
     TaskType_SetHandler2(gHeliWheelType, 2, VehiclePart_Delete);
-    TaskType_SetHandler(gHeliWheelType, RigidDynCubeObj_GetMoveEvent(), HeliWheel_Move);
+    TaskType_SetHandler(gHeliWheelType, MagicObj_GetMoveEvent(), HeliWheel_Move);
     TaskType_SetHandler(gHeliWheelType, Game_GetEvent9(), TASK_NOTHING);
     TaskType_SetHandler(gHeliWheelType, Game_GetEvent11(), TASK_NOTHING);
     TaskType_SetHandler(gHeliWheelType, RigidDynCubeObj_GetEvent0(), HeliWheel_ParseArgs);
@@ -271,7 +271,7 @@ void HeliWheel_Create(VehiclePart *p, PartCreateArg *arg)
     p->offset = arg->offset;
     p->local = arg->local;
     RigidDynCubeObj_Init(arg->unk4, p, model);
-    sub_4C7140(arg->unk4, p, &arg->pos, part_radius(p), 2);
+    DynCube_Add(arg->unk4, p, &arg->pos, part_radius(p), 2);
     p->obj.matrix = arg->matrix;
     p->owner = arg->owner;
     p->params = arg->params;
@@ -287,7 +287,7 @@ void HeliWheel_Move(VehiclePart *p, PartMoveArg *arg)
     part_place(&l, arg);
     radius = part_radius(p);
     world = Game_GetWorld();
-    sub_4C6940(world, p, &l, radius);
+    DynCube_Move(world, p, &l, radius);
     part_turn(p, arg->matrix);
 }
 HOOK(0x426FA0, HeliWheel_Move);
@@ -319,16 +319,16 @@ void HeliDoor_ParseArgs(void *task, PartScriptArg *a);
 
 void HeliDoor_Init(void)
 {
-    gHeliDoorType = TaskType_New("HeliDoor", 0x148, RigidDynCubeObj_GetType(), 0);
+    gHeliDoorType = TaskType_New("HeliDoor", 0x148, MagicObj_GetType(), 0);
     TaskType_SetHandler(gHeliDoorType, 0, CarDoor_Create);
     TaskType_SetHandler2(gHeliDoorType, 1, HeliDoor_Run);
     TaskType_SetHandler2(gHeliDoorType, 2, VehiclePart_Delete);
-    TaskType_SetHandler(gHeliDoorType, RigidDynCubeObj_GetMoveEvent(), HeliDoor_Move);
+    TaskType_SetHandler(gHeliDoorType, MagicObj_GetMoveEvent(), HeliDoor_Move);
     TaskType_SetHandler(gHeliDoorType, Game_GetEvent9(), HANDLER_42D9B0);
     TaskType_SetHandler(gHeliDoorType, Game_GetEvent11(), NULL);
     TaskType_SetHandler(gHeliDoorType, RigidDynCubeObj_GetEvent0(), HeliDoor_ParseArgs);
     TaskType_SetHandler(gHeliDoorType, RigidDynCubeObj_GetEvent1(), HANDLER_51BAA0);
-    TaskType_SetHandler(gHeliDoorType, sub_489610(), VehiclePart_CollFilter);
+    TaskType_SetHandler(gHeliDoorType, AIDetection_GetEvent0(), VehiclePart_CollFilter);
     Script_RegisterConstant("TASKTYPE_HELIDOOR", gHeliDoorType);
 }
 HOOK(0x4272A0, HeliDoor_Init);
@@ -389,7 +389,7 @@ void HeliDoor_Move(VehiclePart *p, PartMoveArg *arg)
     part_place(&l, arg);
     radius = part_radius(p);
     world = Game_GetWorld();
-    sub_4C6940(world, p, &l, radius);
+    DynCube_Move(world, p, &l, radius);
     part_turn(p, arg->matrix);
 }
 HOOK(0x4274E0, HeliDoor_Move);
@@ -424,16 +424,16 @@ void RocketPod_GetArgSize(void *task, int *out);
 
 void RocketPod_Init(void)
 {
-    gRocketPodType = TaskType_New("RocketPod", 0x140, RigidDynCubeObj_GetType(), 0);
+    gRocketPodType = TaskType_New("RocketPod", 0x140, MagicObj_GetType(), 0);
     TaskType_SetHandler(gRocketPodType, 0, RocketPod_Create);
     TaskType_SetHandler2(gRocketPodType, 1, RocketPod_Run);
     TaskType_SetHandler2(gRocketPodType, 2, VehiclePart_Delete);
-    TaskType_SetHandler(gRocketPodType, RigidDynCubeObj_GetMoveEvent(), HeliWheel_Move);
+    TaskType_SetHandler(gRocketPodType, MagicObj_GetMoveEvent(), HeliWheel_Move);
     TaskType_SetHandler(gRocketPodType, Game_GetEvent9(), HANDLER_42D9B0);
     TaskType_SetHandler(gRocketPodType, Game_GetEvent11(), NULL);
     TaskType_SetHandler(gRocketPodType, RigidDynCubeObj_GetEvent0(), RocketPod_ParseArgs);
     TaskType_SetHandler(gRocketPodType, RigidDynCubeObj_GetEvent1(), RocketPod_GetArgSize);
-    TaskType_SetHandler(gRocketPodType, sub_489610(), VehiclePart_CollFilter);
+    TaskType_SetHandler(gRocketPodType, AIDetection_GetEvent0(), VehiclePart_CollFilter);
     Script_RegisterConstant("TASKTYPE_ROCKETPOD", gRocketPodType);
 }
 HOOK(0x427830, RocketPod_Init);
@@ -450,7 +450,7 @@ void RocketPod_Create(VehiclePart *p, PartCreateArg *arg)
     p->offset = arg->offset;
     p->local = arg->local;
     RigidDynCubeObj_Init(arg->unk4, p, model);
-    sub_4C7140(arg->unk4, p, &arg->pos, part_radius(p), 2);
+    DynCube_Add(arg->unk4, p, &arg->pos, part_radius(p), 2);
     p->obj.matrix = arg->matrix;
     p->params = arg->params;
     p->owner = arg->owner;
@@ -497,7 +497,7 @@ void RocketPod_Run(VehiclePart *p)
             filter.unk4 = &p->obj.task;
             filter.self = &p->obj.task;
             filter.target = *n->ref;
-            event = sub_489610();
+            event = AIDetection_GetEvent0();
             to = DynCubeObj_GetPosition(*n->ref);
             world = Game_GetWorld();
             if (!Coll_LineOfSight(world, &p->obj.pos, to, event, &filter, -1, -1, &visibility))
@@ -542,11 +542,11 @@ void HitZone_ClearHit(void *task, void **arg);
 
 void HitZone_Init(void)
 {
-    gHitZoneType = TaskType_New("HitZone", 0x148, RigidDynCubeObj_GetType(), 0);
+    gHitZoneType = TaskType_New("HitZone", 0x148, MagicObj_GetType(), 0);
     TaskType_SetHandler(gHitZoneType, 0, HitZone_Create);
     TaskType_SetHandler2(gHitZoneType, 1, TASK_NOTHING);
     TaskType_SetHandler2(gHitZoneType, 2, TASK_NOTHING);
-    TaskType_SetHandler(gHitZoneType, RigidDynCubeObj_GetMoveEvent(), TASK_NOTHING);
+    TaskType_SetHandler(gHitZoneType, MagicObj_GetMoveEvent(), TASK_NOTHING);
     TaskType_SetHandler(gHitZoneType, Game_GetEvent9(), NULL);
     TaskType_SetHandler(gHitZoneType, Game_GetEvent11(), NULL);
     TaskType_SetHandler(gHitZoneType, RigidDynCubeObj_GetEvent0(), HitZone_ParseArgs);

@@ -207,7 +207,7 @@ HOOK(0x41CC40, AsciiBox_Changed);
 void AsciiBox_Run(AsciiBox *ab)
 {
     if (ab->buf) {
-        int pos = ScrollBar_GetPos(ab->scrollBar);
+        int pos = SlideBar_GetPos(ab->scrollBar);
 
         while (pos < ab->lineIndex) {
             ab->line--;
@@ -231,7 +231,7 @@ void AsciiBox_Draw(AsciiBox *ab)
     float alpha = ui_alpha(ab->w.menu);
     MenuWindow *bar;
 
-    ScrollBar_SetRange(ab->scrollBar, ab->w.w - 19 + ab->w.x, ab->w.y, 0, ab->w.h, ab->lineCount);
+    SlideBar_SetRange(ab->scrollBar, ab->w.w - 19 + ab->w.x, ab->w.y, 0, ab->w.h, ab->lineCount);
     {
         uint16_t base = MenuWindow_GetType();
 
@@ -244,8 +244,8 @@ void AsciiBox_Draw(AsciiBox *ab)
         int rows = (ab->w.h - 4) / ab->lineHeight;
         int left = ab->lineCount - ab->lineIndex;
         int n = rows < left ? rows : left;
-        int x = (Display_Get()->width >> 1) - 316 + ab->w.x;
-        int y = (Display_Get()->height >> 1) - 236 + ab->w.y;
+        int x = (Display_GetMode()->width >> 1) - 316 + ab->w.x;
+        int y = (Display_GetMode()->height >> 1) - 236 + ab->w.y;
 
         if (n > 0) {
             float xf = x;

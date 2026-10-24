@@ -46,7 +46,7 @@ void Radio_Init(void)
     Radio r;
     int i;
 
-    gRadioType = TaskType_New("Radio", sizeof(Radio), sub_481340(), 0);
+    gRadioType = TaskType_New("Radio", sizeof(Radio), ExplodeObject_GetType(), 0);
     TaskType_SetHandler(gRadioType, 0, Radio_Create);
     TaskType_SetHandler2(gRadioType, 1, Radio_Run);
     TaskType_SetHandler2(gRadioType, 2, Radio_Delete);
@@ -55,7 +55,7 @@ void Radio_Init(void)
     TaskType_SetHandler2(gRadioType, Level_GetEventDA8(), Radio_Activate);
     TaskType_SetHandler2(gRadioType, Level_GetEventDAC(), Radio_Deactivate);
     TaskType_SetHandler(gRadioType, ComputerObject_GetEvent0(), HANDLER_443DC0);
-    gRadioParams = ParamTable_Extend(sub_481350(), 6);
+    gRadioParams = ParamTable_Extend(ExplodeObject_GetParams(), 6);
     for (i = 0; i < 4; i++) {
         crt_sprintf(gRadioSoundNames[i], "Radio sound %d", i);
         ParamTable_Add(gRadioParams, &r, r.sounds[i], Param_String16(), 7, NULL);
@@ -69,7 +69,7 @@ void Radio_Create(Radio *r, void *arg)
 {
     int i;
 
-    HANDLER(0, sub_481340())(r, arg);
+    HANDLER(0, ExplodeObject_GetType())(r, arg);
     r->sound = NULL;
     r->timer = 0;
     r->isOn = 0;
@@ -87,7 +87,7 @@ void Radio_Run(Radio *r)
     Task *s;
     int i;
 
-    ((void (*)(void *))HANDLER(1, sub_481340()))(r);
+    ((void (*)(void *))HANDLER(1, ExplodeObject_GetType()))(r);
     if (r->unk190)
         r->isOn = 0;
     else if (VarString_HasExpr(&r->cond))
@@ -128,7 +128,7 @@ HOOK(0x43AF90, Radio_Run);
 
 void Radio_Delete(Radio *r)
 {
-    ((void (*)(void *))HANDLER(2, sub_481340()))(r);
+    ((void (*)(void *))HANDLER(2, ExplodeObject_GetType()))(r);
     if (r->sound) {
         TaskRef_Remove(r->sound);
         r->sound = NULL;
@@ -147,7 +147,7 @@ void Radio_Changed(Radio *r, void *arg)
 {
     int slot = Param_GetChangedEvent();
 
-    HANDLER(slot, sub_481340())(r, arg);
+    HANDLER(slot, ExplodeObject_GetType())(r, arg);
     r->isOn = 0;
     r->timer = 0;
     VarString_Bind(&r->cond, r);
@@ -163,7 +163,7 @@ void Radio_Activate(Radio *r)
     if (r->registered)
         return;
     r->registered = 1;
-    base = sub_481340();
+    base = ExplodeObject_GetType();
     ((void (*)(void *))HANDLER(Level_GetEventDA8(), base))(r);
     Task_GetName(name, r);
     crt_sprintf(buf, "%s.isOn", name);
@@ -179,7 +179,7 @@ void Radio_Deactivate(Radio *r)
 
     if (!r->registered)
         return;
-    base = sub_481340();
+    base = ExplodeObject_GetType();
     ((void (*)(void *))HANDLER(Level_GetEventDAC(), base))(r);
     Task_GetName(name, r);
     crt_sprintf(buf, "%s.isOn", name);

@@ -152,7 +152,7 @@ ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
 ORIG(0x4B8A80, void, Script_GetArgString, (void *args, int i, char *out, int size));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
-ORIG(0x4F0F20, void *, sub_4F0F20, (void));
+ORIG(0x4F0F20, void *, Param_Angle, (void));
 ORIG(0x4F0F50, void *, Param_Real32, (void));
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
 ORIG(0x4F0FC0, void *, Param_VarString, (void));

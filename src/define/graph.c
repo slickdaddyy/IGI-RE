@@ -41,7 +41,7 @@ void SoundDefGraph_Init(void)
     TaskType_SetHandler(gSoundDefGraphType, 0, SoundDefGraph_Create);
     TaskType_SetHandler2(gSoundDefGraphType, 1, SoundDefGraph_Run);
     TaskType_SetHandler2(gSoundDefGraphType, 2, SoundDefGraph_Delete);
-    TaskType_SetHandler(gSoundDefGraphType, sub_4EBDD0(), SoundDefGraph_Play);
+    TaskType_SetHandler(gSoundDefGraphType, SoundSysMicrophone_GetPlayEvent(), SoundDefGraph_Play);
     TaskType_SetHandler(gSoundDefGraphType, Sound_GetListEvent(), SoundDefGraph_Write);
     TaskType_SetHandler(gSoundDefGraphType, Sound_GetFindEvent(), SoundDefGraph_Find);
     TaskType_SetHandler(gSoundDefGraphType, Sound_GetNameEvent(), SoundDefGraph_GetName);
@@ -61,7 +61,7 @@ void SoundDefGraph_Play(SoundDefGraph *s, SoundPlayArg *a)
     if (s->isDef && a->defs)
         return;
     if (s->h.flags & 2) {
-        Vec3d *lp = sub_4EBDE0(a->listener);
+        Vec3d *lp = SoundSysMicrophone_GetPos(a->listener);
         double r = rd(s->range * kDistScale);
 
         if (!(r * r >= Vec3d_DistanceSq(lp, &s->pos)))
@@ -244,7 +244,7 @@ void SoundDefGraph_GetRange(SoundDefGraph *s, float *out)
     Task *p = s->task.parent;
     long double r;
 
-    if (p && p->type == SoundGroup_GetType())
+    if (p && p->type == SoundDefGroup_GetType())
         r = Vec3d_Length(&s->offset) + s->range;
     else
         r = s->range;

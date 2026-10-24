@@ -396,7 +396,7 @@ run:
             ai->unk3AB4 = NULL;
         }
         if (ai->path) {
-            sub_452C10(ai->path, ai->pathLen, ai->pathLen);
+            NodeGrid_Release(ai->path, ai->pathLen, ai->pathLen);
             ai->path = NULL;
         }
         if (ai->unk3E10 < 0) {
@@ -592,7 +592,7 @@ void HumanAI_Destroy(HumanAI *ai, void *arg)
     if (ai->script)
         Script_Free(ai->script);
     if (ai->path)
-        sub_452C10(ai->path, ai->pathLen, ai->pathLen);
+        NodeGrid_Release(ai->path, ai->pathLen, ai->pathLen);
     HumanAI_ClearMove(ai);
     HumanAI_FreeEvents(ai);
     if (ai->unk3AB0)

@@ -242,9 +242,9 @@ ORIG(0x4E6D40, void, Sound_RemoveTask, (void *task));
 ORIG(0x4E6D60, void, SoundHandle_Play, (SoundHandle *h));
 ORIG(0x4E6FA0, char, SoundHandle_IsPlaying, (const SoundHandle *h));
 ORIG(0x4E6FF0, long double, SoundParams_ClampVolume, (SoundParams *p));
-ORIG(0x4EBA80, uint16_t, SoundGroup_GetType, (void));
-ORIG(0x4EBDD0, uint8_t, sub_4EBDD0, (void));
-ORIG(0x4EBDE0, Vec3d *, sub_4EBDE0, (void *listener));
+ORIG(0x4EBA80, uint16_t, SoundDefGroup_GetType, (void));
+ORIG(0x4EBDD0, uint8_t, SoundSysMicrophone_GetPlayEvent, (void));
+ORIG(0x4EBDE0, Vec3d *, SoundSysMicrophone_GetPos, (void *listener));
 
 /* SoundDef_Write helpers, shared by the three definition types */
 void SoundDef_Append(char *buf, const char *s);
