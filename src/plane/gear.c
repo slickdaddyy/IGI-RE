@@ -26,10 +26,10 @@ ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
 extern uint16_t gGearType;
 extern float kQuarterPi;
 
-void Gear_SetMatrix(Part *o, Matrix *parent);
+void Gear_SetMatrix(PlanePart *o, Matrix *parent);
 
 /* down at the def angle unless the gear is up */
-void Gear_Create(Part *o, MagicCreateArg *arg)
+void Gear_Create(PlanePart *o, MagicCreateArg *arg)
 {
     GearDef *def;
 
@@ -42,7 +42,7 @@ HOOK(0x435460, Gear_Create);
 
 /* matrix = parent * local * Euler(angle, 0, roll); roll follows the yaw input
    for gears with the roll flag while the gear is up */
-void Gear_SetMatrix(Part *o, Matrix *parent)
+void Gear_SetMatrix(PlanePart *o, Matrix *parent)
 {
     GearDef *def = o->def;
     const float *l = o->local.m, *p = parent->m;
@@ -81,13 +81,13 @@ void Gear_SetMatrix(Part *o, Matrix *parent)
 }
 HOOK(0x4355A0, Gear_SetMatrix);
 
-void Gear_Run(Part *o);
-void Gear_Move(Part *o, PartMoveArg *a);
+void Gear_Run(PlanePart *o);
+void Gear_Move(PlanePart *o, PartMoveArg *a);
 void Gear_ParseDef(void *unused, DefParseArg *a);
 
 void Gear_Init(void)
 {
-    gGearType = TaskType_New("Gear", sizeof(Part), MagicObj_GetType(), 0);
+    gGearType = TaskType_New("Gear", sizeof(PlanePart), MagicObj_GetType(), 0);
     TaskType_SetHandler(gGearType, 0, Gear_Create);
     TaskType_SetHandler2(gGearType, 1, Gear_Run);
     TaskType_SetHandler2(gGearType, 2, MAGICOBJ_DELETE);
@@ -99,7 +99,7 @@ void Gear_Init(void)
 HOOK(0x435870, Gear_Init);
 
 /* retracts once the gear is up and the hatch has opened */
-void Gear_Run(Part *o)
+void Gear_Run(PlanePart *o)
 {
     Plane *pl = o->owner;
     long double full = ((GearDef *)o->def)->angle * kDegToRad;
@@ -117,7 +117,7 @@ void Gear_Run(Part *o)
 }
 HOOK(0x435930, Gear_Run);
 
-void Gear_Move(Part *o, PartMoveArg *a)
+void Gear_Move(PlanePart *o, PartMoveArg *a)
 {
     PlanePart_Place(o, a, 0);
     Gear_SetMatrix(o, a->matrix);

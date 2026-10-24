@@ -12,6 +12,7 @@
 #include "win/wintypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "weapon/weapontypes.h"
+#include "statgun/statguntypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -53,24 +54,6 @@ typedef struct Human {
     char unk4D8[0x14];
     HumanView *view;        /* 0x4EC */
 } Human;
-
-/* what a weapon task gets each frame from its user (event 0x460BF0) */
-typedef struct WeaponUseMsg {
-    char fire;
-    char shot;
-    char unk2[2];
-    double *eye;
-    Matrix *view;
-    float *vel;
-    int unk10;
-    int active;
-    int alt;
-    int zoomed;
-    float recoilPitch;
-    float recoilYaw;
-    int unk28;
-    Human *h;
-} WeaponUseMsg;
 
 /* the weapon config message: parameters of the weapon's config task */
 typedef struct WeaponConfigMsg {
@@ -184,7 +167,6 @@ _Static_assert(offsetof(WeaponInfo, data) == 0x6E4, "WeaponInfo");
 _Static_assert(offsetof(HumanView, fov) == 0x1E4, "HumanView");
 _Static_assert(offsetof(Human, input) == 0x1B0, "Human");
 _Static_assert(offsetof(Human, view) == 0x4EC, "Human");
-_Static_assert(offsetof(WeaponUseMsg, h) == 0x2C, "WeaponUseMsg");
 _Static_assert(offsetof(Gun, id) == 0x104, "Gun");
 _Static_assert(offsetof(Gun, rounds) == 0x144, "Gun");
 _Static_assert(offsetof(Gun, dir) == 0x168, "Gun");

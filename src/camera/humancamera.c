@@ -9,16 +9,6 @@
 
 FN_EXTERN(HumanCamera_DeleteHandler);
 
-/* filled by the human's camera info handler */
-typedef struct HumanCameraInfo {
-    Vec3d pos;
-    Matrix matrix;
-    float fov;
-    Matrix body;
-    float unk6C;
-    int mode;
-} HumanCameraInfo;
-
 enum {
     CAM_FIRST_PERSON = 1,
     CAM_THIRD_PERSON,
@@ -27,38 +17,10 @@ enum {
     CAM_DEATH,
 };
 
-/* "HumanCamera" task (0x128 bytes): the camera that follows a human */
-typedef struct HumanCamera {
-    Task task;
-    Vec3d pos;
-    Matrix matrix;
-    float fov;
-    void *camera;
-    Task **ref;
-    int unk6C;
-    HumanCameraInfo info;
-    int prevMode;
-    int unkEC;
-    Vec3d look;
-    float pitch;
-    float yaw;
-    float dist;
-    float target;
-    int index;
-    int savedIndex;
-    Task **savedRef;
-    unsigned flags;
-} HumanCamera;
-
 typedef struct Profile {
     char unk0[0x538];
     int invertMouse;
 } Profile;
-
-_Static_assert(offsetof(HumanCameraInfo, mode) == 0x70, "HumanCameraInfo.mode");
-_Static_assert(offsetof(HumanCamera, info) == 0x70, "HumanCamera.info");
-_Static_assert(offsetof(HumanCamera, look) == 0xF0, "HumanCamera.look");
-_Static_assert(sizeof(HumanCamera) == 0x128, "HumanCamera");
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));

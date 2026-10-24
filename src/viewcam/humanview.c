@@ -18,7 +18,7 @@ FN_EXTERN(Task_FalseHandler);
 /* where sounds are heard from */
 typedef struct SoundEar {
     double *pos;
-    Rot *rot;
+    Matrix *rot;
     int unk8;
 } SoundEar;
 
@@ -44,8 +44,8 @@ ORIG(0x4B0DB0, char, Mem_GetMode, (void));
 ORIG(0x4B3100, void, Vec3d_Normalize, (double *v));
 ORIG(0x4B3130, long double, Vec3d_Length, (const double *v));
 ORIG(0x4B3320, char, Vec3d_IsZero, (const double *v));
-ORIG(0x4B38E0, void, Matrix_SetEuler, (Rot *m, float ax, float ay, float az));
-ORIG(0x4B3B60, void, Matrix_SetRotX, (Rot *m, float a));
+ORIG(0x4B38E0, void, Matrix_SetEuler, (Matrix *m, float ax, float ay, float az));
+ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
 ORIG(0x4B4770, long double, Random_Float, (void *rng));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, double *pos, float radius));
@@ -60,7 +60,7 @@ ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4CEC10, void *, VirModel_Find, (const char *name));
 ORIG(0x4D2FB0, void, BoneObj_GetRootMotion, (float *out, float *unk, void *anim));
 ORIG(0x4D3210, void, BoneObj_GetEvents, (int *out, void *anim));
-ORIG(0x4D38C0, void, BoneObj_Update, (Rot *m, void *anim));
+ORIG(0x4D38C0, void, BoneObj_Update, (Matrix *m, void *anim));
 ORIG(0x4D6110, void, Anim_PlayNow, (void *anim, int a, int b, int c));
 ORIG(0x4D9610, uint16_t, BoneDynCubeObj_GetType, (void));
 ORIG(0x4D9620, void, BoneDynCubeObj_Init, (void *world, void *obj, int a, void *model));
@@ -69,7 +69,7 @@ ORIG(0x4E6610, uint8_t, Sound_GetInfoEvent, (void));
 ORIG(0x4E81F0, char *, Viewport_GetCurrentCamera, (void));
 ORIG(0x4EC0E0, void, AnimTrigger_Fire, (int bone, void *obj, double *pos));
 ORIG(0x4F2060, Task *, WeaponSlots_Get, (Task **slots, int i));
-ORIG(0x4F2310, void, Weapon_Move, (Task *w, double *pos, Rot *m));
+ORIG(0x4F2310, void, Weapon_Move, (Task *w, double *pos, Matrix *m));
 
 extern uint16_t gHumanViewType;
 extern int gHumanMaskType;
@@ -155,7 +155,7 @@ typedef struct WeaponPlace {
     int firstPerson;
     int unk4;
     double pos[3];
-    Rot rot;
+    Matrix rot;
 } WeaponPlace;
 
 /* camera of the player being shown: also moves the held weapon */
@@ -555,7 +555,7 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
         double pos[3];
         long double x;
         float y, zz;
-        Rot m, rot;
+        Matrix m, rot;
 
         Matrix_SetEuler(&m, v->weaponPitch, 0.0f, v->weaponYaw);
         if (v->zoomed)
@@ -569,7 +569,7 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
         rot.m[6] = (m.m[6] * c[8] + m.m[0] * c[6]) + m.m[3] * c[7];
         rot.m[7] = (m.m[7] * c[8] + m.m[1] * c[6]) + m.m[4] * c[7];
         rot.m[8] = (m.m[8] * c[8] + m.m[2] * c[6]) + m.m[5] * c[7];
-        rot.serial = v->cam.serial + m.serial + 1;
+        rot.count = v->cam.count + m.count + 1;
         v->rotDirty = 1;
         v->rot = rot;
         BoneObj_GetRootMotion(v->weaponPos, v->unk1FC, v->anim);
@@ -653,7 +653,7 @@ void Human_GetEyePos(double *out, Human *h)
 }
 HOOK(0x465820, Human_GetEyePos);
 
-void HumanView_GetMatrix(Rot *out, HumanView *v)
+void HumanView_GetMatrix(Matrix *out, HumanView *v)
 {
     *out = v->cam;
 }
@@ -667,7 +667,7 @@ void HumanView_GetForward(float *out, HumanView *v)
 }
 HOOK(0x4658A0, HumanView_GetForward);
 
-void HumanView_SetCamera(HumanView *v, const double *pos, const Rot *rot)
+void HumanView_SetCamera(HumanView *v, const double *pos, const Matrix *rot)
 {
     v->camOverride = 1;
     memcpy(v->camPos, pos, sizeof(v->camPos));

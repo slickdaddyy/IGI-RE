@@ -62,7 +62,7 @@ typedef struct GearDef {
 } GearDef;
 
 /* CockpitShield, Gear, Hatch and Rudder (0x140 bytes) */
-typedef struct Part {
+typedef struct PlanePart {
     Task task;
     Vec3d pos;
     char unk38[0x34];
@@ -76,13 +76,13 @@ typedef struct Part {
     int unk134;
     void *def;          /* 0x138 */
     float angle;        /* 0x13C */
-} Part;
+} PlanePart;
 
 _Static_assert(offsetof(Plane, sound_params) == 0x828, "sound_params");
 _Static_assert(sizeof(Plane) == 0x888, "Plane");
 _Static_assert(sizeof(GearDef) == 0x14, "GearDef");
-_Static_assert(offsetof(Part, offset) == 0xF0, "offset");
-_Static_assert(sizeof(Part) == 0x140, "Part");
+_Static_assert(offsetof(PlanePart, offset) == 0xF0, "offset");
+_Static_assert(sizeof(PlanePart) == 0x140, "PlanePart");
 
 typedef void (*TaskFn1)(void *task);
 typedef void (*TaskFn2)(void *task, void *arg);
@@ -164,11 +164,11 @@ static inline signed char part_state(long double full, float angle)
 }
 
 /* the common part of the part create handlers, in part.c */
-void PlanePart_Init(Part *o, MagicCreateArg *arg);
-float PlanePart_Radius(Part *o);
+void PlanePart_Init(PlanePart *o, MagicCreateArg *arg);
+float PlanePart_Radius(PlanePart *o);
 /* the position of a part: offset turned by the owner matrix plus the owner position;
    the x sum is kept unrounded when keep_x */
-void PlanePart_Place(Part *o, PartMoveArg *a, int keep_x);
-void CockpitShield_SetMatrix(Part *o, Matrix *parent);
+void PlanePart_Place(PlanePart *o, PartMoveArg *a, int keep_x);
+void CockpitShield_SetMatrix(PlanePart *o, Matrix *parent);
 
 #endif

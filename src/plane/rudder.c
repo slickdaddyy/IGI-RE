@@ -43,17 +43,17 @@ static inline long double x87_neg(long double x)
     return x;
 }
 
-void Rudder_Create(Part *o, MagicCreateArg *arg)
+void Rudder_Create(PlanePart *o, MagicCreateArg *arg)
 {
     PlanePart_Init(o, arg);
 }
 HOOK(0x4360C0, Rudder_Create);
 
-void Rudder_Move(Part *o, PartMoveArg *a);
+void Rudder_Move(PlanePart *o, PartMoveArg *a);
 
 void Rudder_Init(void)
 {
-    gRudderType = TaskType_New("Rudder", sizeof(Part), MagicObj_GetType(), 0);
+    gRudderType = TaskType_New("Rudder", sizeof(PlanePart), MagicObj_GetType(), 0);
     TaskType_SetHandler(gRudderType, 0, Rudder_Create);
     TaskType_SetHandler2(gRudderType, 1, TASK_RUN_CHILDREN);
     TaskType_SetHandler2(gRudderType, 2, MAGICOBJ_DELETE);
@@ -70,7 +70,7 @@ HOOK(0x4361D0, Rudder_Init);
 
 /* follows the owner and turns by the plane's control inputs, then
    matrix = parent * local * RotX(angle) */
-void Rudder_Move(Part *o, PartMoveArg *a)
+void Rudder_Move(PlanePart *o, PartMoveArg *a)
 {
     VehicleConfig *cfg = ((Plane *)a->owner)->v.phys->data;
     RudderDef *def;

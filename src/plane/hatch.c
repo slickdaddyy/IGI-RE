@@ -25,7 +25,7 @@ extern uint16_t gHatchType;
 extern float kHatchKeep;    /* 0.97 */
 extern float kHatchBlend;   /* 0.03 */
 
-void Hatch_Create(Part *o, MagicCreateArg *arg)
+void Hatch_Create(PlanePart *o, MagicCreateArg *arg)
 {
     float *def;
 
@@ -36,13 +36,13 @@ void Hatch_Create(Part *o, MagicCreateArg *arg)
 }
 HOOK(0x435C50, Hatch_Create);
 
-void Hatch_Run(Part *o);
-void Hatch_Move(Part *o, PartMoveArg *a);
+void Hatch_Run(PlanePart *o);
+void Hatch_Move(PlanePart *o, PartMoveArg *a);
 void Hatch_ParseDef(void *unused, DefParseArg *a);
 
 void Hatch_Init(void)
 {
-    gHatchType = TaskType_New("Hatch", sizeof(Part), MagicObj_GetType(), 0);
+    gHatchType = TaskType_New("Hatch", sizeof(PlanePart), MagicObj_GetType(), 0);
     TaskType_SetHandler(gHatchType, 0, Hatch_Create);
     TaskType_SetHandler2(gHatchType, 1, Hatch_Run);
     TaskType_SetHandler2(gHatchType, 2, MAGICOBJ_DELETE);
@@ -54,7 +54,7 @@ void Hatch_Init(void)
 HOOK(0x435D90, Hatch_Init);
 
 /* opens while the gear is down and out, else closes */
-void Hatch_Run(Part *o)
+void Hatch_Run(PlanePart *o)
 {
     Plane *pl = o->owner;
     long double full = *(float *)o->def * kDegToRad;
@@ -67,7 +67,7 @@ void Hatch_Run(Part *o)
 }
 HOOK(0x435E50, Hatch_Run);
 
-void Hatch_Move(Part *o, PartMoveArg *a)
+void Hatch_Move(PlanePart *o, PartMoveArg *a)
 {
     PlanePart_Place(o, a, 1);
     CockpitShield_SetMatrix(o, a->matrix);

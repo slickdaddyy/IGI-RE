@@ -9,6 +9,7 @@
 #include "coll/colltypes.h"
 #include "humanai/humanaitypes.h"
 #include "soldier/soldiertypes.h"
+#include "camera/cameratypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
@@ -38,7 +39,7 @@ typedef struct HumanView {
     float camMatrix[10];
     char unk180[0x64];
     float fov;
-    int unk1E8;
+    float unk1E8;
 } HumanView;
 
 typedef struct HumanPath {
@@ -262,15 +263,6 @@ typedef struct CollLineMsg {
     char unk9[3];
     char *result;
 } CollLineMsg;
-
-typedef struct HumanCameraInfo {
-    double pos[3];
-    float matrix[10];
-    float fov;
-    float bodyMatrix[10];
-    int unk6C;
-    int mode;
-} HumanCameraInfo;
 
 void Human_WakeIfVisible(Human *h);
 void Human_Wake(Human *h);

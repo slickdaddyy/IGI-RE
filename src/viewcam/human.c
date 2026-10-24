@@ -11,6 +11,7 @@
 #include "coll/colltypes.h"
 #include "material/materialtypes.h"
 #include "humanai/humanaitypes.h"
+#include "statgun/statguntypes.h"
 
 FN_EXTERN(crt_CIpow);
 
@@ -19,26 +20,8 @@ typedef struct Platform {
     Task task;
     double pos[3];
     char unk38[0x38];
-    Rot rot;
+    Matrix rot;
 } Platform;
-
-/* what the weapon task gets when the human uses it */
-typedef struct WeaponUseMsg {
-    char fire;
-    char shot;
-    char unk2[2];
-    double *eye;
-    Rot *view;
-    float *vel;
-    int unk10;
-    int unk4D0;
-    int unk4D2;
-    int zoomed;
-    float recoilPitch;
-    float recoilYaw;
-    int unk4D4;
-    Human *h;
-} WeaponUseMsg;
 
 /* sent to every task in the game's first task list */
 typedef struct HumanPosMsg {
@@ -88,13 +71,13 @@ ORIG(0x462390, void, Human_ProbeGround, (Human *h, double *pos, double *to, floa
 ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B3130, long double, Vec3d_Length, (const double *v));
-ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Rot *m, float a));
+ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Matrix *m, float a));
 ORIG(0x4B4770, long double, Random_Float, (void *rng));
 ORIG(0x4B47C0, unsigned, Random_Int, (void *rng, unsigned n));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, double *pos, float radius));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, double *from, double *to, int count, uint8_t event,
                                   void *filter, unsigned flags));
-ORIG(0x4D38C0, void, BoneObj_Update, (Rot *m, void *anim));
+ORIG(0x4D38C0, void, BoneObj_Update, (Matrix *m, void *anim));
 ORIG(0x4D64C0, int, Anim_GetId, (void *anim, int track));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (Task *sound));
@@ -221,7 +204,7 @@ void Human_UpdateWeapon(Human *h)
     Task *w;
     double eye[3];
     float vel[3];
-    Rot cam;
+    Matrix cam;
 
     h->shot = 0;
     w = WeaponSlots_Get(h->weapons, 0);
@@ -253,8 +236,8 @@ void Human_UpdateWeapon(Human *h)
     msg.fire = h->fire;
     msg.eye = eye;
     msg.view = &cam;
-    msg.unk4D0 = h->unk4D0;
-    msg.unk4D2 = h->unk4D2;
+    msg.active = h->unk4D0;
+    msg.alt = h->unk4D2;
     msg.vel = vel;
     msg.zoomed = v->zoomed;
     msg.shot = 0;
@@ -262,7 +245,7 @@ void Human_UpdateWeapon(Human *h)
     msg.recoilPitch = 0.0f;
     msg.recoilYaw = 0.0f;
     msg.h = h;
-    msg.unk4D4 = h->unk4D4;
+    msg.unk28 = h->unk4D4;
     gTaskHandlers[Human_GetEvent0()][w->type](w, &msg);
     h->fire = 0;
     h->unk4D2 = 0;
@@ -393,7 +376,7 @@ void Human_SetPlatform(Human *h, Task *t)
     const float *m = h->rot.m;
     long double dx, dy, dz;
     double l[3];
-    Rot rel;
+    Matrix rel;
 
     h->platform = t;
     dx = (long double)h->pos[0] - p->pos[0];
@@ -412,7 +395,7 @@ void Human_SetPlatform(Human *h, Task *t)
     rel.m[6] = (r[1] * m[7] + r[2] * m[8]) + r[0] * m[6];
     rel.m[7] = (r[4] * m[7] + r[5] * m[8]) + r[3] * m[6];
     rel.m[8] = (r[7] * m[7] + r[8] * m[8]) + r[6] * m[6];
-    rel.serial = h->rot.serial + 1 + p->rot.serial;
+    rel.count = h->rot.count + 1 + p->rot.count;
     h->platformRot = rel;
     Human_HideShadow(h);
 }

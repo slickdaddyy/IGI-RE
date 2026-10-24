@@ -601,15 +601,15 @@ void Human_GetHumanCameraInfoHandler(Human *h, HumanCameraInfo *info)
 {
     HumanView *v = h->view;
 
-    HumanView_GetEye(info->pos, v);
-    HumanView_GetMatrix(info->matrix, h->view);
+    HumanView_GetEye(&info->pos.x, v);
+    HumanView_GetMatrix(info->matrix.m, h->view);
     info->fov = v->fov;
-    memcpy(info->bodyMatrix, h->matrix, sizeof(info->bodyMatrix));
+    memcpy(&info->body, h->matrix, sizeof(info->body));
     info->unk6C = v->unk1E8;
     info->mode = h->camMode;
     if (v->camOverride) {
-        memcpy(info->pos, v->camPos, sizeof(info->pos));
-        memcpy(info->matrix, v->camMatrix, sizeof(info->matrix));
+        memcpy(&info->pos, v->camPos, sizeof(info->pos));
+        memcpy(&info->matrix, v->camMatrix, sizeof(info->matrix));
         info->mode = 4;
     }
     if (!is_zero(h->input[19]) && is_zero(h->prevInput[19]))

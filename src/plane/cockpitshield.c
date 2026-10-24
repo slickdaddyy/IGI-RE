@@ -25,9 +25,9 @@ ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
 
 extern uint16_t gCockpitShieldType;
 
-void CockpitShield_SetMatrix(Part *o, Matrix *parent);
+void CockpitShield_SetMatrix(PlanePart *o, Matrix *parent);
 
-void CockpitShield_Create(Part *o, MagicCreateArg *arg)
+void CockpitShield_Create(PlanePart *o, MagicCreateArg *arg)
 {
     float *def;
 
@@ -39,7 +39,7 @@ void CockpitShield_Create(Part *o, MagicCreateArg *arg)
 HOOK(0x434E10, CockpitShield_Create);
 
 /* matrix = parent * local * RotX(angle); three sums stay unrounded */
-void CockpitShield_SetMatrix(Part *o, Matrix *parent)
+void CockpitShield_SetMatrix(PlanePart *o, Matrix *parent)
 {
     const float *l = o->local.m, *p = parent->m;
     const float *r;
@@ -74,12 +74,12 @@ void CockpitShield_SetMatrix(Part *o, Matrix *parent)
 }
 HOOK(0x434F50, CockpitShield_SetMatrix);
 
-void CockpitShield_Run(Part *o);
-void CockpitShield_Move(Part *o, PartMoveArg *a);
+void CockpitShield_Run(PlanePart *o);
+void CockpitShield_Move(PlanePart *o, PartMoveArg *a);
 
 void CockpitShield_Init(void)
 {
-    gCockpitShieldType = TaskType_New("CockpitShield", sizeof(Part), MagicObj_GetType(), 0);
+    gCockpitShieldType = TaskType_New("CockpitShield", sizeof(PlanePart), MagicObj_GetType(), 0);
     TaskType_SetHandler(gCockpitShieldType, 0, CockpitShield_Create);
     TaskType_SetHandler2(gCockpitShieldType, 1, CockpitShield_Run);
     TaskType_SetHandler2(gCockpitShieldType, 2, MAGICOBJ_DELETE);
@@ -91,7 +91,7 @@ void CockpitShield_Init(void)
 HOOK(0x4351E0, CockpitShield_Init);
 
 /* opens towards the def angle while the canopy is open, else closes */
-void CockpitShield_Run(Part *o)
+void CockpitShield_Run(PlanePart *o)
 {
     long double target = o->owner->cockpit ? *(float *)o->def * kDegToRad : kZero;
 
@@ -100,7 +100,7 @@ void CockpitShield_Run(Part *o)
 }
 HOOK(0x4352A0, CockpitShield_Run);
 
-void CockpitShield_Move(Part *o, PartMoveArg *a)
+void CockpitShield_Move(PlanePart *o, PartMoveArg *a)
 {
     PlanePart_Place(o, a, 0);
     CockpitShield_SetMatrix(o, a->matrix);

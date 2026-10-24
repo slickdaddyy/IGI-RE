@@ -33,4 +33,21 @@ typedef struct StatGun {
 } StatGun;
 _Static_assert(sizeof(StatGun) == 0x220, "StatGun");
 
+typedef struct WeaponUseMsg {
+    char fire;
+    char shot;
+    char unk2[2];
+    double *eye;
+    Matrix *view;
+    float *vel;
+    int unk10;
+    int active;
+    int alt;
+    int zoomed;
+    float recoilPitch;
+    float recoilYaw;
+    int unk28;
+    struct Human *h;
+} WeaponUseMsg;
+
 #endif

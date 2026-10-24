@@ -34,7 +34,7 @@ enum {
 };
 
 /* An object the player can attach to (ladder, wire...): position and matrix. */
-typedef struct HumanAttach {
+typedef struct ClimbObj {
     char unk00[0x20];
     Vec3d pos;
     char unk38[0x38];
@@ -43,7 +43,7 @@ typedef struct HumanAttach {
     char unk130;
     char unk131[7];
     int steps;
-} HumanAttach;
+} ClimbObj;
 
 typedef struct HumanView {
     char unk00[0x68];
@@ -128,7 +128,7 @@ _Static_assert(__builtin_offsetof(HumanPlayer, damage.hitZone) == 0x2E8, "hitZon
 _Static_assert(__builtin_offsetof(HumanPlayer, weapons) == 0x4C4, "weapons");
 _Static_assert(__builtin_offsetof(HumanPlayer, vel) == 0x664, "vel");
 _Static_assert(__builtin_offsetof(HumanPlayer, ladderTop) == 0xD7C, "ladderTop");
-_Static_assert(__builtin_offsetof(HumanAttach, steps) == 0x138, "HumanAttach");
+_Static_assert(__builtin_offsetof(ClimbObj, steps) == 0x138, "ClimbObj");
 _Static_assert(__builtin_offsetof(HumanView, matrix) == 0xF8, "HumanView");
 
 #endif

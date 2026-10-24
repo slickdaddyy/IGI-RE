@@ -7,24 +7,6 @@
 #include "coll/colltypes.h"
 #include "camera/cameratypes.h"
 
-/* the end of the "HumanCamera" task (the rest is in src/camera) */
-typedef struct HumanCamera {
-    Task task;
-    Vec3d pos;
-    Matrix matrix;
-    float fov;
-    void *camera;
-    Task **ref;
-    char unk6C[0x118 - 0x6C];
-    int index;
-    int savedIndex;
-    Task **savedRef;
-    unsigned flags;
-} HumanCamera;
-
-_Static_assert(offsetof(HumanCamera, index) == 0x118, "HumanCamera.index");
-_Static_assert(sizeof(HumanCamera) == 0x128, "HumanCamera");
-
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
 ORIG(0x483100, void, HumanCamera_LookAt, (Matrix *out, const Vec3d *from, const Vec3d *to));
 ORIG(0x4B3130, long double, Vec3d_Length, (const Vec3d *v));

@@ -548,7 +548,7 @@ void Plane_CheckWheels(Plane *p)
     if (!g)
         return;
     while (n < 4) {
-        Part *gear = (Part *)g;
+        PlanePart *gear = (PlanePart *)g;
         Vec3d *s = &starts[n];
         float *pt = pts[n];
         double z;

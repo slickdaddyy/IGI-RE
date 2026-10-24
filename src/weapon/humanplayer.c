@@ -20,15 +20,15 @@ ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
 ORIG(0x406220, int *, Profile_GetActive, (void));
 ORIG(0x40C140, void, HumanPlayer_SetFlagD44, (HumanPlayer *h));
 ORIG(0x40C2D0, void, HumanPlayer_ClearFlagD44, (HumanPlayer *h));
-ORIG(0x414E20, void, Model_GetPoint, (double *out, HumanAttach *obj, int i));
-ORIG(0x414ED0, void, Model_GetLocalPoint, (float *out, HumanAttach *obj, int i));
+ORIG(0x414E20, void, Model_GetPoint, (double *out, ClimbObj *obj, int i));
+ORIG(0x414ED0, void, Model_GetLocalPoint, (float *out, ClimbObj *obj, int i));
 ORIG(0x416850, char, Game_GetEvent8, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416C90, long double, Game_BlastFalloff, (void *blast, HumanPlayer *h, Vec3d *pos, float radius, int unk));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x416D40, char *, Game_Get, (void));
 ORIG(0x416D80, char, PlayerXPHit, (void));
-ORIG(0x43F820, void, Wire_GetMatrix, (float *m, HumanAttach *obj));
+ORIG(0x43F820, void, Wire_GetMatrix, (float *m, ClimbObj *obj));
 ORIG(0x450CE0, void, HumanAI_Broadcast, (void *noise));
 ORIG(0x45E060, void, HumanPlayerInput_ReadChannels, (int unk, int unk2));
 ORIG(0x460BE0, uint16_t, Human_GetType, (void));
@@ -45,7 +45,7 @@ ORIG(0x463600, void, Human_UnfreezeView, (HumanPlayer *h));
 ORIG(0x463610, void, Human_BeginUse, (HumanPlayer *h));
 ORIG(0x463620, void, Human_EndUse, (HumanPlayer *h));
 ORIG(0x4636A0, void, Human_SetClimbObject, (HumanPlayer *h, int a));
-ORIG(0x4636E0, HumanAttach *, Human_GetClimbObject, (HumanPlayer *h));
+ORIG(0x4636E0, ClimbObj *, Human_GetClimbObject, (HumanPlayer *h));
 ORIG(0x463760, void, HumanViewCam, (HumanPlayer *h, int mode));
 ORIG(0x4637C0, void, Human_SayTimed, (HumanPlayer *h, const char *sound, int count));
 ORIG(0x463AD0, void, Human_Bleed, (HumanPlayer *h, float *dir, int unk));
@@ -278,7 +278,7 @@ static void Attach_Begin(HumanPlayer *h)
 /* starts or ends climbing the attached ladder, from the bottom or the top */
 void HumanPlayer_UpdateLadder(HumanPlayer *h)
 {
-    HumanAttach *obj = Human_GetClimbObject(h);
+    ClimbObj *obj = Human_GetClimbObject(h);
     const float *m = obj->matrix;
     float ax, ay, az;
     double v[3], b, c;
@@ -348,7 +348,7 @@ HOOK(0x4113E0, HumanPlayer_UpdateLadder);
 /* attach for state 41; while attached it keeps sending a noise */
 void HumanPlayer_UpdateFenceClimb(HumanPlayer *h)
 {
-    HumanAttach *obj = Human_GetClimbObject(h);
+    ClimbObj *obj = Human_GetClimbObject(h);
     const float *m = obj->matrix;
     long double dx, dy, dz;
     double lx, ly, k, v[3];
@@ -422,7 +422,7 @@ void HumanPlayer_UpdateFenceClimb(HumanPlayer *h)
 HOOK(0x411770, HumanPlayer_UpdateFenceClimb);
 
 /* lateral position of the player along the wire, in the wire's frame */
-static long double Wire_Side(HumanPlayer *h, HumanAttach *obj, const float *m)
+static long double Wire_Side(HumanPlayer *h, ClimbObj *obj, const float *m)
 {
     long double dx = h->pos.x - obj->pos.x;
     long double dy = h->pos.y - obj->pos.y;
@@ -432,7 +432,7 @@ static long double Wire_Side(HumanPlayer *h, HumanAttach *obj, const float *m)
 }
 
 /* true when y is past one of the ends of the wire */
-static int Wire_Off(HumanAttach *obj, double y)
+static int Wire_Off(ClimbObj *obj, double y)
 {
     float e0[3], e1[3];
 
@@ -460,7 +460,7 @@ static void Wire_Detach(HumanPlayer *h)
     HumanPlayer_ClearFlagD44(h);
 }
 
-static void Wire_Done(HumanPlayer *h, HumanAttach *obj)
+static void Wire_Done(HumanPlayer *h, ClimbObj *obj)
 {
     Human_ShowShadow(h);
     obj->unk130 = 0;
@@ -470,7 +470,7 @@ static void Wire_Done(HumanPlayer *h, HumanAttach *obj)
 /* hand over hand along a wire */
 void HumanPlayer_UpdateWire(HumanPlayer *h)
 {
-    HumanAttach *obj = Human_GetClimbObject(h);
+    ClimbObj *obj = Human_GetClimbObject(h);
     float m[10], e0[3], e1[3], ax, ay, yaw;
     double side, y, v[3];
 
@@ -523,7 +523,7 @@ HOOK(0x411AE0, HumanPlayer_UpdateWire);
 
 void HumanPlayer_UpdateZipline(HumanPlayer *h)
 {
-    HumanAttach *obj = Human_GetClimbObject(h);
+    ClimbObj *obj = Human_GetClimbObject(h);
     float m[10], e0[3], e1[3], ax, ay, yaw;
     double side, a[3], b[3], d[3], v[3];
     long double y;

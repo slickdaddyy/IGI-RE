@@ -16,11 +16,6 @@ typedef void (*TaskHandler)(void *task, void *arg);
 extern TaskHandler gTaskHandlers[][0x180];
 
 /* rotation plus a serial number that changes with it */
-typedef struct Rot {
-    float m[9];
-    int serial;
-} Rot;
-
 typedef struct WeaponInfo {
     VPAD(0x0, 0x610);
     int kind;
@@ -37,7 +32,7 @@ typedef struct Human {
     double pos[3];
     VPAD(0x38, 0x68);
     char anim[0x10];
-    Rot rot;
+    Matrix rot;
     float radius;
     VPAD(0xA4, 0xFC);
     int team;
@@ -93,7 +88,7 @@ typedef struct Human {
     Task **groundRef;
     Task *platform;
     double platformPos[3];
-    Rot platformRot;
+    Matrix platformRot;
     Task **attachedRef;
     Task **climbRef;
     char unk7B8;
@@ -121,7 +116,7 @@ struct HumanView {
     double pos[3];
     VPAD(0x38, 0x68);
     char anim[0x10];
-    Rot rot;
+    Matrix rot;
     float radius;
     VPAD(0xA4, 0xD4);
     int unkD4;
@@ -130,7 +125,7 @@ struct HumanView {
     char rotDirty;
     VPAD(0xDB, 0xE0);
     double eye[3];
-    Rot cam;
+    Matrix cam;
     float pitch;
     float pitchInput;
     float recoilPitch;
@@ -142,7 +137,7 @@ struct HumanView {
     char camOverride;
     VPAD(0x13B, 0x140);
     double camPos[3];
-    Rot camRot;
+    Matrix camRot;
     double target[3];
     char hasTarget;
     VPAD(0x199, 0x19C);
@@ -232,7 +227,7 @@ static inline long double x87_sqrt(long double x)
 void Human_SetPosition(Human *h, double *pos);
 void HumanView_UpdatePosition(HumanView *v);
 void HumanView_GetEye(double *out, HumanView *v);
-void HumanView_GetMatrix(Rot *out, HumanView *v);
+void HumanView_GetMatrix(Matrix *out, HumanView *v);
 void HumanView_ClearAngles(HumanView *v);
 void HumanView_ClearWeaponAngles(HumanView *v);
 void HumanView_AddToWorld(HumanView *v);

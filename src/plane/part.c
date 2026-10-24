@@ -12,14 +12,14 @@ ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float rad
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 
-float PlanePart_Radius(Part *o)
+float PlanePart_Radius(PlanePart *o)
 {
     float s = max_scale(o->scale);
 
     return VirModel_GetRadius(o->model) * s;
 }
 
-void PlanePart_Init(Part *o, MagicCreateArg *arg)
+void PlanePart_Init(PlanePart *o, MagicCreateArg *arg)
 {
     void **model = VirModel_Find(arg->model);
     float radius;
@@ -39,7 +39,7 @@ void PlanePart_Init(Part *o, MagicCreateArg *arg)
     o->def = arg->data;
 }
 
-void PlanePart_Place(Part *o, PartMoveArg *a, int keep_x)
+void PlanePart_Place(PlanePart *o, PartMoveArg *a, int keep_x)
 {
     const float *m = a->matrix->m;
     long double x = m[2] * o->offset.z + m[1] * o->offset.y + m[0] * o->offset.x;
