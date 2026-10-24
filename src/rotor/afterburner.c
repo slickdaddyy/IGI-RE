@@ -60,7 +60,7 @@ static float part_radius(Part *o)
     return (float)(VirModel_GetRadius(o->obj.model) * s);
 }
 
-void Afterburner_Create(Part *o, PartCreateArg *arg)
+void Afterburner_Create(Part *o, MagicCreateArg *arg)
 {
     void **model = VirModel_Find(arg->model);
 

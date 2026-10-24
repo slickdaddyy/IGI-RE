@@ -45,19 +45,6 @@ typedef struct Ladder {
 
 _Static_assert(sizeof(Ladder) == 0x140, "Ladder");
 
-/* the create argument of magic objects */
-typedef struct MagicCreateArg {
-    const char *model;
-    void *room;
-    Vec3d pos;          /* 0x08 */
-    char unk20[0x18];
-    Matrix matrix;      /* 0x38 */
-    char unk60[0x28];
-    void *unk88;
-} MagicCreateArg;
-
-_Static_assert(offsetof(MagicCreateArg, unk88) == 0x88, "MagicCreateArg");
-
 extern uint16_t gLadderType;
 
 extern float kClimbTime;    /* 6 */
@@ -88,13 +75,13 @@ void Ladder_Create(Ladder *l, MagicCreateArg *arg)
         for (;;)
             ;
     }
-    RigidDynCubeObj_Init(arg->room, l, model);
+    RigidDynCubeObj_Init(arg->world, l, model);
     scale = max_scale(&l->obj);
     radius = VirModel_GetRadius(l->obj.model) * scale;
-    DynCube_Add(arg->room, l, &arg->pos, radius, 1);
+    DynCube_Add(arg->world, l, &arg->pos, radius, 1);
     l->obj.matrix = arg->matrix;
-    l->unk130 = arg->unk88;
-    RigidDynCubeObj_CreateMagicObjs(l, l, arg->unk88);
+    l->unk130 = arg->owner;
+    RigidDynCubeObj_CreateMagicObjs(l, l, arg->owner);
     Model_GetLocalPoint(&p2, l, 2);
     Model_GetLocalPoint(&p3, l, 3);
     h = p2.z - p3.z;

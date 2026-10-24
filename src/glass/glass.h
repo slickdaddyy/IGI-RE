@@ -12,18 +12,6 @@
 
 typedef void (*TaskFn)();
 
-/* create argument of the RigidDynCubeObj kinds made by DefineMagicObj */
-typedef struct MagicArg {
-    const char *model;
-    int world;
-    Vec3d pos;          /* 0x08 */
-    Vec3d offset;       /* 0x20, from the owner */
-    Matrix matrix;      /* 0x38 */
-    Matrix local;       /* 0x60 */
-    void *owner;        /* 0x88 */
-    void *data;         /* 0x8C, the DefineMagicObj data block */
-} MagicArg;
-
 /* what a magic object keeps from its create argument, at 0xF0 */
 typedef struct MagicPart {
     char offset[0x18];  /* Vec3d, kept unaligned here */
@@ -47,7 +35,6 @@ typedef struct ParamEnum {
     char **names;
 } ParamEnum;
 
-_Static_assert(offsetof(MagicArg, data) == 0x8C, "MagicArg");
 _Static_assert(sizeof(MagicPart) == 0x4C, "MagicPart");
 _Static_assert(sizeof(ExplodeObj) == 0x238, "ExplodeObj");
 

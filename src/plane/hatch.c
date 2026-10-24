@@ -25,7 +25,7 @@ extern uint16_t gHatchType;
 extern float kHatchKeep;    /* 0.97 */
 extern float kHatchBlend;   /* 0.03 */
 
-void Hatch_Create(Part *o, PartCreateArg *arg)
+void Hatch_Create(Part *o, MagicCreateArg *arg)
 {
     float *def;
 

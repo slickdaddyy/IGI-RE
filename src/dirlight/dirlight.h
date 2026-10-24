@@ -9,20 +9,12 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "litmap/litmaptypes.h"
+#include "sector/sectortypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
 extern TaskHandler gTaskHandlers[];
 #define TASK_HANDLER(event, type) gTaskHandlers[(event) * 0x180 + (type)]
-
-/* a directional light from the level's light sources (0x28 bytes) */
-typedef struct Light {
-    Vec3f dir;
-    Vec3f color;
-    Vec3f ambient;
-    char unk24;
-    char on;
-} Light;
 
 typedef struct Dirlight {
     Task task;

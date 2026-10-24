@@ -57,7 +57,7 @@ static float radius(Wheel *w)
 
 void Wheel_ParseDef(void *unused, ParseArg *a);
 void Wheel_GetDefSize(void *unused, int *size);
-void Wheel_Create(Wheel *w, PartCreateArg *a);
+void Wheel_Create(Wheel *w, MagicCreateArg *a);
 void Wheel_Delete(Wheel *w);
 void Wheel_Run(Wheel *w);
 void Wheel_Move(Wheel *w, PartMoveArg *a);
@@ -116,7 +116,7 @@ void Wheel_Init(void)
 }
 HOOK(0x42FF00, Wheel_Init);
 
-void Wheel_Create(Wheel *w, PartCreateArg *a)
+void Wheel_Create(Wheel *w, MagicCreateArg *a)
 {
     void **model = VirModel_Find(a->model);
     Car *car;

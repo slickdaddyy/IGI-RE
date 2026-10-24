@@ -116,7 +116,7 @@ static void part_turn(VehiclePart *p, const Matrix *m)
     p->obj.matrix = c;
 }
 
-void CarDoor_Create(VehiclePart *p, PartCreateArg *arg);
+void CarDoor_Create(VehiclePart *p, MagicCreateArg *arg);
 void HeliDoor_Run(VehiclePart *p);
 void VehiclePart_Delete(VehiclePart *p);
 void CarDoor_Move(VehiclePart *p, PartMoveArg *arg);
@@ -139,7 +139,7 @@ void CarDoor_Init(void)
 }
 HOOK(0x426630, CarDoor_Init);
 
-void CarDoor_Create(VehiclePart *p, PartCreateArg *arg)
+void CarDoor_Create(VehiclePart *p, MagicCreateArg *arg)
 {
     void **model = VirModel_Find(arg->model);
 
@@ -153,7 +153,7 @@ void CarDoor_Create(VehiclePart *p, PartCreateArg *arg)
     RigidDynCubeObj_Init(arg->world, p, model);
     DynCube_Add(arg->world, p, &arg->pos, part_radius(p), 2);
     p->obj.matrix = arg->matrix;
-    p->params = arg->def;
+    p->params = arg->data;
     p->owner = arg->owner;
     p->open = 0;
     p->angle = 0;
@@ -243,7 +243,7 @@ void CarDoor_SetOpen(VehiclePart *p, char open)
 }
 HOOK(0x426D80, CarDoor_SetOpen);
 
-void HeliWheel_Create(VehiclePart *p, PartCreateArg *arg);
+void HeliWheel_Create(VehiclePart *p, MagicCreateArg *arg);
 void HeliWheel_Move(VehiclePart *p, PartMoveArg *arg);
 void HeliWheel_ParseArgs(void *task, PartScriptArg *a);
 void HitZone_GetArgSize(void *task, int *out);
@@ -263,7 +263,7 @@ void HeliWheel_Init(void)
 }
 HOOK(0x426D90, HeliWheel_Init);
 
-void HeliWheel_Create(VehiclePart *p, PartCreateArg *arg)
+void HeliWheel_Create(VehiclePart *p, MagicCreateArg *arg)
 {
     void **model = VirModel_Find(arg->model);
 
@@ -278,7 +278,7 @@ void HeliWheel_Create(VehiclePart *p, PartCreateArg *arg)
     DynCube_Add(arg->world, p, &arg->pos, part_radius(p), 2);
     p->obj.matrix = arg->matrix;
     p->owner = arg->owner;
-    p->params = arg->def;
+    p->params = arg->data;
 }
 HOOK(0x426E90, HeliWheel_Create);
 
@@ -421,7 +421,7 @@ uint16_t HeliDoor_GetType(void)
 }
 HOOK(0x427820, HeliDoor_GetType);
 
-void RocketPod_Create(VehiclePart *p, PartCreateArg *arg);
+void RocketPod_Create(VehiclePart *p, MagicCreateArg *arg);
 void RocketPod_Run(VehiclePart *p);
 void RocketPod_ParseArgs(void *task, PartScriptArg *a);
 void RocketPod_GetArgSize(void *task, int *out);
@@ -442,7 +442,7 @@ void RocketPod_Init(void)
 }
 HOOK(0x427830, RocketPod_Init);
 
-void RocketPod_Create(VehiclePart *p, PartCreateArg *arg)
+void RocketPod_Create(VehiclePart *p, MagicCreateArg *arg)
 {
     void **model = VirModel_Find(arg->model);
 
@@ -456,7 +456,7 @@ void RocketPod_Create(VehiclePart *p, PartCreateArg *arg)
     RigidDynCubeObj_Init(arg->world, p, model);
     DynCube_Add(arg->world, p, &arg->pos, part_radius(p), 2);
     p->obj.matrix = arg->matrix;
-    p->params = arg->def;
+    p->params = arg->data;
     p->owner = arg->owner;
     p->cooldown = Random_Int(Game_GetRandom(), *(int *)p->params);
 }

@@ -52,7 +52,7 @@ extern float k360;
 
 #define sub_4EFCD0 (FN(0x4EFCD0, ParamReal32x9_Size))
 
-void RadarDish_Create(RadarDish *r, MagicArg *arg);
+void RadarDish_Create(RadarDish *r, MagicCreateArg *arg);
 void RadarDish_Run(RadarDish *r);
 void RadarDish_Delete(RadarDish *r);
 void RadarDish_ParamsChanged(RadarDish *r, char *arg);
@@ -60,7 +60,7 @@ void RadarDish_ParseDef(Task *t, DefArg *arg);
 void RadarDish_Stop(RadarDish *r);
 void RadarDish_GetSoundSource(RadarDish *r, void **out);
 
-void RadarDish_Create(RadarDish *r, MagicArg *arg)
+void RadarDish_Create(RadarDish *r, MagicCreateArg *arg)
 {
     void **model = VirModel_Find(arg->model);
     RadarDishDef *def;
@@ -74,10 +74,10 @@ void RadarDish_Create(RadarDish *r, MagicArg *arg)
     }
     memcpy(r->m.offset, &arg->offset, sizeof(r->m.offset));
     r->m.local = arg->local;
-    RigidDynCubeObj_Init(arg->world, r, model);
+    RigidDynCubeObj_Init((int)arg->world, r, model);
     scale = obj_scale(&r->o);
     radius = VirModel_GetRadius(r->o.model) * scale;
-    DynCube_Add(arg->world, r, &arg->pos, radius, 2);
+    DynCube_Add((int)arg->world, r, &arg->pos, radius, 2);
     r->o.matrix = arg->matrix;
     r->base = arg->matrix;
     def = arg->data;

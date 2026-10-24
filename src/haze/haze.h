@@ -88,16 +88,6 @@ typedef struct MagicObj {
     int unk134;
 } MagicObj;
 
-typedef struct MagicCreateArg {
-    const char *model;
-    void *world;
-    Vec3d pos;
-    Vec3d offset;
-    Matrix matrix;
-    Matrix localMatrix;
-    int unk88;
-} MagicCreateArg;
-
 typedef struct MagicMoveArg {
     Vec3d *pos;
     Matrix *matrix;
@@ -132,7 +122,6 @@ _Static_assert(sizeof(Bone) == 0x84, "Bone");
 _Static_assert(sizeof(QObj) == 0x50, "QObj");
 _Static_assert(sizeof(BoneDynCubeObj) == 0xD8, "BoneDynCubeObj");
 _Static_assert(sizeof(MagicObj) == 0x138, "MagicObj");
-_Static_assert(offsetof(MagicCreateArg, unk88) == 0x88, "MagicCreateArg");
 _Static_assert(sizeof(Camera) == 0x60, "Camera");
 _Static_assert(sizeof(HazeLayer) == 0x90, "HazeLayer");
 

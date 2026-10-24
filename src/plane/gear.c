@@ -29,7 +29,7 @@ extern float kQuarterPi;
 void Gear_SetMatrix(Part *o, Matrix *parent);
 
 /* down at the def angle unless the gear is up */
-void Gear_Create(Part *o, PartCreateArg *arg)
+void Gear_Create(Part *o, MagicCreateArg *arg)
 {
     GearDef *def;
 

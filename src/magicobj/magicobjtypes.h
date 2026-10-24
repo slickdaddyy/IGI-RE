@@ -71,4 +71,17 @@ typedef struct MagicObjDef {
     void *data;
 } MagicObjDef;
 
+/* creates a magic object, or a part of a vehicle or object, at owner's place */
+typedef struct MagicCreateArg {
+    const char *model;
+    void *world;
+    Vec3d pos;
+    Vec3d offset;       /* from the owner */
+    Matrix matrix;
+    Matrix local;
+    void *owner;
+    void *data;         /* the DefineMagicObj data block */
+} MagicCreateArg;
+_Static_assert(sizeof(MagicCreateArg) == 0x90, "MagicCreateArg");
+
 #endif

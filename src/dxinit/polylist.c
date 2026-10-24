@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "dxinit/dxinit.h"
 #include "d3d/d3dtypes.h"
+#include "sector/sectortypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -43,14 +44,6 @@ _Static_assert(offsetof(PolyList, world) == 0x68, "world");
 _Static_assert(offsetof(PolyList, owner) == 0xB4, "owner");
 _Static_assert(sizeof(PolyList) == 0xB8, "PolyList");
 _Static_assert(sizeof(PolyTri) == 0x50, "PolyTri");
-
-/* the lights of the level */
-typedef struct Light {
-    Vec3f dir;
-    float r, g, b;
-    char unk18[0xD];
-    char on;
-} Light;
 
 typedef struct PrimArg {
     int unk0;
@@ -236,9 +229,9 @@ void PolyList_SetLightsCB(void)
         Light *l = Light_Get(i);
 
         light.dltType = D3DLIGHT_DIRECTIONAL;
-        light.dcvDiffuse.r = gNearPlaneScale * l->r;
-        light.dcvDiffuse.g = gNearPlaneScale * l->g;
-        light.dcvDiffuse.b = gNearPlaneScale * l->b;
+        light.dcvDiffuse.r = gNearPlaneScale * l->color.x;
+        light.dcvDiffuse.g = gNearPlaneScale * l->color.y;
+        light.dcvDiffuse.b = gNearPlaneScale * l->color.z;
         light.dvDirection.x = -l->dir.x;
         light.dvDirection.y = -l->dir.y;
         light.dvDirection.z = -l->dir.z;
@@ -319,9 +312,9 @@ void PolyList_Draw(void **msg)
             Light *l = Light_Get(i);
 
             if (l->on) {
-                r += l->r;
-                g += l->g;
-                b += l->b;
+                r += l->color.x;
+                g += l->color.y;
+                b += l->color.z;
             }
         }
         light[1] = g;

@@ -19,7 +19,7 @@ float PlanePart_Radius(Part *o)
     return VirModel_GetRadius(o->model) * s;
 }
 
-void PlanePart_Init(Part *o, PartCreateArg *arg)
+void PlanePart_Init(Part *o, MagicCreateArg *arg)
 {
     void **model = VirModel_Find(arg->model);
     float radius;
@@ -36,7 +36,7 @@ void PlanePart_Init(Part *o, PartCreateArg *arg)
     DynCube_Add(arg->world, o, &arg->pos, radius, 2);
     o->matrix = arg->matrix;
     o->owner = arg->owner;
-    o->def = arg->def;
+    o->def = arg->data;
 }
 
 void PlanePart_Place(Part *o, PartMoveArg *a, int keep_x)

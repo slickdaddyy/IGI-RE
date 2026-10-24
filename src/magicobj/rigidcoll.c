@@ -381,18 +381,6 @@ typedef struct MagicAttach {
     int unk40;
 } MagicAttach;
 
-/* create argument of a magic object (0x90 bytes) */
-typedef struct MagicCreateArg {
-    const char *model;
-    void *world;
-    double pos[3];
-    double offset[3];
-    Matrix matrix;
-    Matrix local;
-    void *owner;
-    void *data;
-} MagicCreateArg;
-
 static int vec_is_zero(const float *v)
 {
     return !(v[0] < kZero || v[0] > kZero) && !(v[1] < kZero || v[1] > kZero) && !(v[2] < kZero || v[2] > kZero);
@@ -426,15 +414,15 @@ void RigidDynCubeObj_CreateMagicObjs(void *parent, RigidDynCubeObj *o, void *own
         float c0, c1, e[3], f[3], *W, *E, *F, *R, *P;
         long double c2;
 
-        arg.offset[0] = att->pos[0];
-        arg.offset[1] = att->pos[1];
-        arg.offset[2] = att->pos[2];
+        arg.offset.x = att->pos[0];
+        arg.offset.y = att->pos[1];
+        arg.offset.z = att->pos[2];
         rx = M[1] * att->pos[1] + M[2] * att->pos[2] + M[0] * att->pos[0];
         ry = M[4] * att->pos[1] + M[5] * att->pos[2] + M[3] * att->pos[0];
         rz = M[8] * att->pos[2] + M[6] * att->pos[0] + M[7] * att->pos[1];
-        arg.pos[0] = rx + o->pos.x;
-        arg.pos[1] = ry + o->pos.y;
-        arg.pos[2] = rz + o->pos.z;
+        arg.pos.x = rx + o->pos.x;
+        arg.pos.y = ry + o->pos.y;
+        arg.pos.z = rz + o->pos.z;
 
         /* local frame from the first column of the attachment matrix */
         R = arg.local.m;

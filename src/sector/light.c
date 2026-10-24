@@ -25,15 +25,6 @@ typedef struct SpotLight {
     float cosHalf;
 } SpotLight;
 
-/* a directional light of the level (0x28 bytes incl. the pool index) */
-typedef struct Light {
-    Vec3f dir;
-    Vec3f color;
-    Vec3f unk18;
-    char unk24;
-    char on;
-} Light;
-
 _Static_assert(sizeof(PointLight) == 0x28, "PointLight");
 _Static_assert(sizeof(SpotLight) == 0x38, "SpotLight");
 
@@ -165,7 +156,7 @@ Light *Light_Add(const Vec3f *dir, const Vec3f *color, const Vec3f *unk18, char 
 
     l->dir = *dir;
     l->color = *color;
-    l->unk18 = *unk18;
+    l->ambient = *unk18;
     l->unk24 = unk24;
     l->on = on;
     return l;

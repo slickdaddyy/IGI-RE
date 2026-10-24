@@ -43,7 +43,7 @@ static inline long double x87_neg(long double x)
     return x;
 }
 
-void Rudder_Create(Part *o, PartCreateArg *arg)
+void Rudder_Create(Part *o, MagicCreateArg *arg)
 {
     PlanePart_Init(o, arg);
 }

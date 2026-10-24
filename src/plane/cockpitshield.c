@@ -27,7 +27,7 @@ extern uint16_t gCockpitShieldType;
 
 void CockpitShield_SetMatrix(Part *o, Matrix *parent);
 
-void CockpitShield_Create(Part *o, PartCreateArg *arg)
+void CockpitShield_Create(Part *o, MagicCreateArg *arg)
 {
     float *def;
 

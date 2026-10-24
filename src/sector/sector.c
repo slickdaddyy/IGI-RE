@@ -80,7 +80,7 @@ typedef struct LocateArg {
     Sector *sector;
     SectorObject *owner;
     Vec3d floor;        /* 0x10 */
-    int unk28;
+    float radius;
     int unk2C;
 } LocateArg;
 
@@ -105,13 +105,6 @@ typedef struct LineQuery {
     int tag;
     LineHit *hit;
 } LineQuery;
-
-/* an object placed in a sector */
-typedef struct SectorLink {
-    RigidDynCubeObj **slot;
-    Sector *sector;
-    SectorObject *owner;
-} SectorLink;
 
 /* a sector to draw this frame, with the screen rectangle it is seen through */
 typedef struct VisSector {
@@ -466,7 +459,7 @@ void SectorObject_LocateHandler(SectorObject *so, LocateArg *arg)
     long double r, rx;
     float scale, ry, rz;
     float *m = so->s.o.matrix.m;
-    Vec3f *v = &so->offset;
+    Vec3f *v = &so->center;
 
     if (!so->sectors)
         return;
@@ -515,7 +508,7 @@ void SectorObject_LocateHandler(SectorObject *so, LocateArg *arg)
     arg->floor.x = rx + hit.obj->pos.x;
     arg->floor.y = ry + hit.obj->pos.y;
     arg->floor.z = rz + hit.obj->pos.z;
-    arg->unk28 = so->unk19C;
+    arg->radius = so->radius;
 }
 HOOK(0x4DBCC0, SectorObject_LocateHandler);
 

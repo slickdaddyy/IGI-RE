@@ -16,17 +16,6 @@ typedef struct PhysicsMagicObj {
     int unk764;
 } PhysicsMagicObj;
 
-/* the create argument, shared with MagicObj */
-typedef struct MagicCreateArg {
-    const char *model;
-    void *world;
-    Vec3d pos;
-    Vec3d offset;
-    Matrix matrix;
-    Matrix local;
-    int unk88;
-} MagicCreateArg;
-
 /* slot 12: may this object hit `other` */
 typedef struct HitCheckArg {
     char result;
@@ -36,7 +25,6 @@ typedef struct HitCheckArg {
 
 _Static_assert(offsetof(PhysicsMagicObj, local) == 0x738, "local");
 _Static_assert(sizeof(PhysicsMagicObj) == 0x768, "PhysicsMagicObj");
-_Static_assert(offsetof(MagicCreateArg, unk88) == 0x88, "MagicCreateArg");
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -94,10 +82,10 @@ void PhysicsMagicObj_Create(PhysicsMagicObj *o, MagicCreateArg *arg)
     o->obj.matrix = arg->matrix;
     o->offset = arg->offset;
     o->local = arg->local;
-    o->unk760 = arg->unk88;
+    o->unk760 = (int)arg->owner;
     PhysicsObj_Init(o);
     PhysicsObj_SetPhysType(o, PhysicsObjType_Find(arg->model));
-    RigidDynCubeObj_CreateMagicObjs(o, o, arg->unk88);
+    RigidDynCubeObj_CreateMagicObjs(o, o, (int)arg->owner);
 }
 HOOK(0x503DF0, PhysicsMagicObj_Create);
 

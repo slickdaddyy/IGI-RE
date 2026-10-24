@@ -84,7 +84,7 @@ static float part_radius(Part *o)
     return (float)(VirModel_GetRadius(o->obj.model) * s);
 }
 
-void Rotor_Create(Part *o, PartCreateArg *arg)
+void Rotor_Create(Part *o, MagicCreateArg *arg)
 {
     void **model = VirModel_Find(arg->model);
 

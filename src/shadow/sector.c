@@ -49,9 +49,9 @@ void SectorObject_Create(SectorObject *so)
     so->s.o.matrix.m[7] = 0;
     so->s.o.matrix.count = 0;
     so->sectors = NULL;
-    memset(so->unk14C, 1, sizeof(so->unk14C));
+    memset(so->portalOpen, 1, sizeof(so->portalOpen));
     so->built = 1;
-    Pool_Init(&so->s.links, 4, 100, 0);
+    Pool_Init(&so->s.objects, 4, 100, 0);
 }
 HOOK(0x4DDF60, SectorObject_Create);
 
@@ -60,7 +60,7 @@ void Sector_RemoveAllObjects(Sector *s);
 void SectorObject_Delete(SectorObject *so)
 {
     Sector_RemoveAllObjects(&so->s);
-    Pool_Free(&so->s.links);
+    Pool_Free(&so->s.objects);
     if (so->s.o.attached)
         Task_Delete(so->s.o.attached);
     if (so->sectors)
@@ -74,16 +74,16 @@ void Sector_RemoveAllObjects(Sector *s)
 {
     int i;
 
-    while (s->links.used > 0) {
-        void **item = (void **)(s->links.data + s->links.free[0] * s->links.stride);
+    while (s->objects.used > 0) {
+        void **item = (void **)(s->objects.data + s->objects.free[0] * s->objects.stride);
         RigidDynCubeObj *obj = *item;
         int found = 0;
 
         for (i = 0; i < gSectorLinks.used && !found; i++) {
             SectorLink *l = (SectorLink *)(gSectorLinks.data + gSectorLinks.free[i] * gSectorLinks.stride);
 
-            if (l->item == item) {
-                pool_release(&l->sector->links, l->item);
+            if ((void **)l->slot == item) {
+                pool_release(&l->sector->objects, l->slot);
                 pool_release(&gSectorLinks, l);
                 found = 1;
                 obj->inSector = 0;
@@ -175,7 +175,7 @@ void SectorObject_Run(SectorObject *so)
 }
 HOOK(0x4DE4E0, SectorObject_Run);
 
-void Sector_Create(Sector *s, MagicArg *arg)
+void Sector_Create(Sector *s, MagicCreateArg *arg)
 {
     RigidDynCubeObj_Init(arg->world, &s->o, NULL);
     s->o.pos = arg->pos;
@@ -185,14 +185,14 @@ void Sector_Create(Sector *s, MagicArg *arg)
     RigidDynCubeObj_CreateMagicObjs(s->o.attached, &s->o, &s->o);
     s->offset = arg->offset;
     s->local = arg->local;
-    Pool_Init(&s->links, 4, 100, 0);
+    Pool_Init(&s->objects, 4, 100, 0);
 }
 HOOK(0x4DE6B0, Sector_Create);
 
 void Sector_Delete(Sector *s)
 {
     Sector_RemoveAllObjects(s);
-    Pool_Free(&s->links);
+    Pool_Free(&s->objects);
     Task_Delete(s->o.attached);
 }
 HOOK(0x4DE740, Sector_Delete);
@@ -223,8 +223,8 @@ void SectorObject_NearClip(SectorObject *so, void *arg)
         int i;
 
         HANDLER(slot, RigidDynCubeObj_GetType())(s, arg);
-        for (i = 0; i < s->links.used; i++) {
-            Task *obj = *(Task **)(s->links.data + s->links.free[i] * s->links.stride);
+        for (i = 0; i < s->objects.used; i++) {
+            Task *obj = *(Task **)(s->objects.data + s->objects.free[i] * s->objects.stride);
             TaskFn fn = HANDLER(QCube_GetNearClipEvent(), obj->type);
 
             if (fn)
@@ -329,7 +329,7 @@ void SectorObject_Update(SectorObject *so)
         so->s.o.attached = MagicObjContainer_New(NULL, so);
         so->sectors = MagicObjContainer_New(NULL, so);
         Sector_CreateMagicObjs(&so->s, so);
-        SectorObject_CalcBounds(so, so->center, &so->radius);
+        SectorObject_CalcBounds(so, &so->center.x, &so->radius);
         so->built = 1;
         return;
     }
@@ -545,7 +545,7 @@ void Sector_CreateMagicObjs(Sector *s, void *owner)
         ModelAttach *att = (ModelAttach *)ModelLod_GetAttach(s->o.model[0], i);
         const float *a = att->m;
         MagicObjDef *def = NULL;
-        MagicArg arg, arg2;
+        MagicCreateArg arg, arg2;
         double rx, ry, rz;
         float c0, c1, e[3], f[3], W[3], E[3], F[3], *R, *A;
         long double c2;

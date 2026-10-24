@@ -38,7 +38,7 @@ _Static_assert(sizeof(Gunx2) == 0x138, "Gunx2");
 
 extern uint16_t gGunx2Type;
 
-void Gunx2_Create(Gunx2 *t, PartCreateArg *a);
+void Gunx2_Create(Gunx2 *t, MagicCreateArg *a);
 void Gunx2_Run(Gunx2 *t);
 void Gunx2_Destroy(Gunx2 *t);
 
@@ -55,7 +55,7 @@ void Gunx2_Init(void)
 }
 HOOK(0x46DD00, Gunx2_Init);
 
-void Gunx2_Create(Gunx2 *t, PartCreateArg *a)
+void Gunx2_Create(Gunx2 *t, MagicCreateArg *a)
 {
     void **model = VirModel_Find(a->model);
 

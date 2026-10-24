@@ -64,7 +64,7 @@ extern float kHitForce;  /* 0.007 */
 
 void GlassShatter_Spawn(void **model, Vec3f *dir, Vec3d *pos, Matrix *m, void *hit);
 
-void Glass_Create(Glass *g, MagicArg *arg)
+void Glass_Create(Glass *g, MagicCreateArg *arg)
 {
     void **model;
     float scale, radius;
@@ -78,10 +78,10 @@ void Glass_Create(Glass *g, MagicArg *arg)
     }
     memcpy(g->m.offset, &arg->offset, sizeof(g->m.offset));
     g->m.local = arg->local;
-    RigidDynCubeObj_Init(arg->world, g, model);
+    RigidDynCubeObj_Init((int)arg->world, g, model);
     scale = obj_scale(&g->o);
     radius = VirModel_GetRadius(g->o.model) * scale;
-    DynCube_Add(arg->world, g, &arg->pos, radius, 2);
+    DynCube_Add((int)arg->world, g, &arg->pos, radius, 2);
     g->o.matrix = arg->matrix;
     g->damage = 0;
     g->strength = 0.75f;

@@ -8,45 +8,9 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "sector/sectortypes.h"
 
 typedef void (*TaskFn)();
-
-/* create argument of the RigidDynCubeObj kinds made from DefineMagicObj */
-typedef struct MagicArg {
-    const char *model;
-    void *world;
-    Vec3d pos;          /* 0x08 */
-    Vec3d offset;       /* 0x20, from the owner */
-    Matrix matrix;      /* 0x38 */
-    Matrix local;       /* 0x60 */
-    void *owner;        /* 0x88 */
-    void *data;         /* 0x8C, the DefineMagicObj data block */
-} MagicArg;
-
-/* "Sector" (0x148 bytes): a magic object that owns other objects */
-typedef struct Sector {
-    RigidDynCubeObj o;
-    Vec3d offset;       /* 0xF0 */
-    Matrix local;       /* 0x108 */
-    Pool links;         /* 0x130, pointers into gSectorLinks */
-} Sector;
-
-/* "SectorObject" (0x1A0 bytes), a building made of sectors */
-typedef struct SectorObject {
-    Sector s;
-    Task *sectors;      /* 0x148, MagicObjContainer of child sectors */
-    char unk14C[0x40];
-    int built;          /* 0x18C */
-    float center[3];    /* 0x190 */
-    float radius;       /* 0x19C */
-} SectorObject;
-
-/* one entry of the link pool at 0xA5E318 */
-typedef struct SectorLink {
-    void **item;        /* entry in the sector's links pool */
-    Sector *sector;
-    int index;
-} SectorLink;
 
 /* "Shadow" (0x124 bytes), a blob shadow quad under its owner */
 typedef struct ShadowPoly {

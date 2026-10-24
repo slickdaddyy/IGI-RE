@@ -127,7 +127,7 @@ HOOK(0x46EAD0, GunHolder_GetList);
 
 void AIStationaryGun_PlaceInitial(AIStationaryGun *g, Matrix *parent);
 
-void AIStationaryGun_Create(AIStationaryGun *g, PartCreateArg *arg)
+void AIStationaryGun_Create(AIStationaryGun *g, MagicCreateArg *arg)
 {
     void **model = VirModel_Find(arg->model);
     float s;
@@ -144,7 +144,7 @@ void AIStationaryGun_Create(AIStationaryGun *g, PartCreateArg *arg)
     s = max_scale(g->obj.scale);
     DynCube_Add(arg->world, g, &arg->pos, (float)(VirModel_GetRadius(g->obj.model) * s), 1);
     g->obj.matrix = arg->matrix;
-    g->def = arg->def;
+    g->def = arg->data;
     g->pos = arg->pos;
     g->matrix = arg->matrix;
     g->pitch = 0;

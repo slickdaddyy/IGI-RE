@@ -102,7 +102,7 @@ static inline long double crt_fmod(long double x, long double y)
     return r;
 }
 
-void AlarmLightReflector_Create(Reflector *t, PartCreateArg *a);
+void AlarmLightReflector_Create(Reflector *t, MagicCreateArg *a);
 void AlarmLightReflector_Run(Reflector *t);
 void AlarmLightReflector_Draw(Reflector *t, void *arg);
 
@@ -140,7 +140,7 @@ void AlarmLight_Init(void)
 }
 HOOK(0x4397C0, AlarmLight_Init);
 
-void AlarmLightReflector_Create(Reflector *t, PartCreateArg *a)
+void AlarmLightReflector_Create(Reflector *t, MagicCreateArg *a)
 {
     void **model;
     long double r;

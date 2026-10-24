@@ -102,8 +102,8 @@ void MagicObj_CreateHandler(MagicObj *o, MagicCreateArg *arg)
     DynCube_Add(arg->world, o, &arg->pos, VirModel_GetRadius_(o->model, o->unkD4) * s, o->unkD4);
     o->matrix = arg->matrix;
     o->offset = arg->offset;
-    o->localMatrix = arg->localMatrix;
-    o->unk130 = arg->unk88;
+    o->localMatrix = arg->local;
+    o->unk130 = (int)arg->owner;
     if (model)
         RigidDynCubeObj_CreateMagicObjs(o, o, o->unk130);
 }

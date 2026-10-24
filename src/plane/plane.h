@@ -244,7 +244,7 @@ static inline signed char part_state(long double full, float angle)
 }
 
 /* the common part of the part create handlers, in part.c */
-void PlanePart_Init(Part *o, PartCreateArg *arg);
+void PlanePart_Init(Part *o, MagicCreateArg *arg);
 float PlanePart_Radius(Part *o);
 /* the position of a part: offset turned by the owner matrix plus the owner position;
    the x sum is kept unrounded when keep_x */

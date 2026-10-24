@@ -8,6 +8,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "sector/sectortypes.h"
 
 typedef void (*TaskFn)();
 
@@ -47,24 +48,6 @@ static inline SectorMesh *lod_mesh(VirModel *m, int i)
     return *(SectorMesh **)(*(char **)((char *)m->lod[i] + 0xC) + 0xC);
 }
 
-/* "Sector" (0x148 bytes): a room; objects inside are kept in its pool */
-typedef struct Sector {
-    RigidDynCubeObj o;
-    char unkF0[0x40];
-    Pool objects;       /* 0x130, slots hold RigidDynCubeObj pointers */
-} Sector;
-
-/* "SectorObject" (0x1A0 bytes): a building made of sectors */
-typedef struct SectorObject {
-    Sector s;
-    Task *sectors;      /* 0x148 */
-    char portalOpen[0x44];  /* 0x14C, by portal id */
-    Vec3f offset;       /* 0x190 */
-    int unk19C;
-} SectorObject;
-
-_Static_assert(sizeof(Sector) == 0x148, "Sector");
-_Static_assert(sizeof(SectorObject) == 0x1A0, "SectorObject");
 _Static_assert(offsetof(SectorMesh, portals) == 0x98, "SectorMesh");
 
 extern TaskFn gTaskHandlers[][0x180];
