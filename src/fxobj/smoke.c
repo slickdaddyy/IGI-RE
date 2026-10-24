@@ -346,7 +346,7 @@ void Smoke_Changed(Smoke *t)
         Matrix id = {{1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f}, 0};
         Matrix rz, rx;
         Vec3f zero, scale;
-        float size;
+        float size[2]; /* start and end size */
         void *sprite, *world, *root;
         int blend;
 
@@ -383,7 +383,7 @@ void Smoke_Changed(Smoke *t)
             sprite = gSmokeSmoke1 + 0x18;
             break;
         }
-        size = t->unk84 * kUnit;
+        size[0] = size[1] = t->unk84 * kUnit;
         zero.x = kZeroF;
         zero.y = kZeroF;
         zero.z = kZeroF;
@@ -392,7 +392,7 @@ void Smoke_Changed(Smoke *t)
         scale.z = t->unk104.z * kScale;
         world = Game_GetWorld();
         root = Level_GetDynamic();
-        t->ps = Particle2D_New(root, world, sprite, &zero, &scale, &size, kLife, blend, 0, t->unk114 * kPerFrame, 0,
+        t->ps = Particle2D_New(root, world, sprite, &zero, &scale, size, kLife, blend, 0, t->unk114 * kPerFrame, 0,
                            t->count, 0);
         Particle2D_SetAutoDelete(t->ps, 0);
     }

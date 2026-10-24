@@ -18,7 +18,8 @@ floatfake(emu, 0x4F16E0, 2)  # VarString_EvalReal
 floatfake(emu, 0x4B4770, 1, effect=lambda e, a: RANDOM.pop(0))  # Random_Float
 logfake(emu, 0x4FE610, 2, derefs={1: 24})
 vfake(emu, 0x4FE210, 12, show=lambda e, a: (a[0], e.read(a[1], 24), e.normalize(a[2])) + tuple(a[3:]))
-vfake(emu, 0x4FDF00, 13, show=lambda e, a: tuple(a[:3]) + (e.read(a[3], 12), e.read(a[4], 12), e.read(a[5], 4))
+# Particle2D_New reads a start and an end size
+vfake(emu, 0x4FDF00, 13, show=lambda e, a: tuple(a[:3]) + (e.read(a[3], 12), e.read(a[4], 12), e.read(a[5], 8))
       + tuple(a[6:]), ret=0x7300)
 logfake(emu, 0x4F0EE0, 0, ret=0x7200)
 logfake(emu, 0x416920, 0, ret=0x9999)  # Game_GetWorld
