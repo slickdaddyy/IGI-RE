@@ -439,9 +439,9 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
     uint8_t ev;
     void *world;
 
-    e0 = h->pitch + v->pitch;
+    e0 = h->rotX + v->pitch;
     e1 = 0.0f;
-    e2 = h->yaw + v->yaw;
+    e2 = h->rotZ + v->yaw;
     if (!x87_eq(v->shake, 0.0f)) {
         e0 = v->shakeAngle * v->shake * shake_random() + e0;
         e1 = v->shakeAngle * v->shake * shake_random();

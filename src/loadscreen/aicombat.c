@@ -17,6 +17,7 @@
 #include "graphnode/graphnodetypes.h"
 #include "weapon/weapontypes.h"
 #include "patrol/patroltypes.h"
+#include "humanbase/humanbasetypes.h"
 
 FN_EXTERN(AICombat_End);
 FN_EXTERN(AICombat_KneelFire);
@@ -32,125 +33,10 @@ FN_EXTERN(AICombat_StandRollLeft);
 FN_EXTERN(AICombat_StandRollRight);
 FN_EXTERN(AICombat_StandThrowGrenade);
 
-typedef struct Human {
-    Task task;
-    char unk20[0x4C4 - 0x20];
-    Task *weapons[4];
-    float aimError;
-    char unk4D8[0x7B4 - 0x4D8];
-    Task **statGun;
-} Human;
-
 typedef struct HumanAI HumanAI;
 typedef struct AIAction AIAction;
 typedef void (*AIActionFn)(HumanAI *ai, AIAction *a);
 typedef char (*AIStepFn)(HumanAI *ai, AIAction *a);
-
-struct HumanAI {
-    Task task;
-    Vec3d pos;
-    Vec3d eye;
-    float body[10];
-    float view[10];
-    char unkA0[0x10];
-    double viewLength;
-    char unkB8[0x87C - 0xB8];
-    int eventCounts[24];
-    char unk8DC[0x3AA8 - 0x8DC];
-    AITarget *target;
-    char unk3AAC[0x3AC8 - 0x3AAC];
-    int statGunId;
-    char unk3ACC[0x3B68 - 0x3ACC];
-    int graphId;
-    Graph *graph;
-    char unk3B70[0x3C74 - 0x3B70];
-    float ctrl[0x28];
-    char unk3D14[0x3D44 - 0x3D14];
-    int unk3D44;
-    int unk3D48;
-    int maxBurst;
-    int maxTurns;
-    float evadeChance;
-    float lieChance;
-    float unk3D5C;
-    float rollChance;
-    char unk3D64[4];
-    float errorNear;
-    float errorFar;
-    float burstMin;
-    float burstRandom;
-    float guardMin;
-    float guardRandom;
-    char unk3D80[8];
-    float grenadeChance;
-    float grenadeChance2;
-    float grenadeMin;
-    float grenadeMax;
-    char unk3D98[0x3DB0 - 0x3D98];
-    double closeRange;
-    double lieRange;
-    double coverRange;
-    char unk3DC8[8];
-    int unk3DD0;
-    int unk3DD4;
-    int unk3DD8;
-    int unk3DDC;
-    char unk3DE0[4];
-    AISeen *seen;
-    int destNode;
-    int targetNode;
-    char targetMoved;
-    char unk3DF1[3];
-    int rollDir;
-    int nextEvade;
-    char unk3DFC;
-    char hasGrenade;
-    char unk3DFE[2];
-    int gunId;
-    char unk3E04[0x3E2C - 0x3E04];
-    int node;
-    char unk3E30[0x3E50 - 0x3E30];
-    int unk3E50;
-    int shotsLeft;
-    int lastAmmo;
-    int unk3E5C;
-    int shotDelay;
-    int unk3E64;
-    char unk3E68;
-    char unk3E69;
-    char unk3E6A;
-    char unk3E6B[5];
-    Vec3d aim;
-    Vec3d aimTarget;
-    NodeGrid *grid;
-    int gridX;
-    int gridY;
-    char unk3EAC[4];
-    Vec3d cover;
-};
-
-_Static_assert(offsetof(Human, weapons) == 0x4C4, "weapons");
-_Static_assert(offsetof(Human, aimError) == 0x4D4, "aimError");
-_Static_assert(offsetof(Human, statGun) == 0x7B4, "statGun");
-_Static_assert(offsetof(HumanAI, viewLength) == 0xB0, "viewLength");
-_Static_assert(offsetof(HumanAI, eventCounts) == 0x87C, "eventCounts");
-_Static_assert(offsetof(HumanAI, target) == 0x3AA8, "target");
-_Static_assert(offsetof(HumanAI, statGunId) == 0x3AC8, "statGunId");
-_Static_assert(offsetof(HumanAI, graphId) == 0x3B68, "graphId");
-_Static_assert(offsetof(HumanAI, ctrl) == 0x3C74, "ctrl");
-_Static_assert(offsetof(HumanAI, unk3D44) == 0x3D44, "unk3D44");
-_Static_assert(offsetof(HumanAI, errorNear) == 0x3D68, "errorNear");
-_Static_assert(offsetof(HumanAI, grenadeChance) == 0x3D88, "grenadeChance");
-_Static_assert(offsetof(HumanAI, closeRange) == 0x3DB0, "closeRange");
-_Static_assert(offsetof(HumanAI, unk3DD0) == 0x3DD0, "unk3DD0");
-_Static_assert(offsetof(HumanAI, seen) == 0x3DE4, "seen");
-_Static_assert(offsetof(HumanAI, rollDir) == 0x3DF4, "rollDir");
-_Static_assert(offsetof(HumanAI, gunId) == 0x3E00, "gunId");
-_Static_assert(offsetof(HumanAI, node) == 0x3E2C, "node");
-_Static_assert(offsetof(HumanAI, unk3E50) == 0x3E50, "unk3E50");
-_Static_assert(offsetof(HumanAI, aim) == 0x3E70, "aim");
-_Static_assert(offsetof(HumanAI, grid) == 0x3EA0, "grid");
-_Static_assert(offsetof(HumanAI, cover) == 0x3EB0, "cover");
 
 /* event counts the combat code looks at (AIEVENT_*) */
 #define EV_ALERT 5
@@ -400,7 +286,7 @@ void AICombatPatrol_Start(HumanAI *ai, AIAction *a)
     ai->unk3DD4 = ai->unk3D44;
     ai->unk3DD8 = -1;
     ai->unk3E64 = 0;
-    ai->destNode = -1;
+    ai->followNode = -1;
     take_target(ai, cd);
     cd->count = 0;
     cd->timer = 0;
@@ -502,7 +388,7 @@ static int off_node(HumanAI *ai)
     GraphNode *node;
     Vec3d *pos;
 
-    if (ai->destNode != -1)
+    if (ai->followNode != -1)
         return 0;
     node = Graph_GetNode(ai->graph, ai->node);
     pos = DynCubeObj_GetPosition(ai->task.parent);
@@ -520,7 +406,7 @@ static int decide_hidden(HumanAI *ai, CombatData *cd, int count)
         AICombat_FindCover(&node, ai, 0, 5);
         if (node && node->id != ai->node) {
             ai->targetMoved = 0;
-            ai->destNode = node->id;
+            ai->followNode = node->id;
             cd->count = 0;
             return 5;
         }
@@ -537,7 +423,7 @@ static int decide_cover(HumanAI *ai, CombatData *cd)
         node = NULL;
         AICombat_FindCover(&node, ai, 1, 5);
         if (node && node->id != ai->node) {
-            ai->destNode = node->id;
+            ai->followNode = node->id;
             return 1;
         }
     }
@@ -843,9 +729,9 @@ void AICombat_StartBurst(HumanAI *ai, char half)
     int ammo[2];
 
     if (HumanAI_InPose(ai, POSE_GUN)) {
-        StatGun *gun = (StatGun *)*h->statGun;
+        StatGun *gun = (StatGun *)*h->climbRef;
 
-        StationaryGun_GetMuzzle(gun, &ai->eye, ai->view);
+        StationaryGun_GetMuzzle(gun, &ai->view.eye, ai->view.view);
         w = WeaponSlots_Get(gun->slots, 0);
     } else {
         w = WeaponSlots_Get(h->weapons, 0);
@@ -867,16 +753,16 @@ void AICombat_StartBurst(HumanAI *ai, char half)
             }
             if (ai->shotsLeft == 0)
                 ai->shotsLeft = 1;
-            d = Vec3d_Distance(&ai->pos, &ai->aimTarget);
+            d = Vec3d_Distance(&ai->view.pos, &ai->aimTarget);
             if (d < kZeroD) {
                 h->aimError = ai->errorNear;
             } else {
-                if (d > ai->viewLength)
-                    d = ai->viewLength;
+                if (d > ai->view.length)
+                    d = ai->view.length;
                 if (d < kMinRange)
                     h->aimError = ai->errorNear;
                 else
-                    h->aimError = d / ai->viewLength * (ai->errorFar - ai->errorNear) + ai->errorNear;
+                    h->aimError = d / ai->view.length * (ai->errorFar - ai->errorNear) + ai->errorNear;
             }
             if (half)
                 h->aimError = h->aimError * kHalf;
@@ -974,7 +860,7 @@ int AICombat_ChooseEvade(HumanAI *ai, CombatData *cd)
     }
     if (Random_Float(Game_GetRandom()) > ai->evadeChance)
         return -1;
-    if (ai->lieChance == kZero || (ai->lieChance < r && cd->dist > ai->lieRange))
+    if (ai->lieChance == kZero || (ai->lieChance < r && cd->dist > ai->fallFlatRange))
         return 0;
     r = Random_Float(Game_GetRandom());
     sides = HumanAI_CheckSides(ai);
@@ -1070,7 +956,7 @@ void AICombat_Kneel(HumanAI *ai, AIAction *a)
         Debug_Log(ai, -1, "Waiting for kneel state");
         return;
     }
-    if (ai->lieRange < kZeroD) {
+    if (ai->fallFlatRange < kZeroD) {
         get_up(ai, a, POSE_KNEEL, NULL);
         return;
     }
@@ -1116,7 +1002,7 @@ void AICombat_Liedown(HumanAI *ai, AIAction *a)
         Debug_Log(ai, -1, "Waiting for liedown state");
         return;
     }
-    if (ai->lieRange < kZeroD) {
+    if (ai->fallFlatRange < kZeroD) {
         get_up(ai, a, POSE_LIEDOWN, NULL);
         return;
     }
@@ -1183,24 +1069,24 @@ void AICombat_Follow(HumanAI *ai, AIAction *a)
         HumanAI_EndAction(ai, a);
         return;
     }
-    if (ai->destNode == -1) {
+    if (ai->followNode == -1) {
         AIAction_SetStep(ai, a, a->resume, NULL);
         return;
     }
     HumanAI_SetRun(ai);
-    Debug_Log(ai, -1, "Tracking target at node #%d", ai->destNode);
+    Debug_Log(ai, -1, "Tracking target at node #%d", ai->followNode);
     if (ai->targetMoved) {
         GraphNode *node = NULL;
 
         AICombat_FindCover(&node, ai, ai->seen->visible, 5);
         if (node && node->id != ai->node) {
-            ai->destNode = node->id;
+            ai->followNode = node->id;
             cd->count = 0;
         }
         ai->targetMoved = 0;
     }
-    if (HumanAI_RunTo(ai, ai->destNode, &ai->cover, 0)) {
-        ai->destNode = -1;
+    if (HumanAI_RunTo(ai, ai->followNode, &ai->cover, 0)) {
+        ai->followNode = -1;
         AIAction_SetStep(ai, a, a->resume, NULL);
         AITarget_SetState(ai->target, ai, TARGET_NONE);
         return;
@@ -1208,12 +1094,12 @@ void AICombat_Follow(HumanAI *ai, AIAction *a)
     if (ai->seen->visible) {
         Vec3d d, f;
 
-        d.x = ai->target->pos.x - ai->pos.x;
-        d.y = ai->target->pos.y - ai->pos.y;
-        d.z = ai->target->pos.z - ai->pos.z;
-        f.x = ai->view[1];
-        f.y = ai->view[4];
-        f.z = ai->view[7];
+        d.x = ai->target->pos.x - ai->view.pos.x;
+        d.y = ai->target->pos.y - ai->view.pos.y;
+        d.z = ai->target->pos.z - ai->view.pos.z;
+        f.x = ai->view.view[1];
+        f.y = ai->view.view[4];
+        f.z = ai->view.view[7];
         Vec3d_Normalize(&d);
         if (f.z * d.z + f.y * d.y + f.x * d.x > kFacing) {
             if (AITarget_CountState(ai->target, TARGET_FIRING) >= 4 && AITarget_GetState(ai->target, ai)) {
@@ -1574,7 +1460,7 @@ pose:
     } else {
         cd->timer = 30;
     }
-    StationaryGun_GetMuzzle(*h->statGun, &ai->eye, ai->view);
+    StationaryGun_GetMuzzle(*h->climbRef, &ai->view.eye, ai->view.view);
     if (!seen->visible) {
         AITarget_SetState(ai->target, ai, TARGET_NONE);
         cd->count = count + 1;

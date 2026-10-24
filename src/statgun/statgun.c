@@ -215,9 +215,9 @@ void StationaryGun_Fire(StatGun *o, char fire)
     msg.recoilPitch = 0.0f;
     msg.recoilYaw = 0.0f;
     if (o->user)
-        MOV32(msg.unk28, o->user->unk4D4);
+        MOV32(msg.aimError, o->user->aimError);
     else
-        MOV32(msg.unk28, kOne);
+        MOV32(msg.aimError, kOne);
     msg.h = o->user;
     HANDLER(Human_GetEvent0(), w->type)(w, &msg);
     MOV32(o->recoilPitch, msg.recoilPitch);
@@ -426,7 +426,7 @@ void StationaryGun_Event6(void *task, Human **msg)
 {
     Human *h = *msg;
 
-    StatusScreen_DrawActionIcon(h, h->unk434);
+    StatusScreen_DrawActionIcon(h, (char *)h + 0x434);
 }
 HOOK(0x474F10, StationaryGun_Event6);
 

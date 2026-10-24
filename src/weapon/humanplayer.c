@@ -94,7 +94,7 @@ ORIG(0x4E6B00, int, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (int sound));
 ORIG(0x4E6C60, void, Sound_SetVolume, (int sound, float unk, float level));
 ORIG(0x4E7C30, char, DebugText_IsEnabled, (void));
-ORIG(0x4F2060, void *, WeaponSlots_Get, (void **slots, int i));
+ORIG(0x4F2060, void *, WeaponSlots_Get, (Task **slots, int i));
 
 extern uint16_t gHumanPlayerType;
 extern char gInputChannels[][16];
@@ -178,10 +178,10 @@ static int is_zero(long double x)
 
 static void State_Set(HumanPlayer *h, int n)
 {
-    h->state.prev = h->state.state;
-    h->state.state = n;
-    h->state.update = h->state.enter[n];
-    h->state.update(&h->state, (struct Human *)h);
+    h->sm.prev = h->sm.state;
+    h->sm.state = n;
+    h->sm.run = h->sm.states[n];
+    h->sm.run(&h->sm, h);
 }
 
 /* weapon category keys: pick the next weapon of that category the player has */
@@ -298,7 +298,7 @@ void HumanPlayer_UpdateLadder(HumanPlayer *h)
         HumanViewCam(h, 1);
         HumanPlayer_ClearFlagD44(h);
         Human_PlayAnimSlot(h, 0, 0);
-        if (h->state.input & HUMAN_DEAD)
+        if (h->sm.input & HUMAN_DEAD)
             State_Set(h, HSTATE_DIE);
         return;
     }
@@ -355,9 +355,9 @@ void HumanPlayer_UpdateFenceClimb(HumanPlayer *h)
     float ax, ay, az, turn;
 
     if (h->unkD90) {
-        dx = h->pos.x - obj->pos.x;
-        dy = h->pos.y - obj->pos.y;
-        dz = h->pos.z - obj->pos.z;
+        dx = h->pos[0] - obj->pos.x;
+        dy = h->pos[1] - obj->pos.y;
+        dz = h->pos[2] - obj->pos.z;
         lx = m[3] * dy + m[6] * dz + m[0] * dx;
         ly = m[4] * dy + m[7] * dz + m[1] * dx;
         if (!(ly >= 0)) {
@@ -404,13 +404,13 @@ void HumanPlayer_UpdateFenceClimb(HumanPlayer *h)
         HumanPlayer_ClearFlagD44(h);
         Human_SetClimbObject(h, 0);
         Human_PlayAnimSlot(h, 0, 0);
-        if (h->state.input & HUMAN_DEAD)
+        if (h->sm.input & HUMAN_DEAD)
             State_Set(h, HSTATE_DIE);
     } else {
         AIMessage n;
 
         n.type = 0xD;
-        n.team = h->unk0FC;
+        n.team = h->team;
         n.flags = 0x46;
         n.radius = 20480.0f;
         n.pos = (Vec3d *)(DynCubeObj_GetPosition(h));
@@ -424,9 +424,9 @@ HOOK(0x411770, HumanPlayer_UpdateFenceClimb);
 /* lateral position of the player along the wire, in the wire's frame */
 static long double Wire_Side(HumanPlayer *h, ClimbObj *obj, const float *m)
 {
-    long double dx = h->pos.x - obj->pos.x;
-    long double dy = h->pos.y - obj->pos.y;
-    long double dz = h->pos.z - obj->pos.z;
+    long double dx = h->pos[0] - obj->pos.x;
+    long double dy = h->pos[1] - obj->pos.y;
+    long double dz = h->pos[2] - obj->pos.z;
 
     return m[7] * dz + m[4] * dy + m[1] * dx;
 }
@@ -446,7 +446,7 @@ static int Wire_Leave(HumanPlayer *h, int off)
 {
     if (!is_zero(h->input[9]) && is_zero(h->prevInput[9]))
         return 1;
-    return off || (h->state.input & HUMAN_DEAD);
+    return off || (h->sm.input & HUMAN_DEAD);
 }
 
 static void Wire_Detach(HumanPlayer *h)
@@ -464,7 +464,7 @@ static void Wire_Done(HumanPlayer *h, ClimbObj *obj)
 {
     Human_ShowShadow(h);
     obj->unk130 = 0;
-    State_Set(h, h->state.input & HUMAN_DEAD ? HSTATE_DIE : HSTATE_UNK29);
+    State_Set(h, h->sm.input & HUMAN_DEAD ? HSTATE_DIE : HSTATE_UNK29);
 }
 
 /* hand over hand along a wire */
@@ -536,7 +536,7 @@ void HumanPlayer_UpdateZipline(HumanPlayer *h)
         h->onZipline = 0;
         Wire_Detach(h);
         if (h->ziplineSound) {
-            Sound_Stop(h->ziplineSound);
+            Sound_Stop((int)h->ziplineSound);
             h->ziplineSound = 0;
         }
         Wire_Done(h, obj);
@@ -588,7 +588,7 @@ void HumanPlayer_UpdateZipline(HumanPlayer *h)
     Human_LeaveGround(h);
     HumanViewCam(h, 3);
     HumanPlayer_SetFlagD44(h);
-    h->ziplineSound = Sound_Play(h, "wire_slide_1");
+    h->ziplineSound = (void *)(Sound_Play(h, "wire_slide_1"));
     Human_HideShadow(h);
     State_Set(h, HSTATE_ZIPLINE);
 }
@@ -712,7 +712,7 @@ void HumanPlayer_HitHandler(HumanPlayer *h, HumanHit *hit)
         TaskType_IsA(*(uint16_t *)((char *)hit->attacker + 0x1C), gTaskType548638))
         h->attacker = TaskRef_Add(hit->attacker);
     Human_Bleed(h, dir, (int)hit->shot);
-    if (!h->quiet)
+    if (!h->dead)
         Human_SayTimed(h, "player_hit_", 4);
     Shake_Random(h);
 
@@ -761,7 +761,7 @@ void HumanPlayer_HitHandler(HumanPlayer *h, HumanHit *hit)
             h->hitFlash[3] = f;
         }
     }
-    if (!h->noclip && !(is_zero(dir[0]) && is_zero(dir[1]) && is_zero(dir[2])))
+    if (!h->deltaScaled && !(is_zero(dir[0]) && is_zero(dir[1]) && is_zero(dir[2])))
         Push_Add(h, dir[0], dir[1], dir[2], kPushHit);
 }
 HOOK(0x412440, HumanPlayer_HitHandler);
@@ -783,7 +783,7 @@ void HumanPlayer_BlastHandler(HumanPlayer *h, HumanBlast *e)
     v[1] = cam[1] - e->pos[1];
     v[2] = cam[2] - e->pos[2];
     dist = Vec3d_Length(v);
-    if (!(dist >= (e->unk10 + e->radius) * kBlastPushRange) && !h->noclip)
+    if (!(dist >= (e->unk10 + e->radius) * kBlastPushRange) && !h->deltaScaled)
         Push_Add(h, v[0], v[1], v[2], kPushBlast);
     if (!(dist >= kBlastEarRange))
         h->earLevel = (1.0 - dist * kBlastEarScale) + h->earLevel;
@@ -796,11 +796,11 @@ void HumanPlayer_BlastHandler(HumanPlayer *h, HumanBlast *e)
         HumanView_Shake(h->view, f * kShakeAmount, f * kShakeAngle, e->shakeFrames);
     d->hitZone = 13;
     HumanDamage_GetZone(d, 13);
-    r = Game_BlastFalloff(e, h, &h->pos, h->radius * kBlastRadius, 1);
+    r = Game_BlastFalloff(e, h, (Vec3d *)h->pos, h->radius * kBlastRadius, 1);
     if (is_zero(r))
         return;
     Damage_Add(d, 13, Damage_Scale(profile, r * d->part[13].mult));
-    if (!h->quiet)
+    if (!h->dead)
         Human_SayTimed(h, "player_xplhit_", 1);
     Flash_RandomAll(h);
 }
@@ -817,9 +817,9 @@ void HumanPlayer_PunchHandler(HumanPlayer *h, HumanPunch *p)
     profile = Profile_Check();
     if (!profile)
         return;
-    fwd[0] = h->matrix[1] * kForward;
-    fwd[1] = h->matrix[4] * kForward;
-    fwd[2] = h->matrix[7] * kForward;
+    fwd[0] = h->matrix.m[1] * kForward;
+    fwd[1] = h->matrix.m[4] * kForward;
+    fwd[2] = h->matrix.m[7] * kForward;
     a = DynCubeObj_GetPosition(h);
     b = DynCubeObj_GetPosition(p->attacker);
     v[0] = a[0] - b[0];
@@ -834,7 +834,7 @@ void HumanPlayer_PunchHandler(HumanPlayer *h, HumanPunch *p)
     d->hitZone = part;
     HumanDamage_GetZone(d, part);
     Damage_Add(d, part, Damage_Scale(profile, d->part[part].mult * p->damage));
-    if (!h->quiet) {
+    if (!h->dead) {
         Human_SayTimed(h, "player_hit_", 4);
         Sound_Play(h->view, Random_Next(Game_GetRandom()) & 1 ? "punched_01" : "punched_02");
     }
@@ -888,7 +888,7 @@ static void Render_ActionBar(HumanPlayer *h, int width, int height, float *top)
     float fw = width, fh = height;
     float x, y, w, hh, right, bottom;
 
-    Draw_RectA(fw * kBarX, fh * kBarY, (long double)h->barValue / h->barMax * fw * kBarW, fh * kBarH, 128.0f, 0, 0,
+    Draw_RectA(fw * kBarX, fh * kBarY, (long double)h->actionFrame / h->actionFrames * fw * kBarW, fh * kBarH, 128.0f, 0, 0,
                0.5f, 0x80000, 0);
     hh = fh * kFrameH;
     w = fw * kFrameW;
@@ -1018,8 +1018,8 @@ typedef struct HumanShapeQuery {
 
 void HumanPlayer_MapMarkerHandler(HumanPlayer *h, HumanShapeQuery *q)
 {
-    q->pos = &h->pos;
-    q->matrix = h->matrix;
+    q->pos = (Vec3d *)&h->pos;
+    q->matrix = h->matrix.m;
     q->radius = h->radius;
     q->unk1C = 2;
     q->unk20 = 3;

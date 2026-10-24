@@ -13,57 +13,10 @@
 #include "humanai/humanaitypes.h"
 #include "graphnode/graphnodetypes.h"
 #include "weapon/weapontypes.h"
+#include "humanbase/humanbasetypes.h"
+#include "humanplayer/humanplayertypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* the parts of a human task the AI reads */
-typedef struct Human {
-    Task task;
-    Vec3d pos;
-    char unk38[0x38];
-    HumanModel *model;
-    int unk74;
-    float matrix[10];
-    char unkA0[0x29C];
-    char unk33C;
-    char unk33D[0x187];
-    Task *weapons[10];
-    void *view;
-    char unk4F0[0x2D4];
-    int unk7C4;
-    char unk7C8[0x538];
-    char unkD00;
-} Human;
-
-/* what the AI sees with: position, eye, body and view rotation, cone sizes */
-typedef struct AIView {
-    Vec3d pos;
-    Vec3d eye;
-    float body[10];
-    float view[10];
-    double alpha;
-    double gamma;
-    double length;
-    double alarmLength;
-    double secAlpha;
-    double secGamma;
-    double secLength;
-    double secAlarmLength;
-} AIView;
-
-/* the view handed to the detection code each frame */
-typedef struct AIDetectView {
-    Vec3d eye;
-    float body[10];
-    double alpha;
-    double gamma;
-    double length;
-    double secAlpha;
-    double secGamma;
-    double secLength;
-    char active;
-    char unk71[7];
-} AIDetectView;
 
 /* AIMessage.flags */
 #define AIMSG_IN_VIEW    0x1
@@ -80,9 +33,6 @@ typedef void (*AIActionFn)(HumanAI *ai, AIAction *a);
 
 /* AIAction.flags */
 #define AIACTION_PUSHABLE 0x1
-
-#define AI_EVENT_TYPES 24
-#define AI_POOL 32
 
 enum {
     EVENT_CREATE,
@@ -111,158 +61,14 @@ enum {
     EVENT_FRIENDLYDETECTION,
 };
 
-/* HumanAI task (0x3ED0), the brain of an enemy, child of its human */
-struct HumanAI {
-    Task task;
-    AIView view;
-    List moves;
-    int unkEC;
-    AIEvent eventPool[AI_POOL];
-    List events[AI_EVENT_TYPES];
-    List freeEvents;
-    int eventOrder[AI_EVENT_TYPES];
-    int eventCounts[AI_EVENT_TYPES];
-    int eventOrderCount;
-    int eventCount;
-    char eventEnabled[AI_EVENT_TYPES];
-    List actions;
-    AIAction actionPool[AI_POOL];
-    AIParam paramPool[AI_POOL];
-    List freeParams;
-    int unk1514;
-    char unk1518[0xE0];
-    AIDetection detection;
-    char detectionActive;
-    char unk3A29[7];
-    AIDetectView dview;
-    AITarget *target;
-    void *targetSeen;
-    void *unk3AB0;
-    void *unk3AB4;
-    char symbolsAdded;
-    char isDetection;
-    char deadDone;
-    char alarmed;
-    char unk3ABC;
-    char unk3ABD;
-    char unk3ABE[2];
-    int unk3AC0;
-    int alarmControlId;
-    int unk3AC8;
-    int unk3ACC;
-    int unk3AD0;
-    char unk3AD4[0x84];
-    int animBase;
-    int animRandom;
-    int animTimer;
-    int animEnabled;
-    int graphId;
-    void *graph;
-    char scriptPath[0x100];
-    void *script;
-    float ctrl[0x28];
-    char started;
-    char aiTypeExpr[0x23];
-    int aiType;
-    int unk3D3C;
-    int unk3D40;
-    char unk3D44[0x6C];
-    double unk3DB0;
-    char unk3DB8[0x18];
-    int unk3DD0;
-    int unk3DD4;
-    int unk3DD8;
-    int unk3DDC;
-    int unk3DE0;
-    int unk3DE4;
-    int unk3DE8;
-    int unk3DEC;
-    char unk3DF0;
-    char unk3DF1;
-    char unk3DF2[2];
-    int unk3DF4;
-    int unk3DF8;
-    char hasGun;
-    char hasGrenade;
-    char unk3DFE[2];
-    int gunId;
-    int grenadeId;
-    int grenadeTime;
-    int unk3E0C;
-    int unk3E10;
-    char unk3E14[0x14];
-    int unk3E28;
-    int node;
-    int destNode;
-    char unk3E34[8];
-    int unk3E3C;
-    int unk3E40;
-    int unk3E44;
-    char unk3E48;
-    char unk3E49;
-    char doorWait;
-    char unk3E4B;
-    Task **door;
-    int unk3E50;
-    int unk3E54;
-    int unk3E58;
-    int unk3E5C;
-    int unk3E60;
-    int unk3E64;
-    char unk3E68;
-    char unk3E69;
-    char unk3E6A;
-    char unk3E6B;
-    int unk3E6C;
-    int unk3E70;
-    int unk3E74;
-    int unk3E78;
-    int unk3E7C;
-    int unk3E80;
-    int unk3E84;
-    char unk3E88[0x18];
-    void *path;
-    int pathLen;
-    char pathA[8];
-    char pathB[0x18];
-    float maxAlpha;
-    float maxGamma;
-};
-
 /* HumanAI.ctrl, the input the AI gives its human */
 #define CTRL_GAMMA 0
 #define CTRL_ALPHA 1
 #define CTRL_FORWARD 4
 #define CTRL_CHEAT 19
 
-_Static_assert(offsetof(Human, unk33C) == 0x33C, "Human");
-_Static_assert(offsetof(Human, weapons) == 0x4C4, "Human");
-_Static_assert(offsetof(Human, unk7C4) == 0x7C4, "Human");
-_Static_assert(offsetof(Human, unkD00) == 0xD00, "Human");
 _Static_assert(sizeof(AIView) == 0xC0, "AIView");
 _Static_assert(sizeof(AIDetectView) == 0x78, "AIDetectView");
-_Static_assert(offsetof(HumanAI, eventPool) == 0xF0, "eventPool");
-_Static_assert(offsetof(HumanAI, events) == 0x6F0, "events");
-_Static_assert(offsetof(HumanAI, eventEnabled) == 0x8E4, "eventEnabled");
-_Static_assert(offsetof(HumanAI, actionPool) == 0x908, "actionPool");
-_Static_assert(offsetof(HumanAI, freeParams) == 0x1508, "freeParams");
-_Static_assert(offsetof(HumanAI, detection) == 0x15F8, "detection");
-_Static_assert(offsetof(HumanAI, dview) == 0x3A30, "dview");
-_Static_assert(offsetof(HumanAI, target) == 0x3AA8, "target");
-_Static_assert(offsetof(HumanAI, symbolsAdded) == 0x3AB8, "symbolsAdded");
-_Static_assert(offsetof(HumanAI, animBase) == 0x3B58, "animBase");
-_Static_assert(offsetof(HumanAI, scriptPath) == 0x3B70, "scriptPath");
-_Static_assert(offsetof(HumanAI, ctrl) == 0x3C74, "ctrl");
-_Static_assert(offsetof(HumanAI, aiType) == 0x3D38, "aiType");
-_Static_assert(offsetof(HumanAI, unk3DB0) == 0x3DB0, "unk3DB0");
-_Static_assert(offsetof(HumanAI, unk3DD0) == 0x3DD0, "unk3DD0");
-_Static_assert(offsetof(HumanAI, hasGun) == 0x3DFC, "hasGun");
-_Static_assert(offsetof(HumanAI, unk3E10) == 0x3E10, "unk3E10");
-_Static_assert(offsetof(HumanAI, unk3E28) == 0x3E28, "unk3E28");
-_Static_assert(offsetof(HumanAI, door) == 0x3E4C, "door");
-_Static_assert(offsetof(HumanAI, unk3E84) == 0x3E84, "unk3E84");
-_Static_assert(offsetof(HumanAI, path) == 0x3EA0, "path");
-_Static_assert(sizeof(HumanAI) == 0x3ED0, "HumanAI");
 
 extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

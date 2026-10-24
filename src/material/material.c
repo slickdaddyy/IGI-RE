@@ -110,8 +110,8 @@ ScriptValue *GameMaterial_Define(ScriptValue *out, void *data, ScriptArgs *args)
     gMaterials[gMaterialActive].unk50 = Script_GetArgReal(args, 5);
     arg = 6;
     for (i = 0; i < 6; i++)
-        Script_GetArgString(args, arg++, gMaterials[gMaterialActive].unk54[i], 32);
-    Script_GetArgString(args, arg++, gMaterials[gMaterialActive].unk114, 32);
+        Script_GetArgString(args, arg++, gMaterials[gMaterialActive].stepSounds[i], 32);
+    Script_GetArgString(args, arg++, gMaterials[gMaterialActive].landSound, 32);
     Script_GetArgString(args, arg++, gMaterials[gMaterialActive].unk134, 32);
     for (i = 0; i < 6; i++)
         Script_GetArgString(args, arg++, gMaterials[gMaterialActive].sounds[i], 32);

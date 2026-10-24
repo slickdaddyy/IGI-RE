@@ -4,13 +4,14 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "humanstate/humanstatetypes.h"
+#include "humanbase/humanbasetypes.h"
+#include "humanplayer/humanplayertypes.h"
 
-typedef struct Human Human;
-typedef struct HumanState HumanState;
-typedef void (*HumanStateFn)(HumanState *sm, Human *h);
+typedef struct HumanPlayer HumanPlayer;
+typedef struct HumanPlayerSM HumanPlayerSM;
+typedef void (*HumanStateFn)(HumanPlayerSM *sm, HumanPlayer *h);
 
-/* HumanState.input */
+/* HumanPlayerSM.input */
 #define HUMAN_ANIM_DONE 0x1
 #define HUMAN_ON_GROUND 0x4
 #define HUMAN_RUN       0x2010
@@ -69,109 +70,11 @@ enum {
     HSTATE_DIE = 47,
 };
 
-#define HPAD(from, to) char pad##from[(to) - (from)]
-
-struct Human {
-    HPAD(0x0, 0x20);
-    double pos[3];
-    HPAD(0x38, 0x68);
-    char anim[0x10];
-    float rot[9];
-    HPAD(0x9C, 0xFC);
-    int unkFC;
-    HPAD(0x100, 0x134);
-    float unk134;
-    HPAD(0x138, 0x1D4);
-    float unk1D4;
-    HPAD(0x1D8, 0x2EC);
-    HumanState sm;
-    HPAD(0x304, 0x33D);
-    char unk33D;
-    HPAD(0x33E, 0x4D0);
-    char unk4D0;
-    HPAD(0x4D1, 0x4EC);
-    void *view;
-    HPAD(0x4F0, 0x514);
-    char unk514[0xC];
-    float move[3];
-    HPAD(0x52C, 0x538);
-    int unk538;
-    int unk53C;
-    float unk540;
-    HPAD(0x544, 0x664);
-    float vel[3];
-    float unk670[3];
-    HPAD(0x67C, 0x6A8);
-    double unk6A8[3];
-    HPAD(0x6C0, 0x6EC);
-    char *ground;
-    HPAD(0x6F0, 0x728);
-    float unk728[3];
-    HPAD(0x734, 0x768);
-    void **unk768;
-    HPAD(0x76C, 0x7BC);
-    int unk7BC;
-    HPAD(0x7C0, 0xD44);
-    char unkD44;
-    HPAD(0xD45, 0xD60);
-    int actionFrames;
-    int actionFrame;
-    char unkD68;
-    HPAD(0xD69, 0xD70);
-    void *actionSound;
-    int useStage;
-    char unkD78;
-    char unkD79;
-    char unkD7A;
-    char unkD7B;
-    int ladderTop;
-    int ladderPos;
-    int ladderDir;
-    float ladderStep;
-    int ladderSound;
-    char unkD90;
-    char unkD91;
-    char unkD92;
-    char unkD93;
-    HPAD(0xD94, 0xD98);
-    float wireStep;
-    int wireSound;
-    char unkDA0;
-    HPAD(0xDA1, 0xDA4);
-    float wireDir[3];
-    float wireSpeed;
-    void *wireSlideSound;
-};
-
-void HumanPlayer_SetFlagD44(Human *h);
-void HumanPlayer_SetFlagD68(Human *h);
-void HumanPlayer_ClearFlagD44(Human *h);
-void HumanPlayer_ClearFlagD68(Human *h);
-void HumanPlayer_PicklockNoise(void *obj, Human *h);
-void HumanPlayer_StartAction(Human *h, int action);
-
-#define HCHECK(f, off) _Static_assert(offsetof(Human, f) == (off), #f)
-HCHECK(pos, 0x20);
-HCHECK(rot, 0x78);
-HCHECK(unk1D4, 0x1D4);
-HCHECK(sm, 0x2EC);
-HCHECK(unk33D, 0x33D);
-HCHECK(view, 0x4EC);
-HCHECK(move, 0x520);
-HCHECK(unk540, 0x540);
-HCHECK(vel, 0x664);
-HCHECK(ground, 0x6EC);
-HCHECK(unk768, 0x768);
-HCHECK(unk7BC, 0x7BC);
-HCHECK(unkD44, 0xD44);
-HCHECK(actionFrames, 0xD60);
-HCHECK(actionSound, 0xD70);
-HCHECK(ladderTop, 0xD7C);
-HCHECK(ladderSound, 0xD8C);
-HCHECK(unkD93, 0xD93);
-HCHECK(wireStep, 0xD98);
-HCHECK(unkDA0, 0xDA0);
-HCHECK(wireSlideSound, 0xDB4);
-#undef HCHECK
+void HumanPlayer_SetFlagD44(HumanPlayer *h);
+void HumanPlayer_SetFlagD68(HumanPlayer *h);
+void HumanPlayer_ClearFlagD44(HumanPlayer *h);
+void HumanPlayer_ClearFlagD68(HumanPlayer *h);
+void HumanPlayer_PicklockNoise(void *obj, HumanPlayer *h);
+void HumanPlayer_StartAction(HumanPlayer *h, int action);
 
 #endif

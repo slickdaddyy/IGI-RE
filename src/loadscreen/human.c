@@ -8,54 +8,21 @@
 #include "task/tasktypes.h"
 #include "loadscreen/loadscreentypes.h"
 #include "humanai/humanaitypes.h"
-
-typedef struct AnimSlot {
-    int anim;
-    int loop;
-} AnimSlot;
+#include "humanplayer/humanplayertypes.h"
+#include "humanbase/humanbasetypes.h"
 
 #define BONE(m, i) ((Vec3f *)((char *)(m)->bones + (i) * 0x84))
 
 typedef struct HumanView {
     char unk0[0x68];
     char anim[8];
-    HumanModel *model;
+    HumanMotion *model;
     char unk74[0xAC];
     float lookYaw;
     char unk124[8];
     float lookPitch;
 } HumanView;
 
-typedef struct Human {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    char anim[8];
-    char *model;
-    int unk74;
-    float matrix[10];
-    char unkA0[0x1B4];
-    HumanDamage damage;
-    char unk2EC[0x4C];
-    AnimSlot *animSlots;
-    char unk33C[0x1B0];
-    HumanView *view;
-    char unk4F0[0x24];
-    Vec3f boneOffset;
-    char unk520[0x12C];
-    char look;
-    char unk64D[3];
-    char unk650[4];
-} Human;
-
-_Static_assert(offsetof(Human, anim) == 0x68, "anim");
-_Static_assert(offsetof(Human, matrix) == 0x78, "matrix");
-_Static_assert(offsetof(Human, damage) == 0x254, "damage");
-_Static_assert(offsetof(Human, damage.hitZone) == 0x2E8, "hitZone");
-_Static_assert(offsetof(Human, animSlots) == 0x338, "animSlots");
-_Static_assert(offsetof(Human, view) == 0x4EC, "view");
-_Static_assert(offsetof(Human, boneOffset) == 0x514, "boneOffset");
-_Static_assert(offsetof(Human, look) == 0x64C, "look");
 _Static_assert(offsetof(HumanView, lookYaw) == 0x120, "lookYaw");
 _Static_assert(offsetof(HumanView, lookPitch) == 0x12C, "lookPitch");
 
@@ -149,8 +116,8 @@ HOOK(0x489C30, Human_InitDamage);
 int Human_GetHitZone(Human *h, HumanHit *hit)
 {
     float x = -hit->dir[0], y = -hit->dir[1], z = -hit->dir[2];
-    float side = z * h->matrix[6] + y * h->matrix[3] + x * h->matrix[0];
-    long double front = z * h->matrix[7] + y * h->matrix[4] + x * h->matrix[1];
+    float side = z * h->matrix.m[6] + y * h->matrix.m[3] + x * h->matrix.m[0];
+    long double front = z * h->matrix.m[7] + y * h->matrix.m[4] + x * h->matrix.m[1];
     int kind = hit->shot->kind;
     int zone;
     Vec3d head, d;
@@ -178,10 +145,10 @@ head:
     if (front < kZero)
         return zone;
     Model_GetBonePoint(&head, h, 4, "000_01_1");
-    hx = head.x + h->pos.x;
+    hx = head.x + h->pos[0];
     head.x = hx;
-    head.y = head.y + h->pos.y;
-    head.z = head.z + h->pos.z;
+    head.y = head.y + h->pos[1];
+    head.z = head.z + h->pos[2];
     d.x = hit->shot->from.x - hx;
     d.y = hit->shot->from.y - head.y;
     d.z = hit->shot->from.z - head.z;
@@ -270,7 +237,7 @@ void Human_ApplyLook(Human *h)
     float yaw, pitch, a;
     Vec3f axis;
     float q[5]; /* a Quat: Quat_SetAxisAngle also clears the int after w */
-    HumanModel *m;
+    HumanMotion *m;
 
     if (!h->look)
         return;
@@ -282,11 +249,11 @@ void Human_ApplyLook(Human *h)
             a = -kLookMax;
         else if (yaw > kLookMax)
             a = kLookMax;
-        axis.x = h->matrix[0];
-        axis.y = h->matrix[3];
-        axis.z = h->matrix[6];
+        axis.x = h->matrix.m[0];
+        axis.y = h->matrix.m[3];
+        axis.z = h->matrix.m[6];
         Quat_SetAxisAngle(q, &axis, a);
-        Bone_Rotate(h->model + 0x84, q, 0, 50, 50);
+        Bone_Rotate((char *)h->motion + 0x84, q, 0, 50, 50);
         if (yaw < -kLookMax)
             a = yaw + kLookMax;
         else if (yaw > kLookMax)
@@ -294,11 +261,11 @@ void Human_ApplyLook(Human *h)
         else
             goto pitch;
         if (a != kZero) {
-            axis.x = h->matrix[0];
-            axis.y = h->matrix[3];
-            axis.z = h->matrix[6];
+            axis.x = h->matrix.m[0];
+            axis.y = h->matrix.m[3];
+            axis.z = h->matrix.m[6];
             Quat_SetAxisAngle(q, &axis, a);
-            Bone_Rotate(h->model + 0x210, q, 0, 50, 50);
+            Bone_Rotate((char *)h->motion + 0x210, q, 0, 50, 50);
         }
     }
 pitch:
@@ -309,12 +276,12 @@ pitch:
         a = -kLookMax;
     else if (pitch > kLookMax)
         a = kLookMax;
-    axis.x = h->matrix[2];
-    axis.y = h->matrix[5];
-    axis.z = h->matrix[8];
+    axis.x = h->matrix.m[2];
+    axis.y = h->matrix.m[5];
+    axis.z = h->matrix.m[8];
     normalize(&axis);
     Quat_SetAxisAngle(q, &axis, a);
-    Bone_Rotate(h->model + 0x84, q, 0, 50, 50);
+    Bone_Rotate((char *)h->motion + 0x84, q, 0, 50, 50);
     if (pitch < -kLookMax)
         a = pitch + kLookMax;
     else if (pitch > kLookMax)
@@ -323,13 +290,13 @@ pitch:
         return;
     if (a == kZero)
         return;
-    m = (HumanModel *)h->model;
+    m = h->motion;
     axis.x = *(float *)((char *)m + 0x2AC) - *(float *)((char *)m + 0x228);
     axis.y = *(float *)((char *)m + 0x2B0) - *(float *)((char *)m + 0x22C);
     axis.z = *(float *)((char *)m + 0x2B4) - *(float *)((char *)m + 0x230);
     normalize(&axis);
     Quat_SetAxisAngle(q, &axis, a);
-    Bone_Rotate(h->model + 0x210, q, 0, 50, 50);
+    Bone_Rotate((char *)h->motion + 0x210, q, 0, 50, 50);
 }
 HOOK(0x489F70, Human_ApplyLook);
 
@@ -348,15 +315,15 @@ HOOK(0x48A330, Human_DisableLook);
 /* world position of a model bone */
 Vec3f *Human_GetBonePos(Vec3f *out, Human *h, int bone)
 {
-    Vec3f p = *BONE((HumanModel *)h->model, bone);
+    Vec3f p = *BONE(h->motion, bone);
     Vec3f r;
 
-    r.x = p.z * h->matrix[6] + p.y * h->matrix[3] + p.x * h->matrix[0];
-    r.y = p.z * h->matrix[7] + p.y * h->matrix[4] + p.x * h->matrix[1];
-    r.z = p.z * h->matrix[8] + p.y * h->matrix[5] + p.x * h->matrix[2];
-    r.x = r.x + h->boneOffset.x;
-    r.y = r.y + h->boneOffset.y;
-    r.z = r.z + h->boneOffset.z;
+    r.x = p.z * h->matrix.m[6] + p.y * h->matrix.m[3] + p.x * h->matrix.m[0];
+    r.y = p.z * h->matrix.m[7] + p.y * h->matrix.m[4] + p.x * h->matrix.m[1];
+    r.z = p.z * h->matrix.m[8] + p.y * h->matrix.m[5] + p.x * h->matrix.m[2];
+    r.x = r.x + h->boneOffset[0];
+    r.y = r.y + h->boneOffset[1];
+    r.z = r.z + h->boneOffset[2];
     *out = r;
     return out;
 }

@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "loadscreen/loadscreentypes.h"
+#include "humanbase/humanbasetypes.h"
 
 typedef struct SoldierSM SoldierSM;
 typedef struct Soldier Soldier;
@@ -71,14 +72,55 @@ typedef struct UseMsg {
 /* same layout as the player's state machine */
 struct Human;
 
-typedef struct HumanSM {
-    void (*input)(struct HumanSM *sm, struct Human *h);
-    void (**states)(struct HumanSM *sm, struct Human *h);
-    uint32_t bits;
-    int prev;
-    int state;
-    void (*run)(struct HumanSM *sm, struct Human *h);
-    char unk18[0x34];
-} HumanSM;
+/* the part every soldier type shares */
+typedef struct Soldier {
+    Human h;
+    int model;
+    int idleAnim;
+    char run;
+    char spawned;
+    char unkD02[2];
+} Soldier;
+_Static_assert(sizeof(Soldier) == 0xD04, "Soldier");
+
+#pragma pack(push, 4)
+/* HumanSoldier and HumanSoldierPistol, 0xD50 bytes */
+typedef struct HumanSoldier {
+    Soldier s;
+    float hitLimit;
+    float hitSum;
+    int scriptAnim;
+    int useTarget;
+    int hitFrames;
+    char thrown;
+    char meleeDone;
+    char unkD1A[2];
+    int deathKind;
+    double deathDir[3];
+    double deathVel[3];
+} HumanSoldier;
+
+/* HumanSoldierFemale, 0xD50 bytes */
+typedef struct SoldierF {
+    Soldier s;
+    float hitLimit;
+    float hitSum;
+    int scriptAnim;
+    int useTarget;
+    char unkD14[4];
+    int deathKind;
+    char unkD1C[4];
+    double deathDir[3];
+    double deathVel[3];
+} SoldierF;
+#pragma pack(pop)
+_Static_assert(offsetof(HumanSoldier, scriptAnim) == 0xD0C, "HumanSoldier");
+_Static_assert(offsetof(HumanSoldier, thrown) == 0xD18, "HumanSoldier");
+_Static_assert(offsetof(HumanSoldier, deathDir) == 0xD20, "HumanSoldier");
+_Static_assert(offsetof(HumanSoldier, deathVel) == 0xD38, "HumanSoldier");
+_Static_assert(sizeof(HumanSoldier) == 0xD50, "HumanSoldier");
+_Static_assert(offsetof(SoldierF, deathKind) == 0xD18, "SoldierF");
+_Static_assert(offsetof(SoldierF, deathVel) == 0xD38, "SoldierF");
+_Static_assert(sizeof(SoldierF) == 0xD50, "SoldierF");
 
 #endif

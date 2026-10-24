@@ -5,16 +5,7 @@
 #include "patrol/patrol.h"
 #include "patrol/patroltypes.h"
 #include "graphnode/graphnodetypes.h"
-
-/* AI brain of a soldier, only the fields used here */
-typedef struct SoldierAI {
-    char unk0[0x3AA8];
-    void *unk3AA8;
-    char unk3AAC[0xC0];
-    Graph *graph;
-} SoldierAI;
-
-_Static_assert(offsetof(SoldierAI, graph) == 0x3B6C, "SoldierAI.graph");
+#include "humanai/humanaitypes.h"
 
 typedef struct ViewObj {
     char unk0[0x50];
@@ -27,8 +18,8 @@ typedef struct GridStamp {
 
 ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x4148F0, long double, Vec3d_PitchAngle, (Vec3d v));
-ORIG(0x451380, void, HumanAI_GetTargetPos, (Vec3d *out, SoldierAI *ai));
-ORIG(0x4513E0, void *, HumanAI_GetTarget, (SoldierAI *ai));
+ORIG(0x451380, void, HumanAI_GetTargetPos, (Vec3d *out, HumanAI *ai));
+ORIG(0x4513E0, void *, HumanAI_GetTarget, (HumanAI *ai));
 ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
 ORIG(0x4F9720, GraphNode *, Graph_GetNode, (Graph *graph, int id));
 ORIG(0x4F9770, void, Graph_GetNodePos, (Vec3d *out, GraphNode *node));
@@ -53,9 +44,9 @@ static const double kHalf = 0.5;
 static const double kCellInv = 0x1p-13;
 static const double kCell = 8192.0;
 
-int AI_HasTarget(SoldierAI *ai)
+int AI_HasTarget(HumanAI *ai)
 {
-    return ai->unk3AA8 != NULL;
+    return ai->target != NULL;
 }
 HOOK(0x4528F0, AI_HasTarget);
 
@@ -82,7 +73,7 @@ void AI_AimThrow(Matrix *outMatrix, float *outVec, ViewObj *obj, const double *f
     float s = scale * kFrames;
     float pitch;
 
-    HumanAI_GetTargetPos(&pos, (SoldierAI *)obj);
+    HumanAI_GetTargetPos(&pos, (HumanAI *)obj);
     dx = pos.x - from[0];
     dy = pos.y - from[1];
     dz = pos.z - from[2];
@@ -265,7 +256,7 @@ void NodeGrid_GetSize(int *w, int *h, Graph *graph, int nodeId)
 HOOK(0x453040, NodeGrid_GetSize);
 
 /* nearest node to the target's position, NULL when there is none */
-static GraphNode *Monitor_Refresh(MonitorTarget *e, MonitorGraph *mg, SoldierAI *ai)
+static GraphNode *Monitor_Refresh(MonitorTarget *e, MonitorGraph *mg, HumanAI *ai)
 {
     GraphNode *found = NULL;
     Vec3d pos;
@@ -281,7 +272,7 @@ static GraphNode *Monitor_Refresh(MonitorTarget *e, MonitorGraph *mg, SoldierAI 
     return NULL;
 }
 
-GraphNode *HumanMonitor_Lookup(SoldierAI *ai, MonitorGraph *mg)
+GraphNode *HumanMonitor_Lookup(HumanAI *ai, MonitorGraph *mg)
 {
     void *target = HumanAI_GetTarget(ai);
     MonitorTarget *e, *next;
@@ -315,7 +306,7 @@ GraphNode *HumanMonitor_Lookup(SoldierAI *ai, MonitorGraph *mg)
 }
 HOOK(0x4530A0, HumanMonitor_Lookup);
 
-GraphNode *HumanMonitor_FindTargetNode(SoldierAI *ai)
+GraphNode *HumanMonitor_FindTargetNode(HumanAI *ai)
 {
     MonitorGraph *mg;
 

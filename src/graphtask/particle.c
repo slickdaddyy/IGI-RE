@@ -522,7 +522,7 @@ Particle2DTask *Particle2D_New(void *parent, void *world, Sprite *sprite, const 
     if (sprite->map)
         t->animated = 1;
     t->light = light;
-    t->callback = (void (*)(struct Particle2DHit *))((void (*)(struct Particle2DHit *))((void (*)(struct Particle2DHit *))((void (*)(struct Particle2DHit *))callback)));
+    t->callback = callback;
     Mem_PushMode(1);
     t->buf = Mem_Alloc(t->capacity * sizeof(Particle2D), 4);
     t->list = Mem_Alloc(t->capacity * sizeof(Particle2D *), 4);

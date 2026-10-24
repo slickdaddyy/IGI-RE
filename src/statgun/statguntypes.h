@@ -46,7 +46,7 @@ typedef struct WeaponUseMsg {
     int zoomed;
     float recoilPitch;
     float recoilYaw;
-    int unk28;
+    float aimError;
     struct Human *h;
 } WeaponUseMsg;
 

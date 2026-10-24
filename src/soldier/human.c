@@ -129,7 +129,7 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *extra));
 ORIG(0x4F1FC0, uint8_t, Weapon_GetSlotsEvent, (void));
-ORIG(0x4F2050, void, WeaponSlots_Init, (void **slots));
+ORIG(0x4F2050, void, WeaponSlots_Init, (Task **slots));
 ORIG(0x4FC840, uint8_t, PhysicsObj_GetEvent0, (void));
 ORIG(0x4FDEF0, uint8_t, Particle2D_GetCollideEvent, (void));
 ORIG(0x504A30, int, AreaActivate_AddCriteria, (const char *name, void *fn));
@@ -306,10 +306,10 @@ void Human_Open(void)
     TaskType_SetHandler(gHumanType, ComputerMap_GetSelectEvent(), Human_Handler4609F0);
     TaskType_SetHandler2(gHumanType, 3, Human_Handler460AC0);
     gHumanParams = ParamTable_New(9);
-    ParamTable_Add(gHumanParams, &tmp, tmp.unkE0, Param_ObjectPos(), 7, NULL);
-    ParamTable_Add(gHumanParams, &tmp, &tmp.unkF8, Param_Angle(), 7, NULL);
-    ParamTable_Add(gHumanParams, &tmp, tmp.unk100, Param_String16(), 7, NULL);
-    ParamTable_Add(gHumanParams, &tmp, &tmp.unkFC, Param_Int32(), 7, NULL);
+    ParamTable_Add(gHumanParams, &tmp, tmp.placePos, Param_ObjectPos(), 7, NULL);
+    ParamTable_Add(gHumanParams, &tmp, &tmp.yaw, Param_Angle(), 7, NULL);
+    ParamTable_Add(gHumanParams, &tmp, tmp.modelName, Param_String16(), 7, NULL);
+    ParamTable_Add(gHumanParams, &tmp, &tmp.team, Param_Int32(), 7, NULL);
     gHumanCriteria = AreaActivate_AddCriteria("CRITERIA_HUMAN", Human_Criteria);
     for (i = 0; i < 8; i++) {
         crt_sprintf(gHumanCriteriaNames[i], "CRITERIA_HUMAN%d", i);
@@ -356,30 +356,30 @@ void Human_CreateHandler(Human *h)
     QTaskList_Add(Game_GetTaskList3(), h);
     HumanCamera_AddHuman(h);
     Human_Reset(h);
-    memset(h->unkE0, 0, sizeof(h->unkE0));
-    h->unkF8 = 0;
-    h->unk100[0] = 0;
-    h->unkFC = -1;
+    memset(h->placePos, 0, sizeof(h->placePos));
+    h->yaw = 0;
+    h->modelName[0] = 0;
+    h->team = -1;
     WeaponSlots_Init(h->weapons);
     h->fire = 0;
     h->altFire = 0;
     h->fired = 0;
     h->weaponReady = 1;
-    h->unk4D4 = 1.0f;
+    h->aimError = 1.0f;
     h->view = HumanView_New(h);
-    h->shadow = Shadow_New(h, h->unk7D0, &h->unk7E8, &h->unk7EC, h->unk7F0, h->unk7F0 + 4, kShadowSize,
+    h->shadow = Shadow_New(h, h->groundPos, &h->unk7E8, &h->groundValid, &h->groundDist, h->groundUp, kShadowSize,
                            kShadowHeight, gShadowTex + 0x18);
     h->unk7E8 = 1;
-    h->unk7EC = 0;
+    h->groundValid = 0;
     h->ai = NULL;
-    memset(h->unk808, 0, sizeof(h->unk808));
+    memset(h->pathPrev, 0, 0x30);
     h->index = Game_CountHuman();
     h->unk7C4 = -1;
     h->deleteMe = 0;
-    h->unkCF4 = 0;
+    h->scriptVars = 0;
     h->textCount = 0;
     for (i = 0; i < 32; i++) {
-        h->textBuf[i][0] = 0;
+        h->lines[i][0] = 0;
         h->texts[i] = NULL;
     }
 }
@@ -390,48 +390,48 @@ void Human_Reset(Human *h)
     memset(h->prevInput, 0, sizeof(h->prevInput));
     memset(h->input, 0, sizeof(h->input));
     h->inputLocked = 0;
-    h->dead = 0;
+    h->deadState = 0;
     h->crouch = 0;
     AmmoList_Init(h->ammo);
-    h->unk4F0 = 1;
-    h->unk4F4 = 0;
-    memset(h->unk4F8, 0, sizeof(h->unk4F8));
-    h->yaw = 0;
-    h->unk510 = 0;
-    memset(h->unk514, 0, sizeof(h->unk514));
+    h->camMode = 1;
+    h->camToggle = 0;
+    memset(&h->rotX, 0, 0x14);
+    h->baseZ = 0;
+    h->frozenView = 0;
+    memset(h->boneOffset, 0, sizeof(h->boneOffset));
     memset(h->delta, 0, sizeof(h->delta));
-    h->unk52C = 0;
+    h->deltaScaled = 0;
     h->unk530 = 1.0f;
-    h->unk538 = -1;
-    h->unk64C = 1;
+    h->animEvent.sound = -1;
+    h->look = 1;
     memset(h->vel, 0, sizeof(h->vel));
-    memset(h->unk670, 0, sizeof(h->unk670));
-    memset(h->unk67C, 0, sizeof(h->unk67C));
-    memset(h->unk688, 0, sizeof(h->unk688));
+    memset(h->push, 0, sizeof(h->push));
+    memset(h->slide, 0, sizeof(h->slide));
+    memset(h->outVel, 0, sizeof(h->outVel));
     h->unk694 = 0;
     h->unk695 = 1;
     h->unk696 = 0;
     h->unk697 = 0;
     h->unk698 = 0;
-    memset(h->unk6A0, 0, 0x70);
+    memset(&h->ground, 0, sizeof(h->ground));
     Human_EnableCollision(h);
     h->groundDistance = 1073741824.0;
-    h->groundAngle = 0;
-    h->unk720 = 1073741824.0;
-    h->ref768 = NULL;
+    h->slopeAngle = 0;
+    h->roofDistance = 1073741824.0;
+    h->groundRef = NULL;
     h->attach = NULL;
-    h->ref7B0 = NULL;
-    h->ref7B4 = NULL;
+    h->attachedRef = NULL;
+    h->climbRef = NULL;
     h->unk7B8 = 0;
     h->unk7B9 = 0;
     h->unk7BC = 0;
-    h->ref838 = NULL;
-    h->ref83C = NULL;
-    h->ref840 = NULL;
-    h->unk844 = -1;
-    h->unk848 = -1;
+    h->bloodRef = NULL;
+    h->dropRef = NULL;
+    h->voiceRef = NULL;
+    h->voiceTime = -1;
+    h->missSoundTime = -1;
     h->footstep = 0;
-    h->dying = 0;
+    h->dead = 0;
     h->vulnerable = 1;
 }
 HOOK(0x45ECD0, Human_Reset);
@@ -444,7 +444,7 @@ void Human_RunHandler(Human *h)
     int i;
 
     for (i = 0; i < 32; i++)
-        h->textBuf[i][0] = 0;
+        h->lines[i][0] = 0;
     h->textCount = 0;
     if (h->deleteMe) {
         Task_Delete(h);
@@ -488,18 +488,18 @@ HOOK(0x45EF40, Human_DeleteHandler);
 
 void Human_RemoveRefs(Human *h)
 {
-    if (h->ref768)
-        TaskRef_Remove(h->ref768);
-    if (h->ref7B0)
-        TaskRef_Remove(h->ref7B0);
-    if (h->ref7B4)
-        TaskRef_Remove(h->ref7B4);
-    if (h->ref838)
-        TaskRef_Remove(h->ref838);
-    if (h->ref83C)
-        TaskRef_Remove(h->ref83C);
-    if (h->ref840)
-        TaskRef_Remove(h->ref840);
+    if (h->groundRef)
+        TaskRef_Remove(h->groundRef);
+    if (h->attachedRef)
+        TaskRef_Remove(h->attachedRef);
+    if (h->climbRef)
+        TaskRef_Remove(h->climbRef);
+    if (h->bloodRef)
+        TaskRef_Remove(h->bloodRef);
+    if (h->dropRef)
+        TaskRef_Remove(h->dropRef);
+    if (h->voiceRef)
+        TaskRef_Remove(h->voiceRef);
 }
 HOOK(0x45EFD0, Human_RemoveRefs);
 

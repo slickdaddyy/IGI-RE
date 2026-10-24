@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "profile/param.h"
 #include "profile/profile.h"
+#include "humanai/humanaitypes.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
@@ -78,31 +79,8 @@ typedef struct HumanAIConfigNames {
     const char *aiType;
 } HumanAIConfigNames;
 
-/* only the fields HumanAIConfig_Apply touches */
-typedef struct HumanAI {
-    Task task;
-    char unk20[0x3D18];
-    int aiType;
-    char unk3D3C[8];
-    int unk3D44;
-    int unk3D48;
-    int unk3D4C;
-    int unk3D50;
-    float unk3D54[13];
-    float unk3D88;
-    float unk3D8C;
-    float unk3D90;
-    float unk3D94;
-    float unk3D98[6];
-    char unk3DB0[8];
-    double unk3DB8;
-    double unk3DC0;
-    double unk3DC8;
-} HumanAI;
-
 _Static_assert(sizeof(HumanAIConfigItem) == 0x2A8, "HumanAIConfigItem");
 _Static_assert(sizeof(HumanAIConfig) == 0x180, "HumanAIConfig");
-_Static_assert(offsetof(HumanAI, unk3DC8) == 0x3DC8, "HumanAI");
 
 extern uint16_t gHumanAIConfigType;
 extern uint16_t gHumanAIConfigItemType;
@@ -364,19 +342,19 @@ void HumanAIConfig_Apply(HumanAI *ai)
     }
     ai->unk3D48 = Round((long double)c->unk230 * gFramesPerSecond);
     ai->unk3D44 = Round((long double)c->unk22C * gFramesPerSecond);
-    ai->unk3D4C = c->unk228;
-    ai->unk3D50 = Round((long double)c->unk268 * gFramesPerSecond);
+    ai->maxBurst = c->unk228;
+    ai->maxTurns = Round((long double)c->unk268 * gFramesPerSecond);
     for (i = 0; i < 13; i++)
-        COPY(ai->unk3D54[i], (&c->unk234)[i]);
-    COPY(ai->unk3D88, c->unk278);
-    COPY(ai->unk3D8C, c->unk27C);
-    ai->unk3D90 = c->unk280 * k4096;
-    ai->unk3D94 = c->unk284 * k4096;
+        COPY((&ai->evadeChance)[i], (&c->unk234)[i]);
+    COPY(ai->grenadeChance, c->unk278);
+    COPY(ai->grenadeChance2, c->unk27C);
+    ai->grenadeMin = c->unk280 * k4096;
+    ai->grenadeMax = c->unk284 * k4096;
     for (i = 0; i < 6; i++)
-        COPY(ai->unk3D98[i], (&c->unk288)[i]);
-    ai->unk3DC0 = c->unk270 * k4096;
-    ai->unk3DB8 = c->unk26C * k4096;
-    ai->unk3DC8 = c->unk274;
+        COPY((&ai->throwSpeedMin)[i], (&c->unk288)[i]);
+    ai->coverRange = c->unk270 * k4096;
+    ai->fallFlatRange = c->unk26C * k4096;
+    ai->aimSpeed = c->unk274;
     COPY(*(float *)(owner + 0x258), c->unk2A0);
     if (((Task *)owner)->type == Soldier_GetType())
         COPY(*(float *)(owner + 0xD04), c->unk2A4);

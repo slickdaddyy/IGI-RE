@@ -5,8 +5,8 @@
 
 #include "igi.h"
 #include "types.h"
-#include "humanstate/humanstatetypes.h"
 #include "loadscreen/loadscreentypes.h"
+#include "humanplayer/humanplayertypes.h"
 
 typedef struct HumanPlayer HumanPlayer;
 
@@ -40,79 +40,10 @@ typedef struct HumanView {
     float matrix[9];
 } HumanView;
 
-/* The "HumanPlayer" task, 0xDF0 bytes. */
-struct HumanPlayer {
-    char task[0x20];
-    Vec3d pos;
-    char unk038[0x40];
-    float matrix[9];
-    char unk09C[0x4];
-    float radius;
-    char unk0A4[0x58];
-    int unk0FC;
-    char unk100[0x10];
-    float prevInput[40];
-    float input[40];
-    char unk250[0x4];
-    HumanDamage damage;
-    HumanState state;
-    char unk304[0x1C0];
-    void *weapons[3];
-    char unk4D0[0x18];
-    int meleeCount;
-    HumanView *view;
-    char unk4F0[0x3C];
-    char noclip;
-    char unk52D[0x137];
-    float vel[3];
-    float push[3];
-    char unk67C[0x679];
-    char quiet;
-    char vulnerable;
-    char unkCF7[0x59];
-    int weaponCategory;
-    int weaponCycle;
-    int weaponAnim;
-    int weaponAnimReq;
-    int barMax;
-    int barValue;
-    char showBar;
-    char unkD69[0xF];
-    char ladderEnter;
-    char onLadder;
-    char ladderLeave;
-    char ladderFromTop;
-    int ladderTop;
-    int ladderPos;
-    char unkD84[0xC];
-    char unkD90;
-    char unkD91;
-    char unkD92;
-    char wireEnter;
-    char onWire;
-    char unkD95[0xB];
-    char ziplineEnter;
-    char onZipline;
-    char unkDA2[0x2];
-    float ziplineDir[3];
-    float ziplineSpeed;
-    int ziplineSound;
-    char unkDB8[0xC];
-    int earSound;
-    float earLevel;
-    float hitFlash[4];
-    float flash;
-    int fenceTimer;
-    void *savedWeapon;
-    void *attacker;
-    char unkDEC[0x4];
-};
-
 /* input channels 23 - 31 are the weapon category keys */
 #define INPUT_WEAPON 13
 #define INPUT_CATEGORY 23
 
-_Static_assert(sizeof(HumanPlayer) == 0xDF0, "HumanPlayer");
 _Static_assert(__builtin_offsetof(HumanPlayer, damage.hitZone) == 0x2E8, "hitZone");
 _Static_assert(__builtin_offsetof(HumanPlayer, weapons) == 0x4C4, "weapons");
 _Static_assert(__builtin_offsetof(HumanPlayer, vel) == 0x664, "vel");

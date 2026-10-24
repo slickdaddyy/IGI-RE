@@ -123,7 +123,7 @@ ORIG(0x4E7C40, void *, DebugText_GetFont, (void));
 ORIG(0x4E81F0, char *, Viewport_GetCurrentCamera, (void));
 ORIG(0x4EC0E0, void, AnimTrigger_Fire, (int a, Human *h, double *pos));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
-ORIG(0x4F2060, Task *, WeaponSlots_Get, (void **slots, int i));
+ORIG(0x4F2060, Task *, WeaponSlots_Get, (Task **slots, int i));
 ORIG(0x4F2310, void, Weapon_Move, (Task *w, double *pos, float *m));
 ORIG(0x4F9720, void *, Graph_GetNode, (void *graph, int id));
 ORIG(0x4F9770, void, Graph_GetNodePos, (double *out, void *node));
@@ -298,7 +298,7 @@ void Human_Wake(Human *h)
     if (!h->frozen)
         return;
     h->frozen = 0;
-    BoneObj_Update(h->matrix, h->anim);
+    BoneObj_Update(h->matrix.m, h->anim);
     Human_ApplyLook(h, Anim_GetId(h->anim, 0));
 }
 HOOK(0x45F240, Human_Wake);
@@ -459,18 +459,18 @@ void Human_ParamChangedHandler(Human *h, void *arg)
 
     if (model) {
         BoneDynCubeObj_SetModel(h, model);
-        BoneObj_Update(h->matrix, h->anim);
+        BoneObj_Update(h->matrix.m, h->anim);
     }
     DynCube_Move(Game_GetWorld(), h, h->placePos, h->radius);
     h->baseZ = h->yaw;
     h->rotZ = h->yaw;
-    Matrix_SetRotZ(h->matrix, h->yaw);
+    Matrix_SetRotZ(h->matrix.m, h->yaw);
 }
 HOOK(0x45F890, Human_ParamChangedHandler);
 
 void Human_GetWeaponsHandler(Human *h, void ***out)
 {
-    *out = h->weapons;
+    *out = (void **)h->weapons;
 }
 HOOK(0x45F900, Human_GetWeaponsHandler);
 
@@ -511,7 +511,7 @@ void Human_HitHandler(Human *h, int *msg)
     Human_Bleed(h, msg + 2, msg[0]);
     if (Human_IsPlayer(h) && PlayerXPHit())
         return;
-    if (!h->active)
+    if (!h->vulnerable)
         return;
     zone = Human_GetHitZone(h, msg);
     d->hitZone = zone;
@@ -529,7 +529,7 @@ void Human_BlastHandler(Human *h, void *msg)
 
     if (Human_IsPlayer(h) && PlayerXPHit())
         return;
-    if (!h->active)
+    if (!h->vulnerable)
         return;
     d->hitZone = 13;
     HumanDamage_GetZone(d, 13);
@@ -549,7 +549,7 @@ void Human_CrushHandler(Human *h, void **msg)
     double *p = DynCubeObj_GetPosition(h);
     char *obj = msg[0];
     double a[3], b[3], d[3], lim;
-    char active = h->active;
+    char active = h->vulnerable;
     CollHit hit;
     CollLinesMsg q;
     float *s, *v, m, dmg;
@@ -590,7 +590,7 @@ void Human_CrushHandler(Human *h, void **msg)
     h->damage.hitZone = 13;
     if (Human_IsPlayer(h) && PlayerXPHit())
         return;
-    if (h->ai && h->ai->immortal)
+    if (h->ai && h->ai->invulnerable)
         return;
     h->damage.part[13].dmg = dmg + h->damage.part[13].dmg;
     Human_AddDamage(h, dmg);
@@ -604,7 +604,7 @@ void Human_GetHumanCameraInfoHandler(Human *h, HumanCameraInfo *info)
     HumanView_GetEye(&info->pos.x, v);
     HumanView_GetMatrix(info->matrix.m, h->view);
     info->fov = v->fov;
-    memcpy(&info->body, h->matrix, sizeof(info->body));
+    memcpy(&info->body, h->matrix.m, sizeof(info->body));
     info->unk6C = v->unk1E8;
     info->mode = h->camMode;
     if (v->camOverride) {
@@ -646,7 +646,7 @@ void Human_DetectInfoHandler(Human *h, int *msg)
     msg[0] = Human_GetMaskType();
     msg[8] = h->team;
     ((char *)msg)[0x24] = !h->dead;
-    ((char *)msg)[0x25] = h->active;
+    ((char *)msg)[0x25] = h->vulnerable;
     Human_GetEyePos(msg + 2, h);
 }
 HOOK(0x45FE30, Human_DetectInfoHandler);
@@ -769,14 +769,14 @@ void Human_GetWeaponBoneHandler(Human *h, HumanBoneMsg *msg)
         memcpy(msg->matrix, v->model + 0x1B0, sizeof(msg->matrix));
         return;
     }
-    b = (float *)(h->motion + 0xB70);
+    b = (float *)((char *)h->motion + 0xB70);
     x = b[0];
     y = b[1];
     z = b[2];
     msg->pos[0] = x + h->pos[0];
     msg->pos[1] = y + h->pos[1];
     msg->pos[2] = z + h->pos[2];
-    memcpy(msg->matrix, h->motion + 0xB7C, sizeof(msg->matrix));
+    memcpy(msg->matrix, (char *)h->motion + 0xB7C, sizeof(msg->matrix));
     msg->firstPerson = 0;
 }
 HOOK(0x4600C0, Human_GetWeaponBoneHandler);
@@ -840,11 +840,11 @@ void Human_MapMarkerHandler(Human *h, HumanSeeQuery *q)
     if (!ComputerMap_GetZoom() || ComputerMap_GetZoom() == 3)
         return;
     q->targetPos = h->pos;
-    q->targetMatrix = h->matrix;
+    q->targetMatrix = h->matrix.m;
     q->unk1C = 1;
     q->radius = h->radius;
     q->kind = h->team == 0 || h->team == 2 ? 3 : 0;
-    if (!h->active)
+    if (!h->vulnerable)
         return;
     d[0] = h->pos[0] - q->pos[0];
     d[1] = h->pos[1] - q->pos[1];
@@ -923,7 +923,7 @@ HOOK(0x460400, Human_RenderHandler);
 void Human_GetSoundInfoHandler(Human *h, void **out)
 {
     out[0] = h->pos;
-    out[1] = h->matrix;
+    out[1] = h->matrix.m;
     out[2] = 0;
 }
 HOOK(0x4606D0, Human_GetSoundInfoHandler);
@@ -1017,9 +1017,9 @@ void Human_ActivateHandler(Human *h, void *arg)
 {
     uint8_t ev;
 
-    if (h->active)
+    if (h->vulnerable)
         return;
-    h->active = 1;
+    h->vulnerable = 1;
     ev = World_GetEvent0();
     Handler(ev, BoneDynCubeObj_GetType())(h, arg);
 }
@@ -1029,9 +1029,9 @@ void Human_DeactivateHandler(Human *h, void *arg)
 {
     uint8_t ev;
 
-    if (!h->active)
+    if (!h->vulnerable)
         return;
-    h->active = 0;
+    h->vulnerable = 0;
     ev = World_GetEvent1();
     Handler(ev, BoneDynCubeObj_GetType())(h, arg);
 }
@@ -1084,7 +1084,7 @@ void Human_PreDeleteHandler(Human *h, void *arg)
         int unk8;
     } m;
 
-    if (h->active)
+    if (h->vulnerable)
         return;
     m.unk0 = 0;
     m.world = Game_GetWorld();
@@ -1188,7 +1188,7 @@ HOOK(0x460C80, Human_printf);
 
 void Human_MarkDelete(Human *h)
 {
-    h->unk7C8 = 1;
+    h->deleteMe = 1;
 }
 HOOK(0x460CE0, Human_MarkDelete);
 
@@ -1214,7 +1214,7 @@ void Human_UpdatePlatformMove(Human *h)
     for (i = 0; i < 3; i++)
         h->movePos[i] = 0;
     for (i = 0; i < 10; i++)
-        h->moveMatrix[i] = 0;
+        ((float *)&h->moveMatrix)[i] = 0;
     h->moveAngle[2] = 0;
     if (!obj && !(obj = Human_GetGround(h)))
         return;
@@ -1239,7 +1239,7 @@ void Human_UpdatePlatformMove(Human *h)
     h->movePos[0] = x;
     h->movePos[1] = y;
     h->movePos[2] = z;
-    memcpy(h->moveMatrix, m, sizeof(h->moveMatrix));
+    memcpy(&h->moveMatrix, m, sizeof(h->moveMatrix));
     Matrix_GetEuler(m, &h->moveAngle[0], &h->moveAngle[1], &h->moveAngle[2]);
 }
 HOOK(0x460CF0, Human_UpdatePlatformMove);
@@ -1289,7 +1289,7 @@ void Human_UpdateUse(Human *h)
         q.h = h;
         HumanView_GetEye(q.pos, h->view);
         HumanView_GetMatrix(q.matrix, h->view);
-        memcpy(q.bodyMatrix, h->matrix, sizeof(q.bodyMatrix));
+        memcpy(q.bodyMatrix, h->matrix.m, sizeof(q.bodyMatrix));
         q.unk70 = q.unk74 = Human_IsPlayer(h) ? kQuarterPi : kPi;
         q.unk78 = 0;
         q.range = kUseRange;
@@ -1305,7 +1305,7 @@ void Human_UpdateUse(Human *h)
         }
         Human_SetAttached(h, q.found);
     }
-    if (!h->unk7B4 || !(t = *h->unk7B4))
+    if (!h->climbRef || !(t = *h->climbRef))
         return;
     c.h = h;
     memcpy(c.pos, h->pos, sizeof(c.pos));
@@ -1329,7 +1329,7 @@ void Human_UpdateBody(Human *h)
     float *b, *m;
 
     if (obj) {
-        m = h->attachMatrix;
+        m = h->attachMatrix.m;
         b = (float *)((char *)obj + 0x70);
         r[0] = m[6] * b[2] + b[1] * m[3] + m[0] * b[0];
         r[1] = m[7] * b[2] + b[1] * m[4] + m[1] * b[0];
@@ -1340,7 +1340,7 @@ void Human_UpdateBody(Human *h)
         r[6] = m[6] * b[8] + m[3] * b[7] + m[0] * b[6];
         r[7] = m[7] * b[8] + m[4] * b[7] + m[1] * b[6];
         r[8] = m[8] * b[8] + m[5] * b[7] + m[2] * b[6];
-        ((int *)r)[9] = h->unk7AC + *(int *)((char *)obj + 0x94) + 1;
+        ((int *)r)[9] = h->attachMatrix.count + *(int *)((char *)obj + 0x94) + 1;
         Matrix_GetEuler(r, &ex, &ey, &ez);
         h->baseX = ex;
         h->rotX = ex;
@@ -1367,7 +1367,7 @@ void Human_UpdateBody(Human *h)
         h->baseZ = s;
         h->rotZ = s + v->unk134;
     }
-    Matrix_SetEuler(h->matrix, h->rotX, h->rotY, h->rotZ);
+    Matrix_SetEuler(h->matrix.m, h->rotX, h->rotY, h->rotZ);
 }
 HOOK(0x4610C0, Human_UpdateBody);
 
@@ -1383,9 +1383,9 @@ void Human_FireAnimTrigger(Human *h)
     BoneObj_GetEvents(&e->unk0, h->anim);
     if (e->sound == -1)
         return;
-    x = h->matrix[2] * e->offset[2] + h->matrix[1] * e->offset[1] + h->matrix[0] * e->offset[0];
-    y = h->matrix[5] * e->offset[2] + h->matrix[4] * e->offset[1] + h->matrix[3] * e->offset[0];
-    z = h->matrix[8] * e->offset[2] + h->matrix[7] * e->offset[1] + h->matrix[6] * e->offset[0];
+    x = h->matrix.m[2] * e->offset[2] + h->matrix.m[1] * e->offset[1] + h->matrix.m[0] * e->offset[0];
+    y = h->matrix.m[5] * e->offset[2] + h->matrix.m[4] * e->offset[1] + h->matrix.m[3] * e->offset[0];
+    z = h->matrix.m[8] * e->offset[2] + h->matrix.m[7] * e->offset[1] + h->matrix.m[6] * e->offset[0];
     p[0] = x + h->pos[0];
     p[1] = y + h->pos[1];
     p[2] = z + h->pos[2];
@@ -1689,7 +1689,7 @@ void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t 
     CollLinesMsg q;
     HumanFilter filter;
     HumanAI *ai;
-    HumanPath *path;
+    Graph *path;
     TaskHandler fn;
     Task *task, *n0;
     void *node, *world;
@@ -1705,9 +1705,9 @@ void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t 
     if (ai) {
         memset(hits, 0, sizeof(hits));
         h->groundDistance = 0;
-        if (!ai->path)
+        if (!ai->graph)
             goto check;
-        node = Graph_GetNode(ai->path, ai->node);
+        node = Graph_GetNode(ai->graph, ai->node);
         memcpy(&hits[0].pos, to, sizeof(hits[0].pos));
         hits[0].pos.z = hits[0].pos.z - foot[2];
         if (node) {
@@ -1717,13 +1717,13 @@ void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t 
             hits[0].normal.y = 0;
             hits[0].normal.z = kOne;
         }
-        if (List_Count(ai->route) <= 0) {
-            node = Graph_GetNode(ai->path, ai->node);
+        if (List_Count(&ai->moves) <= 0) {
+            node = Graph_GetNode(ai->graph, ai->node);
             if (node) {
                 Graph_GetNodePos(d, node);
                 hits[0].pos.z = d[2];
             }
-        } else if ((n0 = ai->route[0])->next) {
+        } else if ((n0 = (Task *)ai->moves.head)->next) {
             if (Vec3d_IsZero(h->pathCur)) {
                 memcpy(h->pathPrev, &hits[0].pos, sizeof(h->pathPrev));
                 memcpy(h->pathCur, &hits[0].pos, sizeof(h->pathCur));
@@ -1750,11 +1750,11 @@ void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t 
                 hits[0].pos.z = (kOneD - t) * zdiff + h->pathPrev[2];
             }
         }
-        path = ai->path;
-        if (!path->unk64)
+        path = ai->graph;
+        if (!path->attached)
             Human_ClearPlatform(h);
         else if (!h->attach)
-            Human_SetPlatform(h, path->unk14);
+            Human_SetPlatform(h, path->task.parent);
         grounded = 1;
     } else {
         memcpy(pts[1], to, sizeof(pts[1]));

@@ -15,6 +15,7 @@
 #include "statgun/statguntypes.h"
 #include "guncasing/guncasingtypes.h"
 #include "ammotype/ammotypetypes.h"
+#include "humanbase/humanbasetypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -29,18 +30,6 @@ typedef struct HumanView {
     float fov;          /* 0x1E4 */
     float unk1E8;
 } HumanView;
-
-typedef struct Human {
-    Task task;
-    char unk20[0xF0];
-    float prevInput[40];    /* 0x110 */
-    float input[40];        /* 0x1B0 */
-    char unk250[0x1E4];
-    char unk434[0xA0];
-    float unk4D4;
-    char unk4D8[0x14];
-    HumanView *view;        /* 0x4EC */
-} Human;
 
 /* the weapon config message: parameters of the weapon's config task */
 typedef struct WeaponConfigMsg {
@@ -124,8 +113,6 @@ static inline float max_scale(const RigidDynCubeObj *o)
 }
 
 _Static_assert(offsetof(HumanView, fov) == 0x1E4, "HumanView");
-_Static_assert(offsetof(Human, input) == 0x1B0, "Human");
-_Static_assert(offsetof(Human, view) == 0x4EC, "Human");
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));

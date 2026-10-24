@@ -18,8 +18,8 @@ typedef struct GameMaterial {
     float unk48;
     char unk4C;
     float unk50;
-    char unk54[6][32];
-    char unk114[32];
+    char stepSounds[6][32];
+    char landSound[32];
     char unk134[32];
     char sounds[6][32];     /* impact sounds */
     char unk214[2][32];

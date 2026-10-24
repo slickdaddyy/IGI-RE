@@ -8,6 +8,7 @@
 #include "task/tasktypes.h"
 #include "qasm/qasmtypes.h"
 #include "weapon/weapontypes.h"
+#include "humanbase/humanbasetypes.h"
 
 #define VPAD(from, to) char pad##from[(to) - (from)]
 
@@ -19,90 +20,6 @@ extern TaskHandler gTaskHandlers[][0x180];
 enum { WEAPON_KIND_GRENADE = 4 };
 
 typedef struct HumanView HumanView;
-
-typedef struct Human {
-    Task task;
-    double pos[3];
-    VPAD(0x38, 0x68);
-    char anim[0x10];
-    Matrix rot;
-    float radius;
-    VPAD(0xA4, 0xFC);
-    int team;
-    VPAD(0x100, 0x110);
-    float prevInput[40];
-    float input[40];
-    char inputLocked;
-    VPAD(0x251, 0x2F4);
-    unsigned stateInput;
-    int prevState;
-    int state;
-    VPAD(0x300, 0x33D);
-    char crouch;
-    VPAD(0x33E, 0x4C4);
-    Task *weapons[3];
-    char unk4D0;
-    char fire;
-    char unk4D2;
-    char shot;
-    int unk4D4;
-    VPAD(0x4D8, 0x4E0);
-    int cookTime;
-    VPAD(0x4E4, 0x4EC);
-    HumanView *view;
-    int viewCam;
-    VPAD(0x4F4, 0x4F8);
-    float pitch;
-    VPAD(0x4FC, 0x508);
-    float yaw;
-    float yaw2;
-    char unk510;
-    VPAD(0x511, 0x520);
-    float move[3];
-    char unk52C;
-    VPAD(0x52D, 0x538);
-    int animId;
-    int animFrame;
-    VPAD(0x540, 0x664);
-    float vel[3];
-    float unk670[3];
-    float unk67C[3];
-    float throwDir[3];
-    char unk694;
-    VPAD(0x695, 0x6A8);
-    double soundPos[3];
-    VPAD(0x6C0, 0x6EC);
-    char *ground;
-    VPAD(0x6F0, 0x6F8);
-    int unk6F8;
-    VPAD(0x6FC, 0x728);
-    float unk728[3];
-    VPAD(0x734, 0x768);
-    Task **groundRef;
-    Task *platform;
-    double platformPos[3];
-    Matrix platformRot;
-    Task **attachedRef;
-    Task **climbRef;
-    char unk7B8;
-    char unk7B9;
-    VPAD(0x7BA, 0x7C0);
-    int unk7C0;
-    VPAD(0x7C4, 0x7D0);
-    double lastPos[2];
-    VPAD(0x7E0, 0x7E8);
-    int unk7E8;
-    VPAD(0x7EC, 0x838);
-    Task **bloodRef;
-    Task **dropRef;
-    Task **voiceRef;
-    int voiceTime;
-    VPAD(0x848, 0x84C);
-    unsigned footstep;
-    VPAD(0x850, 0xCF5);
-    char dead;
-    char unkCF6;
-} Human;
 
 struct HumanView {
     Task task;
@@ -163,26 +80,6 @@ struct HumanView {
 };
 
 #define VCHECK(t, f, off) _Static_assert(offsetof(t, f) == (off), #t "." #f)
-VCHECK(Human, rot, 0x78);
-VCHECK(Human, team, 0xFC);
-VCHECK(Human, inputLocked, 0x250);
-VCHECK(Human, state, 0x2FC);
-VCHECK(Human, crouch, 0x33D);
-VCHECK(Human, unk4D4, 0x4D4);
-VCHECK(Human, view, 0x4EC);
-VCHECK(Human, move, 0x520);
-VCHECK(Human, vel, 0x664);
-VCHECK(Human, unk694, 0x694);
-VCHECK(Human, soundPos, 0x6A8);
-VCHECK(Human, groundRef, 0x768);
-VCHECK(Human, platformRot, 0x788);
-VCHECK(Human, attachedRef, 0x7B0);
-VCHECK(Human, yaw, 0x508);
-VCHECK(Human, unk7C0, 0x7C0);
-VCHECK(Human, lastPos, 0x7D0);
-VCHECK(Human, bloodRef, 0x838);
-VCHECK(Human, footstep, 0x84C);
-VCHECK(Human, unkCF6, 0xCF6);
 VCHECK(HumanView, eye, 0xE0);
 VCHECK(HumanView, cam, 0xF8);
 VCHECK(HumanView, pitch, 0x120);

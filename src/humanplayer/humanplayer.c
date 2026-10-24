@@ -113,7 +113,7 @@ ORIG(0x47CDA0, int, Script_EvalConst, (const char *expr));
 ORIG(0x47CE70, void, AmmoList_SetLimit, (int *list, int id, int limit));
 ORIG(0x47CEE0, AmmoEntry *, AmmoList_Find, (int *list, int id));
 ORIG(0x489C30, void, Human_InitDamage, (HumanPlayer *h, void *speeds));
-ORIG(0x489E10, HitAnims *, HumanDamage_GetZone, (float *damage, int zone));
+ORIG(0x489E10, HitAnims *, HumanDamage_GetZone, (HumanDamage *damage, int zone));
 ORIG(0x489E70, void, Human_PlayAnimSlot, (HumanPlayer *h, int slot, float blend));
 ORIG(0x489EA0, void, Human_PlayAnim, (HumanPlayer *h, int anim, int flag, float blend));
 ORIG(0x48A330, void, Human_DisableLook, (HumanPlayer *h));
@@ -126,8 +126,8 @@ ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
 ORIG(0x4C1790, void, QTaskList_Add, (QTaskList *list, void *item));
 ORIG(0x4C17C0, void, QTaskList_Remove, (QTaskList *list, void *item));
 ORIG(0x4C1800, QTaskList *, QTaskList_New, (int max));
-ORIG(0x4C6940, void, DynCube_Move, (void *world, HumanPlayer *h, double *pos, int unk));
-ORIG(0x4C7140, void, DynCube_Add, (void *world, HumanPlayer *h, double *pos, int unk, int n));
+ORIG(0x4C6940, void, DynCube_Move, (void *world, HumanPlayer *h, double *pos, float radius));
+ORIG(0x4C7140, void, DynCube_Add, (void *world, HumanPlayer *h, double *pos, float radius, int n));
 ORIG(0x4C7560, void, DynCube_Remove, (void *world, HumanPlayer *h));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4D2FB0, void, BoneObj_GetRootMotion, (void *a, float *delta, void *anim));
@@ -257,7 +257,7 @@ enum {
 
 static inline int pressed(HumanPlayer *h, int i)
 {
-    return h->input[i] != 0 && h->prev_input[i] == 0;
+    return h->input[i] != 0 && h->prevInput[i] == 0;
 }
 
 static inline void sm_set(HumanPlayerSM *sm, int state, HumanPlayer *h)
@@ -346,27 +346,27 @@ void HumanPlayer_BodyLeanRun(HumanPlayerSM *sm, HumanPlayer *h)
 
     (void)sm;
     if (h->input[INPUT_LEFT] != 0) {
-        if (h->prev_input[INPUT_LEFT] == 0)
+        if (h->prevInput[INPUT_LEFT] == 0)
             v->lean_speed[0] = gLeanSide / (long double)gLeanFrames;
         lean_towards(&v->lean[0], v->lean_speed[0], -gLeanSide);
     }
     if (h->input[INPUT_RIGHT] != 0) {
-        if (h->prev_input[INPUT_RIGHT] == 0)
+        if (h->prevInput[INPUT_RIGHT] == 0)
             v->lean_speed[0] = gLeanSide / (long double)gLeanFrames;
         lean_towards(&v->lean[0], v->lean_speed[0], gLeanSide);
     }
     if (h->input[INPUT_LEFT] == 0 && h->input[INPUT_RIGHT] == 0) {
-        if (h->prev_input[INPUT_LEFT] != 0 || h->prev_input[INPUT_RIGHT] != 0)
+        if (h->prevInput[INPUT_LEFT] != 0 || h->prevInput[INPUT_RIGHT] != 0)
             v->lean_speed[0] = gLeanSide / (long double)gLeanFrames;
         lean_towards(&v->lean[0], v->lean_speed[0], 0);
     }
     if (h->crouch) {
         if (h->input[INPUT_FORWARD] != 0) {
-            if (h->prev_input[INPUT_FORWARD] == 0)
+            if (h->prevInput[INPUT_FORWARD] == 0)
                 v->lean_speed[2] = gLeanUp / (long double)gLeanFrames;
             lean_towards(&v->lean[2], v->lean_speed[2], gLeanUp);
         } else {
-            if (h->prev_input[INPUT_FORWARD] != 0)
+            if (h->prevInput[INPUT_FORWARD] != 0)
                 v->lean_speed[2] = gLeanUp / (long double)gLeanFrames;
             lean_towards(&v->lean[2], v->lean_speed[2], 0);
         }
@@ -395,9 +395,9 @@ void HumanPlayer_BodyComputerRun(HumanPlayerSM *sm, HumanPlayer *h)
     Computer_Delete();
     HumanView_UnlockPitch(h->view);
     Human_UnfreezeView(h);
-    h->unk670[0] = 0;
-    h->unk670[1] = 0;
-    h->unk670[2] = 0;
+    h->push[0] = 0;
+    h->push[1] = 0;
+    h->push[2] = 0;
     if (in & SM_DEAD)
         sm_set(sm, BODY_DEATH, h);
     else
@@ -410,7 +410,7 @@ void HumanPlayer_BodyHitEnter(HumanPlayerSM *sm, HumanPlayer *h)
     HitAnims *a;
 
     h->crouch = 0;
-    a = HumanDamage_GetZone(&h->damage, h->hit_zone);
+    a = HumanDamage_GetZone(&h->damage, h->damage.hitZone);
     Anim_Play(h->anim, 0, a->hit, 0, BLEND);
     HumanPlayer_SetWeaponAnim(h, 0);
     HumanPlayer_SetFlagD44(h);
@@ -439,7 +439,7 @@ void HumanPlayer_BodyDeathEnter(HumanPlayerSM *sm, HumanPlayer *h)
     unsigned int r;
 
     h->crouch = 0;
-    a = HumanDamage_GetZone(&h->damage, h->hit_zone);
+    a = HumanDamage_GetZone(&h->damage, h->damage.hitZone);
     r = Random_Int(Game_GetRandom(), 2);
     Anim_Play(h->anim, 0, a->death[r], 0, BLEND);
     HumanPlayer_SetWeaponAnim(h, 0);
@@ -449,7 +449,7 @@ void HumanPlayer_BodyDeathEnter(HumanPlayerSM *sm, HumanPlayer *h)
     HumanView_LockPitch(h->view);
     Human_FreezeView(h);
     Human_Say(h, "player_death_", 3);
-    memcpy(h->unk664, h->unk688, sizeof(h->unk664));
+    memcpy(h->vel, h->outVel, sizeof(h->vel));
     sm->run = HumanPlayer_BodyDeathRun;
 }
 HOOK(0x40E560, HumanPlayer_BodyDeathEnter);
@@ -463,8 +463,8 @@ void HumanPlayer_BodyDeathRun(HumanPlayerSM *sm, HumanPlayer *h)
     in = sm->input;
     if (!(in & 4))
         return;
-    memset(h->unk664, 0, sizeof(h->unk664));
-    memset(h->unk670, 0, sizeof(h->unk670));
+    memset(h->vel, 0, sizeof(h->vel));
+    memset(h->push, 0, sizeof(h->push));
     if (!(in & SM_ANIM_DONE))
         return;
     w = WeaponSlots_Get(h->weapons, 0);
@@ -482,8 +482,8 @@ void HumanPlayer_BodyFlyEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     h->crouch = 0;
     Human_PlayAnimSlot(h, sm->state, BLEND);
-    memset(h->unk664, 0, sizeof(h->unk664));
-    memset(h->unk670, 0, sizeof(h->unk670));
+    memset(h->vel, 0, sizeof(h->vel));
+    memset(h->push, 0, sizeof(h->push));
     Human_LeaveGround(h);
     sm->run = HumanPlayer_BodyFlyRun;
 }
@@ -536,7 +536,7 @@ void HumanPlayer_BodyFlyRun(HumanPlayerSM *sm, HumanPlayer *h)
     z = fspeed * z;
     pos[1] = y + pos[1];
     pos[2] = z + pos[2];
-    DynCube_Move(Game_GetWorld(), h, pos, h->unkA0);
+    DynCube_Move(Game_GetWorld(), h, pos, h->radius);
 }
 HOOK(0x40E740, HumanPlayer_BodyFlyRun);
 
@@ -549,7 +549,7 @@ HOOK(0x40E960, HumanPlayer_WeaponDisabledEnter);
 
 void HumanPlayer_WeaponDisabledRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
-    if (!h->weapon_lock)
+    if (!h->weaponLock)
         sm_set(sm, WEAPON_IDLE, h);
 }
 HOOK(0x40E980, HumanPlayer_WeaponDisabledRun);
@@ -571,11 +571,11 @@ void HumanPlayer_WeaponIdleRun(HumanPlayerSM *sm, HumanPlayer *h)
     uint16_t type;
     int arg;
 
-    if (h->weapon_anim != h->weapon_anim_req)
-        HumanPlayer_SetWeaponAnim(h, h->weapon_anim_req);
+    if (h->weaponAnim != h->weaponAnimReq)
+        HumanPlayer_SetWeaponAnim(h, h->weaponAnimReq);
     w = WeaponSlots_Get(h->weapons, 0);
     in = sm->input;
-    if (h->weapon_lock) {
+    if (h->weaponLock) {
         HumanTaskViewReset(h->view);
         sm_set(sm, WEAPON_DISABLED, h);
         return;
@@ -586,16 +586,16 @@ void HumanPlayer_WeaponIdleRun(HumanPlayerSM *sm, HumanPlayer *h)
         if (b) {
             if (b == cur) {
                 ((TaskHandler1)TASK_HANDLER(Weapon_GetDeselectEvent(), b->type))(b);
-                h->next_weapon = Weapon_GetType(h->saved_weapon)->id;
-                h->saved_weapon = NULL;
+                h->nextWeapon = Weapon_GetType(h->savedWeapon)->id;
+                h->savedWeapon = NULL;
             } else {
                 WeaponSlots_Set(h->weapons, 0, b);
-                h->saved_weapon = cur;
+                h->savedWeapon = cur;
             }
             h->input[INPUT_FIRE] = 1.0f;
         }
     }
-    if (h->saved_weapon)
+    if (h->savedWeapon)
         return;
     if (w) {
         info = Weapon_GetType(w);
@@ -613,7 +613,7 @@ void HumanPlayer_WeaponIdleRun(HumanPlayerSM *sm, HumanPlayer *h)
                 break;
             case WEAPON_KIND_MEDIPACK:
                 a = AmmoList_Find(h->ammo, Script_EvalConst("AMMO_ID_MEDIPACK"));
-                if (a && a->count && h->damage != 0) {
+                if (a && a->count && h->damage.total != 0) {
                     sm_set(sm, WEAPON_MEDIPACK, h);
                     return;
                 }
@@ -640,7 +640,7 @@ void HumanPlayer_WeaponIdleRun(HumanPlayerSM *sm, HumanPlayer *h)
                 return;
             }
             if (info->id == Script_EvalConst("WEAPON_ID_PROXIMITYMINE")) {
-                h->unk4D2 = 1;
+                h->altFire = 1;
                 sm_set(sm, WEAPON_PLACE, h);
                 return;
             }
@@ -651,13 +651,13 @@ no_action:
             sm_set(sm, WEAPON_RELOAD, h);
             return;
         }
-        if (h->input[INPUT_LEAN] != 0 && (h->body.input & 4)) {
+        if (h->input[INPUT_LEAN] != 0 && (h->sm.input & 4)) {
             HumanTaskViewReset(h->view);
             sm_set(sm, WEAPON_LEAN, h);
             return;
         }
     }
-    if (h->next_weapon != -1) {
+    if (h->nextWeapon != -1) {
         HumanTaskViewReset(h->view);
         sm_set(sm, WEAPON_SWITCH, h);
         return;
@@ -674,7 +674,7 @@ no_action:
         HumanPlayer_StartAction(h, arg);
         return;
     }
-    if (pressed(h, INPUT_MAP) && (h->body.input & 4)) {
+    if (pressed(h, INPUT_MAP) && (h->sm.input & 4)) {
         HumanTaskViewReset(h->view);
         sm_set(sm, WEAPON_COMPUTER, h);
     }
@@ -696,7 +696,7 @@ void HumanPlayer_WeaponFireRun(HumanPlayerSM *sm, HumanPlayer *h)
 
     Weapon_GetAmmo(w, &ammo);
     in = sm->input;
-    if (h->weapon_lock) {
+    if (h->weaponLock) {
         sm_set(sm, WEAPON_DISABLED, h);
         return;
     }
@@ -711,7 +711,7 @@ void HumanPlayer_WeaponFireRun(HumanPlayerSM *sm, HumanPlayer *h)
         sm_set(sm, WEAPON_RELOAD, h);
         return;
     }
-    if (h->unk4D3)
+    if (h->fired)
         HumanPlayer_SetWeaponAnim(h, 6);
     if ((in & SM_ANIM_DONE) && !(in & 0x200))
         sm_set(sm, WEAPON_IDLE, h);
@@ -728,7 +728,7 @@ HOOK(0x40F0D0, HumanPlayer_WeaponDryFireEnter);
 
 void HumanPlayer_WeaponDryFireRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
-    if (h->weapon_lock)
+    if (h->weaponLock)
         sm_set(sm, WEAPON_DISABLED, h);
     else if (h->input[INPUT_FIRE] == 0)
         sm_set(sm, WEAPON_IDLE, h);
@@ -748,14 +748,14 @@ void HumanPlayer_WeaponReloadRun(HumanPlayerSM *sm, HumanPlayer *h)
     ReloadMsg msg;
     uint8_t slot;
 
-    h->unk4D0 = 0;
+    h->weaponReady = 0;
     msg.h = (Task *)h;
     memcpy(msg.anim, v->unk208, sizeof(msg.anim));
     msg.unlimited = gUnlimitedAmmo;
     slot = Human_GetEvent1();
     ((TaskHandler)TASK_HANDLER(slot, w->type))(w, &msg);
     if (msg.done) {
-        h->unk4D0 = 1;
+        h->weaponReady = 1;
         sm_set(sm, WEAPON_IDLE, h);
     }
 }
@@ -765,7 +765,7 @@ void HumanPlayer_WeaponSwitchEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanPlayer_SetWeaponAnim(h, 9);
     HumanView_SetWeaponTarget(h->view, WEAPON_DOWN_X, WEAPON_DOWN_Y, WEAPON_SPEED_X, WEAPON_SPEED_Y);
-    h->unk4D0 = 0;
+    h->weaponReady = 0;
     sm->run = HumanPlayer_WeaponLowerRun;
 }
 HOOK(0x40F230, HumanPlayer_WeaponSwitchEnter);
@@ -776,10 +776,10 @@ void HumanPlayer_WeaponLowerRun(HumanPlayerSM *sm, HumanPlayer *h)
 
     if (!HumanView_WeaponAtTarget(h->view))
         return;
-    w = Task_FindWeapon(h, h->next_weapon);
+    w = Task_FindWeapon(h, h->nextWeapon);
     if (w)
         WeaponSlots_Set(h->weapons, 0, w);
-    h->next_weapon = -1;
+    h->nextWeapon = -1;
     HumanPlayer_SetWeaponAnim(h, 10);
     HumanView_SetWeaponTarget(h->view, 0, 0, WEAPON_SPEED_X, WEAPON_SPEED_Y);
     sm->run = HumanPlayer_WeaponRaiseRun;
@@ -788,10 +788,10 @@ HOOK(0x40F280, HumanPlayer_WeaponLowerRun);
 
 void HumanPlayer_WeaponRaiseRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
-    if (h->next_weapon != -1) {
+    if (h->nextWeapon != -1) {
         sm_set(sm, WEAPON_SWITCH, h);
     } else if (HumanView_WeaponAtTarget(h->view)) {
-        h->unk4D0 = 1;
+        h->weaponReady = 1;
         sm_set(sm, WEAPON_IDLE, h);
     }
 }
@@ -801,7 +801,7 @@ void HumanPlayer_WeaponLeanEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanPlayer_SetWeaponAnim(h, 1);
     Human_BeginUse(h);
-    sm_set(&h->body, BODY_LEAN, h);
+    sm_set(&h->sm, BODY_LEAN, h);
     HumanView_SetWeaponTarget(h->view, WEAPON_DOWN_X, WEAPON_DOWN_Y, WEAPON_SPEED_X, WEAPON_SPEED_Y);
     sm->run = HumanPlayer_WeaponLeanRun;
 }
@@ -817,7 +817,7 @@ void HumanPlayer_WeaponLeanRun(HumanPlayerSM *sm, HumanPlayer *h)
     v->lean[0] = 0;
     v->lean[1] = 0;
     v->lean[2] = 0;
-    sm_set(&h->body, 0, h);
+    sm_set(&h->sm, 0, h);
     HumanView_SetWeaponTarget(h->view, 0, 0, WEAPON_SPEED_X, WEAPON_SPEED_Y);
     sm_set(sm, WEAPON_IDLE, h);
 }
@@ -828,7 +828,7 @@ void HumanPlayer_WeaponAltFireEnter(HumanPlayerSM *sm, HumanPlayer *h)
     HumanView *v = h->view;
     WeaponType *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
 
-    h->unk4D2 = 1;
+    h->altFire = 1;
     Anim_Play(v->anim, 0, info->anim[3], 0, 0);
     sm->run = HumanPlayer_WeaponWaitRun;
 }
@@ -844,10 +844,10 @@ void HumanPlayer_WeaponThrowEnter(HumanPlayerSM *sm, HumanPlayer *h)
     Anim_Play(v->anim, 0, info->anim[2], 0, 0);
     p = PhysicsObjType_Find(info->key);
     fuse = **(float **)(p + 0x2D4) * kFps;
-    h->grenade_ticking = 0;
-    h->grenade_ticks = 0;
-    h->grenade_sound = 0;
-    h->grenade_fuse = (int)llrintl(fuse);
+    h->grenadeTicking = 0;
+    h->cookTime = 0;
+    h->grenadeSound = 0;
+    h->grenadeFuse = (int)llrintl(fuse);
     sm->run = HumanPlayer_WeaponThrowRun;
 }
 HOOK(0x40F4F0, HumanPlayer_WeaponThrowEnter);
@@ -858,11 +858,11 @@ void HumanPlayer_WeaponThrowRun(HumanPlayerSM *sm, HumanPlayer *h)
     WeaponType *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
 
     if (v->unk208[1] == 4) {
-        h->grenade_ticking = 1;
-        h->grenade_sound = Sound_Play(h->view, "grenade_tick_1");
+        h->grenadeTicking = 1;
+        h->grenadeSound = Sound_Play(h->view, "grenade_tick_1");
     }
-    if (h->grenade_ticking)
-        h->grenade_ticks++;
+    if (h->grenadeTicking)
+        h->cookTime++;
     if ((sm->input & SM_ANIM_DONE) && h->input[INPUT_FIRE] == 0) {
         Anim_Play(v->anim, 0, info->anim[3], 0, 0);
         sm->run = HumanPlayer_WeaponReleaseRun;
@@ -877,12 +877,12 @@ void HumanPlayer_WeaponReleaseRun(HumanPlayerSM *sm, HumanPlayer *h)
     WeaponType *info = Weapon_GetType(w);
     WeaponAmmo ammo;
 
-    h->grenade_ticks++;
+    h->cookTime++;
     if (v->unk208[1] == 3) {
         h->fire = 1;
-        if (h->grenade_sound) {
-            Sound_Stop(h->grenade_sound);
-            h->grenade_sound = 0;
+        if (h->grenadeSound) {
+            Sound_Stop(h->grenadeSound);
+            h->grenadeSound = 0;
         }
     }
     if (!(sm->input & SM_ANIM_DONE))
@@ -909,27 +909,27 @@ void HumanPlayer_CycleWeapon(HumanPlayer *h, int force)
     int cur = w ? Weapon_GetType(w)->id : -1;
     int dir = 0, id = -1, i, n;
 
-    if (h->cycle_index == -1 || force || pressed(h, INPUT_NEXT_WEAPON))
+    if (h->cycleIndex == -1 || force || pressed(h, INPUT_NEXT_WEAPON))
         dir = 1;
     if (pressed(h, INPUT_PREV_WEAPON))
         dir = -1;
     else if (!dir)
         goto select;
-    if (h->saved_weapon) {
-        id = Weapon_GetType(h->saved_weapon)->id;
-        h->saved_weapon = NULL;
+    if (h->savedWeapon) {
+        id = Weapon_GetType(h->savedWeapon)->id;
+        h->savedWeapon = NULL;
         if (id != -1)
             goto done;
         goto select;
     }
     for (n = gWeaponCycleCount; n; ) {
         n--;
-        h->cycle_index += dir;
-        if (h->cycle_index >= gWeaponCycleCount)
-            h->cycle_index = 0;
-        else if (h->cycle_index < 0)
-            h->cycle_index = gWeaponCycleCount - 1;
-        id = gWeaponCycle[h->cycle_index];
+        h->cycleIndex += dir;
+        if (h->cycleIndex >= gWeaponCycleCount)
+            h->cycleIndex = 0;
+        else if (h->cycleIndex < 0)
+            h->cycleIndex = gWeaponCycleCount - 1;
+        id = gWeaponCycle[h->cycleIndex];
         w = Task_FindWeapon(h, id);
         if (w && Weapon_HasAmmo(w)) {
             if (id != -1)
@@ -946,13 +946,13 @@ select:
         } else {
             for (i = 0; i < gWeaponCycleCount; i++) {
                 if (gWeaponCycle[i] == id)
-                    h->cycle_index = i;
+                    h->cycleIndex = i;
             }
         }
     }
 done:
     if (id != cur && Task_FindWeapon(h, id))
-        h->next_weapon = id;
+        h->nextWeapon = id;
 }
 HOOK(0x40F760, HumanPlayer_CycleWeapon);
 
@@ -968,7 +968,7 @@ void HumanPlayer_WeaponPlaceRun(HumanPlayerSM *sm, HumanPlayer *h)
     Task *w;
     WeaponAmmo ammo;
 
-    if (!h->unk4D3) {
+    if (!h->fired) {
         sm_set(sm, WEAPON_IDLE, h);
         return;
     }
@@ -995,7 +995,7 @@ HOOK(0x40FA20, HumanPlayer_WeaponRecoverRun);
 
 void HumanPlayer_WeaponMeleeEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
-    h->melee_count = 0;
+    h->meleeCount = 0;
     sm->run = HumanPlayer_WeaponMeleeRun;
 }
 HOOK(0x40FA60, HumanPlayer_WeaponMeleeEnter);
@@ -1008,12 +1008,12 @@ void HumanPlayer_WeaponMeleeRun(HumanPlayerSM *sm, HumanPlayer *h)
 
     Weapon_GetType(w);
     Weapon_GetAmmo(w, &ammo);
-    if (h->input[INPUT_FIRE] != 0 && h->melee_count < 3)
+    if (h->input[INPUT_FIRE] != 0 && h->meleeCount < 3)
         h->fire = 1;
     in = sm->input;
-    if (h->unk4D3) {
+    if (h->fired) {
         HumanPlayer_SetWeaponAnim(h, 8);
-        h->melee_count++;
+        h->meleeCount++;
     }
     if (in & SM_ANIM_DONE)
         sm_set(sm, WEAPON_IDLE, h);
@@ -1026,7 +1026,7 @@ void HumanPlayer_WeaponMedipackEnter(HumanPlayerSM *sm, HumanPlayer *h)
     WeaponType *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
 
     Anim_Play(v->anim, 0, info->anim[2], 0, 0);
-    h->medipack_delay = 0;
+    h->medipackDelay = 0;
     sm->run = HumanPlayer_WeaponMedipackStartRun;
 }
 HOOK(0x40FB30, HumanPlayer_WeaponMedipackEnter);
@@ -1055,26 +1055,26 @@ void HumanPlayer_WeaponMedipackRun(HumanPlayerSM *sm, HumanPlayer *h)
         Anim_Play(v->anim, 0, Weapon_GetType(WeaponSlots_Get(h->weapons, 0))->anim[4], 0, 0);
         sm->run = HumanPlayer_WeaponWaitRun;
     }
-    if (h->medipack_delay) {
-        h->medipack_delay--;
+    if (h->medipackDelay) {
+        h->medipackDelay--;
         return;
     }
     a = AmmoList_Find(h->ammo, Script_EvalConst("AMMO_ID_MEDIPACK"));
     if (!a)
         return;
-    if (!a->count || h->damage == 0) {
+    if (!a->count || h->damage.total == 0) {
         Anim_Play(v->anim, 0, Weapon_GetType(WeaponSlots_Get(h->weapons, 0))->anim[4], 0, 0);
         sm->run = HumanPlayer_WeaponWaitRun;
         return;
     }
     a->count--;
-    t = h->damage - h->max_damage * *(float *)info->data2;
-    h->damage = t;
+    t = h->damage.total - h->damage.max * *(float *)info->data2;
+    h->damage.total = t;
     if (t < 0)
-        h->damage = 0;
-    else if (t > h->max_damage)
-        h->damage = h->max_damage;
-    h->medipack_delay = (int)llrintl(60.0 / (long double)info->rate * 30.0);
+        h->damage.total = 0;
+    else if (t > h->damage.max)
+        h->damage.total = h->damage.max;
+    h->medipackDelay = (int)llrintl(60.0 / (long double)info->rate * 30.0);
 }
 HOOK(0x40FBE0, HumanPlayer_WeaponMedipackRun);
 
@@ -1087,16 +1087,16 @@ HOOK(0x40FD70, HumanPlayer_WeaponWaitRun);
 
 void HumanPlayer_WeaponComputerEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
-    sm_set(&h->body, BODY_COMPUTER, h);
-    h->unk4D0 = 0;
+    sm_set(&h->sm, BODY_COMPUTER, h);
+    h->weaponReady = 0;
     sm->run = HumanPlayer_WeaponComputerRun;
 }
 HOOK(0x40FDA0, HumanPlayer_WeaponComputerEnter);
 
 void HumanPlayer_WeaponComputerRun(HumanPlayerSM *sm, HumanPlayer *h)
 {
-    if (h->body.state != BODY_COMPUTER) {
-        h->unk4D0 = 1;
+    if (h->sm.state != BODY_COMPUTER) {
+        h->weaponReady = 1;
         sm_set(sm, WEAPON_IDLE, h);
     }
 }
@@ -1228,42 +1228,42 @@ void HumanPlayer_CreateHandler(HumanPlayer *h, void *arg)
     BoneDynCubeObj_Init(Game_GetWorld(), h, 0, 0);
     h->unkCC = 2;
     Human_PlayAnim(h, 2, 0, 0);
-    BoneObj_Update(h->matrix, h->anim);
+    BoneObj_Update(h->matrix.m, h->anim);
     memcpy(h->unk650, h->motion->unk4C, sizeof(h->unk650));
-    DynCube_Add(Game_GetWorld(), h, pos, h->unkA0, 2);
+    DynCube_Add(Game_GetWorld(), h, pos, h->radius, 2);
     HumanView_AddToWorld(h->view);
     for (i = 0; i < gAmmoLimitCount; i++)
         AmmoList_SetLimit(h->ammo, gAmmoLimits[i].id, gAmmoLimits[i].limit);
-    StateMachine_Init(&h->body, HumanPlayer_UpdateBodyInput, gBodyStates, 0, 2, gBodyCombos);
-    h->anim_slots = gAnimSlots;
+    StateMachine_Init(&h->sm, HumanPlayer_UpdateBodyInput, gBodyStates, 0, 2, gBodyCombos);
+    h->animSlots = (struct AnimSlot *)gAnimSlots;
     Human_InitDamage(h, gMoveSpeeds);
-    h->max_damage = gMaxDamage;
+    h->damage.max = gMaxDamage;
     StateMachine_Init(&h->weapon, HumanPlayer_UpdateWeaponInput, gWeaponStates, WEAPON_IDLE, 0, NULL);
-    h->weapon_lock = 0;
+    h->weaponLock = 0;
     h->unkD45 = 0;
-    h->cycle_index = -1;
-    h->next_weapon = -1;
-    h->unkD50 = -1;
-    h->unkD54 = 0;
-    h->weapon_anim = 0;
-    h->weapon_anim_req = 0;
-    h->unkD68 = 0;
-    h->unkD78 = 0;
-    h->unkD79 = 0;
-    h->unkD7A = 0;
-    h->unkD8C = 0;
+    h->cycleIndex = -1;
+    h->nextWeapon = -1;
+    h->weaponCategory = -1;
+    h->weaponCycle = 0;
+    h->weaponAnim = 0;
+    h->weaponAnimReq = 0;
+    h->showBar = 0;
+    h->ladderEnter = 0;
+    h->onLadder = 0;
+    h->ladderLeave = 0;
+    h->ladderSound = 0;
     h->unkD90 = 0;
     h->unkD91 = 0;
     h->unkD92 = 0;
-    h->unkD93 = 0;
-    h->unkD94 = 0;
-    h->unkD9C = 0;
-    h->unkDA0 = 0;
-    h->unkDA1 = 0;
+    h->wireEnter = 0;
+    h->onWire = 0;
+    h->wireSound = 0;
+    h->ziplineEnter = 0;
+    h->onZipline = 0;
     h->unkDBC = NULL;
-    memset(h->unkDC0, 0, sizeof(h->unkDC0));
-    h->saved_weapon = NULL;
-    h->unkDE8 = NULL;
+    memset(&h->unkDC0, 0, 0x24);
+    h->savedWeapon = NULL;
+    h->attacker = NULL;
 }
 HOOK(0x410370, HumanPlayer_CreateHandler);
 
@@ -1319,9 +1319,9 @@ HOOK(0x410700, HumanPlayer_UpdateWeaponInput);
 
 void HumanPlayer_DeleteHandler(HumanPlayer *h)
 {
-    if (h->unkDE8) {
-        TaskRef_Remove(h->unkDE8);
-        h->unkDE8 = NULL;
+    if (h->attacker) {
+        TaskRef_Remove(h->attacker);
+        h->attacker = NULL;
     }
     QTaskList_Remove(gHumanPlayerList, h);
     BoneDynCubeObj_Deinit(h);
@@ -1353,8 +1353,8 @@ void HumanPlayer_DeactivateHandler(HumanPlayer *h, void *arg)
 
     if (Computer_Get())
         Computer_Delete();
-    if (h->unkCF6) {
-        h->unkCF6 = 0;
+    if (h->vulnerable) {
+        h->vulnerable = 0;
         slot = World_GetEvent1();
         ((TaskHandler)TASK_HANDLER(slot, BoneDynCubeObj_GetType()))(h, arg);
     }
@@ -1363,8 +1363,8 @@ HOOK(0x410900, HumanPlayer_DeactivateHandler);
 
 void HumanPlayer_InputHandler(HumanPlayer *h, float **msg)
 {
-    if (!h->input_locked) {
-        memcpy(h->prev_input, h->input, sizeof(h->input));
+    if (!h->inputLocked) {
+        memcpy(h->prevInput, h->input, sizeof(h->input));
         memcpy(h->input, msg[1], sizeof(h->input));
     }
     HumanPlayer_Update(h);
@@ -1385,45 +1385,45 @@ void HumanPlayer_Update(HumanPlayer *h)
         HumanPlayer_SelectWeaponCategory(h);
         HumanPlayer_CycleWeapon(h, 0);
     }
-    StateMachine_Update(&h->body, h);
+    StateMachine_Update(&h->sm, h);
     StateMachine_Update(&h->weapon, h);
     if (pressed(h, INPUT_TOGGLE_D45))
         h->unkD45 ^= 1;
-    if (h->body.state == BODY_FLY) {
+    if (h->sm.state == BODY_FLY) {
         if (pressed(h, INPUT_FLY)) {
-            memset(h->unk664, 0, sizeof(h->unk664));
-            memset(h->unk670, 0, sizeof(h->unk670));
-            sm_set(&h->body, 0, h);
+            memset(h->vel, 0, sizeof(h->vel));
+            memset(h->push, 0, sizeof(h->push));
+            sm_set(&h->sm, 0, h);
         }
     } else if (pressed(h, INPUT_FLY)) {
-        sm_set(&h->body, BODY_FLY, h);
+        sm_set(&h->sm, BODY_FLY, h);
     }
-    if (h->unkD78 || h->unkD79)
+    if (h->ladderEnter || h->onLadder)
         HumanPlayer_UpdateLadder(h);
     if (h->unkD90 || h->unkD91)
         HumanPlayer_UpdateFenceClimb(h);
-    if (h->unkD93 || h->unkD94)
+    if (h->wireEnter || h->onWire)
         HumanPlayer_UpdateWire(h);
-    if (h->unkDA0 || h->unkDA1)
+    if (h->ziplineEnter || h->onZipline)
         HumanPlayer_UpdateZipline(h);
-    h->body.input &= ~SM_HIT;
+    h->sm.input &= ~SM_HIT;
     Human_UpdateBody(h);
     HumanView_UpdateView(h->view, h);
-    h->unkD8 = 1;
-    BoneObj_GetRootMotion(h->unk514, d, h->anim);
-    if (!h->delta_scaled) {
+    h->frozen = 1;
+    BoneObj_GetRootMotion(h->boneOffset, d, h->anim);
+    if (!h->deltaScaled) {
         d[0] = gMoveScale * d[0];
         d[1] = gMoveScale * d[1];
         d[2] = gMoveScale * d[2];
     }
-    x = h->matrix[2] * d[2] + h->matrix[1] * d[1] + h->matrix[0] * d[0];
-    y = h->matrix[5] * d[2] + h->matrix[4] * d[1] + h->matrix[3] * d[0];
-    z = h->matrix[8] * d[2] + h->matrix[7] * d[1] + h->matrix[6] * d[0];
+    x = h->matrix.m[2] * d[2] + h->matrix.m[1] * d[1] + h->matrix.m[0] * d[0];
+    y = h->matrix.m[5] * d[2] + h->matrix.m[4] * d[1] + h->matrix.m[3] * d[0];
+    z = h->matrix.m[8] * d[2] + h->matrix.m[7] * d[1] + h->matrix.m[6] * d[0];
     d[0] = x;
     d[1] = y;
     d[2] = z;
     Human_FireAnimTrigger(h);
-    if (h->body.state != BODY_FLY) {
+    if (h->sm.state != BODY_FLY) {
         if (!h->attach)
             Human_UpdateMove(h);
         else
@@ -1438,24 +1438,24 @@ void HumanPlayer_Update(HumanPlayer *h)
     HumanPlayer_FadeHitFlash(h);
     HumanPlayer_FadeFlash(h);
     HumanPlayer_UpdateFenceTimer(h);
-    speed = h->unk664[2];
-    if (h->unk664[2] < 0)
+    speed = h->vel[2];
+    if (h->vel[2] < 0)
         speed = -speed;
     Human_printf(h, "Speed Z (m/s): %.2f\n", (double)(speed * kUnitsToMetersF * kFps));
     Human_printf(h, "Ground task: %x\n", Human_GetGround(h));
     Human_printf(h, "Attach task: %x\n", h->attach);
-    Human_printf(h, "Delta move pos X: %.2f\n", (double)h->move_pos[0]);
-    Human_printf(h, "Delta move pos Y: %.2f\n", (double)h->move_pos[1]);
-    Human_printf(h, "Delta move pos Z: %.2f\n", (double)h->move_pos[2]);
-    Human_printf(h, "Delta move Alpha: %.2f\n", (double)h->move_angle[0]);
-    Human_printf(h, "Delta move Beta: %.2f\n", (double)h->move_angle[1]);
-    Human_printf(h, "Delta move Gamma: %.2f\n", (double)h->move_angle[2]);
-    Human_printf(h, "Distance to ground from feet: %.2fm\n", (double)(h->ground_distance * kUnitsToMeters));
-    Human_printf(h, "Ground angle: %.3f\n", (double)(h->ground_angle * kRadToDeg));
+    Human_printf(h, "Delta move pos X: %.2f\n", (double)h->movePos[0]);
+    Human_printf(h, "Delta move pos Y: %.2f\n", (double)h->movePos[1]);
+    Human_printf(h, "Delta move pos Z: %.2f\n", (double)h->movePos[2]);
+    Human_printf(h, "Delta move Alpha: %.2f\n", (double)h->moveAngle[0]);
+    Human_printf(h, "Delta move Beta: %.2f\n", (double)h->moveAngle[1]);
+    Human_printf(h, "Delta move Gamma: %.2f\n", (double)h->moveAngle[2]);
+    Human_printf(h, "Distance to ground from feet: %.2fm\n", (double)(h->groundDistance * kUnitsToMeters));
+    Human_printf(h, "Ground angle: %.3f\n", (double)(h->slopeAngle * kRadToDeg));
     Human_printf(h, "Delta translation X: %.2f\n", (double)d[0]);
     Human_printf(h, "Delta translation Y: %.2f\n", (double)h->delta[1]);
     Human_printf(h, "Delta translation Z: %.2f\n", (double)h->delta[2]);
-    if (h->body.input & 4)
+    if (h->sm.input & 4)
         Human_printf(h, "Ground!\n");
     if (Game_CheatKeyPressed(0x57))
         gShowPosition ^= 1;

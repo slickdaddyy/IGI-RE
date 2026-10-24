@@ -90,21 +90,21 @@ void HumanAI_Create(HumanAI *ai, void *arg)
         p->node.next = NULL;
         List_AddTail(&ai->freeParams, p);
     }
-    ai->unk1514 = 0;
+    ai->routeCount = 0;
     ai->target = NULL;
     ai->targetSeen = NULL;
     ai->deadDone = 0;
     ai->isDetection = 0;
     ai->alarmed = 0;
-    ai->unk3ABC = 0;
-    ai->unk3ABD = 0;
-    ai->unk3AC0 = -1;
+    ai->invulnerable = 0;
+    ai->noInstantDeath = 0;
+    ai->alarmTriggerId = -1;
     ai->alarmControlId = -1;
-    ai->unk3AC8 = -1;
-    ai->unk3ACC = 0;
-    ai->unk3AD0 = -1;
-    ai->unk3AB0 = NULL;
-    ai->unk3AB4 = NULL;
+    ai->statGunId = -1;
+    ai->alarmAccess = 0;
+    ai->deathAnim = -1;
+    ai->claim = NULL;
+    ai->alarmClaim = NULL;
     ai->animTimer = -1;
     ai->animEnabled = 0;
     ai->maxAlpha = 0x1.a8c536p-6f;
@@ -120,29 +120,30 @@ void HumanAI_Create(HumanAI *ai, void *arg)
     ai->aiType = 8;
     strcpy(ai->aiTypeExpr, gAITypeNames[8]);
     ai->unk3D40 = 300;
-    ai->unk3DB0 = 6144.0;
+    ai->closeRange = 6144.0;
     ai->unk3DD0 = -1;
     ai->unk3DD4 = 0;
-    ai->unk3DF4 = 0;
+    ai->rollDir = 0;
     ai->unk3DD8 = 0;
-    ai->unk3DF8 = -1;
+    ai->nextEvade = -1;
     ai->unk3DDC = 0;
     ai->unk3DE0 = 0;
     ai->hasGun = 0;
     ai->hasGrenade = 0;
     ai->gunId = -1;
     ai->grenadeId = -1;
-    ai->unk3DE8 = -1;
-    ai->unk3DEC = -1;
-    ai->unk3DF0 = 0;
-    ai->unk3DF1 = 0;
-    ai->path = NULL;
+    ai->followNode = -1;
+    ai->targetNode = -1;
+    ai->targetMoved = 0;
+    ai->reloadToggle = 0;
+    ai->grid = NULL;
     ai->unk3E10 = ai->unk3D40;
     ai->symbolsAdded = 0;
     ai->started = 0;
-    ai->unk3E70 = 0;
-    ai->unk3E78 = 0;
-    ai->unk3E80 = 0;
+    /* aim is zeroed in dword halves */
+    ((int *)&ai->aim.x)[0] = 0;
+    ((int *)&ai->aim.y)[0] = 0;
+    ((int *)&ai->aim.z)[0] = 0;
     ai->doorWait = 0;
     ai->door = NULL;
     ai->unk3E28 = 0;
@@ -152,17 +153,17 @@ void HumanAI_Create(HumanAI *ai, void *arg)
     ai->unk3E3C = -1;
     ai->unk3E44 = -1;
     ai->unk3E50 = 0;
-    ai->unk3E54 = 0;
-    ai->unk3E58 = 0;
+    ai->shotsLeft = 0;
+    ai->lastAmmo = 0;
     ai->unk3E5C = -1;
-    ai->unk3E60 = 0;
+    ai->shotDelay = 0;
     ai->unk3E64 = 0;
     ai->unk3E69 = 0;
     ai->unk3E6A = 0;
     ai->unk3E6B = 0;
-    ai->unk3E74 = 0;
-    ai->unk3E7C = 0;
-    ai->unk3E84 = 0;
+    ((int *)&ai->aim.x)[1] = 0;
+    ((int *)&ai->aim.y)[1] = 0;
+    ((int *)&ai->aim.z)[1] = 0;
 }
 HOOK(0x44F060, HumanAI_Create);
 
@@ -235,7 +236,7 @@ static void HumanAI_SendSeen(HumanAI *ai, int type, Task *t)
 void HumanAI_Update(HumanAI *ai, void *arg)
 {
     Human *h;
-    HumanModel *mdl;
+    HumanMotion *mdl;
     float tmp[3];
     float *off;
     char alarmed;
@@ -249,10 +250,10 @@ void HumanAI_Update(HumanAI *ai, void *arg)
     ai->ctrl[CTRL_CHEAT] = cheat;
     h = (Human *)ai->task.parent;
     off = Human_GetBonePos(tmp, h, 0);
-    ai->view.pos.x = h->pos.x;
-    ai->view.pos.y = h->pos.y;
-    ai->view.pos.z = h->pos.z - off[2];
-    memcpy(ai->view.body, h->matrix, sizeof(ai->view.body));
+    ai->view.pos.x = h->pos[0];
+    ai->view.pos.y = h->pos[1];
+    ai->view.pos.z = h->pos[2] - off[2];
+    memcpy(ai->view.body, h->matrix.m, sizeof(ai->view.body));
     HumanView_GetEye(&ai->view.eye, h->view);
     HumanView_GetMatrix(ai->view.view, h->view);
     HumanView_SetTarget(h->view, 0, 0);
@@ -286,11 +287,11 @@ void HumanAI_Update(HumanAI *ai, void *arg)
         ai->deadDone = HumanAI_IsDead(ai);
     }
     if (!HumanAI_IsDead(ai)) {
-        mdl = h->model;
-        ai->dview.eye.x = mdl->eye[0] + h->pos.x;
-        ai->dview.eye.y = mdl->eye[1] + h->pos.y;
-        ai->dview.eye.z = mdl->eye[2] + h->pos.z;
-        memcpy(ai->dview.body, h->model->matrix, sizeof(ai->dview.body));
+        mdl = h->motion;
+        ai->dview.eye.x = mdl->eye[0] + h->pos[0];
+        ai->dview.eye.y = mdl->eye[1] + h->pos[1];
+        ai->dview.eye.z = mdl->eye[2] + h->pos[2];
+        memcpy(ai->dview.body, h->motion->matrix, sizeof(ai->dview.body));
         memcpy(&ai->dview.alpha, &ai->view.alpha, 8);
         memcpy(&ai->dview.gamma, &ai->view.gamma, 8);
         memcpy(&ai->dview.secAlpha, &ai->view.secAlpha, 8);
@@ -385,19 +386,19 @@ run:
     HumanAI_RunAction(ai);
     if (Human_IsActive(&h->task))
         HumanAI_SendControl(ai);
-    if (HumanAI_IsDead(ai) && Human_IsActive(&h->task) && h->unk33C) {
+    if (HumanAI_IsDead(ai) && Human_IsActive(&h->task) && h->deadState) {
         HumanAI_ClearMove(ai);
-        if (ai->unk3AB0) {
-            AIClaim_Release(ai->unk3AB0);
-            ai->unk3AB0 = NULL;
+        if (ai->claim) {
+            AIClaim_Release(ai->claim);
+            ai->claim = NULL;
         }
-        if (ai->unk3AB4) {
-            AIClaim_Release(ai->unk3AB4);
-            ai->unk3AB4 = NULL;
+        if (ai->alarmClaim) {
+            AIClaim_Release(ai->alarmClaim);
+            ai->alarmClaim = NULL;
         }
-        if (ai->path) {
-            NodeGrid_Release(ai->path, ai->pathLen, ai->pathLen);
-            ai->path = NULL;
+        if (ai->grid) {
+            NodeGrid_Release(ai->grid, ai->gridX, ai->gridX);
+            ai->grid = NULL;
         }
         if (ai->unk3E10 < 0) {
             if (h->task.parent->type == GuardGenerator_GetType() || h->unk7C4 == -1 || Flow_GetRenders() - h->unk7C4 > 1) {
@@ -591,14 +592,14 @@ void HumanAI_Destroy(HumanAI *ai, void *arg)
     }
     if (ai->script)
         Script_Free(ai->script);
-    if (ai->path)
-        NodeGrid_Release(ai->path, ai->pathLen, ai->pathLen);
+    if (ai->grid)
+        NodeGrid_Release(ai->grid, ai->gridX, ai->gridX);
     HumanAI_ClearMove(ai);
     HumanAI_FreeEvents(ai);
-    if (ai->unk3AB0)
-        AIClaim_Release(ai->unk3AB0);
-    if (ai->unk3AB4)
-        AIClaim_Release(ai->unk3AB4);
+    if (ai->claim)
+        AIClaim_Release(ai->claim);
+    if (ai->alarmClaim)
+        AIClaim_Release(ai->alarmClaim);
     if (Task_GetId(ai) >= 0) {
         TaskFn fn = gTaskHandlers[Level_GetEventDAC()][ai->task.type];
 
@@ -751,7 +752,7 @@ void HumanAI_ParamsChanged(HumanAI *ai)
             } else {
                 if (ai->node != *near) {
                     pos = DynCubeObj_GetPosition(ai->task.parent);
-                    ai->path = NodeGrid_Place(&ai->pathLen, ai->pathA, ai->pathB, ai->graph, *near, pos);
+                    ai->grid = NodeGrid_Place(&ai->gridX, &ai->gridY, &ai->cover, ai->graph, *near, pos);
                 }
                 ai->node = *near;
             }

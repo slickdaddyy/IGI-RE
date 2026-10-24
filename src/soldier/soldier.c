@@ -10,6 +10,7 @@
 #include "soldier/soldier.h"
 #include "types.h"
 #include "coll/colltypes.h"
+#include "material/materialtypes.h"
 
 FN_EXTERN(SoldierPistol_BlastHandler);
 FN_EXTERN(SoldierPistol_HitUpdate);
@@ -107,8 +108,8 @@ ORIG(0x4F1980, void *, ParamTable_Extend, (void *table, int extra));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *extra));
-ORIG(0x4F2060, void *, WeaponSlots_Get, (void **slots, int i));
-ORIG(0x4F2070, void, WeaponSlots_Set, (void **slots, int i, void *weapon));
+ORIG(0x4F2060, void *, WeaponSlots_Get, (Task **slots, int i));
+ORIG(0x4F2070, void, WeaponSlots_Set, (Task **slots, int i, void *weapon));
 ORIG(0x4F2290, void, Weapon_DeleteAll, (Human *h));
 ORIG(0x4F2350, void, Weapon_UseAmmo, (void *weapon, char unlimited));
 ORIG(0x4F2390, void, Weapon_Drop, (void *weapon));
@@ -191,7 +192,7 @@ static void sm_go(HumanSM *sm, Human *h, int state)
 {
     sm->prev = sm->state;
     sm->state = state;
-    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))sm->states[state])));
+    sm->run = sm->states[state];
     sm->run(sm, h);
 }
 
@@ -218,7 +219,7 @@ static void enter_anim(HumanSM *sm, Human *h, int crouch, HumanStateFn run)
     h->crouch = crouch;
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))run)));
+    sm->run = run;
 }
 
 void Soldier_ToCrouchRun(HumanSM *sm, Human *h);
@@ -331,7 +332,7 @@ void Soldier_CrouchFireEnter(HumanSM *sm, Human *h)
 {
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_CrouchFireRun)));
+    sm->run = Soldier_CrouchFireRun;
 }
 HOOK(0x45BC60, Soldier_CrouchFireEnter);
 
@@ -339,7 +340,7 @@ void Soldier_CrouchReloadEnter(HumanSM *sm, Human *h)
 {
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_CrouchReloadRun)));
+    sm->run = Soldier_CrouchReloadRun;
 }
 HOOK(0x45BC90, Soldier_CrouchReloadEnter);
 
@@ -361,7 +362,7 @@ void Soldier_CrouchAimEnter(HumanSM *sm, Human *h)
 {
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_CrouchAimRun)));
+    sm->run = Soldier_CrouchAimRun;
 }
 HOOK(0x45BD90, Soldier_CrouchAimEnter);
 
@@ -420,7 +421,7 @@ void Soldier_FireEnter(HumanSM *sm, Human *h)
 {
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_FireRun)));
+    sm->run = Soldier_FireRun;
 }
 HOOK(0x45C090, Soldier_FireEnter);
 
@@ -441,7 +442,7 @@ void Soldier_ReloadEnter(HumanSM *sm, Human *h)
 {
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_ReloadRun)));
+    sm->run = Soldier_ReloadRun;
 }
 HOOK(0x45C190, Soldier_ReloadEnter);
 
@@ -450,8 +451,8 @@ void Soldier_FallEnter(HumanSM *sm, Human *h)
     h->crouch = 0;
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    memcpy(h->vel, h->unk688, sizeof(h->vel));
-    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_FallRun)));
+    memcpy(h->vel, h->outVel, sizeof(h->vel));
+    sm->run = Soldier_FallRun;
 }
 HOOK(0x45C1C0, Soldier_FallEnter);
 
@@ -471,11 +472,11 @@ void Soldier_FallRun(HumanSM *sm, Human *h)
     }
     if (!(bits & SB_ON_GROUND))
         return;
-    if (h->ground) {
-        void *s = Sound_Play(Level_GetDynamic(), h->ground + 0x114);
+    if (h->ground.material) {
+        void *s = Sound_Play(Level_GetDynamic(), h->ground.material->landSound);
 
         if (s)
-            Sound_SetPos(s, h->soundPos);
+            Sound_SetPos(s, &h->ground.pos.x);
     }
     memset(h->vel, 0, sizeof(h->vel));
     sm_go(sm, h, S_STAND);
@@ -491,7 +492,7 @@ void Soldier_HitEnter(HumanSM *sm, Human *h)
     a = HumanDamage_GetZone(&h->damage, h->damage.hitZone);
     Anim_Play(h->anim, 0, a->hit, 0, 0.0f);
     Human_DisableLook(h);
-    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_HitRun)));
+    sm->run = Soldier_HitRun;
 }
 HOOK(0x45C2E0, Soldier_HitEnter);
 
@@ -499,17 +500,17 @@ void Soldier_AimHitEnter(HumanSM *sm, Human *h)
 {
     h->unk696 = 1;
     h->crouch = 0;
-    ((Soldier *)h)->hitFrames = 0;
+    ((HumanSoldier *)h)->hitFrames = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
     Human_DisableLook(h);
-    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_AimHitRun)));
+    sm->run = Soldier_AimHitRun;
 }
 HOOK(0x45C330, Soldier_AimHitEnter);
 
 /* a new hit restarts the animation, but only after 20 frames */
 void Soldier_AimHitRun(HumanSM *sm, Human *h)
 {
-    Soldier *s = (Soldier *)h;
+    HumanSoldier *s = (HumanSoldier *)h;
     uint32_t bits = sm->bits;
 
     if (sm_common(sm, h, bits, 0, S_AIM_DIE))
@@ -543,20 +544,20 @@ static void die_start(Human *h)
 static void die_end(HumanSM *sm, Human *h, int anim)
 {
     Anim_Play(h->anim, 0, anim, 0, 0.0f);
-    Soldier_GetDeathVelocity(((Soldier *)h)->deathVel, h, ((Soldier *)h)->model, anim);
+    Soldier_GetDeathVelocity(((HumanSoldier *)h)->deathVel, h, ((HumanSoldier *)h)->s.model, anim);
     HumanViewCam(h, 3);
     HumanView_LockPitch(h->view);
     Human_FreezeView(h);
     Human_Say(h, "ai_death_", 4);
     Human_DisableLook(h);
-    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_DieRun)));
+    sm->run = Soldier_DieRun;
 }
 
 /* death after a hit or a fall: the AI's own animation, a fall towards or
    away from the shot, or a random one */
 void Soldier_DieEnter(HumanSM *sm, Human *h)
 {
-    Soldier *s = (Soldier *)h;
+    HumanSoldier *s = (HumanSoldier *)h;
     HumanAI *ai = h->ai;
     HitAnims *a;
     int zone, anim = -1, r;
@@ -595,27 +596,27 @@ HOOK(0x45C650, Soldier_AimDieEnter);
 
 void Soldier_DieRun(HumanSM *sm, Human *h)
 {
-    Soldier *s = (Soldier *)h;
+    HumanSoldier *s = (HumanSoldier *)h;
 
     h->pos[0] = s->deathVel[0] + h->pos[0];
     h->pos[1] = s->deathVel[1] + h->pos[1];
     h->pos[2] = s->deathVel[2] + h->pos[2];
     if (sm->bits & SB_ANIM_DONE)
-        sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Human_DeadRun)));
+        sm->run = Human_DeadRun;
 }
 HOOK(0x45C700, Soldier_DieRun);
 
 void Human_DeadRun(HumanSM *sm, Human *h)
 {
     (void)sm;
-    h->dead = 1;
+    h->deadState = 1;
 }
 HOOK(0x45C740, Human_DeadRun);
 
 /* plays the animation the script asked for */
 void Soldier_AnimEnter(HumanSM *sm, Human *h)
 {
-    Soldier *s = (Soldier *)h;
+    HumanSoldier *s = (HumanSoldier *)h;
 
     h->unk696 = 0;
     if (s->scriptAnim == -1) {
@@ -628,7 +629,7 @@ void Soldier_AnimEnter(HumanSM *sm, Human *h)
     }
     s->scriptAnim = 0;
     Human_DisableLook(h);
-    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_AnimRun)));
+    sm->run = Soldier_AnimRun;
 }
 HOOK(0x45C750, Soldier_AnimEnter);
 
@@ -638,7 +639,7 @@ void Soldier_AnimRun(HumanSM *sm, Human *h)
 
     if (sm_common(sm, h, bits, S_HIT, S_DIE))
         return;
-    if ((bits & 0xFD81FE1) || ((Soldier *)h)->scriptAnim == -1) {
+    if ((bits & 0xFD81FE1) || ((HumanSoldier *)h)->scriptAnim == -1) {
         Human_EnableLook(h);
         sm_go(sm, h, S_STAND);
     }
@@ -667,7 +668,7 @@ void Soldier_MountEnter(HumanSM *sm, Human *h)
     HumanView_LockPitch(h->view);
     Human_FreezeView(h);
     Human_SetPlatform(h, obj);
-    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Soldier_MountRun)));
+    sm->run = Soldier_MountRun;
 }
 HOOK(0x45C8B0, Soldier_MountEnter);
 
@@ -692,7 +693,7 @@ void Soldier_UseEnter(HumanSM *sm, Human *h)
 {
     h->unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    sm->run = (void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))((void (*)(struct HumanSM *, struct Human *))Human_UseRun)));
+    sm->run = Human_UseRun;
 }
 HOOK(0x45CA50, Soldier_UseEnter);
 
@@ -714,9 +715,9 @@ void Soldier_EnsureWeapon(Human *h);
 
 void Soldier_Open(void)
 {
-    Soldier tmp;
+    HumanSoldier tmp;
 
-    gSoldierType = TaskType_New("HumanSoldier", sizeof(Soldier), Human_GetType(), 0);
+    gSoldierType = TaskType_New("HumanSoldier", sizeof(HumanSoldier), Human_GetType(), 0);
     TaskType_SetFlags(gSoldierType, 1);
     TaskType_SetHandler(gSoldierType, 0, Soldier_CreateHandler);
     TaskType_SetHandler2(gSoldierType, 1, Soldier_RunHandler);
@@ -729,34 +730,34 @@ void Soldier_Open(void)
     TaskType_SetHandler(gSoldierType, Human_GetPunchEvent(), SoldierPistol_PunchHandler);
     TaskType_SetHandler(gSoldierType, FlashBang_GetEvent(), Human_Handler4D3710);
     gSoldierParams = ParamTable_Extend(Human_GetParamTable(), 2);
-    ParamTable_Add(gSoldierParams, &tmp, &tmp.model, Param_Int32(), 7, NULL);
-    ParamTable_Add(gSoldierParams, &tmp, &tmp.idleAnim, Param_Int32(), 7, NULL);
+    ParamTable_Add(gSoldierParams, &tmp, &tmp.s.model, Param_Int32(), 7, NULL);
+    ParamTable_Add(gSoldierParams, &tmp, &tmp.s.idleAnim, Param_Int32(), 7, NULL);
     gSoldierUnk5BDAC0 = 0;
 }
 HOOK(0x45CAB0, Soldier_Open);
 
 void Soldier_CreateHandler(Human *h, void *arg)
 {
-    Soldier *s = (Soldier *)h;
+    HumanSoldier *s = (HumanSoldier *)h;
 
-    memset((char *)s + sizeof(Human), 0, sizeof(Soldier) - sizeof(Human));
+    memset((char *)s + sizeof(Human), 0, sizeof(HumanSoldier) - sizeof(Human));
     ((TaskHandler)TASK_HANDLER(0, Human_GetType()))(h, arg);
     StateMachine_Init(&h->sm, Soldier_UpdateInput, gSoldierStates, S_STAND, 1, gSoldierCombos);
-    h->animSlots = gSoldierAnimSlots;
+    h->animSlots = (struct AnimSlot *)gSoldierAnimSlots;
     Human_InitDamage(h, gSoldierSpeeds);
-    s->idleAnim = -1;
-    s->run = 1;
-    s->spawned = 0;
+    s->s.idleAnim = -1;
+    s->s.run = 1;
+    s->s.spawned = 0;
     s->hitSum = 0;
     s->hitLimit = kHitLimit;
-    s->model = 1;
+    s->s.model = 1;
 }
 HOOK(0x45CC50, Soldier_CreateHandler);
 
 /* turns the script controls (input floats) into state machine bits */
 void Soldier_UpdateInput(HumanSM *sm, Human *h)
 {
-    Soldier *s = (Soldier *)h;
+    HumanSoldier *s = (HumanSoldier *)h;
     uint32_t bits = sm->bits & 0xF003E01C;
     uint32_t flags = h->motion->flags;
     int i;
@@ -765,7 +766,7 @@ void Soldier_UpdateInput(HumanSM *sm, Human *h)
         bits |= SB_ANIM_DONE;
     if (flags & 0x10000)
         bits |= SB_ANIM_EVENT;
-    if (s->run)
+    if (s->s.run)
         bits |= SB_RUN;
     else
         bits &= ~SB_RUN;
@@ -814,12 +815,12 @@ HOOK(0x45CCF0, Soldier_UpdateInput);
 /* picks the animation set for the kind of AI, then runs the Human handler */
 void Soldier_RunHandler(Human *h)
 {
-    switch (h->ai->kind) {
+    switch (h->ai->aiType) {
     case 5:
-        h->animSlots = gSoldierAnimSlots5;
+        h->animSlots = (struct AnimSlot *)gSoldierAnimSlots5;
         break;
     case 6:
-        h->animSlots = gSoldierAnimSlots6;
+        h->animSlots = (struct AnimSlot *)gSoldierAnimSlots6;
         break;
     case 0x17:
     case 0x18:
@@ -827,10 +828,10 @@ void Soldier_RunHandler(Human *h)
     case 0x1A:
     case 0x1B:
     case 0x1C:
-        h->animSlots = gSoldierAnimSlotsCrouch;
+        h->animSlots = (struct AnimSlot *)gSoldierAnimSlotsCrouch;
         break;
     default:
-        h->animSlots = gSoldierAnimSlots;
+        h->animSlots = (struct AnimSlot *)gSoldierAnimSlots;
         break;
     }
     ((TaskHandler1)TASK_HANDLER(1, Human_GetType()))(h);
@@ -863,15 +864,15 @@ void Soldier_Update(Human *h)
     Human_UpdatePlatformMove(h);
     StateMachine_Update(&h->sm, h);
     if (!is_zero(h->input[20]))
-        ((Soldier *)h)->run ^= 1;
+        ((HumanSoldier *)h)->s.run ^= 1;
     h->sm.bits &= ~SB_HIT;
     Human_UpdateBody(h);
     HumanView_UpdateView(h->view, h);
-    h->unkD8 = 1;
-    BoneObj_GetRootMotion(h->unk514, d, h->anim);
-    x = h->matrix[2] * d[2] + h->matrix[1] * d[1] + h->matrix[0] * d[0];
-    y = h->matrix[5] * d[2] + h->matrix[4] * d[1] + h->matrix[3] * d[0];
-    z = h->matrix[8] * d[2] + h->matrix[7] * d[1] + h->matrix[6] * d[0];
+    h->frozen = 1;
+    BoneObj_GetRootMotion(h->boneOffset, d, h->anim);
+    x = h->matrix.m[2] * d[2] + h->matrix.m[1] * d[1] + h->matrix.m[0] * d[0];
+    y = h->matrix.m[5] * d[2] + h->matrix.m[4] * d[1] + h->matrix.m[3] * d[0];
+    z = h->matrix.m[8] * d[2] + h->matrix.m[7] * d[1] + h->matrix.m[6] * d[0];
     d[0] = x;
     d[1] = y;
     d[2] = z;
@@ -897,7 +898,7 @@ void Soldier_Update(Human *h)
     Human_printf(h, "Delta move Beta: %.2f\n", (double)h->moveAngle[1]);
     Human_printf(h, "Delta move Gamma: %.2f\n", (double)h->moveAngle[2]);
     Human_printf(h, "Distance to ground from feet: %.2fm\n", (double)(h->groundDistance * kUnitsToMeters));
-    Human_printf(h, "Ground angle: %.3f\n", (double)(h->groundAngle * kRadToDeg));
+    Human_printf(h, "Ground angle: %.3f\n", (double)(h->slopeAngle * kRadToDeg));
     Human_printf(h, "Delta translation X: %.2f\n", (double)h->delta[0]);
     Human_printf(h, "Delta translation Y: %.2f\n", (double)h->delta[1]);
     Human_printf(h, "Delta translation Z: %.2f\n", (double)h->delta[2]);
@@ -930,7 +931,7 @@ HOOK(0x45D360, Soldier_EnsureWeapon);
 
 void Soldier_HitHandler(Human *h, SoldierHit *hit)
 {
-    Soldier *s = (Soldier *)h;
+    HumanSoldier *s = (HumanSoldier *)h;
     HumanDamage *d = &h->damage;
     double scratch[3];
     SoldierAIMsg msg;
@@ -940,7 +941,7 @@ void Soldier_HitHandler(Human *h, SoldierHit *hit)
     uint32_t bits;
     int part;
 
-    if (!h->ai || (headshot = h->ai->fullHeadDamage, !h->ai->invulnerable)) {
+    if (!h->ai || (headshot = h->ai->noInstantDeath, !h->ai->invulnerable)) {
         part = Human_GetHitZone(h, hit);
         d->hitZone = part;
         HumanDamage_GetZone(d, part);
@@ -967,7 +968,7 @@ void Soldier_HitHandler(Human *h, SoldierHit *hit)
             s->deathDir[1] = hit->dir[1];
             s->deathDir[2] = hit->dir[2];
             s->deathKind = hit->weapon[0x610 / 4] == 2 ? 1 : 2;
-            h->dying = 1;
+            h->dead = 1;
             bits |= SB_DEAD;
         }
         h->sm.bits = bits;
@@ -1005,11 +1006,11 @@ char Soldier_TurnToHit(Human *h, double *dir)
         return 1;
     memcpy(&v, dir, sizeof(v));
     Vec3d_Normalize(&v);
-    if (v.z * h->matrix[7] + v.y * h->matrix[4] + v.x * h->matrix[1] > kZero) {
-        h->yaw = Vec3d_YawAngle(v);
+    if (v.z * h->matrix.m[7] + v.y * h->matrix.m[4] + v.x * h->matrix.m[1] > kZero) {
+        h->baseZ = Vec3d_YawAngle(v);
         return 0;
     }
-    h->yaw = Vec3d_YawAngle(v) + kPi;
+    h->baseZ = Vec3d_YawAngle(v) + kPi;
     return 1;
 }
 HOOK(0x45DAA0, Soldier_TurnToHit);
@@ -1045,7 +1046,7 @@ void Soldier_GetDeathVelocity(double *out, Human *h, int model, int anim)
     dir[0] = nx;
     dir[1] = ny;
     dir[2] = nz;
-    Matrix_SetRotZ(m0, h->yaw);
+    Matrix_SetRotZ(m0, h->baseZ);
     rd[0] = m0[2] * dir[2] + m0[1] * dir[1] + m0[0] * dir[0];
     rd[1] = m0[5] * dir[2] + m0[4] * dir[1] + m0[3] * dir[0];
     rd[2] = m0[8] * dir[2] + m0[7] * dir[1] + m0[6] * dir[0];
