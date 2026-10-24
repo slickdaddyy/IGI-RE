@@ -141,12 +141,12 @@ extern uint16_t gHandiCamFilterType;
 extern uint16_t gLineFilterType;
 extern uint16_t gWideScreenFilterType;
 extern void *gDevice;
-#define gFilterRandom ((void *)0x935BF0)
+extern char gFilterRandom[];
 extern int gHandiCamDrawMethod;
 extern int gBandDrawMethod;
 extern int gHandiCamFilterPrim;
 extern int gBandFilterPrim;
-#define gBandPixels ((void *)0x935C10)
+extern char gBandPixels[];
 extern int gLineDrawMethod;
 extern int gLineFilterPrim;
 extern int gWideScreenPrim;
@@ -159,8 +159,8 @@ extern float gBandTextX;
 extern float gBandTextY;
 extern float gBandTextDX;
 extern float gBandTextDY;
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
-#define gScene ((void *)0xBCABA0)
+extern void (*gRenderFuncs[])(void *);
+extern char gScene[];
 extern float gViewX;
 extern float gViewY;
 extern float gScreenW;

@@ -89,7 +89,7 @@ _Static_assert(sizeof(CollHole) == 0x30, "CollHole");
 extern void *gTexModParams;
 extern uint16_t gTexModType;
 extern TextureModifier *gTexMods[];
-#define gTexModRandom ((void *)0xA7ACF8)
+extern char gTexModRandom[];
 extern int gTexModCount;
 extern char gBitResident[];
 extern int gCollHoleList[];

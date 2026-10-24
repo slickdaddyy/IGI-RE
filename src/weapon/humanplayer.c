@@ -93,13 +93,12 @@ ORIG(0x4E7C30, char, DebugText_IsEnabled, (void));
 ORIG(0x4F2060, void *, WeaponSlots_Get, (void **slots, int i));
 
 extern uint16_t gHumanPlayerType;
-#define gInputChannels ((char (*)[16])0x538720)
+extern char gInputChannels[][16];
 extern uint16_t gTaskType548638;
 extern void *gUnk56E09C;
 extern float gMoveScale;
 extern float gFenceDamage;
 extern void *gHumanPlayerList;
-#define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
 extern int gQVertexStrip;
 
 typedef struct WeaponCategory {
@@ -121,6 +120,7 @@ typedef struct QVertexStrip {
     int count;
     QVertex *verts;
 } QVertexStrip;
+extern void (*gRenderFuncs[])(QVertexStrip *);
 
 /* 0x1C byte message for 0x450CE0, probably a noise enemies can hear */
 typedef struct HumanNoise {

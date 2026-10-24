@@ -144,7 +144,7 @@ extern uint16_t gGunShotType;
 extern int gRicochetTime;
 extern int gRicochetDelay;
 extern const char *gRicochetSounds[];
-#define gRenderHandlers ((void (**)(void *task, void *arg))0xA982E0)
+extern void (*gRenderHandlers[])(void *task, void *arg);
 
 extern const float kZero;
 extern const float kOne;

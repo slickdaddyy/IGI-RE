@@ -75,7 +75,7 @@ _Static_assert(offsetof(Smoke, enabled) == 0x170, "Smoke.enabled");
 _Static_assert(sizeof(Smoke) == 0x178, "Smoke");
 
 extern char *gSmokeFireball;
-#define gSmokeRandom ((void *)0x57BDE8)
+extern char gSmokeRandom[];
 extern uint16_t gSmokeType;
 extern void *gSmokeParams;
 extern void *gSmokeModel;

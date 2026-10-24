@@ -294,7 +294,7 @@ extern ProjVert gProjVerts[];
 extern int gOpaqueBlendIdx;
 extern ModelVB gMeshVBs[];
 extern int gUnlitIdx;
-#define gTaskHandlers ((void (*(*)[0x180])(void *, void *))0xA96AE0)
+extern void (* gTaskHandlers[][0x180])(void *, void *);
 extern char *gLightBase;
 extern int *gLightIndex;
 extern int gLightCount;

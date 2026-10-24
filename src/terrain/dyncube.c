@@ -18,9 +18,9 @@ ORIG(0x4E5580, int, CellMask_Test, (const void *mask, int x, int y));
 ORIG(0x4E5BA0, int, CellMask_TestRect, (const void *mask, float x, float y, float w, float h));
 
 extern TaskType gTaskTypes[];
-#define gTaskHandlers ((TaskHandler (*)[TASK_MAX_TYPES])0xA96AE0)
+extern TaskHandler gTaskHandlers[][TASK_MAX_TYPES];
 extern const signed char gTaskSlotEvent[];
-#define gDynCubeChildDir ((const int (*)[3])0x548000)
+extern const int gDynCubeChildDir[][3];
 extern const float gPixelCenter;
 extern const float gSqrt3;
 

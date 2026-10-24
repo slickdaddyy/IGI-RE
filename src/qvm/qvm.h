@@ -110,7 +110,7 @@ struct ScriptArgs {
 #define QVM_OPCODES 0x31
 #define QVM_SLOTS 4
 typedef void (*QvmHandler)(void *a, void *b, int op, int slot);
-#define gQvmHandlers ((QvmHandler (*)[6])0xA96108)
+extern QvmHandler gQvmHandlers[][6];
 
 enum {
     OP_BRK, OP_NOP, OP_PUSH, OP_PUSHB, OP_PUSHW, OP_PUSHF, OP_PUSHA, OP_PUSHS,

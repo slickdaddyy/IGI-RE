@@ -39,7 +39,7 @@ ORIG(0x501D70, void, SplineObjWaypoint_UpdateAttach, (SplineObjWaypoint *w));
 extern uint16_t gWaypointType;
 extern void *gWorld;
 extern char gScriptEmptyString;
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 
 extern const float kDefaultSegLength;
 extern const float kHalf;

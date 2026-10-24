@@ -323,7 +323,8 @@ _Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-#define TASK_HANDLER(slot, type) (((void **)0xA96AE0)[(slot) * 0x180 + (type)])
+extern void *gTaskHandlers[][0x180];
+#define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 extern uint8_t gKeys[];
 extern uint8_t gKeysPrev[];
 

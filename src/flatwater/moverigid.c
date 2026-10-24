@@ -61,12 +61,12 @@ typedef struct MoveRigidObj {
 _Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 _Static_assert(sizeof(MoveRigidObj) == 0x208, "MoveRigidObj");
 
-#define gMoveBetaNames ((char (*)[16])0xA837AC)
+extern char gMoveBetaNames[][16];
 extern uint16_t gMoveRigidObjType;
 extern void *gMoveRigidObjParams;
-#define gMoveAlphaNames ((char (*)[16])0xA837D4)
-#define gMoveGammaNames ((char (*)[16])0xA837F4)
-#define gMovePosNames ((char (*)[16])0xA83814)
+extern char gMoveAlphaNames[][16];
+extern char gMoveGammaNames[][16];
+extern char gMovePosNames[][16];
 
 extern float kOne;
 extern double kZero64;

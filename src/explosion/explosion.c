@@ -66,7 +66,7 @@ extern char *gSmoke2Sprite;
 extern char *gBurnTexture;
 extern uint16_t gFireBallType;
 extern Vec3d gViewPos;
-#define gRenderFuncs ((void (**)(RenderArg *))0xA94E84)
+extern void (*gRenderFuncs[])(RenderArg *);
 
 #define Explosion_Create (FN(0x480F30, Explosion_CreateHandler))
 #define Explosion_Run (FN(0x480F40, Explosion_RunHandler))
@@ -82,30 +82,30 @@ static const float kThousandth = 0x1.0624dep-10f;
 static const float kSmokeColor = 0x1.966666p+3f; /* 12.7 */
 static const float kRiseFast = 0x1.1d7218p+1f;   /* 2.23 */
 static const float kRiseSlow = 0x1.1d7218p+0f;   /* 1.115 */
-#define kTenth K(float, 0x5333C8)
-#define kFifth K(float, 0x5333C4)
-#define kHalf K(float, 0x533504)
-#define kQuarter K(float, 0x533518)
-#define kThreeQuarters K(float, 0x53351C)
-#define kFourFifths K(float, 0x5336CC)
-#define kNineTenths K(float, 0x5335A8)
-#define kThreeTenths K(float, 0x5336A4)
-#define kHundredth K(float, 0x533714)
-#define kThreeHalves K(float, 0x53353C)
-#define kUnit K(float, 0x5333B8)
-#define kPi K(float, 0x533400)
-#define kTwoPi K(float, 0x5334A8)
-#define kSmokeSpin K(float, 0x534184)
-#define kFragmentSpin K(float, 0x53418C)
-#define kSmokeRate K(float, 0x534188)
-#define kTrailRate K(float, 0x534190)
-#define kTumble K(float, 0x534198)
-#define kFragmentScale K(float, 0x534194)
-#define kFireballScale K(double, 0x5341B0)
-#define kSmokeScale K(double, 0x5341A0)
-#define kHalfD K(double, 0x5335C0)
-#define kSmokeFrames K(float, 0x5341A8)
-#define kDelaySpread K(float, 0x5341AC)
+extern const float kTenth;
+extern const float kFifth;
+extern const float kHalf;
+extern const float kQuarter;
+extern const float kThreeQuarters;
+extern const float kFourFifths;
+extern const float kNineTenths;
+extern const float kThreeTenths;
+extern const float kHundredth;
+extern const float kThreeHalves;
+extern const float k4096;
+extern const float kPi;
+extern const float kTwoPi;
+extern const float kBlastSmokeSpin;
+extern const float kFragmentSpin;
+extern const float kSmokeRate;
+extern const float kTrailRate;
+extern const float kTumble;
+extern const float kFragmentScale;
+extern const double kFireballScale;
+extern const double kSmokeScale;
+extern const double kHalfD;
+extern const float kSmokeFrames;
+extern const float kDelaySpread;
 
 FireBall *FireBall_New(Vec3d *pos, const char *model, float scale, int life, int a5, int a6, int delay,
                        int animFrames, float angle, float spin);
@@ -128,7 +128,7 @@ void *ExplosionSmoke_Emit(ExplosionSmoke *s, int blend, float *size, float life,
 
     Particle2D_SetAutoDelete(ps, 1);
     a = (float)(Random_Float(Game_GetRandom()) * kTwoPi);
-    b = (float)((kHalf - Random_Float(Game_GetRandom())) * kSmokeSpin);
+    b = (float)((kHalf - Random_Float(Game_GetRandom())) * kBlastSmokeSpin);
     Particle2D_Add(ps, &s->pos, &up, psize, b, a, 1.0f, a5, a6);
     return ps;
 }
@@ -199,7 +199,7 @@ void Fragment_Smoke(Fragment *f)
             puff(f->ps2, &f->pos, &zero, b, n1, n2);
         }
     } else if (f->kind == 1 && (long double)f->life > half) {
-        long double lim = f->size * kUnit, step, s;
+        long double lim = f->size * k4096, step, s;
         double len, stepD, dist = 0.0, d[3];
         Vec3d p;
 

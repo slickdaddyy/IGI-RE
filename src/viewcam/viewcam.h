@@ -11,7 +11,7 @@
 typedef void (*TaskHandler)(void *task, void *arg);
 
 /* gTaskHandlers[slot][type] */
-#define gTaskHandlers ((TaskHandler (*)[0x180])0xA96AE0)
+extern TaskHandler gTaskHandlers[][0x180];
 
 typedef struct Task {
     struct Task *next;

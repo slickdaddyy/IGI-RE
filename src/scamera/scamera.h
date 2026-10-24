@@ -229,7 +229,7 @@ _Static_assert(sizeof(Cabinet) == 0x138, "Cabinet");
 _Static_assert(offsetof(DrawerArg, cabinet) == 0x88, "DrawerArg");
 _Static_assert(sizeof(Drawer) == 0x160, "Drawer");
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

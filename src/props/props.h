@@ -119,7 +119,7 @@ _Static_assert(offsetof(PhysObj, phys) == 0x1B4, "phys");
 _Static_assert(sizeof(PhysObj) == 0x720, "PhysObj");
 _Static_assert(offsetof(UseQuery, range) == 0x78, "UseQuery");
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

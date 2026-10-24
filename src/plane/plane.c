@@ -85,7 +85,7 @@ ORIG(0x435C40, uint16_t, Gear_GetType, (void));
 extern uint16_t gPlaneType;
 extern char gPlaneInputs[]; /* {name, 0, min, max} for each PlaneInput field */
 extern void *gPlaneParams;
-#define gPlaneRandom ((void *)0x57BD48)
+extern char gPlaneRandom[];
 extern uint8_t gKeys[];
 extern uint8_t gKeysPrev[];
 

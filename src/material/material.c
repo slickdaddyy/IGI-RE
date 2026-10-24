@@ -70,7 +70,7 @@ extern unsigned char gMaterialParseEvent;
 extern unsigned char gMaterialImpactEvent;
 extern int gMaterialActive;
 extern GameMaterial gMaterials[];
-#define gTaskHandlers ((TaskHandler (*)[0x180])0xA96AE0)
+extern TaskHandler gTaskHandlers[][0x180];
 extern const char gScriptNumberType[];
 
 static ScriptValue *Material_Return(ScriptValue *out)

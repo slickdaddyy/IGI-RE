@@ -16,10 +16,10 @@ typedef struct WeaponType {
 extern WeaponType gWeaponTypes[];
 extern int gWeaponTypeCount;
 extern uint8_t gWeaponEvents[];
-#define gWeaponCategoryEnum ((void *)0x56E248)
-#define gWeaponSightEnum ((void *)0x56E238)
-#define gWeaponAmmoEnum ((void *)0x56E218)
-#define gWeaponIdEnum ((void *)0x56E228)
+extern char gWeaponCategoryEnum[];
+extern char gWeaponSightEnum[];
+extern char gWeaponAmmoEnum[];
+extern char gWeaponIdEnum[];
 
 void WeaponType_Close(void)
 {

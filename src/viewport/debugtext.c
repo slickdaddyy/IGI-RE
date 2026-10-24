@@ -23,7 +23,7 @@ typedef struct DisplayMode {
 } DisplayMode;
 
 extern char gDebugTextOwnScene;
-#define gDebugFontData ((void *)0x5488DC)
+extern char gDebugFontData[];
 extern Task *gDebugTextTask;
 extern char gDebugTextDirty;
 extern char gDebugTextEnabled;

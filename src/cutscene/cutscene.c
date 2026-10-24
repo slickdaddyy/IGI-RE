@@ -168,7 +168,7 @@ extern int gCutSceneTicksPerSec;
 extern void *gCutSceneParams;
 extern float gCutSceneTimeRange[];
 extern uint16_t gCutSceneType;
-#define gCutSceneRandom ((void *)0xA76C70)
+extern char gCutSceneRandom[];
 extern void *gCutSceneCamera;
 extern void *gCutSceneFilterParent;
 

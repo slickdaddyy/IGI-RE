@@ -75,7 +75,7 @@ typedef struct QVertexStrip {
     QVertex *verts;
 } QVertexStrip;
 
-#define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
+extern void (*gRenderFuncs[])(QVertexStrip *);
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
 extern void *gQVertexPalette;

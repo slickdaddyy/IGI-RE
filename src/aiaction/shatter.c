@@ -46,8 +46,8 @@ extern void *gShatterShards;
 
 extern const float gShardColor2[]; /* 0.7, 0.7, 0.7 */
 
-#define kZero K(float, 0x5333EC)
-#define kOne K(float, 0x5333E0)
+extern const float kZero;
+extern const float kOne;
 
 /* like GlassShatter_Spawn, but the pieces fly away from the point from;
    force is not used */

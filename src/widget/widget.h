@@ -105,10 +105,10 @@ typedef struct Random {
 _Static_assert(sizeof(MenuWindow) == 0x54, "MenuWindow");
 _Static_assert(sizeof(VarString) == 0x50, "VarString");
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-#define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
+extern void (*gRenderFuncs[])(QVertexStrip *);
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
 extern void *gQVertexPalette;

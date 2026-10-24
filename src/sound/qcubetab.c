@@ -20,7 +20,7 @@ extern uint8_t gQCubeUnkB017E0[];
 extern Vec3d gQCubeCorners[];
 extern const uint8_t gQCubePermA[];
 extern const uint8_t gQCubePermB[];
-#define gQCubeFaceCorners ((const uint8_t (*)[4])0x548790)
+extern const uint8_t gQCubeFaceCorners[][4];
 
 static const double kOne = 1.0;
 static const double k1_2 = 1.2;

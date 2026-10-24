@@ -247,7 +247,7 @@ extern List *gAIEventList;
 static const double kFps = 30.0;
 static const double kViewScale = 4096.0;
 static const double kMinWeight = 0.01;
-#define kDegToRad K(float, 0x53367C)
+extern const float kDegToRad;
 
 static ScriptValue *ret_int(ScriptValue *out, int v)
 {

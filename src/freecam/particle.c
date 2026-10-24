@@ -36,7 +36,7 @@ ORIG(0x4C6840, void, DynCube_ListRemove, (void *world, void *obj, int list));
 extern uint16_t gParticleSystemType;
 extern uint16_t gSpriteParticleSystemType;
 extern int gSpriteParticleSystemReady;
-#define gParticleRandom ((void *)0xA845F8)
+extern char gParticleRandom[];
 extern const float gCamMatrix[];
 extern float gCamTanX;
 extern float gCamTanY;

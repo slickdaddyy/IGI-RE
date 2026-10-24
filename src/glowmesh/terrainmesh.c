@@ -201,7 +201,7 @@ extern double gQCubeOriginD[];
 extern TerrainLightMapInfo gTerrainLightMaps[];
 extern TerrainHeightMapInfo gTerrainHeightMaps[];
 extern TerrainMaterialMapInfo gTerrainMaterialMaps[];
-#define gTerrainTileMaps ((uint8_t (*)[8])0xC30080)
+extern uint8_t gTerrainTileMaps[][8];
 extern int gTerrainMeshRenderAll;
 extern char *gLights;
 extern int *gLightIndex;
@@ -229,8 +229,8 @@ extern int gUnkC28FBC;
 extern float gUnkC28FC0;
 extern float gTerrainView[]; /* 3x3 matrix, unk24, then the view origin */
 extern float gTerrainTint[];
-#define gTerrainClipUV ((double (*)[2])0xA7DA70)
-#define gTerrainClipPos ((double (*)[3])0xA7DAB0)
+extern double gTerrainClipUV[][2];
+extern double gTerrainClipPos[][3];
 extern TerrainClipVertex gTerrainClipVerts[];
 
 F32(kZero, 0x00000000);

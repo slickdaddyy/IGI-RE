@@ -167,7 +167,7 @@ extern uint16_t gButtonItemType;
 extern uint16_t gTextItemType;
 extern uint8_t gMapSelectEvent;
 extern const float gMapZoomAngle[];
-#define gItemColor ((const float (*)[3])0x53F7D0)
+extern const float gItemColor[][3];
 extern char *gLevelFlow;
 extern unsigned int gMouseButtons;
 

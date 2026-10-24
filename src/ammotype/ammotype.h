@@ -32,7 +32,7 @@ typedef struct Vec3f {
     float x, y, z;
 } Vec3f;
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) (gTaskHandlers[(uint8_t)(slot)][(uint16_t)(type)])
 extern Task *gTaskStack[];
 extern int gTaskStackTop;

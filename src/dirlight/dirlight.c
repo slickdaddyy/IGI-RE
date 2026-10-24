@@ -45,7 +45,7 @@ ORIG(0x5274D0, void, Dirlight_SetTime, (float time));
 extern void *gCurrentWorld;
 extern void *gDirlightParams;
 extern uint16_t gDirlightType;
-#define gDirlightRandom ((void *)0xA83D38)
+extern char gDirlightRandom[];
 extern float gDirlightKeyframeTime;
 extern void *gDirlightKeyframeParams;
 extern uint16_t gDirlightKeyframeType;

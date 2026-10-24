@@ -16,8 +16,8 @@ ORIG(0x4B0D90, void, Mem_PopMode, (void));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 
 extern TaskType gTaskTypes[];
-#define gTaskHandlers ((TaskHandler (*)[TASK_MAX_TYPES])0xA96AE0)
-#define gTaskHandlerSet ((char (*)[TASK_MAX_TYPES])0x54FF34)
+extern TaskHandler gTaskHandlers[][TASK_MAX_TYPES];
+extern char gTaskHandlerSet[][TASK_MAX_TYPES];
 extern TaskEvent gTaskEvents[];
 extern uint8_t gTaskEventSlot[];
 extern uint8_t gTaskSlotEvent[];

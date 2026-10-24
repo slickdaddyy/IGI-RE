@@ -107,7 +107,7 @@ _Static_assert(offsetof(Rain, last) == 0x56B0, "last");
 _Static_assert(sizeof(Rain) == 0x56D0, "Rain");
 
 extern uint16_t gRainType;
-#define gRainRandom ((void *)0xC311D0)
+extern char gDxRainRandom[];
 extern Rain *gRain;
 extern int gRainEnabled;
 
@@ -196,7 +196,7 @@ void Rain_Init(void)
 {
     int type;
 
-    Random_Init(gRainRandom);
+    Random_Init(gDxRainRandom);
     type = TaskType_New("Rain", sizeof(Rain), gDynCubeObjType, 0, 0);
     gRainType = type;
     TaskType_SetHandler(type, 4, Rain_Render);
@@ -608,9 +608,9 @@ void Rain_Update(Rain *r)
             long double x;
 
             if (d->timer-- < 0) {
-                d->timer += Random_Int(gRainRandom, 30) + 30;
-                d->dx = (Random_Float(gRainRandom) - kHalfF) * kSway;
-                d->dy = (Random_Float(gRainRandom) - kHalfF) * kSway;
+                d->timer += Random_Int(gDxRainRandom, 30) + 30;
+                d->dx = (Random_Float(gDxRainRandom) - kHalfF) * kSway;
+                d->dy = (Random_Float(gDxRainRandom) - kHalfF) * kSway;
             }
             x = d->dx + d->x;
             d->x = x;
@@ -639,12 +639,12 @@ void Rain_Update(Rain *r)
         if (r->dropCount == 80)
             return;
         d = &r->drops[r->dropCount];
-        x = Random_Float(gRainRandom) * kTileF;
-        d->y = Random_Float(gRainRandom) * kTileF;
+        x = Random_Float(gDxRainRandom) * kTileF;
+        d->y = Random_Float(gDxRainRandom) * kTileF;
         d->x = x;
         d->timer = 0;
         d->z = kLayer - speed;
-        d->kind = Random_Int(gRainRandom, 4);
+        d->kind = Random_Int(gDxRainRandom, 4);
         r->dropCount++;
         acc = r->spawn - kSpawnStep;
         r->spawn = acc;

@@ -24,7 +24,7 @@ typedef struct Task {
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[(uint8_t)(slot)][(uint16_t)(type)]
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
@@ -38,7 +38,7 @@ typedef struct ScriptValue {
     int unk14;
 } ScriptValue;
 
-#define gScriptNumberType ((void *)0x567C74)
+extern char gScriptNumberType[];
 
 /* a point of a physics object type, read from the script */
 typedef struct PhysicsObjJoint {

@@ -141,8 +141,8 @@ extern void *gDevice;
 extern TransCtx gTransCtx;
 extern SceneArea gSceneArea;
 extern float gNearPlaneScale;
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
-#define gTaskHandlers ((TaskHandler (*)[0x180])0xA96AE0)
+extern void (*gRenderFuncs[])(void *);
+extern TaskHandler gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern StateList *gStateListA;

@@ -114,7 +114,7 @@ typedef struct CollHit {
 
 #define LIGHTMAP_MAX 0x800
 
-#define gLightMapRandom ((void *)0xA76CD0)
+extern char gLightMapRandom[];
 extern uint16_t gTerrainLightMapType;
 extern void *gTerrainLightMapParams;
 extern uint16_t gDynCubeObjType;

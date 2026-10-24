@@ -9,8 +9,8 @@ ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x491DE0, int, Display_GetGFXCapsMethod, (void));
 ORIG(0x4F11F0, uint8_t, Level_GetEventDA4, (void));
 
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
-#define gGFXCaps ((void *)0xA81028)
+extern void (*gRenderFuncs[])(void *);
+extern char gGFXCaps[];
 extern uint16_t gGFXCapsViewerType;
 
 void GFXCapsViewer_GetCaps(Task *t, void **out)

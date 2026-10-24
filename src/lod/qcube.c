@@ -99,7 +99,7 @@ _Static_assert(offsetof(QEnclosing, radius) == 0x28, "QEnclosing");
 typedef void (*QHandler)(QTask *task, void *arg);
 
 extern QHandler gTaskHandlers[];
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
+extern void (*gRenderFuncs[])(void *);
 extern QEntry *gQCubeList;
 extern QEntry *gQCubeOut;
 extern int gQCubeCount;
@@ -124,8 +124,8 @@ extern int gViewSector;
 extern double gQCubeEnclosingBox[];
 extern float gQCubeEnclosingRadius;
 extern int gQCubeNeighbourBits[];
-#define gQCubeChildOrder ((uint8_t (*)[8])0xB12BE0)
-#define gQCubeBitPerm ((uint8_t (*)[256])0xB12340)
+extern uint8_t gQCubeChildOrder[][8];
+extern uint8_t gQCubeBitPerm[][256];
 extern uint8_t gQCubeOctantMask[];
 extern int gCollChildTable[];
 extern float gQCubeOutsideMin[];

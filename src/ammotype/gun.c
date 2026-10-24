@@ -224,7 +224,7 @@ extern uint8_t gGunEvents[];
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
 extern void *gQVertexPalette;
-#define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
+extern void (*gRenderFuncs[])(QVertexStrip *);
 
 extern const float kHalf;
 extern const float kOne;

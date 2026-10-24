@@ -255,7 +255,7 @@ _Static_assert(sizeof(FireBall) == 0x118, "FireBall");
 _Static_assert(sizeof(Fragment) == 0x118, "Fragment");
 _Static_assert(sizeof(FlashNoise) == 0x1C, "FlashNoise");
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

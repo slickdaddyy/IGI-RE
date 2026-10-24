@@ -110,7 +110,7 @@ extern const char *gBandFont;
 extern int gHandiCamFilterPrim;
 extern int gBandFilterPrim;
 extern int gBandPixels[];
-#define gFilterRandom ((void *)0x935BF0)
+extern char gFilterRandom[];
 extern int gLineDrawMethod;
 extern int gLineFilterPrim;
 extern int gWideScreenPrim;

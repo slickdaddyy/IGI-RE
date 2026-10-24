@@ -32,7 +32,7 @@ ORIG(0x4D2C20, void, QCube_SetDetail, (int v));
 extern int gDriverCount;
 extern D3DDriver gDrivers[];
 extern char gLanguageAliasSet;
-#define gRenderFuncs ((void (**)(int *))0xA94E84)
+extern void (*gRenderFuncs[])(int *);
 
 _Static_assert(sizeof(PlayerProfile) == 0x564, "PlayerProfile");
 _Static_assert(sizeof(D3DDriver) == 0x404, "D3DDriver");

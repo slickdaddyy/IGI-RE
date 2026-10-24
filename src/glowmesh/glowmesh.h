@@ -29,7 +29,7 @@ extern float gSceneMaxY;
 extern float gNearPlane;
 extern int gQCubeActive;
 extern int gQCubeMinSize;
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
+extern void (*gRenderFuncs[])(void *);
 
 /* fistp with the current rounding mode, low 32 bits */
 static inline int x87_fistp(long double x)

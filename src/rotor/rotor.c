@@ -49,7 +49,7 @@ ORIG(0x4EE140, MagicDef *, PhysicsObjType_Find, (const char *name));
 
 #define MAGICOBJ_DELETE (FN(0x51B940, EditorMagicObj_Delete))
 
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
+extern void (*gRenderFuncs[])(void *);
 extern uint16_t gRotorType;
 extern int gRotorPrim;
 

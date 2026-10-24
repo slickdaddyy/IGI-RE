@@ -257,9 +257,9 @@ ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 
 extern const int gFemaleFootstepSounds[];
 extern SoldierStateFn gSoldierFemaleStates[];
-#define gSoldierFemaleCombos ((void *)0x53E468)
-#define gSoldierFemaleAnimSlots ((void *)0x53E4A0)
-#define gSoldierFemaleSpeeds ((void *)0x53E508)
+extern char gSoldierFemaleCombos[];
+extern char gSoldierFemaleAnimSlots[];
+extern char gSoldierFemaleSpeeds[];
 extern void *gSoldierFemaleParams;
 extern uint16_t gSoldierFemaleType;
 extern int gSoldierFemaleUnk5BDA90;

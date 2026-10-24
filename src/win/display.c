@@ -93,7 +93,7 @@ extern DisplayCallback *gDisplayEndFrameCallbacks;
 extern DisplayCallback *gDisplayFrameCallbacks;
 extern int gD3DFoundHAL;
 extern int gD3DTnL;
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
+extern void (*gRenderFuncs[])(void *);
 
 /* RenderMode method ids */
 extern int gMethodGetGFXCaps;

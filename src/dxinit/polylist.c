@@ -105,7 +105,7 @@ extern int gPolyListStageState;
 extern int gPolyListNothingB;
 extern int gPolyListLightState;
 extern int gPolyListNothingD;
-#define gPolyListRandom ((void *)0x720570)
+extern char gPolyListRandom[];
 extern char *gLights;
 extern int *gLightIndex;
 extern int gLightCount;

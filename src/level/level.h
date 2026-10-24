@@ -93,7 +93,7 @@ typedef struct TaskNote {
 
 typedef void (*TaskFn)(Task *task);
 
-#define gTaskHandlers ((void *(*)[0x180])0xA96AE0)
+extern void * gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 

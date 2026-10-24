@@ -198,14 +198,14 @@ ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 #define HumanPlayer_MapMarkerHandler (FN(0x413730, HumanPlayer_MapMarkerHandler))
 #define HumanPlayer_DeadRun ((StateFn)FN(0x45C740, Human_DeadRun))
 
-#define gTaskHandlers ((void **(*)[0x180])0xA96AE0)
-#define TASK_HANDLER(slot, type) (((void **)0xA96AE0)[(slot) * 0x180 + (type)])
+extern void ** gTaskHandlers[][0x180];
+#define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 extern uint16_t gHumanPlayerType;
 extern StateFn gBodyStates[];
 extern StateFn gWeaponStates[];
-#define gBodyCombos ((void *)0x538710)
-#define gAnimSlots ((void *)0x538870)
+extern char gBodyCombos[];
+extern char gAnimSlots[];
 extern float gMoveSpeeds[];
 extern float gTurnSpeeds[];
 extern int gWeaponCycleCount;
@@ -226,7 +226,7 @@ extern float gMaxDamage;
 extern float gUnk56E208;
 extern QTaskList *gHumanPlayerList;
 extern char gUnlimitedAmmo;
-#define gScriptNumberType ((void *)0x567C74)
+extern char gScriptNumberType[];
 
 extern float kKmhToUnits;
 extern float kPerFrameHour;

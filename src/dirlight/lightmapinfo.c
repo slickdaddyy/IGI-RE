@@ -65,15 +65,15 @@ extern void *gLightmapInfoParams;
 extern int gLightmapCountA839F4;
 extern int gLightmapCountA83B4C;
 extern Pool gLightmapPoolA83A00;
-#define gLightmapRandom ((void *)0xA83B30)
+extern char gLightmapRandom[];
 extern Matrix gLightmapRotations[];
-#define gLightmapScene ((void *)0xA83980)
+extern char gLightmapScene[];
 extern int *gLightmapBuffer;
 extern uint8_t gLightSourceIsEvent;
 extern uint8_t gLightSourceTraceEvent;
 extern uint8_t gLightSourceVertexEvent;
 
-#define kScaleRange ((void *)0x54F050)
+extern char kScaleRange[];
 
 static const float kTexelScale = 4096.0f;
 static const float kInvTexelScale = 0x1p-12f;

@@ -23,7 +23,8 @@ typedef struct Task {
 typedef void (*TaskHandler)(void *task, void *arg);
 typedef void (*TaskHandler1)(void *task);
 
-#define TASK_HANDLER(slot, type) (((void **)0xA96AE0)[(slot) * 0x180 + (type)])
+extern void *gTaskHandlers[][0x180];
+#define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 typedef struct Human Human;
 typedef struct HumanSM HumanSM;

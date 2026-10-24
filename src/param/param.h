@@ -135,7 +135,7 @@ typedef struct WeaponState {
 typedef void (*TaskFn)(Task *task);
 typedef void (*TaskArgFn)(Task *task, void *arg);
 
-#define gTaskHandlers ((void *(*)[0x180])0xA96AE0)
+extern void * gTaskHandlers[][0x180];
 #define HANDLER(slot, task) (gTaskHandlers[slot][(task)->type])
 
 #define LEVEL_MAX_IDS 0x1000

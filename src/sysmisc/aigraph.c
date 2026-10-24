@@ -113,7 +113,7 @@ extern void *gAIGraphParams;
 extern int gCriteriaDoor;
 extern int gCriteriaView;
 extern int gCriteriaStair;
-#define gTaskHandlers ((void (**)(void *))0xA96AE0)
+extern void (*gTaskHandlers[])(void *);
 #define TASK_HANDLER(slot, type) gTaskHandlers[(slot) * 0x180 + (type)]
 
 #define ROUTE_TABLE_TYPE 10

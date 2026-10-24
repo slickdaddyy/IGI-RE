@@ -51,7 +51,7 @@ _Static_assert(sizeof(Glow) == 0x1C, "Glow");
 _Static_assert(sizeof(GlowInstancePrim) == 0x28, "GlowInstancePrim");
 
 extern int gGlowReadPrim;
-#define gGlowDirs ((float (*)[2])0xA7DBE0)
+extern float gGlowDirs[][2];
 extern int gGlowInstancePrim;
 extern char gGlowMask[];
 extern int gGlowCount;

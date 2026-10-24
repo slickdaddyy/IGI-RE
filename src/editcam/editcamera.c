@@ -78,7 +78,7 @@ _Static_assert(offsetof(EditCamera, filter) == 0xCC, "EditCamera.filter");
 _Static_assert(offsetof(ObjInfo, name) == 0x50, "ObjInfo");
 
 extern uint16_t gEditCameraType;
-#define gEditCameraFilterEnum ((void *)0xA7B268)
+extern char gEditCameraFilterEnum[];
 extern void *gEditCameraParams;
 extern float gEditCameraLevelRange[];
 extern float gEditCameraShakeRange[];

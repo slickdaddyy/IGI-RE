@@ -93,16 +93,16 @@ extern GlobalLightKeyframe gKeyframeTemplate[];
 extern GlobalLight *gCurrentGlobalLight;
 extern GlobalLightKeyframe *gChangedKeyframe;
 extern float gKeyframeTime;
-#define gTexGammaRange ((void *)0x534CA0)
+extern char gTexGammaRange[];
 
 /* parameter names, one per light set */
-#define gAmbientNames ((char (*)[32])0xA83E00)
-#define gFogNames ((char (*)[32])0xA842D4)
-#define gFogDensityNames ((char (*)[32])0xA83FE8)
-#define gScaleRNames ((char (*)[32])0xA83EA4)
-#define gScaleGNames ((char (*)[32])0xA83F48)
-#define gScaleBNames ((char (*)[32])0xA84090)
-#define gLinkNames ((char (*)[32])0xA83D60)
+extern char gAmbientNames[][32];
+extern char gFogNames[][32];
+extern char gFogDensityNames[][32];
+extern char gScaleRNames[][32];
+extern char gScaleGNames[][32];
+extern char gScaleBNames[][32];
+extern char gLinkNames[][32];
 
 /* what the renderer uses, one per light set */
 extern Vec3f gAmbientColors[];

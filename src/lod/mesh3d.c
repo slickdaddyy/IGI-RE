@@ -97,7 +97,7 @@ extern uint8_t gMesh3DEvent2;
 extern uint8_t gMesh3DEvent3;
 extern uint8_t gMesh3DEvent4;
 extern int gMesh3DEvent5;
-#define gMesh3DFade ((float (*)[3])0xB817C0)
+extern float gMesh3DFade[][3];
 extern float gLayerFov[];
 
 /* LOD settings, see notes/lod.md */
@@ -123,7 +123,7 @@ extern float gExclRightCos;
 extern float gExclTopCos;
 extern float gExclBottomCos;
 
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
+extern void (*gRenderFuncs[])(void *);
 
 static const float kOne = 1.0f;
 static const float kBoneSphere = 0x1.68f5c2p+0f; /* 1.41 */

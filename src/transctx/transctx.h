@@ -43,7 +43,7 @@ typedef struct TransContext {
 _Static_assert(sizeof(Scene) == 0x4C, "Scene");
 _Static_assert(sizeof(TransContext) == 0xA8, "TransContext");
 
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
+extern void (*gRenderFuncs[])(void *);
 extern TransContext gTransContext;
 extern Scene gScene;
 

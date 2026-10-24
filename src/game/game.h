@@ -80,8 +80,8 @@ _Static_assert(offsetof(Game, music) == 0xF0, "Game.music");
 _Static_assert(sizeof(Game) == 0x158, "Game");
 
 extern Game *gGame;
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
-#define gTaskHandlers1 ((TaskFn1 (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
+extern TaskFn1 gTaskHandlers1[][0x180];
 extern GameNode *gTaskStack[];
 extern int gTaskStackTop;
 extern const char gScriptEmptyString[];

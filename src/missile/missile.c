@@ -97,7 +97,7 @@ ORIG(0x4FE730, char *, TagItem_Find, (void *task, const char *name));
 
 extern uint16_t gMissileType;
 extern void *gMissileParams;
-#define gMissileRandom ((void *)0x57BC88)
+extern char gMissileRandom[];
 extern char *gUnkBC2360;
 
 #define Missile_UnkHandlerC (FN(0x45F920, Task_FalseHandler))

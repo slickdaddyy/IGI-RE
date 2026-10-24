@@ -57,7 +57,7 @@ extern Flow *gFlow;
 extern uint16_t gFlowType;
 extern int gFlowPauseStart;
 extern int gFlowPauseDepth;
-#define gTaskHandlers ((void (*(*)[TASK_MAX_TYPES])(Task *))0xA96AE0)
+extern void (* gTaskHandlers[][TASK_MAX_TYPES])(Task *);
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern char gUnk5C8E00;
@@ -66,7 +66,7 @@ extern int gUnkBC20A0;
 extern int gUnkC28C5C;
 extern char gUnkC28C61;
 extern char gUnkC28F80;
-#define gScriptNumberType ((void *)0x567C74)
+extern char gScriptNumberType[];
 
 void Flow_Open(void)
 {

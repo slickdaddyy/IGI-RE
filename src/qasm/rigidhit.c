@@ -131,7 +131,7 @@ ORIG(0x4BD070, int, Qvm_GetArgLine, (RigidLod *lod, RigidCollTri *tri, float u, 
 ORIG(0x4D0950, long double, VirModel_GetRadius, (RigidLod **model));
 
 typedef void (*RigidTaskHandler)(void *task, void *arg);
-#define gTaskHandlers ((RigidTaskHandler (*)[0x180])0xA96AE0)
+extern RigidTaskHandler gTaskHandlers[][0x180];
 
 static const float kBoxSlack = 0x1.99999ap-4f;   /* 0.1f */
 static const double kCloseRange = 0x1.999999999999ap-4; /* 0.1 */

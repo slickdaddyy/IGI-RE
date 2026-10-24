@@ -47,11 +47,11 @@ ORIG(0x4F1DB0, void, ParamEnum_AddConstants, (void *e, const char *pattern));
 extern AmmoType gAmmoTypes[];
 extern int gAmmoTypeCount;
 extern uint8_t gAmmoListEvent;
-#define gAmmoIdEnum ((void *)0x5C10F0)
+extern char gAmmoIdEnum[];
 extern uint8_t gBulletHoleEvent;
 extern uint16_t gBulletHoleType;
-#define gBulletHolePool ((void *)0x5C1108)
-#define gBulletHolePool2 ((void *)0x5C1120)
+extern char gBulletHolePool[];
+extern char gBulletHolePool2[];
 extern const char gScriptEmptyString[];
 
 typedef struct ScriptValue {

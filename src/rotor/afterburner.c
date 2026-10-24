@@ -38,7 +38,7 @@ ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 #define MAGICOBJ_DELETE (FN(0x51B940, EditorMagicObj_Delete))
 
 extern uint16_t gAfterburnerType;
-#define gAfterburnerRandom ((void *)0x57BD00)
+extern char gAfterburnerRandom[];
 extern int gAfterburnerPrim;
 extern float gViewDir[];
 extern Vec3d gViewPos;

@@ -88,7 +88,7 @@ _Static_assert(sizeof(HeightMap) == 0x100, "HeightMap");
 _Static_assert(offsetof(HeightMap, slot) == 0xF8, "HeightMap.slot");
 _Static_assert(sizeof(CollBump) == 0x30, "CollBump");
 
-#define gHeightMapRandom ((void *)0xA7B138)
+extern char gHeightMapRandom[];
 extern HeightMap *gHeightMaps[];
 extern void *gHeightMapParams;
 extern uint16_t gHeightMapType;

@@ -16,7 +16,7 @@ ORIG(0x4D0950, float, VirModel_GetRadius, (void **model));
 ORIG(0x4D0CF0, void *, ModelLod_GetAttach, (void *lod, int i));
 ORIG(0x4D0D10, int, ModelLod_GetAttachCount, (void *lod));
 
-#define gTaskHandlers ((MagicHandler (*)[0x180])0xA96AE0)
+extern MagicHandler gTaskHandlers[][0x180];
 extern MagicObjDef gMagicObjDefs[];
 extern int gMagicObjDefCount;
 extern float kZero;

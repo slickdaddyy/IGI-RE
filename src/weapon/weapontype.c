@@ -29,10 +29,10 @@ extern uint8_t gWeaponInitEvent2;
 extern uint8_t gWeaponTypeEvent;
 extern uint8_t gWeaponEventB2;
 extern int gWeaponMaxId;
-#define gWeaponCategoryEnum ((void *)0x56E248)
-#define gWeaponSightEnum ((void *)0x56E238)
-#define gWeaponAmmoEnum ((void *)0x56E218)
-#define gWeaponIdEnum ((void *)0x56E228)
+extern char gWeaponCategoryEnum[];
+extern char gWeaponSightEnum[];
+extern char gWeaponAmmoEnum[];
+extern char gWeaponIdEnum[];
 extern const char gScriptEmptyString[];
 
 typedef struct DirEntry {

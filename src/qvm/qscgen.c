@@ -110,7 +110,7 @@ extern void *gQscGenLogData;
 extern int gScriptError;
 
 /* "           NAME    ", one per opcode, and 20 spaces for continued lines */
-#define gQscGenOpText ((char (*)[20])0xA43EE0)
+extern char gQscGenOpText[][20];
 extern char gQscGenIndent[];
 
 void QscGen_Error(const char *fmt, ...);

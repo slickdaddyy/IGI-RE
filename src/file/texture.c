@@ -84,7 +84,7 @@ ORIG(0x4B74D0, void *, Chunk_Data, (void *chunk, void *file));
 ORIG(0x509910, void, D3DTex_Register, (void));
 ORIG(0x509920, void, D3DTex_Unregister, (void));
 
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
+extern void (*gRenderFuncs[])(void *);
 extern char gTexFromFile;
 extern float gTexParams[];
 

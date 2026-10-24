@@ -89,7 +89,7 @@ extern uint8_t gObjectEvent0;
 extern uint8_t gObjectEvent1;
 extern uint8_t gObjectEvent2;
 extern const MarkerShape gMarkerShapes[];
-#define gMarkerColors ((const float (*)[3])0x53F608)
+extern const float gMarkerColors[][3];
 extern char *gLevelFlow;
 
 static const float kHalf = 0.5f;

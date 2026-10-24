@@ -67,7 +67,7 @@ typedef struct Toucher {
 _Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 

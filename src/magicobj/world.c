@@ -35,7 +35,7 @@ ORIG(0x4E54E0, void, CellMask_Free, (void *p));
 ORIG(0x5175A0, void *, TexSet_Load, (const char *path));
 ORIG(0x5177F0, void, TexSet_Free, (void *p));
 
-#define gTaskHandlers ((MagicHandler (*)[0x180])0xA96AE0)
+extern MagicHandler gTaskHandlers[][0x180];
 extern MagicNode *gTaskStack[];
 extern int gTaskStackTop;
 extern int gTaskHandlerDepth;

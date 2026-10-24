@@ -43,7 +43,7 @@ typedef struct Terrain {
 
 _Static_assert(offsetof(ObjInfo, name) == 0x50, "ObjInfo");
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern Terrain *gCurrentWorld;

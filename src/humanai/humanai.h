@@ -409,7 +409,7 @@ _Static_assert(offsetof(HumanAI, unk3E84) == 0x3E84, "unk3E84");
 _Static_assert(offsetof(HumanAI, path) == 0x3EA0, "path");
 _Static_assert(sizeof(HumanAI) == 0x3ED0, "HumanAI");
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 /* event slots allocated by HumanAI */

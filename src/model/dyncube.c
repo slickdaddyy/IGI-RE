@@ -17,7 +17,7 @@ ORIG(0x4E5CA0, void, CellMask_Disable, (void));
 ORIG(0x50FAE0, void, TerrainMesh_SetupLighting, (Terrain *t, int unk));
 
 extern TaskType gTaskTypes[];
-#define gTaskHandlers ((TaskHandler (*)[TASK_MAX_TYPES])0xA96AE0)
+extern TaskHandler gTaskHandlers[][TASK_MAX_TYPES];
 extern int gTaskHandlerChanges;
 extern const float gPixelCenter;
 extern const float gZero;

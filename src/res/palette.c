@@ -9,7 +9,7 @@ ORIG(0x4B0EB0, void, RenderMode_DeleteMethod, (int id));
 ORIG(0x4B0F80, int, RenderMode_GetCurrent, (void));
 ORIG(0x4B1000, void, RenderMode_Call, (int device, int id, void *arg));
 
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
+extern void (*gRenderFuncs[])(void *);
 extern int gAllocPalette;
 extern int gDeAllocPalette;
 extern int gDownloadPalette;

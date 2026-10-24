@@ -81,7 +81,7 @@ typedef struct TaskHeader {
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
-#define gTaskHandlers ((TaskHandler (*)[0x180])0xA96AE0)
+extern TaskHandler gTaskHandlers[][0x180];
 extern TaskHeader *gTaskStack[];
 extern int gTaskStackTop;
 
@@ -93,8 +93,8 @@ extern KeyBinding gDefaultKeys[];
 extern ConfigName gInputActions[];
 extern ConfigName gInputDevices[];
 extern ConfigName gInputKeys[];
-#define gLanguageNames ((char (*)[16])0x53331C)
-#define gDifficultyNames ((char (*)[16])0x53337C)
+extern char gLanguageNames[][16];
+extern char gDifficultyNames[][16];
 
 PlayerProfile *Profile_GetActive(void);
 float Profile_GetSfxVolume(void);

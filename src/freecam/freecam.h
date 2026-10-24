@@ -47,7 +47,8 @@ typedef void (*TaskHandler)();
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-#define TASK_HANDLER(slot, type) (((TaskHandler *)0xA96AE0)[(slot) * 0x180 + (type)])
+extern void *gTaskHandlers[][0x180];
+#define TASK_HANDLER(slot, type) (((TaskHandler *)gTaskHandlers)[(slot) * 0x180 + (type)])
 extern void *gWorld;
 extern uint16_t gDynCubeObjType;
 extern Vec3d gCamPos;

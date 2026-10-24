@@ -78,7 +78,7 @@ _Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(offsetof(Obj, scale) == 0x98, "Obj");
 _Static_assert(sizeof(MapQuery) == 0x2C, "MapQuery");
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 uint8_t ComputerObject_GetEvent0(void);

@@ -81,10 +81,10 @@ typedef struct QTaskList {
 _Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(sizeof(ScriptValue) == 0x18, "ScriptValue");
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-#define gScriptNumberType ((void *)0x567C74)
+extern char gScriptNumberType[];
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 #define FIELD(T, f) ((void *)offsetof(T, f))

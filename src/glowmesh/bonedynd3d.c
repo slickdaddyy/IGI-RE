@@ -86,7 +86,7 @@ _Static_assert(offsetof(BoneDynCubeObj, unkD4) == 0xD4, "unkD4");
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-#define gTaskHandlers ((TaskHandler (*)[0x180])0xA96AE0)
+extern TaskHandler gTaskHandlers[][0x180];
 
 #define HEADER(obj) ((*(obj)->model)->lod->header)
 

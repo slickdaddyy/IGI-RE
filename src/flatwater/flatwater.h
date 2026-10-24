@@ -42,7 +42,7 @@ _Static_assert(sizeof(VarString) == 0x50, "VarString");
 typedef void (*TaskFn1)(void *task);
 typedef void (*TaskFn2)(void *task, void *arg);
 
-#define gTaskHandlers ((void *(*)[0x180])0xA96AE0)
+extern void * gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern char *gWorld;
@@ -158,7 +158,7 @@ typedef struct QVertexStrip {
 
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
-#define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
+extern void (*gRenderFuncs[])(QVertexStrip *);
 
 extern float kZero;
 extern float kOne;

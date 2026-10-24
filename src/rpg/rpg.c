@@ -96,9 +96,9 @@ extern uint16_t gSoldierRPGType;
 extern void *gSoldierRPGList;
 extern int gSoldierRPGUnk;
 extern SoldierStateFn gSoldierRPGStates[];
-#define gSoldierRPGCombos ((void *)0x53E718)
-#define gSoldierRPGAnimSlots ((void *)0x53E720)
-#define gSoldierRPGSpeeds ((void *)0x53E798)
+extern char gSoldierRPGCombos[];
+extern char gSoldierRPGAnimSlots[];
+extern char gSoldierRPGSpeeds[];
 #define Human_DeadRun ((SoldierStateFn)FN(0x45C740, Human_DeadRun))
 
 static const float kShakeAmount = 0x1.99999ap+7f;

@@ -25,7 +25,7 @@ typedef struct Task {
 
 typedef void (*TaskFn)(Task *task);
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 

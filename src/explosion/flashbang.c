@@ -38,10 +38,10 @@ static const float kDecalSize = 2048.0f;
 static const float kSmokeSize = 0x1.333334p+11f; /* 2457.6 */
 static const float kLife = 819200.0f;
 static const float kRate = 0x1.dddddep-7f;
-#define kRise K(float, 0x5334A4)
-#define kRiseScale K(float, 0x5334A0)
-#define kSpread K(float, 0x533870)
-#define kSpreadBase K(float, 0x534180)
+extern const float kRise;
+extern const float kRiseScale;
+extern const float kSpread;
+extern const float kSpreadBase;
 
 void FlashBang_Create(FlashBang *t);
 void FlashBang_Run(FlashBang *t);

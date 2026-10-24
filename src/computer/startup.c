@@ -72,7 +72,7 @@ extern uint16_t gStartupType;
 extern int gStartupDraw;
 extern int gStartupMethod;
 extern void *gD3D;
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
+extern void (*gRenderFuncs[])(void *);
 extern float gScreenW;
 extern float gScreenH;
 extern void *gDevice;

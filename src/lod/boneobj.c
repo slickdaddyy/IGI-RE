@@ -58,7 +58,7 @@ _Static_assert(sizeof(Bone) == 0x84, "Bone");
 _Static_assert(sizeof(BoneBlend) == 0x1C, "BoneBlend");
 
 extern BoneHierarchy gBoneHierarchies[];
-#define gBoneSlots ((int (*)[10])0xA538F0)
+extern int gBoneSlots[][10];
 extern BoneHierarchy *gBoneBuild;
 extern Bone *gBoneBuildBones;
 extern float gBoneTicksPerFrame;

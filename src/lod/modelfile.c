@@ -24,7 +24,7 @@ ORIG(0x4D67A0, void, BoneObj_Load, (const char *path));
 extern char gModelPath[];
 extern char gModelDir[];
 extern char gModelAnimDir[];
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
+extern void (*gRenderFuncs[])(void *);
 
 /* Palettes named in the PALF chunk, 0xC bytes each at f->unk3C. */
 void ModelFile_LoadPalettes(ModelFile *f)

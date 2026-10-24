@@ -84,7 +84,7 @@ _Static_assert(sizeof(GlassShatter) == 0x2B048, "GlassShatter");
 _Static_assert(offsetof(HitInfo, normal) == 0x38, "HitInfo");
 
 extern const float *gShatterColor;
-#define gShatterRandom ((void *)0x57C230)
+extern char gShatterRandom[];
 extern float gShatterTen;
 extern uint16_t gShatterType;
 extern int gShatter244;
@@ -104,7 +104,7 @@ extern float kSpin;      /* 1/900 */
 extern float kFall;      /* -44.6 */
 
 extern const float gShardColor[]; /* 0.7, 0.7, 0.7 */
-#define gCrushSounds ((const char (*)[0x20])0x53C880)
+extern const char gCrushSounds[][0x20];
 
 void GlassShatter_Run(GlassShatter *g);
 void GlassShatter_Delete(GlassShatter *g);

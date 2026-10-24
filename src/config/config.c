@@ -41,8 +41,8 @@ extern ConfigConstant gInputDevices[];
 extern ConfigConstant gInputDevicesEnd[];
 extern ConfigConstant gInputKeys[];
 extern ConfigConstant gInputKeysEnd[];
-#define gLanguageNames ((char (*)[16])0x53331C)
-#define gDifficultyNames ((char (*)[16])0x53337C)
+extern char gLanguageNames[][16];
+extern char gDifficultyNames[][16];
 
 #define NUM_PERF_LEVELS 7
 #define NUM_LANGUAGES 6

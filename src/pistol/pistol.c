@@ -112,9 +112,9 @@ extern void *gSoldierPistolList;
 extern uint16_t gSoldierPistolType;
 extern int gSoldierPistolUnk;
 extern SoldierStateFn gSoldierPistolStates[];
-#define gSoldierPistolCombos ((void *)0x53E980)
-#define gSoldierPistolAnimSlots ((void *)0x53E9B8)
-#define gSoldierPistolSpeeds ((void *)0x53EAE8)
+extern char gSoldierPistolCombos[];
+extern char gSoldierPistolAnimSlots[];
+extern char gSoldierPistolSpeeds[];
 
 /* updates that live with the HumanSoldier states */
 #define Soldier_State23Update ((SoldierStateFn)FN(0x45BCC0, Soldier_CrouchReloadRun))

@@ -44,7 +44,7 @@ typedef void *ParamTable;
 #define TASK_NO_TYPE 0x181
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern void *gCurrentWorld;

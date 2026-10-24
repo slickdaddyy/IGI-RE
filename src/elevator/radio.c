@@ -33,7 +33,7 @@ _Static_assert(sizeof(Radio) == 0x2E8, "Radio");
 
 extern uint16_t gRadioType;
 extern void *gRadioParams;
-#define gRadioSoundNames ((char (*)[15])0x57BEFC)
+extern char gRadioSoundNames[][15];
 
 void Radio_Create(Radio *r, void *arg);
 void Radio_Run(Radio *r);

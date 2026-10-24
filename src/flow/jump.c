@@ -8,7 +8,7 @@ ORIG(0x4A507C, void, Crt_LongJmp, (void *buf, int value));
 typedef void (*GameRunHandler)(void *task);
 
 /* the game's own jmp_buf; Game_Quit jumps back into Game_Update */
-#define gGameJmpBuf ((void *)0x54F8E0)
+extern char gGameJmpBuf[];
 /* task run handlers (slot 1 of the handler table) by task type */
 extern GameRunHandler gTaskRunHandlers[];
 

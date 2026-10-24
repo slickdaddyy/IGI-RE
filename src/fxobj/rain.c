@@ -33,8 +33,8 @@ extern uint16_t gRudderType;
 extern char *gRainTexture;
 extern uint16_t gRainEffectType;
 extern void *gRainEffectParams;
-#define gRainLevelRange ((void *)0x57BD90)
-#define gRainSizeRange ((void *)0x57BD98)
+extern char gRainLevelRange[];
+extern char gRainSizeRange[];
 
 static const float kRainScale = 4096.0f;
 

@@ -64,7 +64,7 @@ extern uint8_t gVehicleLoadEvent;
 extern uint8_t gVehicleKeysEvent;
 extern int gAnimDataType;
 extern void *gAnimTaskParams;
-#define gAnimTasks ((void *)0xA76C28)
+extern char gAnimTasks[];
 extern void *gAnimTasksHead;
 extern void *gAnimTasksTail;
 extern void *gAnimTasksTailPred;

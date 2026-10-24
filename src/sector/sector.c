@@ -186,7 +186,7 @@ _Static_assert(sizeof(LineHit) == 0x70, "LineHit");
 _Static_assert(sizeof(LightmapRef) == 0x24, "LightmapRef");
 _Static_assert(sizeof(LightmapSet) == 0x18, "LightmapSet");
 
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
+extern void (*gRenderFuncs[])(void *);
 extern int gQCubeInside;
 extern SectorObject *gQCubeEnclosing;
 extern Sector *gViewSector;
@@ -206,7 +206,7 @@ extern uint16_t gSectorInteriorObjectType;
 extern float gQCubeOutsideMin[];
 extern float gQCubeOutsideMax[];
 extern TransCtx gView;
-#define gScene ((void *)0xBCABA0)
+extern char gScene[];
 extern SceneArea gSceneArea;
 
 extern const double kOneD;

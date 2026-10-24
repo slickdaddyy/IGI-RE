@@ -88,7 +88,7 @@ _Static_assert(sizeof(WTerrainCell) == 0x30, "WTerrainCell");
 
 typedef void (*WHandler)(WTask *task, void *arg);
 
-#define gWalkHandlers ((WHandler (*)[0x180])0xA96AE0)
+extern WHandler gWalkHandlers[][0x180];
 extern char *gWalkWorld;
 extern int gDisplayFrame;
 extern WEntry *gWalkOut;

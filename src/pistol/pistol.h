@@ -11,7 +11,8 @@ typedef struct SoldierSM SoldierSM;
 typedef void (*SoldierStateFn)(SoldierSM *sm, Soldier *h);
 typedef void (*TaskHandler)(void *task, void *arg);
 
-#define TASK_HANDLER(slot, type) (((TaskHandler *)0xA96AE0)[(slot) * 0x180 + (type)])
+extern void *gTaskHandlers[][0x180];
+#define TASK_HANDLER(slot, type) (((TaskHandler *)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 #pragma pack(push, 4)
 

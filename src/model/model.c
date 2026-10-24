@@ -33,7 +33,7 @@ extern char gModelPath[];
 extern char gModelDir[];
 extern int gVirModelCount;
 extern int gVirModelSaved;
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
+extern void (*gRenderFuncs[])(void *);
 
 _Static_assert(sizeof(VirModel) == 0x48, "VirModel");
 _Static_assert(sizeof(ModelFile) == 0x4C, "ModelFile");

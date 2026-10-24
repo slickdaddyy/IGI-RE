@@ -164,10 +164,10 @@ _Static_assert(offsetof(MenuManager, input) == 0x27CC, "MenuManager.input");
 _Static_assert(offsetof(MenuManager, screenStack) == 0x27EC, "MenuManager.screenStack");
 _Static_assert(sizeof(MenuManager) == 0x2898, "MenuManager");
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-#define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
+extern void (*gRenderFuncs[])(QVertexStrip *);
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
 extern void *gQVertexPalette;

@@ -64,7 +64,7 @@ extern uint16_t gLensflareItemType;
 extern void *gLensflareParams;
 extern void *gLensflareItemParams;
 extern int gRangeReal32Type;
-#define gLensflareRandom ((void *)0xA83888)
+extern char gLensflareRandom[];
 extern int gLensflareTextureUsed[];
 extern char gLensflareTextures[];
 extern LensflareSlot gLensflareSlots[];

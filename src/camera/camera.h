@@ -65,7 +65,7 @@ Explosion *Explosion_Spawn(Vec3d *pos, int count, int delay, float unk50, float 
 _Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 _Static_assert(offsetof(CollHit, found) == 0x58, "CollHit.found");
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 

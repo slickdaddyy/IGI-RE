@@ -227,7 +227,7 @@ extern int gGameTextureCount;
 extern int gGameSpriteCount;
 extern char gMusicEnabled;
 extern void *gCurrentWorld;
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
+extern void (*gRenderFuncs[])(void *);
 extern int gUnkBC20A0;
 extern char gUnkC28C61;
 extern char gUnkC28F80;

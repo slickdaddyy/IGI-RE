@@ -77,7 +77,7 @@ _Static_assert(sizeof(Elevator) == 0x648, "Elevator");
 
 extern uint16_t gElevatorType;
 extern void *gElevatorParams;
-#define gElevatorFloorNames ((char (*)[32])0x57BF90)
+extern char gElevatorFloorNames[][32];
 extern RangeF gElevatorMaxSpeedRange;
 extern RangeF gElevatorAccelRange;
 extern RangeF gElevator188Range;

@@ -27,7 +27,7 @@ extern char gHmpResident[];
 extern char gBitResident[];
 extern TerrainLightmap gLightmaps[];
 extern TerrainMaterial gTerrainMaterials[];
-#define gTerrainTileMaps ((uint8_t (*)[64])0xC30080)
+extern uint8_t gTerrainTileMaps[][64];
 
 _Static_assert(offsetof(Terrain, slot_count) == 0x118, "Terrain");
 _Static_assert(offsetof(Terrain, nodes) == 0xD00, "Terrain");

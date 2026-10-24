@@ -55,8 +55,8 @@ extern PtrList *gD3DStateList;
 extern IDirect3D7 *gD3D;
 extern IDirect3DDevice7 *gD3DDevice;
 extern uint16_t gDynCubeObjType;
-#define gTaskHandlers ((void (*(*)[0x180])(void *, void *))0xA96AE0)
-#define gRenderFuncs ((void (**)(void *))0xA94E84)
+extern void (* gTaskHandlers[][0x180])(void *, void *);
+extern void (*gRenderFuncs[])(void *);
 
 #define SET_RS(state, value) gD3DDevice->lpVtbl->SetRenderState(gD3DDevice, (D3DRENDERSTATETYPE)(state), (value))
 #define SET_TSS(stage, state, value) \

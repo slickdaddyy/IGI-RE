@@ -74,7 +74,7 @@ typedef struct AnimInputMsg {
 
 _Static_assert(offsetof(ObjInfo, unk50) == 0x50, "ObjInfo");
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 extern void *gCurrentWorld;
 extern uint8_t gKeys[];

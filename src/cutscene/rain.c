@@ -169,7 +169,7 @@ extern uint16_t gDynCubeObjType;
 extern uint16_t gRainObjType;
 extern int gRainVisibleCubes;
 extern int gRainLineId;
-#define gRainRandom ((void *)0xA76C90)
+extern char gRainRandom[];
 extern int gRainMemory;
 extern RainObj *gRainObjs[];
 extern RainCallback gRainCallback;

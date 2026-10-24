@@ -144,12 +144,12 @@ extern void *gSoldierParams;
 extern uint16_t gSoldierType;
 extern int gSoldierUnk5BDAC0;
 extern HumanStateFn gSoldierStates[];
-#define gSoldierCombos ((void *)0x53ECD8)
-#define gSoldierAnimSlots ((void *)0x53ED10)
-#define gSoldierAnimSlotsCrouch ((void *)0x53EE40)
-#define gSoldierAnimSlots5 ((void *)0x53EF70)
-#define gSoldierAnimSlots6 ((void *)0x53F0A0)
-#define gSoldierSpeeds ((void *)0x53F1D0)
+extern char gSoldierCombos[];
+extern char gSoldierAnimSlots[];
+extern char gSoldierAnimSlotsCrouch[];
+extern char gSoldierAnimSlots5[];
+extern char gSoldierAnimSlots6[];
+extern char gSoldierSpeeds[];
 
 /* states entered from code in this file whose handlers live elsewhere */
 #define Soldier_CrouchRun ((HumanStateFn)FN(0x458BF0, SoldierPistol_State19Update))

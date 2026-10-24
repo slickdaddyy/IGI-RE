@@ -218,7 +218,7 @@ _Static_assert(offsetof(MagicCreateArg, unk88) == 0x88, "MagicCreateArg");
 _Static_assert(sizeof(Camera) == 0x60, "Camera");
 _Static_assert(sizeof(HazeLayer) == 0x90, "HazeLayer");
 
-#define gTaskHandlers ((HzHandler (*)[0x180])0xA96AE0)
+extern HzHandler gTaskHandlers[][0x180];
 extern HzNode *gTaskStack[];
 extern int gTaskStackTop;
 extern void *gWorld;

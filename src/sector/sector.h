@@ -121,7 +121,7 @@ _Static_assert(sizeof(Sector) == 0x148, "Sector");
 _Static_assert(sizeof(SectorObject) == 0x1A0, "SectorObject");
 _Static_assert(offsetof(SectorMesh, portals) == 0x98, "SectorMesh");
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 extern const float kZero;

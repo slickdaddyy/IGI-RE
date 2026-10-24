@@ -149,7 +149,7 @@ extern void *gHumanList;
 extern void *gHumanParams;
 extern int gHumanCriteria;
 extern int gHumanTeamCriteria[];
-#define gHumanCriteriaNames ((char (*)[0x20])0x5BDB18)
+extern char gHumanCriteriaNames[][0x20];
 extern const char *gHumanTeamNames[];
 extern int gHumanUnk5BDC28[];
 extern int gShadowTex;
@@ -162,7 +162,7 @@ extern int gBloodSprite2;
 extern int gHumanMaskType;
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-#define gScriptNumberType ((void *)0x567C74)
+extern char gScriptNumberType[];
 
 /* handlers of the Human type that live after this file */
 #define Human_Handler45F280 (FN(0x45F280, Human_DrawHandler))

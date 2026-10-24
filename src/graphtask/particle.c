@@ -116,7 +116,7 @@ extern uint16_t gDynCubeObjType;
 extern uint16_t gParticle2DType;
 extern uint8_t gParticle2DEvent;
 extern Particle2DTrail gParticle2DTrails[];
-#define gParticle2DRandom ((void *)0xA7A4C0)
+extern char gParticle2DRandom[];
 extern int gParticle2DMem;
 extern int gParticle2DMemMax;
 extern int gParticle2DTrailIdx;

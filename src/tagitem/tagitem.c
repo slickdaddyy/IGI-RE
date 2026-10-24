@@ -43,7 +43,7 @@ extern uint16_t gTagItemType;
 extern uint16_t gTagItemString16Type;
 extern void *gTagItemString256Params;
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 
 void TagItem_OnChanged(TagItem *t);
 void TagItemInt32_Create(TagItem *t);

@@ -58,7 +58,7 @@ ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 
 extern uint16_t gSimpointObjContainerType;
 extern uint16_t gSimpointObjType;
-#define gSimpointObjRandom ((void *)0xA7A630)
+extern char gSimpointObjRandom[];
 
 static const float kSpinDecay = 0x1.fae148p-1f;
 

@@ -154,7 +154,7 @@ _Static_assert(offsetof(StatusScreen, portraits) == 0x38C, "StatusScreen.portrai
 _Static_assert(offsetof(StatusScreen, timeText) == 0x4DC, "StatusScreen.timeText");
 _Static_assert(sizeof(StatusScreen) == 0x4F0, "StatusScreen");
 
-#define gTaskHandlers ((TaskFn (*)[0x180])0xA96AE0)
+extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern const char gScriptEmptyString[];
