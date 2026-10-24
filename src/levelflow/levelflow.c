@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "levelflow/levelflow.h"
+#include "levelflow/levelflowtypes.h"
 
 ORIG(0x402870, int, Flow_GetFps, (void));
 ORIG(0x406220, int *, Profile_GetActive, (void));
@@ -16,34 +17,6 @@ ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void 
 ORIG(0x4CEBA0, void *, VirModel_Add, (const char *name));
 ORIG(0x4F1160, char, Level_IsRunning, (void));
 ORIG(0x4F1CB0, void *, Param_Range0100, (void));
-
-/* the level script's root: completion and failure conditions, tick
-   counter and the script view of the number keys */
-typedef struct LevelFlow {
-    Task task;
-    Vec3d pos;
-    Matrix matrix;
-    char isComplete;
-    char isFailed;
-    char unk62[2];
-    int eDifficulty;
-    int nTick;
-    float startHour;
-    char unk70;
-    char unk71[3];
-    float timeLimit;
-    char registered;
-    char unk79[3];
-    VarString complete;
-    VarString failed;
-    char wasFailed;
-    char unk11D[3];
-    void *menu;
-    int unk124;
-} LevelFlow;
-
-_Static_assert(offsetof(LevelFlow, complete) == 0x7C, "LevelFlow");
-_Static_assert(sizeof(LevelFlow) == 0x128, "LevelFlow");
 
 extern LevelFlow *gLevelFlow;
 extern uint16_t gLevelFlowType;

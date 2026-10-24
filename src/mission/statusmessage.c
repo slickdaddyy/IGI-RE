@@ -119,7 +119,7 @@ void StatusMessage_Run(StatusMessage *m)
         m->ticksSinceFinished++;
     if (m->once && m->isSent && !m->shown)
         return;
-    if (TICKS <= m->tickSent + 210)
+    if (gLevelFlow->nTick <= m->tickSent + 210)
         return;
     if (m->shown && m->isSent) {
         Task_Delete(m);
@@ -131,7 +131,7 @@ void StatusMessage_Run(StatusMessage *m)
         return;
     StatusMessageScreen_AddMessage(StatusScreen_Get()->messages, m);
     m->isSent = 1;
-    m->tickSent = TICKS;
+    m->tickSent = gLevelFlow->nTick;
 }
 HOOK(0x4855F0, StatusMessage_Run);
 
@@ -346,8 +346,8 @@ void StatusMessageScreen_RemoveLine(StatusMessageScreen *s, int i)
     int k;
 
     if (m) {
-        if (gTickInfo)
-            m->tickFinished = TICKS;
+        if (gLevelFlow)
+            m->tickFinished = gLevelFlow->nTick;
         else
             m->tickFinished = 0;
         m->isFinished = 1;
@@ -427,8 +427,8 @@ void *StatusMessageScreen_GetFont(StatusMessageScreen *s, int i)
     if (!m)
         return NULL;
     if (m->plain)
-        return MenuManager_FindFont(*(void **)(gTickInfo + 0x120), "font4.fnt");
-    return MenuManager_FindFont(*(void **)(gTickInfo + 0x120), "font1.fnt");
+        return MenuManager_FindFont(gLevelFlow->menu, "font4.fnt");
+    return MenuManager_FindFont(gLevelFlow->menu, "font1.fnt");
 }
 HOOK(0x485FB0, StatusMessageScreen_GetFont);
 

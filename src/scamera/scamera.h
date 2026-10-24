@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "param/paramtypes.h"
 #include "door/doortypes.h"
+#include "levelflow/levelflowtypes.h"
 
 typedef void (*TaskFn)();
 
@@ -167,8 +168,7 @@ extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 /* the frame counter lives at +0x68 */
-extern char *gTickInfo;
-#define gTick (*(int *)(gTickInfo + 0x68))
+extern LevelFlow *gLevelFlow;
 
 /* Calls the slot handler of each child of t (not deeper), keeping the next
    child on gTaskStack so handlers may delete tasks. slot is evaluated after

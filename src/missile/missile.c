@@ -8,6 +8,7 @@
 #include "igi.h"
 #include "orig.h"
 #include "missile/missile.h"
+#include "levelflow/levelflowtypes.h"
 
 FN_EXTERN(Task_FalseHandler);
 
@@ -98,7 +99,7 @@ ORIG(0x4FE730, char *, TagItem_Find, (void *task, const char *name));
 extern uint16_t gMissileType;
 extern void *gMissileParams;
 extern char gMissileRandom[];
-extern char *gUnkBC2360;
+extern LevelFlow *gLevelFlow;
 
 #define Missile_UnkHandlerC (FN(0x45F920, Task_FalseHandler))
 
@@ -259,7 +260,7 @@ void Missile_Run(Missile *m)
         Task_Delete(m);
         return;
     }
-    if (!(gUnkBC2360[0x68] & 0x1F)) {
+    if (!(gLevelFlow->nTick & 0x1F)) {
         pos = m->v.pos;
         ignore.task = &m->v.task;
         dz = -4096000.0;

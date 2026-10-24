@@ -45,7 +45,7 @@ void Cabinet_Run(Cabinet *c)
     BROADCAST(&c->o.task, 1);
     if (c->o.attached && c->moving)
         HANDLER(1, c->o.attached->type)(c->o.attached);
-    if (gTick > c->useTick + 2)
+    if (gLevelFlow->nTick > c->useTick + 2)
         c->inUse = 0;
     c->lastInUse = c->inUse;
 }
@@ -104,7 +104,7 @@ HOOK(0x444860, Cabinet_CheckUse);
 void Cabinet_Use(Cabinet *c, CabinetUseArg *arg)
 {
     c->inUse = 1;
-    c->useTick = gTick;
+    c->useTick = gLevelFlow->nTick;
     if (arg->close == 0) {
         c->opening = 1;
         c->closing = 0;

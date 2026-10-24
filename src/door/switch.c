@@ -93,7 +93,7 @@ void Switch_Press(Switch *s)
 
     s->isPressed = 1;
     s->isLastPressed = last;
-    s->pressTick = gTick;
+    s->pressTick = gLevelFlow->nTick;
 }
 HOOK(0x444BC0, Switch_Press);
 
@@ -164,7 +164,7 @@ void Switch_RunHandler(Switch *s)
     BROADCAST(&s->o.task, 1);
     if (VarString_HasExpr(&s->on))
         s->isOn = (char)round_ll(VarString_EvalReal(&s->on, s));
-    if (gTick > s->pressTick + 2) {
+    if (gLevelFlow->nTick > s->pressTick + 2) {
         char last = s->isPressed;
 
         s->isPressed = 0;

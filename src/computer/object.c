@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "computer/computer.h"
+#include "levelflow/levelflowtypes.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -90,7 +91,7 @@ extern uint8_t gObjectEvent1;
 extern uint8_t gObjectEvent2;
 extern const MarkerShape gMarkerShapes[];
 extern const float gMarkerColors[][3];
-extern char *gLevelFlow;
+extern LevelFlow *gLevelFlow;
 
 static const float kHalf = 0.5f;
 static const float kTen = 10.0f;
@@ -406,7 +407,7 @@ static void draw_label(float *pos, const char *name)
         crt_sprintf(buf, "RM: %s", name);
         s = buf;
     }
-    font = MenuManager_FindFont(*(void **)(gLevelFlow + 0x120), "font4.fnt");
+    font = MenuManager_FindFont(gLevelFlow->menu, "font4.fnt");
     y = (int)round_ll(pos[1]);
     x = (int)round_ll(pos[0]);
     Computer_DrawWrapped(x, y, 0x1.0a3d7p+9f, 0x80, 0x80, s, font, 0);

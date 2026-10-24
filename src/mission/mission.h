@@ -10,6 +10,7 @@
 #include "qvertex/qvertextypes.h"
 #include "win/wintypes.h"
 #include "res/restypes.h"
+#include "levelflow/levelflowtypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -89,8 +90,7 @@ extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern const char gEmptyString[];
-extern char *gTickInfo;
-#define TICKS (*(int *)(gTickInfo + 0x68))
+extern LevelFlow *gLevelFlow;
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 

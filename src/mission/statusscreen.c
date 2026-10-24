@@ -182,7 +182,7 @@ void StatusScreen_Draw(StatusScreen *s)
         fn = HANDLER(gStatusScreenEvent, h->type);
         if (fn)
             fn(h, &arg);
-        if (gTickInfo[0x70]) {
+        if (gLevelFlow->unk70) {
             min = LevelFlow_GetTicksLeft() / 30 / 60;
             sec = LevelFlow_GetTicksLeft() / 30;
             x = width * kTimeX;

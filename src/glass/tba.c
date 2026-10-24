@@ -124,10 +124,10 @@ void GenericTBA_Run(GenericTBA *t)
         t->on = 0;
     else if (VarString_HasExpr(&t->script))
         t->on = round_int(VarString_EvalReal(&t->script, t));
-    if (gTick > t->use_tick + 2)
+    if (gLevelFlow->nTick > t->use_tick + 2)
         t->in_use = 0;
     t->last_in_use = t->in_use;
-    if (gTick > t->finish_tick + 2)
+    if (gLevelFlow->nTick > t->finish_tick + 2)
         t->finished_tick = 0;
 }
 HOOK(0x4480B0, GenericTBA_Run);
@@ -230,7 +230,7 @@ HOOK(0x4483F0, GenericTBA_RemoveSymbols);
 void GenericTBA_Use(GenericTBA *t)
 {
     t->in_use = 1;
-    t->use_tick = gTick;
+    t->use_tick = gLevelFlow->nTick;
 }
 HOOK(0x4484F0, GenericTBA_Use);
 

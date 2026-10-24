@@ -110,10 +110,10 @@ void Terminal_Run(Terminal *t)
         t->on = 0;
     else if (VarString_HasExpr(&t->script))
         t->on = round_int(VarString_EvalReal(&t->script, t));
-    if (gTick > t->use_tick + 2)
+    if (gLevelFlow->nTick > t->use_tick + 2)
         t->in_use = 0;
     t->last_in_use = t->in_use;
-    if (gTick > t->hack_tick + 2)
+    if (gLevelFlow->nTick > t->hack_tick + 2)
         t->hacked_tick = 0;
 }
 HOOK(0x4438E0, Terminal_Run);
@@ -233,7 +233,7 @@ HOOK(0x443D70, Terminal_GetUseKind);
 void Terminal_Use(Terminal *t)
 {
     t->in_use = 1;
-    t->use_tick = gTick;
+    t->use_tick = gLevelFlow->nTick;
 }
 HOOK(0x443D80, Terminal_Use);
 
@@ -281,7 +281,7 @@ void Terminal_SetHacked(Terminal *t)
 {
     t->hacked = 1;
     t->hacked_tick = 1;
-    t->hack_tick = gTick;
+    t->hack_tick = gLevelFlow->nTick;
 }
 HOOK(0x443EA0, Terminal_SetHacked);
 

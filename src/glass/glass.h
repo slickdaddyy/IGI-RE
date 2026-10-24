@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "levelflow/levelflowtypes.h"
 
 typedef void (*TaskFn)();
 
@@ -36,8 +37,7 @@ extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 /* the frame counter lives at +0x68 */
-extern char *gTickInfo;
-#define gTick (*(int *)(gTickInfo + 0x68))
+extern LevelFlow *gLevelFlow;
 
 /* exe constants, read in place so the x87 code sees the same values */
 extern float kZero;

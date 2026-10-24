@@ -9,6 +9,7 @@
 #include "param/paramtypes.h"
 #include "door/doortypes.h"
 #include "props/propstypes.h"
+#include "levelflow/levelflowtypes.h"
 
 typedef void (*TaskFn)();
 
@@ -89,8 +90,7 @@ extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 /* the frame counter lives at +0x68 */
-extern char *gTickInfo;
-#define gTick (*(int *)(gTickInfo + 0x68))
+extern LevelFlow *gLevelFlow;
 
 extern float kZero;
 extern double kZeroD;
