@@ -82,14 +82,6 @@ typedef struct LightmapGroup {
 
 _Static_assert(sizeof(LightmapGroup) == 0x20, "LightmapGroup");
 
-/* argument of the ExcludeObject method: a view space sphere */
-typedef struct ExcludeArg {
-    Vec3f *center;
-    float radius;
-    int *inside;
-    int outside;
-} ExcludeArg;
-
 extern float gLayerFov[];
 extern int gBoneClipDepth;
 extern ClipVertex gRigidClipVerts[];
@@ -179,11 +171,11 @@ void Direct3DRender_DrawBoneMesh(MeshDrawArg *arg)
     }
     lod = model->lods[n];
     h = (MeshHeader *)lod->mesh->header;
-    pos.x = (float)(obj->pos.x - gTransCtx.pos[0]);
-    pos.y = (float)(obj->pos.y - gTransCtx.pos[1]);
+    pos.x = (float)(obj->pos.x - gTransCtx.pos.x);
+    pos.y = (float)(obj->pos.y - gTransCtx.pos.y);
     pos.x = gNearPlaneScale * pos.x;
     pos.y = gNearPlaneScale * pos.y;
-    pos.z = gNearPlaneScale * (obj->pos.z - gTransCtx.pos[2]);
+    pos.z = gNearPlaneScale * (obj->pos.z - gTransCtx.pos.z);
     rot.m[0] = gNearPlaneScale;
     rot.m[1] = kZero.f;
     rot.m[2] = kZero.f;
@@ -209,12 +201,12 @@ void Direct3DRender_DrawBoneMesh(MeshDrawArg *arg)
             if (g->texture == 0xFFFF) {
                 DEV_SetTextureStageState(gDevice, 0, 1, 3);
                 DEV_SetTexture(gDevice, 0, NULL);
-                DEV_DrawIndexedPrimitiveVB(gDevice, r->primType, gVertexBuffer, g->start + base, g->vertexCount,
+                DEV_DrawIndexedPrimitiveVB(gDevice, r->primType, gVertexBuffer, g->base + base, g->vertexCount,
                                            g->indices, g->indexCount, 0);
                 DEV_SetTextureStageState(gDevice, 0, 1, 4);
             } else {
                 DEV_SetTexture(gDevice, 0, ((void **)lod->textures[g->texture])[8]);
-                DEV_DrawIndexedPrimitiveVB(gDevice, r->primType, gVertexBuffer, g->start + base, g->vertexCount,
+                DEV_DrawIndexedPrimitiveVB(gDevice, r->primType, gVertexBuffer, g->base + base, g->vertexCount,
                                            g->indices, g->indexCount, 0);
             }
             if (g->next == 0xFFFF)
@@ -387,8 +379,8 @@ void RigidDynCubeObj_EnterHandler(RigidDynCubeObj *obj)
     PlaceArg a;
 
     d.obj = obj;
-    d.unk4 = Light_GetActive(&d.unk8);
-    Haze_GetVisible(&d.unkC, &d.unk10);
+    d.lights = Light_GetActive(&d.lightCount);
+    Haze_GetVisible(&d.haze, &d.hazeCount);
     gRenderFuncs[Mesh3D_GetDrawRigidMethod()](&d);
     a.pos = obj->pos;
     a.matrix = obj->matrix;
@@ -784,9 +776,9 @@ void RigidDynCubeObj_NearZHandler(RigidDynCubeObj *obj, NearZArg *arg)
     if (obj->hidden != 1 || !obj->model || !((VirModel *)obj->model)->lods[0])
         return;
     h = (MeshHeader *)((VirModel *)obj->model)->lods[0]->mesh->header;
-    pos.x = (float)(obj->pos.x - gTransCtx.pos[0]);
-    pos.y = (float)(obj->pos.y - gTransCtx.pos[1]);
-    pos.z = (float)(obj->pos.z - gTransCtx.pos[2]);
+    pos.x = (float)(obj->pos.x - gTransCtx.pos.x);
+    pos.y = (float)(obj->pos.y - gTransCtx.pos.y);
+    pos.z = (float)(obj->pos.z - gTransCtx.pos.z);
     x = h->center.z * obj->matrix.m[2] + h->center.y * obj->matrix.m[1] + obj->matrix.m[0] * h->center.x;
     y = obj->matrix.m[5] * h->center.z + obj->matrix.m[3] * h->center.x + h->center.y * obj->matrix.m[4];
     z = h->center.y * obj->matrix.m[7] + obj->matrix.m[6] * h->center.x + h->center.z * obj->matrix.m[8];
@@ -808,9 +800,9 @@ void RigidDynCubeObj_NearZHandler(RigidDynCubeObj *obj, NearZArg *arg)
     if (near > arg->minZ)
         return;
     if (h->format == 0 || h->format == 3) {
-        wx = obj->pos.x - gTransCtx.pos[0];
-        wy = obj->pos.y - gTransCtx.pos[1];
-        wz = obj->pos.z - gTransCtx.pos[2];
+        wx = obj->pos.x - gTransCtx.pos.x;
+        wy = obj->pos.y - gTransCtx.pos.y;
+        wz = obj->pos.z - gTransCtx.pos.z;
         o.x = gTransCtx.m[2] * wz + gTransCtx.m[1] * wy + gTransCtx.m[0] * wx;
         o.y = gTransCtx.m[5] * wz + gTransCtx.m[4] * wy + gTransCtx.m[3] * wx;
         o.z = wz * gTransCtx.m[8] + wy * gTransCtx.m[7] + wx * gTransCtx.m[6];
@@ -852,9 +844,9 @@ void RigidDynCubeObj_NearZHandler(RigidDynCubeObj *obj, NearZArg *arg)
                 for (g = r->unk14; g; g += sizeof(MeshGroup) + ((MeshGroup *)g)->next) {
                     idx = ((MeshGroup *)g)->indices;
                     for (j = 0; j < ((MeshGroup *)g)->indexCount / 3; j++, idx += 3)
-                        clip_face(&gRigidClipVerts[idx[0] + ((MeshGroup *)g)->start],
-                                  &gRigidClipVerts[idx[1] + ((MeshGroup *)g)->start],
-                                  &gRigidClipVerts[idx[2] + ((MeshGroup *)g)->start], &minZ, nearZ);
+                        clip_face(&gRigidClipVerts[idx[0] + ((MeshGroup *)g)->base],
+                                  &gRigidClipVerts[idx[1] + ((MeshGroup *)g)->base],
+                                  &gRigidClipVerts[idx[2] + ((MeshGroup *)g)->base], &minZ, nearZ);
                     if (((MeshGroup *)g)->next == 0xFFFF)
                         break;
                 }

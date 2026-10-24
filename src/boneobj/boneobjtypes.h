@@ -41,4 +41,20 @@ typedef struct RotTrack {
     SlerpInfo *slerp2;
 } RotTrack;
 
+typedef struct AnimDesc {
+    float length;       /* in ticks, 4800 per second */
+    unsigned int flags;
+    PosTrack *pos;
+    RotTrack *rot;      /* one per bone */
+    struct EventTrack *events;
+} AnimDesc;
+
+typedef struct AnimSet {
+    AnimDesc *descs;
+    AnimDesc **byId;
+    Pool caches;
+    int hasCaches;
+    int count;
+} AnimSet;
+
 #endif

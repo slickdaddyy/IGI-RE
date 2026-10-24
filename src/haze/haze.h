@@ -38,22 +38,6 @@ typedef struct BoneObj {
 
 #define ANIM_LOOPS 0x80000000u
 
-typedef struct AnimDesc {
-    float length;       /* in ticks, 4800 per second */
-    unsigned int flags;
-    PosTrack *pos;
-    RotTrack *rot;      /* one per bone */
-    void *events;
-} AnimDesc;
-
-typedef struct AnimSet {
-    AnimDesc *descs;
-    AnimDesc **byId;
-    char caches[0x18];
-    int hasCaches;
-    int count;
-} AnimSet;
-
 extern Skeleton gSkeletons[];
 extern AnimSet gAnimSets[];
 extern int gBoneSmoothAnims;
@@ -145,7 +129,6 @@ typedef struct HazeLayer {
 } HazeLayer;
 
 _Static_assert(sizeof(Bone) == 0x84, "Bone");
-_Static_assert(sizeof(AnimSet) == 0x28, "AnimSet");
 _Static_assert(sizeof(QObj) == 0x50, "QObj");
 _Static_assert(sizeof(BoneDynCubeObj) == 0xD8, "BoneDynCubeObj");
 _Static_assert(sizeof(MagicObj) == 0x138, "MagicObj");

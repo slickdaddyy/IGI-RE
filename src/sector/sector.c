@@ -8,6 +8,7 @@
 #include "hook.h"
 #include "litmap/litmaptypes.h"
 #include "bonemesh/bonemeshtypes.h"
+#include "transctx/transctxtypes.h"
 
 FN_EXTERN(SectorInteriorObject_WorldAdd);
 FN_EXTERN(SectorInteriorObject_WorldRemove);
@@ -72,23 +73,6 @@ ORIG(0x4E55B0, uint8_t, CellMask_GetDrawEvent, (void));
 #define SectorInteriorObject_WorldRemove (FN(0x4DED30, SectorInteriorObject_WorldRemove))
 #define sub_4D3710 (FN(0x4D3710, Task_Nothing))
 
-/* the active camera (0xBCAAE0), fields used here */
-typedef struct TransCtx {
-    float m[9];
-    int unk24;
-    Vec3d pos;
-    float fov;
-    float fovY;
-    float scaleX, scaleY;
-    float centerX, centerY;
-} TransCtx;
-
-/* the screen area being drawn (0xBCABA0) */
-typedef struct SceneArea {
-    char unk0[0x30];
-    float minX, minY, maxX, maxY;
-} SceneArea;
-
 /* argument of the locate event: which sector holds pos */
 typedef struct LocateArg {
     Vec3d *pos;
@@ -152,8 +136,6 @@ typedef struct PlaceArg {
     Matrix matrix;
 } PlaceArg;
 
-_Static_assert(offsetof(TransCtx, centerY) == 0x54, "TransCtx");
-_Static_assert(offsetof(SceneArea, maxY) == 0x3C, "SceneArea");
 _Static_assert(sizeof(LocateArg) == 0x30, "LocateArg");
 _Static_assert(sizeof(LineQuery) == 0x24, "LineQuery");
 _Static_assert(sizeof(LineHit) == 0x70, "LineHit");

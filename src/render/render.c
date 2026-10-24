@@ -13,6 +13,7 @@
 #include "res/restypes.h"
 #include "d3d/d3dtypes.h"
 #include "litmap/litmaptypes.h"
+#include "render/rendertypes.h"
 
 /* Direct3D mesh renderer: rigid, spline and lightmapped meshes. */
 
@@ -81,21 +82,6 @@ typedef struct MeshHeader {
     float center[3];
     float radius;
 } MeshHeader;
-
-/* face group of a rigid or spline mesh */
-typedef struct MeshGroup {
-    float center[3];
-    uint16_t indexCount;
-    uint16_t next;  /* bytes from the indices to the next group, 0xFFFF = last */
-    uint16_t texture;
-    uint16_t base;
-    uint16_t vertexCount;
-    uint16_t sorted;
-    uint8_t flags;  /* bit 0: additive */
-    uint8_t unk19[2];
-    uint8_t alpha;
-    uint16_t indices[];
-} MeshGroup;
 
 typedef struct LmGroup {
     float center[3];
@@ -213,7 +199,6 @@ _Static_assert(offsetof(Scene, minX) == 0x30, "Scene");
 _Static_assert(sizeof(ModelVB) == 0x24, "ModelVB");
 _Static_assert(sizeof(ModelSlot) == 0xFA8, "ModelSlot");
 _Static_assert(offsetof(MeshHeader, radius) == 0x3C, "MeshHeader");
-_Static_assert(offsetof(MeshGroup, indices) == 0x1C, "MeshGroup");
 _Static_assert(offsetof(LmGroup, indices) == 0x20, "LmGroup");
 _Static_assert(offsetof(RigidMesh, vb) == 0x28, "RigidMesh");
 _Static_assert(offsetof(LmMesh, vb) == 0x30, "LmMesh");

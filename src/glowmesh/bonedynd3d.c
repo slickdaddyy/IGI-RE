@@ -8,6 +8,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "bonemesh/bonemeshtypes.h"
+#include "glowmesh/glowmeshtypes.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
@@ -49,14 +50,6 @@ typedef struct BoneDynCubeObj {
     char unkB0[0x24];
     int unkD4;
 } BoneDynCubeObj;
-
-typedef struct MeshDrawArg {
-    BoneDynCubeObj *obj;
-    int lights;
-    int lightCount;
-    int haze;
-    int hazeCount;
-} MeshDrawArg;
 
 /* what children get told: where the object is */
 typedef struct PlaceArg {

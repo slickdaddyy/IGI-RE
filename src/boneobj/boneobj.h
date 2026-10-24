@@ -86,14 +86,6 @@ typedef struct EventTrack {
 
 #define ANIM_LOOPS 0x80000000u
 
-typedef struct AnimDesc {
-    float length;
-    unsigned int flags;
-    PosTrack *pos;
-    RotTrack *rot; /* one per bone */
-    EventTrack *events;
-} AnimDesc;
-
 /* Last key used per bone, so playback does not search from the start */
 typedef struct KeyCache {
     int skel;
@@ -101,14 +93,6 @@ typedef struct KeyCache {
     int unk8;
     int *bones;
 } KeyCache;
-
-typedef struct AnimSet {
-    AnimDesc *descs;
-    AnimDesc **byId;
-    Pool caches;
-    int hasCaches;
-    int count;
-} AnimSet;
 
 #define ANIM_LOOP 1
 #define ANIM_REVERSE 2

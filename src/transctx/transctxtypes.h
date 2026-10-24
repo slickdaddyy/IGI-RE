@@ -28,4 +28,27 @@ typedef struct SoundList {
     SoundNode *tailpred;
 } SoundList;
 
+typedef struct TransCtx {
+    float m[9];
+    int unk24;
+    Vec3d pos;
+    float fov;
+    float fovY;
+    float scaleX, scaleY;
+    float centerX, centerY;
+    int unk58;
+    float unk5C;
+    int layer;
+    float proj[16];
+    int unkA4;
+} TransCtx;
+_Static_assert(sizeof(TransCtx) == 0xA8, "TransCtx");
+
+typedef struct SceneArea {
+    char unk0[0x18];
+    float x, y, w, h;
+    float halfW, halfH;
+    float minX, minY, maxX, maxY;
+} SceneArea;
+
 #endif

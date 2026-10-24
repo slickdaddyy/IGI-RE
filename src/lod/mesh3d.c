@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "model/model.h"
 #include "transctx/transctx.h"
+#include "bonemesh/bonemeshtypes.h"
 
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x401810, int, TaskEvent_Alloc2, (uint16_t type));
@@ -71,13 +72,6 @@ typedef struct SplineMeshObj {
     char unk70[0x530];
     float *bound; /* center and radius */
 } SplineMeshObj;
-
-typedef struct ExcludeArg {
-    float *pos; /* view space */
-    float radius;
-    void *clip;
-    int result;
-} ExcludeArg;
 
 _Static_assert(sizeof(MeshHeader) == 0x90, "MeshHeader");
 _Static_assert(offsetof(RigidMeshObj, scale) == 0x98, "RigidMeshObj");
@@ -341,11 +335,11 @@ int Mesh3D_Exclude(float *pos, float radius, void *clip)
         gExclTopCos = cos_atan(gExclTop);
         gExclBottomCos = cos_atan(gExclBottom);
     }
-    arg.pos = pos;
+    arg.center = (Vec3f *)pos;
     arg.radius = radius;
-    arg.clip = clip;
+    arg.inside = clip;
     gRenderFuncs[Mesh3D_GetExcludeMethod()](&arg);
-    return arg.result;
+    return arg.outside;
 }
 HOOK(0x4D03D0, Mesh3D_Exclude);
 

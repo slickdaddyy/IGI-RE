@@ -8,21 +8,11 @@
 #include "model/model.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "render/rendertypes.h"
+#include "glowmesh/glowmeshtypes.h"
+#include "transctx/transctxtypes.h"
 
 typedef void (*TaskHandler)(Task *task, void *arg);
-
-/* One draw call of a REND chunk. Groups follow each other, next is the
-   byte count of the indices, 0xFFFF on the last group. */
-typedef struct MeshGroup {
-    char unk0[0xC];
-    uint16_t indexCount;
-    uint16_t next;
-    uint16_t texture; /* 0xFFFF = untextured */
-    uint16_t start;
-    uint16_t vertexCount;
-    char unk16[6];
-    uint16_t indices[];
-} MeshGroup;
 
 /* RD3D chunk of a .mef mesh: Direct3D data, filled by the LoadModel method.
    format 0 uses unk10/unk14 (VRTX/REND), format 1 unk18/unk1C, format 3
@@ -68,15 +58,6 @@ typedef struct MeshLoadArg {
     void *res;
 } MeshLoadArg;
 
-/* argument of the DrawRigidMesh / DrawBoneMesh methods */
-typedef struct MeshDrawArg {
-    void *obj;
-    int unk4;
-    int unk8;
-    int unkC;
-    int unk10;
-} MeshDrawArg;
-
 /* PtrList (0x4B73F0): current index at +4, functions at +0x14 */
 typedef struct StateList {
     int unk0;
@@ -85,35 +66,8 @@ typedef struct StateList {
     void (*fn[])(int);
 } StateList;
 
-/* Camera for one view, 0xA8 bytes; the active one is at 0xBCAAE0 */
-typedef struct TransCtx {
-    float m[9];
-    int unk24;
-    double pos[3];
-    float fov;
-    float fovY;
-    float scaleX, scaleY;
-    float centerX, centerY;
-    int unk58;
-    float unk5C;
-    int layer;
-    float proj[16];
-    int unkA4;
-} TransCtx;
-
-/* The screen area being drawn (0xBCABA0) */
-typedef struct SceneArea {
-    char unk0[0x18];
-    float x, y, w, h;
-    float halfW, halfH;
-    float minX, minY, maxX, maxY;
-} SceneArea;
-
-_Static_assert(sizeof(MeshGroup) == 0x1C, "MeshGroup");
 _Static_assert(sizeof(MeshRender) == 0x38, "MeshRender");
 _Static_assert(offsetof(MeshHeader, radius) == 0x3C, "MeshHeader");
-_Static_assert(sizeof(TransCtx) == 0xA8, "TransCtx");
-_Static_assert(offsetof(SceneArea, maxY) == 0x3C, "SceneArea");
 
 extern void *gDevice;
 extern TransCtx gTransCtx;
