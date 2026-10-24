@@ -35,8 +35,7 @@ The same build also makes `igidecomp.exe`. Put it in the game folder next to
 addresses but none of its code: every original function address holds a
 jump to the rewrite, and the C runtime comes from `msvcrt.dll`. Code that
 nothing rewrites stops the game with "No rewrite for IGI.exe code at ...".
-`igidecomp.ini` and `igidecomp.log` work like the DLL's files below. Don't
-leave `dinput.dll` from this project in the folder when you use it.
+`igidecomp.ini` and `igidecomp.log` work like the DLL's files below.
 
 ## Settings and log
 

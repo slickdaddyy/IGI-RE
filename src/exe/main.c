@@ -122,6 +122,11 @@ static void load_exe(void)
 static void load_imports(uint32_t dir)
 {
     const IMAGE_IMPORT_DESCRIPTOR *d = (const IMAGE_IMPORT_DESCRIPTOR *)(EXE_BASE + dir);
+    char sys[MAX_PATH];
+
+    /* the system dinput, not this project's proxy dll if it sits in the game folder */
+    GetSystemDirectoryA(sys, MAX_PATH - 12);
+    LoadLibraryA(strcat(sys, "\\dinput.dll"));
 
     for (; d->Name; d++) {
         HMODULE m = LoadLibraryA((const char *)(EXE_BASE + d->Name));
