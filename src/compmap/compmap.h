@@ -150,7 +150,7 @@ _Static_assert(sizeof(ComputerObjectives) == 0x38, "ComputerObjectives");
 _Static_assert(sizeof(ComputerMap) == 0xAC, "ComputerMap");
 _Static_assert(sizeof(MapHit) == 0x70, "MapHit");
 
-#define gLogType VAR(uint16_t, 0x5BDC98)
+#define gComputerLogType VAR(uint16_t, 0x5BDC98)
 #define gLogLines ((const char **)0x5BDC9C)
 #define gLog VAR(ComputerLog *, 0x5BDD68)
 #define gLogCount VAR(int, 0x5BDD6C)

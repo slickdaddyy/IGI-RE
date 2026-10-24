@@ -204,7 +204,7 @@ ORIG(0x4A0340, void, Direct3DRender_ClipTriangleDepth, (ClipVertex a, ClipVertex
 #define gTerrainTileMaps ((uint8_t (*)[8])0xC30080)
 #define gTerrainMeshRenderAll VAR(int, 0xA7DA10)
 #define gLights VAR(char *, 0xB041E0)
-#define gLightOrder VAR(int *, 0xB041E4)
+#define gLightIndex VAR(int *, 0xB041E4)
 #define gLightCount VAR(int, 0xB041E8)
 #define gLightStride VAR(int, 0xB041F0)
 #define gTerrainFogScale VAR(float, 0xA7DA18)
@@ -343,7 +343,7 @@ void TerrainMesh_SetupLighting(Terrain *t)
 
     if (!gLightCount)
         return;
-    c = (float *)(gLights + *gLightOrder * gLightStride + 0xC);
+    c = (float *)(gLights + *gLightIndex * gLightStride + 0xC);
     r = c[0];
     g = c[1];
     b = c[2];

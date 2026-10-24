@@ -33,9 +33,9 @@ typedef struct SpriteSheet {
 typedef void (*DrawFunc)(DrawCmd *cmd);
 
 #define gDrawUnkA84A50 VAR(int, 0xA84A50)
-#define gDrawDriver VAR(int, 0xA84A54)
+#define gQVertexStrip VAR(int, 0xA84A54)
 #define gDrawUnkA84A58 VAR(int, 0xA84A58)
-#define gDrawFuncs ((DrawFunc *)0xA94E84)
+#define gRenderFuncs ((DrawFunc *)0xA94E84)
 
 #define COLOR_SCALE (1.0f / 128)
 
@@ -77,7 +77,7 @@ static void DrawRect(float x, float y, float w, float h, float r, float g, float
     cmd.verts = v;
     gDrawUnkA84A50 = 0;
     gDrawUnkA84A58 = 0;
-    gDrawFuncs[gDrawDriver](&cmd);
+    gRenderFuncs[gQVertexStrip](&cmd);
 }
 
 void Draw_Rect(float x, float y, float w, float h, float r, float g, float b, int unk4, int unk8)
@@ -138,7 +138,7 @@ void Draw_RectGradient(float x, float y, float w, float h,
     cmd.verts = v;
     gDrawUnkA84A50 = 0;
     gDrawUnkA84A58 = 0;
-    gDrawFuncs[gDrawDriver](&cmd);
+    gRenderFuncs[gQVertexStrip](&cmd);
 }
 HOOK(0x4B4BE0, Draw_RectGradient);
 
@@ -173,7 +173,7 @@ static void DrawSprite(const SpriteSheet *sheet, float x, float y, float r, floa
     cmd.verts = v;
     gDrawUnkA84A50 = f->unk0;
     gDrawUnkA84A58 = sheet->unk0;
-    gDrawFuncs[gDrawDriver](&cmd);
+    gRenderFuncs[gQVertexStrip](&cmd);
 }
 
 void Draw_Sprite(const SpriteSheet *sheet, float x, float y, float r, float g, float b, int frame, int unk4,

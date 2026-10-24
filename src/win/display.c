@@ -92,7 +92,7 @@ _Static_assert(offsetof(DDEnumCtx, cur.d3dDesc) == 0x430, "DDEnumCtx");
 #define gDisplayEndFrameCallbacks VAR(DisplayCallback *, 0xBCADFC)
 #define gDisplayFrameCallbacks VAR(DisplayCallback *, 0xBCAE00)
 #define gD3DFoundHAL VAR(int, 0xBCACF4)
-#define gD3DUseTnL VAR(int, 0xBCAD74)
+#define gD3DTnL VAR(int, 0xBCAD74)
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
 
 /* RenderMode method ids */
@@ -582,7 +582,7 @@ BOOL WINAPI Display_EnumDriverCB(GUID *guid, char *desc, char *name, void *conte
     }
     if (!ctx->listDevices) {
         gD3DFoundHAL = 0;
-        gD3DUseTnL = 0;
+        gD3DTnL = 0;
         hr = d3d->lpVtbl->EnumDevices(d3d, (LPD3DENUMDEVICESCALLBACK7)Direct3D_FindDeviceCB,
                                       &ctx->cur.d3dDesc);
         if (hr) {

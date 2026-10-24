@@ -111,7 +111,7 @@ typedef struct AnimSet {
 
 #define gSkeletons ((Skeleton *)0xA542F0)
 #define gAnimSets ((AnimSet *)0xA538F0)
-#define gSmoothAnims VAR(int, 0xA54678)
+#define gBoneSmoothAnims VAR(int, 0xA54678)
 
 /* --- task types --- */
 

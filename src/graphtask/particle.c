@@ -122,7 +122,7 @@ ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 #define gParticle2DTrailIdx VAR(int, 0xA7A4D8)
 #define gParticle2DTimer VAR(int16_t, 0xA7A4DC)
 #define gLights VAR(char *, 0xB041E0)
-#define gLightIdx VAR(int *, 0xB041E4)
+#define gLightIndex VAR(int *, 0xB041E4)
 #define gLightCount VAR(int, 0xB041E8)
 #define gLightStride VAR(int, 0xB041F0)
 #define gAmbient ((float *)0xB818A0)
@@ -278,7 +278,7 @@ void Particle2D_GetLight(Particle2DTask *t, float *out)
     int i;
 
     for (i = 0; i < gLightCount; i++) {
-        float *l = (float *)(gLights + gLightIdx[i] * gLightStride);
+        float *l = (float *)(gLights + gLightIndex[i] * gLightStride);
 
         sx = sx + l[3];
         sy = sy + l[4];

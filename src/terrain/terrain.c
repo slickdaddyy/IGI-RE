@@ -25,7 +25,7 @@ ORIG(0x4D11C0, void, QCube_Reset, (void));
 #define gScriptEmptyString ((const char *)0x567C74)
 #define gHmpResident ((char *)0xB81920)
 #define gBitResident ((char *)0xB81A20)
-#define gTerrainLightmaps ((TerrainLightmap *)0xB81B20)
+#define gLightmaps ((TerrainLightmap *)0xB81B20)
 #define gTerrainMaterials ((TerrainMaterial *)0xC28FE0)
 #define gTerrainTileMaps ((uint8_t (*)[64])0xC30080)
 
@@ -53,7 +53,7 @@ void Terrain_LoadLightmaps(Terrain *t)
     p = Resource_Load(t->name, &size);
     t->lmp = p;
     if (p) {
-        lm = gTerrainLightmaps;
+        lm = gLightmaps;
         for (pos = 0; pos < (int)size; lm++) {
             int n = *p++;
 

@@ -58,7 +58,7 @@ void Anim_PrepareSlerps(int skel)
             if (keys <= 1 || t->slerp)
                 continue;
             t->slerp = Mem_Alloc(keys * sizeof(SlerpInfo), 4);
-            if (gSmoothAnims)
+            if (gBoneSmoothAnims)
                 t->slerp2 = Mem_Alloc(keys * sizeof(SlerpInfo), 4);
             for (k = 0; k < keys; k++) {
                 int next = (k + 1) % keys;
@@ -66,14 +66,14 @@ void Anim_PrepareSlerps(int skel)
                 if (next == 0 && !(desc->flags & ANIM_LOOPS)) {
                     t->slerp[k].angle = 0;
                     t->slerp[k].invSin = 0;
-                    if (gSmoothAnims) {
+                    if (gBoneSmoothAnims) {
                         t->slerp2[k].angle = 0;
                         t->slerp2[k].invSin = 0;
                     }
                     continue;
                 }
                 slerp_prepare(&t->slerp[k], &t->keys[k].q.x, &t->keys[next].q.x);
-                if (gSmoothAnims)
+                if (gBoneSmoothAnims)
                     slerp_prepare(&t->slerp2[k], t->keys[k].a, t->keys[next].b);
             }
         }

@@ -281,12 +281,12 @@ void Level_Shutdown(void)
     ParamType_Free(gParamQTaskNote);
     ParamType_Free(gParamBool8);
     TaskEvent_Free(gLevelEvent0);
-    TaskEvent_Free(gLevelEvent1);
+    TaskEvent_Free(gLevelNameEvent);
     TaskEvent_Free2(gLevelEventDA8);
     TaskEvent_Free2(gLevelEventDAC);
     TaskEvent_Free2(gLevelEventDB0);
     gLevelEvent0 = 0xFF;
-    gLevelEvent1 = 0xFF;
+    gLevelNameEvent = 0xFF;
     gLevelEventDA8 = 0xFF;
     gLevelEventDAC = 0xFF;
     gLevelEventDB0 = 0xFF;

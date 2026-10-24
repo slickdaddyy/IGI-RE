@@ -8,8 +8,8 @@ ORIG(0x4F65E0, char *, RainObj_FindCell, (void *rain, const Vec3d *pos));
 #define RAIN_MAX 8
 
 #define gRainParams VAR(void *, 0xA76CCC)
-#define gRainType VAR(uint16_t, 0x54E2CC)
-#define gRains ((char **)0xA76CA4)
+#define gRainObjType VAR(uint16_t, 0x54E2CC)
+#define gRainObjs ((char **)0xA76CA4)
 #define gRainCallback VAR(void *, 0xA76CC4)
 
 static const float kOne = 1.0f;
@@ -18,8 +18,8 @@ static const float kZero = 0.0f;
 void RainDynCubeObj_Shutdown(void)
 {
     QTaskList_Free(gRainParams);
-    TaskType_Free(gRainType);
-    gRainType = TASK_NO_TYPE;
+    TaskType_Free(gRainObjType);
+    gRainObjType = TASK_NO_TYPE;
 }
 HOOK(0x4F80B0, RainDynCubeObj_Shutdown);
 
@@ -37,7 +37,7 @@ long double RainDynCubeObj_IsRainingAt(const Vec3d *pos)
     for (i = 0; i < RAIN_MAX; i++) {
         char *cell;
 
-        if (gRains[i] && (cell = RainObj_FindCell(gRains[i], pos)) && *(int *)(cell + 0x1C))
+        if (gRainObjs[i] && (cell = RainObj_FindCell(gRainObjs[i], pos)) && *(int *)(cell + 0x1C))
             return kOne;
     }
     return kZero;
@@ -51,7 +51,7 @@ void RainDynCubeObj_GetHits(void **hits, int *counts, int *n)
 
     *n = 0;
     for (i = 0; i < RAIN_MAX; i++) {
-        char *r = gRains[i];
+        char *r = gRainObjs[i];
 
         if (r) {
             hits[*n] = r + 0x2D18;

@@ -45,7 +45,7 @@ ORIG(0x5269C0, void, Dirlight_Update, (Dirlight *d));
 #define gDirlightType VAR(uint16_t, 0xA83D34)
 #define gDirlightKeyframeParams VAR(void *, 0xA83D48)
 #define gDirlightKeyframeType VAR(uint16_t, 0xA83D4C)
-#define gDirlights VAR(Pool, 0xBA1E00)
+#define gDirlightPool VAR(Pool, 0xBA1E00)
 
 void DirlightKeyframe_GetParams(void *task, void **out)
 {
@@ -61,7 +61,7 @@ HOOK(0x527470, DirlightKeyframe_Delete);
 
 void Dirlight_Close(void)
 {
-    Pool_Free(&gDirlights);
+    Pool_Free(&gDirlightPool);
     QTaskList_Free(gDirlightKeyframeParams);
     QTaskList_Free(gDirlightParams);
     TaskType_Free(gDirlightKeyframeType);
@@ -79,8 +79,8 @@ void Dirlight_SetTime(float time)
 {
     int i;
 
-    for (i = 0; i < gDirlights.count; i++) {
-        Dirlight *d = *(Dirlight **)(gDirlights.data + gDirlights.used[i] * gDirlights.stride);
+    for (i = 0; i < gDirlightPool.count; i++) {
+        Dirlight *d = *(Dirlight **)(gDirlightPool.data + gDirlightPool.used[i] * gDirlightPool.stride);
 
         if (time < d->time || time > d->time) {
             d->time = time;

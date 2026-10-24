@@ -86,13 +86,13 @@ typedef void (*TaskHandler)(void *task, void *arg);
 #define gTaskStackTop VAR(int, 0xAFA7E0)
 
 #define gProfileCount VAR(int, 0xBC2380)
-#define gProfileActive VAR(int, 0xBC2384)
+#define gActiveProfile VAR(int, 0xBC2384)
 #define gProfiles ((PlayerProfile *)0xBC2388)
 #define gContentControlPassword ((char *)0xBC79C8)
 #define gDefaultKeys ((KeyBinding *)0x536410)
-#define gConfigActions ((ConfigName *)0x536558)
-#define gConfigDevices ((ConfigName *)0x536928)
-#define gConfigKeys ((ConfigName *)0x536998)
+#define gInputActions ((ConfigName *)0x536558)
+#define gInputDevices ((ConfigName *)0x536928)
+#define gInputKeys ((ConfigName *)0x536998)
 #define gLanguageNames ((char (*)[16])0x53331C)
 #define gDifficultyNames ((char (*)[16])0x53337C)
 

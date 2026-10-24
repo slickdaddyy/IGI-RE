@@ -97,8 +97,8 @@ typedef struct ConfigConstant {
 #define gActiveProfile VAR(int, 0xBC2384)
 #define gProfiles ((PlayerProfile *)0xBC2388)
 #define gContentControlPassword ((char *)0xBC79C8)
-#define gDeviceCount VAR(int, 0x567C90)
-#define gDevices ((ConfigDevice *)0x567C98)
+#define gDriverCount VAR(int, 0x567C90)
+#define gDrivers ((ConfigDevice *)0x567C98)
 
 typedef ScriptValue *ScriptFn(ScriptValue *out, void *data, void *args);
 

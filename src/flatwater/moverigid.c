@@ -62,8 +62,8 @@ _Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 _Static_assert(sizeof(MoveRigidObj) == 0x208, "MoveRigidObj");
 
 #define gMoveBetaNames ((char (*)[16])0xA837AC)
-#define gMoveRigidType VAR(uint16_t, 0xA837CC)
-#define gMoveRigidParams VAR(void *, 0xA837D0)
+#define gMoveRigidObjType VAR(uint16_t, 0xA837CC)
+#define gMoveRigidObjParams VAR(void *, 0xA837D0)
 #define gMoveAlphaNames ((char (*)[16])0xA837D4)
 #define gMoveGammaNames ((char (*)[16])0xA837F4)
 #define gMovePosNames ((char (*)[16])0xA83814)
@@ -87,30 +87,30 @@ void MoveRigidObj_Open(void)
     MoveRigidObj t;
     int i;
 
-    gMoveRigidType = TaskType_New("MoveRigidObj", sizeof(MoveRigidObj), RigidDynCubeObj_GetType(), 0);
-    TaskType_SetHandler(gMoveRigidType, 0, MoveRigidObj_Create);
-    TaskType_SetHandler2(gMoveRigidType, 1, MoveRigidObj_Run);
-    TaskType_SetHandler2(gMoveRigidType, 2, MoveRigidObj_Delete);
-    TaskType_SetHandler(gMoveRigidType, Param_GetTableEvent(), MoveRigidObj_GetParams);
-    TaskType_SetHandler(gMoveRigidType, Param_GetChangedEvent(), MOVERIGID_PARAMS_CHANGED);
-    TaskType_SetHandler2(gMoveRigidType, Level_GetEventDA8(), MoveRigidObj_Activate);
-    TaskType_SetHandler2(gMoveRigidType, Level_GetEventDAC(), MoveRigidObj_Deactivate);
-    gMoveRigidParams = ParamTable_New(20);
+    gMoveRigidObjType = TaskType_New("MoveRigidObj", sizeof(MoveRigidObj), RigidDynCubeObj_GetType(), 0);
+    TaskType_SetHandler(gMoveRigidObjType, 0, MoveRigidObj_Create);
+    TaskType_SetHandler2(gMoveRigidObjType, 1, MoveRigidObj_Run);
+    TaskType_SetHandler2(gMoveRigidObjType, 2, MoveRigidObj_Delete);
+    TaskType_SetHandler(gMoveRigidObjType, Param_GetTableEvent(), MoveRigidObj_GetParams);
+    TaskType_SetHandler(gMoveRigidObjType, Param_GetChangedEvent(), MOVERIGID_PARAMS_CHANGED);
+    TaskType_SetHandler2(gMoveRigidObjType, Level_GetEventDA8(), MoveRigidObj_Activate);
+    TaskType_SetHandler2(gMoveRigidObjType, Level_GetEventDAC(), MoveRigidObj_Deactivate);
+    gMoveRigidObjParams = ParamTable_New(20);
     for (i = 0; i < 2; i++) {
         crt_sprintf(gMovePosNames[i], "Position %d", i);
         crt_sprintf(gMoveAlphaNames[i], "Alpha %d", i);
         crt_sprintf(gMoveBetaNames[i], "Beta %d", i);
         crt_sprintf(gMoveGammaNames[i], "Gamma %d", i);
-        ParamTable_Add(gMoveRigidParams, &t, &t.keyPos[i], Param_ObjectPos(), 7, NULL);
-        ParamTable_Add(gMoveRigidParams, &t, &t.alpha[i], Param_Angle(), 7, NULL);
-        ParamTable_Add(gMoveRigidParams, &t, &t.beta[i], Param_Angle(), 7, NULL);
-        ParamTable_Add(gMoveRigidParams, &t, &t.gamma[i], Param_Angle(), 7, NULL);
+        ParamTable_Add(gMoveRigidObjParams, &t, &t.keyPos[i], Param_ObjectPos(), 7, NULL);
+        ParamTable_Add(gMoveRigidObjParams, &t, &t.alpha[i], Param_Angle(), 7, NULL);
+        ParamTable_Add(gMoveRigidObjParams, &t, &t.beta[i], Param_Angle(), 7, NULL);
+        ParamTable_Add(gMoveRigidObjParams, &t, &t.gamma[i], Param_Angle(), 7, NULL);
     }
-    ParamTable_Add(gMoveRigidParams, &t, &t.unk180, Param_String16(), 3, NULL);
-    ParamTable_Add(gMoveRigidParams, &t, &t.expr, Param_VarString(), 7, NULL);
-    ParamTable_Add(gMoveRigidParams, &t, &t.value, Param_Real64(), 3, NULL);
-    ParamTable_Add(gMoveRigidParams, &t, &t.unk1B0, Param_Bool8(), 3, NULL);
-    Script_RegisterConstant("TASKTYPE_MOVERIGIDOBJ", gMoveRigidType);
+    ParamTable_Add(gMoveRigidObjParams, &t, &t.unk180, Param_String16(), 3, NULL);
+    ParamTable_Add(gMoveRigidObjParams, &t, &t.expr, Param_VarString(), 7, NULL);
+    ParamTable_Add(gMoveRigidObjParams, &t, &t.value, Param_Real64(), 3, NULL);
+    ParamTable_Add(gMoveRigidObjParams, &t, &t.unk1B0, Param_Bool8(), 3, NULL);
+    Script_RegisterConstant("TASKTYPE_MOVERIGIDOBJ", gMoveRigidObjType);
 }
 HOOK(0x51F580, MoveRigidObj_Open);
 
@@ -196,7 +196,7 @@ HOOK(0x51FA30, MoveRigidObj_Delete);
 
 void MoveRigidObj_GetParams(void *task, void **out)
 {
-    *out = gMoveRigidParams;
+    *out = gMoveRigidObjParams;
 }
 HOOK(0x51FA90, MoveRigidObj_GetParams);
 

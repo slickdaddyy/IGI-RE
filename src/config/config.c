@@ -34,7 +34,7 @@ ORIG(0x41B290, void, TextBox_AddItem, (const char *text, int id));
 #define gScriptEmptyString ((const char *)0x567C74)
 #define gLanguageAliasSet VAR(char, 0x537B90)
 #define gPerfLevelFlags ((int *)0x537B74)
-#define gDefaultRemaps ((InputRemap *)0x536410)
+#define gDefaultKeys ((InputRemap *)0x536410)
 #define gInputActions ((ConfigConstant *)0x536558)
 #define gInputActionsEnd ((ConfigConstant *)0x536924)
 #define gInputDevices ((ConfigConstant *)0x536928)
@@ -177,10 +177,10 @@ void Config_RegisterScriptSymbols(void)
 
     RenderMode_Push(Direct3D_GetRenderMode());
     n = Display_EnumModes(names, CONFIG_MAX_DEVICES);
-    gDeviceCount = n;
+    gDriverCount = n;
     for (i = 0; i < n; i++) {
-        memcpy(gDevices[i].name, names[i], sizeof(names[i]));
-        gDevices[i].mode_count = 0;
+        memcpy(gDrivers[i].name, names[i], sizeof(names[i]));
+        gDrivers[i].mode_count = 0;
     }
     Display_FindModes(Display_GetMode(), 8, Config_AddDisplayMode);
     RenderMode_Pop();
@@ -439,8 +439,8 @@ void Config_AddDisplayMode(DisplayMode *mode)
 
     if ((uintptr_t)mode == (uintptr_t)-offsetof(DisplayMode, device) || mode->width < 640 || mode->height < 480)
         return;
-    for (i = 0; i < gDeviceCount; i++) {
-        ConfigDevice *d = &gDevices[i];
+    for (i = 0; i < gDriverCount; i++) {
+        ConfigDevice *d = &gDrivers[i];
 
         if (strcmp(mode->device, d->name) == 0) {
             d->modes[d->mode_count].width = mode->width;
@@ -459,7 +459,7 @@ static int pack_mode(const ConfigDisplayMode *m)
 
 ScriptValue *Config_FillScreenResolutionListBox(ScriptValue *out, void *data, void *args)
 {
-    ConfigDevice *d = &gDevices[Script_GetArgInt(args, 0)];
+    ConfigDevice *d = &gDrivers[Script_GetArgInt(args, 0)];
     char text[256];
     int i;
 
@@ -505,7 +505,7 @@ ScriptValue *Config_GraphicOptionsGetResolution(ScriptValue *out, void *data, vo
     int width = Config_GetGraphicOptions()->width;
     int height = Config_GetGraphicOptions()->height;
     int depth = Config_GetGraphicOptions()->depth;
-    ConfigDevice *d = &gDevices[dev];
+    ConfigDevice *d = &gDrivers[dev];
     ConfigDisplayMode *best = NULL;
     int best_score = 0x7FFFFFFF;
     int i;
@@ -528,8 +528,8 @@ ScriptValue *Config_FillRenderDeviceListBox(ScriptValue *out)
 {
     int i;
 
-    for (i = 0; i < gDeviceCount; i++)
-        ListBox_AddItem(gDevices[i].desc, i);
+    for (i = 0; i < gDriverCount; i++)
+        ListBox_AddItem(gDrivers[i].desc, i);
     return ret_int(out, 0);
 }
 HOOK(0x4046A0, Config_FillRenderDeviceListBox);
@@ -538,8 +538,8 @@ ScriptValue *Config_GraphicOptionsGetDevice(ScriptValue *out)
 {
     int i;
 
-    for (i = 0; i < gDeviceCount; i++) {
-        if (strcmp(Config_GetGraphicOptions()->device, gDevices[i].name) == 0)
+    for (i = 0; i < gDriverCount; i++) {
+        if (strcmp(Config_GetGraphicOptions()->device, gDrivers[i].name) == 0)
             return ret_int(out, i);
     }
     return ret_int(out, 0);
@@ -550,8 +550,8 @@ ScriptValue *Config_GraphicOptionsSetDevice(ScriptValue *out, void *data, void *
 {
     int i = Script_GetArgInt(args, 0);
 
-    strcpy(Config_GetGraphicOptions()->device_desc, gDevices[i].desc);
-    strcpy(Config_GetGraphicOptions()->device, gDevices[i].name);
+    strcpy(Config_GetGraphicOptions()->device_desc, gDrivers[i].desc);
+    strcpy(Config_GetGraphicOptions()->device, gDrivers[i].name);
     return ret_int(out, 0);
 }
 HOOK(0x4047F0, Config_GraphicOptionsSetDevice);
@@ -829,7 +829,7 @@ void Config_ResetProfiles(void)
     p->sound.fx_volume = 1.0f;
     p->sound.speech_volume = 1.0f;
     p->remap_count = NUM_DEFAULT_REMAPS;
-    memcpy(p->remaps, gDefaultRemaps, NUM_DEFAULT_REMAPS * sizeof(InputRemap));
+    memcpy(p->remaps, gDefaultKeys, NUM_DEFAULT_REMAPS * sizeof(InputRemap));
     p->invert_mouse = 1;
     p->mouse_sensitivity = 0.4f;
 }

@@ -162,7 +162,7 @@ ORIG(0x518130, void, Hermite_Init, (double *h, double p1, double p2, double m1, 
 ORIG(0x518190, long double, Hermite_Eval, (double *h, double u));
 
 #define gVehicleClearHitEvent VAR(uint8_t, 0x54E203)
-#define gVehicleTaskList VAR(void *, 0xA76C40)
+#define gVehicles VAR(void *, 0xA76C40)
 #define gCutSceneModel VAR(void *, 0xA76C50)
 #define gCutSceneTicksPerSec VAR(int, 0xA76C54)
 #define gCutSceneParams VAR(void *, 0xA76C58)
@@ -192,7 +192,7 @@ HOOK(0x4F4860, Vehicle_GetClearHitEvent);
 
 void Vehicle_SetTaskList(void *list)
 {
-    gVehicleTaskList = list;
+    gVehicles = list;
 }
 HOOK(0x4F4870, Vehicle_SetTaskList);
 

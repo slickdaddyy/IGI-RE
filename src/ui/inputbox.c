@@ -20,7 +20,7 @@ typedef struct QVertexStrip {
 
 #define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
 #define gQVertexTexture VAR(void *, 0xA84A50)
-#define gQVertexStripMode VAR(int, 0xA84A54)
+#define gQVertexStrip VAR(int, 0xA84A54)
 #define gQVertexPalette VAR(void *, 0xA84A58)
 
 /* a one line text field; the script sees the text as "<name>.zData" */
@@ -306,7 +306,7 @@ void InputBox_Draw(InputBox *ib)
             strip.verts = v;
             gQVertexTexture = NULL;
             gQVertexPalette = NULL;
-            gRenderFuncs[gQVertexStripMode](&strip);
+            gRenderFuncs[gQVertexStrip](&strip);
         }
     }
     MenuWindow_DrawEnd(ib, 0.5f, alpha, ib->w.focused);

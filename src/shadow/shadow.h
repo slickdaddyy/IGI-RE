@@ -130,7 +130,7 @@ typedef struct Shadow {
 #define gSectorObjectType VAR(uint16_t, 0x548696)
 #define gSectorInteriorObjectType VAR(uint16_t, 0x548698)
 #define gSectorLinks VAR(Pool, 0xA5E318)
-#define gSectorPool2 VAR(Pool, 0xA5E338)
+#define gVisSectors VAR(Pool, 0xA5E338)
 #define gCurrentWorld VAR(void *, 0xA44344)
 
 /* exe constants, read in place */

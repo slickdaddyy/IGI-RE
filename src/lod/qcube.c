@@ -99,7 +99,7 @@ _Static_assert(offsetof(QEnclosing, radius) == 0x28, "QEnclosing");
 typedef void (*QHandler)(QTask *task, void *arg);
 
 #define gTaskHandlers ((QHandler *)0xA96AE0)
-#define gRenderFuncs_ ((void (**)(void *))0xA94E84)
+#define gRenderFuncs ((void (**)(void *))0xA94E84)
 #define gQCubeList VAR(QEntry *, 0xB16C98)
 #define gQCubeOut VAR(QEntry *, 0xB12C58)
 #define gQCubeCount VAR(int, 0xB12C20)
@@ -120,7 +120,7 @@ typedef void (*QHandler)(QTask *task, void *arg);
 #define gQCubeDrawOutside VAR(int, 0x54843C)
 #define gQCubeInside VAR(int, 0xA538CC)
 #define gQCubeEnclosing VAR(QTask *, 0xA538D0)
-#define gQCubeEnclosingUnk VAR(int, 0xA538D4)
+#define gViewSector VAR(int, 0xA538D4)
 #define gQCubeEnclosingBox ((double *)0xB16C80)
 #define gQCubeEnclosingRadius VAR(float, 0xB04264)
 #define gQCubeNeighbourBits ((int *)0xA50FFC)
@@ -419,7 +419,7 @@ void QCube_Render(QWorld *w, const char *flags, int full)
             q.pos = gTransContext.pos;
             q.unk4 = 0;
             Coll_SendEvent(w, QCube_GetEnclosingEvent(), &q, gTransContext.pos, -1, 5);
-            gQCubeEnclosingUnk = q.unk8;
+            gViewSector = q.unk8;
             for (i = 0; i < 3; i++)
                 gQCubeEnclosingBox[i] = q.box[i];
             gQCubeEnclosing = q.task;
@@ -442,7 +442,7 @@ void QCube_Render(QWorld *w, const char *flags, int full)
             if (flags[i + 1])
                 QCube_RunTaskList(w->lists[i]);
     }
-    gQCubeEnclosingUnk = 0;
+    gViewSector = 0;
     gQCubeEnclosing = NULL;
     gQCubeInside = 0;
     gQCubeDrawOutside = 1;
@@ -490,8 +490,8 @@ void QCube_UpdateNearPlane(QWorld *w, const char *flags)
 
     arg.dist = kNearStart;
     arg.zbuffer = 0;
-    if (gRenderFuncs_[TransContext_GetNearClipMethod()])
-        gRenderFuncs_[TransContext_GetNearClipMethod()](&arg);
+    if (gRenderFuncs[TransContext_GetNearClipMethod()])
+        gRenderFuncs[TransContext_GetNearClipMethod()](&arg);
     if (!arg.zbuffer || !VAR(int, 0x543A64))
         return;
     nearq[0] = 0;
@@ -515,8 +515,8 @@ void QCube_UpdateNearPlane(QWorld *w, const char *flags)
     nearq[2] = nearq[2] * kNearScale;
     arg.dist = nearq[2];
     arg.zbuffer = 0;
-    if (gRenderFuncs_[TransContext_GetNearClipMethod()])
-        gRenderFuncs_[TransContext_GetNearClipMethod()](&arg);
+    if (gRenderFuncs[TransContext_GetNearClipMethod()])
+        gRenderFuncs[TransContext_GetNearClipMethod()](&arg);
     crt_sprintf(gNearClipText, "Closest Z: %.2f", (double)nearq[2]);
 }
 HOOK(0x4D2840, QCube_UpdateNearPlane);

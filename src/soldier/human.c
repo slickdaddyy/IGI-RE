@@ -148,7 +148,7 @@ ORIG(0x5096A0, uint8_t, AIGraph_GetEvent, (void));
 #define gHumanList VAR(void *, 0x5BDC24)
 #define gHumanParams VAR(void *, 0x5BDC18)
 #define gHumanCriteria VAR(int, 0x5BDB00)
-#define gHumanCriteriaN ((int *)0x5BDAD8)
+#define gHumanTeamCriteria ((int *)0x5BDAD8)
 #define gHumanCriteriaNames ((char (*)[0x20])0x5BDB18)
 #define gHumanTeamNames ((const char **)0x53F348)
 #define gHumanUnk5BDC28 ((int *)0x5BDC28)
@@ -320,7 +320,7 @@ void Human_Open(void)
     gHumanCriteria = AreaActivate_AddCriteria("CRITERIA_HUMAN", Human_Criteria);
     for (i = 0; i < 8; i++) {
         crt_sprintf(gHumanCriteriaNames[i], "CRITERIA_HUMAN%d", i);
-        gHumanCriteriaN[i] = AreaActivate_AddCriteria(gHumanCriteriaNames[i], Human_CriteriaN);
+        gHumanTeamCriteria[i] = AreaActivate_AddCriteria(gHumanCriteriaNames[i], Human_CriteriaN);
     }
     for (i = 0; i < 2; i++)
         Script_RegisterConstant(gHumanTeamNames[i], i);

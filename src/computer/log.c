@@ -18,14 +18,14 @@ ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 #define LOG_DELETE (FN(0x468BB0, ComputerLog_Delete))
 #define LOG_DRAW (FN(0x468BC0, ComputerLog_Draw))
 
-#define gLogType VAR(uint16_t, 0x5BDC98)
+#define gComputerLogType VAR(uint16_t, 0x5BDC98)
 
 void ComputerLog_Open(void)
 {
-    gLogType = TaskType_New("ComputerLog", 0x24, Task_GetRootType(), 0);
-    TaskType_SetHandler(gLogType, 0, LOG_CREATE);
-    TaskType_SetHandler2(gLogType, 1, LOG_RUN);
-    TaskType_SetHandler2(gLogType, 2, LOG_DELETE);
-    TaskType_SetHandler2(gLogType, Screen_GetDrawEvent(), LOG_DRAW);
+    gComputerLogType = TaskType_New("ComputerLog", 0x24, Task_GetRootType(), 0);
+    TaskType_SetHandler(gComputerLogType, 0, LOG_CREATE);
+    TaskType_SetHandler2(gComputerLogType, 1, LOG_RUN);
+    TaskType_SetHandler2(gComputerLogType, 2, LOG_DELETE);
+    TaskType_SetHandler2(gComputerLogType, Screen_GetDrawEvent(), LOG_DRAW);
 }
 HOOK(0x4688B0, ComputerLog_Open);

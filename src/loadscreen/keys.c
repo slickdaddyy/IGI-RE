@@ -2,7 +2,7 @@
 #include "igi.h"
 
 /* typed keys for the menus: a ring of 32 entries, WM_CHAR codes or negative KEY_* values */
-#define gKeys ((int *)0x5C8B20)
+#define gKeyQueue ((int *)0x5C8B20)
 #define gKeysStart VAR(int, 0x5C8BA0)
 #define gKeysCount VAR(int, 0x5C8BA4)
 #define gKeysActive VAR(char, 0x5C8BA8)
@@ -27,7 +27,7 @@ ORIG(0x48F4F0, void, AppMain_RemoveWinProcCallback, (void *fn));
 void Keys_Push(int key)
 {
     if (gKeysCount < 31) {
-        gKeys[(gKeysStart + gKeysCount) % 32] = key;
+        gKeyQueue[(gKeysStart + gKeysCount) % 32] = key;
         gKeysCount++;
     }
 }
@@ -89,7 +89,7 @@ int Keys_Pop(void)
     int key = 0;
 
     if (gKeysCount) {
-        key = gKeys[gKeysStart];
+        key = gKeyQueue[gKeysStart];
         if (++gKeysStart == 32)
             gKeysStart = 0;
         gKeysCount--;

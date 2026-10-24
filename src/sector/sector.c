@@ -187,8 +187,8 @@ _Static_assert(sizeof(LightmapRef) == 0x24, "LightmapRef");
 _Static_assert(sizeof(LightmapSet) == 0x18, "LightmapSet");
 
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
-#define gViewSectorSkip VAR(int, 0xA538CC)
-#define gViewSectorObj VAR(SectorObject *, 0xA538D0)
+#define gQCubeInside VAR(int, 0xA538CC)
+#define gQCubeEnclosing VAR(SectorObject *, 0xA538D0)
 #define gViewSector VAR(Sector *, 0xA538D4)
 #define gSectorFogCount VAR(int, 0xA5E310)
 #define gSectorLinks VAR(Pool, 0xA5E318)
@@ -199,12 +199,12 @@ _Static_assert(sizeof(LightmapSet) == 0x18, "LightmapSet");
 #define gCurrentSectorObj VAR(SectorObject *, 0xA5E354)
 #define gVisFrame VAR(int, 0xA5E358)
 #define gSectorLights VAR(int *, 0xA5E35C)
-#define gViewRectSet VAR(int, 0x54843C)
+#define gQCubeDrawOutside VAR(int, 0x54843C)
 #define gSectorType VAR(uint16_t, 0x548694)
 #define gSectorObjectType VAR(uint16_t, 0x548696)
-#define gSectorInteriorType VAR(uint16_t, 0x548698)
-#define gViewRectMin ((float *)0xB12B78)
-#define gViewRectMax ((float *)0xB16C60)
+#define gSectorInteriorObjectType VAR(uint16_t, 0x548698)
+#define gQCubeOutsideMin ((float *)0xB12B78)
+#define gQCubeOutsideMax ((float *)0xB16C60)
 #define gView VAR(TransCtx, 0xBCAAE0)
 #define gScene ((void *)0xBCABA0)
 #define gSceneArea VAR(SceneArea, 0xBCABA0)
@@ -993,9 +993,9 @@ void Sector_Open(void)
     TaskType_SetHandler(gSectorObjectType, World_GetEvent1(), SectorObject_WorldRemove);
     Pool_Init(&gVisSectors, sizeof(VisSector), 20, 0);
     Pool_Init(&gSectorLinks, sizeof(SectorLink), 1000, 0);
-    gSectorInteriorType = TaskType_New("SectorInteriorObject", sizeof(Obj), RigidDynCubeObj_GetType(), 0);
-    TaskType_SetHandler(gSectorInteriorType, World_GetEvent0(), SectorInteriorObject_WorldAdd);
-    TaskType_SetHandler(gSectorInteriorType, World_GetEvent1(), SectorInteriorObject_WorldRemove);
+    gSectorInteriorObjectType = TaskType_New("SectorInteriorObject", sizeof(Obj), RigidDynCubeObj_GetType(), 0);
+    TaskType_SetHandler(gSectorInteriorObjectType, World_GetEvent0(), SectorInteriorObject_WorldAdd);
+    TaskType_SetHandler(gSectorInteriorObjectType, World_GetEvent1(), SectorInteriorObject_WorldRemove);
 }
 HOOK(0x4DCF20, Sector_Open);
 
@@ -1063,8 +1063,8 @@ void SectorObject_Render(SectorObject *so)
     gCurrentSectorObj = so;
     if (!so->s.o.model)
         return;
-    if (so == gViewSectorObj) {
-        if (gViewSectorSkip)
+    if (so == gQCubeEnclosing) {
+        if (gQCubeInside)
             return;
         s = gViewSector;
     }
@@ -1120,12 +1120,12 @@ HOOK(0x4DD4B0, Sector_AddVisible);
 
 void Sector_DrawVisible(Sector *s, float *min, float *max, int lod)
 {
-    if (s == &gCurrentSectorObj->s && gCurrentSectorObj == gViewSectorObj) {
-        gViewRectMin[0] = min[0];
-        gViewRectMin[1] = min[1];
-        gViewRectMax[0] = max[0];
-        gViewRectMax[1] = max[1];
-        gViewRectSet = 1;
+    if (s == &gCurrentSectorObj->s && gCurrentSectorObj == gQCubeEnclosing) {
+        gQCubeOutsideMin[0] = min[0];
+        gQCubeOutsideMin[1] = min[1];
+        gQCubeOutsideMax[0] = max[0];
+        gQCubeOutsideMax[1] = max[1];
+        gQCubeDrawOutside = 1;
     }
     Scene_SetBounds(gScene, min, max);
     HANDLER(4, gSectorType)(s, 0);

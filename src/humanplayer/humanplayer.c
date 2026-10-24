@@ -216,9 +216,9 @@ ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 #define gUnk56E09C VAR(void *, 0x56E09C)
 #define gWeaponCategories ((WeaponCategory *)0x56E0A0)
 #define gMoveScale VAR(float, 0x56E1E8)
-#define gWalkSpeed VAR(float, 0x56E1EC)
-#define gRunSpeed VAR(float, 0x56E1F0)
-#define gSprintSpeed VAR(float, 0x56E1F4)
+#define gJumpSpeed VAR(float, 0x56E1EC)
+#define gJumpUp VAR(float, 0x56E1F0)
+#define gHumanAirSpeed VAR(float, 0x56E1F4)
 #define gLeanSide VAR(float, 0x56E1F8)
 #define gLeanUp VAR(float, 0x56E1FC)
 #define gLeanFrames VAR(int, 0x56E200)
@@ -1164,9 +1164,9 @@ ScriptValue *DefineHumanPlayerGeneral(ScriptValue *ret, void *unused, void *args
 
     (void)unused;
     gMoveScale = Script_GetArgReal(args, 0);
-    gWalkSpeed = Script_GetArgReal(args, 1) * kKmhToUnits * kPerFrameHour;
-    gRunSpeed = Script_GetArgReal(args, 2) * kKmhToUnits * kPerFrameHour;
-    gSprintSpeed = Script_GetArgReal(args, 3) * kKmhToUnits * kPerFrameHour;
+    gJumpSpeed = Script_GetArgReal(args, 1) * kKmhToUnits * kPerFrameHour;
+    gJumpUp = Script_GetArgReal(args, 2) * kKmhToUnits * kPerFrameHour;
+    gHumanAirSpeed = Script_GetArgReal(args, 3) * kKmhToUnits * kPerFrameHour;
     gLeanSide = Script_GetArgReal(args, 4) * 4096.0;
     gLeanUp = Script_GetArgReal(args, 5) * 4096.0;
     gLeanFrames = (int)llrintl(Script_GetArgReal(args, 6) * 30.0);

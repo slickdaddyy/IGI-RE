@@ -8,13 +8,13 @@ ORIG(0x4018E0, void, TaskEvent_Free2, (int index));
 
 #define gWeaponSelectEvent VAR(int, 0xA76BFC)
 #define gWeaponTriggerEvent VAR(uint8_t, 0xA76C00)
-#define gWeaponEvent3 VAR(uint8_t, 0xA76C01)
+#define gWeaponUseAmmoEvent VAR(uint8_t, 0xA76C01)
 #define gWeaponSlotsEvent VAR(uint8_t, 0xA76C02)
 #define gWeaponStateEvent VAR(uint8_t, 0xA76C03)
 #define gWeaponDeselectEvent VAR(int, 0xA76C04)
-#define gWeaponEvent7 VAR(uint8_t, 0xA76C08)
+#define gWeaponDropEvent VAR(uint8_t, 0xA76C08)
 #define gWeaponMoveEvent VAR(uint8_t, 0xA76C09)
-#define gWeaponEvent4 VAR(uint8_t, 0xA76C10)
+#define gWeaponAmmoEvent VAR(uint8_t, 0xA76C10)
 
 void Weapon_InitEvents(void)
 {
@@ -22,11 +22,11 @@ void Weapon_InitEvents(void)
     gWeaponStateEvent = TaskEvent_Alloc(0);
     gWeaponMoveEvent = TaskEvent_Alloc(0);
     gWeaponTriggerEvent = TaskEvent_Alloc(0);
-    gWeaponEvent3 = TaskEvent_Alloc(0);
-    gWeaponEvent4 = TaskEvent_Alloc(0);
+    gWeaponUseAmmoEvent = TaskEvent_Alloc(0);
+    gWeaponAmmoEvent = TaskEvent_Alloc(0);
     gWeaponSelectEvent = TaskEvent_Alloc2(0);
     gWeaponDeselectEvent = TaskEvent_Alloc2(0);
-    gWeaponEvent7 = TaskEvent_Alloc(0);
+    gWeaponDropEvent = TaskEvent_Alloc(0);
 }
 HOOK(0x4F1EE0, Weapon_InitEvents);
 
@@ -34,13 +34,13 @@ void Weapon_FreeEvents(void)
 {
     TaskEvent_Free(gWeaponSlotsEvent);
     TaskEvent_Free(gWeaponStateEvent);
-    TaskEvent_Free(gWeaponEvent4);
-    TaskEvent_Free(gWeaponEvent3);
+    TaskEvent_Free(gWeaponAmmoEvent);
+    TaskEvent_Free(gWeaponUseAmmoEvent);
     TaskEvent_Free(gWeaponTriggerEvent);
     TaskEvent_Free(gWeaponMoveEvent);
     TaskEvent_Free2(gWeaponSelectEvent);
     TaskEvent_Free2(gWeaponDeselectEvent);
-    TaskEvent_Free(gWeaponEvent7);
+    TaskEvent_Free(gWeaponDropEvent);
 }
 HOOK(0x4F1F50, Weapon_FreeEvents);
 
@@ -70,13 +70,13 @@ HOOK(0x4F1FF0, Weapon_GetTriggerEvent);
 
 char Weapon_GetEvent3(void)
 {
-    return gWeaponEvent3;
+    return gWeaponUseAmmoEvent;
 }
 HOOK(0x4F2000, Weapon_GetEvent3);
 
 char Weapon_GetEvent4(void)
 {
-    return gWeaponEvent4;
+    return gWeaponAmmoEvent;
 }
 HOOK(0x4F2010, Weapon_GetEvent4);
 
@@ -94,7 +94,7 @@ HOOK(0x4F2030, Weapon_GetDeselectEvent);
 
 char Weapon_GetEvent7(void)
 {
-    return gWeaponEvent7;
+    return gWeaponDropEvent;
 }
 HOOK(0x4F2040, Weapon_GetEvent7);
 

@@ -29,7 +29,7 @@ ORIG(0x4D0970, void, Mesh3D_GetVertex, (float *out, void *obj, int point));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 
 /* the task that ran LOCAL:lod.qsc */
-#define gLodRoot VAR(void *, 0xA5EFD4)
+#define gModelLODSettingsContainer VAR(void *, 0xA5EFD4)
 
 #define gPhysicsObjTypeEvents ((uint8_t *)0x54DC30)
 #define gPhysicsObjTypeCount VAR(int, 0xA5EFD8)
@@ -52,8 +52,8 @@ typedef struct PointQuery {
 
 void Lod_SendChanged(void)
 {
-    if (gLodRoot)
-        Task_Broadcast(gLodRoot, Param_GetChangedEvent(), NULL);
+    if (gModelLODSettingsContainer)
+        Task_Broadcast(gModelLODSettingsContainer, Param_GetChangedEvent(), NULL);
 }
 HOOK(0x4EDCC0, Lod_SendChanged);
 

@@ -120,7 +120,7 @@ typedef struct ZBufferSearch {
 #define gTextureBytes VAR(int, 0x5CA128)
 #define gBytesToMb VAR(float, 0x5333C0)
 #define gD3DDeviceDesc VAR(D3DDEVICEDESC7, 0xBCAC00)
-#define gD3DFoundHal VAR(int, 0xBCACF4)
+#define gD3DFoundHAL VAR(int, 0xBCACF4)
 #define gD3DTnL VAR(int, 0xBCAD74)
 #define gD3DZ24 VAR(int, 0xBCADA4)
 #define gVBTL VAR(DynVB, 0xBCAD00)
@@ -159,11 +159,11 @@ static void __attribute__((noreturn)) DXError(const char *what, HRESULT hr)
 HRESULT __stdcall Direct3D_FindDeviceCB(char *desc, char *name, D3DDEVICEDESC7 *dev, D3DDEVICEDESC7 *out)
 {
     if (!memcmp(&dev->deviceGUID, IID_IDirect3DHALDevice_, sizeof(GUID)))
-        gD3DFoundHal = 1;
+        gD3DFoundHAL = 1;
     if (!memcmp(&dev->deviceGUID, IID_IDirect3DTnLHalDevice_, sizeof(GUID))) {
         gD3DTnL = 1;
-        gD3DFoundHal = 1;
-    } else if (!gD3DFoundHal) {
+        gD3DFoundHAL = 1;
+    } else if (!gD3DFoundHAL) {
         return 1;
     }
     *out = *dev;
@@ -529,7 +529,7 @@ HOOK(0x492BE0, DDraw_GetErrorString);
 #define gD3DUnkBCADB0 VAR(float, 0xBCADB0)
 #define gD3DUnkBCADB8 VAR(float, 0xBCADB8)
 #define gD3DUnkBCADBC VAR(float, 0xBCADBC)
-#define gD3DUnkBCADC0 VAR(float, 0xBCADC0)
+#define gNearPlane VAR(float, 0xBCADC0)
 #define gD3DUnkBCADCC VAR(float, 0xBCADCC)
 #define gD3DUnkBCADD0 VAR(float, 0xBCADD0)
 #define gD3DUnkBCADD4 VAR(float, 0xBCADD4)
@@ -573,7 +573,7 @@ void Direct3D_Init(void)
     gD3DUnkBCAD70 = 999.99994f;
     gD3DUnkBCADDC = 204.8f;
     gD3DUnkBCADD0 = 6144.0f;
-    gD3DUnkBCADC0 = 409.6f;
+    gNearPlane = 409.6f;
     gD3DUnkBCADCC = 4.096e8f;
     gD3DUnkBCADD4 = 4.096e8f;
     gD3DUnkBCADBC = 4.096e8f;

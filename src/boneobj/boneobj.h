@@ -187,7 +187,7 @@ typedef struct OrientData {
 #define gFadePool VAR(Pool, 0xA54640)
 #define gNodePool VAR(Pool, 0xA54660)
 #define gTicksPerFrame VAR(float, 0xA54658)
-#define gSmoothAnims VAR(int, 0xA54678)
+#define gBoneSmoothAnims VAR(int, 0xA54678)
 
 static inline void *pool_get(Pool *p)
 {

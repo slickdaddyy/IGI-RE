@@ -83,7 +83,7 @@ ORIG(0x4F1C20, void, ParamCursor_Need, (ParamCursor *c, int count));
 #define gIdleType VAR(uint16_t, 0x54DD12)
 #define gCameraBaseType VAR(uint16_t, 0x54DD14)
 #define gLevelEventDA4 VAR(uint8_t, 0x54DDA4)
-#define gLevelEventDA5 VAR(uint8_t, 0x54DDA5)
+#define gLevelNameEvent VAR(uint8_t, 0x54DDA5)
 #define gLevelEventDA8 VAR(int, 0x54DDA8)
 #define gLevelEventDAC VAR(int, 0x54DDAC)
 #define gLevelEventDB0 VAR(int, 0x54DDB0)
@@ -91,9 +91,9 @@ ORIG(0x4F1C20, void, ParamCursor_Need, (ParamCursor *c, int count));
 /* LevelQTaskID -> task reference */
 #define gLevelTaskIds ((void **)0xA71890)
 /* 251 buckets of task references, Amiga style lists */
-#define gTaskRefBuckets ((void **)0xA70CA8)
+#define gTaskNotes ((void **)0xA70CA8)
 #define gTaskRefBucketsEnd ((void **)0xA7186C)
-#define gLevelA758BD VAR(char, 0xA758BD)
+#define gLevelPaused VAR(char, 0xA758BD)
 #define gLevelA758BE VAR(char, 0xA758BE)
 #define gLevelA758C0 VAR(int, 0xA758C0)
 #define gLevelA758C4 VAR(int, 0xA758C4)
@@ -260,7 +260,7 @@ void Level_Open(void)
     new_type("Idle", 0x20, &gIdleType);
     new_type("CameraBase", 0x20, &gCameraBaseType);
     gLevelEventDA4 = TaskEvent_Alloc(0);
-    gLevelEventDA5 = TaskEvent_Alloc(0);
+    gLevelNameEvent = TaskEvent_Alloc(0);
     gLevelEventDA8 = TaskEvent_Alloc2(0);
     gLevelEventDAC = TaskEvent_Alloc2(0);
     gLevelEventDB0 = TaskEvent_Alloc2(0);
@@ -291,9 +291,9 @@ void Level_Open(void)
         *kParamAliases[i].id = ParamType_New(kParamAliases[i].name, *kParamAliases[i].parent);
     Script_RegisterFunction("Task_New", FN(0x4F0780, Level_NewTask), NULL, -1);
     Script_RegisterFunction("Task_DeclareParameters", FN(0x4F0740, Task_DeclareParameters), NULL, -1);
-    gLevelA758BD = 0;
+    gLevelPaused = 0;
     gLevelA758BE = 0;
-    for (b = gTaskRefBuckets; b < gTaskRefBucketsEnd; b += 3) {
+    for (b = gTaskNotes; b < gTaskRefBucketsEnd; b += 3) {
         b[0] = &b[1];
         b[2] = b;
         b[1] = NULL;

@@ -38,7 +38,7 @@ ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
 #define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
 #define gQVertexTexture VAR(void *, 0xA84A50)
-#define gQVertexStripMode VAR(int, 0xA84A54)
+#define gQVertexStrip VAR(int, 0xA84A54)
 #define gQVertexPalette VAR(void *, 0xA84A58)
 
 static const double kZeroD = 0.0;
@@ -551,7 +551,7 @@ void StatusMessageScreen_DrawBox(StatusMessageScreen *s, int i, float x, float y
     strip.unk8 = flags;
     strip.count = 4;
     strip.verts = v;
-    gRenderFuncs[gQVertexStripMode](&strip);
+    gRenderFuncs[gQVertexStrip](&strip);
 
     for (k = 0; k < 4; k++) {
         v[k].z = 1.0f;
@@ -575,7 +575,7 @@ void StatusMessageScreen_DrawBox(StatusMessageScreen *s, int i, float x, float y
     strip.unk8 = flags;
     strip.count = 5;
     strip.verts = v;
-    gRenderFuncs[gQVertexStripMode](&strip);
+    gRenderFuncs[gQVertexStrip](&strip);
 }
 HOOK(0x486210, StatusMessageScreen_DrawBox);
 

@@ -128,7 +128,7 @@ ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 #define gGraphType VAR(uint16_t, 0x54E364)
 #define gGraphEvents ((uint8_t *)0x54E368)
 #define gGraphParams VAR(void *, 0xA76D10)
-#define gGraphHandlerFree VAR(List, 0xA76D18)
+#define gStreamHandlersFree VAR(List, 0xA76D18)
 #define gGraphLinkCost VAR(int, 0xA76D24)
 #define gGraphHandlerSlots ((GraphStreamHandler *)0xA76D28)
 #define gGraphNodeSizes ((GraphNodeSize *)0xA77228)
@@ -136,7 +136,7 @@ ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 #define gGraphLinkB VAR(int, 0xA77254)
 #define gGraphLinkA VAR(int, 0xA77258)
 #define gGraphNodeTemp VAR(GraphNode, 0xA77260)
-#define gGraphHandlers VAR(List, 0xA774A0)
+#define gStreamHandlers VAR(List, 0xA774A0)
 #define gTerrain VAR(void *, 0xA44344)
 
 /* the next byte of the file, which stays unread. When nothing is read
@@ -204,16 +204,16 @@ void Graph_Open(void)
     }
     Graph_SetNodeSize(gGraphType, sizeof(GraphNode));
 
-    gGraphHandlers.head = (Node *)&gGraphHandlers.tail;
-    gGraphHandlers.tailpred = (Node *)&gGraphHandlers;
-    gGraphHandlers.tail = NULL;
-    gGraphHandlerFree.head = (Node *)&gGraphHandlerFree.tail;
-    gGraphHandlerFree.tailpred = (Node *)&gGraphHandlerFree;
-    gGraphHandlerFree.tail = NULL;
+    gStreamHandlers.head = (Node *)&gStreamHandlers.tail;
+    gStreamHandlers.tailpred = (Node *)&gStreamHandlers;
+    gStreamHandlers.tail = NULL;
+    gStreamHandlersFree.head = (Node *)&gStreamHandlersFree.tail;
+    gStreamHandlersFree.tailpred = (Node *)&gStreamHandlersFree;
+    gStreamHandlersFree.tail = NULL;
     for (h = gGraphHandlerSlots; h < gGraphHandlerSlots + 64; h++) {
         h->node.prev = NULL;
         h->node.next = NULL;
-        List_AddTail(&gGraphHandlerFree, &h->node);
+        List_AddTail(&gStreamHandlersFree, &h->node);
     }
 
     GraphStream_AddHandler("nMaxNodes", 5, Graph_ReadMaxNodes);

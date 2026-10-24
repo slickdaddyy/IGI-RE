@@ -21,7 +21,7 @@ ORIG(0x4B8770, int, Script_EvalExpr, (const char *text));
 ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Matrix *m, float a));
 ORIG(0x4B3320, char, Vec3d_IsZero, (const Vec3d *v));
 
-/* a TaskRef to a graph, on gGraphs */
+/* a TaskRef to a graph, on gGraphRefs */
 typedef struct GraphRef {
     Node node;
     Task **ref;
@@ -44,8 +44,8 @@ typedef struct NodeSize {
 #define gGraphNodeAddEvent VAR(uint8_t, 0x54E36F)
 #define gGraphEvent371 VAR(uint8_t, 0x54E371)
 #define gGraphAllocEvent VAR(uint8_t, 0x54E369)
-#define gGraphs VAR(List, 0xA77248)
-#define gNodeSizes ((NodeSize *)0xA77228)
+#define gGraphRefs VAR(List, 0xA77248)
+#define gGraphNodeSizes ((NodeSize *)0xA77228)
 
 static const double kZero = 0.0;
 static const double kInside = 4096.0;
@@ -75,7 +75,7 @@ void Graph_Create(Graph *g)
     r->ref = TaskRef_Add(g);
     r->node.prev = NULL;
     r->node.next = NULL;
-    List_AddTail(&gGraphs, r);
+    List_AddTail(&gGraphRefs, r);
     type = g->task.parent->type;
     g->pos.x = g->pos.y = g->pos.z = 0;
     g->attached = 0;
@@ -178,7 +178,7 @@ Graph *Graph_Find(int id)
 
     if (id == -1)
         return NULL;
-    for (n = gGraphs.head; (next = n->next); n = next) {
+    for (n = gGraphRefs.head; (next = n->next); n = next) {
         GraphRef *r = (GraphRef *)n;
 
         if (r->ref) {
@@ -240,10 +240,10 @@ void Graph_SetNodeSize(uint16_t type, int size)
     int i, free = -1;
 
     for (i = 0; i < NODESIZE_MAX; i++) {
-        if (free == -1 && gNodeSizes[i].type == TASK_NO_TYPE)
+        if (free == -1 && gGraphNodeSizes[i].type == TASK_NO_TYPE)
             free = i;
-        if (gNodeSizes[i].type == type) {
-            gNodeSizes[i].size = size;
+        if (gGraphNodeSizes[i].type == type) {
+            gGraphNodeSizes[i].size = size;
             return;
         }
     }
@@ -252,8 +252,8 @@ void Graph_SetNodeSize(uint16_t type, int size)
         for (;;)
             ;
     }
-    gNodeSizes[free].type = type;
-    gNodeSizes[free].size = size;
+    gGraphNodeSizes[free].type = type;
+    gGraphNodeSizes[free].size = size;
 }
 HOOK(0x4F9460, Graph_SetNodeSize);
 
@@ -262,8 +262,8 @@ int Graph_GetNodeSize(Graph *g)
     int i;
 
     for (i = 0; i < NODESIZE_MAX; i++) {
-        if (g->task.type == gNodeSizes[i].type)
-            return gNodeSizes[i].size;
+        if (g->task.type == gGraphNodeSizes[i].type)
+            return gGraphNodeSizes[i].size;
     }
     Error_Show("Undefined GraphNodeDataSize");
     for (;;)

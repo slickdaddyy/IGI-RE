@@ -109,11 +109,11 @@ ORIG(0x4C0750, void, QvmLex_Free, (void *lexer));
 ORIG(0x4C0900, void, QvmAsm_RegisterOps, (void));
 ORIG(0x4F1D80, void, ParamEnum_Free, (List *list));
 
-#define gQvmAsmErrorData VAR(void *, 0xA43EC0)
+#define gAsmErrorContext VAR(void *, 0xA43EC0)
 #define gQvmAsmLogData VAR(void *, 0xA43EC8)
-#define gQvmAsmErrors VAR(int, 0xA43ED0)
+#define gAsmErrorCount VAR(int, 0xA43ED0)
 #define gQvmAsmLogFn VAR(QvmAsmCallback, 0xA43ED4)
-#define gQvmAsmErrorFn VAR(QvmAsmCallback, 0xA43ED8)
+#define gAsmErrorHandler VAR(QvmAsmCallback, 0xA43ED8)
 
 void QvmAsm_Log(const char *fmt, ...);
 
@@ -172,16 +172,16 @@ int QvmAsm_Assemble(const char *path, const char *source)
         Regex_Substitute(tmp, sizeof(tmp), "/0qvmbin.tmp", path);
     else
         strcpy(tmp, "LOCAL:qvmbin.tmp");
-    gQvmAsmErrors = 0;
+    gAsmErrorCount = 0;
     out = File_Open(path, "w");
     if (!out) {
         Asm_Error(&a, "Failed to open file '%s' for writing.", path);
-        return gQvmAsmErrors;
+        return gAsmErrorCount;
     }
     if (!Resource_Exists(source)) {
         Asm_Error(&a, "Failed to load assembler source file: '%s'", source);
         File_Close(out);
-        return gQvmAsmErrors;
+        return gAsmErrorCount;
     }
     data = Resource_Load(source, &size);
     QvmAsm_Log("Initialising parser.\n");
@@ -321,7 +321,7 @@ cleanup:
     ParamEnum_Free(&rules);
     Resource_Flush(data);
     File_Close(out);
-    return gQvmAsmErrors;
+    return gAsmErrorCount;
 }
 HOOK(0x4BB270, QvmAsm_Assemble);
 
@@ -341,10 +341,10 @@ HOOK(0x4BBC30, QvmAsm_Log);
 
 void QvmAsm_Init(void)
 {
-    gQvmAsmErrorFn = NULL;
+    gAsmErrorHandler = NULL;
     VAR(int, 0xA43ECC) = 0;
     gQvmAsmLogFn = NULL;
-    gQvmAsmErrorData = NULL;
+    gAsmErrorContext = NULL;
     VAR(int, 0xA43EC4) = 0;
     gQvmAsmLogData = NULL;
     QvmAsm_RegisterOps();

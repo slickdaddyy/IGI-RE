@@ -71,7 +71,7 @@ _Static_assert(offsetof(DiscardTerrain, scale) == 0x98, "DiscardTerrain.scale");
 
 #define gDiscardTerrainType VAR(uint16_t, 0xA8454C)
 #define gDiscardTerrainParams VAR(void *, 0xA84550)
-#define gQCubeDiscard VAR(int, 0xB12BB8)
+#define gQCubeSkipCells VAR(int, 0xB12BB8)
 
 static const float kRadius = 4096.0f;
 static const double kHalf = 0.5;
@@ -118,7 +118,7 @@ HOOK(0x52C000, DiscardTerrain_Create);
 /* slot 15, while the qcube walk is inside the box */
 void DiscardTerrain_Visit(void)
 {
-    gQCubeDiscard = 1;
+    gQCubeSkipCells = 1;
 }
 HOOK(0x52C0B0, DiscardTerrain_Visit);
 

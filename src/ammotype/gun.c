@@ -217,12 +217,12 @@ ORIG(0x4F1FF0, uint8_t, Weapon_GetTriggerEvent, (void));
 ORIG(0x4F2060, Task *, WeaponSlots_Get, (void *slots, int i));
 ORIG(0x4F2350, void, Weapon_UseAmmo, (Gun *g, char unlimited));
 
-#define gGunList VAR(void *, 0x5BE3C0)
+#define gGunParams VAR(void *, 0x5BE3C0)
 #define gGunCasingType VAR(uint16_t, 0x5BE3C4)
 #define gGunType VAR(uint16_t, 0x5BE3C6)
 #define gGunEvents ((uint8_t *)0x5407B8)
 #define gQVertexTexture VAR(void *, 0xA84A50)
-#define gQVertexStripMode VAR(int, 0xA84A54)
+#define gQVertexStrip VAR(int, 0xA84A54)
 #define gQVertexPalette VAR(void *, 0xA84A58)
 #define gRenderFuncs ((void (**)(QVertexStrip *))0xA94E84)
 
@@ -567,7 +567,7 @@ void Gun_HudHandler(Gun *g, Hud **msg)
             m = iconW;
         v[1].x = v[0].x - m;
         v[1].y = v[0].y;
-        gRenderFuncs[gQVertexStripMode](&strip);
+        gRenderFuncs[gQVertexStrip](&strip);
     }
     if (w->sightDisplay == 1) {
         void *cross = HUD_SPRITE(hud, 0x74);
@@ -756,7 +756,7 @@ HOOK(0x47A9E0, Gun_AddHandler);
 
 void Gun_Close(void)
 {
-    QTaskList_Free(gGunList);
+    QTaskList_Free(gGunParams);
     TaskEvent_Free(gGunEvents[4]);
     TaskEvent_Free(gGunEvents[3]);
     TaskEvent_Free(gGunEvents[2]);

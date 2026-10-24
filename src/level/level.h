@@ -121,7 +121,7 @@ typedef void (*TaskFn)(Task *task);
 #define gIdleType VAR(uint16_t, 0x54DD12)
 #define gCameraBaseType VAR(uint16_t, 0x54DD14)
 #define gLevelEvent0 VAR(uint8_t, 0x54DDA4)
-#define gLevelEvent1 VAR(uint8_t, 0x54DDA5)
+#define gLevelNameEvent VAR(uint8_t, 0x54DDA5)
 #define gLevelEventDA8 VAR(int, 0x54DDA8)
 #define gLevelEventDAC VAR(int, 0x54DDAC)
 #define gLevelEventDB0 VAR(int, 0x54DDB0)

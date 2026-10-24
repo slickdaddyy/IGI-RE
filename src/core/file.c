@@ -16,9 +16,9 @@ ORIG(0x4B1DE0, const char *, Device_GetName, (int device));
 #define gAliases ((FileAlias *)0x942330)
 #define gDevices ((FileDevice *)0x9436B0)
 #define gDeviceCount VAR(int, 0x94396C)
-#define gFileList VAR(List, 0x943970)
+#define gLoadedFiles VAR(List, 0x943970)
 #define gUnk943988 VAR(int, 0x943988)
-#define gLastPath ((char *)0x943A18)
+#define gExpandedPath ((char *)0x943A18)
 
 /* Expands an alias at the start of path into its index'th path. Returns the
    next index to try, or 0 when this was the last one. */
@@ -52,11 +52,11 @@ int File_ResolvePath(char *out, const char *path, int index)
         while (*p != ';' && *p)
             *o++ = *p++;
         strcpy(o, path + len);
-        strcpy(gLastPath, out);
+        strcpy(gExpandedPath, out);
         return next;
     }
     strcpy(out, path);
-    strcpy(gLastPath, path);
+    strcpy(gExpandedPath, path);
     return 0;
 }
 HOOK(0x4B1020, File_ResolvePath);
@@ -90,18 +90,18 @@ void File_Init(void)
     Alias_Clear();
     gDeviceCount = 1;
     memset(gDevices, 0, sizeof(FileDevice) * FILE_DEVICE_MAX);
-    gLastPath[0] = 0;
+    gExpandedPath[0] = 0;
     LocalDevice_Register();
     gUnk943988 = 0;
-    gFileList.head = (Node *)&gFileList.tail;
-    gFileList.tailpred = (Node *)&gFileList;
-    gFileList.tail = NULL;
+    gLoadedFiles.head = (Node *)&gLoadedFiles.tail;
+    gLoadedFiles.tailpred = (Node *)&gLoadedFiles;
+    gLoadedFiles.tail = NULL;
 }
 HOOK(0x4B1200, File_Init);
 
 void File_Shutdown(void)
 {
-    Node *n = gFileList.head, *next;
+    Node *n = gLoadedFiles.head, *next;
 
     for (next = n->next; next; next = next->next) {
         Script_FreeRefBlock(n);

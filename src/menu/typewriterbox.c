@@ -53,7 +53,7 @@ typedef struct Color {
 
 #define gTypeWriterBoxType VAR(uint16_t, 0x539C40)
 #define gTypeLines ((TypeLine *)0x539C48)
-#define gTypeColors ((const Color *)0x53B778)
+#define gMenuColors ((const Color *)0x53B778)
 #define gTypeWriterBoxParams VAR(void *, 0x57BB90)
 #define gKeys ((unsigned char *)0xC28C62)
 
@@ -227,9 +227,9 @@ void TypeWriterBox_DrawHandler(TypeWriterBox *tw)
 
             if (t && l->y != -1) {
                 int x = l->x;
-                float r = gTypeColors[l->color].r;
-                float g = gTypeColors[l->color].g;
-                float b = gTypeColors[l->color].b;
+                float r = gMenuColors[l->color].r;
+                float g = gMenuColors[l->color].g;
+                float b = gMenuColors[l->color].b;
                 float a = alpha;
 
                 if (tw->fading) {

@@ -5,12 +5,12 @@
 
 FN_EXTERN(Reader_ReadLine);
 
-#define gReaderLineSize VAR(int, 0xA969C4)
+#define gScriptLineSize VAR(int, 0xA969C4)
 
 Reader *Reader_Init(Reader *r, const char *src, int size, int (*refill)(Reader *r))
 {
-    r->buf = Mem_Alloc(gReaderLineSize, 4);
-    memset(r->buf, 0, gReaderLineSize);
+    r->buf = Mem_Alloc(gScriptLineSize, 4);
+    memset(r->buf, 0, gScriptLineSize);
     r->src = src;
     r->size = size;
     r->cur = r->buf;
@@ -45,7 +45,7 @@ int Reader_ReadLine(Reader *r)
     if (r->pos >= r->size)
         return 0;
 
-    for (n = 0; n < gReaderLineSize - 2 && r->pos + n < r->size; n++) {
+    for (n = 0; n < gScriptLineSize - 2 && r->pos + n < r->size; n++) {
         c = r->src[r->pos + n];
         r->buf[n] = c;
         r->textline = r->line;
@@ -63,7 +63,7 @@ int Reader_ReadLine(Reader *r)
             goto strip;
         }
     }
-    if (n >= gReaderLineSize - 2) {
+    if (n >= gScriptLineSize - 2) {
         /* line too long: cut it at the last blank */
         while (n != 0) {
             c = r->buf[--n];

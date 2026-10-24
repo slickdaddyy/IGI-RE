@@ -104,7 +104,7 @@ typedef void (*WHandler)(WTask *task, void *arg);
 #define gWalkTreeIndex ((signed char *)0x548444)
 #define gWalkSavedRoots ((WCube *)0xA4EF38)
 #define gWalkFakeRoots ((WCube *)0xA53740)
-#define gWalkSkipCells VAR(int, 0xB12BB8)
+#define gQCubeSkipCells VAR(int, 0xB12BB8)
 #define gWalkOverflow VAR(int, 0xB12B80)
 #define gTerrainCells ((WTerrainCell *)0xB16CE0)
 #define gTerrainCellCount VAR(int, 0xB16CA4)
@@ -333,7 +333,7 @@ void QCube_Walk(WWorld *w)
             sel = (fl | 1) >> 4 & 7;
             cellmask = cell->mask;
         }
-        gWalkSkipCells = 0;
+        gQCubeSkipCells = 0;
         if (trees) {
             int bit = 1;
 
@@ -375,7 +375,7 @@ void QCube_Walk(WWorld *w)
         oz += SAR(corner[oct][2], depth);
         pp = &perm[sel * 8];
         ord = &order[sel * 8];
-        if (gWalkSkipCells)
+        if (gQCubeSkipCells)
             cellmask = 0;
 
         for (i = 0; i < 8; i++) {

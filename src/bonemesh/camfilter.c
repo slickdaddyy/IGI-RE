@@ -107,20 +107,20 @@ _Static_assert(sizeof(HandiCamFilter) == 0x54, "HandiCamFilter");
 #define gHandiCamDrawMethod VAR(int, 0x935BFC)
 #define gBandDrawMethod VAR(int, 0x935C00)
 #define gBandFont VAR(const char *, 0x935C04)
-#define gHandiCamFilterTask VAR(int, 0x935C08)
-#define gBandFilterTask VAR(int, 0x935C0C)
+#define gHandiCamFilterPrim VAR(int, 0x935C08)
+#define gBandFilterPrim VAR(int, 0x935C0C)
 #define gBandPixels ((int *)0x935C10)
 #define gFilterRandom ((void *)0x935BF0)
 #define gLineDrawMethod VAR(int, 0x936010)
-#define gLineFilterTask VAR(int, 0x936014)
-#define gWideScreenFilterTask VAR(int, 0x936018)
-#define gHandiCamSprite VAR(const char *, 0x936020)
-#define gHandiCamFont VAR(const char *, 0x936024)
+#define gLineFilterPrim VAR(int, 0x936014)
+#define gWideScreenPrim VAR(int, 0x936018)
+#define gBatterySprite VAR(const char *, 0x936020)
+#define gTimecodeFont VAR(const char *, 0x936024)
 #define gHandiCamSpriteX VAR(int, 0x936028)
 #define gHandiCamSpriteY VAR(int, 0x93602C)
 #define gHandiCamFontX VAR(int, 0x936030)
 #define gHandiCamFontY VAR(int, 0x936034)
-#define gFilterNoiseSeed VAR(float, 0x936038)
+#define gTimecode VAR(float, 0x936038)
 #define gBandFontA VAR(float, 0x93603C)
 #define gBandFontB VAR(float, 0x936040)
 #define gBandFontC VAR(float, 0x936044)
@@ -132,7 +132,7 @@ _Static_assert(sizeof(HandiCamFilter) == 0x54, "HandiCamFilter");
 #define gD3DMinZ VAR(float, 0xBCADA0)
 #define gD3DViewMinZ VAR(float, 0xBCADB4)
 #define gD3DViewMaxZ VAR(float, 0xBCAD8C)
-#define gNearClipZ VAR(float, 0xBCADC0)
+#define gNearPlane VAR(float, 0xBCADC0)
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 #define TASK_DEBUG_LOG (FN(0x4C1780, Debug_Log))
@@ -331,8 +331,8 @@ HandiCamFilter *HandiCamFilter_New(void *parent, float r, float g, float b, floa
     t->blink = 0;
     t->lastTime = Timer_GetMs();
     t->font = NULL;
-    t->font = Sprite_New(gHandiCamFont);
-    Sprite_Load(t->battery, gHandiCamSprite);
+    t->font = Sprite_New(gTimecodeFont);
+    Sprite_Load(t->battery, gBatterySprite);
     if (!mode)
         Mem_ClearMode();
     return t;
@@ -348,7 +348,7 @@ HOOK(0x4A29A0, HandiCamFilter_Delete);
 
 void HandiCamFilter_SetSprite(const char *name, int x, int y)
 {
-    gHandiCamSprite = name;
+    gBatterySprite = name;
     gHandiCamSpriteX = x;
     gHandiCamSpriteY = y;
 }
@@ -356,7 +356,7 @@ HOOK(0x4A29C0, HandiCamFilter_SetSprite);
 
 void HandiCamFilter_SetFont(const char *name, int x, int y)
 {
-    gHandiCamFont = name;
+    gTimecodeFont = name;
     gHandiCamFontX = x;
     gHandiCamFontY = y;
 }
@@ -390,16 +390,16 @@ void CameraFilter_Init(void)
     RenderMode_SetMethod(Direct3D_GetRenderMode(), gLineDrawMethod, LineFilter_Render);
     RenderMode_SetMethod(Direct3D_GetRenderMode(), gBandDrawMethod, FN(0x4A3940, BandFilter_Render));
     RenderMode_SetMethod(Direct3D_GetRenderMode(), gHandiCamDrawMethod, FN(0x4A4300, HandiCamFilter_Render));
-    gLineFilterTask = Primitive_Register("LineFilter");
-    gWideScreenFilterTask = Primitive_Register("WideScreenFilter");
-    gBandFilterTask = Primitive_Register("BandFilter");
-    gHandiCamFilterTask = Primitive_Register("HandiCamFilter");
-    Primitive_SetHandler(gLineFilterTask, FN(0x4A3530, LineFilter_DrawPrim));
-    Primitive_SetHandler(gWideScreenFilterTask, FN(0x4A35B0, WideScreenFilter_DrawPrim));
-    Primitive_SetHandler(gBandFilterTask, FN(0x4A36B0, BandFilter_DrawPrim));
-    Primitive_SetHandler(gHandiCamFilterTask, FN(0x4A4C90, HandiCamFilter_DrawPrim));
+    gLineFilterPrim = Primitive_Register("LineFilter");
+    gWideScreenPrim = Primitive_Register("WideScreenFilter");
+    gBandFilterPrim = Primitive_Register("BandFilter");
+    gHandiCamFilterPrim = Primitive_Register("HandiCamFilter");
+    Primitive_SetHandler(gLineFilterPrim, FN(0x4A3530, LineFilter_DrawPrim));
+    Primitive_SetHandler(gWideScreenPrim, FN(0x4A35B0, WideScreenFilter_DrawPrim));
+    Primitive_SetHandler(gBandFilterPrim, FN(0x4A36B0, BandFilter_DrawPrim));
+    Primitive_SetHandler(gHandiCamFilterPrim, FN(0x4A4C90, HandiCamFilter_DrawPrim));
     Random_Init(gFilterRandom);
-    gFilterNoiseSeed = Random_Float(gFilterRandom) * kSeedScale.f;
+    gTimecode = Random_Float(gFilterRandom) * kSeedScale.f;
 }
 HOOK(0x4A2A00, CameraFilter_Init);
 
@@ -433,7 +433,7 @@ void LineFilter_Render(LineFilter *t)
     long hr;
     int first, count, n, k;
 
-    depth = t->depth > gNearClipZ ? t->depth : gNearClipZ;
+    depth = t->depth > gNearPlane ? t->depth : gNearPlane;
     DEV_GetTransform(gDevice, 3, m);
     rhw = kOne.f / (gNearPlaneScale * depth);
     z = (kOne.f - gD3DMinZ * rhw) * m[10] * (gD3DViewMaxZ - gD3DViewMinZ) + gD3DViewMinZ;

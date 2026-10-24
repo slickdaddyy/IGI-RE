@@ -287,7 +287,7 @@ HOOK(0x4DED30, SectorInteriorObject_WorldRemove);
 void Sector_Close(void)
 {
     Pool_Free(&gSectorLinks);
-    Pool_Free(&gSectorPool2);
+    Pool_Free(&gVisSectors);
     TaskType_Free(gSectorObjectType);
     TaskType_Free(gSectorType);
     TaskType_Free(gSectorInteriorObjectType);

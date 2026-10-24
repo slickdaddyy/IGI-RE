@@ -63,7 +63,7 @@ _Static_assert(sizeof(TgaHeader) == 0x12, "TgaHeader");
 
 /* DirectInput key tables, now and last frame */
 #define gKeys ((uint8_t *)0xC28C62)
-#define gPrevKeys ((uint8_t *)0xC28D62)
+#define gKeysPrev ((uint8_t *)0xC28D62)
 #define DIK_LCONTROL 0x1D
 #define DIK_LSHIFT 0x2A
 #define DIK_LMENU 0x38
@@ -107,7 +107,7 @@ void ScreenGrab_Create(ScreenGrab *g)
 HOOK(0x4EE530, ScreenGrab_Create);
 
 #define DOWN(k) (gKeys[k] & 0x80)
-#define PRESSED(k) (DOWN(k) && !(gPrevKeys[k] & 0x80))
+#define PRESSED(k) (DOWN(k) && !(gKeysPrev[k] & 0x80))
 
 /* Ctrl+Num/ or Scroll Lock grabs one frame, Alt+Num/ starts recording,
    Alt+Shift+Num/ stops it */

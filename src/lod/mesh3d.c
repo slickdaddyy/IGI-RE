@@ -123,7 +123,7 @@ _Static_assert(offsetof(SplineMeshObj, bound) == 0x5A0, "SplineMeshObj");
 #define gExclTopCos VAR(float, 0xB46D18)
 #define gExclBottomCos VAR(float, 0xB46CE8)
 
-#define gRenderFuncs_ ((void (**)(void *))0xA94E84)
+#define gRenderFuncs ((void (**)(void *))0xA94E84)
 
 static const float kOne = 1.0f;
 static const float kBoneSphere = 0x1.68f5c2p+0f; /* 1.41 */
@@ -344,7 +344,7 @@ int Mesh3D_Exclude(float *pos, float radius, void *clip)
     arg.pos = pos;
     arg.radius = radius;
     arg.clip = clip;
-    gRenderFuncs_[Mesh3D_GetExcludeMethod()](&arg);
+    gRenderFuncs[Mesh3D_GetExcludeMethod()](&arg);
     return arg.result;
 }
 HOOK(0x4D03D0, Mesh3D_Exclude);

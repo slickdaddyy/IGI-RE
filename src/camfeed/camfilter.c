@@ -142,12 +142,12 @@ typedef struct DynVB {
 #define gWideScreenFilterType VAR(uint16_t, 0x543D4E)
 #define gDevice VAR(void *, 0x5CA114)
 #define gFilterRandom ((void *)0x935BF0)
-#define gHandiCamFilterMethod VAR(int, 0x935BFC)
-#define gBandFilterMethod VAR(int, 0x935C00)
+#define gHandiCamDrawMethod VAR(int, 0x935BFC)
+#define gBandDrawMethod VAR(int, 0x935C00)
 #define gHandiCamFilterPrim VAR(int, 0x935C08)
 #define gBandFilterPrim VAR(int, 0x935C0C)
 #define gBandPixels ((void *)0x935C10)
-#define gLineFilterMethod VAR(int, 0x936010)
+#define gLineDrawMethod VAR(int, 0x936010)
 #define gLineFilterPrim VAR(int, 0x936014)
 #define gWideScreenPrim VAR(int, 0x936018)
 #define gBatteryX VAR(int, 0x936028)
@@ -240,7 +240,7 @@ static inline int is_zero(float f)
 
 void LineFilter_DrawPrim(FilterPrim *p)
 {
-    void (*fn)(void *) = gRenderFuncs[gLineFilterMethod];
+    void (*fn)(void *) = gRenderFuncs[gLineDrawMethod];
 
     if (fn)
         fn(p->task);
@@ -296,7 +296,7 @@ HOOK(0x4A3650, WideScreenFilter_Draw);
 
 void BandFilter_DrawPrim(FilterPrim *p)
 {
-    void (*fn)(void *) = gRenderFuncs[gBandFilterMethod];
+    void (*fn)(void *) = gRenderFuncs[gBandDrawMethod];
 
     if (fn)
         fn(p->task);
@@ -614,7 +614,7 @@ HOOK(0x4A4300, HandiCamFilter_Render);
 
 void HandiCamFilter_DrawPrim(FilterPrim *p)
 {
-    void (*fn)(void *) = gRenderFuncs[gHandiCamFilterMethod];
+    void (*fn)(void *) = gRenderFuncs[gHandiCamDrawMethod];
 
     if (fn)
         fn(p->task);
@@ -679,9 +679,9 @@ void CameraFilter_Close(void)
     Primitive_Unregister(gBandFilterPrim);
     Primitive_Unregister(gWideScreenPrim);
     Primitive_Unregister(gLineFilterPrim);
-    RenderMode_DeleteMethod(gHandiCamFilterMethod);
-    RenderMode_DeleteMethod(gBandFilterMethod);
-    RenderMode_DeleteMethod(gLineFilterMethod);
+    RenderMode_DeleteMethod(gHandiCamDrawMethod);
+    RenderMode_DeleteMethod(gBandDrawMethod);
+    RenderMode_DeleteMethod(gLineDrawMethod);
     TaskType_Free(gHandiCamFilterType);
     TaskType_Free(gBandFilterType);
     TaskType_Free(gWideScreenFilterType);

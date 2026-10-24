@@ -32,7 +32,7 @@ ORIG(0x4D2C20, void, QCube_SetDetail, (int v));
 #define gDriverCount VAR(int, 0x567C90)
 #define gDrivers ((D3DDriver *)0x567C98)
 #define gLanguageAliasSet VAR(char, 0x537B90)
-#define gUnkA94E84 ((void (**)(int *))0xA94E84)
+#define gRenderFuncs ((void (**)(int *))0xA94E84)
 
 _Static_assert(sizeof(PlayerProfile) == 0x564, "PlayerProfile");
 _Static_assert(sizeof(D3DDriver) == 0x404, "D3DDriver");
@@ -148,7 +148,7 @@ void Config_Apply(void)
 
     if (gLanguageAliasSet)
         Alias_Remove("LANGUAGE:");
-    crt_sprintf(path, "LOCAL:language/%s/", gLanguageNames[gProfiles[gProfileActive].language]);
+    crt_sprintf(path, "LOCAL:language/%s/", gLanguageNames[gProfiles[gActiveProfile].language]);
     Alias_Set("LANGUAGE:", path);
     gLanguageAliasSet = 1;
     music = Profile_GetMusicVolume();
@@ -183,7 +183,7 @@ void Config_WriteStart(void *f)
 {
     char buf[256];
 
-    File_Write(f, buf, crt_sprintf(buf, "%s(%d);\n", "GOStart", gProfileActive));
+    File_Write(f, buf, crt_sprintf(buf, "%s(%d);\n", "GOStart", gActiveProfile));
 }
 HOOK(0x405C50, Config_WriteStart);
 
@@ -253,26 +253,26 @@ void Config_WriteInput(void *f, int i)
     for (b = 0; b < p->keyCount; b++, k++) {
         n = crt_sprintf(buf, "%s(", "GOInRemap");
         for (j = 0; j < CONFIG_ACTION_COUNT; j++)
-            if (gConfigActions[j].value == k->action)
+            if (gInputActions[j].value == k->action)
                 break;
         if (j == CONFIG_ACTION_COUNT)
             n += crt_sprintf(buf + n, "%d,", k->action);
         else
-            n += crt_sprintf(buf + n, "%s,", gConfigActions[j].name);
+            n += crt_sprintf(buf + n, "%s,", gInputActions[j].name);
         for (j = 0; j < CONFIG_DEVICE_COUNT; j++)
-            if (gConfigDevices[j].value == k->device)
+            if (gInputDevices[j].value == k->device)
                 break;
         if (j == CONFIG_DEVICE_COUNT)
             n += crt_sprintf(buf + n, "%d,", k->device);
         else
-            n += crt_sprintf(buf + n, "%s,", gConfigDevices[j].name);
+            n += crt_sprintf(buf + n, "%s,", gInputDevices[j].name);
         for (j = 0; j < CONFIG_KEY_COUNT; j++)
-            if (gConfigKeys[j].value == (k->device << 30 | k->key))
+            if (gInputKeys[j].value == (k->device << 30 | k->key))
                 break;
         if (j == CONFIG_KEY_COUNT)
             n += crt_sprintf(buf + n, "%d);\n", k->key);
         else
-            n += crt_sprintf(buf + n, "%s);\n", gConfigKeys[j].name);
+            n += crt_sprintf(buf + n, "%s);\n", gInputKeys[j].name);
         File_Write(f, buf, n);
     }
 }
@@ -294,34 +294,34 @@ HOOK(0x4061B0, Config_GetDefaultKeys);
 
 KeyBinding *Profile_GetKeys(void)
 {
-    return gProfiles[gProfileActive].keys;
+    return gProfiles[gActiveProfile].keys;
 }
 HOOK(0x4061C0, Profile_GetKeys);
 
 int Profile_GetKeyCount(void)
 {
-    return gProfiles[gProfileActive].keyCount;
+    return gProfiles[gActiveProfile].keyCount;
 }
 HOOK(0x4061E0, Profile_GetKeyCount);
 
 void Profile_SetKeyCount(int count)
 {
-    gProfiles[gProfileActive].keyCount = count;
+    gProfiles[gActiveProfile].keyCount = count;
 }
 HOOK(0x406200, Profile_SetKeyCount);
 
 PlayerProfile *Profile_GetActive(void)
 {
-    return &gProfiles[gProfileActive];
+    return &gProfiles[gActiveProfile];
 }
 HOOK(0x406220, Profile_GetActive);
 
 void Config_GetKey(int i, int *value, const char **name)
 {
     if (name)
-        *name = gConfigKeys[i].name;
+        *name = gInputKeys[i].name;
     if (value)
-        *value = gConfigKeys[i].value;
+        *value = gInputKeys[i].value;
 }
 HOOK(0x406240, Config_GetKey);
 
@@ -334,9 +334,9 @@ HOOK(0x406270, Config_GetKeyCount);
 void Config_GetAction(int i, int *value, const char **name)
 {
     if (name)
-        *name = gConfigActions[i].name;
+        *name = gInputActions[i].name;
     if (value)
-        *value = gConfigActions[i].value;
+        *value = gInputActions[i].value;
 }
 HOOK(0x406280, Config_GetAction);
 
@@ -409,7 +409,7 @@ void Profile_ApplyPerformance(void)
     unsigned flags = Profile_GetActive()->performance;
     int v = flags & 1 ? 1 : flags & 2;
 
-    gUnkA94E84[Texture_GetSetLODId()](&v);
+    gRenderFuncs[Texture_GetSetLODId()](&v);
     AppContext_SetTerrainLightmapsUsed(~flags >> 2 & 1);
     AppContext_SetLightmapsUsed(~flags >> 3 & 1);
     QCube_SetDetail(flags & 0x10 ? 0x60 : flags & 0x20 ? 0x81 : 0xA3);

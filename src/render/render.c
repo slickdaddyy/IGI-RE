@@ -282,17 +282,17 @@ ORIG(0x4D0EA0, void, ModelLod_LoadTexAnimState, (ModelLod *l, const int *in));
 
 #define gD3D VAR(IDirect3D7 *, 0x5CA110)
 #define gD3DDevice VAR(IDirect3DDevice7 *, 0x5CA114)
-#define gModelSlots ((ModelSlot *)0x7205C0)
+#define gMeshBatches ((ModelSlot *)0x7205C0)
 #define gTexStageIdx VAR(int, 0x7205B0)
 #define gAlphaBlendIdx VAR(int, 0x7205B8)
 #define gLitAlphaIdx VAR(int, 0x7205BC)
 #define gLitIdx VAR(int, 0x7234B8)
 #define gLmStageIdx VAR(int, 0x723504)
 #define gUnlitAlphaIdx VAR(int, 0x723508)
-#define gModelVBCount VAR(int, 0x72350C)
+#define gMeshVBCount VAR(int, 0x72350C)
 #define gProjVerts ((ProjVert *)0x723518)
 #define gOpaqueBlendIdx VAR(int, 0x7AC09C)
-#define gModelVBs ((ModelVB *)0x7AC0A0)
+#define gMeshVBs ((ModelVB *)0x7AC0A0)
 #define gUnlitIdx VAR(int, 0x7ADDD4)
 #define gTaskHandlers ((void (*(*)[0x180])(void *, void *))0xA96AE0)
 #define gLightBase VAR(char *, 0xB041E0)
@@ -300,7 +300,7 @@ ORIG(0x4D0EA0, void, ModelLod_LoadTexAnimState, (ModelLod *l, const int *in));
 #define gLightCount VAR(int, 0xB041E8)
 #define gLightStride VAR(int, 0xB041F0)
 #define gFogDensity VAR(DWORD, 0xB46D04)
-#define gFov ((float *)0xB81700)
+#define gLayerFov ((float *)0xB81700)
 #define gAmbient ((float *)0xB818AC)
 #define gFogColor ((float *)0xB818EC)
 #define gView VAR(View, 0xBCAAE0)
@@ -390,8 +390,8 @@ static void select_layer_view(View *saved, View *tc)
 
     *saved = gView;
     *tc = *saved;
-    tc->fov = gFov[0];
-    t = gFov[0] * gScene.h;
+    tc->fov = gLayerFov[0];
+    t = gLayerFov[0] * gScene.h;
     tc->fovY = t / (Display_GetAspect() * gScene.w);
     tc->scaleX = gScene.halfW / tc->fov;
     tc->layer = 0;
@@ -469,8 +469,8 @@ void Direct3DRender_RestoreVertexBuffers(void)
 {
     int i;
 
-    for (i = 0; i < gModelVBCount; i++) {
-        ModelVB *m = &gModelVBs[i];
+    for (i = 0; i < gMeshVBCount; i++) {
+        ModelVB *m = &gMeshVBs[i];
         VBUpload *n, *next;
         void *p;
 
@@ -633,7 +633,7 @@ void Direct3DRender_InitModels(void)
     int i;
 
     for (i = 0; i < 3; i++)
-        if (gModelSlots[i].used)
+        if (gMeshBatches[i].used)
             MeshBatch_Flush(i);
 }
 HOOK(0x49C7D0, Direct3DRender_InitModels);
@@ -642,11 +642,11 @@ void Direct3DRender_DeinitModels(void)
 {
     int i;
 
-    for (i = 0; i < gModelVBCount; i++) {
-        IDirect3DVertexBuffer7_Release(gModelVBs[i].vb);
-        gModelVBs[i].vb = NULL;
+    for (i = 0; i < gMeshVBCount; i++) {
+        IDirect3DVertexBuffer7_Release(gMeshVBs[i].vb);
+        gMeshVBs[i].vb = NULL;
     }
-    gModelVBCount = 0;
+    gMeshVBCount = 0;
 }
 HOOK(0x49C800, Direct3DRender_DeinitModels);
 

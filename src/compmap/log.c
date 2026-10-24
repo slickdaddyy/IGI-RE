@@ -120,13 +120,13 @@ HOOK(0x468BC0, ComputerLog_Draw);
 
 void ComputerLog_Shutdown(void)
 {
-    TaskType_Free(gLogType);
+    TaskType_Free(gComputerLogType);
 }
 HOOK(0x468DA0, ComputerLog_Shutdown);
 
 Task *ComputerLog_New(void *parent)
 {
-    return Task_New(parent, gLogType, 0);
+    return Task_New(parent, gComputerLogType, 0);
 }
 HOOK(0x468DB0, ComputerLog_New);
 

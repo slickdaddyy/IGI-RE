@@ -145,7 +145,7 @@ ORIG(0x462BA0, void, sub_462BA0, (Human *h, double *pos, double *to, float *vel)
 #define gHumanType VAR(uint16_t, 0x5BDAF8)
 #define gHumanDebugTime VAR(int, 0x5BDAFC)
 #define gHumanCriteria VAR(void *, 0x5BDB00)
-#define gHumanParamTable VAR(void *, 0x5BDC18)
+#define gHumanParams VAR(void *, 0x5BDC18)
 #define gHumanDebug VAR(int, 0x5BDC1C)
 #define gHumanList VAR(void *, 0x5BDC24)
 
@@ -449,7 +449,7 @@ HOOK(0x45F800, Human_CollLineHandler);
 
 void Human_GetParamTableHandler(Human *h, void **out)
 {
-    *out = gHumanParamTable;
+    *out = gHumanParams;
 }
 HOOK(0x45F880, Human_GetParamTableHandler);
 
@@ -1098,7 +1098,7 @@ void Human_Close(void)
     int i;
 
     QTaskList_Free(gHumanList);
-    QTaskList_Free(gHumanParamTable);
+    QTaskList_Free(gHumanParams);
     if (gHumanEvent0 != 0xFF)
         TaskEvent_Free(gHumanEvent0);
     if (gHumanEvent1 != 0xFF)
@@ -1151,7 +1151,7 @@ HOOK(0x460C40, Human_GetPunchEvent);
 
 void *Human_GetParamTable(void)
 {
-    return gHumanParamTable;
+    return gHumanParams;
 }
 HOOK(0x460C50, Human_GetParamTable);
 

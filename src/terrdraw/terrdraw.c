@@ -20,12 +20,12 @@ ORIG(0x495200, void, Direct3D_AddRestoreCallback, (void (*fn)(void)));
 #define gD3D VAR(IDirect3D7 *, 0x5CA110)
 #define gD3DDevice VAR(IDirect3DDevice7 *, 0x5CA114)
 #define gFogEnable VAR(DWORD, 0x5470B4)
-#define gTerrFogColor VAR(DWORD, 0xA7E068)
+#define gTerrainFogColorD3D VAR(DWORD, 0xA7E068)
 #define gChunkHash ((TerrList *)0xA7E080)
 #define gChunkHashEnd ((TerrList *)0xA7F85C)
-#define gChunkPool VAR(TerrPool, 0xA7F878)
-#define gTerrVB VAR(IDirect3DVertexBuffer7 *, 0xA7F890)
-#define gD3DHardwareTL VAR(int, 0xBCAD74)
+#define gTerrainChunkPool VAR(TerrPool, 0xA7F878)
+#define gTerrainVB VAR(IDirect3DVertexBuffer7 *, 0xA7F890)
+#define gD3DTnL VAR(int, 0xBCAD74)
 
 #define CHUNK_HASH_SIZE 0x1FD
 
@@ -34,7 +34,7 @@ void Terrain_SetBlendMode(int mode)
     switch (mode) {
     case 0:
         IDirect3DDevice7_SetRenderState(gD3DDevice, D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-        IDirect3DDevice7_SetRenderState(gD3DDevice, D3DRENDERSTATE_FOGCOLOR, gTerrFogColor);
+        IDirect3DDevice7_SetRenderState(gD3DDevice, D3DRENDERSTATE_FOGCOLOR, gTerrainFogColorD3D);
         IDirect3DDevice7_SetRenderState(gD3DDevice, D3DRENDERSTATE_FOGENABLE, gFogEnable);
         IDirect3DDevice7_SetTextureStageState(gD3DDevice, 0, D3DTSS_COLOROP, D3DTOP_MODULATE);
         IDirect3DDevice7_SetRenderState(gD3DDevice, D3DRENDERSTATE_ZFUNC, D3DCMP_LESS);
@@ -80,15 +80,15 @@ TerrChunk *TerrChunk_Get(int x, int y)
             return c;
         c = (TerrChunk *)next;
     }
-    if (gChunkPool.used == gChunkPool.count) {
+    if (gTerrainChunkPool.used == gTerrainChunkPool.count) {
         Error_Show("Out of terrain renderchunks");
         for (;;)
             ;
     }
-    i = gChunkPool.used;
-    c = (TerrChunk *)(gChunkPool.data + gChunkPool.free[i] * gChunkPool.stride);
-    *(int *)((char *)c + gChunkPool.size) = i;
-    gChunkPool.used = i + 1;
+    i = gTerrainChunkPool.used;
+    c = (TerrChunk *)(gTerrainChunkPool.data + gTerrainChunkPool.free[i] * gTerrainChunkPool.stride);
+    *(int *)((char *)c + gTerrainChunkPool.size) = i;
+    gTerrainChunkPool.used = i + 1;
     c->unk2EE8 = 0;
     c->x = x;
     c->y = y;
@@ -124,32 +124,32 @@ static void create_vertex_buffer(void)
 
     d.dwSize = sizeof(d);
     d.dwCaps = D3DVBCAPS_WRITEONLY;
-    if (!gD3DHardwareTL)
+    if (!gD3DTnL)
         d.dwCaps = D3DVBCAPS_WRITEONLY | D3DVBCAPS_SYSTEMMEMORY;
     d.dwFVF = D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_SPECULAR | D3DFVF_TEX1;
     d.dwNumVertices = 0x8000;
-    IDirect3D7_CreateVertexBuffer(gD3D, &d, &gTerrVB, 0);
+    IDirect3D7_CreateVertexBuffer(gD3D, &d, &gTerrainVB, 0);
 }
 
 void TerrDraw_SetMode(void)
 {
     create_vertex_buffer();
-    Pool_Init(&gChunkPool, sizeof(TerrChunk), 0x80, 0);
+    Pool_Init(&gTerrainChunkPool, sizeof(TerrChunk), 0x80, 0);
 }
 HOOK(0x516640, TerrDraw_SetMode);
 
 void TerrDraw_UnsetMode(void)
 {
-    Pool_Free(&gChunkPool);
-    IDirect3DVertexBuffer7_Release(gTerrVB);
-    gTerrVB = NULL;
+    Pool_Free(&gTerrainChunkPool);
+    IDirect3DVertexBuffer7_Release(gTerrainVB);
+    gTerrainVB = NULL;
 }
 HOOK(0x5166C0, TerrDraw_UnsetMode);
 
 void TerrDraw_Restore(void)
 {
-    IDirect3DVertexBuffer7_Release(gTerrVB);
-    gTerrVB = NULL;
+    IDirect3DVertexBuffer7_Release(gTerrainVB);
+    gTerrainVB = NULL;
     create_vertex_buffer();
 }
 HOOK(0x5166F0, TerrDraw_Restore);

@@ -73,7 +73,7 @@ ORIG_STD(0x4AF7A6, HRESULT, AVIStreamRead_, (PAVISTREAM s, LONG start, LONG coun
 ORIG(0x4AF7A0, DWORD, ICDecompress_, (HIC hic, DWORD flags, BITMAPINFOHEADER *infmt, void *in,
                                       BITMAPINFOHEADER *outfmt, void *out));
 
-#define gBackBuffer VAR(IDirectDrawSurface7 *, 0x5CA100)
+#define gD3DBack VAR(IDirectDrawSurface7 *, 0x5CA100)
 #define gDDraw VAR(IDirectDraw7 *, 0x5CA10C)
 
 #define MOVIE_SUBTITLE_MAX 32
@@ -375,13 +375,13 @@ char Movie_InitVideo(Movie *m)
     if (!Display_FindModes(&mode, 7, NULL))
         goto fail;
     Display_SetMode(&mode);
-    if (!gBackBuffer)
+    if (!gD3DBack)
         goto fail;
 
     memset(&pf, 0, sizeof(pf));
     pf.dwSize = sizeof(pf);
     pf.dwFlags = DDPF_RGB;
-    hr = gBackBuffer->lpVtbl->GetPixelFormat(gBackBuffer, &pf);
+    hr = gD3DBack->lpVtbl->GetPixelFormat(gD3DBack, &pf);
     if (hr) {
         crt_sprintf(msg, "Couldn't read pixel format");
         Error_Show(kDXError, msg, DDraw_GetErrorString(hr));
@@ -575,7 +575,7 @@ void Movie_BlitFrame(Movie *m)
 
     memset(&sd, 0, sizeof(sd));
     sd.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
-    hr = gBackBuffer->lpVtbl->GetPixelFormat(gBackBuffer, &sd.ddpfPixelFormat);
+    hr = gD3DBack->lpVtbl->GetPixelFormat(gD3DBack, &sd.ddpfPixelFormat);
     if (hr) {
         crt_sprintf(msg, "Couldn't read pixel format");
         Error_Show(kDXError, msg, DDraw_GetErrorString(hr));
@@ -600,7 +600,7 @@ void Movie_BlitFrame(Movie *m)
     r.top = 0;
     r.right = m->outFormat->h.biWidth;
     r.bottom = abs(m->outFormat->h.biHeight);
-    gBackBuffer->lpVtbl->Blt(gBackBuffer, NULL, surf, &r, DDBLT_DONOTWAIT | DDBLT_ASYNC, NULL);
+    gD3DBack->lpVtbl->Blt(gD3DBack, NULL, surf, &r, DDBLT_DONOTWAIT | DDBLT_ASYNC, NULL);
     surf->lpVtbl->Release(surf);
 }
 HOOK(0x4910C0, Movie_BlitFrame);

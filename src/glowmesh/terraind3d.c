@@ -84,15 +84,15 @@ ORIG(0x514760, void, TerrDraw_ClipTriangle, (TdClipVtx a, TdClipVtx b, TdClipVtx
 ORIG(0x4AF960, void, List_Remove, (TdNode *node));
 
 #define gD3DDevice VAR(IDirect3DDevice7 *, 0x5CA114)
-#define gTerrVB VAR(IDirect3DVertexBuffer7 *, 0xA7F890)
+#define gTerrainVB VAR(IDirect3DVertexBuffer7 *, 0xA7F890)
 #define gTerrVBData VAR(TdTLVertex *, 0xA7F89C)
 #define gTerrVertCount VAR(int, 0xA7E078)
-#define gTerrFogColor VAR(uint32_t, 0xA7E068)
+#define gTerrainFogColorD3D VAR(uint32_t, 0xA7E068)
 #define gTerrMirror VAR(int, 0xA7E06C)
 #define gClipZBias VAR(float, 0xA7E074)
 #define gClipZScale VAR(float, 0xA7F894)
 #define gTerrViewport VAR(D3DVIEWPORT7, 0xA7F860)
-#define gChunkPool VAR(TdPool, 0xA7F878)
+#define gTerrainChunkPool VAR(TdPool, 0xA7F878)
 #define gTerrainFogScale VAR(float, 0xA7DA18)
 #define gTerrainFogColor ((float *)0xA7DA30)
 #define gTerrainMeshes ((TdMesh **)0xB12C60)
@@ -336,7 +336,7 @@ void TerrainMesh_DrawD3D(void)
     r = x87_fistp(gTerrainFogColor[0] * kMinus255.f);
     g = x87_fistp(gTerrainFogColor[1] * kMinus255.f);
     b = x87_fistp(gTerrainFogColor[2] * k255.f);
-    gTerrFogColor = (uint32_t)b - ((((uint32_t)r << 8) + g) << 8);
+    gTerrainFogColorD3D = (uint32_t)b - ((((uint32_t)r << 8) + g) << 8);
 
     memset(ident, 0, 16 * sizeof(float));
     ident[0] = ident[5] = ident[10] = ident[15] = 1.0f;
@@ -370,7 +370,7 @@ void TerrainMesh_DrawD3D(void)
     IDirect3DDevice7_SetTextureStageState(gD3DDevice, 0, 0x03, 0);
     IDirect3DDevice7_SetTextureStageState(gD3DDevice, 1, 0x01, 1);
     gTerrVertCount = 0;
-    if (IDirect3DVertexBuffer7_Lock(gTerrVB, 0x2020, (void **)&gTerrVBData, NULL))
+    if (IDirect3DVertexBuffer7_Lock(gTerrainVB, 0x2020, (void **)&gTerrVBData, NULL))
         return;
 
     count = gTerrainMeshCount;
@@ -606,17 +606,17 @@ void TerrainMesh_DrawD3D(void)
         }
     }
 
-    IDirect3DVertexBuffer7_Unlock(gTerrVB);
+    IDirect3DVertexBuffer7_Unlock(gTerrainVB);
     for (mi = 0; mi < 3; mi++) {
-        int i = gChunkPool.used;
+        int i = gTerrainChunkPool.used;
 
         Terrain_SetBlendMode(mi);
         while (i) {
-            TdChunk *c = (TdChunk *)(gChunkPool.data + gChunkPool.free[--i] * gChunkPool.stride);
+            TdChunk *c = (TdChunk *)(gTerrainChunkPool.data + gTerrainChunkPool.free[--i] * gTerrainChunkPool.stride);
 
             if (c->count && c->pass == mi) {
                 IDirect3DDevice7_SetTexture(gD3DDevice, 0, *(IDirectDrawSurface7 **)(c->texture + 0x20));
-                IDirect3DDevice7_DrawIndexedPrimitiveVB(gD3DDevice, D3DPT_TRIANGLELIST, gTerrVB, 0, gTerrVertCount,
+                IDirect3DDevice7_DrawIndexedPrimitiveVB(gD3DDevice, D3DPT_TRIANGLELIST, gTerrainVB, 0, gTerrVertCount,
                                                         c->tris, c->count * 3, 0);
                 c->count = 0;
             }
@@ -624,17 +624,17 @@ void TerrainMesh_DrawD3D(void)
     }
 
     /* every chunk back to the pool */
-    while (gChunkPool.used) {
-        TdChunk *c = (TdChunk *)(gChunkPool.data + gChunkPool.stride * gChunkPool.free[0]);
-        int last = --gChunkPool.used, i = *(int *)((char *)c + gChunkPool.size);
+    while (gTerrainChunkPool.used) {
+        TdChunk *c = (TdChunk *)(gTerrainChunkPool.data + gTerrainChunkPool.stride * gTerrainChunkPool.free[0]);
+        int last = --gTerrainChunkPool.used, i = *(int *)((char *)c + gTerrainChunkPool.size);
 
         if (i != last) {
-            char *o = gChunkPool.data + gChunkPool.free[last] * gChunkPool.stride;
-            int jj = *(int *)(o + gChunkPool.size), t = gChunkPool.free[i];
+            char *o = gTerrainChunkPool.data + gTerrainChunkPool.free[last] * gTerrainChunkPool.stride;
+            int jj = *(int *)(o + gTerrainChunkPool.size), t = gTerrainChunkPool.free[i];
 
-            gChunkPool.free[i] = gChunkPool.free[jj];
-            gChunkPool.free[jj] = t;
-            *(int *)(o + gChunkPool.size) = i;
+            gTerrainChunkPool.free[i] = gTerrainChunkPool.free[jj];
+            gTerrainChunkPool.free[jj] = t;
+            *(int *)(o + gTerrainChunkPool.size) = i;
         }
         List_Remove(&c->node);
     }

@@ -62,7 +62,7 @@ _Static_assert(sizeof(BoneBlend) == 0x1C, "BoneBlend");
 #define gBoneBuild VAR(BoneHierarchy *, 0xA54638)
 #define gBoneBuildBones VAR(Bone *, 0xA5467C)
 #define gBoneTicksPerFrame VAR(float, 0xA54658)
-#define gBoneObjReady VAR(int, 0xA54678)
+#define gBoneSmoothAnims VAR(int, 0xA54678)
 
 static const float kTicksPerSecond = 4800.0f;
 
@@ -77,7 +77,7 @@ void BoneObj_Init(void)
     int i;
 
     BoneObj_SetRoot(0, 0);
-    gBoneObjReady = 1;
+    gBoneSmoothAnims = 1;
     for (i = 0; i < 64; i++) {
         gBoneHierarchies[i].count = 0;
         gBoneHierarchies[i].parents = NULL;

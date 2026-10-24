@@ -122,7 +122,7 @@ typedef struct ExcludeArg {
 #define gClipDepth VAR(int, 0x7AF1E0)
 #define gRigidClipVerts ((ClipVertex *)0x7AF1E8)
 #define gLightmapClipVerts ((ClipVertex *)0x8AD068)
-#define gNearClipZ VAR(float, 0xBCADC0)
+#define gNearPlane VAR(float, 0xBCADC0)
 #define gVertexBuffer VAR(void *, 0xBCAD90)
 #define gClipOnIndex VAR(int, 0xBCACEC)
 #define gClipOffIndex VAR(int, 0xBCADE0)
@@ -795,7 +795,7 @@ static void clip_face(ClipVertex *a, ClipVertex *b, ClipVertex *c, float *minZ, 
    the first). */
 void RigidDynCubeObj_NearZHandler(RigidObj *obj, NearZArg *arg)
 {
-    float nearZ = gNearClipZ;
+    float nearZ = gNearPlane;
     MeshHeader *h;
     MeshRender *r;
     Matrix rot;

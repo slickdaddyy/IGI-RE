@@ -44,7 +44,7 @@ _Static_assert(sizeof(MenuTextConditional) == 0x218, "MenuTextConditional");
 #define gMenuTextCondColors ((const Color *)0x53B708)
 #define gMenuTextType VAR(uint16_t, 0x53B770)
 #define gMenuTextParams VAR(void *, 0x57BBF4)
-#define gMenuTextColors ((const Color *)0x53B778)
+#define gMenuColors ((const Color *)0x53B778)
 
 void MenuTextConditional_Run(MenuTextConditional *mt);
 void MenuTextConditional_Draw(MenuTextConditional *mt);
@@ -359,7 +359,7 @@ void MenuText_Draw(MenuText *mt)
 
     ((void (*)(void *))HANDLER(Screen_GetDrawEvent(), base))(mt);
     if (t)
-        DRAW_LABEL(mt, gMenuTextColors, fade, alpha, mt->color & 0x10);
+        DRAW_LABEL(mt, gMenuColors, fade, alpha, mt->color & 0x10);
 }
 HOOK(0x421130, MenuText_Draw);
 

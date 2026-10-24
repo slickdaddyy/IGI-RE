@@ -107,9 +107,9 @@ ORIG(0x4D97E0, uint8_t, QObj_GetEvent, (void));
 #define gPolyListNothingD VAR(int, 0x7205A0)
 #define gPolyListRandom ((void *)0x720570)
 #define gLights VAR(char *, 0xB041E0)
-#define gLightOrder VAR(int *, 0xB041E4)
+#define gLightIndex VAR(int *, 0xB041E4)
 #define gLightCount VAR(int, 0xB041E8)
-#define gLightSize VAR(int, 0xB041F0)
+#define gLightStride VAR(int, 0xB041F0)
 #define gAmbient ((float *)0xB818AC)
 #define gFogColor ((float *)0xB818EC)
 #define gFogDensity VAR(float, 0xB46D04)
@@ -126,7 +126,7 @@ ORIG(0x4D97E0, uint8_t, QObj_GetEvent, (void));
 
 static Light *Light_Get(int i)
 {
-    return (Light *)(gLights + gLightOrder[i] * gLightSize);
+    return (Light *)(gLights + gLightIndex[i] * gLightStride);
 }
 
 void PolyList_Delete(PolyList *p)

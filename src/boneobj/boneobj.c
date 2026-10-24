@@ -824,7 +824,7 @@ int BoneObj_AnimPositionCB(float *pos, float *delta, AnimInst *inst)
         } else {
             PosKey *k = &keys[i], *pk = &keys[i - 1];
 
-            if (gSmoothAnims) {
+            if (gBoneSmoothAnims) {
                 long double dt = kt - pk->time;
                 long double s = 1.0f - (kt - tm) / dt;
                 long double s2 = s * s, s3, h, in2;
@@ -1143,7 +1143,7 @@ interp:
         long double angle, s0, s1;
         Quat c;
 
-        if (gSmoothAnims) {
+        if (gBoneSmoothAnims) {
             Quat q1, q2;
 
             angle = slerp_angle(&c, kb->q, &tr->slerp[a]);
