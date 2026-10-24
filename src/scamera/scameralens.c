@@ -206,7 +206,7 @@ void SCameraLens_Run(SCameraLens *l)
         l->explode = 0;
         c->exploded = 1;
         RigidDynCubeObj_SetModel(l, VirModel_Find(c->broken_model));
-        l->o.unkDC = 0;
+        l->o.lightmapRefs = 0;
         Explosion_Spawn(&l->o.pos, 1, 0, 0.25f, 2048.0f, 0, 0, 7, 3, 0, "1009_01_1", "explo_camera", 0x15, 2,
                         102400.0f, 0);
     }

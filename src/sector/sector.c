@@ -9,6 +9,7 @@
 #include "litmap/litmaptypes.h"
 #include "bonemesh/bonemeshtypes.h"
 #include "transctx/transctxtypes.h"
+#include "glowmesh/glowmeshtypes.h"
 
 FN_EXTERN(SectorInteriorObject_WorldAdd);
 FN_EXTERN(SectorInteriorObject_WorldRemove);
@@ -115,14 +116,6 @@ typedef struct VisSector {
     Sector *sector;
     int unk1C;
 } VisSector;
-
-typedef struct DrawArg {
-    RigidDynCubeObj *obj;
-    int *lights;
-    int lightCount;
-    int *fog;
-    int fogCount;
-} DrawArg;
 
 typedef struct PlaceArg {
     Vec3d pos;
@@ -949,16 +942,16 @@ HOOK(0x4DCF20, Sector_Open);
    children and draws the objects inside */
 void Sector_Render(Sector *s)
 {
-    DrawArg d;
+    MeshDrawArg d;
     PlaceArg a;
     Task *c;
     int i;
 
-    d.obj = &s->o;
+    d.obj = (struct BoneDynCubeObj *)&s->o;
     d.lights = gSectorLights;
     d.lightCount = gSectorLightCount;
-    d.fog = gSectorFog;
-    d.fogCount = gSectorFogCount;
+    d.haze = gSectorFog;
+    d.hazeCount = gSectorFogCount;
     gRenderFuncs[Mesh3D_GetDrawRigidMethod()](&d);
     a.pos = s->o.pos;
     a.matrix = s->o.matrix;

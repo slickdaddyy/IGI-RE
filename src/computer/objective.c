@@ -20,16 +20,6 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *extra));
 
-/* one line of the objectives list */
-typedef struct Objective {
-    char name[32];
-    int id;
-    VarString visible;
-    VarString done;
-    int isVisible;
-    int isDone;
-} Objective;
-
 /* the objectives shown on the map computer, while cond is true */
 typedef struct ComputerObjective {
     Task task;
@@ -37,7 +27,6 @@ typedef struct ComputerObjective {
     Objective obj[6];
 } ComputerObjective;
 
-_Static_assert(sizeof(Objective) == 0xCC, "Objective");
 _Static_assert(sizeof(ComputerObjective) == 0x538, "ComputerObjective");
 
 extern void *gObjectiveParams;
@@ -65,7 +54,7 @@ void ComputerObjective_Open(void)
     ParamTable_Add(gObjectiveParams, &c, &c.cond, Param_VarString(), 7, NULL);
     for (i = 0; i < 6; i++) {
         ParamTable_Add(gObjectiveParams, &c, c.obj[i].name, Param_String32(), 7, NULL);
-        ParamTable_Add(gObjectiveParams, &c, &c.obj[i].id, Param_Int32(), 7, NULL);
+        ParamTable_Add(gObjectiveParams, &c, &c.obj[i].taskId, Param_Int32(), 7, NULL);
         ParamTable_Add(gObjectiveParams, &c, &c.obj[i].visible, Param_VarString(), 7, NULL);
         ParamTable_Add(gObjectiveParams, &c, &c.obj[i].done, Param_VarString(), 7, NULL);
     }
@@ -79,11 +68,11 @@ void ComputerObjective_Create(ComputerObjective *c)
     VarString_Init(&c->cond);
     for (i = 0; i < 6; i++) {
         c->obj[i].name[0] = 0;
-        c->obj[i].id = -1;
+        c->obj[i].taskId = -1;
         VarString_Init(&c->obj[i].visible);
         VarString_Init(&c->obj[i].done);
-        c->obj[i].isVisible = 0;
-        c->obj[i].isDone = 0;
+        c->obj[i].complete = 0;
+        c->obj[i].failed = 0;
     }
 }
 HOOK(0x4673B0, ComputerObjective_Create);
@@ -103,8 +92,8 @@ void ComputerObjective_Run(ComputerObjective *c)
         return;
     gObjective = c;
     for (i = 0; i < 6; i++) {
-        c->obj[i].isVisible = eval_flag(&c->obj[i].visible, c);
-        c->obj[i].isDone = eval_flag(&c->obj[i].done, c);
+        c->obj[i].complete = eval_flag(&c->obj[i].visible, c);
+        c->obj[i].failed = eval_flag(&c->obj[i].done, c);
     }
 }
 HOOK(0x467410, ComputerObjective_Run);

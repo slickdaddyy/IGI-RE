@@ -116,7 +116,7 @@ HOOK(0x4675B0, ComputerObject_Project);
 void ComputerObject_ProjectPos(float *out, float *depth, Vec3d *pos, MapQuery *q)
 {
     long double dx, dy, dz;
-    float *m = q->view;
+    float *m = (float *)q->view;
     float v0, v1, v2, s, h;
 
     dx = pos->x - q->center->x;
@@ -238,7 +238,7 @@ void ComputerObject_Draw(ComputerObject *o)
     int i;
 
     q.center = (Vec3d *)(view + 0x28);
-    q.view = (float *)view;
+    q.view = (Matrix *)((float *)view);
     memcpy(&q.zoom, view + 0x40, sizeof(float));
     q.marker = -1;
     q.color = -1;
@@ -340,7 +340,7 @@ static void to_view(float *v, MapQuery *q)
     d[0] = q->pos->x - q->center->x;
     d[1] = q->pos->y - q->center->y;
     d[2] = q->pos->z - q->center->z;
-    m = q->view;
+    m = (float *)q->view;
     v[0] = d[2] * m[6] + d[1] * m[3] + d[0] * m[0];
     v[1] = d[2] * m[7] + d[1] * m[4] + d[0] * m[1];
     v[2] = d[2] * m[8] + d[1] * m[5] + d[0] * m[2];

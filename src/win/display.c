@@ -48,22 +48,7 @@ typedef struct DisplayCallback {
 
 #define DISPLAY_CALLBACK_MAX 32
 
-/* What Display_EnumDrivers passes to its callback. */
-typedef struct DDEnumCtx {
-    int listDevices;
-    const char *driverName;
-    const char *deviceName;
-    DDDriver *drivers;
-    int *count;
-    void *devices;
-    int *deviceCount;
-    int unk1C;
-    int unk20;
-    DDDriver cur;
-} DDEnumCtx;
-
 _Static_assert(sizeof(DisplayMode) == 0x11C, "DisplayMode");
-_Static_assert(offsetof(DDEnumCtx, cur.d3dDesc) == 0x430, "DDEnumCtx");
 
 extern char gDisplayOpen;
 extern char gDisplayModeSet;

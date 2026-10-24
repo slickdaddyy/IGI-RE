@@ -31,13 +31,6 @@ static const float kSlowTurn = 0x1.a8c536p-6f;
 static const double kReached = 0x1.3333333333333p+10;
 static const double kNodeTol = 0x1.3333333333333p-2;
 
-/* what the door search handler fills in */
-typedef struct NearQuery {
-    Vec3d pos;
-    double best;
-    Task *found;
-} NearQuery;
-
 /* is pos inside the view cone (or the wider secondary one) */
 char AIView_CanSee(AIView *v, const Vec3d *pos, char alarm)
 {

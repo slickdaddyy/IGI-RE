@@ -44,4 +44,10 @@ typedef struct AIMessage {
 } AIMessage;
 _Static_assert(sizeof(AIMessage) == 0x1C, "AIMessage");
 
+typedef struct NearQuery {
+    Vec3d pos;
+    double best;
+    Task *found;
+} NearQuery;
+
 #endif

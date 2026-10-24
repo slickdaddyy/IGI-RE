@@ -18,7 +18,7 @@ ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 ORIG(0x4D7550, void, BoneDynCubeObj_Open, (void));
 ORIG(0x4D95E0, void, BoneDynCubeObj_Close, (void));
 ORIG(0x4D9610, uint16_t, BoneDynCubeObj_GetType, (void));
-ORIG(0x4DA180, void, Haze_GetVisible, (int *list, int *count));
+ORIG(0x4DA180, void, Haze_GetVisible, (int **list, int *count));
 ORIG(0x4DAA20, int, Light_GetActive, (int *count));
 
 typedef void (*TaskHandler)(Task *task, void *arg);
@@ -77,7 +77,7 @@ void BoneDynCubeObj_EnterHandler(BoneDynCubeObj *obj)
     Task *c;
 
     d.obj = obj;
-    d.lights = Light_GetActive(&d.lightCount);
+    d.lights = (int *)(Light_GetActive(&d.lightCount));
     Haze_GetVisible(&d.haze, &d.hazeCount);
     gRenderFuncs[Mesh3D_GetDrawBoneMethod()](&d);
     memcpy(a.pos, obj->pos, sizeof(a.pos));

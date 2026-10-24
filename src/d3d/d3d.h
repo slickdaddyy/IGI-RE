@@ -17,27 +17,12 @@ typedef struct D3DDeviceEntry {
     int hwRasterization;
 } D3DDeviceEntry;
 
-/* Context of the driver enumeration (0x491EF0 / 0x491F10). */
-typedef struct DDEnumCtx {
-    int listDevices;
-    const char *driverName;
-    const char *deviceName;
-    DDDriver *drivers;
-    int *count;
-    D3DDeviceEntry *devices;
-    int *deviceCount;
-    int unk1C;
-    int unk20;
-    DDDriver cur;
-} DDEnumCtx;
-
 typedef struct D3DCallback {
     struct D3DCallback *next;
     void (*fn)(void);
 } D3DCallback;
 
 _Static_assert(sizeof(D3DDeviceEntry) == 0x668, "D3DDeviceEntry");
-_Static_assert(sizeof(DDEnumCtx) == 0x51C, "DDEnumCtx");
 
 const char *DDraw_GetErrorString(HRESULT hr);
 

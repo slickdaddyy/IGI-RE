@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "editcam/editcam.h"
 #include "magicobj/magicobjtypes.h"
+#include "editcam/editcamtypes.h"
 
 FN_EXTERN(SubLevel_Run);
 
@@ -37,36 +38,6 @@ ORIG(0x4F1E20, void *, Param_EnumString32, (void));
 ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
 #define SubLevel_Run (FN(0x488700, SubLevel_Run))
-
-/* a camera key of a cut scene */
-typedef struct EditCamera {
-    Task task;
-    Vec3d pos;
-    float duration;
-    float angles[3];
-    Vec3d attachPos;    /* offset from the position target */
-    Matrix attachRot;
-    float fov;
-    int posAttach;      /* task id followed by the position, -1 none */
-    int rotAttach;      /* task id the camera looks at, -1 none */
-    char smooth;
-    char posFollow;
-    char rotFollow;
-    char unk97;
-    float unk98;
-    Task **refs[3];
-    char unkA8;
-    char filterName[0x23];
-    int filter;
-    float filterLevel;
-    float color[3];
-    float shake;
-    int unkE4;
-} EditCamera;
-
-_Static_assert(sizeof(EditCamera) == 0xE8, "EditCamera");
-_Static_assert(offsetof(EditCamera, filterName) == 0xA9, "EditCamera.filterName");
-_Static_assert(offsetof(EditCamera, filter) == 0xCC, "EditCamera.filter");
 
 extern uint16_t gEditCameraType;
 extern char gEditCameraFilterEnum[];

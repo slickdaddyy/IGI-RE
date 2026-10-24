@@ -3,9 +3,9 @@
 
 typedef struct MeshDrawArg {
     void *obj;          /* the object drawn */
-    int lights;
+    int *lights;
     int lightCount;
-    int haze;
+    int *haze;
     int hazeCount;
 } MeshDrawArg;
 

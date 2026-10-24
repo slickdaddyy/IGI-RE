@@ -242,7 +242,7 @@ HOOK(0x469D70, ComputerMap_OnTab);
 void ComputerMap_OnButton(ComputerButtonItem *b, int *id)
 {
     ComputerMap *map = gMap;
-    char *in = Computer_Get()->input;
+    char *in = (char *)(Computer_Get()->obj.task.parent);
     float sound[3] = {1.0f, 1.0f, 0};
     float dx, dy, sdx;
     long double f;

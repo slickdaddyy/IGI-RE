@@ -7,6 +7,7 @@
 #include "dxinit/dxinit.h"
 #include "win/wintypes.h"
 #include "coll/colltypes.h"
+#include "dxinit/dxinittypes.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401400, void, TaskType_SetHandler, (int type, uint8_t slot, void *fn));
@@ -36,13 +37,6 @@ typedef struct RainDrop {
     float dx, dy;
     int kind; /* bit 0 / 1: tile wrapped in x / y, picks the vertex group */
 } RainDrop;
-
-/* a ground sample of the 24x24 grid around the camera (12x12 tiled twice) */
-typedef struct RainCell {
-    double x, y, z;
-    float depth;
-    unsigned flags; /* 0x20 = valid, bits 0-4 outcodes */
-} RainCell;
 
 /* heights of the drops in one vertex group, in drawing order */
 typedef struct RainList {

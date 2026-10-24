@@ -41,4 +41,17 @@ typedef struct D3DDevice {
     const D3DDeviceVtbl *vtbl;
 } D3DDevice;
 
+typedef struct DDEnumCtx {
+    int listDevices;
+    const char *driverName;
+    const char *deviceName;
+    DDDriver *drivers;
+    int *count;
+    struct D3DDeviceEntry *devices;
+    int *deviceCount;
+    int unk1C;
+    int unk20;
+    DDDriver cur;
+} DDEnumCtx;
+
 #endif

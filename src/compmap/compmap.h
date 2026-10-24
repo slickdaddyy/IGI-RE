@@ -8,6 +8,7 @@
 #include "types.h"
 #include "qasm/qasmtypes.h"
 #include "coll/colltypes.h"
+#include "comprun/compruntypes.h"
 
 /* the storage of a loaded sprite */
 typedef struct SpriteSlot {
@@ -113,11 +114,6 @@ typedef struct MapCamera {
     Vec3d pos;           /* 0x28 */
     float fov;           /* 0x40 */
 } MapCamera;
-
-typedef struct Computer {
-    char unk0[0x14];
-    char *input;         /* 0x14, mouse moves at 0x1B0 / 0x1B4 */
-} Computer;
 
 _Static_assert(sizeof(ComputerRes) == 0x4FC, "ComputerRes");
 _Static_assert(sizeof(ComputerButtonItem) == 0x94, "ComputerButtonItem");

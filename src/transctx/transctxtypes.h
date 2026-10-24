@@ -57,4 +57,20 @@ typedef struct RenderNode {
     int unk8;
 } RenderNode;
 
+typedef struct Sound {
+    SoundNode node;
+    int key1;
+    int key2;
+    int magic;
+    short format; /* 0 / 2 streamed (2 = ADPCM), 1 PCM, 3 ADPCM decoded at load */
+    short bits;
+    short channels;
+    short unk1A;
+    int rate;
+    int samples;
+    struct IDirectSoundBuffer *buffer;
+    char *name;
+    void *data;
+} Sound;
+
 #endif

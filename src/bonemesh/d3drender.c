@@ -32,7 +32,7 @@ ORIG(0x4D03D0, int, Mesh3D_Exclude, (Vec3f *center, float radius, void *out));
 ORIG(0x4D06C0, int, Mesh3D_ExcludeBone, (void *obj, int *clip));
 ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 ORIG(0x4D97E0, uint8_t, QObj_GetEvent, (void));
-ORIG(0x4DA180, void, Haze_GetVisible, (int *a, int *b));
+ORIG(0x4DA180, void, Haze_GetVisible, (int **a, int *b));
 ORIG(0x4DAA20, int, Light_GetActive, (int *a));
 
 #define ID_RD3D 0x52443344
@@ -378,8 +378,8 @@ void RigidDynCubeObj_EnterHandler(RigidDynCubeObj *obj)
     MeshDrawArg d;
     PlaceArg a;
 
-    d.obj = obj;
-    d.lights = Light_GetActive(&d.lightCount);
+    d.obj = (struct BoneDynCubeObj *)obj;
+    d.lights = (int *)(Light_GetActive(&d.lightCount));
     Haze_GetVisible(&d.haze, &d.hazeCount);
     gRenderFuncs[Mesh3D_GetDrawRigidMethod()](&d);
     a.pos = obj->pos;

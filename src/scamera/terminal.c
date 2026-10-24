@@ -244,7 +244,7 @@ void Terminal_DrawIcon(Terminal *t, char **arg)
 HOOK(0x443DA0, Terminal_DrawIcon);
 
 /* fills the position, orientation and radius of a map marker */
-void Terminal_MapHandler(SObj *o, char *arg)
+void Terminal_MapHandler(RigidDynCubeObj *o, char *arg)
 {
     float scale;
 

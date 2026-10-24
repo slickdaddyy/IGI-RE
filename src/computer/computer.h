@@ -10,25 +10,9 @@
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "qasm/qasmtypes.h"
+#include "computer/computertypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* passed to every object drawn on the map computer (ComputerObject event 0) */
-typedef struct MapQuery {
-    Vec3d *center;
-    float *view;
-    float zoom;
-    Vec3d *pos;
-    Matrix *matrix;
-    float radius;
-    void *sprite;
-    int marker;
-    int color;
-    char *text;
-    char *text2;
-} MapQuery;
-
-_Static_assert(sizeof(MapQuery) == 0x2C, "MapQuery");
 
 extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

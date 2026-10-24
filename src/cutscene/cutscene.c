@@ -8,31 +8,9 @@
 #include "camera/camera.h"
 #include "param/paramtypes.h"
 #include "win/wintypes.h"
+#include "editcam/editcamtypes.h"
 
 FN_EXTERN(Task_Nothing);
-
-/* a camera key of a cut scene: an EditCamera child task */
-typedef struct EditCamera {
-    Task task;
-    Vec3d pos;
-    float duration;
-    float angles[3];
-    char unk48[0x18];
-    char unk60[0x28];
-    float fov;
-    int posAttach;
-    int rotAttach;
-    char smooth;
-    char posFollow;
-    char rotFollow;
-    char pad97;
-    float unk98;
-    char unk9C[0x30];
-    int filter;
-    float filterLevel;
-    float color[3];
-    float shake;
-} EditCamera;
 
 /* 0x278 bytes, parent Position */
 typedef struct CutScene {
@@ -77,9 +55,6 @@ typedef struct CutKey {
     float time;
 } CutKey;
 
-_Static_assert(offsetof(EditCamera, fov) == 0x88, "EditCamera.fov");
-_Static_assert(offsetof(EditCamera, unk98) == 0x98, "EditCamera.unk98");
-_Static_assert(offsetof(EditCamera, shake) == 0xE0, "EditCamera.shake");
 _Static_assert(offsetof(CutScene, runExpr) == 0x7C, "CutScene.runExpr");
 _Static_assert(offsetof(CutScene, key) == 0x20C, "CutScene.key");
 _Static_assert(offsetof(CutScene, camMatrix) == 0x230, "CutScene.camMatrix");
@@ -557,7 +532,7 @@ void CutScene_Interpolate(CutScene *c, CutKey **k, double t, double end, char ch
         if (!changed && !e1->posFollow) {
             pos = c->camPos;
         } else {
-            EditCamera_AttachPosition(&pos, &rot, e1->unk48, e1->unk60, e1->posAttach);
+            EditCamera_AttachPosition(&pos, &rot, &e1->attachPos, &e1->attachRot, e1->posAttach);
             c->camPos = pos;
         }
     }

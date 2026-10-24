@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "comprun/comprun.h"
+#include "comprun/compruntypes.h"
 
 FN_EXTERN(Task_FalseHandler);
 
@@ -46,19 +47,6 @@ ORIG(0x4E8220, void, Viewport_SetList, (void *view, int layer, int on));
 ORIG(0x4E8250, void, Viewport_SetDrawWorld, (void *view, int on));
 ORIG(0x4E8270, void, Viewport_SetFog, (void *view, int v));
 ORIG(0x4E8370, void, TerraDrawTask_New, (void *view, void *world));
-
-/* "Computer" (0x198 bytes), the in-game computer the player looks at */
-typedef struct Computer {
-    RigidDynCubeObj obj;
-    Vec3d eye;    /* 0xF0 */
-    Matrix look;  /* 0x108 */
-    Task *view;   /* 0x130 */
-    int unk134;
-    char camera[0x60];
-} Computer;
-
-_Static_assert(offsetof(Computer, camera) == 0x138, "camera");
-_Static_assert(sizeof(Computer) == 0x198, "Computer");
 
 extern uint16_t gComputerType;
 extern Computer *gComputer;

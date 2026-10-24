@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "door/door.h"
 #include "coll/colltypes.h"
+#include "humanai/humanaitypes.h"
 
 FN_EXTERN(Param_Three);
 FN_EXTERN(Task_Nothing);
@@ -72,13 +73,6 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 ORIG(0x5096A0, uint8_t, AIGraph_GetEvent, (void));
-
-/* asks for the door nearest to pos */
-typedef struct NearQuery {
-    Vec3d pos;
-    double best;        /* 0x18, squared, below 0 for none yet */
-    Door *found;        /* 0x20 */
-} NearQuery;
 
 /* sent to the children of unkE8 with the MagicObj move event */
 typedef struct DoorMoveMsg {
@@ -221,7 +215,7 @@ void Door_FindNearest(Door *d, NearQuery *q)
 
     if (!(q->best >= kZeroD) || !(dist >= q->best)) {
         q->best = dist;
-        q->found = d;
+        q->found = (Task *)d;
     }
 }
 HOOK(0x446470, Door_FindNearest);

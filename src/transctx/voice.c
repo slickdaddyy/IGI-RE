@@ -31,23 +31,6 @@ typedef struct AdpcmState {
     char odd; /* the low nibble of the last byte is still to be decoded */
 } AdpcmState;
 
-/* A loaded sample (0x30 bytes), filed in gSoundLists[key1] (see Sound_Load). */
-typedef struct Sound {
-    SoundNode node;
-    int key1;
-    int key2;
-    int magic;
-    short format; /* 0 / 2 streamed (2 = ADPCM), 1 PCM, 3 ADPCM decoded at load */
-    short bits;
-    short channels;
-    short unk1A;
-    int rate;
-    int samples;
-    IDirectSoundBuffer *buffer;
-    char *name;
-    void *data;
-} Sound;
-
 /* A playing sound, 32 of them at gSoundVoices. Positions are in sample frames. */
 typedef struct Voice {
     struct Voice *next;
@@ -70,7 +53,6 @@ typedef struct Voice {
 } Voice;
 
 _Static_assert(sizeof(AdpcmState) == 0xC, "AdpcmState");
-_Static_assert(sizeof(Sound) == 0x30, "Sound");
 _Static_assert(sizeof(Voice) == 0x4C, "Voice");
 
 extern int gSoundVoiceCount;

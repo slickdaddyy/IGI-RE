@@ -11,6 +11,7 @@
 #include "magicobj/magicobjtypes.h"
 #include "graphtask/graphtasktypes.h"
 #include "humanai/humanaitypes.h"
+#include "computer/computertypes.h"
 
 typedef void (*TaskFn)();
 
@@ -70,18 +71,6 @@ typedef struct MineProbe {
     Vec3d pos;
     float radius;
 } MineProbe;
-
-/* what the computer map asks every object (0x2C bytes) */
-typedef struct MapQuery {
-    Vec3d *center;
-    Matrix *view;
-    float zoom;
-    Vec3d *pos;         /* 0xC */
-    Matrix *matrix;     /* 0x10 */
-    float radius;       /* 0x14 */
-    char *sprite;       /* 0x18 */
-    char unk1C[0x10];
-} MapQuery;
 
 /* M203 grenade (0x128 bytes) */
 typedef struct M203 {
