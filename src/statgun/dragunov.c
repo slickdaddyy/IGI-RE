@@ -81,17 +81,17 @@ void Dragunov_Use(ZoomGun *g, WeaponUseMsg *msg)
         if (h->input[15] == kZero)
             return;
         t = x87_tan(kAngle45);
-        if (t > v->fov) {
-            v->fov = v->fov * kDragunovZoomOut;
-            v->unk1E8 = v->unk1E8 * kDragunovZoomOut;
+        if (t > v->fovX) {
+            v->fovX = v->fovX * kDragunovZoomOut;
+            v->fovY = v->fovY * kDragunovZoomOut;
         }
-        if (t < v->fov) {
-            v->fov = t;
-            v->unk1E8 = x87_tan(kAngle30);
+        if (t < v->fovX) {
+            v->fovX = t;
+            v->fovY = x87_tan(kAngle30);
         }
-    } else if (v->fov > *minFov) {
-        v->fov = v->fov * kDragunovZoomIn;
-        v->unk1E8 = v->unk1E8 * kDragunovZoomIn;
+    } else if (v->fovX > *minFov) {
+        v->fovX = v->fovX * kDragunovZoomIn;
+        v->fovY = v->fovY * kDragunovZoomIn;
     }
 }
 HOOK(0x472E50, Dragunov_Use);

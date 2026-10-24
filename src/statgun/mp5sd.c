@@ -60,13 +60,13 @@ void Mp5sd_Use(ZoomGun *g, WeaponUseMsg *msg)
 
     HANDLER(Human_GetEvent0(), Gun_GetType())(g, msg);
     if (!msg->active) {
-        v->fov = x87_tan(kAngle45);
-        v->unk1E8 = x87_tan(kAngle30);
+        v->fovX = x87_tan(kAngle45);
+        v->fovY = x87_tan(kAngle30);
         g->zoomed = 0;
         return;
     }
-    fov = v->fov;
-    MOV32(e, v->unk1E8);
+    fov = v->fovX;
+    MOV32(e, v->fovY);
     pressed = h->input[7] != kZero && h->prevInput[7] == kZero;
     if (g->zoomed) {
         if (pressed)
@@ -88,8 +88,8 @@ void Mp5sd_Use(ZoomGun *g, WeaponUseMsg *msg)
             e = x87_tan(kAngle30);
         }
     }
-    v->fov = fov;
-    MOV32(v->unk1E8, e);
+    v->fovX = fov;
+    MOV32(v->fovY, e);
 }
 HOOK(0x473AF0, Mp5sd_Use);
 

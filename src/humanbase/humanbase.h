@@ -11,6 +11,7 @@
 #include "camera/cameratypes.h"
 #include "loadscreen/loadscreentypes.h"
 #include "humanbase/humanbasetypes.h"
+#include "viewcam/viewcamtypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
@@ -24,35 +25,10 @@ typedef struct HumanText {
     unsigned int flags;
 } HumanText;
 
-typedef struct HumanView {
-    char unk0[0x20];
-    double pos[3];
-    char unk38[0x38];
-    char *model;
-    char unk74[0x65];
-    char firstPerson;
-    char unkDA[0x5A];
-    float unk134;
-    char unk138[2];
-    char camOverride;
-    char unk13B[5];
-    double camPos[3];
-    float camMatrix[10];
-    char unk180[0x64];
-    float fov;
-    float unk1E8;
-} HumanView;
-
 #define HUMAN_ON_GROUND 0x4
 #define HUMAN_ROOF      0x10
 #define HUMAN_DEAD      0x20000
 
-_Static_assert(offsetof(HumanView, firstPerson) == 0xD9, "firstPerson");
-_Static_assert(offsetof(HumanView, unk134) == 0x134, "unk134");
-_Static_assert(offsetof(HumanView, camOverride) == 0x13A, "camOverride");
-_Static_assert(offsetof(HumanView, camPos) == 0x140, "camPos");
-_Static_assert(offsetof(HumanView, camMatrix) == 0x158, "camMatrix");
-_Static_assert(offsetof(HumanView, fov) == 0x1E4, "fov");
 _Static_assert(offsetof(HumanText, flags) == 0x24, "flags");
 
 /* where a weapon sits: hand bone of the body, or of the view model */

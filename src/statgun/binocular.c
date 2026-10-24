@@ -43,15 +43,15 @@ void BinocularOverlay_UseHandler(BinocularOverlay *o, WeaponUseMsg *msg)
     Matrix r, m;
     int i, j;
 
-    o->matrix = v->unkF8;
+    o->matrix = v->cam;
     Matrix_SetEuler(&r, kTurn, 0.0f, 0.0f);
     for (i = 0; i < 3; i++)
         for (j = 0; j < 3; j++)
             m.m[i * 3 + j] = a[i * 3] * r.m[j] + a[i * 3 + 2] * r.m[6 + j] + a[i * 3 + 1] * r.m[3 + j];
     m.count = o->matrix.count + r.count + 1;
     o->matrix = m;
-    o->pos = v->unkE0;
-    MOV32(o->fov, v->fov);
+    o->pos = *(Vec3d *)v->eye;
+    MOV32(o->fov, v->fovX);
 }
 HOOK(0x472440, BinocularOverlay_UseHandler);
 

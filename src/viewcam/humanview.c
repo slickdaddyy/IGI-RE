@@ -126,13 +126,13 @@ void HumanView_CreateHandler(HumanView *v)
     v->unk139 = 1;
     v->camOverride = 0;
     v->hasTarget = 0;
-    memset(v->offset, 0, sizeof(v->offset));
-    memset(v->unk1A8, 0, sizeof(v->unk1A8));
+    memset(v->lean, 0, sizeof(v->lean));
+    memset(v->leanSpeed, 0, sizeof(v->leanSpeed));
     v->shake = 0.0f;
     v->dip = 0.0f;
     HumanView_ClearWeaponAngles(v);
     v->zoomed = 0;
-    v->bone = -1;
+    v->animEvent.sound = -1;
     v->duck = 0.0f;
     v->duckNow = 0.0f;
     v->fovX = x87_tan(kFovX);
@@ -449,9 +449,9 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
     }
     Matrix_SetEuler(&v->cam, e0, e1, e2);
     Human_GetEyePos(eye, h);
-    o[0] = v->offset[0];
-    o[1] = v->offset[1];
-    o[2] = v->offset[2];
+    o[0] = v->lean[0];
+    o[1] = v->lean[1];
+    o[2] = v->lean[2];
     z = o[2];
     if (!x87_eq(v->shake, 0.0f)) {
         long double n;
@@ -573,11 +573,11 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
         v->rotDirty = 1;
         v->rot = rot;
         BoneObj_GetRootMotion(v->weaponPos, v->unk1FC, v->anim);
-        v->bone = -1;
-        BoneObj_GetEvents(&v->unk208, v->anim);
+        v->animEvent.sound = -1;
+        BoneObj_GetEvents(&v->animEvent.unk0, v->anim);
         r = v->rot.m;
-        if (v->bone != -1) {
-            const float *b = v->bonePos;
+        if (v->animEvent.sound != -1) {
+            const float *b = v->animEvent.offset;
 
             x = (r[2] * b[2] + r[1] * b[1]) + b[0] * r[0];
             y = (r[5] * b[2] + r[4] * b[1]) + r[3] * b[0];
@@ -585,7 +585,7 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
             pos[0] = x + v->pos[0];
             pos[1] = y + v->pos[1];
             pos[2] = zz + v->pos[2];
-            AnimTrigger_Fire(v->bone, v, pos);
+            AnimTrigger_Fire(v->animEvent.sound, v, pos);
         }
         HumanView_GetEye(eye, h->view);
         w = v->weaponPos;

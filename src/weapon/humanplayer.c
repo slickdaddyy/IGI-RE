@@ -721,7 +721,7 @@ void HumanPlayer_HitHandler(HumanPlayer *h, HumanHit *hit)
         f = Flash_Random();
         h->hitFlash[0] = h->hitFlash[1] = h->hitFlash[2] = h->hitFlash[3] = f;
     } else {
-        const float *m = h->view->matrix;
+        const float *m = h->view->cam.m;
 
         f = (Random_Float(Game_GetRandom()) + 1.0) * kFlashScale;
         a = m[0] * dir[0] + m[6] * dir[2] + m[3] * dir[1];

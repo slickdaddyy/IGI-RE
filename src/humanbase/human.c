@@ -603,13 +603,13 @@ void Human_GetHumanCameraInfoHandler(Human *h, HumanCameraInfo *info)
 
     HumanView_GetEye(&info->pos.x, v);
     HumanView_GetMatrix(info->matrix.m, h->view);
-    info->fov = v->fov;
+    info->fov = v->fovX;
     memcpy(&info->body, h->matrix.m, sizeof(info->body));
-    info->unk6C = v->unk1E8;
+    info->unk6C = v->fovY;
     info->mode = h->camMode;
     if (v->camOverride) {
         memcpy(&info->pos, v->camPos, sizeof(info->pos));
-        memcpy(&info->matrix, v->camMatrix, sizeof(info->matrix));
+        memcpy(&info->matrix, &v->camRot, sizeof(info->matrix));
         info->mode = 4;
     }
     if (!is_zero(h->input[19]) && is_zero(h->prevInput[19]))
@@ -742,7 +742,7 @@ HOOK(0x460070, Human_GetWeaponHandler);
 
 void Human_FirstPersonHandler(Human *h, int *msg)
 {
-    if (*msg && h->view->firstPerson) {
+    if (*msg && h->view->inWorld) {
         *msg = 1;
         return;
     }
@@ -758,15 +758,15 @@ void Human_GetWeaponBoneHandler(Human *h, HumanBoneMsg *msg)
     float *b;
     float x, y, z;
 
-    if (msg->firstPerson && v->firstPerson) {
-        b = (float *)(v->model + 0x1A4);
+    if (msg->firstPerson && v->inWorld) {
+        b = (float *)((char *)v->motion + 0x1A4);
         x = b[0];
         y = b[1];
         z = b[2];
         msg->pos[0] = x + v->pos[0];
         msg->pos[1] = y + v->pos[1];
         msg->pos[2] = z + v->pos[2];
-        memcpy(msg->matrix, v->model + 0x1B0, sizeof(msg->matrix));
+        memcpy(msg->matrix, (char *)v->motion + 0x1B0, sizeof(msg->matrix));
         return;
     }
     b = (float *)((char *)h->motion + 0xB70);
@@ -787,16 +787,16 @@ static void Human_GetViewBone(Human *h, double *out, int bone)
     float *b;
     float x, y, z;
 
-    if (!v->firstPerson)
+    if (!v->inWorld)
         return;
-    b = (float *)(v->model + bone);
+    b = (float *)((char *)v->motion + bone);
     x = b[0];
     y = b[1];
     z = b[2];
     out[0] = x + v->pos[0];
     out[1] = y + v->pos[1];
     out[2] = z + v->pos[2];
-    memcpy(out + 3, v->model + bone + 0xC, 40);
+    memcpy(out + 3, (char *)v->motion + bone + 0xC, 40);
 }
 
 void Human_GetViewBarrelHandler(Human *h, double *out)
@@ -1347,11 +1347,11 @@ void Human_UpdateBody(Human *h)
         h->baseY = ey;
         h->rotY = ey;
         h->baseZ = ez;
-        h->rotZ = ez + v->unk134;
+        h->rotZ = ez + v->recoilYaw;
     } else {
         s = x87_tan(kQuarterPiD);
         x = h->input[0];
-        if (!(s < v->fov || s > v->fov))
+        if (!(s < v->fovX || s > v->fovX))
             x = (x + h->prevInput[0]) * kHalfD;
         if (h->frozenView)
             x = kZero;
@@ -1359,13 +1359,13 @@ void Human_UpdateBody(Human *h)
         h->rotX = 0;
         h->baseY = 0;
         h->rotY = 0;
-        a = -(x * kPi) * v->fov;
+        a = -(x * kPi) * v->fovX;
         ax = !(x >= kZero) ? -x : x;
         if (!(ax >= kTurnDead))
             a = a / (kTwoD - ax * kTurnDiv);
         s = (a + h->moveAngle[2]) + h->baseZ;
         h->baseZ = s;
-        h->rotZ = s + v->unk134;
+        h->rotZ = s + v->recoilYaw;
     }
     Matrix_SetEuler(h->matrix.m, h->rotX, h->rotY, h->rotZ);
 }

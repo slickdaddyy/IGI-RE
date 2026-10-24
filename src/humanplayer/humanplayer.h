@@ -10,6 +10,7 @@
 #include "humanplayer/humanplayertypes.h"
 #include "weapon/weapontypes.h"
 #include "ammotype/ammotypetypes.h"
+#include "viewcam/viewcamtypes.h"
 
 typedef struct HumanPlayerSM HumanPlayerSM;
 typedef struct HumanPlayer HumanPlayer;
@@ -43,25 +44,9 @@ enum {
     INPUT_COUNT = 40,
 };
 
-typedef struct HumanView {
-    char unk0[0x68];
-    char anim[8];
-    HumanMotion *motion;
-    char unk74[0xC4];
-    char unk138;
-    char unk139[0x63];
-    float lean[3];
-    float lean_speed[3];
-    char unk1B4[0x54];
-    int unk208[7];
-} HumanView;
-
 typedef struct WeaponAmmo {
     int clip;
     int reserve;
 } WeaponAmmo;
-
-_Static_assert(offsetof(HumanView, lean) == 0x19C, "lean");
-_Static_assert(offsetof(HumanView, unk208) == 0x208, "unk208");
 
 #endif

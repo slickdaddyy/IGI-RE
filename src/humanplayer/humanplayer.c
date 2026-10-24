@@ -347,28 +347,28 @@ void HumanPlayer_BodyLeanRun(HumanPlayerSM *sm, HumanPlayer *h)
     (void)sm;
     if (h->input[INPUT_LEFT] != 0) {
         if (h->prevInput[INPUT_LEFT] == 0)
-            v->lean_speed[0] = gLeanSide / (long double)gLeanFrames;
-        lean_towards(&v->lean[0], v->lean_speed[0], -gLeanSide);
+            v->leanSpeed[0] = gLeanSide / (long double)gLeanFrames;
+        lean_towards(&v->lean[0], v->leanSpeed[0], -gLeanSide);
     }
     if (h->input[INPUT_RIGHT] != 0) {
         if (h->prevInput[INPUT_RIGHT] == 0)
-            v->lean_speed[0] = gLeanSide / (long double)gLeanFrames;
-        lean_towards(&v->lean[0], v->lean_speed[0], gLeanSide);
+            v->leanSpeed[0] = gLeanSide / (long double)gLeanFrames;
+        lean_towards(&v->lean[0], v->leanSpeed[0], gLeanSide);
     }
     if (h->input[INPUT_LEFT] == 0 && h->input[INPUT_RIGHT] == 0) {
         if (h->prevInput[INPUT_LEFT] != 0 || h->prevInput[INPUT_RIGHT] != 0)
-            v->lean_speed[0] = gLeanSide / (long double)gLeanFrames;
-        lean_towards(&v->lean[0], v->lean_speed[0], 0);
+            v->leanSpeed[0] = gLeanSide / (long double)gLeanFrames;
+        lean_towards(&v->lean[0], v->leanSpeed[0], 0);
     }
     if (h->crouch) {
         if (h->input[INPUT_FORWARD] != 0) {
             if (h->prevInput[INPUT_FORWARD] == 0)
-                v->lean_speed[2] = gLeanUp / (long double)gLeanFrames;
-            lean_towards(&v->lean[2], v->lean_speed[2], gLeanUp);
+                v->leanSpeed[2] = gLeanUp / (long double)gLeanFrames;
+            lean_towards(&v->lean[2], v->leanSpeed[2], gLeanUp);
         } else {
             if (h->prevInput[INPUT_FORWARD] != 0)
-                v->lean_speed[2] = gLeanUp / (long double)gLeanFrames;
-            lean_towards(&v->lean[2], v->lean_speed[2], 0);
+                v->leanSpeed[2] = gLeanUp / (long double)gLeanFrames;
+            lean_towards(&v->lean[2], v->leanSpeed[2], 0);
         }
     }
 }
@@ -750,7 +750,7 @@ void HumanPlayer_WeaponReloadRun(HumanPlayerSM *sm, HumanPlayer *h)
 
     h->weaponReady = 0;
     msg.h = (Task *)h;
-    memcpy(msg.anim, v->unk208, sizeof(msg.anim));
+    memcpy(msg.anim, &v->animEvent, sizeof(msg.anim));
     msg.unlimited = gUnlimitedAmmo;
     slot = Human_GetEvent1();
     ((TaskHandler)TASK_HANDLER(slot, w->type))(w, &msg);
@@ -857,7 +857,7 @@ void HumanPlayer_WeaponThrowRun(HumanPlayerSM *sm, HumanPlayer *h)
     HumanView *v = h->view;
     WeaponType *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
 
-    if (v->unk208[1] == 4) {
+    if (v->animEvent.sound == 4) {
         h->grenadeTicking = 1;
         h->grenadeSound = Sound_Play(h->view, "grenade_tick_1");
     }
@@ -878,7 +878,7 @@ void HumanPlayer_WeaponReleaseRun(HumanPlayerSM *sm, HumanPlayer *h)
     WeaponAmmo ammo;
 
     h->cookTime++;
-    if (v->unk208[1] == 3) {
+    if (v->animEvent.sound == 3) {
         h->fire = 1;
         if (h->grenadeSound) {
             Sound_Stop(h->grenadeSound);

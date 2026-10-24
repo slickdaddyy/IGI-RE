@@ -10,21 +10,9 @@
 #include "humanai/humanaitypes.h"
 #include "humanplayer/humanplayertypes.h"
 #include "humanbase/humanbasetypes.h"
+#include "viewcam/viewcamtypes.h"
 
 #define BONE(m, i) ((Vec3f *)((char *)(m)->bones + (i) * 0x84))
-
-typedef struct HumanView {
-    char unk0[0x68];
-    char anim[8];
-    HumanMotion *model;
-    char unk74[0xAC];
-    float lookYaw;
-    char unk124[8];
-    float lookPitch;
-} HumanView;
-
-_Static_assert(offsetof(HumanView, lookYaw) == 0x120, "lookYaw");
-_Static_assert(offsetof(HumanView, lookPitch) == 0x12C, "lookPitch");
 
 /* what hit a human: the shot's kind at +0x44 picks the zone table entry */
 typedef struct Shot {
@@ -215,7 +203,7 @@ HOOK(0x489F20, HumanPlayer_PlayAnim);
 
 char HumanPlayer_AnimDone(Human *h)
 {
-    return (h->view->model->flags & 0x100) != 0;
+    return (h->view->motion->flags & 0x100) != 0;
 }
 HOOK(0x489F50, HumanPlayer_AnimDone);
 
@@ -234,32 +222,32 @@ static void normalize(Vec3f *v)
 /* turns two bones of the body towards the view's look angles, at most 55 degrees each */
 void Human_ApplyLook(Human *h)
 {
-    float yaw, pitch, a;
+    float pitch, yaw, a;
     Vec3f axis;
     float q[5]; /* a Quat: Quat_SetAxisAngle also clears the int after w */
     HumanMotion *m;
 
     if (!h->look)
         return;
-    yaw = h->view->lookYaw;
-    pitch = h->view->lookPitch;
-    if (yaw != kZero) {
-        a = yaw;
-        if (yaw < -kLookMax)
+    pitch = h->view->pitch;
+    yaw = h->view->yaw;
+    if (pitch != kZero) {
+        a = pitch;
+        if (pitch < -kLookMax)
             a = -kLookMax;
-        else if (yaw > kLookMax)
+        else if (pitch > kLookMax)
             a = kLookMax;
         axis.x = h->matrix.m[0];
         axis.y = h->matrix.m[3];
         axis.z = h->matrix.m[6];
         Quat_SetAxisAngle(q, &axis, a);
         Bone_Rotate((char *)h->motion + 0x84, q, 0, 50, 50);
-        if (yaw < -kLookMax)
-            a = yaw + kLookMax;
-        else if (yaw > kLookMax)
-            a = yaw - kLookMax;
+        if (pitch < -kLookMax)
+            a = pitch + kLookMax;
+        else if (pitch > kLookMax)
+            a = pitch - kLookMax;
         else
-            goto pitch;
+            goto yaw;
         if (a != kZero) {
             axis.x = h->matrix.m[0];
             axis.y = h->matrix.m[3];
@@ -268,13 +256,13 @@ void Human_ApplyLook(Human *h)
             Bone_Rotate((char *)h->motion + 0x210, q, 0, 50, 50);
         }
     }
-pitch:
-    if (pitch == kZero)
+yaw:
+    if (yaw == kZero)
         return;
-    a = pitch;
-    if (pitch < -kLookMax)
+    a = yaw;
+    if (yaw < -kLookMax)
         a = -kLookMax;
-    else if (pitch > kLookMax)
+    else if (yaw > kLookMax)
         a = kLookMax;
     axis.x = h->matrix.m[2];
     axis.y = h->matrix.m[5];
@@ -282,10 +270,10 @@ pitch:
     normalize(&axis);
     Quat_SetAxisAngle(q, &axis, a);
     Bone_Rotate((char *)h->motion + 0x84, q, 0, 50, 50);
-    if (pitch < -kLookMax)
-        a = pitch + kLookMax;
-    else if (pitch > kLookMax)
-        a = pitch - kLookMax;
+    if (yaw < -kLookMax)
+        a = yaw + kLookMax;
+    else if (yaw > kLookMax)
+        a = yaw - kLookMax;
     else
         return;
     if (a == kZero)

@@ -7,6 +7,7 @@
 #include "types.h"
 #include "loadscreen/loadscreentypes.h"
 #include "humanplayer/humanplayertypes.h"
+#include "viewcam/viewcamtypes.h"
 
 typedef struct HumanPlayer HumanPlayer;
 
@@ -34,12 +35,6 @@ typedef struct ClimbObj {
     int steps;
 } ClimbObj;
 
-typedef struct HumanView {
-    char unk00[0x68];
-    char anim[0x90];
-    float matrix[9];
-} HumanView;
-
 /* input channels 23 - 31 are the weapon category keys */
 #define INPUT_WEAPON 13
 #define INPUT_CATEGORY 23
@@ -49,6 +44,6 @@ _Static_assert(__builtin_offsetof(HumanPlayer, weapons) == 0x4C4, "weapons");
 _Static_assert(__builtin_offsetof(HumanPlayer, vel) == 0x664, "vel");
 _Static_assert(__builtin_offsetof(HumanPlayer, ladderTop) == 0xD7C, "ladderTop");
 _Static_assert(__builtin_offsetof(ClimbObj, steps) == 0x138, "ClimbObj");
-_Static_assert(__builtin_offsetof(HumanView, matrix) == 0xF8, "HumanView");
+_Static_assert(__builtin_offsetof(HumanView, cam.m) == 0xF8, "HumanView");
 
 #endif
