@@ -261,7 +261,7 @@ void BulletHole_Delete(BulletHole *bh)
 HOOK(0x47D320, BulletHole_Delete);
 
 /* bullet hole event of a RigidDynCubeObj */
-void BulletHole_AddRigid(RigidObj *obj, HoleMsg *msg)
+void BulletHole_AddRigid(RigidDynCubeObj *obj, HoleMsg *msg)
 {
     add_hole(&obj->task, msg, &obj->pos, &obj->matrix, 0);
 }

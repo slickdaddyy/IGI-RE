@@ -10,7 +10,7 @@
 #include "math/x87.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
-ORIG(0x4012A0, MagicTask *, Task_New, (void *parent, uint16_t type, void *arg));
+ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x4BD070, int, Qvm_GetArgLine, (void *lod, void *tri, float v, float u));
 ORIG(0x4D0950, float, VirModel_GetRadius, (void **model));
 ORIG(0x4D0CF0, void *, ModelLod_GetAttach, (void *lod, int i));
@@ -294,32 +294,32 @@ void RigidDynCubeObj_CollLine(RigidDynCubeObj *o, CollLineQuery *q)
     sc = coll_max_scale(o);
     rs = VirModel_GetRadius(o->model) * (long double)sc;
     r = rs;
-    if (o->pos[0] - rs > p0[0] && o->pos[0] - rs > p1[0])
+    if (o->pos.x - rs > p0[0] && o->pos.x - rs > p1[0])
         return;
-    if (!(r + o->pos[0] >= p0[0]) && !(r + o->pos[0] >= p1[0]))
+    if (!(r + o->pos.x >= p0[0]) && !(r + o->pos.x >= p1[0]))
         return;
-    if (o->pos[1] - r > p0[1] && o->pos[1] - r > p1[1])
+    if (o->pos.y - r > p0[1] && o->pos.y - r > p1[1])
         return;
-    if (!(r + o->pos[1] >= p0[1]) && !(r + o->pos[1] >= p1[1]))
+    if (!(r + o->pos.y >= p0[1]) && !(r + o->pos.y >= p1[1]))
         return;
-    if (o->pos[2] - r > p0[2] && o->pos[2] - r > p1[2])
+    if (o->pos.z - r > p0[2] && o->pos.z - r > p1[2])
         return;
-    if (!(r + o->pos[2] >= p0[2]) && !(r + o->pos[2] >= p1[2]))
+    if (!(r + o->pos.z >= p0[2]) && !(r + o->pos.z >= p1[2]))
         return;
 
     /* both ends into model space (the inverse rotation, divided by scale x) */
-    dx = p0[0] - o->pos[0];
-    dy = p0[1] - o->pos[1];
-    dz = p0[2] - o->pos[2];
+    dx = p0[0] - o->pos.x;
+    dy = p0[1] - o->pos.y;
+    dz = p0[2] - o->pos.z;
     t0 = dy * M[3] + dz * M[6] + dx * M[0];
     t1 = dz * M[7] + dx * M[1] + dy * M[4];
     t2 = dy * M[5] + dz * M[8] + dx * M[2];
     s.a[0] = t0 / o->scale[0];
     s.a[1] = t1 / o->scale[0];
     s.a[2] = t2 / o->scale[0];
-    dx = p1[0] - o->pos[0];
-    dy = p1[1] - o->pos[1];
-    dz = p1[2] - o->pos[2];
+    dx = p1[0] - o->pos.x;
+    dy = p1[1] - o->pos.y;
+    dz = p1[2] - o->pos.z;
     t0 = dz * M[6] + dx * M[0] + dy * M[3];
     t1 = dz * M[7] + dx * M[1] + dy * M[4];
     t2 = dz * M[8] + dx * M[2] + dy * M[5];
@@ -387,8 +387,8 @@ typedef struct MagicCreateArg {
     void *world;
     double pos[3];
     double offset[3];
-    MagicMatrix matrix;
-    MagicMatrix local;
+    Matrix matrix;
+    Matrix local;
     void *owner;
     void *data;
 } MagicCreateArg;
@@ -421,7 +421,7 @@ void RigidDynCubeObj_CreateMagicObjs(void *parent, RigidDynCubeObj *o, void *own
         MagicObjDef *def = NULL;
         MagicCreateArg arg, arg2;
         MagicHandler h;
-        MagicTask *t;
+        Task *t;
         double rx, ry, rz;
         float c0, c1, e[3], f[3], *W, *E, *F, *R, *P;
         long double c2;
@@ -432,9 +432,9 @@ void RigidDynCubeObj_CreateMagicObjs(void *parent, RigidDynCubeObj *o, void *own
         rx = M[1] * att->pos[1] + M[2] * att->pos[2] + M[0] * att->pos[0];
         ry = M[4] * att->pos[1] + M[5] * att->pos[2] + M[3] * att->pos[0];
         rz = M[8] * att->pos[2] + M[6] * att->pos[0] + M[7] * att->pos[1];
-        arg.pos[0] = rx + o->pos[0];
-        arg.pos[1] = ry + o->pos[1];
-        arg.pos[2] = rz + o->pos[2];
+        arg.pos[0] = rx + o->pos.x;
+        arg.pos[1] = ry + o->pos.y;
+        arg.pos[2] = rz + o->pos.z;
 
         /* local frame from the first column of the attachment matrix */
         R = arg.local.m;
@@ -461,7 +461,7 @@ void RigidDynCubeObj_CreateMagicObjs(void *parent, RigidDynCubeObj *o, void *own
         memcpy(F, f, sizeof(f));
         if (!vec_is_zero(f))
             vec_scale(F, kOneD / x87_sqrt(f[0] * f[0] + f[1] * f[1] + f[2] * f[2]));
-        arg.local.unk24 = 0;
+        arg.local.count = 0;
 
         /* world frame: object matrix times the local one, made orthonormal
            again (the original also does that a second time into a copy it
@@ -494,7 +494,7 @@ void RigidDynCubeObj_CreateMagicObjs(void *parent, RigidDynCubeObj *o, void *own
             if (!vec_is_zero(d))
                 vec_scale(P + 6, kOneD / x87_sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]));
         }
-        arg.matrix.unk24 = 0;
+        arg.matrix.count = 0;
 
         for (j = 0; j < gMagicObjDefCount && !def; j++)
             if (strcmp(att->name, gMagicObjDefs[j].name) == 0)
@@ -506,14 +506,14 @@ void RigidDynCubeObj_CreateMagicObjs(void *parent, RigidDynCubeObj *o, void *own
                 ;
         }
         arg.data = def->data;
-        arg.world = (void *)(intptr_t)o->unk68;
+        arg.world = (void *)(intptr_t)o->world;
         arg.owner = owner;
         arg.model = def->model;
         t = Task_New(parent, def->type, &arg);
         /* only these four fields are set, like the original */
         arg2.data = def->data;
         arg2.model = def->model;
-        arg2.world = (void *)(intptr_t)o->unk68;
+        arg2.world = (void *)(intptr_t)o->world;
         arg2.owner = owner;
         h = gTaskHandlers[(uint8_t)RigidDynCubeObj_GetEvent3()][t->type];
         if (h)

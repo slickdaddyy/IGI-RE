@@ -140,7 +140,7 @@ void Switch_CreateHandler(Switch *s)
     scale = max_scale(&s->o);
     radius = VirModel_GetRadius(s->o.model) * scale;
     DynCube_Add(gWorld, s, &zero, radius, 1);
-    Sector_AddObject(s->o.sector, s, DynCubeObj_GetPosition(s));
+    Sector_AddObject(s->o.world, s, DynCubeObj_GetPosition(s));
     s->o.matrix = id;
     s->matrix = id;
     for (i = 0; i < 5; i++)
@@ -204,7 +204,7 @@ void Switch_DeleteHandler(Switch *s)
     }
     VarString_Free(&s->on);
     Sector_RemoveObject(s);
-    DynCube_Remove(s->o.sector, s);
+    DynCube_Remove(s->o.world, s);
 }
 HOOK(0x445270, Switch_DeleteHandler);
 
@@ -217,7 +217,7 @@ HOOK(0x4452E0, Switch_GetParams);
 /* remembers where the switch sits on the object it is fixed to */
 void Switch_UpdateLocal(Switch *s)
 {
-    Obj *p = Task_FindAncestor(s, RigidDynCubeObj_GetType());
+    RigidDynCubeObj *p = Task_FindAncestor(s, RigidDynCubeObj_GetType());
 
     if (p)
         to_local(&s->offset, &s->local, &s->place, &s->matrix, p);
@@ -233,8 +233,8 @@ void Switch_ParamsChanged(Switch *s)
     RigidDynCubeObj_SetModel(s, VirModel_Find(s->models[0]));
     scale = max_scale(&s->o);
     radius = VirModel_GetRadius(s->o.model) * scale;
-    DynCube_Move(s->o.sector, s, &s->place, radius);
-    Sector_MoveObject(s->o.sector, s, DynCubeObj_GetPosition(s));
+    DynCube_Move(s->o.world, s, &s->place, radius);
+    Sector_MoveObject(s->o.world, s, DynCubeObj_GetPosition(s));
     s->isLastOn = s->isOn;
     s->o.matrix = s->matrix;
     VarString_Bind(&s->on, s);
@@ -318,7 +318,7 @@ void Switch_MoveHandler(Switch *s, MoveMsg *msg)
     place_from(&s->place, msg->matrix, &s->offset, msg->pos);
     scale = max_scale(&s->o);
     radius = VirModel_GetRadius(s->o.model) * scale;
-    DynCube_Move(s->o.sector, s, &s->place, radius);
+    DynCube_Move(s->o.world, s, &s->place, radius);
     mat_mul(&s->matrix, msg->matrix, &s->local, ORDER(SUM01_2, SUM02_1, SUM02_1));
     s->o.matrix = s->matrix;
     out.pos = &s->place;

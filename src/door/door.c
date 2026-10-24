@@ -152,7 +152,7 @@ void Door_Place(Door *d)
 }
 HOOK(0x446290, Door_Place);
 
-void Door_GetMoveMsg(MoveMsg *msg, Obj *o)
+void Door_GetMoveMsg(MoveMsg *msg, RigidDynCubeObj *o)
 {
     msg->pos = &o->pos;
     msg->matrix = &o->matrix;
@@ -327,8 +327,8 @@ HOOK(0x4468F0, Door_CreateHandler);
 void Door_DeleteHandler(Door *d)
 {
     QTaskList_Remove(Game_GetTaskList0(), d);
-    if (d->o.unkE8)
-        Task_Delete(d->o.unkE8);
+    if (d->o.attached)
+        Task_Delete(d->o.attached);
     if (Task_GetId(d) >= 0) {
         TaskFn fn = HANDLER(Level_GetEventDAC(), d->o.task.type);
 
@@ -338,7 +338,7 @@ void Door_DeleteHandler(Door *d)
     VarString_Free(&d->openExpr);
     VarString_Free(&d->closeExpr);
     VarString_Free(&d->lockExpr);
-    DynCube_Remove(d->o.sector, d);
+    DynCube_Remove(d->o.world, d);
 }
 HOOK(0x446AC0, Door_DeleteHandler);
 
@@ -512,13 +512,13 @@ void Door_RunHandler(Door *d)
             }
         }
         Door_MoveChildren(d);
-        if (d->o.unkE8) {
+        if (d->o.attached) {
             DoorMoveMsg msg;
 
             msg.pos = &d->o.pos;
             msg.matrix = &d->o.matrix;
             msg.door = d;
-            BROADCAST(d->o.unkE8, MagicObj_GetMoveEvent(), &msg);
+            BROADCAST(d->o.attached, MagicObj_GetMoveEvent(), &msg);
         }
     }
 
@@ -546,15 +546,15 @@ void Door_RunHandler(Door *d)
         Sound_Stop(d->moveSound);
         d->moveSound = NULL;
     }
-    if (d->o.unkE8)
-        HANDLER(1, d->o.unkE8->type)(d->o.unkE8);
+    if (d->o.attached)
+        HANDLER(1, d->o.attached->type)(d->o.attached);
 }
 HOOK(0x446D10, Door_RunHandler);
 
 /* remembers where the door sits on the object it is fixed to */
 void Door_UpdateLocal(Door *d)
 {
-    Obj *p = Task_FindAncestor(d, RigidDynCubeObj_GetType());
+    RigidDynCubeObj *p = Task_FindAncestor(d, RigidDynCubeObj_GetType());
 
     if (p)
         to_local(&d->offset, &d->local, &d->place, &d->base, p);
@@ -599,10 +599,10 @@ void Door_ParamsChanged(Door *d, char *arg)
         Sound_Stop(d->moveSound);
         d->moveSound = NULL;
     }
-    if (d->o.unkE8)
-        Task_Delete(d->o.unkE8);
+    if (d->o.attached)
+        Task_Delete(d->o.attached);
     t = MagicObjContainer_New(NULL, d);
-    d->o.unkE8 = t;
+    d->o.attached = t;
     RigidDynCubeObj_CreateMagicObjs(t, d, d);
     BROADCAST(&d->o.task, Param_GetChangedEvent(), arg);
     d->lastPos = d->o.pos;

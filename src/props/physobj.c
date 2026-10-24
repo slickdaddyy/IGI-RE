@@ -69,7 +69,7 @@ typedef struct Force {
 
 /* Game event 9 (a hit) and event 11 (an explosion) */
 typedef struct HitMsg {
-    RigidObj *src;
+    RigidDynCubeObj *src;
     Vec3d *center;      /* event 11 */
     Vec3f dir;          /* event 9 */
 } HitMsg;

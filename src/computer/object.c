@@ -99,8 +99,8 @@ static const float kMinMarker = 3072.0f;
 void ComputerObject_Create(ComputerObject *o);
 void ComputerObject_Delete(ComputerObject *o);
 void ComputerObject_Draw(ComputerObject *o);
-void ComputerObject_DrawVehicle(Obj *v, MapQuery *q);
-void ComputerObject_DrawLine(Obj *o);
+void ComputerObject_DrawVehicle(RigidDynCubeObj *v, MapQuery *q);
+void ComputerObject_DrawLine(RigidDynCubeObj *o);
 
 void ComputerObject_Project(float *out, float *in, MapQuery *q)
 {
@@ -160,7 +160,7 @@ void ComputerObject_Open(void)
 HOOK(0x467700, ComputerObject_Open);
 
 /* the line between model points 10 and 11 (doors bright, others dim) */
-void ComputerObject_DrawLine(Obj *o)
+void ComputerObject_DrawLine(RigidDynCubeObj *o)
 {
     float color[3];
     Vec3d a, b;
@@ -273,7 +273,7 @@ void ComputerObject_Draw(ComputerObject *o)
 HOOK(0x467970, ComputerObject_Draw);
 
 /* vehicles shown with a yellow box */
-void ComputerObject_DrawVehicle(Obj *v, MapQuery *q)
+void ComputerObject_DrawVehicle(RigidDynCubeObj *v, MapQuery *q)
 {
     float scale;
 

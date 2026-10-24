@@ -146,16 +146,16 @@ void Vehicle_Activate(Vehicle *v, void *msg)
 {
     v->active = 1;
     HANDLER(World_GetEvent0(), RigidDynCubeObj_GetType())(v, msg);
-    if (v->obj.parts)
-        BROADCAST(v->obj.parts, World_GetEvent0(), msg);
+    if (v->obj.attached)
+        BROADCAST(v->obj.attached, World_GetEvent0(), msg);
 }
 HOOK(0x4F43E0, Vehicle_Activate);
 
 void Vehicle_Deactivate(Vehicle *v, void *msg)
 {
     v->active = 0;
-    if (v->obj.parts)
-        BROADCAST(v->obj.parts, World_GetEvent1(), msg);
+    if (v->obj.attached)
+        BROADCAST(v->obj.attached, World_GetEvent1(), msg);
     HANDLER(World_GetEvent1(), RigidDynCubeObj_GetType())(v, msg);
 }
 HOOK(0x4F44A0, Vehicle_Deactivate);
@@ -208,7 +208,7 @@ HOOK(0x4F4640, Vehicle_Free);
 
 void Vehicle_RunParts(Vehicle *v)
 {
-    Task *parts = v->obj.parts;
+    Task *parts = v->obj.attached;
 
     if (parts)
         HANDLER(1, parts->type)(parts);
@@ -251,16 +251,16 @@ HOOK(0x4F4780, Vehicle_LoadState);
 
 void Vehicle_NewParts(Vehicle *v)
 {
-    v->obj.parts = MagicObjContainer_New(NULL, v);
-    RigidDynCubeObj_CreateMagicObjs(v->obj.parts, v, v);
+    v->obj.attached = MagicObjContainer_New(NULL, v);
+    RigidDynCubeObj_CreateMagicObjs(v->obj.attached, v, v);
 }
 HOOK(0x4F4800, Vehicle_NewParts);
 
 void Vehicle_DeleteParts(Vehicle *v)
 {
-    if (v->obj.parts) {
-        Task_Delete(v->obj.parts);
-        v->obj.parts = NULL;
+    if (v->obj.attached) {
+        Task_Delete(v->obj.attached);
+        v->obj.attached = NULL;
     }
 }
 HOOK(0x4F4820, Vehicle_DeleteParts);

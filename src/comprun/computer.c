@@ -49,7 +49,7 @@ ORIG(0x4E8370, void, TerraDrawTask_New, (void *view, void *world));
 
 /* "Computer" (0x198 bytes), the in-game computer the player looks at */
 typedef struct Computer {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d eye;    /* 0xF0 */
     Matrix look;  /* 0x108 */
     Task *view;   /* 0x130 */

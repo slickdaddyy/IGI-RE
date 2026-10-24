@@ -5,7 +5,7 @@
 
 /* "StationaryGun" (0x220 bytes): a mounted M2HB a human can take over */
 typedef struct StatGun {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d basePos;          /* 0xF0, script parameter */
     Matrix baseMatrix;      /* 0x108, script parameter */
     Vec3d relPos;           /* 0x130, base in the frame of the carrier */
@@ -350,7 +350,7 @@ HOOK(0x4748B0, StationaryGun_Clamp);
 void StationaryGun_DeleteHandler(StatGun *o)
 {
     QTaskList_Remove(Game_GetTaskList0(), o);
-    DynCube_Remove(o->obj.room, o);
+    DynCube_Remove(o->obj.world, o);
 }
 HOOK(0x474960, StationaryGun_DeleteHandler);
 
@@ -392,7 +392,7 @@ void StationaryGun_UpdateCarrier(StatGun *o)
 {
     static const int kLast[9] = {0, 0, 0, 1, 1, 1, 1, 0, 0};
     Task *c = Task_FindAncestor(o, RigidDynCubeObj_GetType());
-    RigidObj *a = (RigidObj *)c;
+    RigidDynCubeObj *a = (RigidDynCubeObj *)c;
     float *n = o->baseMatrix.m;
     float *am;
     long double dz;
@@ -510,7 +510,7 @@ void StationaryGun_Move(StatGun *o, MoveMsg *m)
     t.count = m->matrix->count + o->relMatrix.count + 1;
     o->baseMatrix = t;
     radius = StationaryGun_Radius(o);
-    DynCube_Move(o->obj.room, o, &o->basePos, radius);
+    DynCube_Move(o->obj.world, o, &o->basePos, radius);
     o->obj.matrix = o->baseMatrix;
     StationaryGun_Aim(o);
     out.pos = &o->basePos;

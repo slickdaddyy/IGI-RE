@@ -68,10 +68,10 @@ typedef struct GunDef {
 
 /* "AIStationaryGun" (0x1E8 bytes), a turning gun mounted on a vehicle */
 typedef struct AIStationaryGun {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d offset;           /* 0xF0 */
     Matrix local;           /* 0x108 */
-    RigidObj *owner;        /* 0x130 */
+    RigidDynCubeObj *owner;        /* 0x130 */
     int unk134;
     Vec3d pos;              /* 0x138 */
     Matrix matrix;          /* 0x150 */

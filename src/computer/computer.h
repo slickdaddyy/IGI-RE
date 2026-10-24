@@ -8,6 +8,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "magicobj/magicobjtypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -17,17 +18,6 @@ typedef struct TaskArray {
     int unk04;
     Task *items[1];
 } TaskArray;
-
-/* RigidDynCubeObj, the fields used here */
-typedef struct Obj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    int world;
-    void **model;
-    Matrix matrix;
-    float scale[3];
-} Obj;
 
 /* passed to every object drawn on the map computer (ComputerObject event 0) */
 typedef struct MapQuery {
@@ -44,7 +34,6 @@ typedef struct MapQuery {
     char *text2;
 } MapQuery;
 
-_Static_assert(offsetof(Obj, scale) == 0x98, "Obj");
 _Static_assert(sizeof(MapQuery) == 0x2C, "MapQuery");
 
 extern TaskFn gTaskHandlers[][0x180];
@@ -69,7 +58,7 @@ static inline long long round_ll(long double f)
 }
 
 /* the largest of the three scale factors */
-static inline float max_scale(const Obj *o)
+static inline float max_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] >= o->scale[1] ? o->scale[2] : o->scale[1];
 

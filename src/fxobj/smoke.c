@@ -418,7 +418,7 @@ HOOK(0x438000, Smoke_Changed);
 /* the offset from the nearest moving ancestor, in its frame */
 void Smoke_UpdateLocal(Smoke *t)
 {
-    RigidObj *p = Task_FindAncestor(t, RigidDynCubeObj_GetType());
+    RigidDynCubeObj *p = Task_FindAncestor(t, RigidDynCubeObj_GetType());
     const float *m;
     long double z;
     Vec3d v;

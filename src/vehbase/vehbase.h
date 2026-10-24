@@ -9,30 +9,15 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "magicobj/magicobjtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)();
 
-/* "RigidDynCubeObj" (0xF0 bytes), an object with a model */
-typedef struct RigidObj {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x30];
-    void *room;         /* 0x68 */
-    void **model;       /* 0x6C */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    int lod;            /* 0xA4 */
-    Vec3f rgb[2];       /* 0xA8 */
-    char unkC0[0x28];
-    Task *parts;        /* 0xE8, a MagicObjContainer */
-    int unkEC;
-} RigidObj;
-
 /* "EditRigidObj" (0x1A0 bytes) */
 typedef struct EditRigidObj {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d pos;          /* 0xF0 */
     Matrix matrix;      /* 0x108 */
     char model[0x10];   /* 0x130 */
@@ -99,7 +84,7 @@ typedef struct AnimData {
 
 /* "Vehicle" (0x748 bytes), a subtype of PhysicsObj */
 typedef struct Vehicle {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     char unkF0[0x18];
     Vec3f velocity;     /* 0x108, of the rigid body */
     char unk114[0x720 - 0x114];
@@ -134,7 +119,6 @@ typedef struct ObjInfo {
     int unk50;
 } ObjInfo;
 
-_Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 _Static_assert(offsetof(EditRigidObj, offset) == 0x158, "offset");
 _Static_assert(sizeof(EditRigidObj) == 0x1A0, "EditRigidObj");
 _Static_assert(offsetof(AnimTask, channels) == 0x6C, "channels");
@@ -174,7 +158,7 @@ extern int gTaskStackTop;
     } while (0)
 
 /* the largest of the three scale factors, compared like the original */
-static inline float max_scale(const RigidObj *o)
+static inline float max_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] >= o->scale[1] ? o->scale[2] : o->scale[1];
 

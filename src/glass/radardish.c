@@ -24,7 +24,7 @@ typedef struct RadarDishDef {
 
 /* "RadarDish" (0x180), a turning magic object */
 typedef struct RadarDish {
-    Obj o;
+    RigidDynCubeObj o;
     MagicPart m;        /* 0xF0 */
     float target_speed; /* 0x13C */
     float speed;        /* 0x140 */
@@ -97,7 +97,7 @@ HOOK(0x448B70, RadarDish_Create);
 
 void RadarDish_Delete(RadarDish *r)
 {
-    DynCube_Remove(r->o.world, r);
+    DynCube_Remove((int)r->o.world, r);
     if (r->sound)
         TaskRef_Remove(r->sound);
     if (r->sound_params)

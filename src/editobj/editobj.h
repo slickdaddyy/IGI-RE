@@ -8,20 +8,9 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "magicobj/magicobjtypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* "RigidDynCubeObj" (0xF0 bytes), the fields used here */
-typedef struct Obj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    void *world;
-    void **model;
-    Matrix matrix;
-    float scale[3];
-    char unkA4[0xF0 - 0xA4];
-} Obj;
 
 /* filled by the slot 7 (GetInfo) handlers */
 typedef struct ObjInfo {
@@ -38,7 +27,6 @@ typedef struct MoveArg {
     Matrix *matrix;
 } MoveArg;
 
-_Static_assert(sizeof(Obj) == 0xF0, "Obj");
 _Static_assert(offsetof(ObjInfo, radius) == 0x4C, "ObjInfo");
 
 extern TaskFn gTaskHandlers[][0x180];
@@ -73,7 +61,7 @@ static inline long long round_ll(long double f)
 }
 
 /* the largest of the three scale factors */
-static inline float max_scale(const Obj *o)
+static inline float max_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] >= o->scale[1] ? o->scale[2] : o->scale[1];
 

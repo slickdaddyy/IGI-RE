@@ -409,7 +409,7 @@ FireBall *FireBall_New(Vec3d *pos, const char *model, float scale, int life, int
     fb->size = scale * kFireballScale;
     fb->angle = angle;
     fb->spin = spin;
-    Debug_Log(fb->obj.unkA4 + 0x1C, vm);
+    Debug_Log(fb->obj.unkC0, vm);
     return fb;
 }
 HOOK(0x480060, FireBall_New);

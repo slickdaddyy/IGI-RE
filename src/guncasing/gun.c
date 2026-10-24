@@ -351,7 +351,7 @@ void Gun_CreateHandler(Gun *g)
     g->ammoType = NULL;
     shots = GunShot_New(Level_GetDynamic(), &g->o.task, g->o.task.parent);
     g->shots = TaskRef_Add(shots);
-    g->o.coll = MagicObjContainer_New(NULL, g);
+    g->o.attached = MagicObjContainer_New(NULL, g);
 }
 HOOK(0x478540, Gun_CreateHandler);
 
@@ -384,7 +384,7 @@ void Gun_RunHandler(Gun *g)
     }
     if (g->cooldown)
         g->cooldown--;
-    BROADCAST(g->o.coll->head, 1);
+    BROADCAST(g->o.attached->head, 1);
     if (!(g->recoil >= kZero)) {
         step = kMinute / ((kMinute / (long double)wt->rate) * kFpsD);
         v = step + g->recoil;
@@ -438,7 +438,7 @@ void Gun_DeleteHandler(Gun *g)
     }
     if (g->unk190)
         TaskRef_Remove(g->unk190);
-    Task_Delete(g->o.coll);
+    Task_Delete(g->o.attached);
 }
 HOOK(0x478840, Gun_DeleteHandler);
 
@@ -499,9 +499,9 @@ void Gun_ParamChangedHandler(Gun *g)
     model = VirModel_Find(wt->key);
     if (model)
         RigidDynCubeObj_SetModel(g, model);
-    if (g->o.coll)
-        Task_DeleteChildren(g->o.coll);
-    RigidDynCubeObj_CreateMagicObjs(g->o.coll, g, g);
+    if (g->o.attached)
+        Task_DeleteChildren(g->o.attached);
+    RigidDynCubeObj_CreateMagicObjs(g->o.attached, g, g);
 }
 HOOK(0x4789C0, Gun_ParamChangedHandler);
 

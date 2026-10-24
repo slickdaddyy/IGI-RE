@@ -8,24 +8,9 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "magicobj/magicobjtypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* "RigidDynCubeObj" (0xF0 bytes), the fields used here */
-typedef struct Obj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    int world;
-    void **model;
-    Matrix matrix;
-    float scale[3];
-    char unkA4[0xDC - 0xA4];
-    int unkDC;
-    char unkE0[8];
-    Task *unkE8;
-    int unkEC;
-} Obj;
 
 /* filled by the RigidDynCubeObj slot 7 handler */
 typedef struct ObjInfo {
@@ -42,7 +27,6 @@ typedef struct MoveArg {
     Matrix *matrix;
 } MoveArg;
 
-_Static_assert(sizeof(Obj) == 0xF0, "Obj");
 _Static_assert(offsetof(ObjInfo, name) == 0x50, "ObjInfo");
 
 extern TaskFn gTaskHandlers[][0x180];
@@ -158,14 +142,14 @@ static inline long long round_ll(long double f)
 }
 
 /* the largest of the three scale factors */
-static inline float max_scale(const Obj *o)
+static inline float max_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] >= o->scale[1] ? o->scale[2] : o->scale[1];
 
     return o->scale[0] > m ? o->scale[0] : m;
 }
 
-static inline float obj_radius(Obj *o)
+static inline float obj_radius(RigidDynCubeObj *o)
 {
     float s = max_scale(o);
 

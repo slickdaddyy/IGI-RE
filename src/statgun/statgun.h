@@ -10,23 +10,11 @@
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "win/wintypes.h"
+#include "magicobj/magicobjtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)();
-
-/* "RigidDynCubeObj" (0xF0 bytes), an object with a model */
-typedef struct RigidObj {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x30];
-    void *room;         /* 0x68 */
-    void **model;       /* 0x6C */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0xEC - 0xA4];
-    int unkEC;
-} RigidObj;
 
 /* the parts of a WeaponType (see weapon/weapon.h) used here */
 typedef struct WeaponInfo {
@@ -113,7 +101,7 @@ typedef struct ConfigVar {
 
 /* base of the hand weapons (type 0x477BF0, 0x1B0 bytes) */
 typedef struct Gun {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     char unkF0;
     char unkF1[0x13];
     char id[0x24];      /* 0x104 */
@@ -189,14 +177,13 @@ static inline long long round_ll(long double f)
 }
 
 /* the largest of the three scale factors, compared like the original */
-static inline float max_scale(const RigidObj *o)
+static inline float max_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] < o->scale[1] ? o->scale[1] : o->scale[2];
 
     return o->scale[0] > m ? o->scale[0] : m;
 }
 
-_Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 _Static_assert(offsetof(WeaponInfo, clipSize) == 0x648, "WeaponInfo");
 _Static_assert(offsetof(WeaponInfo, unk664) == 0x664, "WeaponInfo");
 _Static_assert(offsetof(WeaponInfo, data) == 0x6E4, "WeaponInfo");

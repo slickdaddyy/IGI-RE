@@ -13,7 +13,7 @@ ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
 
 /* "Train" (0x8E0 bytes) */
 typedef struct Train {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     char unkF0[0x694 - 0xF0];
     Matrix unk694;
     char unk6BC[4];

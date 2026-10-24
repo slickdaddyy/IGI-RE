@@ -27,7 +27,7 @@ typedef struct SimpointObjContainer {
 
 /* "SimpointObj" (0x100), a RigidDynCubeObj */
 typedef struct SimpointObj {
-    Obj obj;
+    RigidDynCubeObj obj;
     Vec3f vel;
     int life;
 } SimpointObj;

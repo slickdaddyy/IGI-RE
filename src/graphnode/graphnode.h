@@ -6,21 +6,13 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "magicobj/magicobjtypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
 extern TaskHandler gTaskHandlers[];
 #define TASK_HANDLER(slot, type) gTaskHandlers[(slot) * 0x180 + (type)]
 #define TASK_NO_TYPE 0x181
-
-/* the parts of a RigidDynCubeObj used here */
-typedef struct RigidDynCubeObj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x38];
-    Matrix matrix;
-    int unk98;
-} RigidDynCubeObj;
 
 /* Graph task: a node array indexed by node id plus a list of links */
 typedef struct Graph {

@@ -43,7 +43,7 @@ typedef struct ScriptArg {
 
 /* a magic object that swaps its model and explodes once it took enough damage */
 typedef struct ExplodeMagicObj {
-    Obj obj;
+    RigidDynCubeObj obj;
     Vec3d offset;
     Matrix local;
     void *owner;
@@ -131,7 +131,7 @@ void ExplodeMagicObj_Run(ExplodeMagicObj *o)
             ;
     }
     RigidDynCubeObj_SetModel(o, model);
-    o->obj.unkDC = 0;
+    o->obj.lightmapRefs = 0;
     CALL_CHILDREN(&o->obj.task, Mesh3D_GetEvent5());
     p = o->params;
     Explosion_Spawn(&o->obj.pos, 1, 0, o->unk144, p->unk14 * kUnits, p->unk18 * kUnits, 6144.0f, p->unk24, p->unk28, 0,

@@ -35,7 +35,7 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 
 /* "Ladder" (0x140 bytes), a magic object humans climb (use kind 10) */
 typedef struct Ladder {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     char unkF0[0x40];
     void *unk130;
     char unk134[4];
@@ -107,7 +107,7 @@ HOOK(0x440280, Ladder_Create);
 void Ladder_Delete(Ladder *l)
 {
     QTaskList_Remove(Game_GetTaskList0(), l);
-    DynCube_Remove(l->obj.room, l);
+    DynCube_Remove(l->obj.world, l);
 }
 HOOK(0x4403C0, Ladder_Delete);
 

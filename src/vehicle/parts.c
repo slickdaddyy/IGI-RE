@@ -21,7 +21,7 @@ ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 
 /* a moving part of a vehicle: door, wheel, rocket pod */
 typedef struct VehiclePart {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d offset;
     Matrix local;
     Task *owner;
@@ -162,7 +162,7 @@ HOOK(0x426740, CarDoor_Create);
 
 void VehiclePart_Delete(VehiclePart *p)
 {
-    DynCube_Remove(p->obj.unk68, p);
+    DynCube_Remove((int)p->obj.world, p);
 }
 HOOK(0x426860, VehiclePart_Delete);
 
@@ -510,7 +510,7 @@ void RocketPod_Run(VehiclePart *p)
             pos.x = m[1] * kRocketReach + pos.x;
             pos.y = (float)(m[4] * kRocketReach) + pos.y;
             pos.z = (float)(m[7] * kRocketReach) + pos.z;
-            target = ((RigidObj *)*n->ref)->pos;
+            target = ((RigidDynCubeObj *)*n->ref)->pos;
             speed = owner->speed * kRocketSpeed + kRocketSpeedMin;
             Missile_New(Level_GetDynamic(), p, p, &pos, &p->obj.matrix, speed, &target, 0, "700_10_1", 0);
             delay = *(int *)p->params;

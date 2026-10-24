@@ -12,7 +12,7 @@ ORIG(0x4453E0, void, Switch_UpdateLocal, (void *obj));
 
 /* a lamp that rides along with an elevator, lit while a script condition holds */
 typedef struct ElevatorFloorIndicator {
-    Obj obj;
+    RigidDynCubeObj obj;
     Vec3d place;
     Matrix placeMatrix;
     Vec3d offset;
@@ -47,7 +47,7 @@ void ElevatorFloorIndicator_Move(ElevatorFloorIndicator *f, MoveArg *arg)
     f->place.x = arg->pos->x + f->place.x;
     f->place.y = arg->pos->y + f->place.y;
     f->place.z = arg->pos->z + f->place.z;
-    DynCube_Move(f->obj.world, f, &f->place, obj_radius(&f->obj));
+    DynCube_Move((int)f->obj.world, f, &f->place, obj_radius(&f->obj));
     m = arg->matrix->m;
     r.m[0] = l[6] * m[2] + l[0] * m[0] + l[3] * m[1];
     r.m[1] = l[7] * m[2] + l[1] * m[0] + l[4] * m[1];
@@ -143,7 +143,7 @@ void ElevatorFloorIndicator_Delete(ElevatorFloorIndicator *f)
 {
     VarString_Free(&f->lit);
     VarString_Free(&f->ring);
-    DynCube_Remove(f->obj.world, f);
+    DynCube_Remove((int)f->obj.world, f);
 }
 HOOK(0x43CB30, ElevatorFloorIndicator_Delete);
 
@@ -156,7 +156,7 @@ HOOK(0x43CB60, ElevatorFloorIndicator_GetParams);
 void ElevatorFloorIndicator_Changed(ElevatorFloorIndicator *f)
 {
     RigidDynCubeObj_SetModel(f, VirModel_Find(f->model));
-    DynCube_Move(f->obj.world, f, &f->place, obj_radius(&f->obj));
+    DynCube_Move((int)f->obj.world, f, &f->place, obj_radius(&f->obj));
     f->obj.matrix = f->placeMatrix;
     Switch_UpdateLocal(f);
     VarString_Bind(&f->lit, f);

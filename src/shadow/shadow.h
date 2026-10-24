@@ -7,24 +7,9 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "magicobj/magicobjtypes.h"
 
 typedef void (*TaskFn)();
-
-/* "RigidDynCubeObj" (0xF0 bytes), the fields used here */
-typedef struct Obj {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x28];
-    int inSector;       /* 0x60, set by Sector_AddObject */
-    int unk64;
-    void *world;        /* 0x68 */
-    void **model;       /* 0x6C, VirModel */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0x44];
-    Task *parts;        /* 0xE8, MagicObjContainer */
-    int unkEC;
-} Obj;
 
 /* create argument of the RigidDynCubeObj kinds made from DefineMagicObj */
 typedef struct MagicArg {
@@ -40,7 +25,7 @@ typedef struct MagicArg {
 
 /* "Sector" (0x148 bytes): a magic object that owns other objects */
 typedef struct Sector {
-    Obj o;
+    RigidDynCubeObj o;
     Vec3d offset;       /* 0xF0 */
     Matrix local;       /* 0x108 */
     Pool links;         /* 0x130, pointers into gSectorLinks */
@@ -174,7 +159,7 @@ static inline void pool_release(Pool *p, void *item)
     *(int *)(last + p->size) = index;
 }
 
-static inline float obj_scale(const Obj *o)
+static inline float obj_scale(const RigidDynCubeObj *o)
 {
     float m = !(o->scale[2] >= o->scale[1]) ? o->scale[1] : o->scale[2];
 

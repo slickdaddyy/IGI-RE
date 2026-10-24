@@ -8,20 +8,9 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "magicobj/magicobjtypes.h"
 
 typedef void (*TaskFn)();
-
-/* "RigidDynCubeObj" (0xF0 bytes), the fields used here */
-typedef struct Obj {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x30];
-    int world;          /* 0x68 */
-    void **model;       /* 0x6C, VirModel */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0x4C];
-} Obj;
 
 /* create argument of the RigidDynCubeObj kinds made by DefineMagicObj */
 typedef struct MagicArg {
@@ -46,7 +35,7 @@ typedef struct MagicPart {
 
 /* "ExplodeObject" (0x238 bytes), the fields used here */
 typedef struct ExplodeObj {
-    Obj o;
+    RigidDynCubeObj o;
     char unkF0[0xA0];
     char exploded;      /* 0x190 */
     char unk191[0xA7];
@@ -58,7 +47,6 @@ typedef struct ParamEnum {
     char **names;
 } ParamEnum;
 
-_Static_assert(sizeof(Obj) == 0xF0, "Obj");
 _Static_assert(offsetof(MagicArg, data) == 0x8C, "MagicArg");
 _Static_assert(sizeof(MagicPart) == 0x4C, "MagicPart");
 _Static_assert(sizeof(ExplodeObj) == 0x238, "ExplodeObj");
@@ -119,7 +107,7 @@ static inline int fne(long double a, long double b)
 }
 
 /* the largest scale factor, compared like the original */
-static inline float obj_scale(const Obj *o)
+static inline float obj_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] < o->scale[1] ? o->scale[1] : o->scale[2];
 

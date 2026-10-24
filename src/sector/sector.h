@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "magicobj/magicobjtypes.h"
 
 typedef void (*TaskFn)();
 
@@ -46,30 +47,11 @@ static inline SectorMesh *lod_mesh(VirModel *m, int i)
     return *(SectorMesh **)(*(char **)((char *)m->lod[i] + 0xC) + 0xC);
 }
 
-/* "RigidDynCubeObj" (0xF0 bytes), the fields used here */
-typedef struct Obj {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x28];
-    int inSector;       /* 0x60 */
-    int unk64;
-    int world;          /* 0x68 */
-    VirModel *model;    /* 0x6C */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0x34];
-    int unkD8;
-    void *lightmapRefs; /* 0xDC */
-    char unkE0[8];
-    Task *attached;     /* 0xE8 */
-    char unkEC[4];
-} Obj;
-
 /* "Sector" (0x148 bytes): a room; objects inside are kept in its pool */
 typedef struct Sector {
-    Obj o;
+    RigidDynCubeObj o;
     char unkF0[0x40];
-    Pool objects;       /* 0x130, slots hold Obj pointers */
+    Pool objects;       /* 0x130, slots hold RigidDynCubeObj pointers */
 } Sector;
 
 /* "SectorObject" (0x1A0 bytes): a building made of sectors */
@@ -81,7 +63,6 @@ typedef struct SectorObject {
     int unk19C;
 } SectorObject;
 
-_Static_assert(sizeof(Obj) == 0xF0, "Obj");
 _Static_assert(sizeof(Sector) == 0x148, "Sector");
 _Static_assert(sizeof(SectorObject) == 0x1A0, "SectorObject");
 _Static_assert(offsetof(SectorMesh, portals) == 0x98, "SectorMesh");

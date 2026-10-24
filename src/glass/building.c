@@ -20,7 +20,7 @@ ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 
 /* "Building" (0x1F0), a SectorObject (0x1A0 bytes) placed by the level */
 typedef struct Building {
-    Obj o;
+    RigidDynCubeObj o;
     char unkF0[0xB0];
     Matrix matrix;      /* 0x1A0 */
     char model[16];     /* 0x1C8 */
@@ -89,7 +89,7 @@ HOOK(0x448760, Building_Create);
 
 void Building_Delete(Building *b)
 {
-    DynCube_Remove(b->o.world, b);
+    DynCube_Remove((int)b->o.world, b);
     HANDLER(2, SectorObject_GetType())(b);
 }
 HOOK(0x448850, Building_Delete);

@@ -37,7 +37,7 @@ typedef struct PartCreateArg {
 
 /* "Gunx2" (0x138 bytes), a twin gun mounted on a vehicle */
 typedef struct Gunx2 {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d offset; /* 0xF0 */
     Matrix local; /* 0x108 */
     Task *owner;  /* 0x130 */
@@ -75,23 +75,23 @@ void Gunx2_Create(Gunx2 *t, PartCreateArg *a)
     t->offset = a->offset;
     t->local = a->local;
     RigidDynCubeObj_Init(a->world, t, model);
-    t->obj.unkEC = 0;
+    t->obj.hidden = 0;
     t->obj.matrix = a->matrix;
     t->owner = a->owner;
-    t->obj.child = MagicObjContainer_New(NULL, a->owner);
-    RigidDynCubeObj_CreateMagicObjs(t->obj.child, t, t->owner);
+    t->obj.attached = MagicObjContainer_New(NULL, a->owner);
+    RigidDynCubeObj_CreateMagicObjs(t->obj.attached, t, t->owner);
 }
 HOOK(0x46DDC0, Gunx2_Create);
 
 void Gunx2_Run(Gunx2 *t)
 {
-    CALL_CHILDREN_RUN(t->obj.child);
+    CALL_CHILDREN_RUN(t->obj.attached);
 }
 HOOK(0x46DE70, Gunx2_Run);
 
 void Gunx2_Destroy(Gunx2 *t)
 {
-    Task_Delete(t->obj.child);
+    Task_Delete(t->obj.attached);
 }
 HOOK(0x46DEE0, Gunx2_Destroy);
 

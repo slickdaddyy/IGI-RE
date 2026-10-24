@@ -9,22 +9,9 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "magicobj/magicobjtypes.h"
 
 typedef void (*TaskFn)();
-
-/* "SectorInteriorObject" (0xF0 bytes), a RigidDynCubeObj placed in a sector */
-typedef struct Obj {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x30];
-    void *sector;       /* 0x68 */
-    void **model;       /* 0x6C */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0x44];
-    Task *unkE8;        /* 0xE8 */
-    int unkEC;
-} Obj;
 
 /* the search for what a human can use (see 0x416AD0) */
 typedef struct UseQuery {
@@ -41,7 +28,7 @@ typedef struct MoveMsg {
 
 /* "Cabinet" (0x138) */
 typedef struct Cabinet {
-    Obj o;
+    RigidDynCubeObj o;
     Vec3d place;        /* 0xF0 */
     float yaw;          /* 0x108 */
     char model[0x10];   /* 0x10C */
@@ -62,7 +49,7 @@ typedef struct Cabinet {
 
 /* "Switch" (0x228) */
 typedef struct Switch {
-    Obj o;
+    RigidDynCubeObj o;
     Vec3d place;        /* 0xF0 */
     Matrix matrix;      /* 0x108 */
     Vec3d offset;       /* 0x130, place relative to the parent object */
@@ -85,7 +72,7 @@ typedef struct Switch {
 
 /* "Door" (0x328): turns around z and/or slides in x/y */
 typedef struct Door {
-    Obj o;
+    RigidDynCubeObj o;
     Vec3d place;        /* 0xF0 */
     float slide[2];     /* 0x108 */
     Matrix base;        /* 0x110, the closed matrix */
@@ -123,7 +110,6 @@ typedef struct Door {
     Matrix local;       /* 0x300, base relative to the parent object */
 } Door;
 
-_Static_assert(sizeof(Obj) == 0xF0, "Obj");
 _Static_assert(sizeof(Cabinet) == 0x138, "Cabinet");
 _Static_assert(offsetof(Switch, models) == 0x170, "Switch");
 _Static_assert(offsetof(Switch, on) == 0x1D0, "Switch");
@@ -186,7 +172,7 @@ ORIG(0x416AD0, char, UseQuery_Consider, (UseQuery *q, void *obj, const Vec3d *po
 extern double kUseWidth;
 
 /* offers o to the human when it stands in front of model point 0 */
-static inline void check_use(Obj *o, UseQuery *q)
+static inline void check_use(RigidDynCubeObj *o, UseQuery *q)
 {
     const float *m = o->matrix.m;
     long double x, a, b;
@@ -212,7 +198,7 @@ static inline void check_use(Obj *o, UseQuery *q)
 }
 
 /* the largest of the three scale factors, compared like the original */
-static inline float max_scale(const Obj *o)
+static inline float max_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] >= o->scale[1] ? o->scale[2] : o->scale[1];
 
@@ -259,7 +245,7 @@ static inline void place_from(Vec3d *place, const Matrix *m, const Vec3d *offset
 }
 
 /* offset and local are place and m seen from the parent object */
-static inline void to_local(Vec3d *offset, Matrix *local, const Vec3d *place, const Matrix *m, const Obj *parent)
+static inline void to_local(Vec3d *offset, Matrix *local, const Vec3d *place, const Matrix *m, const RigidDynCubeObj *parent)
 {
     const float *t = parent->matrix.m;
     long double z;

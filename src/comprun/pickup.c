@@ -83,7 +83,7 @@ ORIG(0x4F1E20, void *, Param_EnumString32, (void));
 
 /* "GenericPickup" (0x120 bytes), a model that disappears when touched */
 typedef struct GenericPickup {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d pos;      /* 0xF0 */
     char model[16]; /* 0x108 */
     char registered;
@@ -94,7 +94,7 @@ typedef struct GenericPickup {
 
 /* "GunPickup" (0x158 bytes), a weapon lying around or falling to the ground */
 typedef struct GunPickup {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d pos;    /* 0xF0 */
     Vec3d ground; /* 0x108 */
     double fall;  /* 0x120 */
@@ -109,7 +109,7 @@ typedef struct GunPickup {
 
 /* "AmmoPickup" (0x138 bytes) */
 typedef struct AmmoPickup {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d pos; /* 0xF0 */
     char registered;
     char pickedUp;
@@ -167,7 +167,7 @@ static const float kZeroF = 0.0f;
 static const float kRight = 90.0f;
 static const float kLeft = -90.0f;
 
-static long double radius(RigidObj *o)
+static long double radius(RigidDynCubeObj *o)
 {
     float s = max_scale(o);
 
@@ -175,7 +175,7 @@ static long double radius(RigidObj *o)
 }
 
 /* whether a toucher is close enough to pick o up */
-static int touches(RigidObj *o, Toucher *by)
+static int touches(RigidDynCubeObj *o, Toucher *by)
 {
     long double r = radius(o);
     double range = r;
@@ -448,7 +448,7 @@ HOOK(0x46C980, GunPickup_New);
 
 void GunPickup_Create(GunPickup *t);
 void GunPickup_Run(GunPickup *t);
-void Pickup_Destroy(RigidObj *t);
+void Pickup_Destroy(RigidDynCubeObj *t);
 void GunPickup_GetParams(void *t, void **out);
 void GunPickup_Changed(GunPickup *t);
 void GunPickup_Register(GunPickup *t);
@@ -479,7 +479,7 @@ void GunPickup_Init(void)
 HOOK(0x46CB70, GunPickup_Init);
 
 /* creates a pickup lying at the origin until its parameters arrive */
-static void pickup_create(RigidObj *t)
+static void pickup_create(RigidDynCubeObj *t)
 {
     Vec3d zero = {0.0, 0.0, 0.0};
     long double r;
@@ -492,7 +492,7 @@ static void pickup_create(RigidObj *t)
 }
 
 /* moves a pickup to pos after a parameter change */
-static void pickup_move(RigidObj *t, Vec3d *pos)
+static void pickup_move(RigidDynCubeObj *t, Vec3d *pos)
 {
     long double r = radius(t);
 
@@ -683,7 +683,7 @@ void AmmoPickup_Run(AmmoPickup *t)
 HOOK(0x46D740, AmmoPickup_Run);
 
 /* the delete handler of GunPickup and AmmoPickup */
-void Pickup_Destroy(RigidObj *t)
+void Pickup_Destroy(RigidDynCubeObj *t)
 {
     QTaskList_Remove(Game_GetTaskList2(), t);
     Sector_RemoveObject(t);

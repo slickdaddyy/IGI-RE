@@ -26,7 +26,7 @@ ORIG(0x502180, long double, SplineObj_GetLengthTo, (int id, int floor));
 
 /* a platform moving between the floors of a graph task */
 typedef struct Elevator {
-    Obj obj;
+    RigidDynCubeObj obj;
     Vec3d place;
     Vec3d lastPos;
     Matrix placeMatrix;

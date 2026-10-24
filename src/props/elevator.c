@@ -34,7 +34,7 @@ ORIG(0x502200, void, SplineObj_GetWaypointPos, (Vec3d *out, int id, int floor));
 /* "Elevator" (0x648 bytes): a platform moving along a graph between floors.
    Field names follow src/elevator. */
 typedef struct Elevator {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d place;            /* 0xF0, point on the graph */
     Vec3d lastPos;          /* 0x108 */
     Matrix placeMatrix;     /* 0x120 */
@@ -150,7 +150,7 @@ void Elevator_DeleteHandler(Elevator *e)
     VarString_Free(&e->down);
     VarString_Free(&e->up);
     VarString_Free(&e->move);
-    DynCube_Remove(e->obj.room, e);
+    DynCube_Remove(e->obj.world, e);
 }
 HOOK(0x43DCF0, Elevator_DeleteHandler);
 

@@ -22,7 +22,7 @@ ORIG(0x4F0F70, void *, Param_Real32x9, (void));
 
 /* a model spinning around its axes ("RotatingObject", 0x200 bytes) */
 typedef struct RotatingObject {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     char sound[16];
     char unk100[16];
     char model[16];
@@ -133,7 +133,7 @@ HOOK(0x438C30, RotatingObject_Create);
 
 void RotatingObject_Delete(RotatingObject *t)
 {
-    DynCube_Remove((void *)(intptr_t)t->obj.unk68, t);
+    DynCube_Remove((void *)(intptr_t)t->obj.world, t);
     if (t->soundRef)
         TaskRef_Remove(t->soundRef);
     if (t->soundParams)

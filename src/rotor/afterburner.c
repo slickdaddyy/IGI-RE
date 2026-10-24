@@ -169,7 +169,7 @@ HOOK(0x42C0B0, Afterburner_Move);
 
 void Afterburner_DrawPrim(Prim *p)
 {
-    RigidObj *o = p->obj;
+    RigidDynCubeObj *o = p->obj;
 
     Debug_Log(o, p->unk10, o->unk48, p->unk14, p->unk18, p->unk20, p->unk1C, p->color);
 }

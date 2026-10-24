@@ -109,7 +109,7 @@ HOOK(0x42C500, Rotor_Create);
 void Rotor_DrawPrim(Prim *p)
 {
     Part *src = p->obj;
-    RigidObj copy = src->obj;
+    RigidDynCubeObj copy = src->obj;
     Matrix base = copy.matrix;
     RotorDef *d = src->def->data;
     Car *car = src->owner;
@@ -118,7 +118,7 @@ void Rotor_DrawPrim(Prim *p)
     float step, maxTilt, tilt, a;
     int i;
     struct {
-        RigidObj *obj;
+        RigidDynCubeObj *obj;
         int unk14;
         int unk18;
         int unk20;

@@ -20,7 +20,7 @@ ORIG(0x44BD70, void, GlassShatter_SpawnFrom, (void **model, Matrix *m, Vec3d *po
 
 /* "Glass" (0x148), a pane that shatters once it took enough damage */
 typedef struct Glass {
-    Obj o;
+    RigidDynCubeObj o;
     MagicPart m;        /* 0xF0 */
     float damage;       /* 0x13C */
     float strength;     /* 0x140 */
@@ -48,7 +48,7 @@ typedef struct BlastArg {
 
 /* something ran into the glass (event from 0x4FC860) */
 typedef struct TouchArg {
-    Obj *by;
+    RigidDynCubeObj *by;
     int unk4;
     int handled;
 } TouchArg;
@@ -96,7 +96,7 @@ HOOK(0x4497F0, Glass_Create);
 void Glass_Delete(Glass *g)
 {
     QTaskList_Remove(Game_GetTaskList3(), g);
-    DynCube_Remove(g->o.world, g);
+    DynCube_Remove((int)g->o.world, g);
 }
 HOOK(0x449950, Glass_Delete);
 

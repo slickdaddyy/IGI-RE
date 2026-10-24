@@ -16,7 +16,7 @@ ORIG(0x503CC0, Task *, SimpointObjContainer_Add, (void *group, uint16_t type, Ve
 
 /* throws a new model object every few seconds */
 typedef struct SimpointObjGenerator {
-    Obj obj;
+    RigidDynCubeObj obj;
     int timer;
     char model[16];
     char unk104[16];

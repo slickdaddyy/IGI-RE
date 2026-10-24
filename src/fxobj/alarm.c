@@ -49,7 +49,7 @@ ORIG(0x4F0F70, void *, Param_Real32x9, (void));
 
 /* a rotating warning light ("AlarmLight", 0x1F8 bytes) */
 typedef struct AlarmLight {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d pos;
     Matrix local;
     char offModel[16];
@@ -65,7 +65,7 @@ typedef struct AlarmLight {
 
 /* the turning reflector inside an alarm light ("AlarmLightReflector", 0x140 bytes) */
 typedef struct Reflector {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d offset;
     Matrix local;
     AlarmLight *light;

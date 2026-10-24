@@ -37,7 +37,7 @@ typedef struct SplineObjSegment {
 
 /* "SplineObjWaypoint" (0x1A8), a RigidDynCubeObj */
 typedef struct SplineObjWaypoint {
-    Obj obj;
+    RigidDynCubeObj obj;
     SplineObjSegment *seg;
     int unkF4;
     Vec3d point;
@@ -112,7 +112,7 @@ static const float kPi = 0x1.921fb6p+1f;
 /* Stores the waypoint's place relative to the RigidDynCubeObj it hangs under */
 void SplineObjWaypoint_UpdateAttach(SplineObjWaypoint *w)
 {
-    Obj *a = (Obj *)Task_FindAncestor(w->obj.task.parent, RigidDynCubeObj_GetType());
+    RigidDynCubeObj *a = (RigidDynCubeObj *)Task_FindAncestor(w->obj.task.parent, RigidDynCubeObj_GetType());
     const float *m, *t, *r;
     long double dz;
     Vec3d p;

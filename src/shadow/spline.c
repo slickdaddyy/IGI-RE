@@ -5,7 +5,7 @@
 
 /* "SplineObj", the fields used here */
 typedef struct SplineObj {
-    Obj o;
+    RigidDynCubeObj o;
     char unkF0[0xC];
     float minX;         /* 0xFC */
     float maxX;         /* 0x100 */

@@ -43,8 +43,8 @@ typedef struct CabinetUseArg {
 void Cabinet_Run(Cabinet *c)
 {
     BROADCAST(&c->o.task, 1);
-    if (c->o.unkE8 && c->moving)
-        HANDLER(1, c->o.unkE8->type)(c->o.unkE8);
+    if (c->o.attached && c->moving)
+        HANDLER(1, c->o.attached->type)(c->o.attached);
     if (gTick > c->useTick + 2)
         c->inUse = 0;
     c->lastInUse = c->inUse;
@@ -60,10 +60,10 @@ void Cabinet_Delete(Cabinet *c)
         if (fn)
             fn(c);
     }
-    if (c->o.unkE8)
-        Task_Delete(c->o.unkE8);
+    if (c->o.attached)
+        Task_Delete(c->o.attached);
     Sector_RemoveObject(c);
-    DynCube_Remove(c->o.sector, c);
+    DynCube_Remove(c->o.world, c);
 }
 HOOK(0x444660, Cabinet_Delete);
 
@@ -82,16 +82,16 @@ void Cabinet_ParamsChanged(Cabinet *c, char *arg)
     RigidDynCubeObj_SetModel(c, VirModel_Find(c->model));
     scale = max_scale(&c->o);
     radius = VirModel_GetRadius(c->o.model) * scale;
-    DynCube_Move(c->o.sector, c, &c->place, radius);
-    Sector_MoveObject(c->o.sector, c, DynCubeObj_GetPosition(c));
+    DynCube_Move(c->o.world, c, &c->place, radius);
+    Sector_MoveObject(c->o.world, c, DynCubeObj_GetPosition(c));
     Matrix_SetRotZ(&c->o.matrix, c->yaw);
-    if (c->o.unkE8)
-        Task_Delete(c->o.unkE8);
+    if (c->o.attached)
+        Task_Delete(c->o.attached);
     t = MagicObjContainer_New(NULL, c);
-    c->o.unkE8 = t;
+    c->o.attached = t;
     RigidDynCubeObj_CreateMagicObjs(t, c, c);
     if (!arg || !*arg)
-        BROADCAST(c->o.unkE8, Param_GetChangedEvent(), NULL);
+        BROADCAST(c->o.attached, Param_GetChangedEvent(), NULL);
 }
 HOOK(0x4446E0, Cabinet_ParamsChanged);
 
@@ -167,7 +167,7 @@ void Cabinet_Close(void)
 HOOK(0x444B00, Cabinet_Close);
 
 /* where a human uses obj (its model point 0) and how it is turned */
-void Obj_GetUsePoint(Obj *o, Vec3d *pos, Matrix *m)
+void Obj_GetUsePoint(RigidDynCubeObj *o, Vec3d *pos, Matrix *m)
 {
     *m = o->matrix;
     Model_GetPoint(pos, o, 0);

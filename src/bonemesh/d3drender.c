@@ -6,6 +6,7 @@
 
 #include "hook.h"
 #include "bonemesh/bonemesh.h"
+#include "magicobj/magicobjtypes.h"
 
 ORIG(0x491D40, long double, Display_GetAspect, (void));
 ORIG(0x4950F0, void, Direct3D_MakeMatrix, (void *out, const Matrix *rot, const Vec3f *pos));
@@ -55,22 +56,6 @@ typedef struct BoneObj {
 } BoneObj;
 
 _Static_assert(offsetof(BoneObj, layer) == 0xD4, "BoneObj");
-
-/* "RigidDynCubeObj" */
-typedef struct RigidObj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    int unk68;
-    VirModel *model;
-    Matrix matrix;
-    float scale[3];
-    char unkA4[0x44];
-    Task *attached;
-    int unkEC;
-} RigidObj;
-
-_Static_assert(offsetof(RigidObj, attached) == 0xE8, "RigidObj");
 
 /* what a rigid object passes to its children */
 typedef struct PlaceArg {
@@ -150,8 +135,8 @@ extern float gFrustumTScale;
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);
 
-void RigidDynCubeObj_GetSphereHandler(RigidObj *obj, SphereArg *out);
-void RigidDynCubeObj_NearZHandler(RigidObj *obj, NearZArg *arg);
+void RigidDynCubeObj_GetSphereHandler(RigidDynCubeObj *obj, SphereArg *out);
+void RigidDynCubeObj_NearZHandler(RigidDynCubeObj *obj, NearZArg *arg);
 
 /* Calls the handler of slot_fn() on each child of t (not deeper), keeping
    the next child on gTaskStack so handlers may delete tasks. */
@@ -409,7 +394,7 @@ HOOK(0x4A0110, Direct3DRender_Shutdown);
 
 /* draws the object, then tells its children (and those of the attached
    task) where it is */
-void RigidDynCubeObj_EnterHandler(RigidObj *obj)
+void RigidDynCubeObj_EnterHandler(RigidDynCubeObj *obj)
 {
     MeshDrawArg d;
     PlaceArg a;
@@ -721,9 +706,9 @@ void RigidDynCubeObj_OpenD3D(void)
 HOOK(0x4A1470, RigidDynCubeObj_OpenD3D);
 
 /* bounding sphere of the model in world space */
-void RigidDynCubeObj_GetSphereHandler(RigidObj *obj, SphereArg *out)
+void RigidDynCubeObj_GetSphereHandler(RigidDynCubeObj *obj, SphereArg *out)
 {
-    VirModel *m = obj->model;
+    VirModel *m = (VirModel *)obj->model;
     MeshHeader *h;
     const Matrix *r = &obj->matrix;
     long double x;
@@ -793,7 +778,7 @@ static void clip_face(ClipVertex *a, ClipVertex *b, ClipVertex *c, float *minZ, 
    mesh, then asks the attached task's children. For a vertex behind the
    near plane the screen position is the previous vertex's (stale stack for
    the first). */
-void RigidDynCubeObj_NearZHandler(RigidObj *obj, NearZArg *arg)
+void RigidDynCubeObj_NearZHandler(RigidDynCubeObj *obj, NearZArg *arg)
 {
     float nearZ = gNearPlane;
     MeshHeader *h;
@@ -809,9 +794,9 @@ void RigidDynCubeObj_NearZHandler(RigidObj *obj, NearZArg *arg)
     const float *p;
     int i, j;
 
-    if (obj->unkEC != 1 || !obj->model || !obj->model->lods[0])
+    if (obj->hidden != 1 || !obj->model || !((VirModel *)obj->model)->lods[0])
         return;
-    h = (MeshHeader *)obj->model->lods[0]->mesh->header;
+    h = (MeshHeader *)((VirModel *)obj->model)->lods[0]->mesh->header;
     pos.x = (float)(obj->pos.x - gTransCtx.pos[0]);
     pos.y = (float)(obj->pos.y - gTransCtx.pos[1]);
     pos.z = (float)(obj->pos.z - gTransCtx.pos[2]);

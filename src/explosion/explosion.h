@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "magicobj/magicobjtypes.h"
 
 FN_EXTERN(Task_FalseHandler);
 FN_EXTERN(Task_Nothing);
@@ -19,17 +20,6 @@ typedef struct TaskArray {
     int unk4;
     Task *tasks[1];
 } TaskArray;
-
-/* "RigidDynCubeObj" (0xF0 bytes), a moving object with a model */
-typedef struct RigidObj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x34];
-    void **model;
-    Matrix matrix;
-    float scale[3];
-    char unkA4[0xF0 - 0xA4];
-} RigidObj;
 
 /* the start of the 0x70 byte collision hit sent with the bullet hole event */
 typedef struct HoleHit {
@@ -137,7 +127,7 @@ typedef struct ExplosionSmoke {
 
 /* "FireBall" (0x118 bytes), an animated sprite model that faces the camera */
 typedef struct FireBall {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     int frame;  /* 0xF0, -1 when not animated */
     int life;   /* 0xF4 */
     int frames; /* 0xF8 */
@@ -204,7 +194,6 @@ typedef struct RenderArg {
     int unk10;
 } RenderArg;
 
-_Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 _Static_assert(offsetof(HoleHit, dir) == 0x38, "HoleHit");
 _Static_assert(sizeof(HolePoly) == 0x40, "HolePoly");
 _Static_assert(sizeof(Hole) == 0x58, "Hole");

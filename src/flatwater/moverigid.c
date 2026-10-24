@@ -6,6 +6,7 @@
 
 #include "hook.h"
 #include "flatwater/flatwater.h"
+#include "magicobj/magicobjtypes.h"
 
 FN_EXTERN(MoveRigidObj_Changed);
 
@@ -23,22 +24,8 @@ ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D0950, long double, VirModel_GetRadius2, (void **model, int unk));
 ORIG(0x4E0930, Task *, MagicObjContainer_New, (void *parent, void *owner));
 
-/* the RigidDynCubeObj part */
-typedef struct RigidObj {
-    Task task;
-    Vec3d pos;         /* 0x20 */
-    char unk38[0x30];
-    char *world;       /* 0x68 */
-    void **model;      /* 0x6C */
-    float matrix[10];  /* 0x70 */
-    float scale[3];    /* 0x98 */
-    char unkA4[0x44];
-    Task *magic;       /* 0xE8 */
-    int unkEC;
-} RigidObj;
-
 typedef struct MoveRigidObj {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d keyPos[2];   /* 0xF0 */
     Vec3d unk120[2];
     float alpha[2];    /* 0x150 */
@@ -58,7 +45,6 @@ typedef struct MoveRigidObj {
     char pad205[3];
 } MoveRigidObj;
 
-_Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 _Static_assert(sizeof(MoveRigidObj) == 0x208, "MoveRigidObj");
 
 extern char gMoveBetaNames[][16];
@@ -115,7 +101,7 @@ void MoveRigidObj_Open(void)
 HOOK(0x51F580, MoveRigidObj_Open);
 
 /* largest scale component; a NaN compare picks the later operand */
-static float max_scale(const RigidObj *o)
+static float max_scale(const RigidDynCubeObj *o)
 {
     float m = !(o->scale[2] >= o->scale[1]) ? o->scale[1] : o->scale[2];
 
@@ -132,7 +118,7 @@ void MoveRigidObj_Create(MoveRigidObj *t)
     pos.x = 0;
     pos.y = 0;
     pos.z = 0;
-    t->obj.magic = MagicObjContainer_New(NULL, t);
+    t->obj.attached = MagicObjContainer_New(NULL, t);
     t->unk180[0] = 0;
     VarString_Init(&t->expr);
     RigidDynCubeObj_Init(gWorld, t, NULL);
@@ -190,7 +176,7 @@ void MoveRigidObj_Delete(MoveRigidObj *t)
     }
     VarString_Free(&t->expr);
     DynCube_Remove(t->obj.world, t);
-    Task_Delete(t->obj.magic);
+    Task_Delete(t->obj.attached);
 }
 HOOK(0x51FA30, MoveRigidObj_Delete);
 
@@ -200,7 +186,7 @@ void MoveRigidObj_GetParams(void *task, void **out)
 }
 HOOK(0x51FA90, MoveRigidObj_GetParams);
 
-void MoveRigidObj_Apply(MoveRigidObj *t, RigidObj *o, char force);
+void MoveRigidObj_Apply(MoveRigidObj *t, RigidDynCubeObj *o, char force);
 
 void MoveRigidObj_Run(MoveRigidObj *t)
 {
@@ -226,7 +212,7 @@ void MoveRigidObj_Run(MoveRigidObj *t)
 HOOK(0x51FAA0, MoveRigidObj_Run);
 
 /* places o between key i and key i+1 (wrapping to 0) by the fraction of value */
-void MoveRigidObj_Apply(MoveRigidObj *t, RigidObj *o, char force)
+void MoveRigidObj_Apply(MoveRigidObj *t, RigidDynCubeObj *o, char force)
 {
     long double f, g;
     float alpha, beta, gamma, scale, radius;
@@ -245,7 +231,7 @@ void MoveRigidObj_Apply(MoveRigidObj *t, RigidObj *o, char force)
     pos.x = g * t->keyPos[i].x + f * t->keyPos[j].x;
     pos.y = f * t->keyPos[j].y + g * t->keyPos[i].y;
     pos.z = f * t->keyPos[j].z + g * t->keyPos[i].z;
-    Matrix_SetEuler(o->matrix, alpha, beta, gamma);
+    Matrix_SetEuler(o->matrix.m, alpha, beta, gamma);
     scale = max_scale(o);
     radius = VirModel_GetRadius(o->model) * scale;
     DynCube_Move(o->world, o, &pos, radius);

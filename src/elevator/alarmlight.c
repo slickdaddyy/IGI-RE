@@ -10,7 +10,7 @@ ORIG(0x4E0930, Task *, MagicObjContainer_New, (void *parent, void *obj));
 
 /* a light that turns on and off with a script condition and breaks when hit */
 typedef struct AlarmLight {
-    Obj obj;
+    RigidDynCubeObj obj;
     Vec3d place;
     Matrix placeMatrix;
     char offModel[16];
@@ -44,7 +44,7 @@ void AlarmLight_Create(AlarmLight *al)
     al->place.y = 0;
     al->place.z = 0;
     DynCube_Add(gCurrentWorld, al, &al->place, obj_radius(&al->obj), 1);
-    Sector_AddObject(al->obj.world, al, DynCubeObj_GetPosition(al));
+    Sector_AddObject((int)al->obj.world, al, DynCubeObj_GetPosition(al));
     for (i = 0; i < 9; i++)
         al->placeMatrix.m[i] = i % 4 == 0 ? 1.0f : 0.0f;
     al->placeMatrix.count = 0;
@@ -85,8 +85,8 @@ void AlarmLight_Run(AlarmLight *al)
         RigidDynCubeObj_SetModel(al, VirModel_Find(al->onModel));
     }
     CALL_CHILDREN(&al->obj.task, 1);
-    if (al->obj.unkE8)
-        ((void (*)(void *))HANDLER(1, al->obj.unkE8->type))(al->obj.unkE8);
+    if (al->obj.attached)
+        ((void (*)(void *))HANDLER(1, al->obj.attached->type))(al->obj.attached);
 }
 HOOK(0x43A270, AlarmLight_Run);
 
@@ -100,10 +100,10 @@ void AlarmLight_Delete(AlarmLight *al)
         if (fn)
             ((void (*)(void *))fn)(al);
     }
-    if (al->obj.unkE8)
-        Task_Delete(al->obj.unkE8);
+    if (al->obj.attached)
+        Task_Delete(al->obj.attached);
     Sector_RemoveObject(al);
-    DynCube_Remove(al->obj.world, al);
+    DynCube_Remove((int)al->obj.world, al);
 }
 HOOK(0x43A3C0, AlarmLight_Delete);
 
@@ -118,17 +118,17 @@ void AlarmLight_Changed(AlarmLight *al, const char *arg)
     Task *t;
 
     RigidDynCubeObj_SetModel(al, VirModel_Find(al->onModel));
-    DynCube_Move(al->obj.world, al, &al->place, obj_radius(&al->obj));
-    Sector_MoveObject(al->obj.world, al, DynCubeObj_GetPosition(al));
-    t = al->obj.unkE8;
+    DynCube_Move((int)al->obj.world, al, &al->place, obj_radius(&al->obj));
+    Sector_MoveObject((int)al->obj.world, al, DynCubeObj_GetPosition(al));
+    t = al->obj.attached;
     al->obj.matrix = al->placeMatrix;
     if (t)
         Task_Delete(t);
     t = MagicObjContainer_New(NULL, al);
-    al->obj.unkE8 = t;
+    al->obj.attached = t;
     RigidDynCubeObj_CreateMagicObjs(t, al, al);
     if (!arg || !*arg)
-        CALL_CHILDREN(al->obj.unkE8, Param_GetChangedEvent(), NULL);
+        CALL_CHILDREN(al->obj.attached, Param_GetChangedEvent(), NULL);
     VarString_Bind(&al->cond, al);
 }
 HOOK(0x43A450, AlarmLight_Changed);

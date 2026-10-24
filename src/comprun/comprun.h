@@ -8,24 +8,11 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "magicobj/magicobjtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* "RigidDynCubeObj" (0xF0 bytes), a moving object with a model */
-typedef struct RigidObj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    void *world;
-    void **model;
-    Matrix matrix;
-    float scale[3];
-    char unkA4[0x44];
-    Task *child; /* 0xE8 */
-    int unkEC;
-} RigidObj;
 
 /* what a picker passes to the touch handlers */
 typedef struct Toucher {
@@ -33,8 +20,6 @@ typedef struct Toucher {
     int unk4;
     Vec3d pos;
 } Toucher;
-
-_Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
@@ -89,7 +74,7 @@ static inline int round_int(long double f)
 }
 
 /* the largest of the three scale factors */
-static inline float max_scale(const RigidObj *o)
+static inline float max_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] >= o->scale[1] ? o->scale[2] : o->scale[1];
 

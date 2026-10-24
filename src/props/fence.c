@@ -56,7 +56,7 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 /* "Fence" (0x178 bytes): a fence that shocks humans while a script
    expression is true, with a buzzing spark task on top */
 typedef struct Fence {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d pos;          /* 0xF0 */
     float angle;        /* 0x108, about z */
     char model[0x10];   /* 0x10C */

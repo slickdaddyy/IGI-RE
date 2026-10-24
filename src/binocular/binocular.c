@@ -44,7 +44,7 @@ extern uint16_t gBinocularType;
 
 /* "Binocular" (0x1C8 bytes), a weapon */
 typedef struct Binocular {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     char unkF0[0x14];
     char id[0x24];          /* 0x104 */
     char *weaponType;       /* 0x128, its +0x6E4 holds the zoom limits */

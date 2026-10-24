@@ -8,6 +8,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "coll/colltypes.h"
+#include "magicobj/magicobjtypes.h"
 
 typedef void (*TaskFn)();
 
@@ -24,19 +25,6 @@ typedef struct CollFilter {
     Task *other;
     float unk10;
 } CollFilter;
-
-/* RigidDynCubeObj, 0xF0 bytes */
-typedef struct Obj {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x34];
-    void **model;       /* 0x6C */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0x44];
-    Task *coll;         /* 0xE8, its children get the move event */
-    int hidden;         /* 0xEC */
-} Obj;
 
 /* noise for HumanAI_Broadcast */
 typedef struct Noise {
@@ -80,7 +68,7 @@ typedef struct WeaponType {
 
 /* Mine (0x250 bytes), a subtype of ExplodeObject (0x238 bytes) */
 typedef struct Mine {
-    Obj o;
+    RigidDynCubeObj o;
     Vec3d placePos;     /* 0xF0 */
     Matrix placeMatrix; /* 0x108 */
     char unk130[0x40];
@@ -120,7 +108,7 @@ typedef struct MapQuery {
 
 /* M203 grenade (0x128 bytes) */
 typedef struct M203 {
-    Obj o;
+    RigidDynCubeObj o;
     Vec3d pos;          /* 0xF0 */
     Vec3f vel;          /* 0x108 */
     Task **owner;       /* 0x114 */
@@ -150,7 +138,7 @@ typedef struct GrenadeType {
 
 /* Grenade (0x738 bytes), a subtype of PhysicsObj */
 typedef struct Grenade {
-    Obj o;
+    RigidDynCubeObj o;
     Body body;          /* 0xF0 */
     PhysType *phys;     /* 0x1B4 */
     int hit;            /* 0x1B8 */
@@ -166,7 +154,7 @@ typedef struct Grenade {
 
 /* GunFlame, GunClip and GunMovingPart (0x140 bytes) */
 typedef struct GunPart {
-    Obj o;
+    RigidDynCubeObj o;
     Vec3d offset;       /* 0xF0 */
     Matrix local;       /* 0x108 */
     int unk130;
@@ -206,7 +194,7 @@ typedef struct GunFire {
 
 /* hand weapon (0x1B0 bytes) */
 typedef struct Gun {
-    Obj o;
+    RigidDynCubeObj o;
     char inWorld;       /* 0xF0 */
     char unkF1;
     char unkF2[2];
@@ -252,14 +240,14 @@ typedef struct GunColl {
 
 /* empty cartridge thrown out of a gun (0x128 bytes) */
 typedef struct GunCasing {
-    Obj o;
+    RigidDynCubeObj o;
     int life;           /* 0xF0, frames */
     Matrix spin;        /* 0xF4 */
     Vec3f vel;          /* 0x11C */
 } GunCasing;
 
 #define SCHECK(t, f, off) _Static_assert(offsetof(t, f) == (off), #f)
-SCHECK(Obj, coll, 0xE8);
+SCHECK(RigidDynCubeObj, attached, 0xE8);
 SCHECK(WeaponType, spread, 0x664);
 SCHECK(WeaponType, sound2, 0x6C0);
 SCHECK(WeaponType, gunType, 0x6D8);
@@ -329,7 +317,7 @@ static inline Task *next_sibling(Task *t)
     } while (0)
 
 /* the largest scale, compared the way the original does */
-static inline float max_scale(const Obj *o)
+static inline float max_scale(const RigidDynCubeObj *o)
 {
     float m = !(o->scale[2] >= o->scale[1]) ? o->scale[1] : o->scale[2];
 

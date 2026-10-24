@@ -9,22 +9,11 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "magicobj/magicobjtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)();
-
-/* "RigidDynCubeObj" (0xF0 bytes), an object with a model */
-typedef struct RigidObj {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x30];
-    void *room;         /* 0x68 */
-    void **model;       /* 0x6C */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0xF0 - 0xA4];
-} RigidObj;
 
 /* the physics object type a PhysicsObj was made from */
 typedef struct PhysType {
@@ -34,7 +23,7 @@ typedef struct PhysType {
 
 /* "PhysicsObj" (0x720 bytes), a RigidDynCubeObj moved by a rigid body */
 typedef struct PhysObj {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     struct {
         char unk0[0x18];
         Vec3f velocity; /* 0x108 */
@@ -77,7 +66,6 @@ typedef struct CollMsg {
     void *obj;
 } CollMsg;
 
-_Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 _Static_assert(offsetof(PhysObj, body.velocity) == 0x108, "velocity");
 _Static_assert(offsetof(PhysObj, name) == 0x154, "name");
 _Static_assert(offsetof(PhysObj, phys) == 0x1B4, "phys");
@@ -126,7 +114,7 @@ static inline long long round_ll(long double f)
 }
 
 /* the largest of the three scale factors, compared like the original */
-static inline float max_scale(const RigidObj *o)
+static inline float max_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] >= o->scale[1] ? o->scale[2] : o->scale[1];
 

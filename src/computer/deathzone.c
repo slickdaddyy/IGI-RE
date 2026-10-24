@@ -39,8 +39,8 @@ ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (void *obj));
 
 /* a MagicObj that rides on a vehicle and hurts the humans it touches */
 typedef struct DeathZone {
-    Obj o;
-    char unkA8[0xF0 - sizeof(Obj)];
+    RigidDynCubeObj o;
+    char unkA8[0xF0 - sizeof(RigidDynCubeObj)];
     Vec3d offset;
     Matrix rel;
     Task *vehicle;

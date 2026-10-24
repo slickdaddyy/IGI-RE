@@ -8,7 +8,7 @@ FN_EXTERN(MagicObj_RunHandler);
 
 /* "PhysicsMagicObj" (0x768), a PhysicsObj (0x720) */
 typedef struct PhysicsMagicObj {
-    Obj obj;
+    RigidDynCubeObj obj;
     char unkF0[0x720 - 0xF0];
     Vec3d offset;
     Matrix local;
@@ -63,7 +63,7 @@ extern uint16_t gPhysicsMagicObjType;
 
 void PhysicsMagicObj_Create(PhysicsMagicObj *o, MagicCreateArg *arg);
 void PhysicsMagicObj_Move(PhysicsMagicObj *o, MoveArg *arg);
-void PhysicsMagicObj_Slot12(Obj *o, HitCheckArg *arg);
+void PhysicsMagicObj_Slot12(RigidDynCubeObj *o, HitCheckArg *arg);
 
 void PhysicsMagicObj_Open(void)
 {
@@ -140,7 +140,7 @@ void PhysicsMagicObj_Move(PhysicsMagicObj *o, MoveArg *arg)
 }
 HOOK(0x503F20, PhysicsMagicObj_Move);
 
-void PhysicsMagicObj_Slot12(Obj *o, HitCheckArg *arg)
+void PhysicsMagicObj_Slot12(RigidDynCubeObj *o, HitCheckArg *arg)
 {
     if (o != arg->other && *(void **)((char *)o + 0x130) != arg->other) {
         arg->result = 1;

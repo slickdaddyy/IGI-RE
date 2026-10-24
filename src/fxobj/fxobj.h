@@ -8,6 +8,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
+#include "magicobj/magicobjtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -31,18 +32,6 @@ typedef struct ParseArg {
     int used;
 } ParseArg;
 
-/* "RigidDynCubeObj" (0xF0 bytes), a moving object with a model */
-typedef struct RigidObj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    int unk68;
-    void **model;
-    Matrix matrix;
-    float scale[3];
-    char unkA4[0xF0 - 0xA4];
-} RigidObj;
-
 /* the argument of the create handler of the vehicle parts */
 typedef struct PartCreateArg {
     const char *model;
@@ -54,7 +43,6 @@ typedef struct PartCreateArg {
     Task *owner;
 } PartCreateArg;
 
-_Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 _Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 
 extern TaskFn gTaskHandlers[][0x180];
@@ -99,7 +87,7 @@ static inline int round_int(long double f)
 #define EQ_OR_NAN(a, b) (!((a) < (b) || (a) > (b)))
 
 /* the largest of the three scale factors */
-static inline float max_scale(const RigidObj *o)
+static inline float max_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] >= o->scale[1] ? o->scale[2] : o->scale[1];
 
