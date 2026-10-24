@@ -6,18 +6,12 @@
 #include "qvertex/qvertextypes.h"
 #include "coll/colltypes.h"
 #include "win/wintypes.h"
+#include "res/restypes.h"
 
 FN_EXTERN(BinocularHolder_Changed);
 FN_EXTERN(BinocularHolder_GetParams);
 FN_EXTERN(BinocularOverlay_DrawHandler);
 FN_EXTERN(BinocularOverlay_UseHandler);
-
-/* a text line drawn on screen; only the position is used here */
-typedef struct Text {
-    void *grid;
-    float x;
-    float y;
-} Text;
 
 /* what the collision line tests skip */
 typedef struct CollFilter {

@@ -7,27 +7,9 @@
 #include "igi.h"
 #include "task/tasktypes.h"
 #include "qvertex/qvertextypes.h"
+#include "res/restypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Sprite {
-    void *palette;
-    void *textures;
-    void *frames;
-    void *map;
-    int ntextures;
-    unsigned short nframes;
-    unsigned char format;
-} Sprite;
-
-typedef struct Text {
-    void *grid;
-    float x, y, z;
-    float alpha;
-    float color[3];
-    int unk20;
-    unsigned int flags;
-} Text;
 
 /* the "MenuWindow" task (0x54 bytes), base of every menu element */
 typedef struct MenuWindow {

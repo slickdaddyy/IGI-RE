@@ -5,18 +5,7 @@
 #include "igi.h"
 #include "math/x87.h"
 #include "graphtask/graphtask.h"
-
-typedef struct SpriteAnim {
-    char unk0[4];
-    int16_t count;
-    char unk6[10];
-    uint8_t frames[1];  /* 0x10, frame number + 1 per animation step */
-} SpriteAnim;
-
-typedef struct Sprite {
-    char unk0[0xC];
-    SpriteAnim *anim;
-} Sprite;
+#include "res/restypes.h"
 
 typedef struct Particle2D {
     Vec3d pos;
@@ -263,7 +252,7 @@ void Particle2D_Draw(Particle2DTask *t)
                 b = t->color.z * p->level;
             }
         }
-        frame = t->animated ? t->sprite->anim->frames[p->frame] - 1 : 0;
+        frame = t->animated ? t->sprite->map->cells[p->frame] - 1 : 0;
         QVertex_DrawQuadEx(t->sprite, q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], r, g, b, depth, alpha, frame,
                            t->flags | 0x1000000, 0);
     } while (++i < t->count);
@@ -335,7 +324,7 @@ void Particle2D_Run(Particle2DTask *t)
         return;
     }
     if (t->animated)
-        last = t->sprite->anim->count - 1;
+        last = t->sprite->map->cols - 1;
     do {
         Particle2D *p = t->list[i];
 
@@ -578,7 +567,7 @@ Particle2DTask *Particle2D_New(void *parent, void *world, Sprite *sprite, const 
     t->grow = grow;
     t->animated = 0;
     t->sprite = sprite;
-    if (sprite->anim)
+    if (sprite->map)
         t->animated = 1;
     t->light = light;
     t->callback = callback;

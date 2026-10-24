@@ -7,6 +7,7 @@
 
 #include "hook.h"
 #include "qvertex/qvertex.h"
+#include "res/restypes.h"
 
 /* The QVertex driver of the Direct3D render mode. */
 
@@ -16,15 +17,6 @@ ORIG(0x497800, void *, Frame_Alloc, (int size));
 ORIG(0x497860, void, Primitive_Draw, (void *prim));
 ORIG(0x4978B0, void, RenderQueue_Add, (int queue, void *node));
 ORIG(0x4B72E0, void *, SortRender_Add, (void (*fn)(void *), int size, uint32_t key));
-
-typedef struct PtrList {
-    unsigned int magic;
-    int current;
-    int count;
-    int capacity;
-    unsigned int magic2;
-    void (*items[])(void *);
-} PtrList;
 
 ORIG(0x4B7430, int, PtrList_Add, (PtrList *list, void *fn));
 
@@ -474,7 +466,7 @@ static void RunState(PtrList *l, int index, StripState *st)
 {
     if (l->current != index) {
         l->current = index;
-        l->items[index](st);
+        ((void (*)(void *))l->items[index])(st);
     }
 }
 

@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "task/tasktypes.h"
+#include "res/restypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x490370, int, Timer_GetMs, (void));
@@ -105,15 +106,6 @@ typedef struct ClipPrim {
     float x, y, w, h;
     int unk1C, unk20;
 } ClipPrim;
-
-typedef struct Text {
-    void *grid;
-    float x, y, z;
-    float alpha;
-    float color[3];
-    int unk20;
-    unsigned int flags;
-} Text;
 
 typedef struct Vertex {
     float x, y, z, rhw;

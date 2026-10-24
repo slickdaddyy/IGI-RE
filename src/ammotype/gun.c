@@ -5,6 +5,7 @@
 #include "ammotype/ammotype.h"
 #include "qvertex/qvertextypes.h"
 #include "win/wintypes.h"
+#include "res/restypes.h"
 
 /* The "Gun" task (0x1B0 bytes, 0x5BE3C6), base of the hand weapons. These
    are its handlers from 0x479780 on; the type is registered by 0x477E30. */
@@ -121,11 +122,6 @@ typedef struct AIMessage {
     void *from;
     void *about;
 } AIMessage;
-
-typedef struct Text {
-    void *grid;
-    float x, y;
-} Text;
 
 /* the HUD sprites and text the human render handler passes on */
 typedef struct Hud {

@@ -3,12 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "orig.h"
-
-/* A texture handle, owned by the render device that created it. */
-typedef struct Texture {
-    int device;
-    int unk04[8];
-} Texture;
+#include "res/restypes.h"
 
 /* What AllocTexture and DownloadTexture get from the engine. */
 typedef struct TextureDesc {

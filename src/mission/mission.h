@@ -11,21 +11,9 @@
 #include "script/scripttypes.h"
 #include "qvertex/qvertextypes.h"
 #include "win/wintypes.h"
+#include "res/restypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Sprite {
-    char unk0[0x18];
-} Sprite;
-
-typedef struct Text {
-    void *grid;
-    float x, y, z;
-    float alpha;
-    float color[3];
-    int unk20;
-    unsigned int flags;
-} Text;
 
 /* a "StatusMessage" task (0x1E0 bytes): a text shown on the status screen when cond becomes true */
 typedef struct StatusMessage {

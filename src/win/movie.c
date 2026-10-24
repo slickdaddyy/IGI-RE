@@ -6,6 +6,7 @@
 
 #include "hook.h"
 #include "win/win.h"
+#include "res/restypes.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -37,14 +38,6 @@ ORIG(0x4977F0, void, Frame_Reset, (void));
 ORIG(0x4C1780, void, Debug_Log, (void));
 
 typedef struct Sprite Sprite;
-typedef struct Text {
-    void *grid;
-    float x, y, z;
-    float alpha;
-    float color[3];
-    int unk20;
-    unsigned flags;
-} Text;
 
 ORIG(0x4B6EC0, Text *, Text_New, (Sprite *s, float x, float y, const char *str));
 ORIG(0x4B6F30, void, Text_Free, (Text *t));

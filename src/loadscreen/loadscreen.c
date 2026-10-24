@@ -4,21 +4,13 @@
 #include "hook.h"
 #include "igi.h"
 #include "win/wintypes.h"
+#include "res/restypes.h"
 
 typedef struct Bitmap {
     int w;
     int h;
     uint32_t *pixels;
 } Bitmap;
-
-typedef struct Text {
-    void *grid;
-    float x, y;
-    float z;
-    float alpha;
-    float color[3];
-    int unk20;
-} Text;
 
 /* a pixel block handed to Display_DrawPrimitive */
 typedef struct BlitPrim {

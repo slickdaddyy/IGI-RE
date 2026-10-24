@@ -442,20 +442,20 @@ void ControlsMenu_DrawList(ControlsMenu *cm, float alpha)
             if (name && key) {
                 float ty;
 
-                name->r = 0.0f;
-                name->b = 0.0f;
+                name->color[0] = 0.0f;
+                name->color[2] = 0.0f;
                 name->x = fx + nameX;
-                name->g = 128.0f;
+                name->color[1] = 128.0f;
                 name->flags |= 0x80000;
                 name->alpha = alpha;
                 ty = (float)y + textY;
                 name->y = ty;
                 Text_DrawAlt(name);
                 key->flags |= 0x80000;
-                key->r = 128.0f;
-                key->g = 85.0f;
+                key->color[0] = 128.0f;
+                key->color[1] = 85.0f;
                 key->x = fx + keyX;
-                key->b = 0.0f;
+                key->color[2] = 0.0f;
                 key->alpha = alpha;
                 key->y = ty;
                 Text_DrawAlt(key);

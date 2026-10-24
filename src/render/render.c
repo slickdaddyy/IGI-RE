@@ -10,6 +10,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "model/model.h"
+#include "res/restypes.h"
 
 /* Direct3D mesh renderer: rigid, spline and lightmapped meshes. */
 
@@ -74,11 +75,6 @@ typedef struct ModelSlot {
     char unk0[0xFA4];
     int used;
 } ModelSlot;
-
-typedef struct Texture {
-    char unk0[0x20];
-    IDirectDrawSurface7 *surface;
-} Texture;
 
 /* MESH chunk of a .mef file */
 typedef struct MeshHeader {

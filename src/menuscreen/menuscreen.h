@@ -9,25 +9,11 @@
 #include "param/paramtypes.h"
 #include "qvertex/qvertextypes.h"
 #include "win/wintypes.h"
+#include "res/restypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
 typedef struct Sprite Sprite;
-
-typedef struct Grid {
-    int proportional;
-    short cols, rows;
-    Sprite *sprite;
-} Grid;
-
-typedef struct Text {
-    Grid *grid;
-    float x, y, z;
-    float alpha;
-    float color[3];
-    int unk20;
-    unsigned int flags;
-} Text;
 
 /* the "MenuWindow" task (0x54 bytes), base of every menu element */
 typedef struct MenuWindow {

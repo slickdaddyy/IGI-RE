@@ -10,6 +10,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "res/restypes.h"
 
 /* the view the frame is drawn with (0xBCAAE0) */
 typedef struct View {
@@ -17,16 +18,6 @@ typedef struct View {
     int frame;
     Vec3d pos;
 } View;
-
-/* PtrList (0x4B73F0): current index at +4, functions at +0x14 */
-typedef struct PtrList {
-    int magic;
-    int current;
-    int count;
-    int capacity;
-    int magic2;
-    void (*items[1])(void);
-} PtrList;
 
 extern View gView;
 extern Vec3d gViewPos;
