@@ -32,7 +32,6 @@ extern float gOffscreenClip[];
 
 /* One palette slot only: slot n is byte n - 1. */
 extern char gPaletteSlots[];
-extern uint32_t gPaletteSlotWords[];
 extern uint8_t gPaletteColors[];
 extern uint16_t gPalette565[];
 
@@ -82,8 +81,7 @@ void OffscreenBuffer_InitTextures(void)
     RenderMode_SetMethod(mode, gAllocPalette, OffscreenBuffer_AllocPalette);
     RenderMode_SetMethod(mode, gDeAllocPalette, OffscreenBuffer_DeAllocPalette);
     RenderMode_SetMethod(mode, gDownloadPalette, NOTHING);
-    gPaletteSlotWords[0] = 0;
-    gPaletteSlotWords[1] = 0;
+    memset(gPaletteSlots, 0, 8);
 }
 HOOK(0x50BD80, OffscreenBuffer_InitTextures);
 
@@ -431,8 +429,7 @@ void OffscreenBufferSprite_RenderSprite(OffscreenSprite *s)
 HOOK(0x50F070, OffscreenBufferSprite_RenderSprite);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-STORE(igb, A7CEC8, 4) uint32_t store_A7CEC8[4];
-ALIAS(gPaletteSlotWords, store_A7CEC8, 0);
+STORE(igb, A7CEC8, 1) char store_A7CEC8[16];
 ALIAS(gPaletteSlots, store_A7CEC8, 0);
 STORE(igb, BC7A00, 2) uint16_t store_BC7A00[2048];
 ALIAS(gPalette565, store_BC7A00, 0);
