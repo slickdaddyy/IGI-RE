@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "menu/menu.h"
+#include "ui/uitypes.h"
 
 FN_EXTERN(TextBox_Changed);
 FN_EXTERN(TextBox_Create);
@@ -13,16 +14,6 @@ FN_EXTERN(TextBox_Run);
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
 ORIG(0x4F0FC0, void *, Param_VarString, (void));
 ORIG(0x4F0FE0, void *, Param_String32, (void));
-
-typedef struct TextBox {
-    MenuWindow w;
-    char font[0x20];
-    char unk74[0x2130];
-    char text[0x50];
-    char text2[0x50];
-} TextBox;
-
-_Static_assert(sizeof(TextBox) == 0x2244, "TextBox");
 
 extern uint16_t gTextBoxType;
 extern void *gTextBoxParams;
@@ -53,8 +44,8 @@ void TextBox_Init(void)
     ParamTable_Add(gTextBoxParams, &tb, tb.font, Param_String32(), 7, NULL);
     ParamTable_Add(gTextBoxParams, &tb, &tb.w.w, Param_Int32(), 7, NULL);
     ParamTable_Add(gTextBoxParams, &tb, &tb.w.h, Param_Int32(), 7, NULL);
-    ParamTable_Add(gTextBoxParams, &tb, tb.text, Param_VarString(), 7, NULL);
-    ParamTable_Add(gTextBoxParams, &tb, tb.text2, Param_VarString(), 7, NULL);
+    ParamTable_Add(gTextBoxParams, &tb, &tb.fill, Param_VarString(), 7, NULL);
+    ParamTable_Add(gTextBoxParams, &tb, &tb.select, Param_VarString(), 7, NULL);
 }
 HOOK(0x41AAF0, TextBox_Init);
 

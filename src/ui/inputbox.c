@@ -77,8 +77,8 @@ void InputBox_Create(InputBox *ib, void *arg)
     ib->w.h = 15;
     ib->text[0] = gEmptyString[0];
     ib->cursor = 4;
-    ib->w.unk3C = 1;
-    ib->w.unk40 = 1;
+    ib->w.centreX = 1;
+    ib->w.centreY = 1;
     ib->maxLength = 20;
     VarString_Init(&ib->init);
     VarString_Init(&ib->forward);

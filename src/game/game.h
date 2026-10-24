@@ -8,41 +8,10 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "script/scripttypes.h"
+#include "game/gametypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 typedef void (*TaskFn1)(void *task);
-
-/* The in-mission game task, made from the "Game" task type. */
-typedef struct Game {
-    Task task;
-    void *world;
-    void *models;
-    int unk28;
-    Random rand1;
-    Random rand2;
-    Task *unk44;
-    Task *unk48;
-    void *unk4C;
-    int unk50;
-    Task **ref54;
-    int unk58;
-    void *unk5C;
-    char unk60[0x60];
-    Task **players[4];
-    int unkD0[4];
-    char paused;
-    char godMode;
-    char unkE2[2];
-    int unkE4;
-    void *sprites;
-    void *textures;
-    int music[4];
-    char unk100[0x58];
-} Game;
-
-_Static_assert(offsetof(Game, players) == 0xC0, "Game.players");
-_Static_assert(offsetof(Game, music) == 0xF0, "Game.music");
-_Static_assert(sizeof(Game) == 0x158, "Game");
 
 extern Game *gGame;
 extern TaskFn gTaskHandlers[][0x180];

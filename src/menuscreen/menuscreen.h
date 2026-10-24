@@ -11,30 +11,11 @@
 #include "win/wintypes.h"
 #include "res/restypes.h"
 #include "menu/menutypes.h"
+#include "widget/widgettypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
 typedef struct Sprite Sprite;
-
-/* the "MenuWindow" task (0x54 bytes), base of every menu element */
-typedef struct MenuWindow {
-    Task task;
-    int x, y, w, h;
-    char unk30[0xC];
-    int unk3C;
-    int unk40;
-    void *menu;
-    char wasOver;
-    char over;
-    char held;
-    char clicked;
-    char selectable;
-    char focused;
-    char unk4E[2];
-    int key;
-} MenuWindow;
-
-_Static_assert(sizeof(MenuWindow) == 0x54, "MenuWindow");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

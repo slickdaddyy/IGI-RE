@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "menuscreen/menuscreen.h"
+#include "menuscreen/menuscreentypes.h"
 
 FN_EXTERN(MenuScreen_Activate);
 FN_EXTERN(MenuScreen_Apply);
@@ -26,23 +27,6 @@ ORIG(0x4B6E80, int, Text_Height, (Text *t));
 #define MenuScreen_Deactivate (FN(0x422200, MenuScreen_Deactivate))
 #define MenuScreen_Layout (FN(0x422260, MenuScreen_Open))
 #define MenuScreen_Forward918 (FN(0x422300, MenuScreen_Apply))
-
-/* one page of the front end: a background picture, the game logo and a
-   framed box, all other elements are its children */
-typedef struct MenuScreen {
-    MenuWindow w;
-    char pic[0x40];
-    Text *picText;
-    Text *logo;
-    int frameX0, frameX1, frameY0, frameY1;
-    VarString onBack;
-    VarString onLayout;
-    VarString onForward;
-    int userData; /* "<name>.nUserData" */
-    int registered;
-} MenuScreen;
-
-_Static_assert(sizeof(MenuScreen) == 0x1A4, "MenuScreen");
 
 extern uint16_t gMenuScreenType;
 extern void *gMenuScreenParams;

@@ -1,19 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "widget/widget.h"
-
-/* a whole menu page; the type and its first handlers are made at 0x421750 */
-typedef struct MenuScreen {
-    MenuWindow w;
-    char unk54[0xAC - 0x54];
-    VarString onBack;  /* run when Esc / the back button is pressed */
-    VarString onOpen;  /* run on MenuWindow event 914 (layout) */
-    VarString onApply; /* run on MenuWindow event 918 */
-    int userData;      /* the script variable <name>.nUserData */
-    int registered;
-} MenuScreen;
-
-_Static_assert(sizeof(MenuScreen) == 0x1A4, "MenuScreen");
+#include "menuscreen/menuscreentypes.h"
 
 extern uint16_t gMenuScreenType;
 extern void *gMenuScreenParams;
@@ -65,16 +53,16 @@ HOOK(0x422200, MenuScreen_Deactivate);
 
 void MenuScreen_Open(MenuScreen *ms)
 {
-    if (VarString_HasExpr(&ms->onOpen))
-        VarString_EvalReal(&ms->onOpen, ms);
+    if (VarString_HasExpr(&ms->onLayout))
+        VarString_EvalReal(&ms->onLayout, ms);
     CALL_CHILDREN(ms, MenuWindow_GetEvent914());
 }
 HOOK(0x422260, MenuScreen_Open);
 
 void MenuScreen_Apply(MenuScreen *ms)
 {
-    if (VarString_HasExpr(&ms->onApply))
-        VarString_EvalReal(&ms->onApply, ms);
+    if (VarString_HasExpr(&ms->onForward))
+        VarString_EvalReal(&ms->onForward, ms);
     CALL_CHILDREN(ms, MenuWindow_GetEvent918());
 }
 HOOK(0x422300, MenuScreen_Apply);

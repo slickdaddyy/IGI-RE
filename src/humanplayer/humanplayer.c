@@ -10,6 +10,7 @@
 #include "humanplayer/humanplayer.h"
 #include "qasm/qasmtypes.h"
 #include "weapon/weapontypes.h"
+#include "game/gametypes.h"
 
 FN_EXTERN(HumanPlayer_BlastHandler);
 FN_EXTERN(HumanPlayer_FenceHandler);
@@ -48,11 +49,6 @@ typedef struct Camera {
     char unk0[0x38];
     float m[10];
 } Camera;
-
-typedef struct Game {
-    char unk0[0x5C];
-    Camera *camera;
-} Game;
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));

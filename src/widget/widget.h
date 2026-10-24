@@ -18,27 +18,6 @@ typedef void (*TaskFn)(void *task, void *arg);
 
 typedef struct Sprite Sprite;
 
-/* the "MenuWindow" task (0x54 bytes), base of every menu element */
-typedef struct MenuWindow {
-    Task task;
-    int x, y, w, h;
-    int spacingX, spacingY;
-    int lineup;     /* LINEUPMODE_* */
-    int centreX;    /* 1 = centred in the parent when not lined up */
-    int centreY;
-    void *menu;     /* the MenuManager above it */
-    char wasHover;  /* hover last frame, or the pointer just entered */
-    char hover;
-    char held;
-    char clicked;
-    char selectable;
-    char focused;
-    char pad4E[2];
-    int key;
-} MenuWindow;
-
-_Static_assert(sizeof(MenuWindow) == 0x54, "MenuWindow");
-
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;

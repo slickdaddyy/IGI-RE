@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "game/game.h"
+#include "menu/menutypes.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -51,57 +52,6 @@ ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
-
-/* the fields of the menu system task used here, see the menu module */
-typedef struct MenuManager {
-    Task task;
-    int screen;
-    int popup;
-    int state;
-    int nextState;
-    Task *screenTask;
-    Task *popupTask;
-    Task *focus;
-    char unk3C[0x98];
-    char resPath[0x100];
-    void *menuRes;
-    void *missionRes;
-    char unk1DC[0x80];
-    int langResCount;
-    void *strings;
-    char unk264[0x2400];
-    short spriteCount;
-    short fontCount;
-    short picCount;
-    short pad266A;
-    char unk266C[0x50];
-    char unk26BC;
-    char active;
-    char unk26BE;
-    char soundsLoaded;
-    char unk26C0;
-    char fastFade;
-    char unk26C2[3];
-    char scriptName[0x100];
-    char pad27C5[3];
-    Task *pointer;
-    char input;
-    char unk27CD[0x13];
-    Task *backgroundFX;
-    int language;
-    int depth;
-    int screenStack[16];
-    char unk282C[0x6C];
-} MenuManager;
-
-_Static_assert(offsetof(MenuManager, resPath) == 0xD4, "MenuManager.resPath");
-_Static_assert(offsetof(MenuManager, langResCount) == 0x25C, "MenuManager.langResCount");
-_Static_assert(offsetof(MenuManager, spriteCount) == 0x2664, "MenuManager.spriteCount");
-_Static_assert(offsetof(MenuManager, scriptName) == 0x26C5, "MenuManager.scriptName");
-_Static_assert(offsetof(MenuManager, pointer) == 0x27C8, "MenuManager.pointer");
-_Static_assert(offsetof(MenuManager, backgroundFX) == 0x27E0, "MenuManager.backgroundFX");
-_Static_assert(offsetof(MenuManager, screenStack) == 0x27EC, "MenuManager.screenStack");
-_Static_assert(sizeof(MenuManager) == 0x2898, "MenuManager");
 
 extern uint16_t gMenuManagerType;
 extern void *gMenuManagerParams;
@@ -192,7 +142,7 @@ void MenuManager_Create(MenuManager *mm)
     mm->popupTask = NULL;
     mm->unk26BC = 0;
     mm->active = 0;
-    mm->input = 0;
+    mm->input.button = 0;
     mm->resPath[0] = 0;
     mm->menuRes = NULL;
     mm->missionRes = NULL;
@@ -214,7 +164,7 @@ HOOK(0x417260, MenuManager_Create);
 void MenuManager_ApplyLanguage(MenuManager *mm)
 {
     int old = Profile_GetLanguage();
-    Task *w = mm->screenTask;
+    Task *w = (Task *)mm->screenTask;
     TaskFn1 fn;
 
     if (w) {
@@ -235,7 +185,7 @@ void MenuManager_Refresh(MenuManager *mm, int all)
     TaskFn1 fn;
 
     if (!all) {
-        w = mm->screenTask;
+        w = (Task *)mm->screenTask;
         fn = gTaskHandlers1[MenuWindow_GetEvent91C()][w->type];
         if (fn)
             fn(w);
@@ -251,7 +201,7 @@ void MenuManager_Refresh(MenuManager *mm, int all)
             } while (n);
         }
     }
-    MenuManager_SendEvent910(mm, mm->screenTask);
+    MenuManager_SendEvent910(mm, (Task *)mm->screenTask);
 }
 HOOK(0x417590, MenuManager_Refresh);
 

@@ -63,8 +63,8 @@ HOOK(0x4199F0, DialogWindow_Init);
 void DialogWindow_Create(DialogWindow *dw, void *arg)
 {
     HANDLER(0, MenuWindow_GetType())(dw, arg);
-    dw->w.unk3C = 1;
-    dw->w.unk40 = 1;
+    dw->w.centreX = 1;
+    dw->w.centreY = 1;
     dw->unk58 = 0;
     dw->unk54 = 0;
     dw->horizontal = 1;

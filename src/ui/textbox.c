@@ -1,29 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "ui/ui.h"
-
-/* one page of text, picked by id */
-typedef struct TextBoxItem {
-    char text[0x100];
-    int id;
-    const char *str;
-} TextBoxItem;
-
-/* shows one of up to 32 texts, word wrapped */
-typedef struct TextBox {
-    MenuWindow w;
-    char font[0x20];
-    char unk74[0x20];
-    Text *text;
-    Sprite *sprite;
-    TextBoxItem items[32];
-    int index;
-    int count;
-    VarString fill;
-    VarString select;
-} TextBox;
-
-_Static_assert(sizeof(TextBox) == 0x2244, "TextBox");
+#include "ui/uitypes.h"
 
 extern uint16_t gTextBoxType;
 extern void *gTextBoxParams;
@@ -39,8 +17,8 @@ void TextBox_Create(TextBox *tb, void *arg)
     tb->sprite = NULL;
     tb->w.x = 300;
     tb->w.y = 230;
-    tb->w.unk3C = 1;
-    tb->w.unk40 = 1;
+    tb->w.centreX = 1;
+    tb->w.centreY = 1;
     tb->count = 0;
     tb->index = 0;
     VarString_Init(&tb->fill);

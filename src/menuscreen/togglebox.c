@@ -1,19 +1,9 @@
 #include "hook.h"
 #include "igi.h"
 #include "menuscreen/menuscreen.h"
+#include "ui/uitypes.h"
 
 ORIG(0x4B7E80, void, Script_RegisterInt, (const char *name, int *value));
-
-/* only the tail of the ToggleBox type lives here, the rest is just before */
-typedef struct ToggleBox {
-    MenuWindow w;
-    char unk54[0x50];
-    int isOn;
-    char registered;
-    char unkA9[0xA3];
-} ToggleBox;
-
-_Static_assert(sizeof(ToggleBox) == 0x14C, "ToggleBox");
 
 extern uint16_t gToggleBoxType;
 extern void *gToggleBoxParams;

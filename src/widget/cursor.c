@@ -7,19 +7,6 @@ ORIG(0x48F490, void, AppMain_AddWinProcCallback, (void *fn));
 ORIG(0x424CA0, void, Cursor_WinProc, (void));
 ORIG(0x424CE0, void, Cursor_RunHandler, (void *task));
 
-/* the menu mouse pointer */
-typedef struct Cursor {
-    Task task;
-    void *owner;
-    int x, y;
-    int hotX, hotY;
-    Sprite *sprite;
-    int unk38;
-    int unk3C;
-} Cursor;
-
-_Static_assert(sizeof(Cursor) == 0x40, "Cursor");
-
 extern uint16_t gCursorType;
 
 void Cursor_CreateHandler(Cursor *c, void *owner);
@@ -44,8 +31,8 @@ void Cursor_CreateHandler(Cursor *c, void *owner)
     c->y = 240;
     c->hotX = -2;
     c->hotY = 0;
-    c->unk38 = 0;
-    c->unk3C = 0;
+    c->prevButtons = 0;
+    c->buttons = 0;
 }
 HOOK(0x424C10, Cursor_CreateHandler);
 

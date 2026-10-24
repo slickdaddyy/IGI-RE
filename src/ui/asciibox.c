@@ -73,8 +73,8 @@ void AsciiBox_Create(AsciiBox *ab, void *arg)
     CALL_BASE(0, ab, arg);
     ab->w.w = 100;
     ab->w.h = 100;
-    ab->w.unk3C = 1;
-    ab->w.unk40 = 1;
+    ab->w.centreX = 1;
+    ab->w.centreY = 1;
     ab->active = 0;
     ab->text = NULL;
     ab->sprite = NULL;

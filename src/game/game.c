@@ -432,7 +432,7 @@ void LevelStart(Game *g)
     LoadingScreen_Step(loading, 1);
     StatusMessages_Load();
     LoadingScreen_Step(loading, 1);
-    gGame->unk44 = GameScreen_New(Flow_GetUnk20());
+    gGame->root = GameScreen_New(Flow_GetUnk20());
     gGame->unk4C = Level_New(Game_Get());
     LoadingScreen_Step(loading, 1);
     sub_4E6060(0);
@@ -461,7 +461,7 @@ void LevelStart(Game *g)
     Lod_SendChanged();
     CutScene_SetCamera(gGame->unk60);
     CutScene_SetTicksPerSecond(30);
-    CutScene_SetFilterParent(GameScreen_GetView(Game_Get()->unk44));
+    CutScene_SetFilterParent(GameScreen_GetView(Game_Get()->root));
     LevelLoad(gMissionPath, 30);
     LoadingScreen_Step(loading, 1);
     for (i = 0; i < 6; i++)
@@ -651,7 +651,7 @@ void LevelQuit(void)
     TaskRef_Remove(gGame->ref54);
     if (gGame->unk48)
         Task_Delete(gGame->unk48);
-    Task_Delete(gGame->unk44);
+    Task_Delete(gGame->root);
     Game_FreeSprites();
     Resource_Flush(gGame->sprites);
     Game_FreeTextures();
@@ -1005,9 +1005,9 @@ void Game_ResetState(void)
     if (t)
         gGame->players[0] = TaskRef_Add(t);
     gGame->unk58 = 0;
-    gGame->unk5C = HumanCamera_New(*gGame->ref54, gGame->unk60);
+    gGame->camera = HumanCamera_New(*gGame->ref54, gGame->unk60);
     if (t)
-        HumanCamera_SetHuman(gGame->unk5C, t);
+        HumanCamera_SetHuman(gGame->camera, t);
     {
         float music = Profile_GetMusicVolume();
 

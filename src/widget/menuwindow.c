@@ -128,7 +128,7 @@ void MenuWindow_FindMenu(MenuWindow *w, Task *t)
             return;
         }
     }
-    w->menu = t;
+    w->menu = (struct MenuManager *)t;
 }
 HOOK(0x424220, MenuWindow_FindMenu);
 
