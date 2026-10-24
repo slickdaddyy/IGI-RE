@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "terrain/terrain.h"
+#include "coll/colltypes.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B2450, void, Texture_Download, (void *tex, void *palette, int pitch, int width, int height, int format,
@@ -31,7 +32,7 @@ extern uint8_t gTerrainTileMaps[][64];
 
 _Static_assert(offsetof(Terrain, slot_count) == 0x118, "Terrain");
 _Static_assert(offsetof(Terrain, nodes) == 0xD00, "Terrain");
-_Static_assert(offsetof(Terrain, unkDBC) == 0xDBC, "Terrain");
+_Static_assert(offsetof(Terrain, textures) == 0xDBC, "Terrain");
 _Static_assert(offsetof(Terrain, offset) == 0xDE0, "Terrain");
 _Static_assert(sizeof(Terrain) == 0xF00, "Terrain");
 _Static_assert(sizeof(TerrainMaterial) == 900, "TerrainMaterial");
@@ -148,7 +149,7 @@ void Terrain_Load(Terrain *t, const char *path)
     Script_UnregisterSymbol("CreateTerrainTileMap");
 
     for (i = 0; i < (int)(ctr_size >> 5); i++)
-        t->ctr[i].cmd += (uintptr_t)t->cmd;
+        t->ctr[i].leaf = (const short *)((const char *)t->ctr[i].leaf + (uintptr_t)t->cmd);
 
     t->unkDC0 = Mem_Alloc(0x1000, 4);
     t->unkDC4 = Mem_Alloc(0x10000, 4);

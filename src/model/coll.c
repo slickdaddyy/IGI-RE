@@ -92,9 +92,9 @@ int Coll_LineHit(CollHit *out, const CollCursor *c, int depth, const Vec3d *s, c
     Vec3f n;
 
     Coll_SaveMods();
-    ox = t->origin[0];
-    oy = t->origin[1];
-    oz = t->origin[2];
+    ox = t->offset[0];
+    oy = t->offset[1];
+    oz = t->offset[2];
     lo[0] = fistp(!(s->x >= e->x) ? s->x : e->x) + ox;
     lo[1] = fistp(e->y > s->y ? s->y : e->y) + oy;
     lo[2] = fistp(e->z > s->z ? s->z : e->z) + oz;
@@ -139,9 +139,9 @@ int Coll_LineHit(CollHit *out, const CollCursor *c, int depth, const Vec3d *s, c
         if (30 - f->level >= 16) {
             Vec3d base;
 
-            base.x = (int)(f->x - f->terrain->origin[0]);
-            base.y = (int)(f->y - f->terrain->origin[1]);
-            base.z = (int)(f->z - f->terrain->origin[2]);
+            base.x = (int)(f->x - f->terrain->offset[0]);
+            base.y = (int)(f->y - f->terrain->offset[1]);
+            base.z = (int)(f->z - f->terrain->offset[2]);
             if (Coll_LeafLineHit(f->node->leaf, &base, s, e, &hp, 30 - f->level, &m1, &m2, f->orient, &n))
                 goto found;
             sp--;
@@ -169,7 +169,7 @@ int Coll_LineHit(CollHit *out, const CollCursor *c, int depth, const Vec3d *s, c
 
             if (!(mask & (1u << (child & 31))))
                 continue;
-            nn = F.terrain->nodes + F.node->child[child];
+            nn = F.terrain->ctr + F.node->child[child];
             half = (unsigned int)F.size >> 1;
             cx = ((idx & 1) * 2 - 1) * half + F.x;
             cy = ((idx & 2) - 1) * half + F.y;
@@ -179,9 +179,9 @@ int Coll_LineHit(CollHit *out, const CollCursor *c, int depth, const Vec3d *s, c
                 continue;
             hf = (float)half;
             hz = (float)((long double)hf + 16385.0f);
-            wx = cx - t->origin[0];
-            wy = cy - t->origin[1];
-            wz = cz - t->origin[2];
+            wx = cx - t->offset[0];
+            wy = cy - t->offset[1];
+            wz = cz - t->offset[2];
             minx = (double)(wx - (long double)half);
             miny = (double)(wy - (long double)hf);
             minz = (double)(wz - (long double)hz);
@@ -518,11 +518,11 @@ void Coll_LinesEx(Terrain *t, CollHit *results, const Vec3d *starts, const Vec3d
     c.x = 0;
     c.y = 0;
     c.z = 0;
-    c.node = t->nodes + 1;
+    c.node = t->ctr + 1;
     c.terrain = t;
-    a = (fistp(hi.x) + t->origin[0]) ^ (fistp(lo.x) + t->origin[0]);
-    b = (fistp(hi.y) + t->origin[1]) ^ (fistp(lo.y) + t->origin[1]);
-    d = (fistp(hi.z) + t->origin[2]) ^ (fistp(lo.z) + t->origin[2]);
+    a = (fistp(hi.x) + t->offset[0]) ^ (fistp(lo.x) + t->offset[0]);
+    b = (fistp(hi.y) + t->offset[1]) ^ (fistp(lo.y) + t->offset[1]);
+    d = (fistp(hi.z) + t->offset[2]) ^ (fistp(lo.z) + t->offset[2]);
     depth = 30 - top_bit(d | b | a);
     if (depth > 16)
         depth = 16;

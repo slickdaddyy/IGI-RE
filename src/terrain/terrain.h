@@ -30,43 +30,6 @@ typedef struct DynCubeNode {
     void *unk3C;
 } DynCubeNode;
 
-/* 0x20 byte records of the .ctr file. */
-typedef struct TerrainCtr {
-    char unk0[0x1C];
-    char *cmd;                 /* offset into the .cmd file, made a pointer on load */
-} TerrainCtr;
-
-typedef struct Terrain {
-    int unk0;
-    void *unk4;
-    char *cmd;
-    TerrainCtr *ctr;
-    DynCubeNode *roots[DYNCUBE_TREES];
-    DynCubeNode *start[DYNCUBE_TREES];      /* where queries start descending */
-    Vec3d start_pos[DYNCUBE_TREES];
-    int start_depth[DYNCUBE_TREES];
-    int start_valid[DYNCUBE_TREES];
-    int handler_changes[DYNCUBE_TREES];
-    int16_t slot_count[DYNCUBE_TREES][TASK_MAX_SLOTS]; /* objects with a handler in each slot */
-    Pool nodes;
-    DynCubeObj *lists[9];                    /* index list + 1 */
-    char unkD3C[0xDBC - 0xD3C];
-    void *unkDBC;
-    int *unkDC0;
-    uint8_t *unkDC4;
-    int unkDC8;
-    TerrainMap *bit;
-    TerrainMap *hmp;
-    char unkDD4[0xC];
-    int offset[3];
-    int unkDEC;
-    int unkDF0;
-    void *palette;
-    int *lmp;
-    int unkDFC;
-    char name[0x100];
-} Terrain;
-
 typedef struct TerrainLightmap {
     int size;
     void *data;

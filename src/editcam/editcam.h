@@ -53,13 +53,6 @@ static inline int x87_fistp(long double x)
     return (int)r;
 }
 
-typedef struct Terrain {
-    char unk0[0xDCC];
-    TerrainMap *bit;
-    TerrainMap *hmp;
-    char unkDD4[0xC];
-    int offset[3];
-} Terrain;
 extern Terrain *gCurrentWorld;
 
 /* MenuItem: one selectable item of a menu panel */
@@ -83,6 +76,5 @@ typedef struct MenuItemEvent {
 } MenuItemEvent;
 
 _Static_assert(sizeof(MenuItem) == 0x54, "MenuItem");
-_Static_assert(offsetof(Terrain, offset) == 0xDE0, "Terrain");
 
 #endif

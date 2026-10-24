@@ -151,13 +151,13 @@ HOOK(0x4CE3D0, Terrain_InvalidateLighting);
 
 void Terrain_SetMaterial(Terrain *t, int i, void *m)
 {
-    ((void **)t->unkD3C)[i] = m;
+    ((void **)t->materials)[i] = m;
 }
 HOOK(0x4CE3E0, Terrain_SetMaterial);
 
 void *Terrain_GetMaterial(Terrain *t, int i)
 {
-    return ((void **)t->unkD3C)[i];
+    return ((void **)t->materials)[i];
 }
 HOOK(0x4CE400, Terrain_GetMaterial);
 

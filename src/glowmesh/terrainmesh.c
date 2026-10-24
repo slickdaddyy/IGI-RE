@@ -49,13 +49,6 @@ typedef struct TerrainMesh {
     TerrainMeshVertex verts[];
 } TerrainMesh;
 
-typedef struct Terrain {
-    char unk0[0xDBC];
-    int textures;
-    char unkDC0[0x34];
-    void *palette;
-} Terrain;
-
 typedef struct TerrainFog {
     float value;
     float delta;
@@ -366,7 +359,7 @@ HOOK(0x50FAE0, TerrainMesh_SetupLighting);
 
 void TerrainMesh_SetTextures(Terrain *t)
 {
-    gTerrainTextures = t->textures;
+    gTerrainTextures = (int)t->textures;
 }
 HOOK(0x50FD00, TerrainMesh_SetTextures);
 
@@ -903,7 +896,7 @@ HOOK(0x511500, TerrainMesh_Render);
 
 void sub_5116B0(Terrain *t)
 {
-    gUnkA7DA40 = t->textures;
+    gUnkA7DA40 = (int)t->textures;
 }
 HOOK(0x5116B0, sub_5116B0);
 

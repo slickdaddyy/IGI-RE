@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "litmap/litmap.h"
+#include "terrain/terraintypes.h"
 
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
@@ -14,11 +15,6 @@ ORIG(0x4C1780, void, Debug_Log, (void));
 ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 ORIG(0x4E5360, uint8_t, DynCubeObj_GetMaskVisibleEvent, (void));
 ORIG(0x52BFE0, void, DiscardTerrain_MaskVisible, (void));
-
-typedef struct Terrain {
-    char unk0[0xDE0];
-    int offset[3];
-} Terrain;
 
 /* The world origin marker: the integer part of its position becomes the
    terrain offset, so far away maps keep their precision. */

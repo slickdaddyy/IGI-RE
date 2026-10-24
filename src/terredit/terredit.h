@@ -8,13 +8,9 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "terrain/terraintypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Terrain {
-    char unk0[0xDE0];
-    int offset[3];
-} Terrain;
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

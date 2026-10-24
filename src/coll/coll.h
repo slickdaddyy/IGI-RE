@@ -6,15 +6,7 @@
 #include "igi.h"
 #include "types.h"
 #include "coll/colltypes.h"
-
-/* Terrain octree node. At the deepest level, leaf points at the triangles. */
-typedef struct CollNode {
-    uint16_t child[8]; /* index into Terrain.nodes */
-    uint8_t code[8];   /* orientation change when entering each child */
-    uint8_t mask;      /* which children exist */
-    uint8_t pad19[3];
-    const short *leaf;
-} CollNode;
+#include "terrain/terraintypes.h"
 
 /* A task in the object octree (only the fields used here) */
 typedef struct CollTask {
@@ -35,16 +27,6 @@ typedef struct ObjNode {
     char unk30[8];
     uint16_t flags;           /* 0x38 */
 } ObjNode;
-
-typedef struct Terrain {
-    char unk0[0xC];
-    CollNode *nodes;      /* 0x0C, node 1 is the root */
-    char unk10[0x10];
-    ObjNode *objects;     /* 0x20 */
-    char unk24[0xD18];
-    void *materials[41];  /* 0xD3C */
-    int origin[3];        /* 0xDE0, added to world coordinates */
-} Terrain;
 
 /* Position while walking down the terrain octree. Coordinates are
    world + origin, and the root cell covers the whole 2^31 range. */

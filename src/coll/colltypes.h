@@ -92,4 +92,14 @@ typedef struct CollBump {
 } CollBump;
 _Static_assert(sizeof(CollBump) == 0x30, "CollBump");
 
+/* a node of the collision tree in the .ctr file */
+typedef struct CollNode {
+    uint16_t child[8]; /* index into Terrain.ctr */
+    uint8_t code[8];   /* orientation change when entering each child */
+    uint8_t mask;      /* which children exist */
+    uint8_t pad19[3];
+    const short *leaf;
+} CollNode;
+_Static_assert(sizeof(CollNode) == 0x20, "CollNode");
+
 #endif
