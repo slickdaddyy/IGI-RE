@@ -18,7 +18,7 @@ ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, float radius));
 ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int unk));
-ORIG(0x4C7760, void, DynCubeObj_Init, (void *obj));
+ORIG(0x4C7760, void, sub_4C7760, (void *obj));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0_, (void *unused));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
@@ -110,7 +110,7 @@ HOOK(0x4D9610, BoneDynCubeObj_GetType);
 void BoneDynCubeObj_Init(void *world, BoneDynCubeObj *o, short skel, void **model)
 {
     (void)world;
-    DynCubeObj_Init(o);
+    sub_4C7760(o);
     BoneObj_Create(&o->bones, skel);
     o->model = model;
     o->matrix = (Matrix){ { 1.0f, 0, 0, 0, 1.0f, 0, 0, 0, 1.0f }, 0 };

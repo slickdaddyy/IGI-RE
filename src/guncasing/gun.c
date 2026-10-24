@@ -33,7 +33,7 @@ ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x401AE0, Task **, TaskRef_Add, (void *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x413B50, uint8_t, Weapon_GetTypeEvent, (void));
-ORIG(0x413B60, uint8_t, Weapon_GetEvent7, (void));
+ORIG(0x413B60, uint8_t, sub_413B60, (void));
 ORIG(0x413BD0, WeaponType *, WeaponType_Find, (int id));
 ORIG(0x413DE0, void *, WeaponType_GetIdEnum, (void));
 ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int i));
@@ -247,7 +247,7 @@ void Gun_Open(void)
     TaskType_SetHandler2(gGunType, Weapon_GetDeselectEvent(), FN(0x479C10, Gun_RemoveFromWorldHandler));
     TaskType_SetHandler(gGunType, Weapon_GetEvent7b(), FN(0x479C20, Gun_DropHandler));
     TaskType_SetHandler(gGunType, Weapon_GetTypeEvent(), FN(0x479C80, Gun_GetTypeHandler));
-    TaskType_SetHandler(gGunType, Weapon_GetEvent7(), FN(0x479CA0, Gun_Handler479CA0));
+    TaskType_SetHandler(gGunType, sub_413B60(), FN(0x479CA0, Gun_Handler479CA0));
     TaskType_SetHandler(gGunType, StatusScreen_GetEvent(), FN(0x479D20, Gun_HudHandler));
     TaskType_SetHandler(gGunType, AIDetection_GetEvent0(), FN(0x47A8E0, Gun_CollFilter));
     TaskType_SetHandler(gGunType, GunShot_GetEvent(), FN(0x47A940, Gun_GetShotSourceHandler));

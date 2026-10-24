@@ -141,7 +141,7 @@ ORIG(0x4B4770, long double, Random_Float, (void *r));
 ORIG(0x4B47E0, void, Random_Seed, (void *r, unsigned int seed));
 ORIG(0x4C6840, void, DynCube_ListRemove, (void *world, void *obj, int list));
 ORIG(0x4C6890, void, DynCube_ListAdd, (void *world, void *obj, int list));
-ORIG(0x4C7760, void, DynCubeObj_Init, (void *obj));
+ORIG(0x4C7760, void, sub_4C7760, (void *obj));
 ORIG(0x4CB9F0, void, Coll_DropPointsMat, (void *world, void *results, Vec3d *points, int count, const double *dz,
                                           int unk, int unk2, unsigned int flags));
 ORIG(0x4E1130, void, Line3D_Draw2, (Vec3d *a, Vec3d *b, float *colorA, float alphaA, float *colorB, float alphaB));
@@ -872,7 +872,7 @@ void RainObj_ParamChangedHandler(RainObj *r)
     DynCube_ListRemove(gCurrentWorld, r, 0);
     r->inWorld = 0;
 add:
-    DynCubeObj_Init(r);
+    sub_4C7760(r);
     DynCube_ListAdd(gCurrentWorld, r, 0);
     r->inWorld = 1;
     gRainMemory += sizeof(RainObj);
