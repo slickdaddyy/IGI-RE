@@ -46,20 +46,6 @@ typedef struct AIAction AIAction;
 typedef void (*AIActionFn)(HumanAI *ai, AIAction *a);
 typedef char (*AIStepFn)(HumanAI *ai, AIAction *a);
 
-struct AIAction {
-    Node node;
-    int event;
-    int delay;
-    unsigned flags;
-    AIActionFn start;
-    AIActionFn update;
-    AIActionFn resume;
-    AIActionFn end;
-    AIStepFn step;
-    AIParam *param;
-    char used;
-};
-
 struct HumanAI {
     Task task;
     Vec3d pos;
@@ -146,7 +132,6 @@ struct HumanAI {
 _Static_assert(offsetof(Human, weapons) == 0x4C4, "weapons");
 _Static_assert(offsetof(Human, aimError) == 0x4D4, "aimError");
 _Static_assert(offsetof(Human, statGun) == 0x7B4, "statGun");
-_Static_assert(offsetof(AIAction, param) == 0x28, "param");
 _Static_assert(offsetof(HumanAI, viewLength) == 0xB0, "viewLength");
 _Static_assert(offsetof(HumanAI, eventCounts) == 0x87C, "eventCounts");
 _Static_assert(offsetof(HumanAI, target) == 0x3AA8, "target");
@@ -297,7 +282,7 @@ static inline int round_int(long double f)
 
 static CombatData *combat_data(AIAction *a)
 {
-    return &a->param->d;
+    return &((AIParam *)a->param)->d;
 }
 
 void AICombat_AlertOthers(HumanAI *ai);
@@ -1350,8 +1335,8 @@ void AICombatRPG_Stand(HumanAI *ai, AIAction *a)
     }
     if (visible) {
         HumanAI_GetTargetPos(&ai->aimTarget, ai);
-        AICombat_StartBurst(ai, a->param->d.first);
-        a->param->d.first = 0;
+        AICombat_StartBurst(ai, ((AIParam *)a->param)->d.first);
+        ((AIParam *)a->param)->d.first = 0;
         a->step = AICombat_StandFire;
         ai->unk3DD0 = 0;
     }
@@ -1400,8 +1385,8 @@ void AICombatRPG_Kneel(HumanAI *ai, AIAction *a)
     }
     if (visible) {
         HumanAI_GetTargetPos(&ai->aimTarget, ai);
-        AICombat_StartBurst(ai, a->param->d.first);
-        a->param->d.first = 0;
+        AICombat_StartBurst(ai, ((AIParam *)a->param)->d.first);
+        ((AIParam *)a->param)->d.first = 0;
         a->step = AICombat_KneelFire;
         ai->unk3DD0 = 0;
     }
@@ -1474,8 +1459,8 @@ void AICombatGuard_Stand(HumanAI *ai, AIAction *a)
         if (AITarget_CountState(ai->target, TARGET_FIRING) < 4) {
             AITarget_SetState(ai->target, ai, TARGET_FIRING);
             HumanAI_GetTargetPos(&ai->aimTarget, ai);
-            AICombat_StartBurst(ai, a->param->d.first);
-            a->param->d.first = 0;
+            AICombat_StartBurst(ai, ((AIParam *)a->param)->d.first);
+            ((AIParam *)a->param)->d.first = 0;
             a->step = AICombat_StandFire;
             return;
         }
@@ -1609,8 +1594,8 @@ pose:
     if (AITarget_CountState(ai->target, TARGET_FIRING) < 4) {
         AITarget_SetState(ai->target, ai, TARGET_FIRING);
         HumanAI_GetTargetPos(&ai->aimTarget, ai);
-        AICombat_StartBurst(ai, a->param->d.first);
-        a->param->d.first = 0;
+        AICombat_StartBurst(ai, ((AIParam *)a->param)->d.first);
+        ((AIParam *)a->param)->d.first = 0;
         a->step = AICombat_StandFire;
         return;
     }

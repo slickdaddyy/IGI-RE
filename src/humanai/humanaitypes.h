@@ -102,4 +102,23 @@ typedef struct AITarget {
 } AITarget;
 _Static_assert(sizeof(AITarget) == 0x130, "AITarget");
 
+struct HumanAI;
+
+/* a queued action of a HumanAI */
+typedef struct AIAction {
+    Node node;
+    int event;
+    int delay;
+    unsigned flags;
+    void (*start)(struct HumanAI *ai, struct AIAction *a);
+    void (*update)(struct HumanAI *ai, struct AIAction *a);
+    void (*resume)(struct HumanAI *ai, struct AIAction *a);
+    void (*end)(struct HumanAI *ai, struct AIAction *a);
+    char (*step)(struct HumanAI *ai, struct AIAction *a);
+    void *param;        /* parameter block, an AIParam for combat */
+    char used;
+    char unk2D[3];
+} AIAction;
+_Static_assert(sizeof(AIAction) == 0x30, "AIAction");
+
 #endif

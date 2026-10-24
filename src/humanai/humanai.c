@@ -1013,11 +1013,11 @@ void HumanAI_PushAction(AIActionFn start, Node *param, unsigned flags)
     a->update = NULL;
     a->event = gAIEventIndex;
     a->flags = flags;
-    a->unk1C = 0;
+    a->resume = 0;
     a->end = NULL;
-    a->unk24 = 0;
+    a->step = 0;
     a->start = start;
-    a->param = param;
+    a->param = (AIParam *)param;
     a->used = 1;
     List_AddTail(gAIActionList, a);
 }

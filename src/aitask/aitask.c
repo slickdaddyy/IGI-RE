@@ -80,22 +80,6 @@ typedef struct HumanAI {
 typedef struct AIAction AIAction;
 typedef void (*AIActionFn)(HumanAI *ai, AIAction *a);
 
-struct AIAction {
-    void *next;
-    void *prev;
-    int event;
-    int delay;
-    unsigned flags;
-    AIActionFn start;
-    AIActionFn update;
-    int unk1C;
-    AIActionFn end;
-    int unk24;
-    void *param;
-    char used;
-    char unk2D[3];
-};
-
 /* the parameter blocks, each after an 8 byte list node */
 typedef struct AnimParam {
     char node[8];
@@ -182,7 +166,6 @@ _Static_assert(offsetof(HumanAI, shotDelay) == 0x3E60, "shotDelay");
 _Static_assert(offsetof(HumanAI, aim) == 0x3E70, "aim");
 _Static_assert(offsetof(HumanAI, unk3EB0) == 0x3EB0, "unk3EB0");
 _Static_assert(sizeof(HumanAI) == 0x3ED0, "HumanAI");
-_Static_assert(sizeof(AIAction) == 0x30, "AIAction");
 _Static_assert(offsetof(PosParam, move.ref) == 0x28, "PosParam");
 _Static_assert(offsetof(PosParam, panic.node) == 0x28, "PosParam");
 _Static_assert(offsetof(PanicData, node) == 0x20, "PanicData");

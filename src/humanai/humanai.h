@@ -81,21 +81,6 @@ typedef void (*AIActionFn)(HumanAI *ai, AIAction *a);
 /* AIAction.flags */
 #define AIACTION_PUSHABLE 0x1
 
-struct AIAction {
-    Node node;
-    int event;
-    int delay;
-    unsigned flags;
-    AIActionFn start;
-    AIActionFn update;
-    int unk1C;
-    AIActionFn end;
-    int unk24;
-    Node *param;
-    char used;
-    char unk2D[3];
-};
-
 #define AI_EVENT_TYPES 24
 #define AI_POOL 32
 
@@ -256,7 +241,6 @@ _Static_assert(offsetof(Human, unk7C4) == 0x7C4, "Human");
 _Static_assert(offsetof(Human, unkD00) == 0xD00, "Human");
 _Static_assert(sizeof(AIView) == 0xC0, "AIView");
 _Static_assert(sizeof(AIDetectView) == 0x78, "AIDetectView");
-_Static_assert(sizeof(AIAction) == 0x30, "AIAction");
 _Static_assert(offsetof(HumanAI, eventPool) == 0xF0, "eventPool");
 _Static_assert(offsetof(HumanAI, events) == 0x6F0, "events");
 _Static_assert(offsetof(HumanAI, eventEnabled) == 0x8E4, "eventEnabled");

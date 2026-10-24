@@ -98,15 +98,6 @@ ORIG(0x509890, char, GraphNode_HasCriteria, (void *node, unsigned mask));
 #define AI_FIRE_AT_NODE (FN(0x48ECA0, AIFireAtNode_Start))
 #define AI_FIRE_AT_TASK (FN(0x48EDE0, AIFireAtTask_Start))
 
-/* a queued action */
-typedef struct AIAction {
-    Node node;
-    int unk8;
-    char unkC[0x1C];
-    void *data;         /* 0x28 */
-    char active;        /* 0x2C */
-} AIAction;
-
 typedef struct AnimEntry {
     int anim;
     int unk4;
@@ -737,7 +728,7 @@ ScriptValue *AIFunction_RemoveAlarmActions(ScriptValue *out, void *data, void *a
     AIAction *next;
 
     for (next = (AIAction *)a->node.next; next; a = next, next = (AIAction *)next->node.next) {
-        if (a->unk8 == tag) {
+        if (a->event == tag) {
             HumanAI_EndAction(ai, a);
             ai = gAICurrent;
         }
