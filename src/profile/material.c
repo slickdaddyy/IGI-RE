@@ -1,5 +1,6 @@
 #include "hook.h"
 #include "igi.h"
+#include "material/material.h"
 
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
@@ -9,7 +10,7 @@ ORIG(0x407F50, void, GameMaterial_Define, (void));
 
 #define MATERIAL_MAX 32
 
-#define gMaterialUsed(i) VAR(char, 0x569474 + (i) * 0x268)
+extern GameMaterial gMaterials[];
 extern uint8_t gMaterialEvent0;
 extern uint8_t gMaterialEvent1;
 extern uint8_t gMaterialEvent2;
@@ -19,7 +20,7 @@ void Material_Init(void)
     int i;
 
     for (i = 0; i < MATERIAL_MAX; i++)
-        gMaterialUsed(i) = 0;
+        gMaterials[i].used = 0;
     gMaterialEvent0 = TaskEvent_Alloc(0);
     gMaterialEvent1 = TaskEvent_Alloc(0);
     gMaterialEvent2 = TaskEvent_Alloc(0);

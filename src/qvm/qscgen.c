@@ -103,6 +103,8 @@ ORIG(0x4BF1F0, int, Parse_Block, (void *lexer, Block **out));
 ORIG(0x4BF8F0, void, Block_Free, (Block *b));
 
 extern void *gQscGenErrorData;
+extern int gQscGenUnkA442B8;
+extern int gQscGenUnkA442BC;
 extern QscGenCallback gQscGenLogFn;
 extern QscGenCallback gQscGenErrorFn;
 extern int gQscGenErrors;
@@ -504,9 +506,9 @@ void QscGen_Init(void)
 {
     gQscGenErrorFn = NULL;
     gQscGenLogFn = NULL;
-    VAR(int, 0xA442B8) = 0;
+    gQscGenUnkA442B8 = 0;
     gQscGenErrorData = NULL;
-    VAR(int, 0xA442BC) = 0;
+    gQscGenUnkA442BC = 0;
     gQscGenLogData = NULL;
 }
 HOOK(0x4BC920, QscGen_Init);

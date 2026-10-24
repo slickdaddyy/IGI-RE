@@ -108,6 +108,14 @@ extern const unsigned gMeshCaps[];
 extern const unsigned gMeshCapsTnL[];
 extern int gGenericUVFromRenderModeUV;
 extern int gRenderModeUVFromGenericUV;
+extern int gTexStageIdx;
+extern int gAlphaBlendIdx;
+extern int gLitAlphaIdx;
+extern int gLitIdx;
+extern int gLmStageIdx;
+extern int gUnlitAlphaIdx;
+extern int gOpaqueBlendIdx;
+extern int gUnlitIdx;
 
 extern const float kOne;
 
@@ -378,14 +386,14 @@ void Direct3DRender_Init(void)
         gMeshBatches[i].total = 0;
     }
     gMeshVBCount = 0;
-    VAR(int, 0x7205B0) = PtrList_Add(gD3DListA, FN(0x49D730, Direct3DRender_SetTextureStages));
-    VAR(int, 0x7AC09C) = PtrList_Add(gD3DListB, FN(0x49DB10, Direct3DRender_AlphaBlendOff));
-    VAR(int, 0x7234B8) = PtrList_Add(gD3DListC, FN(0x49D480, Direct3DRender_SetLitState));
-    VAR(int, 0x723504) = PtrList_Add(gD3DListA, FN(0x49D960, Direct3DRender_SetLightmapStages));
-    VAR(int, 0x7ADDD4) = PtrList_Add(gD3DListC, FN(0x49D810, Direct3DRender_SetUnlitState));
-    VAR(int, 0x7205B8) = PtrList_Add(gD3DListB, FN(0x49DB10, Direct3DRender_AlphaBlendOff));
-    VAR(int, 0x7205BC) = PtrList_Add(gD3DListC, FN(0x49DB20, Direct3DRender_SetLitAlphaState));
-    VAR(int, 0x723508) = PtrList_Add(gD3DListC, FN(0x49DDF0, Direct3DRender_SetUnlitAlphaState));
+    gTexStageIdx = PtrList_Add(gD3DListA, FN(0x49D730, Direct3DRender_SetTextureStages));
+    gOpaqueBlendIdx = PtrList_Add(gD3DListB, FN(0x49DB10, Direct3DRender_AlphaBlendOff));
+    gLitIdx = PtrList_Add(gD3DListC, FN(0x49D480, Direct3DRender_SetLitState));
+    gLmStageIdx = PtrList_Add(gD3DListA, FN(0x49D960, Direct3DRender_SetLightmapStages));
+    gUnlitIdx = PtrList_Add(gD3DListC, FN(0x49D810, Direct3DRender_SetUnlitState));
+    gAlphaBlendIdx = PtrList_Add(gD3DListB, FN(0x49DB10, Direct3DRender_AlphaBlendOff));
+    gLitAlphaIdx = PtrList_Add(gD3DListC, FN(0x49DB20, Direct3DRender_SetLitAlphaState));
+    gUnlitAlphaIdx = PtrList_Add(gD3DListC, FN(0x49DDF0, Direct3DRender_SetUnlitAlphaState));
     Direct3D_AddRestoreCallback(FN(0x49BD30, Direct3DRender_RestoreVertexBuffers));
     slot = QCube_GetNearClipEvent();
     TaskType_SetHandler(SplineObjSegment_GetType(), slot, FN(0x49BE10, Direct3DRender_SplineNearZ));

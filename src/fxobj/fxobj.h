@@ -47,6 +47,25 @@ typedef struct VarString {
     int refCount;
 } VarString;
 
+/* min and max of a script parameter */
+typedef struct RangeF {
+    float min, max;
+} RangeF;
+
+typedef struct RangeD {
+    double min, max;
+} RangeD;
+
+typedef struct RangeI {
+    int min, max;
+} RangeI;
+
+/* {count, names} extra data of an enum parameter */
+typedef struct ParamEnum {
+    int count;
+    const char **names;
+} ParamEnum;
+
 /* the argument of the script argument parsers */
 typedef struct ParseArg {
     void *out;

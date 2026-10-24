@@ -26,15 +26,15 @@ ORIG(0x497410, int, Sound_HashName, (void *key));
 ORIG(0x497450, int, Sound_HashBucket, (void *key));
 /* the exe's import thunk and table entries; DSOUND and WINMM are not linked into our DLL */
 ORIG_STD(0x4AF746, HRESULT, DirectSoundCreate_, (GUID *guid, IDirectSound **out, IUnknown *outer));
-#define mixerGetLineControlsA_ (*(MMRESULT(WINAPI **)(HMIXEROBJ, MIXERLINECONTROLSA *, DWORD))0x5331F0)
-#define mixerSetControlDetails_ (*(MMRESULT(WINAPI **)(HMIXEROBJ, MIXERCONTROLDETAILS *, DWORD))0x5331F4)
-#define mixerClose_ (*(MMRESULT(WINAPI **)(HMIXER))0x5331F8)
-#define mixerGetNumDevs_ (*(UINT(WINAPI **)(void))0x5331FC)
-#define mixerOpen_ (*(MMRESULT(WINAPI **)(HMIXER *, UINT, DWORD_PTR, DWORD_PTR, DWORD))0x533200)
-#define mixerGetDevCapsA_ (*(MMRESULT(WINAPI **)(UINT_PTR, MIXERCAPSA *, UINT))0x533204)
-#define mixerGetLineInfoA_ (*(MMRESULT(WINAPI **)(HMIXEROBJ, MIXERLINEA *, DWORD))0x533208)
-#define mixerGetControlDetailsA_ (*(MMRESULT(WINAPI **)(HMIXEROBJ, MIXERCONTROLDETAILS *, DWORD))0x53320C)
-#define mciSendCommandA_ (*(MCIERROR(WINAPI **)(MCIDEVICEID, UINT, DWORD_PTR, DWORD_PTR))0x533210)
+extern MMRESULT (WINAPI *mixerGetLineControlsA_)(HMIXEROBJ, MIXERLINECONTROLSA *, DWORD);
+extern MMRESULT (WINAPI *mixerSetControlDetails_)(HMIXEROBJ, MIXERCONTROLDETAILS *, DWORD);
+extern MMRESULT (WINAPI *mixerClose_)(HMIXER);
+extern UINT (WINAPI *mixerGetNumDevs_)(void);
+extern MMRESULT (WINAPI *mixerOpen_)(HMIXER *, UINT, DWORD_PTR, DWORD_PTR, DWORD);
+extern MMRESULT (WINAPI *mixerGetDevCapsA_)(UINT_PTR, MIXERCAPSA *, UINT);
+extern MMRESULT (WINAPI *mixerGetLineInfoA_)(HMIXEROBJ, MIXERLINEA *, DWORD);
+extern MMRESULT (WINAPI *mixerGetControlDetailsA_)(HMIXEROBJ, MIXERCONTROLDETAILS *, DWORD);
+extern MCIERROR (WINAPI *mciSendCommandA_)(MCIDEVICEID, UINT, DWORD_PTR, DWORD_PTR);
 
 typedef struct SoundNode {
     struct SoundNode *next;

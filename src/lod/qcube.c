@@ -131,6 +131,16 @@ extern int gCollChildTable[];
 extern float gQCubeOutsideMin[];
 extern float gQCubeOutsideMax[];
 extern char gNearClipText[];
+extern int gQCubeActive;
+extern int gUnk543A64;
+extern uint16_t gQCubeUnkC30064;
+extern int gQCubeUnkB97DF0;
+extern int gQCubeUnkA538DC;
+extern int gQCubeUnkA538E0;
+extern int gQCubeUnkB12B40;
+extern uint8_t gQCubeUnkA538D8;
+extern int gQCubeUnkB12BCC;
+extern int gQCubeUnkB16C68;
 
 static const float kOne = 1.0f;
 static const double kHalf = 0.5;
@@ -308,7 +318,7 @@ void QCube_DrawObjects(QWorld *w)
         for (i = 0; i < gQCubeCount; i++, e++) {
             float r = gQCubeEnclosingRadius;
 
-            if (e->task->type == VAR(uint16_t, 0xC30064) ||
+            if (e->task->type == gQCubeUnkC30064 ||
                 !((long double)r * r >= Vec3d_DistanceSq(gQCubeEnclosingBox, e->task->pos))) {
                 if (gQCubeDrawOutside) {
                     if (inside)
@@ -363,11 +373,11 @@ void QCube_Begin(QWorld *w)
     int i, d;
 
     gQCubeOut = gQCubeList;
-    VAR(int, 0xB97DF0) = -1;
-    VAR(int, 0xA538DC) = 0;
-    VAR(int, 0xA538E0) = 0;
+    gQCubeUnkB97DF0 = -1;
+    gQCubeUnkA538DC = 0;
+    gQCubeUnkA538E0 = 0;
     gQCubeCount = 0;
-    VAR(int, 0xB12B40) = 0;
+    gQCubeUnkB12B40 = 0;
     gQCubeWorld = w;
     for (i = 0; i < 3; i++)
         gQCubeOrigin[i] = w->origin[i];
@@ -375,7 +385,7 @@ void QCube_Begin(QWorld *w)
         gQCubeOriginF[i] = w->origin[i];
     for (i = 0; i < 3; i++)
         gQCubeOriginD[i] = w->origin[i];
-    VAR(uint8_t, 0xA538D8) = 0;
+    gQCubeUnkA538D8 = 0;
     if (gTransContext.fov > kOne)
         d = gQCubeDetail;
     else
@@ -392,8 +402,8 @@ void QCube_Render(QWorld *w, const char *flags, int full)
 {
     int i;
 
-    VAR(int, 0xB12BCC) = VAR(int, 0xB16C68);
-    VAR(int, 0xB16C68) = 0;
+    gQCubeUnkB12BCC = gQCubeUnkB16C68;
+    gQCubeUnkB16C68 = 0;
     if (!w->ready) {
         TerrainMesh_SetupLighting(w, 0);
         w->ready = 1;
@@ -401,7 +411,7 @@ void QCube_Render(QWorld *w, const char *flags, int full)
     QCube_UpdateViewScale();
     Light_ResetFrame();
     Haze_ResetFrame();
-    if (VAR(int, 0xBCAB38)) {
+    if (gQCubeActive) {
         if (full)
             QCube_Begin(w);
         if (w->terrain && full) {
@@ -492,7 +502,7 @@ void QCube_UpdateNearPlane(QWorld *w, const char *flags)
     arg.zbuffer = 0;
     if (gRenderFuncs[TransContext_GetNearClipMethod()])
         gRenderFuncs[TransContext_GetNearClipMethod()](&arg);
-    if (!arg.zbuffer || !VAR(int, 0x543A64))
+    if (!arg.zbuffer || !gUnk543A64)
         return;
     nearq[0] = 0;
     nearq[1] = 0;

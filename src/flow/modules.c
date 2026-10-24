@@ -636,9 +636,11 @@ ORIG(0x401A60, int, Task_GetCount, (void));
 ORIG(0x402880, void *, Flow_Get, (void));
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 
+extern char gGameName[];
+
 char Game_Start(void)
 {
-    AppContext_SetName((void *)0x536144);
+    AppContext_SetName(gGameName);
     AppContext_SetQvmOnly(1);
     Modules_Open();
     Flow_New(NULL);

@@ -61,6 +61,13 @@ extern BoneHierarchy gBoneHierarchies[];
 extern int gBoneSlots[][10];
 extern BoneHierarchy *gBoneBuild;
 extern Bone *gBoneBuildBones;
+extern Pool gSourcePool;
+extern Pool gOrientPool;
+extern Pool gInstPool;
+extern Pool gFadePool;
+extern Pool gNodePool;
+extern int gBoneUnkA54684;
+extern int gBoneUnkA54688;
 extern float gBoneTicksPerFrame;
 extern int gBoneSmoothAnims;
 
@@ -86,13 +93,13 @@ void BoneObj_Init(void)
         gBoneSlots[i][0] = 0;
         gBoneSlots[i][1] = 0;
     }
-    Pool_Init_(&VAR(Pool, 0xA54640), 0x10, 0x80, 4);
-    Pool_Init_(&VAR(Pool, 0xA54620), 0x34, 0x80, 4);
-    Pool_Init_(&VAR(Pool, 0xA54608), 0x1C, 0x80, 4);
-    Pool_Init_(&VAR(Pool, 0xA54660), 0x2C, 0x80, 4);
-    Pool_Init_(&VAR(Pool, 0xA545F0), 0x14, 0x100, 4);
-    VAR(int, 0xA54684) = 0;
-    VAR(int, 0xA54688) = 0;
+    Pool_Init_(&gFadePool, 0x10, 0x80, 4);
+    Pool_Init_(&gInstPool, 0x34, 0x80, 4);
+    Pool_Init_(&gOrientPool, 0x1C, 0x80, 4);
+    Pool_Init_(&gNodePool, 0x2C, 0x80, 4);
+    Pool_Init_(&gSourcePool, 0x14, 0x100, 4);
+    gBoneUnkA54684 = 0;
+    gBoneUnkA54688 = 0;
     gBoneTicksPerFrame = 0;
 }
 HOOK(0x4D2C30, BoneObj_Init);
@@ -100,11 +107,11 @@ HOOK(0x4D2C30, BoneObj_Init);
 void BoneObj_Shutdown(void)
 {
     BoneObj_FreeAll();
-    Pool_Free_(&VAR(Pool, 0xA54640));
-    Pool_Free_(&VAR(Pool, 0xA54620));
-    Pool_Free_(&VAR(Pool, 0xA54608));
-    Pool_Free_(&VAR(Pool, 0xA54660));
-    Pool_Free_(&VAR(Pool, 0xA545F0));
+    Pool_Free_(&gFadePool);
+    Pool_Free_(&gInstPool);
+    Pool_Free_(&gOrientPool);
+    Pool_Free_(&gNodePool);
+    Pool_Free_(&gSourcePool);
 }
 HOOK(0x4D2CF0, BoneObj_Shutdown);
 

@@ -423,8 +423,8 @@ extern List *gAIActionList;
 extern List *gAIEventList;
 extern int gAIEventIndex;
 
-#define gAIMoveFree (*(List *)0x58A9C8)
-#define gAITargets (*(List *)0x58A9D8)
+extern List gAIMoveFree;
+extern List gAITargets;
 extern AITarget gAITargetPool[];
 #define AI_TARGETS 8
 

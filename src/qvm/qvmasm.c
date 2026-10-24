@@ -111,6 +111,8 @@ ORIG(0x4F1D80, void, ParamEnum_Free, (List *list));
 
 extern void *gAsmErrorContext;
 extern void *gQvmAsmLogData;
+extern int gQvmAsmUnkA43EC4;
+extern int gQvmAsmUnkA43ECC;
 extern int gAsmErrorCount;
 extern QvmAsmCallback gQvmAsmLogFn;
 extern QvmAsmCallback gAsmErrorHandler;
@@ -342,10 +344,10 @@ HOOK(0x4BBC30, QvmAsm_Log);
 void QvmAsm_Init(void)
 {
     gAsmErrorHandler = NULL;
-    VAR(int, 0xA43ECC) = 0;
+    gQvmAsmUnkA43ECC = 0;
     gQvmAsmLogFn = NULL;
     gAsmErrorContext = NULL;
-    VAR(int, 0xA43EC4) = 0;
+    gQvmAsmUnkA43EC4 = 0;
     gQvmAsmLogData = NULL;
     QvmAsm_RegisterOps();
 }

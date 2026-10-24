@@ -39,6 +39,12 @@ ORIG(0x4BACA0, void, Script_UnrefSymbol, (void *ref));
 
 extern int gQvmSavedTsp;
 extern int gQvmSavedSp;
+extern int gQvmUnkA442EC;
+extern int gQvmUnkA442F4;
+extern int gQvmUnkA442F8;
+extern int gQvmUnkA442FC;
+extern int gQvmUnkA44300;
+extern int gQvmUnkA44308;
 
 typedef struct QvmHeader {
     char magic[4];      /* "LOOP" */
@@ -578,12 +584,12 @@ void Qvm_Init(void)
     Qvm_SetHandler(OP_PUSHSI, 0, Qvm_OpPushName);
     Qvm_SetHandler(OP_PUSHSIB, 0, Qvm_OpPushName);
     Qvm_SetHandler(OP_PUSHSIW, 0, Qvm_OpPushName);
-    VAR(int, 0xA442F8) = 0;
-    VAR(int, 0xA442EC) = 0;
-    VAR(int, 0xA44300) = 0;
-    VAR(int, 0xA442FC) = 0;
-    VAR(int, 0xA44308) = 0;
-    VAR(int, 0xA442F4) = 0;
+    gQvmUnkA442F8 = 0;
+    gQvmUnkA442EC = 0;
+    gQvmUnkA44300 = 0;
+    gQvmUnkA442FC = 0;
+    gQvmUnkA44308 = 0;
+    gQvmUnkA442F4 = 0;
 }
 HOOK(0x4BD430, Qvm_Init);
 

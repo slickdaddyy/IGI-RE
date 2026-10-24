@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "profile/param.h"
 #include "profile/profile.h"
+#include "core/pool.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
@@ -94,6 +95,22 @@ _Static_assert(sizeof(WeaponConfig) == 0x708, "WeaponConfig");
 
 #define WEAPON_CONFIG_SIZE (sizeof(WeaponConfig) - sizeof(TaskHeader))
 
+typedef struct TaskType {
+    const char *name;
+    int size;
+    uint16_t parent;
+    uint16_t unk0A;
+    Pool pool;
+    char pooled;
+    char used;
+    char unk26[2];
+    uint16_t mask;
+    uint16_t unk2A;
+    uint32_t flags;
+} TaskType;
+
+_Static_assert(sizeof(TaskType) == 0x30, "TaskType");
+
 extern uint16_t gWeaponConfigContainerType;
 extern uint16_t gWeaponConfigType;
 extern uint8_t gWeaponConfigEvent;
@@ -102,7 +119,7 @@ extern char gWeaponConfigPath[];
 extern char gTaskTypeEnum;
 extern ParamTable *gWeaponConfigContainerParams;
 extern ParamTable *gWeaponConfigParams;
-#define gTaskTypeUsed(i) VAR(char, 0xAF5F05 + (i) * 0x30)
+extern TaskType gTaskTypes[];
 
 void WeaponConfigContainer_Create(WeaponConfigContainer *c);
 void WeaponConfigContainer_GetParams(void *task, ParamTable **out);
@@ -268,7 +285,7 @@ HOOK(0x407BE0, WeaponConfig_Apply);
 int TaskType_IsUsed(int type)
 {
     if (type >= 0 && type < 0x180)
-        return gTaskTypeUsed(type);
+        return gTaskTypes[type].used;
     return 0;
 }
 HOOK(0x407CD0, TaskType_IsUsed);

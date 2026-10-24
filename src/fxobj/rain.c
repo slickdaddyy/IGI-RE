@@ -33,8 +33,8 @@ extern uint16_t gRudderType;
 extern char *gRainTexture;
 extern uint16_t gRainEffectType;
 extern void *gRainEffectParams;
-extern char gRainLevelRange[];
-extern char gRainSizeRange[];
+extern RangeF gRainLevelRange;
+extern RangeF gRainSizeRange;
 
 static const float kRainScale = 4096.0f;
 
@@ -65,10 +65,10 @@ void RainEffect_Init(void)
 {
     RainEffect r;
 
-    VAR(float, 0x57BD98) = 5.0f;
-    VAR(float, 0x57BD9C) = 150.0f;
-    VAR(float, 0x57BD90) = 0.0f;
-    VAR(float, 0x57BD94) = 1.0f;
+    gRainSizeRange.min = 5.0f;
+    gRainSizeRange.max = 150.0f;
+    gRainLevelRange.min = 0.0f;
+    gRainLevelRange.max = 1.0f;
     gRainEffectType = TaskType_New("RainEffect", sizeof(RainEffect), Task_GetRootType(), 0);
     TaskType_SetHandler(gRainEffectType, 0, RainEffect_Create);
     TaskType_SetHandler2(gRainEffectType, 2, RainEffect_Delete);
@@ -79,10 +79,10 @@ void RainEffect_Init(void)
     TaskType_SetHandler2(gRainEffectType, Level_GetEventDAC(), TASK_NOTHING);
     gRainEffectParams = ParamTable_New(5);
     ParamTable_Add(gRainEffectParams, &r, &r.unk24, Param_Bool8(), 7, NULL);
-    ParamTable_Add(gRainEffectParams, &r, &r.unk28, Param_Real32(), 7, gRainSizeRange);
-    ParamTable_Add(gRainEffectParams, &r, &r.unk2C, Param_Real32(), 7, gRainSizeRange);
+    ParamTable_Add(gRainEffectParams, &r, &r.unk28, Param_Real32(), 7, &gRainSizeRange);
+    ParamTable_Add(gRainEffectParams, &r, &r.unk2C, Param_Real32(), 7, &gRainSizeRange);
     ParamTable_Add(gRainEffectParams, &r, &r.expr, Param_VarString(), 7, NULL);
-    ParamTable_Add(gRainEffectParams, &r, &r.level, Param_Real32(), 7, gRainLevelRange);
+    ParamTable_Add(gRainEffectParams, &r, &r.level, Param_Real32(), 7, &gRainLevelRange);
     gRainTexture = Game_AddTexture("snow.tex");
 }
 HOOK(0x436780, RainEffect_Init);

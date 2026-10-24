@@ -21,16 +21,16 @@ ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 
 /* the exe's import table entries; OLE32 is not linked into our DLL */
-#define CoCreateInstance_ (*(HRESULT(WINAPI **)(REFCLSID, IUnknown *, DWORD, REFIID, void **))0x533218)
-#define CoInitialize_ (*(HRESULT(WINAPI **)(void *))0x53321C)
-#define CoUninitialize_ (*(void(WINAPI **)(void))0x533220)
+extern HRESULT(WINAPI *CoCreateInstance_)(REFCLSID, IUnknown *, DWORD, REFIID, void **);
+extern HRESULT(WINAPI *CoInitialize_)(void *);
+extern void(WINAPI *CoUninitialize_)(void);
 
-#define IID_IDirectDrawSurface4_ ((REFIID)0x534A30)
-#define IID_IDirectDrawSurface3_ ((REFIID)0x534A40)
-#define IID_IDirectDraw7_ ((REFIID)0x534A50)
-#define IID_IDirectDraw2_ ((REFIID)0x534A60)
-#define IID_IDirectMusic_ ((REFIID)0x5348E0)
-#define CLSID_DirectMusic_ ((REFCLSID)0x5348F0)
+extern const GUID IID_IDirectDrawSurface4_[];
+extern const GUID IID_IDirectDrawSurface3_[];
+extern const GUID IID_IDirectDraw7_[];
+extern const GUID IID_IDirectDraw2_[];
+extern const GUID IID_IDirectMusic_[];
+extern const GUID CLSID_DirectMusic_[];
 
 /* A 32 bit offscreen image, the target of the "OffscreenBuffer" render mode. */
 typedef struct OffscreenBuffer {

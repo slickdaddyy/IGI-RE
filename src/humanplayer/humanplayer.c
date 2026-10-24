@@ -235,6 +235,7 @@ extern float kTwoPi;
 extern float kRadToDeg;
 extern double kUnitsToMeters;
 extern float kUnitsToMetersF;
+extern float kFps;
 
 #define BLEND 0x1.99999ap-3f
 #define WEAPON_DOWN_X -0x1.38c354p-1f
@@ -862,7 +863,7 @@ void HumanPlayer_WeaponThrowEnter(StateMachine *sm, HumanPlayer *h)
 
     Anim_Play(v->anim, 0, info->anim684, 0, 0);
     p = PhysicsObjType_Find(info->unk61C);
-    fuse = **(float **)(p + 0x2D4) * VAR(float, 0x5333BC);
+    fuse = **(float **)(p + 0x2D4) * kFps;
     h->grenade_ticking = 0;
     h->grenade_ticks = 0;
     h->grenade_sound = 0;
@@ -1460,7 +1461,7 @@ void HumanPlayer_Update(HumanPlayer *h)
     speed = h->unk664[2];
     if (h->unk664[2] < 0)
         speed = -speed;
-    Human_printf(h, "Speed Z (m/s): %.2f\n", (double)(speed * kUnitsToMetersF * VAR(float, 0x5333BC)));
+    Human_printf(h, "Speed Z (m/s): %.2f\n", (double)(speed * kUnitsToMetersF * kFps));
     Human_printf(h, "Ground task: %x\n", Human_GetGround(h));
     Human_printf(h, "Attach task: %x\n", h->attach);
     Human_printf(h, "Delta move pos X: %.2f\n", (double)h->move_pos[0]);

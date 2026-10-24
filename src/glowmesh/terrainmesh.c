@@ -140,6 +140,11 @@ typedef struct TerrainLevelMat {
     int tileB;
 } TerrainLevelMat;
 
+typedef struct TerrainMaterial {
+    int unk0;
+    TerrainLevelMat levels[32];
+} TerrainMaterial;
+
 typedef struct TerrainMatEntry {
     int shift; /* 0 ends the list */
     float scale;
@@ -180,6 +185,7 @@ _Static_assert(sizeof(TerrainLightMapInfo) == 0x30, "TerrainLightMapInfo");
 _Static_assert(sizeof(TerrainHeightMapInfo) == 0x30, "TerrainHeightMapInfo");
 _Static_assert(sizeof(TerrainMaterialMapInfo) == 0x30, "TerrainMaterialMapInfo");
 _Static_assert(sizeof(TerrainLevelMat) == 0x1C, "TerrainLevelMat");
+_Static_assert(sizeof(TerrainMaterial) == 900, "TerrainMaterial");
 _Static_assert(sizeof(TerrainVertRec) == 0x24, "TerrainVertRec");
 _Static_assert(sizeof(TerrainMatRec) == 0x28, "TerrainMatRec");
 _Static_assert(offsetof(TerrainPoly, fogLayers) == 0x84, "TerrainPoly");
@@ -227,6 +233,7 @@ extern float gTerrainCenterY;
 extern float gTerrainInvSize;
 extern int gUnkC28FBC;
 extern float gUnkC28FC0;
+extern TerrainMaterial gTerrainMaterials[];
 extern float gTerrainView[]; /* 3x3 matrix, unk24, then the view origin */
 extern float gTerrainTint[];
 extern double gTerrainClipUV[][2];
@@ -795,7 +802,7 @@ void TerrainMesh_Build(void)
         m = 0;
         do {
             int mat = list[m], sh1 = (0x17 - level) & 31, sh2 = (0x16 - level) & 31, ax, ay, bx, by;
-            const TerrainLevelMat *t = (const TerrainLevelMat *)((char *)0xC28FE4 + mat * 900 + level * 28);
+            const TerrainLevelMat *t = &gTerrainMaterials[mat].levels[level];
             TerrainMatRec *r = &mrec[m];
             long double fA = t->scaleA;
             float fB = t->scaleB;

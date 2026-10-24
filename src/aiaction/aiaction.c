@@ -1,5 +1,7 @@
 #pragma GCC optimize("excess-precision=standard")
 
+#include <string.h>
+
 #include "aiaction/aiaction.h"
 #include "hook.h"
 
@@ -235,6 +237,86 @@ typedef struct CombatData {
 _Static_assert(offsetof(EventData, ref) == 0x28, "EventData");
 _Static_assert(offsetof(CombatData, unk28) == 0x28, "CombatData");
 
+/* the static pools HumanAI_Init sets up; other areas take items from their free lists */
+typedef struct MonitorGraph {
+    Node node;
+    void *graph;
+    List targets;
+} MonitorGraph;
+
+typedef struct MonitorTarget {
+    Node node;
+    int nodeId;
+    int tick;
+    void *target;
+} MonitorTarget;
+
+typedef struct Claim {
+    Node node;
+    void *task;
+} Claim;
+
+typedef struct AITarget {
+    Node node;
+    char used;
+    char unk09[3];
+    Task **ref;
+    Task *humans[32];
+    int states[32];
+    Vec3d pos;
+    int count;
+    int removed;
+} AITarget;
+
+typedef struct MoveItem {
+    Node node;
+    Vec3d pos;
+    int door;
+    int id;
+} MoveItem;
+
+typedef struct NodeGrid {
+    Node node;
+    int graph;
+    int nodeId;
+    int refs;
+    int w;
+    int h;
+    int unk1C;
+    int cells[20][20];
+} NodeGrid;
+
+_Static_assert(sizeof(MonitorGraph) == 0x18, "MonitorGraph");
+_Static_assert(sizeof(MonitorTarget) == 0x14, "MonitorTarget");
+_Static_assert(sizeof(Claim) == 0xC, "Claim");
+_Static_assert(sizeof(AITarget) == 0x130, "AITarget");
+_Static_assert(sizeof(MoveItem) == 0x28, "MoveItem");
+_Static_assert(sizeof(NodeGrid) == 0x660, "NodeGrid");
+
+#define AI_MONITOR_GRAPHS 64
+#define AI_MONITOR_TARGETS 128
+#define AI_CLAIMS 16
+#define AI_TARGETS 8
+#define AI_MOVE_ITEMS 1280
+#define AI_GRIDS 128
+
+extern MonitorGraph gMonitorGraphs[AI_MONITOR_GRAPHS];
+extern MonitorTarget gMonitorTargets[AI_MONITOR_TARGETS];
+extern Claim gClaims[AI_CLAIMS];
+extern AITarget gAITargetPool[AI_TARGETS];
+extern MoveItem gAIMoveItems[AI_MOVE_ITEMS];
+extern NodeGrid gNodeGrids[AI_GRIDS];
+extern List gMonitorGraphsFree;
+extern List gMonitorGraphsUsed;
+extern List gMonitorTargetsFree;
+extern List gClaimsFree;
+extern List gClaimsUsed;
+extern List gGridsFree;
+extern List gGridsUsed;
+extern List gAIMoveFree;
+extern List gAITargets;
+extern int gAIUnk5BDA38[8];
+
 extern uint16_t gHumanAIType;
 extern const char *gAIScriptNames[];
 extern const int gAIScriptOfType[];
@@ -275,6 +357,9 @@ void HumanAI_Init(void)
     HumanAI t;
     List *l;
     char *p;
+    NodeGrid *g;
+    MonitorGraph *mg;
+    MonitorTarget *mt;
     int i;
 
     gHumanAIType = TaskType_New("HumanAI", sizeof(HumanAI), Task_GetRootType(), 0);
@@ -299,56 +384,49 @@ void HumanAI_Init(void)
     for (p = (char *)(addr); p < (char *)(end); p += (size)) \
         ((Node *)p)->prev = NULL, ((Node *)p)->next = NULL, List_AddTail((List *)(list), p)
 
-    LIST_INIT(0x58A9D8);
-    for (p = (char *)0x57D840; p < (char *)0x57E1C0; p += 0x130)
-        *p = 0;
-    LIST_INIT(0x58A9C8);
-    NODES(0x57E1C8, 0x58A9C8, 0x28, 0x58A9C8);
+    LIST_INIT(&gAITargets);
+    for (i = 0; i < AI_TARGETS; i++)
+        gAITargetPool[i].used = 0;
+    LIST_INIT(&gAIMoveFree);
+    NODES(gAIMoveItems, gAIMoveItems + AI_MOVE_ITEMS, sizeof(MoveItem), &gAIMoveFree);
     for (i = 0; i < 9; i++)
         gAIScripts[i] = Script_Load(gAIScriptNames[i]);
-    LIST_INIT(0x57D768);
-    LIST_INIT(0x58A9E8);
-    for (p = (char *)0x58AA28; p < (char *)0x5BDA28; p += 0x660) {
-        int *q = (int *)p;
-
-        q[1] = 0;
-        q[0] = 0;
-        List_AddTail((List *)0x58A9E8, p);
-        for (i = 8; i < 0x198; i++)
-            q[i] = 0;
-        q[2] = -1;
-        q[3] = -1;
-        q[5] = 0;
-        q[6] = 0;
-        q[4] = 0;
+    LIST_INIT(&gGridsUsed);
+    LIST_INIT(&gGridsFree);
+    for (g = gNodeGrids; g < gNodeGrids + AI_GRIDS; g++) {
+        g->node.prev = NULL;
+        g->node.next = NULL;
+        List_AddTail(&gGridsFree, g);
+        memset(g->cells, 0, sizeof(g->cells));
+        g->graph = -1;
+        g->nodeId = -1;
+        g->w = 0;
+        g->h = 0;
+        g->refs = 0;
     }
-    LIST_INIT(0x5BDA28);
-    LIST_INIT(0x57D758);
-    NODES(0x57D778, 0x57D838, 0xC, 0x57D758);
-    LIST_INIT(0x58AA18);
-    LIST_INIT(0x57C748);
-    LIST_INIT(0x57E1B8);
-    for (p = (char *)0x57C758; p < (char *)0x57CD58; p += 0x18) {
-        int *q = (int *)p;
-
-        q[1] = 0;
-        q[0] = 0;
-        List_AddTail((List *)0x57C748, p);
-        LIST_INIT(p + 0xC);
-        q[2] = 0;
+    LIST_INIT(&gClaimsUsed);
+    LIST_INIT(&gClaimsFree);
+    NODES(gClaims, gClaims + AI_CLAIMS, sizeof(Claim), &gClaimsFree);
+    LIST_INIT(&gMonitorGraphsUsed);
+    LIST_INIT(&gMonitorGraphsFree);
+    LIST_INIT(&gMonitorTargetsFree);
+    for (mg = gMonitorGraphs; mg < gMonitorGraphs + AI_MONITOR_GRAPHS; mg++) {
+        mg->node.prev = NULL;
+        mg->node.next = NULL;
+        List_AddTail(&gMonitorGraphsFree, mg);
+        LIST_INIT(&mg->targets);
+        mg->graph = NULL;
     }
-    for (p = (char *)0x57CD58; p < (char *)0x57D758; p += 0x14) {
-        int *q = (int *)p;
-
-        q[1] = 0;
-        q[0] = 0;
-        List_AddTail((List *)0x57E1B8, p);
-        q[3] = -1;
-        q[2] = -1;
-        q[4] = 0;
+    for (mt = gMonitorTargets; mt < gMonitorTargets + AI_MONITOR_TARGETS; mt++) {
+        mt->node.prev = NULL;
+        mt->node.next = NULL;
+        List_AddTail(&gMonitorTargetsFree, mt);
+        mt->tick = -1;
+        mt->nodeId = -1;
+        mt->target = NULL;
     }
     for (i = 0; i < 8; i++)
-        ((int *)0x5BDA38)[i] = 0;
+        gAIUnk5BDA38[i] = 0;
 #undef LIST_INIT
 #undef NODES
 }
