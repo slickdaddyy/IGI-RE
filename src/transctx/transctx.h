@@ -2,13 +2,7 @@
 #define TRANSCTX_TRANSCTX_H
 
 #include "igi.h"
-
-/* Anything drawn through gRenderFuncs[type]; queues are chains of these. */
-typedef struct RenderNode {
-    struct RenderNode *next;
-    int type; /* method index, -1 for a queue head */
-    int unk8;
-} RenderNode;
+#include "transctx/transctxtypes.h"
 
 /* A screen area with its own render queues, 0x4C bytes. The one being drawn is copied to gScene. */
 typedef struct Scene {

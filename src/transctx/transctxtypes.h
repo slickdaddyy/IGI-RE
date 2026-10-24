@@ -51,4 +51,10 @@ typedef struct SceneArea {
     float minX, minY, maxX, maxY;
 } SceneArea;
 
+typedef struct RenderNode {
+    struct RenderNode *next;
+    int type; /* method index, -1 for a queue head */
+    int unk8;
+} RenderNode;
+
 #endif

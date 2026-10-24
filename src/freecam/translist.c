@@ -1,4 +1,5 @@
 #include "freecam/freecam.h"
+#include "d3d/d3dtypes.h"
 
 /* TransparencyList collects transparent triangle batches during the frame
    and draws them back to front at the end of the scene. */
@@ -28,26 +29,15 @@ typedef struct TransparencyList {
     int unk7C;
 } TransparencyList;
 
-typedef struct RenderNode {
+typedef struct TransListNode {
     void *next;
     int primitive;
     int unk8;
     TransparencyList *list;
-} RenderNode;
-
-typedef struct D3DDevice D3DDevice;
-typedef struct D3DDeviceVtbl {
-    void *unk0[25];
-    long(__stdcall *DrawPrimitive)(D3DDevice *dev, int type, uint32_t fvf, void *verts, uint32_t count,
-                                   uint32_t flags);
-} D3DDeviceVtbl;
-struct D3DDevice {
-    const D3DDeviceVtbl *vtbl;
-};
+} TransListNode;
 
 _Static_assert(sizeof(TransparencyList) == 0x80, "TransparencyList");
 _Static_assert(offsetof(TransBatch, verts) == 0x20, "TransBatch");
-_Static_assert(offsetof(D3DDeviceVtbl, DrawPrimitive) == 0x64, "DrawPrimitive");
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -86,8 +76,8 @@ void TransparencyList_Delete(TransparencyList *l)
 HOOK(0x531F60, TransparencyList_Delete);
 
 void TransparencyList_Render(TransparencyList *l);
-void TransparencyList_Start(RenderNode *n);
-void TransparencyList_Draw(RenderNode *n);
+void TransparencyList_Start(TransListNode *n);
+void TransparencyList_Draw(TransListNode *n);
 
 void TransparencyList_Init(void)
 {
@@ -112,7 +102,7 @@ int TransparencyList_Compare(const TransEntry *a, const TransEntry *b)
 }
 HOOK(0x5320D0, TransparencyList_Compare);
 
-void TransparencyList_Draw(RenderNode *n)
+void TransparencyList_Draw(TransListNode *n)
 {
     int count = n->list->count, i, k;
     TransEntry *e = n->list->entries;
@@ -133,7 +123,7 @@ void TransparencyList_Draw(RenderNode *n)
 }
 HOOK(0x532030, TransparencyList_Draw);
 
-void TransparencyList_Start(RenderNode *n)
+void TransparencyList_Start(TransListNode *n)
 {
     TransparencyList *l = n->list;
 
@@ -146,12 +136,12 @@ HOOK(0x532100, TransparencyList_Start);
 
 void TransparencyList_Render(TransparencyList *l)
 {
-    RenderNode *n = Frame_Alloc(sizeof(RenderNode));
+    TransListNode *n = Frame_Alloc(sizeof(TransListNode));
 
     n->primitive = gTransPrimitive;
     n->list = l;
     RenderQueue_Add(0, n);
-    n = Frame_Alloc(sizeof(RenderNode));
+    n = Frame_Alloc(sizeof(TransListNode));
     n->list = l;
     n->primitive = gTransStartPrimitive;
     RenderQueue_Add(gRenderQueueCount - 1, n);
