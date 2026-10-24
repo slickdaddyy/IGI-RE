@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "bonemesh/bonemesh.h"
 #include "camfeed/camfeedtypes.h"
+#include "d3d/d3dtypes.h"
 
 FN_EXTERN(BandFilter_Draw);
 FN_EXTERN(BandFilter_DrawPrim);
@@ -78,9 +79,7 @@ extern float gBandTextY;
 extern float gBandTextDX;
 extern int gBandTextDY;
 
-extern void *gFilterVB;
-extern int gFilterVBSize;
-extern int gFilterVBUsed;
+extern DynVB gVBTL;
 extern float gD3DMinZ;
 extern float gLayer1MinZ;
 extern float gLayer1MaxZ;
@@ -358,12 +357,12 @@ HOOK(0x4A2A00, CameraFilter_Init);
 /* locks room for 200 vertices in the filter buffer, discarding it when
    full; 0 on failure */
 #define LOCK_BATCH(v, first)                                            \
-    (gFilterVBUsed + 200 > gFilterVBSize                                \
-         ? (hr = VB_Lock(gFilterVB, 0x2020, &(v), NULL), (first) = 0,   \
-            gFilterVBUsed = 200, !hr && (v))                            \
-         : (hr = VB_Lock(gFilterVB, 0x1020, &(v), NULL),                \
-            (first) = gFilterVBUsed, (v) += (first),                    \
-            gFilterVBUsed = (first) + 200, !hr && (v)))
+    (gVBTL.used + 200 > gVBTL.size                                \
+         ? (hr = VB_Lock(gVBTL.vb, 0x2020, &(v), NULL), (first) = 0,   \
+            gVBTL.used = 200, !hr && (v))                            \
+         : (hr = VB_Lock(gVBTL.vb, 0x1020, &(v), NULL),                \
+            (first) = gVBTL.used, (v) += (first),                    \
+            gVBTL.used = (first) + 200, !hr && (v)))
 
 static uint32_t line_color(const LineFilter *t)
 {
@@ -436,8 +435,8 @@ void LineFilter_Render(LineFilter *t)
             v++;
             count += 2;
         } else {
-            VB_Unlock(gFilterVB);
-            DEV_DrawPrimitiveVB(gD3DDevice, 2, gFilterVB, first, count, 0);
+            VB_Unlock(gVBTL.vb);
+            DEV_DrawPrimitiveVB(gD3DDevice, 2, gVBTL.vb, first, count, 0);
             if (!LOCK_BATCH(v, first))
                 return;
             y = y - kLineStep.f;
@@ -445,9 +444,9 @@ void LineFilter_Render(LineFilter *t)
         }
         y = y + kLineStep.f;
     }
-    VB_Unlock(gFilterVB);
+    VB_Unlock(gVBTL.vb);
     if (count > 0)
-        DEV_DrawPrimitiveVB(gD3DDevice, 2, gFilterVB, first, count, 0);
+        DEV_DrawPrimitiveVB(gD3DDevice, 2, gVBTL.vb, first, count, 0);
     if (!(level > kZero.f))
         return;
     s = level * kNoiseScale.f;
@@ -487,8 +486,8 @@ void LineFilter_Render(LineFilter *t)
                 v++;
                 count++;
             } else {
-                VB_Unlock(gFilterVB);
-                DEV_DrawPrimitiveVB(gD3DDevice, 2, gFilterVB, first, count, 0);
+                VB_Unlock(gVBTL.vb);
+                DEV_DrawPrimitiveVB(gD3DDevice, 2, gVBTL.vb, first, count, 0);
                 if (!LOCK_BATCH(v, first))
                     return;
                 count = 0;
@@ -497,9 +496,9 @@ void LineFilter_Render(LineFilter *t)
         y = ny;
         ny = step + y;
     }
-    VB_Unlock(gFilterVB);
+    VB_Unlock(gVBTL.vb);
     if (count > 0)
-        DEV_DrawPrimitiveVB(gD3DDevice, 2, gFilterVB, first, count, 0);
+        DEV_DrawPrimitiveVB(gD3DDevice, 2, gVBTL.vb, first, count, 0);
 }
 HOOK(0x4A2CD0, LineFilter_Render);
 

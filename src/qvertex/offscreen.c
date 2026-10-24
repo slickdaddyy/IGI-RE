@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "qvertex/qvertex.h"
 #include "sysmisc/sysmisctypes.h"
+#include "transctx/transctxtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -26,8 +27,7 @@ extern int gDeAllocPalette;
 extern int gDownloadPalette;
 extern int gAllocPalette;
 
-extern int gOffscreenWidth;
-extern uint32_t *gOffscreenPixels;
+extern OffscreenBuffer gOffscreenTarget;
 extern float gOffscreenClip[];
 
 /* One palette slot only: slot n is byte n - 1. */
@@ -210,11 +210,11 @@ void OffscreenBufferSprite_RenderRect(OffscreenSprite *s)
     long double a;
     float inv;
 
-    if (!gOffscreenPixels)
+    if (!gOffscreenTarget.pixels)
         return;
     y = QV_Fist(s->y);
     x = QV_Fist(s->x);
-    row = gOffscreenPixels + (gOffscreenWidth * y + x);
+    row = gOffscreenTarget.pixels + (gOffscreenTarget.width * y + x);
     cx0 = QV_Fist(gOffscreenClip[0]);
     cy0 = QV_Fist(gOffscreenClip[1]);
     cx1 = QV_Fist(gOffscreenClip[2]) + cx0;
@@ -259,7 +259,7 @@ void OffscreenBufferSprite_RenderRect(OffscreenSprite *s)
                 p++;
             } while (!((long double)i >= s->w));
         }
-        row += gOffscreenWidth;
+        row += gOffscreenTarget.width;
         j++;
         yy++;
     } while (j < QV_Fist(s->h));
@@ -282,7 +282,7 @@ void OffscreenBufferSprite_RenderSprite(OffscreenSprite *s)
     float fth;
     uint32_t *row, *p, c, d, out;
 
-    if (!gOffscreenPixels)
+    if (!gOffscreenTarget.pixels)
         return;
     tw = s->tex.width;
     th = s->tex.height;
@@ -294,7 +294,7 @@ void OffscreenBufferSprite_RenderSprite(OffscreenSprite *s)
     dv = QV_Fist(fth * s->v1) - v0;
     y = QV_Fist(s->y);
     x = QV_Fist(s->x);
-    row = gOffscreenPixels + (gOffscreenWidth * y + x);
+    row = gOffscreenTarget.pixels + (gOffscreenTarget.width * y + x);
     cx0 = QV_Fist(gOffscreenClip[0]);
     cy0 = QV_Fist(gOffscreenClip[1]);
     cx1 = QV_Fist(gOffscreenClip[2]) + cx0;
@@ -335,7 +335,7 @@ void OffscreenBufferSprite_RenderSprite(OffscreenSprite *s)
                     p++;
                 } while (i < s->tex.width);
             }
-            row += gOffscreenWidth;
+            row += gOffscreenTarget.width;
             src += s->tex.pitch;
             j++;
             yy++;
@@ -375,7 +375,7 @@ void OffscreenBufferSprite_RenderSprite(OffscreenSprite *s)
                     p++;
                 } while (--k);
             }
-            row += gOffscreenWidth;
+            row += gOffscreenTarget.width;
             src += ((uint32_t)(int)s->tex.pitch >> 1) * 2;
             yy++;
         } while (--j);
@@ -419,7 +419,7 @@ void OffscreenBufferSprite_RenderSprite(OffscreenSprite *s)
                     p++;
                 } while (--k);
             }
-            row += gOffscreenWidth;
+            row += gOffscreenTarget.width;
             src += ((uint32_t)(int)s->tex.pitch >> 2) * 4;
             yy++;
         } while (--j);

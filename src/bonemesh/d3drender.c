@@ -9,6 +9,7 @@
 #include "magicobj/magicobjtypes.h"
 #include "bonemesh/bonemeshtypes.h"
 #include "haze/hazetypes.h"
+#include "d3d/d3dtypes.h"
 
 ORIG(0x491D40, long double, Display_GetAspect, (void));
 ORIG(0x4950F0, void, Direct3D_MakeMatrix, (void *out, const Matrix *rot, const Vec3f *pos));
@@ -69,7 +70,7 @@ extern int gBoneClipDepth;
 extern ClipVertex gRigidClipVerts[];
 extern ClipVertex gLightmapClipVerts[];
 extern float gNearPlane;
-extern void *gVertexBuffer;
+extern DynVB gVBNormal;
 extern int gD3DClippingOnIndex;
 extern int gD3DClippingOffIndex;
 extern float gNearZ;
@@ -183,12 +184,12 @@ void Direct3DRender_DrawBoneMesh(MeshDrawArg *arg)
             if (g->texture == 0xFFFF) {
                 DEV_SetTextureStageState(gD3DDevice, 0, 1, 3);
                 DEV_SetTexture(gD3DDevice, 0, NULL);
-                DEV_DrawIndexedPrimitiveVB(gD3DDevice, r->primType, gVertexBuffer, g->base + base, g->vertexCount,
+                DEV_DrawIndexedPrimitiveVB(gD3DDevice, r->primType, gVBNormal.vb, g->base + base, g->vertexCount,
                                            g->indices, g->indexCount, 0);
                 DEV_SetTextureStageState(gD3DDevice, 0, 1, 4);
             } else {
                 DEV_SetTexture(gD3DDevice, 0, ((void **)lod->textures[g->texture])[8]);
-                DEV_DrawIndexedPrimitiveVB(gD3DDevice, r->primType, gVertexBuffer, g->base + base, g->vertexCount,
+                DEV_DrawIndexedPrimitiveVB(gD3DDevice, r->primType, gVBNormal.vb, g->base + base, g->vertexCount,
                                            g->indices, g->indexCount, 0);
             }
             if (g->next == 0xFFFF)
@@ -748,7 +749,7 @@ void RigidDynCubeObj_NearZHandler(RigidDynCubeObj *obj, NearZArg *arg)
     Vec3f pos, o;
     float y, z, s, radius, minZ, tx, ty, tz;
     float sx = 0, sy = 0, rhw = 0;
-    long double x, wx, wy, wz, near, vz;
+    long double x, wx, wy, wz, zn, vz;
     ClipVertex *v;
     char *g;
     uint16_t *idx;
@@ -778,8 +779,8 @@ void RigidDynCubeObj_NearZHandler(RigidDynCubeObj *obj, NearZArg *arg)
     radius = s * h->sphere;
     if (Mesh3D_Exclude(&pos, radius, NULL))
         return;
-    near = pos.z - radius;
-    if (near > arg->minZ)
+    zn = pos.z - radius;
+    if (zn > arg->minZ)
         return;
     if (h->format == 0 || h->format == 3) {
         wx = obj->pos.x - gTransContext.pos.x;
@@ -822,7 +823,7 @@ void RigidDynCubeObj_NearZHandler(RigidDynCubeObj *obj, NearZArg *arg)
                 if (!project(v, tx + o.x, ty + o.y, vz, nearZ, &sx, &sy, &rhw, 0) && v->z < minZ)
                     minZ = v->z;
             }
-            if (near < arg->minZ) {
+            if (zn < arg->minZ) {
                 for (g = r->unk14; g; g += sizeof(MeshGroup) + ((MeshGroup *)g)->next) {
                     idx = ((MeshGroup *)g)->indices;
                     for (j = 0; j < ((MeshGroup *)g)->indexCount / 3; j++, idx += 3)
@@ -844,7 +845,7 @@ void RigidDynCubeObj_NearZHandler(RigidDynCubeObj *obj, NearZArg *arg)
                 if (!project(v, tx + o.x, ty + o.y, vz, nearZ, &sx, &sy, &rhw, 1) && v->z < minZ)
                     minZ = v->z;
             }
-            if (near < arg->minZ) {
+            if (zn < arg->minZ) {
                 for (g = r->unk1C; g; g += sizeof(LightmapGroup) + ((LightmapGroup *)g)->next) {
                     idx = ((LightmapGroup *)g)->indices;
                     for (j = 0; j < ((LightmapGroup *)g)->indexCount / 3; j++, idx += 3)

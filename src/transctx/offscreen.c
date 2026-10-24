@@ -19,9 +19,7 @@ ORIG(0x4B0EC0, void, RenderMode_SetMethod, (int mode, int method, void *fn));
 #define NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* What the OffscreenBuffer render mode draws into: 32 bit pixels in memory. */
-extern int gOffscreenWidth;
-extern int gOffscreenHeight;
-extern uint32_t *gOffscreenPixels;
+extern OffscreenBuffer gOffscreenTarget;
 extern float gOffscreenClip[];
 extern int gOffscreenMode;
 extern char gOffscreenReady;
@@ -59,25 +57,25 @@ void Offscreen_ClipWindow(ClipWindowPrim *p)
     if (!(p->x >= kZero.f)) {
         gOffscreenClip[0] = 0;
     } else {
-        t = gOffscreenWidth;
+        t = gOffscreenTarget.width;
         gOffscreenClip[0] = !(t >= p->x) ? t : p->x;
     }
     if (!(p->y >= kZero.f)) {
         gOffscreenClip[1] = 0;
     } else {
-        t = gOffscreenHeight;
+        t = gOffscreenTarget.height;
         gOffscreenClip[1] = !(t >= p->y) ? t : p->y;
     }
     if (!(p->w >= p->x)) {
         gOffscreenClip[2] = p->x;
     } else {
-        t = gOffscreenWidth - p->x;
+        t = gOffscreenTarget.width - p->x;
         gOffscreenClip[2] = !(t >= p->w) ? t : p->w;
     }
     if (!(p->h >= p->y)) {
         gOffscreenClip[3] = p->y;
     } else {
-        t = gOffscreenHeight - p->y;
+        t = gOffscreenTarget.height - p->y;
         gOffscreenClip[3] = !(t >= p->h) ? t : p->h;
     }
 }
@@ -85,17 +83,17 @@ HOOK(0x498140, Offscreen_ClipWindow);
 
 int Offscreen_Open(void)
 {
-    gOffscreenWidth = 0;
-    gOffscreenHeight = 0;
+    gOffscreenTarget.width = 0;
+    gOffscreenTarget.height = 0;
     memset(gOffscreenClip, 0, 6 * 4);
-    gOffscreenPixels = NULL;
+    gOffscreenTarget.pixels = NULL;
     return 1;
 }
 HOOK(0x498230, Offscreen_Open);
 
 void Offscreen_Clear(void)
 {
-    memset(gOffscreenPixels, 0, (unsigned)(gOffscreenHeight * gOffscreenWidth) * 4);
+    memset(gOffscreenTarget.pixels, 0, (unsigned)(gOffscreenTarget.height * gOffscreenTarget.width) * 4);
 }
 HOOK(0x498260, Offscreen_Clear);
 
@@ -107,22 +105,22 @@ void Offscreen_Blit(BlitPrim *p)
     if (p->w < 0) {
         w = 0;
     } else {
-        w = gOffscreenWidth - p->x;
+        w = gOffscreenTarget.width - p->x;
         if (w >= p->w)
             w = p->w;
     }
     if (p->h < 0) {
         h = 0;
     } else {
-        h = gOffscreenHeight - p->y;
+        h = gOffscreenTarget.height - p->y;
         if (h >= p->h)
             h = p->h;
     }
-    dst = gOffscreenPixels + p->y * gOffscreenWidth + p->x;
+    dst = gOffscreenTarget.pixels + p->y * gOffscreenTarget.width + p->x;
     src = p->pixels;
     for (; h > 0; h--) {
         memcpy(dst, src, (unsigned)w * 4);
-        dst += gOffscreenWidth;
+        dst += gOffscreenTarget.width;
         src += p->pitch / 4;
     }
 }

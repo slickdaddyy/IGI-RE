@@ -9,6 +9,7 @@
 #include "qvertex/qvertex.h"
 #include "res/restypes.h"
 #include "transctx/transctxtypes.h"
+#include "d3d/d3dtypes.h"
 
 /* The QVertex driver of the Direct3D render mode. */
 
@@ -56,9 +57,7 @@ typedef struct StripState {
 } StripState;
 
 extern IDirect3DDevice7 *gD3DDevice;
-extern IDirect3DVertexBuffer7 *gVBTL;
-extern int gVBTLSize;
-extern int gVBTLUsed;
+extern DynVB gVBTL;
 extern DWORD gD3DZEnable;
 extern int gD3DClippingOnIndex;
 extern PtrList *gD3DTextureStates;
@@ -469,15 +468,15 @@ static int LockVerts(int count, TLVertex **out)
     int start;
     TLVertex *p;
 
-    if (gVBTLUsed + count > gVBTLSize) {
-        hr = gVBTL->lpVtbl->Lock(gVBTL, DDLOCK_DISCARDCONTENTS | DDLOCK_WRITEONLY, (void **)&p, NULL);
+    if (gVBTL.used + count > gVBTL.size) {
+        hr = gVBTL.vb->lpVtbl->Lock(gVBTL.vb, DDLOCK_DISCARDCONTENTS | DDLOCK_WRITEONLY, (void **)&p, NULL);
         start = 0;
-        gVBTLUsed = count;
+        gVBTL.used = count;
     } else {
-        hr = gVBTL->lpVtbl->Lock(gVBTL, DDLOCK_WRITEONLY, (void **)&p, NULL);
-        start = gVBTLUsed;
-        p += gVBTLUsed;
-        gVBTLUsed += count;
+        hr = gVBTL.vb->lpVtbl->Lock(gVBTL.vb, DDLOCK_WRITEONLY, (void **)&p, NULL);
+        start = gVBTL.used;
+        p += gVBTL.used;
+        gVBTL.used += count;
     }
     if (hr || !p)
         return -1;
@@ -513,8 +512,8 @@ void D3DQVertex_DrawStrip(StripNode *n)
         if (start < 0)
             return;
         memcpy(p, v, n->count * sizeof(TLVertex));
-        gVBTL->lpVtbl->Unlock(gVBTL);
-        gD3DDevice->lpVtbl->DrawPrimitiveVB(gD3DDevice, n->lines ? D3DPT_LINESTRIP : D3DPT_TRIANGLESTRIP, gVBTL, start,
+        gVBTL.vb->lpVtbl->Unlock(gVBTL.vb);
+        gD3DDevice->lpVtbl->DrawPrimitiveVB(gD3DDevice, n->lines ? D3DPT_LINESTRIP : D3DPT_TRIANGLESTRIP, gVBTL.vb, start,
                                             n->count, 0);
         return;
     }
@@ -530,8 +529,8 @@ void D3DQVertex_DrawStrip(StripNode *n)
     p[2] = v[0];
     p[2].y = v[1].y;
     p[2].v = v[1].v;
-    gVBTL->lpVtbl->Unlock(gVBTL);
-    gD3DDevice->lpVtbl->DrawPrimitiveVB(gD3DDevice, D3DPT_TRIANGLESTRIP, gVBTL, start, 4, 0);
+    gVBTL.vb->lpVtbl->Unlock(gVBTL.vb);
+    gD3DDevice->lpVtbl->DrawPrimitiveVB(gD3DDevice, D3DPT_TRIANGLESTRIP, gVBTL.vb, start, 4, 0);
 }
 HOOK(0x50D7E0, D3DQVertex_DrawStrip);
 

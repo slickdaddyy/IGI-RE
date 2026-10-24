@@ -5,6 +5,7 @@
 
 #include "hook.h"
 #include "igi.h"
+#include "transctx/transctxtypes.h"
 
 typedef void (*ErrorHandler)(const char *text);
 
@@ -31,13 +32,6 @@ extern const GUID IID_IDirectDraw7_[];
 extern const GUID IID_IDirectDraw2_[];
 extern const GUID IID_IDirectMusic_[];
 extern const GUID CLSID_DirectMusic_[];
-
-/* A 32 bit offscreen image, the target of the "OffscreenBuffer" render mode. */
-typedef struct OffscreenBuffer {
-    int width;
-    int height;
-    unsigned *pixels;
-} OffscreenBuffer;
 
 extern OffscreenBuffer gOffscreenTarget;
 extern float gOffscreenClip[];

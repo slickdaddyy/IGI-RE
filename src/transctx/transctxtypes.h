@@ -30,6 +30,13 @@ typedef struct SoundList {
     SoundNode *tailpred;
 } SoundList;
 
+/* A 32 bit offscreen image, the target of the "OffscreenBuffer" render mode. */
+typedef struct OffscreenBuffer {
+    int width;
+    int height;
+    uint32_t *pixels;
+} OffscreenBuffer;
+
 typedef struct RenderNode {
     struct RenderNode *next;
     int type; /* method index, -1 for a queue head */
