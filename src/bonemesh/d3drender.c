@@ -221,7 +221,7 @@ void Direct3DRender_DrawBoneMesh(MeshDrawArg *arg)
     rot.m[6] = kZero.f;
     rot.m[7] = kZero.f;
     rot.m[8] = gNearPlaneScale;
-    rot.unk24 = 0;
+    rot.count = 0;
     Direct3D_MakeMatrix(d3dm, &rot, &pos);
     DEV_SetTransform(gDevice, 1, d3dm);
     Fog_SetRange(&obj->pos, h->radius);
@@ -862,7 +862,7 @@ void RigidDynCubeObj_NearZHandler(RigidObj *obj, NearZArg *arg)
                    gTransCtx.m[6] * obj->matrix.m[1];
         rot.m[8] = gTransCtx.m[7] * obj->matrix.m[5] + gTransCtx.m[8] * obj->matrix.m[8] +
                    gTransCtx.m[6] * obj->matrix.m[2];
-        rot.unk24 = obj->matrix.unk24 + gTransCtx.unk24 + 1;
+        rot.count = obj->matrix.count + gTransCtx.unk24 + 1;
         if (h->format == 0) {
             for (i = 0; i < 9; i++)
                 rot.m[i] = rot.m[i] * obj->scale[i % 3];

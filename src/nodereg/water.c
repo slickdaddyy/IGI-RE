@@ -422,7 +422,7 @@ void Water_GetInfo(Water *w, WaterInfo *info)
     info->matrix.m[6] = 0;
     info->matrix.m[7] = 0;
     info->matrix.m[8] = 1;
-    info->matrix.unk24 = 0;
+    info->matrix.count = 0;
     info->name = NULL;
     h = 0x40000000 >> w->shift;
     info->radius = h + h;

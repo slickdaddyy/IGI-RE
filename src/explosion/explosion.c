@@ -616,24 +616,24 @@ void FireBall_Draw(FireBall *fb)
         scale_vec(n.m + 6, (n.m[6] * n.m[6] + n.m[7] * n.m[7]) + n.m[8] * n.m[8]);
     for (i = 0; i < 9; i++)
         m[i] = n.m[i];
-    fb->obj.matrix.stamp = 0;
+    fb->obj.matrix.count = 0;
 
     for (i = 0; i < 9; i++)
         n.m[i] = i % 4 == 0 ? 1.0f : 0.0f;
-    n.stamp = 0;
+    n.count = 0;
     Matrix_RotateZ(&n, &n, fb->angle);
     fb->angle = fb->spin + fb->angle;
 
     /* matrix = transpose(matrix) * n */
     for (i = 0; i < 9; i++)
         t.m[i] = m[(i % 3) * 3 + i / 3];
-    t.stamp = fb->obj.matrix.stamp;
+    t.count = fb->obj.matrix.count;
     for (i = 0; i < 3; i++) {
         m[i] = (n.m[i] * t.m[0] + n.m[3 + i] * t.m[1]) + n.m[6 + i] * t.m[2];
         m[3 + i] = (n.m[6 + i] * t.m[5] + n.m[i] * t.m[3]) + n.m[3 + i] * t.m[4];
         m[6 + i] = (n.m[6 + i] * t.m[8] + n.m[3 + i] * t.m[7]) + n.m[i] * t.m[6];
     }
-    fb->obj.matrix.stamp = t.stamp + n.stamp + 1;
+    fb->obj.matrix.count = t.count + n.count + 1;
     Light_GetActive(&junk[0]);
     Haze_GetVisible(&junk[1], &junk[2]);
     if (fb->frame >= 0) {

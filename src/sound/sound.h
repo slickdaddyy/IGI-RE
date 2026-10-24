@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -47,10 +48,6 @@ extern int gTaskStackTop;
             c_ = gTaskStack[--gTaskStackTop];                           \
         } while (c_);                                                   \
     } while (0)
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4B0C60, void *, Mem_Alloc, (int size, int align));

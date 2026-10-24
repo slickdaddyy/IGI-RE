@@ -66,7 +66,7 @@ void Gear_SetMatrix(Part *o, Matrix *parent)
     t20 = r[6] * l[8] + r[3] * l[7] + r[0] * l[6];
     t21 = r[7] * l[8] + r[4] * l[7] + r[1] * l[6];
     t22 = r[8] * l[8] + r[5] * l[7] + r[2] * l[6];
-    n = o->local.unk24 + rot.unk24 + 1;
+    n = o->local.count + rot.count + 1;
     out.m[0] = t20 * p[2] + t10 * p[1] + t00 * p[0];
     out.m[1] = t21 * p[2] + t11 * p[1] + t01 * p[0];
     out.m[2] = t22 * p[2] + t12 * p[1] + t02 * p[0];
@@ -76,7 +76,7 @@ void Gear_SetMatrix(Part *o, Matrix *parent)
     out.m[6] = t00 * p[6] + t20 * p[8] + t10 * p[7];
     out.m[7] = t01 * p[6] + t21 * p[8] + t11 * p[7];
     out.m[8] = t02 * p[6] + t22 * p[8] + t12 * p[7];
-    out.unk24 = parent->unk24 + n + 1;
+    out.count = parent->count + n + 1;
     o->matrix = out;
 }
 HOOK(0x4355A0, Gear_SetMatrix);

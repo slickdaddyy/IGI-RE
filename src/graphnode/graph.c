@@ -395,7 +395,7 @@ void Graph_GetNodeMatrix(Matrix *out, GraphNode *node, char rotate)
 
         for (i = 0; i < 9; i++)
             out->m[i] = i % 4 == 0 ? 1.0f : 0.0f;
-        out->unk24 = 0;
+        out->count = 0;
     }
     g = node->graph;
     if (g->attached) {
@@ -413,7 +413,7 @@ void Graph_GetNodeMatrix(Matrix *out, GraphNode *node, char rotate)
         r.m[6] = a[6] * p[0] + a[8] * p[6] + p[3] * a[7];
         r.m[7] = a[6] * p[1] + p[7] * a[8] + p[4] * a[7];
         r.m[8] = a[8] * p[8] + p[2] * a[6] + p[5] * a[7];
-        r.unk24 = pt->matrix.unk24 + out->unk24 + 1;
+        r.count = pt->matrix.count + out->count + 1;
         *out = r;
     }
 }

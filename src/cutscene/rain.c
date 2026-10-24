@@ -17,10 +17,6 @@ typedef struct VarString {
     int refCount;
 } VarString;
 
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
 /* one cube of the 7x7x7 grid of rain around the camera */
 typedef struct RainCell {
     double x, y, z;

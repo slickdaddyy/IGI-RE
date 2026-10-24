@@ -413,7 +413,7 @@ void BoneObj_Update(const Matrix *m, BoneObj *o)
         qa[k] = (e[k * 3 + i] + e[i * 3 + k]) * s;
         q.w = -((e[j * 3 + k] - e[k * 3 + j]) * s);
     }
-    q.unk10 = mm.unk24;
+    q.unk10 = mm.count;
     BoneObj_SetRoot(&mm, &q);
     root = o->bones;
     BoneObj_UpdateBone(&mm, &q, &pos, root, NULL);
@@ -497,7 +497,7 @@ void BoneObj_UpdateBone(const Matrix *m, const Quat *pq, const Vec3f *ppos, Bone
             b->local.w = o[3] * inv;
         }
     }
-    b->matrix.unk24 = q.unk10;
+    b->matrix.count = q.unk10;
     b->world = q;
     {
         long double xx = (long double)q.x * q.x, xy = (long double)q.x * q.y, zw;

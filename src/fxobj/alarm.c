@@ -190,7 +190,7 @@ void AlarmLightReflector_Run(Reflector *t)
         x4 = R[7] * T[5] + R[1] * T[3] + R[4] * T[4];
         x5 = R[8] * T[5] + R[2] * T[3] + R[5] * T[4];
         x6 = R[3] * T[7] + R[6] * T[8] + R[0] * T[6];
-        stamp = t->local.stamp + r.stamp + 1;
+        stamp = t->local.count + r.count + 1;
         x7 = R[4] * T[7] + R[7] * T[8] + R[1] * T[6];
         x8 = R[5] * T[7] + R[8] * T[8] + R[2] * T[6];
         r.m[0] = x0 * L[0] + x6 * L[2] + x3 * L[1];
@@ -200,7 +200,7 @@ void AlarmLightReflector_Run(Reflector *t)
         r.m[4] = x1 * L[3] + x7 * L[5] + x4 * L[4];
         r.m[5] = x2 * L[3] + x8 * L[5] + x5 * L[4];
         r.m[6] = x6 * L[8] + x3 * L[7] + x0 * L[6];
-        r.stamp = l->obj.matrix.stamp + stamp + 1;
+        r.count = l->obj.matrix.count + stamp + 1;
         r.m[7] = x7 * L[8] + x4 * L[7] + x1 * L[6];
         r.m[8] = x8 * L[8] + x5 * L[7] + x2 * L[6];
         t->obj.matrix = r;

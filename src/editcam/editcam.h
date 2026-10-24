@@ -5,16 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
+#include "types.h"
 
 /* the first 0x20 bytes of every task */
 typedef struct Task {

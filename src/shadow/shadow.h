@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 /* the first 0x20 bytes of every task */
 typedef struct Task {
@@ -21,25 +22,6 @@ typedef struct Task {
 } Task;
 
 typedef void (*TaskFn)();
-
-/* fixed size item pool; slots[] maps a slot number to an item number */
-typedef struct Pool {
-    char *data;
-    int *slots;
-    int used;
-    int capacity;
-    int stride;
-    int index_offset;
-} Pool;
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Matrix {
-    float m[9];
-    int unk24;          /* changes since the last re-orthonormalization */
-} Matrix;
 
 /* "RigidDynCubeObj" (0xF0 bytes), the fields used here */
 typedef struct Obj {
@@ -190,19 +172,19 @@ static inline Task *first_child(Task *t)
 
 static inline void pool_release(Pool *p, void *item)
 {
-    int index = *(int *)((char *)item + p->index_offset);
+    int index = *(int *)((char *)item + p->size);
     char *last;
     int last_index, tmp;
 
     p->used--;
     if (index == p->used)
         return;
-    last = p->data + p->slots[p->used] * p->stride;
-    last_index = *(int *)(last + p->index_offset);
-    tmp = p->slots[index];
-    p->slots[index] = p->slots[last_index];
-    p->slots[last_index] = tmp;
-    *(int *)(last + p->index_offset) = index;
+    last = p->data + p->free[p->used] * p->stride;
+    last_index = *(int *)(last + p->size);
+    tmp = p->free[index];
+    p->free[index] = p->free[last_index];
+    p->free[last_index] = tmp;
+    *(int *)(last + p->size) = index;
 }
 
 static inline float obj_scale(const Obj *o)

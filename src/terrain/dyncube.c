@@ -46,28 +46,28 @@ _Static_assert(offsetof(DynCubeObj, unk60) == 0x60, "DynCubeObj");
 
 static DynCubeNode *node_new(Pool *p)
 {
-    DynCubeNode *n = (DynCubeNode *)(p->data + p->slots[p->used] * p->stride);
+    DynCubeNode *n = (DynCubeNode *)(p->data + p->free[p->used] * p->stride);
 
-    *(int *)((char *)n + p->index_offset) = p->used;
+    *(int *)((char *)n + p->size) = p->used;
     p->used++;
     return n;
 }
 
 static void node_delete(Pool *p, DynCubeNode *n)
 {
-    int index = *(int *)((char *)n + p->index_offset);
+    int index = *(int *)((char *)n + p->size);
     char *last;
     int last_index, tmp;
 
     p->used--;
     if (index == p->used)
         return;
-    last = p->data + p->slots[p->used] * p->stride;
-    tmp = p->slots[index];
-    last_index = *(int *)(last + p->index_offset);
-    p->slots[index] = p->slots[last_index];
-    p->slots[last_index] = tmp;
-    *(int *)(last + p->index_offset) = index;
+    last = p->data + p->free[p->used] * p->stride;
+    tmp = p->free[index];
+    last_index = *(int *)(last + p->size);
+    p->free[index] = p->free[last_index];
+    p->free[last_index] = tmp;
+    *(int *)(last + p->size) = index;
 }
 
 static void free_child(Terrain *t, DynCubeNode *parent, int i)

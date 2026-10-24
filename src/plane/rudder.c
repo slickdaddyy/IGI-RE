@@ -125,7 +125,7 @@ void Rudder_Move(Part *o, PartMoveArg *a)
     t.m[6] = r[6] * l[8] + r[0] * l[6] + r[3] * l[7];
     t.m[7] = r[7] * l[8] + r[1] * l[6] + r[4] * l[7];
     t.m[8] = r[8] * l[8] + r[2] * l[6] + r[5] * l[7];
-    t.unk24 = o->local.unk24 + rot.unk24 + 1;
+    t.count = o->local.count + rot.count + 1;
     p = a->matrix->m;
     out.m[0] = t.m[6] * p[2] + t.m[3] * p[1] + t.m[0] * p[0];
     out.m[1] = t.m[7] * p[2] + t.m[4] * p[1] + t.m[1] * p[0];
@@ -136,7 +136,7 @@ void Rudder_Move(Part *o, PartMoveArg *a)
     out.m[6] = t.m[6] * p[8] + t.m[0] * p[6] + t.m[3] * p[7];
     out.m[7] = t.m[7] * p[8] + t.m[1] * p[6] + t.m[4] * p[7];
     out.m[8] = t.m[8] * p[8] + t.m[2] * p[6] + t.m[5] * p[7];
-    out.unk24 = a->matrix->unk24 + t.unk24 + 1;
+    out.count = a->matrix->count + t.count + 1;
     o->matrix = out;
 }
 HOOK(0x4362C0, Rudder_Move);

@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 /* the first 0x20 bytes of every task */
 typedef struct Task {
@@ -21,10 +22,6 @@ typedef struct Task {
 } Task;
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
 
 typedef struct SoundParams {
     float volume;

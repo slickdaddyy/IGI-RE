@@ -143,7 +143,7 @@ void Elevator_CreateHandler(Elevator *e)
     e->place = zero;
     for (i = 0; i < 9; i++)
         e->placeMatrix.m[i] = i % 4 == 0 ? 1.0f : 0.0f;
-    e->placeMatrix.unk24 = 0;
+    e->placeMatrix.count = 0;
     e->graph = -1;
     e->model[0] = 0;
     e->height = 0.0f;

@@ -163,7 +163,7 @@ static void Segment_BlendRot(Matrix *m, SplineObjSegment *seg, int i, float t)
     a = a + a;
     b = (long double)r[1] * r[0];
     b = b + b;
-    memcpy(&m->stamp, &r[4], 4);
+    memcpy(&m->count, &r[4], 4);
     c = 2 * ((long double)r[2] * r[0]);
     d = 2 * ((long double)r[3] * r[0]);
     e = 2 * ((long double)r[1] * r[1]);
@@ -673,7 +673,7 @@ static void Waypoint_AutoOrient(Waypoint *w, Waypoint *prev, Waypoint *next)
     m.m[6] = u[2];
     m.m[7] = c[2];
     m.m[8] = d[2];
-    m.stamp = 0;
+    m.count = 0;
     memcpy(&w->rot, &m, sizeof(Matrix));
 }
 

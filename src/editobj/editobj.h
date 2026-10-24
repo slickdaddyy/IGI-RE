@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 /* the first 0x20 bytes of every task */
 typedef struct Task {
@@ -21,20 +22,6 @@ typedef struct Task {
 } Task;
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24; /* sum of the inputs' values plus one on each multiply */
-} Matrix;
 
 /* "RigidDynCubeObj" (0xF0 bytes), the fields used here */
 typedef struct Obj {

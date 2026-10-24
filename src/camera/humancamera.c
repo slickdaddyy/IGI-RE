@@ -151,7 +151,7 @@ static void set_view(HumanCamera *c, const Vec3d *pos, const Matrix *a, float fo
     for (i = 0; i < 3; i++)
         for (j = 0; j < 3; j++)
             out.m[i * 3 + j] = m[i * 3 + 2] * r.m[6 + j] + m[i * 3 + 1] * r.m[3 + j] + m[i * 3] * r.m[j];
-    out.serial = a->serial + r.serial + 1;
+    out.count = a->count + r.count + 1;
     c->pos = *pos;
     c->fov = fov;
     c->matrix = out;

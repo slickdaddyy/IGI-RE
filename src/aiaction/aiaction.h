@@ -5,17 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-typedef struct Node {
-    struct Node *next;
-    struct Node *prev;
-} Node;
-
-typedef struct List {
-    Node *head;
-    Node *tail;
-    Node *tailpred;
-} List;
+#include "types.h"
 
 /* the first 0x20 bytes of every task */
 typedef struct Task {
@@ -32,20 +22,6 @@ typedef struct Task {
 } Task;
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major, and a counter the engine bumps on changes */
-typedef struct Matrix {
-    float m[9];
-    int stamp;
-} Matrix;
 
 /* a script string parameter that may hold an expression */
 typedef struct VarString {

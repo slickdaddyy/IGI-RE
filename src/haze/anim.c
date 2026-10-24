@@ -186,7 +186,7 @@ void Bone_Rotate(Bone *b, const Quat *q, int depth, int rotDepth, int posDepth)
                 l->w = lw * r;
             }
         }
-        b->matrix.unk24 = w->unk10;
+        b->matrix.count = w->unk10;
         xx = w->x * w->x;
         xx += xx;
         xy = w->y * w->x;

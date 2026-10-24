@@ -58,7 +58,7 @@ void ElevatorFloorIndicator_Move(ElevatorFloorIndicator *f, MoveArg *arg)
     r.m[6] = l[3] * m[7] + m[8] * l[6] + m[6] * l[0];
     r.m[7] = l[4] * m[7] + m[8] * l[7] + m[6] * l[1];
     r.m[8] = l[5] * m[7] + m[8] * l[8] + m[6] * l[2];
-    r.unk24 = arg->matrix->unk24 + f->local.unk24 + 1;
+    r.count = arg->matrix->count + f->local.count + 1;
     f->placeMatrix = r;
     f->obj.matrix = r;
     child.pos = &f->place;
@@ -107,7 +107,7 @@ void ElevatorFloorIndicator_Create(ElevatorFloorIndicator *f)
     DynCube_Add(gCurrentWorld, f, &zero, obj_radius(&f->obj), 1);
     for (i = 0; i < 9; i++)
         f->obj.matrix.m[i] = i % 4 == 0 ? 1.0f : 0.0f;
-    f->obj.matrix.unk24 = 0;
+    f->obj.matrix.count = 0;
     f->litModel[0] = 0;
     f->model[0] = 0;
     f->sound[0] = 0;

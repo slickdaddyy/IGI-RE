@@ -4,27 +4,7 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
-
-typedef struct Node {
-    struct Node *next;
-    struct Node *prev;
-} Node;
-
-typedef struct List {
-    Node *head;
-    Node *tail;
-    Node *tailpred;
-} List;
+#include "types.h"
 
 typedef struct Task {
     Node node;

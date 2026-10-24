@@ -8,14 +8,11 @@
 #include "hook.h"
 #include "igi.h"
 #include "viewcam/viewcam.h"
+#include "types.h"
 
 FN_EXTERN(HumanAttach_Detect);
 FN_EXTERN(SubLevel_Run);
 FN_EXTERN(Task_FalseHandler);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
 
 typedef struct CollHit {
     Task *task;

@@ -7,15 +7,6 @@
 #include "hook.h"
 #include "animcam/animcam.h"
 
-typedef struct Pool {
-    char *data;
-    int *used;          /* slot index of each live item */
-    int count;
-    int max;
-    int stride;
-    int size;
-} Pool;
-
 /* "Dirlight" (0x64 bytes) */
 typedef struct Dirlight {
     Task task;
@@ -79,8 +70,8 @@ void Dirlight_SetTime(float time)
 {
     int i;
 
-    for (i = 0; i < gDirlightPool.count; i++) {
-        Dirlight *d = *(Dirlight **)(gDirlightPool.data + gDirlightPool.used[i] * gDirlightPool.stride);
+    for (i = 0; i < gDirlightPool.used; i++) {
+        Dirlight *d = *(Dirlight **)(gDirlightPool.data + gDirlightPool.free[i] * gDirlightPool.stride);
 
         if (time < d->time || time > d->time) {
             d->time = time;

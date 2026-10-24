@@ -228,7 +228,7 @@ void Door_MoveHandler(Door *d, MoveMsg *msg)
     d->base.m[6] = e;
     d->base.m[7] = f;
     d->base.m[8] = g;
-    d->base.unk24 = 0;
+    d->base.count = 0;
     d->o.matrix = d->base;
     Door_MoveChildren(d);
 }

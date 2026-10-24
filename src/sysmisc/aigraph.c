@@ -4,10 +4,7 @@
 
 #include "hook.h"
 #include "igi.h"
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
+#include "types.h"
 
 /* the parts of the Graph base task used here */
 typedef struct Graph {

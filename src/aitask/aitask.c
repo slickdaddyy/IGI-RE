@@ -6,10 +6,7 @@
 
 #include "igi.h"
 #include "hook.h"
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
+#include "types.h"
 
 typedef struct Task {
     void *next;

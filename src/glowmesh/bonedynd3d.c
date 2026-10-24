@@ -5,6 +5,7 @@
 
 #include "hook.h"
 #include "glowmesh/glowmesh.h"
+#include "types.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
@@ -16,11 +17,6 @@ ORIG(0x4D95E0, void, BoneDynCubeObj_Close, (void));
 ORIG(0x4D9610, uint16_t, BoneDynCubeObj_GetType, (void));
 ORIG(0x4DA180, void, Haze_GetVisible, (int *list, int *count));
 ORIG(0x4DAA20, int, Light_GetActive, (int *count));
-
-typedef struct Node {
-    struct Node *next;
-    struct Node *prev;
-} Node;
 
 typedef struct Task {
     Node node;

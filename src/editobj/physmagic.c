@@ -130,7 +130,7 @@ void PhysicsMagicObj_Move(PhysicsMagicObj *o, MoveArg *arg)
     r.m[6] = l[3] * m[7] + m[8] * l[6] + m[6] * l[0];
     r.m[7] = l[4] * m[7] + m[8] * l[7] + m[6] * l[1];
     r.m[8] = l[5] * m[7] + m[8] * l[8] + m[6] * l[2];
-    r.unk24 = arg->matrix->unk24 + o->local.unk24 + 1;
+    r.count = arg->matrix->count + o->local.count + 1;
     o->obj.matrix = r;
     if (!o->obj.task.head->next || !o->obj.task.head)
         return;

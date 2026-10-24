@@ -7,6 +7,7 @@
 
 #include "hook.h"
 #include "igi.h"
+#include "types.h"
 
 /* Texture functions of the Direct3D render mode: textures are DirectDraw
    surfaces, created and filled when the engine downloads them. */
@@ -76,15 +77,6 @@ typedef struct TexFormat {
     int bBits;
     int rgbBits;
 } TexFormat;
-
-typedef struct Pool {
-    char *data;
-    int *free;
-    int used;
-    int count;
-    int stride;
-    int size;
-} Pool;
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));

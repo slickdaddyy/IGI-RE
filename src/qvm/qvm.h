@@ -2,17 +2,7 @@
 #define QVM_QVM_H
 
 #include "igi.h"
-
-typedef struct Node {
-    struct Node *next;
-    struct Node *prev;
-} Node;
-
-typedef struct List {
-    Node *head;
-    Node *tail;
-    Node *tailpred;
-} List;
+#include "types.h"
 
 /* Same record as Script_RegisterSymbol makes. */
 typedef struct ScriptSymbol {

@@ -16,17 +16,6 @@ enum {
     TASK_SLOT_PREDELETE,
 };
 
-/* Fixed size item pool. slots[] maps a slot number to an item number, so
-   used items are always slots 0..used-1. */
-typedef struct Pool {
-    char *data;
-    int *slots;
-    int used;
-    int capacity;
-    int stride;
-    int index_offset;
-} Pool;
-
 typedef struct TaskType {
     const char *name;
     int size;

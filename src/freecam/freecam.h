@@ -7,6 +7,7 @@
 
 #include "hook.h"
 #include "igi.h"
+#include "types.h"
 
 typedef struct FcNode {
     struct FcNode *next;
@@ -28,20 +29,6 @@ typedef struct Task {
     char pooled;
     char unk1F;
 } Task;
-
-/* fixed size item pool; slots[] maps a slot number to an item number */
-typedef struct Pool {
-    char *data;
-    int *slots;
-    int used;
-    int capacity;
-    int stride;
-    int index_offset;
-} Pool;
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
 
 typedef void (*TaskHandler)();
 

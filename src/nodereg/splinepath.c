@@ -152,11 +152,11 @@ void SplinePathNode_Create(SplinePathNode *n)
     n->matrix.m[5] = 0;
     n->matrix.m[6] = 0;
     n->matrix.m[7] = 0;
-    n->matrix.unk24 = 0;
+    n->matrix.count = 0;
     n->quat.x = 0;
     n->quat.y = 0;
     n->quat.z = 0;
-    n->quat.unk = 0;
+    n->quat.unk10 = 0;
     n->length = 0;
     n->speed = 0;
     n->time = 0;
@@ -198,7 +198,7 @@ void SplinePathNode_UpdateMatrix(SplinePathNode *n)
         m[6] = 0;
         m[7] = 0;
         m[8] = 1;
-        n->matrix.unk24 = 0;
+        n->matrix.count = 0;
         return;
     }
     x = n->tangent.x;
@@ -588,7 +588,7 @@ void SplinePath_UpdateRotations(SplinePath *p)
             n->quat.w = -((m[b * 3 + c] - m[c * 3 + b]) * s);
         }
         n = p->nodes[i];
-        n->quat.unk = n->matrix.unk24;
+        n->quat.unk10 = n->matrix.count;
     }
 }
 HOOK(0x51ACB0, SplinePath_UpdateRotations);

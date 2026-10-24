@@ -112,7 +112,7 @@ void Origo_GetBounds(Origo *o, BoundSphere *b)
     for (i = 0; i < 9; i++)
         b->matrix.m[i] = 0;
     b->matrix.m[0] = b->matrix.m[4] = b->matrix.m[8] = 1.0f;
-    b->matrix.unk24 = 0;
+    b->matrix.count = 0;
     s = !(o->scale[2] >= o->scale[1]) ? o->scale[1] : o->scale[2];
     if (o->scale[0] > s)
         s = o->scale[0];

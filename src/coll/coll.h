@@ -4,14 +4,7 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
+#include "types.h"
 
 /* Terrain octree node. At the deepest level, leaf points at the triangles. */
 typedef struct CollNode {

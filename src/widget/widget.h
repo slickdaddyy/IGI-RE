@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 /* the first 0x20 bytes of every task */
 typedef struct Task {
@@ -97,10 +98,6 @@ typedef struct Display {
 typedef struct IntRange {
     int min, max;
 } IntRange;
-
-typedef struct Random {
-    unsigned int a, b, c;
-} Random;
 
 _Static_assert(sizeof(MenuWindow) == 0x54, "MenuWindow");
 _Static_assert(sizeof(VarString) == 0x50, "VarString");

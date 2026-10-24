@@ -479,7 +479,7 @@ void Heli_Move(Heli *h)
             nm.m[3 + i] = r.m[i] * m[3] + r.m[6 + i] * m[5] + r.m[3 + i] * m[4];
             nm.m[6 + i] = r.m[6 + i] * m[8] + r.m[i] * m[6] + r.m[3 + i] * m[7];
         }
-        nm.unk24 = h->v.matrix.unk24 + r.unk24 + 1;
+        nm.count = h->v.matrix.count + r.count + 1;
         h->v.matrix = nm;
     }
     if (!PhysicsObj_IsResting(h)) {

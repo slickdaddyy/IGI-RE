@@ -7,10 +7,6 @@
 
 static const double kOneOver24 = 1.0 / 24.0;
 
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
 /* Height offsets added to the leaf vertices while a task bumps the terrain */
 typedef struct CollBump {
     char unk0[0xC];

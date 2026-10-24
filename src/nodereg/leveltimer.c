@@ -102,7 +102,7 @@ void LevelTimer_Create(LevelTimer *t)
     t->matrix.m[6] = 0;
     t->matrix.m[7] = 0;
     t->matrix.m[8] = 1;
-    t->matrix.unk24 = 0;
+    t->matrix.count = 0;
     t->registered = 0;
     t->isRun = 1;
     t->nTick = 0;

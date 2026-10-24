@@ -6,16 +6,7 @@
 
 #include "igi.h"
 #include "hook.h"
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major, and how many products it went through */
-typedef struct Matrix {
-    float m[9];
-    int count;
-} Matrix;
+#include "types.h"
 
 typedef struct LightmapTex {
     char texture[0x24];

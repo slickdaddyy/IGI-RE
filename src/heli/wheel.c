@@ -263,7 +263,7 @@ void Wheel_Move(Wheel *w, PartMoveArg *a)
         nm.m[3 + i] = r.m[i] * m[3] + r.m[6 + i] * m[5] + r.m[3 + i] * m[4];
         nm.m[6 + i] = r.m[i] * m[6] + r.m[6 + i] * m[8] + r.m[3 + i] * m[7];
     }
-    nm.unk24 = a->matrix->unk24 + r.unk24 + 1;
+    nm.count = a->matrix->count + r.count + 1;
     w->matrix = nm;
 }
 HOOK(0x430640, Wheel_Move);

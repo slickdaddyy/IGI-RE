@@ -166,7 +166,7 @@ void Computer_RunHandler(Computer *t)
     o[1] = q[4] * m[1] + q[1] * m[0] + q[7] * m[2];
     o[2] = q[5] * m[1] + q[2] * m[0] + q[8] * m[2];
     o[3] = q[3] * m[4] + q[6] * m[5] + q[0] * m[3];
-    out.stamp = t->look.stamp + r.stamp + 1;
+    out.count = t->look.count + r.count + 1;
     o[4] = q[4] * m[4] + q[7] * m[5] + q[1] * m[3];
     o[5] = q[5] * m[4] + q[8] * m[5] + q[2] * m[3];
     o[6] = q[6] * m[8] + q[0] * m[6] + q[3] * m[7];

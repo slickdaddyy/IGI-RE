@@ -31,12 +31,6 @@ typedef struct DynVB {
     int used;
 } DynVB;
 
-typedef struct List {
-    void *head;
-    void *tail;
-    void *tailpred;
-} List;
-
 /* meshes waiting to be copied into a static vertex buffer: 0 rigid, 1 bone, 2 rigid */
 typedef struct MeshBatch {
     char *items[1000];
@@ -214,8 +208,8 @@ void MeshBatch_Flush(int list)
     gD3D->lpVtbl->CreateVertexBuffer(gD3D, &desc, &rec->vb, 0);
     rec->desc = desc;
     rec->meshes.tail = NULL;
-    rec->meshes.head = &rec->meshes.tail;
-    rec->meshes.tailpred = &rec->meshes.head;
+    rec->meshes.head = (Node *)&rec->meshes.tail;
+    rec->meshes.tailpred = (Node *)&rec->meshes.head;
     for (i = 0; i < b->count; i++) {
         char *item = b->items[i];
         char *m = *(char **)(item + 0x24);

@@ -9,6 +9,7 @@
 
 #include "hook.h"
 #include "igi.h"
+#include "types.h"
 
 FN_EXTERN(AICombat_End);
 FN_EXTERN(AICombat_KneelFire);
@@ -23,21 +24,6 @@ FN_EXTERN(AICombat_StandReload);
 FN_EXTERN(AICombat_StandRollLeft);
 FN_EXTERN(AICombat_StandRollRight);
 FN_EXTERN(AICombat_StandThrowGrenade);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Node {
-    struct Node *next;
-    struct Node *prev;
-} Node;
-
-typedef struct List {
-    Node *head;
-    Node *tail;
-    Node *tailpred;
-} List;
 
 typedef struct Task {
     char unk0[0x14];

@@ -112,7 +112,7 @@ static void part_turn(VehiclePart *p, const Matrix *m)
     for (i = 0; i < 3; i++)
         for (j = 0; j < 3; j++)
             c.m[i * 3 + j] = m->m[i * 3 + 1] * b[3 + j] + m->m[i * 3 + 2] * b[6 + j] + m->m[i * 3] * b[j];
-    c.unk24 = m->unk24 + p->local.unk24 + 1;
+    c.count = m->count + p->local.count + 1;
     p->obj.matrix = c;
 }
 
@@ -191,14 +191,14 @@ void CarDoor_Move(VehiclePart *p, PartMoveArg *arg)
         for (j = 0; j < 3; j++)
             a.m[i * 3 + j] = r.m[6 + j] * p->local.m[i * 3 + 2] + r.m[j] * p->local.m[i * 3] +
                              r.m[3 + j] * p->local.m[i * 3 + 1];
-    a.unk24 = p->local.unk24 + r.unk24 + 1;
+    a.count = p->local.count + r.count + 1;
     m = arg->matrix->m;
     for (j = 0; j < 3; j++) {
         c.m[j] = a.m[j] * m[0] + a.m[3 + j] * m[1] + a.m[6 + j] * m[2];
         c.m[3 + j] = a.m[6 + j] * m[5] + a.m[j] * m[3] + a.m[3 + j] * m[4];
         c.m[6 + j] = a.m[6 + j] * m[8] + a.m[j] * m[6] + a.m[3 + j] * m[7];
     }
-    c.unk24 = arg->matrix->unk24 + a.unk24 + 1;
+    c.count = arg->matrix->count + a.count + 1;
     p->obj.matrix = c;
 }
 HOOK(0x426880, CarDoor_Move);

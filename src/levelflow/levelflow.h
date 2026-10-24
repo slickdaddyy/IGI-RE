@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 FN_EXTERN(MagicObjContainer_Event);
 FN_EXTERN(Task_Nothing);
@@ -24,22 +25,6 @@ typedef struct Task {
 } Task;
 
 typedef void (*TaskFn)();
-
-typedef struct List {
-    void *head;
-    void *tail;
-    void *tailpred;
-} List;
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
 
 /* a script string parameter that may hold an expression */
 typedef struct VarString {

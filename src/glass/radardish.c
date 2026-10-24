@@ -134,7 +134,7 @@ static void turn(Matrix *out, const Matrix *b, const Matrix *rot)
             out->m[i * 3 + j] = i == 1 ? (p2 + p0) + p1 : (p1 + p2) + p0;
         }
     }
-    out->unk24 = b->unk24 + rot->unk24 + 1;
+    out->count = b->count + rot->count + 1;
 }
 
 /* turns the dish towards its target speed and spins it */

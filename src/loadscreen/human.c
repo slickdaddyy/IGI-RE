@@ -4,14 +4,7 @@
 
 #include "hook.h"
 #include "igi.h"
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
+#include "types.h"
 
 typedef struct Task {
     char unk0[0x20];

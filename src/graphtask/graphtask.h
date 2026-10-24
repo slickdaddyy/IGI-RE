@@ -5,17 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-typedef struct Node {
-    struct Node *next;
-    struct Node *prev;
-} Node;
-
-typedef struct List {
-    Node *head;
-    Node *tail;
-    Node *tailpred;
-} List;
+#include "types.h"
 
 typedef struct Task {
     Node node;
@@ -33,20 +23,6 @@ extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[(uint8_t)(slot)][(uint16_t)(type)]
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major, and a counter of the products it came from */
-typedef struct Matrix {
-    float m[9];
-    int count;
-} Matrix;
 
 /* one result of Coll_Lines (0x70 bytes) */
 typedef struct CollHit {

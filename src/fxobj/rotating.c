@@ -215,7 +215,7 @@ void RotatingObject_Run(RotatingObject *t)
         o[6] = m[3] * b[7] + m[6] * b[8] + m[0] * b[6];
         o[7] = m[4] * b[7] + m[7] * b[8] + m[1] * b[6];
         o[8] = m[5] * b[7] + m[8] * b[8] + m[2] * b[6];
-        t->obj.matrix.stamp = t->base.stamp + e.stamp + 1;
+        t->obj.matrix.count = t->base.count + e.count + 1;
     }
     if (t->soundParams) {
         float *p = t->soundParams;

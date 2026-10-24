@@ -284,7 +284,7 @@ void Elevator_GetMotion(Elevator *e, void **out)
     t.m[6] = e->lastMatrix.m[2];
     t.m[7] = e->lastMatrix.m[5];
     t.m[8] = e->lastMatrix.m[8];
-    t.unk24 = e->lastMatrix.unk24;
+    t.count = e->lastMatrix.count;
     mat_mul(&gElevatorTurn, &e->obj.matrix, &t, 5);
     out[0] = &e->obj.pos;
     out[2] = &gElevatorMove;

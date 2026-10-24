@@ -289,7 +289,7 @@ void StationaryGun_Aim(StatGun *o)
     Matrix_SetRotZ(&o->obj.matrix, o->outYaw);
     for (i = 0; i < 9; i++)
         t.m[i] = mat_elem(n, i / 3, m, i % 3, kLast[i]);
-    t.unk24 = o->baseMatrix.unk24 + o->obj.matrix.unk24 + 1;
+    t.count = o->baseMatrix.count + o->obj.matrix.count + 1;
     o->obj.matrix = t;
     model = o->obj.model;
     if (model && *(short *)(*(char **)(*(char **)((char *)*model + 0xC) + 0xC) + 0x7C) < 1)
@@ -301,7 +301,7 @@ void StationaryGun_Aim(StatGun *o)
     Matrix_SetEuler(&e, o->outPitch, 0.0f, 0x1.921fb6p+1f);
     for (i = 0; i < 9; i++)
         t.m[i] = mat_elem(m, i / 3, e.m, i % 3, 1);
-    t.unk24 = o->obj.matrix.unk24 + e.unk24 + 1;
+    t.count = o->obj.matrix.count + e.count + 1;
     e = t;
     Weapon_Move(w, &p, &e);
     o->muzzlePos = p;
@@ -421,10 +421,10 @@ void StationaryGun_UpdateCarrier(StatGun *o)
         MOV32(o->relMatrix.m[i * 3 + 1], am[i + 3]);
         MOV32(o->relMatrix.m[i * 3 + 2], am[i + 6]);
     }
-    o->relMatrix.unk24 = a->matrix.unk24;
+    o->relMatrix.count = a->matrix.count;
     for (i = 0; i < 9; i++)
         t.m[i] = mat_elem(n, i / 3, o->relMatrix.m, i % 3, kLast[i]);
-    t.unk24 = o->relMatrix.unk24 + o->baseMatrix.unk24 + 1;
+    t.count = o->relMatrix.count + o->baseMatrix.count + 1;
     o->relMatrix = t;
 }
 HOOK(0x474AE0, StationaryGun_UpdateCarrier);
@@ -507,7 +507,7 @@ void StationaryGun_Move(StatGun *o, MoveMsg *m)
     o->basePos.z = m->pos->z + o->basePos.z;
     for (i = 0; i < 9; i++)
         t.m[i] = mat_elem(f, i / 3, o->relMatrix.m, i % 3, 1);
-    t.unk24 = m->matrix->unk24 + o->relMatrix.unk24 + 1;
+    t.count = m->matrix->count + o->relMatrix.count + 1;
     o->baseMatrix = t;
     radius = StationaryGun_Radius(o);
     DynCube_Move(o->obj.room, o, &o->basePos, radius);

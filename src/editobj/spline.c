@@ -134,12 +134,12 @@ void SplineObjWaypoint_UpdateAttach(SplineObjWaypoint *w)
     p.y = m[1] * w->attachPos.x + m[4] * w->attachPos.y + m[7] * dz;
     p.z = m[2] * w->attachPos.x + m[5] * w->attachPos.y + m[8] * dz;
     w->attachPos = p;
-    w->attachRot = (Matrix){{m[0], m[3], m[6], m[1], m[4], m[7], m[2], m[5], m[8]}, a->matrix.unk24};
+    w->attachRot = (Matrix){{m[0], m[3], m[6], m[1], m[4], m[7], m[2], m[5], m[8]}, a->matrix.count};
     t = w->attachRot.m;
     r = w->rot.m;
     n.m[0] = t[6] * r[2] + r[1] * t[3] + r[0] * t[0];
     n.m[1] = r[1] * t[4] + t[1] * r[0] + t[7] * r[2];
-    n.unk24 = w->attachRot.unk24 + w->rot.unk24 + 1;
+    n.count = w->attachRot.count + w->rot.count + 1;
     n.m[2] = t[2] * r[0] + t[8] * r[2] + r[1] * t[5];
     n.m[3] = t[6] * r[5] + t[0] * r[3] + t[3] * r[4];
     n.m[4] = t[7] * r[5] + t[4] * r[4] + t[1] * r[3];
@@ -332,7 +332,7 @@ void SplineObj_Changed(SplineObj *o, char *arg)
                 n.m[6] = m.m[6] * r[8] + m.m[3] * r[7] + m.m[0] * r[6];
                 n.m[7] = m.m[7] * r[8] + m.m[4] * r[7] + m.m[1] * r[6];
                 n.m[8] = m.m[8] * r[8] + m.m[5] * r[7] + m.m[2] * r[6];
-                n.unk24 = w->rot.unk24 + m.unk24 + 1;
+                n.count = w->rot.count + m.count + 1;
                 /* the original renormalises a local copy past 1000 and throws it away */
                 w->rot = n;
                 w = (SplineObjWaypoint *)Task_FindNext(w, gSplineObjWaypointType);

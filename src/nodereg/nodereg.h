@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -23,20 +24,6 @@ typedef struct Task {
 } Task;
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
 
 /* what the param table handlers get: the table is stored through out */
 typedef void *ParamTable;

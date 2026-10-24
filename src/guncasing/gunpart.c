@@ -158,7 +158,7 @@ void GunPart_MoveHandler(GunPart *p, MoveMsg *msg)
     for (i = 0; i < 3; i++)
         for (j = 0; j < 3; j++)
             r.m[i * 3 + j] = (m[i * 3 + 1] * l[3 + j] + m[i * 3 + 2] * l[6 + j]) + m[i * 3] * l[j];
-    r.unk24 = msg->matrix->unk24 + p->local.unk24 + 1;
+    r.count = msg->matrix->count + p->local.count + 1;
     p->o.matrix = r;
 }
 HOOK(0x4776C0, GunPart_MoveHandler);

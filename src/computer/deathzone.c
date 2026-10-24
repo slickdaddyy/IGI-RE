@@ -191,7 +191,7 @@ void DeathZone_Move(DeathZone *z, MoveArg *a)
     out.m[6] = m[8] * b[6] + m[6] * b[0] + m[7] * b[3];
     out.m[7] = m[8] * b[7] + m[6] * b[1] + m[7] * b[4];
     out.m[8] = m[8] * b[8] + m[6] * b[2] + m[7] * b[5];
-    out.unk24 = ((int *)m)[9] + z->rel.unk24 + 1;
+    out.count = ((int *)m)[9] + z->rel.count + 1;
     z->o.matrix = out;
 }
 HOOK(0x465F50, DeathZone_Move);

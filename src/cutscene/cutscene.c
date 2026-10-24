@@ -620,7 +620,7 @@ void CutScene_Interpolate(CutScene *c, CutKey **k, double t, double end, char ch
     m.m[6] = rot.m[8] * shk.m[6] + rot.m[7] * shk.m[3] + rot.m[6] * shk.m[0];
     m.m[7] = rot.m[8] * shk.m[7] + rot.m[7] * shk.m[4] + rot.m[6] * shk.m[1];
     m.m[8] = rot.m[8] * shk.m[8] + rot.m[7] * shk.m[5] + rot.m[6] * shk.m[2];
-    m.serial = shk.serial + rot.serial + 1;
+    m.count = shk.count + rot.count + 1;
     rot = m;
     screen = (1.0f - mix) + mix * c->screenSize;
     Camera_Set(gCutSceneCamera, &pos, &rot, fov, 1.0f, 1000.0f, Screen_GetFrame(), NULL, unk98, 0);

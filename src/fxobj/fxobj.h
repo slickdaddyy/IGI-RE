@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -23,20 +24,6 @@ typedef struct Task {
 } Task;
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major, and a counter the engine bumps on changes */
-typedef struct Matrix {
-    float m[9];
-    int stamp;
-} Matrix;
 
 /* a script string parameter that may hold an expression */
 typedef struct VarString {

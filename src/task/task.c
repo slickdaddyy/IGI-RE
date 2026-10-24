@@ -35,8 +35,8 @@ extern int gTaskStackTop;
 
 typedef void (*TaskDeleteHandler)(Task *task);
 
-#define POOL_ITEM(p, i) ((p)->data + (p)->slots[i] * (p)->stride)
-#define POOL_INDEX(p, item) (*(int *)((char *)(item) + (p)->index_offset))
+#define POOL_ITEM(p, i) ((p)->data + (p)->free[i] * (p)->stride)
+#define POOL_INDEX(p, item) (*(int *)((char *)(item) + (p)->size))
 
 static void *pool_take(Pool *p)
 {
@@ -58,9 +58,9 @@ static void pool_release(Pool *p, void *item)
         return;
     last = POOL_ITEM(p, p->used);
     last_index = POOL_INDEX(p, last);
-    tmp = p->slots[index];
-    p->slots[index] = p->slots[last_index];
-    p->slots[last_index] = tmp;
+    tmp = p->free[index];
+    p->free[index] = p->free[last_index];
+    p->free[last_index] = tmp;
     POOL_INDEX(p, last) = index;
 }
 
@@ -163,7 +163,7 @@ Task *Task_Alloc(Task *parent, uint16_t type)
     char pooled;
 
     gTaskCount++;
-    if (!tt->pooled || tt->pool.used >= tt->pool.capacity) {
+    if (!tt->pooled || tt->pool.used >= tt->pool.count) {
         pooled = 0;
         Mem_PushMode(1);
         t = Mem_Alloc(tt->size, 4);

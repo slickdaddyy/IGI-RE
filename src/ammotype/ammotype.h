@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 #define AMMO_TYPE_MAX 32
 #define AMMO_LIST_MAX 32
@@ -23,14 +24,6 @@ typedef struct Task {
 } Task;
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
 
 extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) (gTaskHandlers[(uint8_t)(slot)][(uint16_t)(type)])

@@ -5,16 +5,7 @@
 
 #include "igi.h"
 #include "ui/ui.h"
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major, then a counter */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
+#include "types.h"
 
 /* the storage of a loaded sprite */
 typedef struct SpriteSlot {

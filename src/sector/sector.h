@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 /* the first 0x20 bytes of every task */
 typedef struct Task {
@@ -21,29 +22,6 @@ typedef struct Task {
 } Task;
 
 typedef void (*TaskFn)();
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
-
-/* count fixed size slots; the slot index is kept at slot + size */
-typedef struct Pool {
-    char *data;
-    int *free;
-    int used;
-    int count;
-    int stride;
-    int size;
-} Pool;
 
 /* a portal of a sector mesh (0x14 bytes) */
 typedef struct Portal {

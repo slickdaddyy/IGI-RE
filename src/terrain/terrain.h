@@ -10,10 +10,6 @@
 #define DYNCUBE_MIN_SIZE 0x2000
 #define DYNCUBE_MAX_SIZE 0x40000000
 
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
 typedef struct DynCubeObj DynCubeObj;
 
 /* Octree node. Children are indexed by x | y << 1 | z << 2, where each bit

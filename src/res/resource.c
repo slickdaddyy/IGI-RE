@@ -28,7 +28,7 @@ extern char gMemberName[];
 static Resource *Pool_New(void)
 {
     Pool *p = &gResourcePool;
-    char *obj = p->base + p->order[p->used] * p->stride;
+    char *obj = p->data + p->free[p->used] * p->stride;
 
     *(int *)(obj + p->size) = p->used;
     p->used++;
@@ -45,11 +45,11 @@ static void Pool_Delete(void *obj)
     p->used--;
     if (pos == p->used)
         return;
-    last = p->base + p->order[p->used] * p->stride;
+    last = p->data + p->free[p->used] * p->stride;
     lastpos = *(int *)(last + p->size);
-    t = p->order[pos];
-    p->order[pos] = p->order[lastpos];
-    p->order[lastpos] = t;
+    t = p->free[pos];
+    p->free[pos] = p->free[lastpos];
+    p->free[lastpos] = t;
     *(int *)(last + p->size) = pos;
 }
 

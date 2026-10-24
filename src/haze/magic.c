@@ -139,7 +139,7 @@ void MagicObj_MoveHandler(MagicObj *o, MagicMoveArg *arg)
     r.m[6] = l[3] * m[7] + m[8] * l[6] + m[6] * l[0];
     r.m[7] = l[4] * m[7] + m[8] * l[7] + m[6] * l[1];
     r.m[8] = l[5] * m[7] + m[8] * l[8] + m[6] * l[2];
-    r.unk24 = arg->matrix->unk24 + o->localMatrix.unk24 + 1;
+    r.count = arg->matrix->count + o->localMatrix.count + 1;
     o->matrix = r;
     n = o->task.head;
     if (!n->next)

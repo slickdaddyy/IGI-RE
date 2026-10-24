@@ -127,7 +127,7 @@ void SimpointObjContainer_Run(SimpointObjContainer *c)
         r.m[6] = e.m[6] * w[0] + e.m[8] * w[6] + e.m[7] * w[3];
         r.m[7] = e.m[8] * w[7] + e.m[7] * w[4] + e.m[6] * w[1];
         r.m[8] = e.m[6] * w[2] + e.m[8] * w[8] + e.m[7] * w[5];
-        r.unk24 = o->obj.matrix.unk24 + e.unk24 + 1;
+        r.count = o->obj.matrix.count + e.count + 1;
         /* the original renormalises a local copy past 1000 and throws it away */
         o->obj.matrix = r;
         o = (SimpointObj *)o->obj.task.next;

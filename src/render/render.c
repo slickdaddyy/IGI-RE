@@ -13,11 +13,6 @@
 
 /* Direct3D mesh renderer: rigid, spline and lightmapped meshes. */
 
-typedef struct Matrix {
-    float m[9];
-    int frame;
-} Matrix;
-
 /* the view the frame is drawn with (0xBCAAE0, 0xA8 bytes) */
 typedef struct View {
     Matrix matrix;

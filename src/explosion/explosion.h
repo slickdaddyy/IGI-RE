@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 FN_EXTERN(Task_FalseHandler);
 FN_EXTERN(Task_Nothing);
@@ -24,30 +25,6 @@ typedef struct Task {
 } Task;
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major, and a counter the engine bumps on changes */
-typedef struct Matrix {
-    float m[9];
-    int stamp;
-} Matrix;
-
-/* fixed size item pool; slots[] maps a slot number to an item number */
-typedef struct Pool {
-    char *data;
-    int *slots;
-    int used;
-    int capacity;
-    int stride;
-    int index_offset;
-} Pool;
 
 /* the array behind Game_GetTaskList3 and Human_GetList */
 typedef struct TaskArray {

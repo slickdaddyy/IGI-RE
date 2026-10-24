@@ -206,12 +206,12 @@ void AIDetector_Init(AIDetector *d, void *unk0, uint32_t flags, uint32_t mask, i
     gAIDetectPhase = (gAIDetectPhase + 1) % 4;
     d->viewInterval = viewInterval / 4;
     d->sightInterval = sightInterval / 4;
-    d->enemies.head = &d->enemies.tail;
+    d->enemies.head = (Node *)&d->enemies.tail;
     d->enemies.tail = NULL;
-    d->enemies.tailpred = &d->enemies.head;
-    d->friends.head = &d->friends.tail;
+    d->enemies.tailpred = (Node *)&d->enemies.head;
+    d->friends.head = (Node *)&d->friends.tail;
     d->friends.tail = NULL;
-    d->friends.tailpred = &d->friends.head;
+    d->friends.tailpred = (Node *)&d->friends.head;
     for (i = 0; i < AIDETECT_MAX; i++)
         d->slots[i].active = 0;
 }

@@ -7,10 +7,6 @@
 
 FN_EXTERN(Task_Nothing);
 
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
 /* one triangle of a PolyListDynCubeObj (the same layout as HoleTri in explosion) */
 typedef struct PolyTri {
     Vec3f *v[3];

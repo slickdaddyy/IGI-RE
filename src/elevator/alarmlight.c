@@ -47,7 +47,7 @@ void AlarmLight_Create(AlarmLight *al)
     Sector_AddObject(al->obj.world, al, DynCubeObj_GetPosition(al));
     for (i = 0; i < 9; i++)
         al->placeMatrix.m[i] = i % 4 == 0 ? 1.0f : 0.0f;
-    al->placeMatrix.unk24 = 0;
+    al->placeMatrix.count = 0;
     al->obj.matrix = al->placeMatrix;
     al->offModel[0] = 0;
     al->onModel[0] = 0;

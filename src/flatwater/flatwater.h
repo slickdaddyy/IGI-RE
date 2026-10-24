@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 FN_EXTERN(SubLevel_Run);
 
@@ -20,14 +21,6 @@ typedef struct Task {
     char pooled;
     char unk1F;
 } Task;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
 
 typedef struct VarString {
     char *text;

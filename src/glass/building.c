@@ -83,7 +83,7 @@ void Building_Create(Building *b, void *arg)
     b->matrix.m[6] = 0;
     b->matrix.m[7] = 0;
     b->matrix.m[8] = 1.0f;
-    b->matrix.unk24 = 0;
+    b->matrix.count = 0;
 }
 HOOK(0x448760, Building_Create);
 

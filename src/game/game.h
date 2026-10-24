@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 typedef struct GameNode {
     struct GameNode *next;
@@ -34,18 +35,6 @@ typedef struct ScriptValue {
     const char *type;
     int unk14;
 } ScriptValue;
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-typedef struct Random {
-    unsigned int a, b, c;
-} Random;
 
 /* The in-mission game task, made from the "Game" task type. */
 typedef struct Game {

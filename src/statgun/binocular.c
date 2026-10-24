@@ -69,7 +69,7 @@ void BinocularOverlay_UseHandler(BinocularOverlay *o, WeaponUseMsg *msg)
     for (i = 0; i < 3; i++)
         for (j = 0; j < 3; j++)
             m.m[i * 3 + j] = a[i * 3] * r.m[j] + a[i * 3 + 2] * r.m[6 + j] + a[i * 3 + 1] * r.m[3 + j];
-    m.unk24 = o->matrix.unk24 + r.unk24 + 1;
+    m.count = o->matrix.count + r.count + 1;
     o->matrix = m;
     o->pos = v->unkE0;
     MOV32(o->fov, v->fov);

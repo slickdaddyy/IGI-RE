@@ -8,6 +8,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "soldier/soldier.h"
+#include "types.h"
 
 FN_EXTERN(SoldierPistol_BlastHandler);
 FN_EXTERN(SoldierPistol_HitUpdate);
@@ -18,10 +19,6 @@ FN_EXTERN(SoldierPistol_State28Update);
 FN_EXTERN(SoldierRPG_ParamsChanged);
 FN_EXTERN(Soldier_DeleteHandler);
 FN_EXTERN(Task_Nothing);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
 
 typedef struct CollHit {
     int unk0;

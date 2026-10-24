@@ -168,7 +168,7 @@ void GuardTemplate_Spawn(GuardTemplate *t, Task *parent)
         ParamType_Call(t->values[i], e->type, ParamOp_Copy(), &field);
     }
     if (List_Count(&t->children)) {
-        c = t->children.head;
+        c = (GuardTemplate *)t->children.head;
         for (n = c->next; n; c = n, n = n->next)
             GuardTemplate_Spawn(c, task);
     }
@@ -201,7 +201,7 @@ HOOK(0x488140, GuardGenerator_FreeTree);
 
 void GuardTemplate_Free(GuardTemplate *t)
 {
-    GuardTemplate *c = t->children.head, *n;
+    GuardTemplate *c = (GuardTemplate *)t->children.head, *n;
     int i;
 
     if (c->next && c) {
@@ -307,8 +307,8 @@ GuardTemplate *GuardTemplate_New(GuardTemplate *parent, Task *task)
     t->parent = parent;
     t->prev = NULL;
     t->next = NULL;
-    t->children.head = &t->children.tail;
-    t->children.tailpred = &t->children.head;
+    t->children.head = (Node *)&t->children.tail;
+    t->children.tailpred = (Node *)&t->children.head;
     t->children.tail = NULL;
     if (parent)
         List_AddTail(&parent->children, t);

@@ -4,15 +4,6 @@
 #include "hook.h"
 #include "patrol/patrol.h"
 
-typedef struct Matrix {
-    float m[9];
-    int count;
-} Matrix;
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
 typedef struct GraphNode {
     int id;
     char unk4[0x24];

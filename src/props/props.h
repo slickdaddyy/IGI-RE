@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "igi.h"
+#include "types.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -24,20 +25,6 @@ typedef struct Task {
 } Task;
 
 typedef void (*TaskFn)();
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
 
 /* a script string parameter that may hold an expression */
 typedef struct VarString {
@@ -184,7 +171,7 @@ static inline void mat_mul(Matrix *out, const Matrix *a, const Matrix *b, int b_
             n.m[i * 3 + j] = b_rows & (1 << i) ? (p1 + p2) + p0 : (p0 + p2) + p1;
         }
     }
-    n.unk24 = a->unk24 + b->unk24 + 1;
+    n.count = a->count + b->count + 1;
     *out = n;
 }
 

@@ -8,6 +8,7 @@
 #include <d3d.h>
 
 #include "igi.h"
+#include "types.h"
 
 typedef struct Task {
     struct Task *next;
@@ -21,10 +22,6 @@ typedef struct Task {
     char pooled;
     char unk1F;
 } Task;
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
 
 /* the view the frame is drawn with (0xBCAAE0) */
 typedef struct View {

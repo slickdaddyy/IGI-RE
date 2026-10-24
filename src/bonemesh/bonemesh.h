@@ -6,6 +6,7 @@
 
 #include "igi.h"
 #include "model/model.h"
+#include "types.h"
 
 typedef struct Task {
     Node node;
@@ -18,20 +19,6 @@ typedef struct Task {
 } Task;
 
 typedef void (*TaskHandler)(Task *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
 
 /* One draw call of a REND chunk. Groups follow each other, next is the
    byte count of the indices, 0xFFFF on the last group. */

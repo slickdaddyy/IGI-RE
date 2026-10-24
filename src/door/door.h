@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "igi.h"
+#include "types.h"
 
 /* the first 0x20 bytes of every task */
 typedef struct Task {
@@ -22,20 +23,6 @@ typedef struct Task {
 } Task;
 
 typedef void (*TaskFn)();
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
 
 /* a script string parameter that may hold an expression */
 typedef struct VarString {
@@ -275,7 +262,7 @@ static inline void mat_mul(Matrix *out, const Matrix *a, const Matrix *b, int or
             n.m[i * 3 + j] = o == SUM01_2 ? (p0 + p1) + p2 : o == SUM02_1 ? (p0 + p2) + p1 : (p1 + p2) + p0;
         }
     }
-    n.unk24 = a->unk24 + b->unk24 + 1;
+    n.count = a->count + b->count + 1;
     *out = n;
 }
 
@@ -317,7 +304,7 @@ static inline void to_local(Vec3d *offset, Matrix *local, const Vec3d *place, co
     local->m[6] = t[2];
     local->m[7] = t[5];
     local->m[8] = t[8];
-    local->unk24 = parent->matrix.unk24;
+    local->count = parent->matrix.count;
     mat_mul(local, m, local, ORDER(SUM01_2, SUM02_1, SUM12_0));
 }
 

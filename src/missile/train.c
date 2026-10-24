@@ -204,7 +204,7 @@ static void identity(Matrix *m)
     m->m[5] = 0;
     m->m[6] = 0;
     m->m[7] = 0;
-    m->unk24 = 0;
+    m->count = 0;
 }
 
 void Train_PlaceWagons(Train *t, Vec3d *p, int quiet);

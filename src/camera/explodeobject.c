@@ -443,7 +443,7 @@ void ExplodeObject_MoveHandler(ExplodeObject *o, MoveArg *arg)
     r.m[6] = m[8] * l[6] + m[6] * l[0] + m[7] * l[3];
     r.m[7] = m[8] * l[7] + m[6] * l[1] + m[7] * l[4];
     r.m[8] = m[8] * l[8] + m[6] * l[2] + m[7] * l[5];
-    r.serial = arg->matrix->serial + o->local.serial + 1;
+    r.count = arg->matrix->count + o->local.count + 1;
     o->placeMatrix = r;
     DynCube_Move(o->world, o, &o->place, VirModel_GetRadius(o->model) * max_scale(o));
     o->matrix = o->placeMatrix;

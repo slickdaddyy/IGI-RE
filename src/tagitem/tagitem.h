@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 /* the first 0x20 bytes of every task */
 typedef struct Task {
@@ -33,20 +34,6 @@ typedef struct TagItem {
         char s[0x100];
     } v;
 } TagItem;
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major, and a counter */
-typedef struct Matrix {
-    float m[9];
-    int stamp;
-} Matrix;
 
 /* "SplineObjSegment" (0x5B8), the bent model between two waypoints; see notes/sound.md */
 typedef struct SplineObjSegment {

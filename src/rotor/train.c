@@ -41,7 +41,7 @@ void Train_GetFrame(Train *t, void **out)
     for (i = 0; i < 3; i++)
         for (j = 0; j < 3; j++)
             tr.m[i * 3 + j] = t->unk694.m[j * 3 + i];
-    tr.unk24 = t->unk694.unk24;
+    tr.count = t->unk694.count;
     mat_mul(&gTrainMatrix, &t->obj.matrix, &tr, 0, 1, 0);
     out[0] = &t->obj.pos;
     out[2] = &gTrainRelPos;

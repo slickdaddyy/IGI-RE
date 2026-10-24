@@ -4,18 +4,7 @@
 #include <stddef.h>
 
 #include "igi.h"
-
-/* Same layout as core/list.h, which declares the real List_* functions. */
-typedef struct Node {
-    struct Node *next;
-    struct Node *prev;
-} Node;
-
-typedef struct List {
-    Node *head;
-    Node *tail;
-    Node *tailpred;
-} List;
+#include "types.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));

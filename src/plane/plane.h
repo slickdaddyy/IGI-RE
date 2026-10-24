@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 /* the first 0x20 bytes of every task */
 typedef struct Task {
@@ -19,16 +20,6 @@ typedef struct Task {
     char pooled;
     char unk1F;
 } Task;
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24; /* sum of the inputs' values plus one on each multiply */
-} Matrix;
 
 /* script string that may hold an expression */
 typedef struct VarString {

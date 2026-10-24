@@ -6,6 +6,7 @@
 
 #include "hook.h"
 #include "glowmesh/glowmesh.h"
+#include "types.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -73,15 +74,6 @@ typedef struct TerrainClipVertex {
     float u, v;
     int unk28, unk2C;
 } TerrainClipVertex;
-
-typedef struct Pool {
-    char *data;
-    int *free;
-    int used;
-    int count;
-    int stride;
-    int size;
-} Pool;
 
 /* a slot of the QCube cache; data is the cell's mesh */
 typedef struct QCacheEntry {

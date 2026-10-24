@@ -110,7 +110,7 @@ void HumanCamera_WatchKiller(HumanCamera *c)
     out.m[4] = m.m[5] * r.m[7] + m.m[4] * r.m[4] + m.m[3] * r.m[1];
     out.m[5] = m.m[5] * r.m[8] + m.m[4] * r.m[5] + m.m[3] * r.m[2];
     out.m[6] = m.m[8] * r.m[6] + m.m[7] * r.m[3] + m.m[6] * r.m[0];
-    out.serial = r.serial + m.serial + 1;
+    out.count = r.count + m.count + 1;
     out.m[7] = m.m[8] * r.m[7] + m.m[7] * r.m[4] + m.m[6] * r.m[1];
     out.m[8] = m.m[8] * r.m[8] + m.m[7] * r.m[5] + m.m[6] * r.m[2];
     c->matrix = out;

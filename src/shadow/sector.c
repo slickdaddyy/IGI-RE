@@ -47,7 +47,7 @@ void SectorObject_Create(SectorObject *so)
     so->s.o.matrix.m[5] = 0;
     so->s.o.matrix.m[6] = 0;
     so->s.o.matrix.m[7] = 0;
-    so->s.o.matrix.unk24 = 0;
+    so->s.o.matrix.count = 0;
     so->sectors = NULL;
     memset(so->unk14C, 1, sizeof(so->unk14C));
     so->built = 1;
@@ -75,12 +75,12 @@ void Sector_RemoveAllObjects(Sector *s)
     int i;
 
     while (s->links.used > 0) {
-        void **item = (void **)(s->links.data + s->links.slots[0] * s->links.stride);
+        void **item = (void **)(s->links.data + s->links.free[0] * s->links.stride);
         Obj *obj = *item;
         int found = 0;
 
         for (i = 0; i < gSectorLinks.used && !found; i++) {
-            SectorLink *l = (SectorLink *)(gSectorLinks.data + gSectorLinks.slots[i] * gSectorLinks.stride);
+            SectorLink *l = (SectorLink *)(gSectorLinks.data + gSectorLinks.free[i] * gSectorLinks.stride);
 
             if (l->item == item) {
                 pool_release(&l->sector->links, l->item);
@@ -91,7 +91,7 @@ void Sector_RemoveAllObjects(Sector *s)
         }
     }
     for (i = gSectorLinks.used - 1; i >= 0; i--) {
-        SectorLink *l = (SectorLink *)(gSectorLinks.data + gSectorLinks.slots[i] * gSectorLinks.stride);
+        SectorLink *l = (SectorLink *)(gSectorLinks.data + gSectorLinks.free[i] * gSectorLinks.stride);
 
         if (l->sector == s)
             pool_release(&gSectorLinks, l);
@@ -224,7 +224,7 @@ void SectorObject_NearClip(SectorObject *so, void *arg)
 
         HANDLER(slot, RigidDynCubeObj_GetType())(s, arg);
         for (i = 0; i < s->links.used; i++) {
-            Task *obj = *(Task **)(s->links.data + s->links.slots[i] * s->links.stride);
+            Task *obj = *(Task **)(s->links.data + s->links.free[i] * s->links.stride);
             TaskFn fn = HANDLER(QCube_GetNearClipEvent(), obj->type);
 
             if (fn)
@@ -357,7 +357,7 @@ void SectorObject_Update(SectorObject *so)
             r[6] = m[3] * l[7] + l[8] * m[6] + m[0] * l[6];
             r[7] = m[4] * l[7] + m[7] * l[8] + l[6] * m[1];
             r[8] = m[5] * l[7] + m[2] * l[6] + m[8] * l[8];
-            s->o.matrix.unk24 = s->local.unk24 + so->s.o.matrix.unk24 + 1;
+            s->o.matrix.count = s->local.count + so->s.o.matrix.count + 1;
             x = m[2] * (long double)s->offset.z + m[0] * (long double)s->offset.x + m[1] * (long double)s->offset.y;
             y = m[4] * (long double)s->offset.y + m[3] * (long double)s->offset.x + m[5] * (long double)s->offset.z;
             z = m[7] * (long double)s->offset.y + m[6] * (long double)s->offset.x + m[8] * (long double)s->offset.z;
@@ -398,7 +398,7 @@ static inline const float *model_bounds(void **model)
     return (const float *)(model_info(model) + 0x50);
 }
 
-#define SPHERE(p, i) ((float *)((p)->data + (p)->slots[i] * (p)->stride))
+#define SPHERE(p, i) ((float *)((p)->data + (p)->free[i] * (p)->stride))
 
 /* Merges the bounding spheres of all sectors and their magic objects into
    one, always joining the two closest. */
@@ -427,7 +427,7 @@ void SectorObject_CalcBounds(SectorObject *so, float *center, float *radius)
         const float *info = model_bounds(s->o.model);
         float *item = SPHERE(&sp, sp.used);
 
-        *(int *)((char *)item + sp.index_offset) = sp.used;
+        *(int *)((char *)item + sp.size) = sp.used;
         sp.used++;
         item[0] = info[0];
         item[1] = info[1];
@@ -614,7 +614,7 @@ void Sector_CreateMagicObjs(Sector *s, void *owner)
         R[6] = F[0];
         R[7] = F[1];
         R[8] = F[2];
-        arg.local.unk24 = 0;
+        arg.local.count = 0;
 
         /* world frame: the object's matrix times the local one, then
            re-orthonormalized (the original also does that a second time
@@ -662,7 +662,7 @@ void Sector_CreateMagicObjs(Sector *s, void *owner)
             A[6] = D[0];
             A[7] = D[1];
             A[8] = D[2];
-            arg.matrix.unk24 = 0;
+            arg.matrix.count = 0;
         }
 
         for (j = 0; j < gMagicObjDefCount && !def; j++)

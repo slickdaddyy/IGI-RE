@@ -311,7 +311,7 @@ void GunCasing_RunHandler(GunCasing *c)
     r.m[6] = (m[8] * s[6] + m[7] * s[3]) + m[6] * s[0];
     r.m[7] = (m[7] * s[4] + m[8] * s[7]) + m[6] * s[1];
     r.m[8] = (m[7] * s[5] + m[8] * s[8]) + m[6] * s[2];
-    r.unk24 = c->spin.unk24 + c->o.matrix.unk24 + 1;
+    r.count = c->spin.count + c->o.matrix.count + 1;
     c->o.matrix = r;
 }
 HOOK(0x4782D0, GunCasing_RunHandler);
@@ -627,7 +627,7 @@ void Gun_FireHandler(Gun *g, GunFire *msg)
                 out.m[6] = a[8] * e[6] + a[7] * e[3] + a[6] * e[0];
                 out.m[7] = a[8] * e[7] + a[7] * e[4] + a[6] * e[1];
                 out.m[8] = a[8] * e[8] + a[7] * e[5] + a[6] * e[2];
-                out.unk24 = rot.unk24 + aim.unk24 + 1;
+                out.count = rot.count + aim.count + 1;
                 /* the original then re-orthonormalises a copy once unk24
                    passes 1000, but never uses the result */
             }

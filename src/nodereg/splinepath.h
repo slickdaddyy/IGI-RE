@@ -6,11 +6,6 @@
 #define SPLINE_NODES 100
 #define SPLINE_SUBSEGS 10
 
-typedef struct Quat {
-    float x, y, z, w;
-    int unk;
-} Quat;
-
 /* "SplinePathNodeQTask" (0xC8) */
 typedef struct SplinePathNode {
     Task task;

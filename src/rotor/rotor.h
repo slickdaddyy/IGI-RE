@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "types.h"
 
 /* the first 0x20 bytes of every task */
 typedef struct Task {
@@ -21,16 +22,6 @@ typedef struct Task {
 } Task;
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
 
 typedef struct VarString {
     char *text;
@@ -349,7 +340,7 @@ static inline void mat_mul(Matrix *out, const Matrix *a, const Matrix *b, int la
                                         + (long double)a->m[i * 3 + k1] * b->m[k1 * 3 + j]
                                         + (long double)a->m[i * 3 + last] * b->m[last * 3 + j]);
     }
-    out->unk24 = a->unk24 + b->unk24 + 1;
+    out->count = a->count + b->count + 1;
 }
 
 #endif

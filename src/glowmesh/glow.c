@@ -7,6 +7,7 @@
 
 #include "hook.h"
 #include "glowmesh/glowmesh.h"
+#include "types.h"
 
 ORIG(0x497800, void *, Frame_Alloc, (int size));
 ORIG(0x4978B0, void, RenderQueue_Add, (int queue, void *node));
@@ -15,15 +16,6 @@ ORIG(0x4978E0, void, Primitive_Unregister, (int id));
 ORIG(0x4978F0, void, Primitive_SetHandler, (int id, void *fn));
 ORIG(0x4D3710, void, Task_Nothing, (void *buf, int x, int y, int w, int h));
 ORIG(0x5182B0, void, LensFlare_Draw, (int unk, float *pos, float *color));
-
-typedef struct Pool {
-    char *data;
-    int *free;
-    int used;
-    int count;
-    int stride;
-    int size;
-} Pool;
 
 typedef struct Glow {
     int unk0;

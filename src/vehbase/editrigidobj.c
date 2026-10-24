@@ -60,7 +60,7 @@ static inline void mat_mul(Matrix *out, const Matrix *a, const Matrix *b, const 
             n.m[i * 3 + j] = (a->m[i * 3 + k0] * b->m[k0 * 3 + j] + a->m[i * 3 + k1] * b->m[k1 * 3 + j]) +
                              a->m[i * 3 + k2] * b->m[k2 * 3 + j];
     }
-    n.unk24 = a->unk24 + b->unk24 + 1;
+    n.count = a->count + b->count + 1;
     *out = n;
 }
 
