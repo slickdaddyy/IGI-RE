@@ -12,20 +12,6 @@
 
 typedef void (*TaskFn)();
 
-typedef struct CollIgnore {
-    int unk0;
-    Task *task;
-} CollIgnore;
-
-/* M203 shells ignore their owner and one more task */
-typedef struct CollFilter {
-    int unk0;
-    Task *task;
-    Task *owner;
-    Task *other;
-    float unk10;
-} CollFilter;
-
 /* noise for HumanAI_Broadcast */
 typedef struct Noise {
     int kind;

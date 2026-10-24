@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "d3d/d3d.h"
+#include "d3d/d3dtypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -50,12 +51,6 @@ extern const GUID IID_IDirect3DHALDevice_[];
 extern const GUID IID_IDirect3DRGBDevice_[];
 extern const GUID IID_IDirect3D7_[];
 extern const GUID IID_IDirectDraw7_[];
-
-typedef struct DynVB {
-    IDirect3DVertexBuffer7 *vb;
-    int size;
-    int used;
-} DynVB;
 
 typedef struct ClipRect {
     int unk0;

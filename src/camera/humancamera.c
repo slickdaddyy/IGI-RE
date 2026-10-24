@@ -87,7 +87,7 @@ ORIG(0x4B3130, long double, Vec3d_Length, (const Vec3d *v));
 ORIG(0x4B38E0, void, Matrix_SetEuler, (Matrix *m, float ax, float ay, float az));
 ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, Vec3d *starts, Vec3d *ends, int count, uint8_t event,
-                                  CollFilter *filter, int flags));
+                                  CollIgnore *filter, int flags));
 ORIG(0x4D3710, void, Task_Nothing, (void *task));
 ORIG(0x4D9870, void, Camera_Set, (void *cam, const Vec3d *pos, const Matrix *axes, float fov, float aspect,
                                   float range, int frame, void *owner, float unk9, int unk10));
@@ -587,7 +587,7 @@ static void follow(HumanCamera *c)
     double d0, d1, wx, wy;
     float fov;
     CollHit hit;
-    CollFilter filter;
+    CollIgnore filter;
 
     Matrix_SetEuler(&e, c->pitch, 0, c->yaw);
     nd = -c->target;
@@ -605,7 +605,7 @@ static void follow(HumanCamera *c)
     HumanCamera_LookAt(&m, &w, &p);
     fov = x87_tan(kQuarterPi);
     start = p;
-    filter.ignore = h;
+    filter.task = h;
     end = w;
     for (;;) {
         uint8_t ev = Game_GetEvent8();
@@ -663,10 +663,10 @@ char HumanCamera_IsBlocked(HumanCamera *c, Task *h, Vec3d *to, Vec3d *from)
     Vec3d *hp = task_pos(h);
     Vec3d pts[8], d;
     CollHit hit;
-    CollFilter filter;
+    CollIgnore filter;
     int i;
 
-    filter.ignore = h;
+    filter.task = h;
     for (i = 0; i < 8; i++) {
         pts[i].x = kBodyPoints[i][0] + hp->x;
         pts[i].y = kBodyPoints[i][1] + hp->y;
@@ -738,7 +738,7 @@ void HumanCamera_DeathCameraCollide(HumanCamera *c, float dpitch, float dyaw)
     Vec3d p = c->info.pos;
     Vec3d l1[5], l2[5], starts[4], ends[4];
     CollHit hits[4];
-    CollFilter filter;
+    CollIgnore filter;
     Matrix e;
     uint8_t ev;
     int i;
@@ -758,7 +758,7 @@ void HumanCamera_DeathCameraCollide(HumanCamera *c, float dpitch, float dyaw)
     off[4][0] = 0;
     off[4][1] = -c->dist;
     off[4][2] = na;
-    filter.ignore = *c->ref;
+    filter.task = *c->ref;
     Matrix_SetEuler(&e, c->pitch, 0, c->yaw);
     for (i = 0; i < 5; i++) {
         const double *o = off[i];

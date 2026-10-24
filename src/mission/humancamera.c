@@ -29,11 +29,6 @@ typedef struct HumanCameraEntry {
     char pad6[2];
 } HumanCameraEntry;
 
-typedef struct CollFilter {
-    int unk0;
-    Task *ignore;
-} CollFilter;
-
 _Static_assert(offsetof(HumanCamera, index) == 0x118, "HumanCamera.index");
 _Static_assert(sizeof(HumanCamera) == 0x128, "HumanCamera");
 
@@ -42,7 +37,7 @@ ORIG(0x483100, void, HumanCamera_LookAt, (Matrix *out, const Vec3d *from, const 
 ORIG(0x4B3130, long double, Vec3d_Length, (const Vec3d *v));
 ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, Vec3d *starts, Vec3d *ends, int count, uint8_t event,
-                                  CollFilter *filter, int flags));
+                                  CollIgnore *filter, int flags));
 
 extern uint16_t gHumanCameraType;
 extern uint8_t gHumanCameraEvent;
@@ -62,7 +57,7 @@ void HumanCamera_WatchKiller(HumanCamera *c)
     Task *killer = **(Task ***)((char *)h + 0xDE8);
     Vec3d from, to, head, d;
     CollHit hit;
-    CollFilter filter;
+    CollIgnore filter;
     Matrix m, r, out;
     long double len, k, kz;
     uint8_t event;
@@ -78,7 +73,7 @@ void HumanCamera_WatchKiller(HumanCamera *c)
     len = Vec3d_Length(&d);
     if (len > kZero) {
         k = kBackOff / len;
-        filter.ignore = h;
+        filter.task = h;
         d.x = k * d.x;
         d.y = k * d.y;
         kz = k * d.z;

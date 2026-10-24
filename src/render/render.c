@@ -11,6 +11,7 @@
 #include "igi.h"
 #include "model/model.h"
 #include "res/restypes.h"
+#include "d3d/d3dtypes.h"
 
 /* Direct3D mesh renderer: rigid, spline and lightmapped meshes. */
 
@@ -46,12 +47,6 @@ typedef struct StateList {
     int magic2;
     void (*items[])(int);
 } StateList;
-
-typedef struct DynVB {
-    IDirect3DVertexBuffer7 *vb;
-    int size;
-    int used;
-} DynVB;
 
 typedef struct VBUpload {
     struct VBUpload *next;

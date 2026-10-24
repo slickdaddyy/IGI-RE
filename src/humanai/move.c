@@ -5,7 +5,7 @@
 
 ORIG(0x4148F0, long double, Vec3d_PitchAngle, (Vec3d v));
 ORIG(0x414950, long double, Vec3d_YawAngle, (Vec3d v));
-ORIG(0x4168A0, TaskArray *, Game_GetTaskList0, (void));
+ORIG(0x4168A0, QTaskList *, Game_GetTaskList0, (void));
 ORIG(0x4B28A0, long double, Math_ACos, (double x));
 ORIG(0x4B3100, void, Vec3d_Normalize, (Vec3d *v));
 ORIG(0x4B3130, long double, Vec3d_Length, (const Vec3d *v));

@@ -86,14 +86,14 @@ ORIG(0x406220, Profile *, Profile_GetActive, (void));
 ORIG(0x413C80, WeaponInfo *, Weapon_GetType, (Task *w));
 ORIG(0x4167D0, uint8_t, Game_GetEvent0, (void));
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
-ORIG(0x4168B0, TaskArray *, Game_GetTaskList1, (void));
+ORIG(0x4168B0, QTaskList *, Game_GetTaskList1, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416A70, Task *, Game_GetPlayer, (int i));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x416FB0, int, Game_IsRaining, (void));
 ORIG(0x450CE0, void, HumanAI_Broadcast, (HumanNoise *noise));
 ORIG(0x460BF0, uint8_t, Human_GetEvent0, (void));
-ORIG(0x460C60, TaskArray *, Human_GetList, (void));
+ORIG(0x460C60, QTaskList *, Human_GetList, (void));
 ORIG(0x462390, void, Human_ProbeGround, (Human *h, double *pos, double *to, float *vel, unsigned *bits, float dist));
 ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -154,7 +154,7 @@ static __attribute__((noinline)) long double crt_pow(long double x, long double 
 /* keeps `to` away from other humans standing near it; out = to - from */
 void Human_AvoidHumans(Human *h, double *from, double *to, float *out)
 {
-    TaskArray *list = Human_GetList();
+    QTaskList *list = Human_GetList();
     int i;
 
     for (i = 0; i < list->count; i++) {

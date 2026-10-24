@@ -236,7 +236,7 @@ void ComputerHilight_Close(void)
 }
 HOOK(0x468870, ComputerHilight_Close);
 
-TaskArray *ComputerHilight_GetList(void)
+QTaskList *ComputerHilight_GetList(void)
 {
     return gHilightList;
 }

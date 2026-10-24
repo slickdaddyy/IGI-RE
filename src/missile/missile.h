@@ -13,11 +13,6 @@
 typedef void (*TaskFn1)(Task *task);
 typedef void (*TaskFn2)(Task *task, void *arg);
 
-typedef struct CollIgnore {
-    int unk0;
-    Task *task;
-} CollIgnore;
-
 /* the physics object type a vehicle was made from (DefinePhysicsObjType) */
 typedef struct PhysType {
     char unk0[0x2D4];

@@ -6,6 +6,7 @@
 #include "igi.h"
 #include "ui/ui.h"
 #include "types.h"
+#include "qasm/qasmtypes.h"
 
 /* the storage of a loaded sprite */
 typedef struct SpriteSlot {
@@ -111,13 +112,6 @@ typedef struct MapCamera {
     Vec3d pos;           /* 0x28 */
     float fov;           /* 0x40 */
 } MapCamera;
-
-/* a list of tasks: count, unknown, items */
-typedef struct TaskArray {
-    int count;
-    int unk4;
-    Task *item[1];
-} TaskArray;
 
 typedef struct MapHit {
     Task *task;

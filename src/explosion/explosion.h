@@ -8,18 +8,12 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "qasm/qasmtypes.h"
 
 FN_EXTERN(Task_FalseHandler);
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* the array behind Game_GetTaskList3 and Human_GetList */
-typedef struct TaskArray {
-    int count;
-    int unk4;
-    Task *tasks[1];
-} TaskArray;
 
 /* the start of the 0x70 byte collision hit sent with the bullet hole event */
 typedef struct HoleHit {

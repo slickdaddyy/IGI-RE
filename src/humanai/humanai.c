@@ -34,7 +34,7 @@ ORIG(0x440C10, char, AlarmControl_IsLastAlarm, (Task *t));
 ORIG(0x452D20, void *, NodeGrid_Place, (int *len, void *a, void *b, void *graph, int node, Vec3d *pos));
 ORIG(0x453390, void, AIClaim_Release, (void *p));
 ORIG(0x460BE0, uint16_t, Human_GetType, (void));
-ORIG(0x460C60, TaskArray *, Human_GetList, (void));
+ORIG(0x460C60, QTaskList *, Human_GetList, (void));
 ORIG(0x460C70, void, Human_SetAI, (Task *human, HumanAI *ai));
 ORIG(0x464250, int, Human_GetMaskType, (void));
 ORIG(0x465800, void, HumanView_GetEye, (Vec3d *eye, void *view));

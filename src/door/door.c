@@ -80,12 +80,6 @@ typedef struct NearQuery {
     Door *found;        /* 0x20 */
 } NearQuery;
 
-/* passed to Coll_Lines; the first word is left uninitialised */
-typedef struct CollIgnore {
-    int unk0;
-    Door *door;
-} CollIgnore;
-
 /* sent to the children of unkE8 with the MagicObj move event */
 typedef struct DoorMoveMsg {
     Vec3d *pos;
@@ -501,7 +495,7 @@ void Door_RunHandler(Door *d)
 
             last_point(d, &from, 1);
             last_point(d, &to, 2);
-            ignore.door = d;
+            ignore.task = (Task *)d;
             Coll_Lines(Game_GetWorld(), &hit, &from, &to, 1, 0xFF, &ignore, 1);
             if (hit.found && hit.task) {
                 d->slideTarget = 1.0f;

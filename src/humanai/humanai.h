@@ -7,15 +7,9 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "qasm/qasmtypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* a task list: count, then the tasks from +8 */
-typedef struct TaskArray {
-    int count;
-    int unk04;
-    Task *items[1];
-} TaskArray;
 
 typedef struct GraphNode {
     int id;

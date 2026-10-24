@@ -23,4 +23,18 @@ typedef struct CollHit {
 } CollHit;
 _Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 
+typedef struct CollFilter {
+    int unk0;
+    Task *task;
+    Task *owner;
+    Task *other;
+    float unk10;
+} CollFilter;
+
+/* the filter of a collision query: the task to leave out */
+typedef struct CollIgnore {
+    int unk0;
+    Task *task;
+} CollIgnore;
+
 #endif

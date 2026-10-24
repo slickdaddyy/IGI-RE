@@ -17,7 +17,7 @@ ORIG(0x416830, uint8_t, Game_GetEvent7, (void));
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
 ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
 ORIG(0x416880, uint8_t, Game_GetEvent13, (void));
-ORIG(0x4168D0, TaskArray *, Game_GetTaskList3, (void));
+ORIG(0x4168D0, QTaskList *, Game_GetTaskList3, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416930, char *, Game_AddTexture, (const char *name));
 ORIG(0x4169D0, char *, Game_AddSprite, (const char *name));
@@ -365,10 +365,10 @@ void Explosion_Burst(Explosion *e)
         msg.unk14 = 90;
         msg.unk84 = e->unk84;
         for (i = 0; i < Game_GetTaskList3()->count; i++) {
-            uint16_t type = Game_GetTaskList3()->tasks[i]->type;
+            uint16_t type = Game_GetTaskList3()->items[i]->type;
             TaskFn fn = HANDLER(Game_GetEvent11(), type);
 
-            fn(Game_GetTaskList3()->tasks[i], &msg);
+            fn(Game_GetTaskList3()->items[i], &msg);
         }
     }
 }

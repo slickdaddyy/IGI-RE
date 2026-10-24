@@ -11,12 +11,6 @@
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-/* the second word is the object the lines ignore */
-typedef struct CollFilter {
-    int unk0;
-    Task *ignore;
-} CollFilter;
-
 typedef struct Explosion Explosion;
 
 Explosion *Explosion_Spawn(Vec3d *pos, int count, int delay, float unk50, float radius, float unk58,

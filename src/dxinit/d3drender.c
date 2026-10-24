@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "dxinit/dxinit.h"
+#include "d3d/d3dtypes.h"
 
 FN_EXTERN(Direct3DRender_AlphaBlendOff);
 FN_EXTERN(Direct3DRender_SetLightmapStages);
@@ -24,12 +25,6 @@ FN_EXTERN(Direct3DRender_LoadModel);
 FN_EXTERN(Direct3DRender_RestoreVertexBuffers);
 FN_EXTERN(Direct3DRender_SplineNearZ);
 FN_EXTERN(Direct3DRender_UnloadModel);
-
-typedef struct DynVB {
-    IDirect3DVertexBuffer7 *vb;
-    int size;
-    int used;
-} DynVB;
 
 /* meshes waiting to be copied into a static vertex buffer: 0 rigid, 1 bone, 2 rigid */
 typedef struct MeshBatch {

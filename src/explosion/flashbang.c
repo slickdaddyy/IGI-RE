@@ -17,7 +17,7 @@ ORIG(0x416930, char *, Game_AddTexture, (const char *name));
 ORIG(0x4169D0, char *, Game_AddSprite, (const char *name));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x450CE0, void, HumanAI_Broadcast, (FlashNoise *noise));
-ORIG(0x460C60, TaskArray *, Human_GetList, (void));
+ORIG(0x460C60, QTaskList *, Human_GetList, (void));
 ORIG(0x4B4770, long double, Random_Float, (void *rng));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
@@ -135,10 +135,10 @@ FlashBang *FlashBang_Explode(Vec3d *pos, HoleHit *hit, float radius, float fallo
     msg.pos = pos;
     msg.radius = radius;
     for (i = 0; i < Human_GetList()->count; i++) {
-        uint16_t type = Human_GetList()->tasks[i]->type;
+        uint16_t type = Human_GetList()->items[i]->type;
         TaskFn fn = HANDLER(FlashBang_GetEvent(), type);
 
-        fn(Human_GetList()->tasks[i], &msg);
+        fn(Human_GetList()->items[i], &msg);
     }
     if (hit && hit->task && HANDLER(BulletHole_GetEvent(), hit->task->type)) {
         HoleMsg m;

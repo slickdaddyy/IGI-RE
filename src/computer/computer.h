@@ -9,15 +9,9 @@
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "qasm/qasmtypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* a task list: count, then the tasks from +8 */
-typedef struct TaskArray {
-    int count;
-    int unk04;
-    Task *items[1];
-} TaskArray;
 
 /* passed to every object drawn on the map computer (ComputerObject event 0) */
 typedef struct MapQuery {
@@ -42,7 +36,7 @@ extern TaskFn gTaskHandlers[][0x180];
 uint8_t ComputerObject_GetEvent0(void);
 uint8_t ComputerObject_GetEvent1(void);
 uint8_t ComputerObject_GetEvent2(void);
-TaskArray *ComputerHilight_GetList(void);
+QTaskList *ComputerHilight_GetList(void);
 void ComputerObject_ProjectDir(float *out, float *dir, MapQuery *q);
 void ComputerObject_DrawSprite(MapQuery *q);
 void ComputerObject_DrawMarker(MapQuery *q);

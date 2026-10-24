@@ -13,15 +13,6 @@ FN_EXTERN(BinocularHolder_GetParams);
 FN_EXTERN(BinocularOverlay_DrawHandler);
 FN_EXTERN(BinocularOverlay_UseHandler);
 
-/* what the collision line tests skip */
-typedef struct CollFilter {
-    int unk0;
-    void *a;
-    void *b;
-    void *c;
-    float unk10;
-} CollFilter;
-
 /* a bar that jumps to random levels and falls back */
 typedef struct VUMeter {
     float level;
@@ -371,12 +362,12 @@ void BinocularOverlay_Draw(BinocularOverlay *ov)
     uint8_t event;
     int i;
 
-    filter.a = ov;
-    filter.b = ov->task.parent;
+    filter.task = (Task *)ov;
+    filter.owner = ov->task.parent;
     from = ov->pos;
     to.x = ov->dir[0];
     to.y = ov->dir[1];
-    filter.c = ov->task.parent->parent;
+    filter.other = ov->task.parent->parent;
     filter.unk10 = 1.0f;
     to.x = (AppContext_IsUSA() ? kImperial : kMetric) * to.x * kWorldUnit;
     to.y = (AppContext_IsUSA() ? kImperial : kMetric) * to.y * kWorldUnit;
@@ -531,9 +522,9 @@ void BinocularOverlay_TrackMovement(BinocularOverlay *ov)
         v[2] = gView.m[8] * dz + gView.m[7] * dy + gView.m[6] * dx;
         if (Mesh3D_Exclude(v, radius, NULL))
             continue;
-        filter.a = player;
-        filter.b = player;
-        filter.c = hm;
+        filter.task = player;
+        filter.owner = player;
+        filter.other = (Task *)hm;
         ov->visible++;
         visibility = 0;
         event = AIDetection_GetEvent0();

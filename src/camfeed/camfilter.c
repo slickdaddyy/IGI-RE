@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "task/tasktypes.h"
 #include "res/restypes.h"
+#include "d3d/d3dtypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x490370, int, Timer_GetMs, (void));
@@ -112,12 +113,6 @@ typedef struct Vertex {
     uint32_t color;
     float u, v;
 } Vertex;
-
-typedef struct DynVB {
-    void *vb;
-    int size;
-    int used;
-} DynVB;
 
 extern uint16_t gBandFilterType;
 extern uint16_t gHandiCamFilterType;

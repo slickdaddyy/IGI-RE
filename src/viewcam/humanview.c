@@ -15,12 +15,6 @@ FN_EXTERN(HumanAttach_Detect);
 FN_EXTERN(SubLevel_Run);
 FN_EXTERN(Task_FalseHandler);
 
-/* the second word is the object the line ignores */
-typedef struct CollFilter {
-    uint32_t unk0;
-    Human *ignore;
-} CollFilter;
-
 /* where sounds are heard from */
 typedef struct SoundEar {
     double *pos;
@@ -58,9 +52,9 @@ ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, double *pos, float r
 ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, double *pos, float radius, int category));
 ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *obj));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, double *from, double *to, int count, uint8_t event,
-                                  CollFilter *filter, unsigned flags));
+                                  CollIgnore *filter, unsigned flags));
 ORIG(0x4CDB20, void, Coll_LinesEx, (void *world, CollHit *hits, double *from, double *to, int count, uint8_t event,
-                                    CollFilter *filter, unsigned flags, int unk));
+                                    CollIgnore *filter, unsigned flags, int unk));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4CEC10, void *, VirModel_Find, (const char *name));
@@ -440,7 +434,7 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
     float e0, e1, e2, o[3];
     long double z;
     double eye[3], start[3], end[3];
-    CollFilter filter;
+    CollIgnore filter;
     CollHit hit;
     uint8_t ev;
     void *world;
@@ -497,7 +491,7 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
         end[1] = b + eye[1];
         end[2] = z + eye[2];
         memcpy(&filter.unk0, &o[0], 4);
-        filter.ignore = h;
+        filter.task = (Task *)h;
         ev = Game_GetEvent8();
         world = Game_GetWorld();
         Coll_LinesEx(world, &hit, start, end, 1, ev, &filter, 0xFFFFFFFF, 1);
@@ -532,7 +526,7 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
         filter.unk0 = (uint32_t)(uintptr_t)&v->cam.m[2];
         memcpy(start, eye, sizeof(start));
         end[0] = a + eye[0];
-        filter.ignore = h;
+        filter.task = (Task *)h;
         end[1] = b + eye[1];
         end[2] = c + eye[2];
         ev = Game_GetEvent8();

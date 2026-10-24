@@ -6,6 +6,7 @@
 
 #include "igi.h"
 #include "task/tasktypes.h"
+#include "qasm/qasmtypes.h"
 
 #define VPAD(from, to) char pad##from[(to) - (from)]
 
@@ -13,13 +14,6 @@ typedef void (*TaskHandler)(void *task, void *arg);
 
 /* gTaskHandlers[slot][type] */
 extern TaskHandler gTaskHandlers[][0x180];
-
-/* count, then the tasks from +8 */
-typedef struct TaskArray {
-    int count;
-    int unk4;
-    Task *items[1];
-} TaskArray;
 
 /* rotation plus a serial number that changes with it */
 typedef struct Rot {

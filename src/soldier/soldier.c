@@ -21,12 +21,6 @@ FN_EXTERN(SoldierRPG_ParamsChanged);
 FN_EXTERN(Soldier_DeleteHandler);
 FN_EXTERN(Task_Nothing);
 
-/* who the death slide traces ignore */
-typedef struct CollIgnore {
-    int unk0;
-    Human *h;
-} CollIgnore;
-
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
@@ -1073,7 +1067,7 @@ void Soldier_GetDeathVelocity(double *out, Human *h, int model, int anim)
         }
         zoff = zoff + kSlideStep;
     }
-    ignore.h = h;
+    ignore.task = (Task *)h;
     event = Game_GetEvent8();
     Coll_Lines(Game_GetWorld(), hits, from, to, 9, event, &ignore, 0xFFFFFFFF);
     for (j = 0; j < 9; j++)

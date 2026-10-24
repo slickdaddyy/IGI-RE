@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "ammotype/ammotype.h"
+#include "qasm/qasmtypes.h"
 
 /* "GunShot" (0xC38 bytes): the bullets in flight of one gun and the
    tracer trails they leave. */
@@ -92,12 +93,6 @@ typedef struct FireArgs {
     int unk2C;
 } FireArgs;
 
-typedef struct TaskArray {
-    int count;
-    int unk4;
-    Task *items[1];
-} TaskArray;
-
 _Static_assert(sizeof(Bullet) == 0x48, "Bullet");
 _Static_assert(sizeof(Trail) == 0xC8, "Trail");
 _Static_assert(sizeof(ShotPoly) == 0x50, "ShotPoly");
@@ -120,7 +115,7 @@ ORIG(0x413B20, uint8_t, Weapon_GetFireEvent, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x460C30, uint8_t, Human_GetGunshotEvent, (void));
-ORIG(0x460C60, TaskArray *, Human_GetList, (void));
+ORIG(0x460C60, QTaskList *, Human_GetList, (void));
 ORIG(0x47B750, void, GunShot_MoveBullets, (GunShot *s));
 ORIG(0x497F20, void, TransContext_Project, (float *screen, float *depth, Vec3d *pos));
 ORIG(0x49A430, void, PolyList_SetPos, (PolyObj *p, Vec3d *pos));

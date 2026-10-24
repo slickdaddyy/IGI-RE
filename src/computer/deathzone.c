@@ -20,7 +20,7 @@ ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
 ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
 ORIG(0x416920, int, Game_GetWorld, (void));
 ORIG(0x42BC20, uint16_t, Train_GetType, (void));
-ORIG(0x460C60, TaskArray *, Human_GetList, (void));
+ORIG(0x460C60, QTaskList *, Human_GetList, (void));
 ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (int world, void *obj, void **model));

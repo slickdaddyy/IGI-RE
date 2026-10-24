@@ -10,6 +10,7 @@
 #include "weapon/humanplayer.h"
 #include "weapon/weapon.h"
 #include "qvertex/qvertextypes.h"
+#include "coll/colltypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401AE0, void *, TaskRef_Add, (void *task));
@@ -951,12 +952,6 @@ static void Render_ActionBar(HumanPlayer *h, int width, int height, float *top)
     gRenderFuncs[gQVertexStrip](&s);
 }
 
-/* passed to Coll_Lines; the first word is left over from the action bar */
-typedef struct CollIgnore {
-    float unk0;
-    HumanPlayer *h;
-} CollIgnore;
-
 /* debug range finder: distance to what the view points at */
 static void Render_Range(HumanPlayer *h, CollIgnore *ignore)
 {
@@ -967,7 +962,7 @@ static void Render_Range(HumanPlayer *h, CollIgnore *ignore)
     void *task, *world;
     char unk;
 
-    ignore->h = h;
+    ignore->task = (Task *)h;
     HumanView_GetEye(cam, h->view);
     HumanView_GetForward(dir, h->view);
     end[1] = dir[1];
@@ -1012,7 +1007,7 @@ void HumanPlayer_RenderHandler(HumanPlayer *h, void *arg)
     type = Human_GetType();
     gTaskHandlers[ev][type](h, arg);
     if (h->showBar)
-        Render_ActionBar(h, width, height, &ignore.unk0);
+        Render_ActionBar(h, width, height, (float *)&ignore.unk0);
     if (DebugText_IsEnabled())
         Render_Range(h, &ignore);
     if (*(int *)(settings + 0xE8) != 1)

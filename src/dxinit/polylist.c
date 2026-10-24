@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "dxinit/dxinit.h"
+#include "d3d/d3dtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -57,12 +58,6 @@ typedef struct PrimArg {
     int unk8;
     void *obj;
 } PrimArg;
-
-typedef struct DynVB {
-    IDirect3DVertexBuffer7 *vb;
-    int size;
-    int used;
-} DynVB;
 
 typedef struct LitVertex {
     float x, y, z;
