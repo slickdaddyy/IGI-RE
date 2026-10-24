@@ -8,6 +8,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "qasm/qasmtypes.h"
+#include "graphtask/graphtasktypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -57,11 +58,6 @@ typedef struct WeaponType {
     char unk614[8];
     char name[4];
 } WeaponType;
-
-typedef struct PhysType {
-    char unk0[0x2D4];
-    float *time;
-} PhysType;
 
 /* what the AI sees with: position, eye, body and view rotation, cone sizes */
 typedef struct AIView {

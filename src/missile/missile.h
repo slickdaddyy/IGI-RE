@@ -9,15 +9,10 @@
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "coll/colltypes.h"
+#include "graphtask/graphtasktypes.h"
 
 typedef void (*TaskFn1)(Task *task);
 typedef void (*TaskFn2)(Task *task, void *arg);
-
-/* the physics object type a vehicle was made from (DefinePhysicsObjType) */
-typedef struct PhysType {
-    char unk0[0x2D4];
-    void *data;
-} PhysType;
 
 /* "Vehicle" (0x748 bytes), a subtype of RigidDynCubeObj */
 typedef struct Vehicle {

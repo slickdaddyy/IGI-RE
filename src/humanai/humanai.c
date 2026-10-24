@@ -437,7 +437,7 @@ void HumanAI_FindWeapons(HumanAI *ai)
                     PhysType *pt = PhysicsObjType_Find(wt->name);
 
                     ai->hasGrenade = 1;
-                    ai->grenadeTime = round_int(*pt->time * 30.0f);
+                    ai->grenadeTime = round_int(*(float *)pt->data * 30.0f);
                     ai->grenadeId = wt->id;
                 }
             }

@@ -306,7 +306,7 @@ static int velocity2_zero(Plane *p)
 static void plane_start_velocity(Plane *p)
 {
     if (velocity2_zero(p)) {
-        long double k = (long double)p->v.speed * p->v.phys->data->unk0 * kStartSpeed;
+        long double k = (long double)p->v.speed * ((VehicleConfig *)p->v.phys->data)->unk0 * kStartSpeed;
 
         p->v.body.velocity[0] = k * p->v.matrix.m[1];
         p->v.body.velocity[1] = k * p->v.matrix.m[4];
@@ -383,7 +383,7 @@ void Plane_Fly(Plane *p)
         ratio = kZero;
     else if (ratio > kOne)
         ratio = kOne;
-    for (i = 0; i < phys->joint_count; i++)
+    for (i = 0; i < phys->jointCount; i++)
         p->v.joints[i].active = !p->gear;
 
     /* speed towards the thrust setting, slower on the ground */
@@ -454,7 +454,7 @@ void Plane_Fly(Plane *p)
     }
 
     if (p->catapult) {
-        float force[6] = {0, phys->power * kCatapult, 0, 0, 0, 0};
+        float force[6] = {0, phys->mass * kCatapult, 0, 0, 0, 0};
 
         Body_AddForce(&p->v.body, force);
     }
@@ -463,7 +463,7 @@ void Plane_Fly(Plane *p)
 
         force[0] = 0;
         force[2] = 0;
-        force[1] = phys->power * p->v.speed * kThrust;
+        force[1] = phys->mass * p->v.speed * kThrust;
         if (!p->v.unk1B8) {
             Matrix m;
             float g0, g1, g2;
@@ -595,13 +595,13 @@ void Plane_CheckWheels(Plane *p)
         if (!(hits[i].dist >= kWheelNear)) {
             long double u;
 
-            force[2] = ((kWheelNearF - hits[i].dist) * kWheelSpring + kOne) * p->v.phys->power * kWheelForce;
+            force[2] = ((kWheelNearF - hits[i].dist) * kWheelSpring + kOne) * p->v.phys->mass * kWheelForce;
             u = kWheelNear - hits[i].dist;
             if (lift < u)
                 lift = u;
             found = 1;
         } else {
-            force[2] = t * kWheelFar * p->v.phys->power * kWheelForce;
+            force[2] = t * kWheelFar * p->v.phys->mass * kWheelForce;
         }
         force[3] = pts[i][0];
         force[4] = pts[i][1];

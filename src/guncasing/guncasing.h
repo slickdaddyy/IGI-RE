@@ -9,6 +9,7 @@
 #include "task/tasktypes.h"
 #include "coll/colltypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "graphtask/graphtasktypes.h"
 
 typedef void (*TaskFn)();
 
@@ -110,11 +111,6 @@ typedef struct Body {
     Vec3f vel;          /* 0x108 */
     char unk24[0xA0];
 } Body;
-
-typedef struct PhysType {
-    char unk0[0x2D4];
-    void *data;
-} PhysType;
 
 /* per type data read by Grenade_ParseArgs */
 typedef struct GrenadeType {

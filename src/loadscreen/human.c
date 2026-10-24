@@ -6,13 +6,7 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
-
-/* per hit zone: damage multiplier and the hit / death animations */
-typedef struct HitAnims {
-    float mult;
-    int hit;
-    int death[2];
-} HitAnims;
+#include "loadscreen/loadscreentypes.h"
 
 typedef struct HumanDamage {
     float total;

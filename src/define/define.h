@@ -8,21 +8,10 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "script/scripttypes.h"
+#include "sound/soundtypes.h"
+#include "transctx/transctxtypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct SoundParams {
-    float volume;
-    float pitch;
-    float pan;
-    int unkC;
-    double minDist;
-    double maxDist;
-    Vec3d pos;
-    Vec3d vel;
-    float start;
-    int unk54;
-} SoundParams;
 
 /* what a task keeps to restart or query a sound of its own */
 typedef struct SoundHandle {
@@ -51,11 +40,6 @@ typedef struct SoundWriteArg {
     char *buf;
     int indent;
 } SoundWriteArg;
-
-typedef struct SoundFindArg {
-    const char *name;
-    Task *found;
-} SoundFindArg;
 
 /* argument of Create: the definition to copy, or NULL for a definition */
 typedef struct SoundCreateArg {
@@ -148,7 +132,6 @@ typedef struct SoundDefGraph {
     int hash;
 } SoundDefGraph;
 
-_Static_assert(sizeof(SoundParams) == 0x58, "SoundParams");
 _Static_assert(offsetof(SoundDefSound, pos) == 0x88, "SoundDefSound");
 _Static_assert(offsetof(SoundDefSound, name) == 0xDF, "SoundDefSound");
 _Static_assert(sizeof(SoundDefSound) == 0x130, "SoundDefSound");

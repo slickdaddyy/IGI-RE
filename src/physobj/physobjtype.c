@@ -8,6 +8,7 @@
 #include "hook.h"
 #include "orig.h"
 #include "physobj/physobj.h"
+#include "sysmisc/sysmisctypes.h"
 
 ORIG(0x401D80, void, Task_Broadcast, (void *task, uint8_t slot, void *arg));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
@@ -34,13 +35,6 @@ extern void *gModelLODSettingsContainer;
 extern uint8_t gPhysicsObjTypeEvents[];
 extern int gPhysicsObjTypeCount;
 extern PhysicsObjType gPhysicsObjTypes[];
-
-/* what File_ScanDir passes to its callback */
-typedef struct DirEntry {
-    char *path;
-    int unk4;
-    char isDir;
-} DirEntry;
 
 /* the parts of an object Mesh3D_GetVertex reads */
 typedef struct PointQuery {
@@ -168,14 +162,14 @@ void PhysicsObjLoad_Visit(DirEntry *e)
     size_t n, m;
 
     if (e->isDir) {
-        PhysicsObjLoad(e->path);
+        PhysicsObjLoad(e->name);
         return;
     }
     ext = AppContext_GetQvmOnly() ? "qvm" : "qsc";
-    n = strlen(e->path);
+    n = strlen(e->name);
     m = strlen(ext);
-    if (n > m && !crt_stricmp(e->path + n - m, ext))
-        PhysicsObjType_ParseConfigFile(e->path);
+    if (n > m && !crt_stricmp(e->name + n - m, ext))
+        PhysicsObjType_ParseConfigFile(e->name);
 }
 HOOK(0x4EE050, PhysicsObjLoad_Visit);
 

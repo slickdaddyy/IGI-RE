@@ -10,16 +10,11 @@
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "graphtask/graphtasktypes.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)();
-
-/* the physics object type a PhysicsObj was made from */
-typedef struct PhysType {
-    char unk0[8];
-    float mass;         /* 0x08 */
-} PhysType;
 
 /* "PhysicsObj" (0x720 bytes), a RigidDynCubeObj moved by a rigid body */
 typedef struct PhysObj {

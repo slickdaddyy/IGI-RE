@@ -6,6 +6,7 @@
 
 #include "hook.h"
 #include "igi.h"
+#include "transctx/transctxtypes.h"
 
 ORIG(0x495620, void, Sound_ListPush, (void *node, void *head));
 ORIG(0x4A5500, char *, crt_strncpy, (char *dst, const char *src, size_t n));
@@ -79,23 +80,9 @@ typedef struct Voice {
     AdpcmState adpcm;
 } Voice;
 
-typedef struct SoundParams {
-    float volume;
-    float pitch;
-    float pan;
-    int unkC;
-    double minDist;
-    double maxDist;
-    double pos[3];
-    int unk38[6];
-    float start; /* seconds into the sample */
-    int unk54;
-} SoundParams;
-
 _Static_assert(sizeof(AdpcmState) == 0xC, "AdpcmState");
 _Static_assert(sizeof(Sound) == 0x30, "Sound");
 _Static_assert(sizeof(Voice) == 0x4C, "Voice");
-_Static_assert(sizeof(SoundParams) == 0x58, "SoundParams");
 
 extern int gSoundVoiceCount;
 extern double gListenerPos[];
@@ -636,9 +623,9 @@ void Voice_SetParams(Voice *v, SoundParams *p)
     l.minDist = p->minDist * kDistScale;
     l.maxDist = p->maxDist * kDistScale;
     if ((v->flags & 2) && !(v->flags & 4)) {
-        d[0] = p->pos[0] - gListenerPos[0];
-        d[1] = p->pos[1] - gListenerPos[1];
-        d[2] = p->pos[2] - gListenerPos[2];
+        d[0] = p->pos.x - gListenerPos[0];
+        d[1] = p->pos.y - gListenerPos[1];
+        d[2] = p->pos.z - gListenerPos[2];
         dist = Vec3d_Length(d);
         if (dist > l.maxDist) {
             l.volume = 0;
@@ -761,7 +748,7 @@ void SoundParams_InitBasic(SoundParams *p);
 void SoundParams_Init(SoundParams *p)
 {
     SoundParams_InitBasic(p);
-    memset(p->pos, 0, 0x34);
+    memset(&p->pos, 0, 0x34);
 }
 HOOK(0x4974A0, SoundParams_Init);
 

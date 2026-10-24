@@ -445,9 +445,9 @@ void Heli_Move(Heli *h)
         float f2[6] = {0, 0, 0, 0, 0, 409.6f};
         float f3[6] = {0, 0, 0, 0, 12288.0f, 0};
 
-        f1[1] = a0 * phys->power * kYawForce;
-        f2[0] = a1 * phys->power;
-        f3[0] = s * (t2 * c->axis[2].rate) * phys->power * kRollForce;
+        f1[1] = a0 * phys->mass * kYawForce;
+        f2[0] = a1 * phys->mass;
+        f3[0] = s * (t2 * c->axis[2].rate) * phys->mass * kRollForce;
         stale = f2[0];
         Body_AddForce(&h->v.body, f1);
         Body_AddForce(&h->v.body, f2);
@@ -587,12 +587,12 @@ void Heli_UpdateWheels(Heli *h)
             float u = top + kTwoMeters;
 
             landed = 1;
-            force[2] = ((u - dist) / u + kOne) * h->v.phys->power * kLift;
+            force[2] = ((u - dist) / u + kOne) * h->v.phys->mass * kLift;
             if (t - hit->dist > max_lift)
                 max_lift = t - hit->dist;
         } else {
             landed = 0;
-            force[2] = pen / len * h->v.phys->power * kLift;
+            force[2] = pen / len * h->v.phys->mass * kLift;
         }
         force[3] = offs[i].x;
         force[4] = offs[i].y;

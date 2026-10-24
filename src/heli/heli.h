@@ -11,19 +11,7 @@
 #include "coll/colltypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "vehicle/vehicletypes.h"
-
-/* a physics object type (DefinePhysicsObjType); data is its parsed arguments */
-typedef struct PhysType {
-    char unk0[8];
-    float power;
-    char unkC[0x14C - 0xC];
-    struct {
-        int point;
-        char unk4[0x14];
-    } joints[16];       /* 0x14C */
-    char unk2CC[8];
-    void *data;
-} PhysType;
+#include "graphtask/graphtasktypes.h"
 
 /* "Vehicle" (0x748 bytes), a subtype of RigidDynCubeObj */
 typedef struct Vehicle {
@@ -238,7 +226,6 @@ typedef struct ControlInfo {
     float max;
 } ControlInfo;
 
-_Static_assert(offsetof(PhysType, data) == 0x2D4, "PhysType");
 _Static_assert(offsetof(Vehicle, contacts) == 0x1B8, "Vehicle");
 _Static_assert(offsetof(Vehicle, moved) == 0x690, "Vehicle");
 _Static_assert(offsetof(Vehicle, airborne) == 0x6D9, "Vehicle");

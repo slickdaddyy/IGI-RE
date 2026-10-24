@@ -3,6 +3,7 @@
 
 #include "hook.h"
 #include "igi.h"
+#include "sysmisc/sysmisctypes.h"
 
 /* The "LOCAL:" device: files of the host file system through the C
    runtime, 16 open files at a time. */
@@ -21,13 +22,6 @@ typedef struct LocalFile {
     int mode;
     int used;
 } LocalFile;
-
-/* what EnumDir passes to its callback for each file */
-typedef struct DirEntry {
-    char *name;
-    DWORD size;
-    char isDir;
-} DirEntry;
 
 #define LOCAL_FILE_MAX 16
 

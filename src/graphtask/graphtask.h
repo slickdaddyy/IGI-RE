@@ -8,6 +8,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "coll/colltypes.h"
+#include "graphtask/graphtasktypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -32,31 +33,6 @@ typedef struct Body {
     int forceCount;     /* 0x5C */
     int lastForceCount;
 } Body;
-
-/* a point of a physics object type */
-typedef struct PhysJoint {
-    int point;
-    int unk4;
-    int unk8;
-    float bounce;
-    float unk10;
-    float friction;
-} PhysJoint;
-
-/* one DefinePhysicsObjType() entry */
-typedef struct PhysType {
-    uint16_t type;
-    int unk4;
-    float mass;         /* 0x08 */
-    float size[3];
-    char unk18[0x120];
-    char model[0x10];   /* 0x138 */
-    int jointCount;     /* 0x148 */
-    PhysJoint joints[16];
-    float restSpeed;    /* 0x2CC */
-    float restSpin;     /* 0x2D0, squared */
-    void *data;
-} PhysType;
 
 /* a model point the physics object stands on */
 typedef struct Contact {
@@ -123,8 +99,6 @@ typedef struct PhysPointMsg {
 } PhysPointMsg;
 
 _Static_assert(sizeof(Body) == 0x64, "Body");
-_Static_assert(offsetof(PhysType, joints) == 0x14C, "PhysType.joints");
-_Static_assert(offsetof(PhysType, data) == 0x2D4, "PhysType.data");
 _Static_assert(sizeof(Contact) == 0x38, "Contact");
 _Static_assert(offsetof(PhysObj, body) == 0xF0, "PhysObj.body");
 _Static_assert(offsetof(PhysObj, contacts) == 0x1BC, "PhysObj.contacts");

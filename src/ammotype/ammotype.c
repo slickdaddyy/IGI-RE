@@ -2,6 +2,7 @@
 #include "igi.h"
 #include "ammotype/ammotype.h"
 #include "script/scripttypes.h"
+#include "sysmisc/sysmisctypes.h"
 
 FN_EXTERN(BulletHole_AddRigid);
 FN_EXTERN(BulletHole_AddSpline);
@@ -54,12 +55,6 @@ extern uint16_t gBulletHoleType;
 extern char gBulletHolePool[];
 extern char gBulletHolePool2[];
 extern const char gScriptEmptyString[];
-
-typedef struct DirEntry {
-    char *name;
-    int unk04;
-    char isDir;
-} DirEntry;
 
 ScriptValue *DefineAmmoType(ScriptValue *out, void *data, void *args);
 void AmmoType_LoadAll(void);

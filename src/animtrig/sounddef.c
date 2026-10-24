@@ -5,6 +5,8 @@
 #include "igi.h"
 #include "animtrig/animtrig.h"
 #include "qasm/qasmtypes.h"
+#include "sound/soundtypes.h"
+#include "transctx/transctxtypes.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4974A0, void, SoundParams_Init, (void *params));
@@ -24,20 +26,6 @@ ORIG(0x4E6710, uint8_t, Sound_GetDurationEvent, (void));
 ORIG(0x4E6730, int, Sound_GetStopEvent, (void));
 ORIG(0x4E6FF0, long double, SoundParams_ClampVolume, (void *params));
 ORIG(0x4E7030, void, SoundGraph_Eval, (float *out, float *graph, float x));
-
-/* a voice's play parameters, see notes/transctx.md */
-typedef struct SoundParams {
-    float volume;
-    float pitch;
-    float pan;
-    int unkC;
-    double minDist;
-    double maxDist;
-    double pos[3];
-    int unk38[6];
-    float start;
-    int unk54;
-} SoundParams;
 
 /* filled by the sound info event of the owner */
 typedef struct SoundInfo {
@@ -93,11 +81,6 @@ typedef struct SoundWriteArg {
     char *buf;
     int depth;
 } SoundWriteArg;
-
-typedef struct SoundFindArg {
-    const char *name;
-    Task *found;
-} SoundFindArg;
 
 typedef struct SoundSysMicrophone {
     Task task;
@@ -194,9 +177,9 @@ void SoundDefGraph_Update(SoundDefGraph *s)
         s->volume2 = 0;
     else if (s->volume2 > kOne)
         s->volume2 = 1.0f;
-    memset(s->params.unk38, 0, sizeof(s->params.unk38));
+    memset(&s->params.vel, 0, sizeof(s->params.vel));
     s->params.volume = (long double)s->volume2 * s->volume * s->params.volume;
-    memcpy(s->params.pos, s->pos, sizeof(s->pos));
+    memcpy(&s->params.pos, s->pos, sizeof(s->pos));
     s->params.pitch = (long double)s->pitch * s->params.pitch;
     s->params.minDist = s->minDist;
     s->params.maxDist = s->maxDist;

@@ -2,16 +2,11 @@
 
 #include "hook.h"
 #include "qasm/qasm.h"
+#include "sysmisc/sysmisctypes.h"
 
 ORIG(0x48F340, int, AppContext_GetQvmOnly, (void));
 ORIG(0x4A5980, int, crt_stricmp, (const char *a, const char *b));
 ORIG(0x4C48E0, void, RigidDynCubeObj_ParseConfigFile, (const char *path));
-
-typedef struct DirEntry {
-    char *name;
-    int unk04;
-    char isDir;
-} DirEntry;
 
 /* Directory scan callback: loads every .qvm file, or .qsc when the flag
    read by AppContext_GetQvmOnly is clear. */

@@ -5,6 +5,7 @@
 
 #include "hook.h"
 #include "patrol/patrol.h"
+#include "loadscreen/loadscreentypes.h"
 
 FN_EXTERN(Human_DeadRun);
 FN_EXTERN(Human_UseRun);
@@ -67,12 +68,6 @@ typedef struct SoldierMotion {
     char unk8[0x44];
     int unk4C[5];
 } SoldierMotion;
-
-typedef struct HitAnims {
-    int unk0;
-    int hit;
-    int death;
-} HitAnims;
 
 typedef struct SoldierAI {
     char unk0[0x3AD0];
@@ -666,7 +661,7 @@ void SoldierFemale_DieEnter(SoldierSM *sm, Soldier *h)
     if (ai && ai->deathAnim != -1)
         anim = ai->deathAnim;
     else
-        anim = a->death;
+        anim = a->death[0];
     Anim_Play(h->anim, 0, anim, 0, 0.0f);
     Soldier_GetDeathVelocity(h->deathVel, h, h->model, anim);
     HumanViewCam(h, 3);

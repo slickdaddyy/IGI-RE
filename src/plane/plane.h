@@ -10,6 +10,7 @@
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "vehicle/vehicletypes.h"
+#include "graphtask/graphtasktypes.h"
 
 /* per type data of a vehicle physics type, parsed by 0x5031F0 */
 typedef struct VehicleConfig {
@@ -33,16 +34,6 @@ typedef struct HeliConfig {
     int list[13];       /* 0x11C, the second list starts at list[3] */
     int count2;         /* 0x150 */
 } HeliConfig;
-
-/* the physics object type a vehicle was made from (DefinePhysicsObjType) */
-typedef struct PhysType {
-    char unk0[8];
-    float power;
-    char unkC[0x148 - 0xC];
-    int joint_count;    /* 0x148 */
-    char unk14C[0x2D4 - 0x14C];
-    VehicleConfig *data;
-} PhysType;
 
 typedef struct Joint {
     char unk0[0x18];
@@ -177,7 +168,6 @@ _Static_assert(offsetof(Vehicle, speed) == 0x720, "speed");
 _Static_assert(sizeof(Vehicle) == 0x748, "Vehicle");
 _Static_assert(sizeof(VehicleConfig) == 0x118, "VehicleConfig");
 _Static_assert(offsetof(HeliConfig, count2) == 0x150, "HeliConfig");
-_Static_assert(offsetof(PhysType, data) == 0x2D4, "PhysType");
 _Static_assert(offsetof(Plane, sound_params) == 0x828, "sound_params");
 _Static_assert(sizeof(Plane) == 0x888, "Plane");
 _Static_assert(offsetof(Heli, unk8C0) == 0x8C0, "Heli");

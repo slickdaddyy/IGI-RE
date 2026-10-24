@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "mission/mission.h"
+#include "sysmisc/sysmisctypes.h"
 
 /* a mission defined by DefineMission in LOCAL:missions/<folder>/mission.qsc */
 typedef struct Mission {
@@ -17,12 +18,6 @@ typedef struct Mission {
     char picture[0x20];
     int next;
 } Mission;
-
-typedef struct DirEntry {
-    char *name;
-    int unk04;
-    char isDir;
-} DirEntry;
 
 _Static_assert(offsetof(Mission, path) == 0x144, "Mission.path");
 _Static_assert(offsetof(Mission, picture) == 0x484, "Mission.picture");

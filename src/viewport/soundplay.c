@@ -3,18 +3,10 @@
 #include "hook.h"
 #include "viewport/viewport.h"
 #include "qasm/qasmtypes.h"
+#include "sound/soundtypes.h"
+#include "transctx/transctxtypes.h"
 
 /* Playing sounds by name or through a handle, on top of the sound system of src/sound. */
-
-typedef struct SoundParams {
-    float volume;
-    float pitch;
-    float pan;
-    int unkC;
-    double minDist;
-    double maxDist;
-    char rest[0x38];
-} SoundParams;
 
 /* one playing (or wanted) sound, there is one per DirectSound voice */
 typedef struct SoundInst {
@@ -38,14 +30,8 @@ typedef struct SoundHandle {
     SoundParams params;
 } SoundHandle;
 
-typedef struct SoundFindArg {
-    const char *name;
-    Task *found;
-} SoundFindArg;
-
 typedef void (*TaskFn2)(Task *task, void *arg);
 
-_Static_assert(sizeof(SoundParams) == 0x58, "SoundParams");
 _Static_assert(sizeof(SoundInst) == 0x78, "SoundInst");
 
 extern int gUnkA5E5E8;

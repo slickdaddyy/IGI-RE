@@ -6,6 +6,7 @@
 
 #include "igi.h"
 #include "task/tasktypes.h"
+#include "loadscreen/loadscreentypes.h"
 
 #pragma pack(push, 4)
 
@@ -60,12 +61,6 @@ typedef struct HumanDamage {
     } part[17];
     int hitZone;
 } HumanDamage;
-
-typedef struct HitAnims {
-    int unk0;
-    int hit;
-    int death[2];
-} HitAnims;
 
 /* The AI brain that drives a soldier (Human.ai). */
 typedef struct HumanAI {

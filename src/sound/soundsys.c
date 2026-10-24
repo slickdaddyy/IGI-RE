@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "sound/sound.h"
 #include "qasm/qasmtypes.h"
+#include "sound/soundtypes.h"
 
 FN_EXTERN(DefineGraph);
 FN_EXTERN(DefineGroup);
@@ -68,11 +69,6 @@ typedef struct SoundSysDef {
     Task task;
     char path[0x80];
 } SoundSysDef;
-
-typedef struct SoundFindArg {
-    const char *name;
-    Task *found;
-} SoundFindArg;
 
 typedef struct SoundCreateArg {
     Task *def;

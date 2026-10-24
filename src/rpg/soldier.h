@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "loadscreen/loadscreentypes.h"
 
 typedef struct Soldier Soldier;
 typedef struct SoldierSM SoldierSM;
@@ -58,12 +59,6 @@ typedef struct SoldierDamage {
     } part[17];
     int hitZone;
 } SoldierDamage;
-
-typedef struct HitAnims {
-    int unk0;
-    int hit;
-    int death[2];
-} HitAnims;
 
 /* The AI brain that drives a soldier (Soldier.ai). */
 typedef struct SoldierAI {

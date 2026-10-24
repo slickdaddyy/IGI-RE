@@ -6,6 +6,7 @@
 
 #include "task/tasktypes.h"
 #include "script/scripttypes.h"
+#include "loadscreen/loadscreentypes.h"
 
 typedef struct StateMachine StateMachine;
 typedef struct HumanPlayer HumanPlayer;
@@ -101,12 +102,6 @@ typedef struct AmmoEntry {
     int id;
     int count;
 } AmmoEntry;
-
-typedef struct HitAnims {
-    int unk0;
-    int hit;
-    int death[2];
-} HitAnims;
 
 struct HumanPlayer {
     Task task;
