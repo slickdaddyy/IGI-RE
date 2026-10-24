@@ -1,16 +1,26 @@
 #ifndef RES_RESTYPES_H
 #define RES_RESTYPES_H
 
+#include <stdint.h>
+
 /* Filled in by the render driver */
 typedef struct Palette {
     int device;
     int unk4;
-    int unk8;
+    uint32_t *colors;       /* 256 */
 } Palette;
 
 typedef struct Texture {
     int device;
-    int unk4[7];
+    uint16_t width;
+    uint16_t height;
+    uint16_t pitch;
+    uint16_t format;
+    int unk0C;
+    float uScale;           /* used part of the surface */
+    float vScale;
+    float alpha;            /* share of the pixels that are see through */
+    int unk1C;
     struct IDirectDrawSurface7 *surface;
 } Texture;
 

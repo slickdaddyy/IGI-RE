@@ -8,42 +8,21 @@
 #include "hook.h"
 #include "igi.h"
 #include "types.h"
+#include "res/restypes.h"
 
 /* Texture functions of the Direct3D render mode: textures are DirectDraw
    surfaces, created and filled when the engine downloads them. */
 
-/* the engine's texture handle, 9 words */
-typedef struct TexHandle {
-    int mode;
-    uint16_t width;
-    uint16_t height;
-    uint16_t pitch;
-    uint16_t format;
-    int unk0C;
-    float uScale;           /* used part of the surface */
-    float vScale;
-    float alpha;            /* share of the pixels that are see through */
-    int unk1C;
-    IDirectDrawSurface7 *surface;
-} TexHandle;
-
-/* a palette handle and what AllocPalette gets */
-typedef struct PalHandle {
-    int mode;
-    int unk4;
-    uint32_t *colors;       /* 256 */
-} PalHandle;
-
 typedef struct PaletteDesc {
-    PalHandle *pal;
+    Palette *pal;
     int unk4;
     uint32_t *colors;
 } PaletteDesc;
 
 /* what AllocTexture and DownloadTexture get from the engine */
 typedef struct TextureDesc {
-    TexHandle *tex;
-    PalHandle *palette;
+    Texture *tex;
+    Palette *palette;
     int unk08;
     int pitch;
     int unk10;
@@ -144,10 +123,10 @@ static const float kAlphaNone = 0.0f;
 
 void D3DTex_GetTextureSize(TexSize *s);
 void D3DTex_AllocTexture(TextureDesc *d);
-void D3DTex_DeAllocTexture(TexHandle *t);
+void D3DTex_DeAllocTexture(Texture *t);
 void D3DTex_DownloadTexture(TextureDesc *d);
 void D3DTex_AllocPalette(PaletteDesc *d);
-void D3DTex_DeAllocPalette(PalHandle *p);
+void D3DTex_DeAllocPalette(Palette *p);
 void D3DTex_GetTMUs(int *out);
 void D3DTex_SetActiveTMU(int *in);
 void D3DTex_GetActiveTMU(int *out);
@@ -191,7 +170,7 @@ HOOK(0x50A620, D3DTex_AlphaCoverage);
 
 void D3DTex_AllocPalette(PaletteDesc *d)
 {
-    PalHandle *p = d->pal;
+    Palette *p = d->pal;
 
     p->colors = Mem_Alloc(0x400, 4);
     if (d->colors)
@@ -199,7 +178,7 @@ void D3DTex_AllocPalette(PaletteDesc *d)
 }
 HOOK(0x50A670, D3DTex_AllocPalette);
 
-void D3DTex_DeAllocPalette(PalHandle *p)
+void D3DTex_DeAllocPalette(Palette *p)
 {
     Mem_Free(p->colors);
     p->colors = NULL;
@@ -281,13 +260,13 @@ void D3DTex_AllocTexture(TextureDesc *d)
     int pitch = d->pitch;
     int format = d->format;
     DDPIXELFORMAT pf;
-    TexHandle *t;
+    Texture *t;
     TexSize s;
 
     D3DTex_FindFormat(&pf, format, d->flags, 0.0f);
     t = d->tex;
     memset(t, 0, sizeof(*t));
-    t->mode = Direct3D_GetRenderMode();
+    t->device = Direct3D_GetRenderMode();
     t->unk1C = 0;
     t->surface = NULL;
     if (!mipmap && (gD3DDeviceDesc.dpcTriCaps.dwTextureCaps & D3DPTEXTURECAPS_NONPOW2CONDITIONAL)) {
@@ -317,7 +296,7 @@ void D3DTex_AllocTexture(TextureDesc *d)
 
         *(int *)(slot + p->size) = p->used;
         p->used++;
-        *(TexHandle **)slot = t;
+        *(Texture **)slot = t;
     }
 }
 HOOK(0x50A940, D3DTex_AllocTexture);
@@ -356,7 +335,7 @@ void D3DTex_FindFormat(DDPIXELFORMAT *out, int format, unsigned flags, float alp
 }
 HOOK(0x50AA70, D3DTex_FindFormat);
 
-void D3DTex_DeAllocTexture(TexHandle *t)
+void D3DTex_DeAllocTexture(Texture *t)
 {
     Pool *p = &gTexPool;
     LARGE_INTEGER t0, t1;
@@ -369,7 +348,7 @@ void D3DTex_DeAllocTexture(TexHandle *t)
         int j, k, idx;
         char *last;
 
-        if (*(TexHandle **)slot != t)
+        if (*(Texture **)slot != t)
             continue;
         p->used--;
         j = *(int *)(slot + p->size);

@@ -54,19 +54,13 @@ typedef struct WideScreenFilter {
     float barH;
 } WideScreenFilter;
 
-typedef struct FilterTexture {
-    int device;
-    int unk4[7];
-    void *surface;
-} FilterTexture;
-
 /* security camera feed: rolling bands, noise and "CAMERA n" */
 typedef struct BandFilter {
     Task task;
     float z;
     float level; /* noise, falls back to 0 */
     float maxLevel; /* 0 = no signal, a flat rectangle */
-    FilterTexture tex;
+    Texture tex;
     int counter; /* 0..period, bands shift half a step past 45 */
     int period;
     int timer;
