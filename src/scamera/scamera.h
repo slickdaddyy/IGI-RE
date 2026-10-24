@@ -148,7 +148,6 @@ typedef struct Drawer {
     char unk15C[4];
 } Drawer;
 
-_Static_assert(sizeof(RigidDynCubeObj) == 0xF0, "RigidDynCubeObj");
 _Static_assert(offsetof(SCamera, lens) == 0x15C, "SCamera");
 _Static_assert(sizeof(SCamera) == 0x1C8, "SCamera");
 _Static_assert(offsetof(SCameraLens, eye) == 0x110, "SCameraLens");

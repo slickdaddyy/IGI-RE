@@ -61,9 +61,6 @@ enum {
 #define CTRL_FORWARD 4
 #define CTRL_CHEAT 19
 
-_Static_assert(sizeof(AIView) == 0xC0, "AIView");
-_Static_assert(sizeof(AIDetectView) == 0x78, "AIDetectView");
-
 extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 

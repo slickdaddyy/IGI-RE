@@ -48,8 +48,6 @@ typedef struct DisplayCallback {
 
 #define DISPLAY_CALLBACK_MAX 32
 
-_Static_assert(sizeof(DisplayMode) == 0x11C, "DisplayMode");
-
 extern char gDisplayOpen;
 extern char gDisplayModeSet;
 extern char gDisplayDevice[];

@@ -30,12 +30,6 @@ extern TerrainLightmap gLightmaps[];
 extern TerrainMaterial gTerrainMaterials[];
 extern uint8_t gTerrainTileMaps[][64];
 
-_Static_assert(offsetof(Terrain, slot_count) == 0x118, "Terrain");
-_Static_assert(offsetof(Terrain, nodes) == 0xD00, "Terrain");
-_Static_assert(offsetof(Terrain, textures) == 0xDBC, "Terrain");
-_Static_assert(offsetof(Terrain, offset) == 0xDE0, "Terrain");
-_Static_assert(sizeof(Terrain) == 0xF00, "Terrain");
-_Static_assert(sizeof(TerrainMaterial) == 900, "TerrainMaterial");
 _Static_assert(sizeof(TerrainLightmap) == 0x2C, "TerrainLightmap");
 
 ScriptValue *CreateTerrainMaterial(ScriptValue *out, void *data, void *args);

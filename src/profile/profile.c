@@ -34,9 +34,6 @@ extern ConfigDevice gDrivers[];
 extern char gLanguageAliasSet;
 extern void (*gRenderFuncs[])(int *);
 
-_Static_assert(sizeof(PlayerProfile) == 0x564, "PlayerProfile");
-_Static_assert(sizeof(ConfigDevice) == 0x404, "ConfigDevice");
-
 void Config_AddMissingKeys(void);
 void Config_FixDisplayModes(void);
 void Config_Apply(void);

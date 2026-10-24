@@ -59,5 +59,6 @@ typedef struct PlayerProfile {
     char name[32];
     int active_mission;
 } PlayerProfile;
+_Static_assert(sizeof(PlayerProfile) == 0x564, "PlayerProfile");
 
 #endif

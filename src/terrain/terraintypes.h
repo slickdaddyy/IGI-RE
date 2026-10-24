@@ -21,6 +21,8 @@ typedef struct DynCubeObj {
     int unk60;
 } DynCubeObj;
 _Static_assert(sizeof(DynCubeObj) == 0x68, "DynCubeObj");
+_Static_assert(offsetof(DynCubeObj, node) == 0x50, "DynCubeObj");
+_Static_assert(offsetof(DynCubeObj, unk60) == 0x60, "DynCubeObj");
 
 typedef struct TerrainMap {
     uint8_t *data;
@@ -39,11 +41,13 @@ typedef struct TerrainLayer {
     float scaleB;
     int tileB;
 } TerrainLayer;
+_Static_assert(sizeof(TerrainLayer) == 0x1C, "TerrainLayer");
 
 typedef struct TerrainMaterial {
     int unk0;
     TerrainLayer layers[32];
 } TerrainMaterial;
+_Static_assert(sizeof(TerrainMaterial) == 900, "TerrainMaterial");
 
 typedef struct Terrain {
     int unk0;
@@ -76,5 +80,9 @@ typedef struct Terrain {
     char name[0x100];
 } Terrain;
 _Static_assert(sizeof(Terrain) == 0xF00, "Terrain");
+_Static_assert(offsetof(Terrain, slot_count) == 0x118, "Terrain");
+_Static_assert(offsetof(Terrain, nodes) == 0xD00, "Terrain");
+_Static_assert(offsetof(Terrain, textures) == 0xDBC, "Terrain");
+_Static_assert(offsetof(Terrain, offset) == 0xDE0, "Terrain");
 
 #endif

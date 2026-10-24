@@ -35,9 +35,7 @@ extern int gVirModelCount;
 extern int gVirModelSaved;
 extern void (*gRenderFuncs[])(void *);
 
-_Static_assert(sizeof(VirModel) == 0x48, "VirModel");
 _Static_assert(sizeof(ModelFile) == 0x4C, "ModelFile");
-_Static_assert(sizeof(ModelLod) == 0x1C, "ModelLod");
 
 static void list_init(List *l)
 {

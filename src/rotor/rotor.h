@@ -81,7 +81,6 @@ _Static_assert(sizeof(Part) == 0x140, "Part");
 _Static_assert(offsetof(Prim, color) == 0x24, "Prim");
 _Static_assert(sizeof(CarData) == 0x2C0, "CarData");
 _Static_assert(offsetof(CarData, explodePoints) == 0x284, "CarData");
-_Static_assert(sizeof(Contact) == 0x38, "Contact");
 
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }

@@ -134,6 +134,7 @@ typedef struct AIView {
     double secLength;
     double secAlarmLength;
 } AIView;
+_Static_assert(sizeof(AIView) == 0xC0, "AIView");
 
 /* the view handed to the detection code each frame */
 typedef struct AIDetectView {
@@ -148,6 +149,7 @@ typedef struct AIDetectView {
     char active;
     char unk71[7];
 } AIDetectView;
+_Static_assert(sizeof(AIDetectView) == 0x78, "AIDetectView");
 
 /* HumanAI task (0x3ED0), the brain of an enemy, child of its human */
 typedef struct HumanAI {

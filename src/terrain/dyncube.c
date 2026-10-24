@@ -35,8 +35,6 @@ typedef struct QueryFrame {
 } QueryFrame;
 
 _Static_assert(sizeof(DynCubeNode) == 0x40, "DynCubeNode");
-_Static_assert(offsetof(DynCubeObj, node) == 0x50, "DynCubeObj");
-_Static_assert(offsetof(DynCubeObj, unk60) == 0x60, "DynCubeObj");
 
 static DynCubeNode *node_new(Pool *p)
 {

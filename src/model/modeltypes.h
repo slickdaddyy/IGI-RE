@@ -45,6 +45,7 @@ typedef struct ModelLod {
     void **texinfo;
     int count;
 } ModelLod;
+_Static_assert(sizeof(ModelLod) == 0x1C, "ModelLod");
 
 /* Up to five LODs named <name>, then the last letter counted up */
 typedef struct VirModel {

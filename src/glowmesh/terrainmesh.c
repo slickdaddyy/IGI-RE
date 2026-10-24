@@ -140,7 +140,6 @@ _Static_assert(sizeof(TerrainCell) == 0x30, "TerrainCell");
 _Static_assert(sizeof(TerrainLightMapInfo) == 0x30, "TerrainLightMapInfo");
 _Static_assert(sizeof(TerrainHeightMapInfo) == 0x30, "TerrainHeightMapInfo");
 _Static_assert(sizeof(TerrainMaterialMapInfo) == 0x30, "TerrainMaterialMapInfo");
-_Static_assert(sizeof(TerrainLayer) == 0x1C, "TerrainLayer");
 _Static_assert(sizeof(TerrainVertRec) == 0x24, "TerrainVertRec");
 _Static_assert(sizeof(TerrainMatRec) == 0x28, "TerrainMatRec");
 _Static_assert(offsetof(TerrainPoly, fogLayers) == 0x84, "TerrainPoly");
