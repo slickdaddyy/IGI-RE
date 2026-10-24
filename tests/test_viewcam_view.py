@@ -74,8 +74,11 @@ fk.add(0x4D96F0, 1)
 fk.add(CAMLIST, 0, 0)
 fk.add(0x4EC0E0, 3, deref={2: 24})
 fk.add(0x4F2060, 2, fn=lambda e, a: e.u32(a[0] + 4 * a[1]))
-fk.add(0x4F2310, 3, fn=lambda e, a: log(e, [0x4F2310, a[0]]), logged=False)
-HANDLER = fk.add(None, 2, deref={1: 4})
+# the weapon goes where the owner's gun event reply says: pos and rotation must reach Weapon_Move
+fk.add(0x4F2310, 3, fn=lambda e, a: log(e, [0x4F2310, a[0]] + words(e.read(a[1], 24)) + words(e.read(a[2], 40))),
+       logged=False)
+WEAPON_PLACE = struct.pack("<3d10f", 1.5, -2.25, 3.0, *range(1, 11))
+HANDLER = fk.add(None, 2, deref={1: 4}, fn=lambda e, a: e.write(a[1] + 8, WEAPON_PLACE))
 HANDLER0 = fk.add(None, 2)
 
 

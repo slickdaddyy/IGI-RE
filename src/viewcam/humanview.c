@@ -165,15 +165,21 @@ void HumanView_DeleteHandler(HumanView *v)
 }
 HOOK(0x464470, HumanView_DeleteHandler);
 
+/* gun event 2 reply: where the held weapon sits (HumanBoneMsg in humanbase) */
+typedef struct WeaponPlace {
+    int firstPerson;
+    int unk4;
+    double pos[3];
+    Rot rot;
+} WeaponPlace;
+
 /* camera of the player being shown: also moves the held weapon */
 void HumanView_EnterHandler(HumanView *v, void *arg)
 {
     Human *h = (Human *)v->task.parent;
     char *cam = *(char **)(Game_Get() + 0x5C);
     Task *w;
-    double pos[3];
-    Rot m;
-    int msg;
+    WeaponPlace msg;
 
     if (*(char **)(Viewport_GetCurrentCamera() + 0x54) != cam || **(Human ***)(cam + 0x68) != h || *(int *)(cam + 0xE8) != 1)
         return;
@@ -184,9 +190,9 @@ void HumanView_EnterHandler(HumanView *v, void *arg)
     w = WeaponSlots_Get(h->weapons, 0);
     if (!w)
         return;
-    msg = 1;
+    msg.firstPerson = 1;
     gTaskHandlers[Gun_GetEvent2()][h->task.type](h, &msg);
-    Weapon_Move(w, pos, &m);
+    Weapon_Move(w, msg.pos, &msg.rot);
     gTaskHandlers[4][RigidDynCubeObj_GetType()](w, NULL);
 }
 HOOK(0x4644A0, HumanView_EnterHandler);
