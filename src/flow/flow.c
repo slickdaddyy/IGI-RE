@@ -16,9 +16,9 @@ ORIG(0x405850, void, Config_Read, (const char *path));
 ORIG(0x405BD0, void, Config_Write, (const char *path));
 ORIG(0x406220, char *, Profile_GetActive, (void));
 ORIG(0x406DF0, void, HumanAIConfig_Load, (Flow *flow));
-ORIG(0x4061C0, int, Profile_GetKeys, (int mode, float a0, float a1, float a2, float b0, float b1, float b2,
-                                 float c0, float c1, float c2, float d0, float d1, float d2));
-ORIG(0x4061E0, int, Profile_GetKeyCount, (int value));
+ORIG(0x4061C0, void *, Profile_GetKeys, (int mode, float a0, float a1, float a2, float b0, float b1, float b2,
+                                         float c0, float c1, float c2, float d0, float d1, float d2));
+ORIG(0x4061E0, int, Profile_GetKeyCount, (void *keys));
 ORIG(0x4071E0, void, WeaponConfig_Read, (Flow *flow, const char *path));
 ORIG(0x408350, void, GameMaterial_LoadParameters, (void));
 ORIG(0x4137A0, void, HumanPlayer_LoadParameters, (void));
@@ -45,7 +45,9 @@ ORIG(0x4E7B80, void, DebugText_SetCursor, (int a, int b));
 ORIG(0x4E7BB0, void, DebugText_Clear, (void));
 ORIG(0x4EC0C0, void, AnimTriggerLoad, (const char *path));
 ORIG(0x4ED5C0, void *, InputPort_New, (Flow *flow));
-ORIG(0x4ED5E0, void, InputPort_Setup, (int a, int b));
+ORIG(0x4ED5E0, void, InputPort_Setup, (int port, int count, void *bindings, int analog, float a0, float a1, float a2,
+                                        float b0, float b1, float b2, float c0, float c1, float c2, float d0,
+                                        float d1, float d2));
 ORIG(0x4EDCB0, uint16_t, ModelLODSettingsContainer_GetType, (int unk));
 ORIG(0x4EE030, void, PhysicsObjLoad, (const char *path));
 ORIG(0x4EE3B0, void, PhysicsObjType_FreeAll, (void));
@@ -109,9 +111,13 @@ void Flow_CreateHandler(Flow *flow)
     gFlow->unk24 = InputPort_New(gFlow);
     SoundSys_NewController(gFlow);
     if (gUnkC28C61) {
-        int v = Profile_GetKeys(gUnkC28F80 ? 3 : 0, 0.03f, 0.001f, 0.001f, 0.03f, 0.001f, 0.001f,
-                           0.03f, 0.001f, 0.001f, 0.03f, 0.001f, 0.001f);
-        InputPort_Setup(0, Profile_GetKeyCount(v));
+        int mode = gUnkC28F80 ? 3 : 0;
+        void *keys = Profile_GetKeys(mode, 0.03f, 0.001f, 0.001f, 0.03f, 0.001f, 0.001f, 0.03f, 0.001f, 0.001f, 0.03f,
+                                     0.001f, 0.001f);
+
+        /* the original reuses the pushes above as the arguments after keys */
+        InputPort_Setup(0, Profile_GetKeyCount(keys), keys, mode, 0.03f, 0.001f, 0.001f, 0.03f, 0.001f, 0.001f, 0.03f,
+                        0.001f, 0.001f, 0.03f, 0.001f, 0.001f);
         gUnkBC20A0 = 1;
     }
     AppContext_SetActiveCallback(Flow_FocusChanged, 0);

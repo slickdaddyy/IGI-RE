@@ -16,7 +16,7 @@ ORIG(0x416C90, long double, Game_BlastFalloff, (void *blast, void *obj, Vec3d *p
 ORIG(0x42EC30, void, Car_ApplyWheelDrop, (Car *c));
 ORIG(0x464250, int, Human_GetMaskType, (int a, int b));
 ORIG(0x475300, uint16_t, StationaryGun_GetType, (void));
-ORIG(0x4896C0, void, AIDetector_Init, (void *light, int a, int b, int c));
+ORIG(0x4896C0, void, AIDetector_Init, (void *light, int a, int b, int c, int d, int e));
 ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Matrix *m, float a));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B7EE0, void, Script_RegisterBool8, (const char *name, char *value));
@@ -76,7 +76,7 @@ void Car_ParamsChanged(Car *c)
             c->light_cfg[0] = c->light_params[0] * kDegToRad;
             c->light_cfg[1] = c->light_params[1] * kDegToRad;
             c->light_cfg[2] = c->light_params[2] * kFixed;
-            AIDetector_Init(c->light, 1, 4, Human_GetMaskType(4, 8));
+            AIDetector_Init(c->light, 1, 4, Human_GetMaskType(4, 8), 4, 8);
         }
     } else if (c->v.name[0] && c->v.name[1] != '*') {
         crt_sprintf(buf, "Model \"%s\" not available", c->v.name);

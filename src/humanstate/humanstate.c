@@ -66,7 +66,7 @@ ORIG(0x4B3790, void, Matrix_RotateZ, (float *out, const float *m, float a));
 ORIG(0x4B3C50, void, Matrix_GetEuler, (const float *m, float *ax, float *ay, float *az));
 ORIG(0x4C3440, void *, DynCubeObj_GetPosition, (Human *h));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, void *result, const double *from, const double *to, int a, char b,
-                                  void *filter));
+                                  void *filter, unsigned flags));
 ORIG(0x4D2FB0, void, BoneObj_GetRootMotion, (void *a, float *move, void *anim));
 ORIG(0x4D64E0, long double, Anim_GetLength, (void *anim, int track));
 ORIG(0x4D6520, long double, Anim_GetPhase, (void *anim, int track));
@@ -1078,7 +1078,7 @@ void HumanPlayer_Use36Enter(HumanState *sm, Human *h)
     dir[2] = (float)d[2];
     b = Game_GetEvent8();
     world = Game_GetWorld();
-    Coll_Lines(world, &res, cam, start, 1, b, &filter);
+    Coll_Lines(world, &res, cam, start, 1, b, &filter, 0xFFFFFFFF);
     if (res.unk58 && res.unk4C) {
         dir[0] = res.normal[0];
         pos[0] = res.point[0];

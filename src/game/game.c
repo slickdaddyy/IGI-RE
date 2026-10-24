@@ -137,7 +137,9 @@ ORIG(0x4E7BD0, void, Debug_printf, (const char *fmt, ...));
 ORIG(0x4E7D40, Task *, CameraControl_New, (Game *game, void *p, void *world));
 ORIG(0x4E7D70, void, CameraControl_AddListener, (Game *game, Task *task, void *world));
 ORIG(0x4EDCC0, void, Lod_SendChanged, (void));
-ORIG(0x4ED5E0, void, InputPort_Setup, (int a, int b));
+ORIG(0x4ED5E0, void, InputPort_Setup, (int port, int count, void *bindings, int analog, float a0, float a1, float a2,
+                                        float b0, float b1, float b2, float c0, float c1, float c2, float d0,
+                                        float d1, float d2));
 ORIG(0x4F0CB0, void *, Level_New, (Game *game));
 ORIG(0x4F0CD0, void, Level_FreeModels, (void));
 ORIG(0x4F0CE0, void, Level_SetModels, (void *models));
@@ -464,11 +466,14 @@ void LevelStart(Game *g)
     gGame->unk48 = NULL;
     BoneObj_SetFrameRate(30.0f);
     if (gUnkC28C61) {
-        void *keys = Profile_GetKeys(gUnkC28F80 ? 3 : 0, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f,
-                                     0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f,
-                                     0x1.2c5f92p-5f, 0x1.2c5f92p-5f);
+        int mode = gUnkC28F80 ? 3 : 0;
+        void *keys = Profile_GetKeys(mode, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f,
+                                     0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f);
 
-        InputPort_Setup(0, Profile_GetKeyCount(keys));
+        /* the original reuses the pushes above as the arguments after keys */
+        InputPort_Setup(0, Profile_GetKeyCount(keys), keys, mode, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f,
+                        0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f, 0x1.2c5f92p-5f,
+                        0x1.2c5f92p-5f);
         gUnkBC20A0 = 1;
     }
     RainDynCubeObj_SetCallback(Game_SetRaining);

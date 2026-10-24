@@ -37,7 +37,9 @@ ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
 ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
-ORIG(0x4ED5E0, void, InputPort_Setup, (int a, int b));
+ORIG(0x4ED5E0, void, InputPort_Setup, (int port, int count, void *bindings, int analog, float a0, float a1, float a2,
+                                        float b0, float b1, float b2, float c0, float c1, float c2, float d0,
+                                        float d1, float d2));
 ORIG(0x4F0EF0, void *, Param_PushButton, (void));
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
 ORIG(0x4F0FF0, void *, Param_String256, (void));
@@ -165,11 +167,15 @@ void MenuManager_Create(MenuManager *mm)
     Script_RegisterConstant("MENUMANAGER_RESTARTLEVEL", 12);
     mm->unk26BE = 0;
     if (gUnkC28C61) {
-        void *keys = Profile_GetKeys(gUnkC28F80 ? 3 : 0, 0.05f, 0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.25f,
-                                     0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.05f, 0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.25f,
-                                     0x1.b4e81cp-9f, 0x1.b4e81cp-9f);
+        int mode = gUnkC28F80 ? 3 : 0;
+        void *keys = Profile_GetKeys(mode, 0.05f, 0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.25f, 0x1.b4e81cp-9f,
+                                     0x1.b4e81cp-9f, 0.05f, 0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.25f, 0x1.b4e81cp-9f,
+                                     0x1.b4e81cp-9f);
 
-        InputPort_Setup(0, Profile_GetKeyCount(keys));
+        /* the original reuses the pushes above as the arguments after keys */
+        InputPort_Setup(0, Profile_GetKeyCount(keys), keys, mode, 0.05f, 0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.25f,
+                        0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.05f, 0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.25f, 0x1.b4e81cp-9f,
+                        0x1.b4e81cp-9f);
         gUnkBC20A0 = 1;
     }
     Keys_Install();

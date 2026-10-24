@@ -112,7 +112,7 @@ fake(0x416850, "", ret=0x12345601)
 fake(0x416920, "", ret=0x9999)
 for addr in (0x42FDF0, 0x444B30, 0x448570):
     fake(addr, "v x x", fill={1: "pos", 2: "mat"})
-fake(0x4CC2A0, "v x p6 p6 v b p2", fill={1: "trace"})
+fake(0x4CC2A0, "v x p6 p6 v b p2 v", fill={1: "trace"})
 fake(0x440270, "", fret=1.37)
 fake(0x444B80, "v", fret=2.1)
 fake(0x447D30, "v", fret=3.3)

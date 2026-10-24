@@ -31,7 +31,7 @@ ORIG(0x480FE0, void, Explosion_Spawn, (Vec3d *pos, int a, int b, float c, float 
                                        int i, const char *sprite, const char *sound, int j, int k, float l, int m));
 ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
 ORIG(0x489630, uint8_t, AIDetection_GetEvent2, (void));
-ORIG(0x4896C0, void, AIDetector_Init, (void *light, int a, int b, int c));
+ORIG(0x4896C0, void, AIDetector_Init, (void *light, int a, int b, int c, int d, int e));
 ORIG(0x489750, void, AIDetector_Update, (void *light, Vec3d *pos, void *owner, int a));
 ORIG(0x489B90, void, AIDetection_RemoveRefs, (void *light));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -295,7 +295,7 @@ void Heli_Run(Heli *h)
         }
         if (!h->lights && was) {
             AIDetection_RemoveRefs(h->light);
-            AIDetector_Init(h->light, 1, 4, Human_GetMaskType(4, 8));
+            AIDetector_Init(h->light, 1, 4, Human_GetMaskType(4, 8), 4, 8);
         }
     }
     BROADCAST(h->v.task.head, 1);
@@ -621,7 +621,7 @@ void Heli_ParamsChanged(Heli *h)
         h->light_cfg[0] = h->light_params[0] * kDegToRad;
         h->light_cfg[1] = h->light_params[1] * kDegToRad;
         h->light_cfg[2] = h->light_params[2] * kFixed;
-        AIDetector_Init(h->light, 1, 4, Human_GetMaskType(4, 8));
+        AIDetector_Init(h->light, 1, 4, Human_GetMaskType(4, 8), 4, 8);
     } else if (h->v.name[0] && h->v.name[1] != '*') {
         crt_sprintf(buf, "Model \"%s\" not available", h->v.name);
         strcpy(name, h->v.name);

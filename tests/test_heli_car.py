@@ -12,7 +12,7 @@ def write_name(e, a):
 
 emu = new_emu(
     fakes=[(0x4CEC10, 1, dict(strings=(0,))), (0x4C48D0, 2), (0x4EE140, 1, dict(strings=(0,))), (0x4FB700, 2),
-           (0x4F4600, 1), (0x42EC30, 1), (0x464250, 2), (0x4896C0, 4), (0x416920, 0), (0x4C6940, 4),
+           (0x4F4600, 1), (0x42EC30, 1), (0x464250, 2), (0x4896C0, 6), (0x416920, 0), (0x4C6940, 4),
            (0x4F4820, 1), (0x4F4800, 1), (0x4F1400, 2), (0x4F4780, 2), (0x4F46E0, 2), (0x4015F0, 1),
            (0x4B7EE0, 2, dict(strings=(0,))), (0x4B80A0, 1, dict(strings=(0,))), (0x4C1830, 1),
            (0x401A20, 1, dict(masks={0: 0xFFFF})), (0x401BE0, 2, dict(masks={1: 0xFFFF}))],
