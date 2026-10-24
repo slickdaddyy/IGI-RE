@@ -1,7 +1,6 @@
 #ifndef GAME_GAMETYPES_H
 #define GAME_GAMETYPES_H
 
-#include "types.h"
 #include "task/tasktypes.h"
 
 /* The in-mission game task, made from the "Game" task type. */

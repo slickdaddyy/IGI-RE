@@ -5,11 +5,8 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "task/tasktypes.h"
-#include "loadscreen/loadscreentypes.h"
 #include "soldier/soldiertypes.h"
 #include "humanplayer/humanplayertypes.h"
-#include "humanbase/humanbasetypes.h"
 #include "humanai/humanaitypes.h"
 
 #pragma pack(push, 4)

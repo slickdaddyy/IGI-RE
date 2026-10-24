@@ -6,7 +6,6 @@
 
 #include "hook.h"
 #include "glowmesh/glowmesh.h"
-#include "types.h"
 #include "bonemesh/bonemeshtypes.h"
 #include "lod/lodtypes.h"
 #include "terrain/terraintypes.h"

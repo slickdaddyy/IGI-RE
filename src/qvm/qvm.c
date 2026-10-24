@@ -4,7 +4,6 @@
 #include "igi.h"
 #include "orig.h"
 #include "qvm/qvm.h"
-#include "qvm/qvmtypes.h"
 
 FN_EXTERN(Qvm_OpAssign);
 FN_EXTERN(Qvm_OpBinary);

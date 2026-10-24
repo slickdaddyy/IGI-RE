@@ -1,7 +1,6 @@
 #ifndef DOOR_DOORTYPES_H
 #define DOOR_DOORTYPES_H
 
-#include "types.h"
 #include "magicobj/magicobjtypes.h"
 
 typedef struct Cabinet {

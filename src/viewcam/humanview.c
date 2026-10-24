@@ -8,8 +8,6 @@
 #include "hook.h"
 #include "igi.h"
 #include "viewcam/viewcam.h"
-#include "types.h"
-#include "coll/colltypes.h"
 
 FN_EXTERN(HumanAttach_Detect);
 FN_EXTERN(SubLevel_Run);

@@ -1,8 +1,6 @@
 #ifndef VIEWCAM_VIEWCAMTYPES_H
 #define VIEWCAM_VIEWCAMTYPES_H
 
-#include "types.h"
-#include "task/tasktypes.h"
 #include "humanbase/humanbasetypes.h"
 
 /* "HumanView" (0x328 bytes), the eye of a human */

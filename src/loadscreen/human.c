@@ -4,12 +4,8 @@
 
 #include "hook.h"
 #include "igi.h"
-#include "types.h"
-#include "task/tasktypes.h"
-#include "loadscreen/loadscreentypes.h"
 #include "humanai/humanaitypes.h"
 #include "humanplayer/humanplayertypes.h"
-#include "humanbase/humanbasetypes.h"
 #include "viewcam/viewcamtypes.h"
 
 #define BONE(m, i) ((Vec3f *)((char *)(m)->bones + (i) * 0x84))

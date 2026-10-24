@@ -1,7 +1,6 @@
 #ifndef FLATWATER_FLATWATERTYPES_H
 #define FLATWATER_FLATWATERTYPES_H
 
-#include "types.h"
 #include "magicobj/magicobjtypes.h"
 #include "param/paramtypes.h"
 

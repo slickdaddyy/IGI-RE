@@ -6,7 +6,6 @@
 #include "animtrig/animtrig.h"
 #include "qasm/qasmtypes.h"
 #include "sound/soundtypes.h"
-#include "transctx/transctxtypes.h"
 #include "define/definetypes.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));

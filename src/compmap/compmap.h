@@ -5,7 +5,6 @@
 
 #include "igi.h"
 #include "ui/ui.h"
-#include "types.h"
 #include "qasm/qasmtypes.h"
 #include "coll/colltypes.h"
 #include "comprun/compruntypes.h"

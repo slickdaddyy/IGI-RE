@@ -5,11 +5,9 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "qvertex/qvertextypes.h"
 #include "win/wintypes.h"
-#include "res/restypes.h"
 #include "menu/menutypes.h"
 #include "widget/widgettypes.h"
 

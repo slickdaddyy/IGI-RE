@@ -8,7 +8,6 @@
 #include <d3d.h>
 
 #include "igi.h"
-#include "types.h"
 #include "task/tasktypes.h"
 #include "res/restypes.h"
 #include "transctx/transctxtypes.h"

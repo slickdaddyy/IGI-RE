@@ -3,8 +3,6 @@
 
 #include "hook.h"
 #include "patrol/patrol.h"
-#include "patrol/patroltypes.h"
-#include "graphnode/graphnodetypes.h"
 #include "humanai/humanaitypes.h"
 
 typedef struct ViewObj {

@@ -4,7 +4,6 @@
 
 #include "aiaction/aiaction.h"
 #include "hook.h"
-#include "patrol/patroltypes.h"
 #include "humanai/humanaitypes.h"
 
 FN_EXTERN(AIActivate_Start);

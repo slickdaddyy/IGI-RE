@@ -6,7 +6,6 @@
 
 #include "hook.h"
 #include "flatwater/flatwater.h"
-#include "magicobj/magicobjtypes.h"
 #include "flatwater/flatwatertypes.h"
 
 FN_EXTERN(MoveRigidObj_Changed);

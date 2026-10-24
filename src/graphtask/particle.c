@@ -5,7 +5,6 @@
 #include "igi.h"
 #include "math/x87.h"
 #include "graphtask/graphtask.h"
-#include "res/restypes.h"
 
 /* passed to the hit callback */
 typedef struct Particle2DHit {

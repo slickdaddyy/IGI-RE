@@ -457,7 +457,7 @@ void HeightMap_Changed(HeightMap *hm)
     bump->scale = kOne;
     bump->unk0 = hm->unkC4;
     bump->texShift = hm->texShift;
-    bump->heights = maps[hm->hmpIndex].data;
+    bump->heights = (const signed char *)maps[hm->hmpIndex].data;
     bump->scale = kOne / (1 << bump->texShift) * bump->scale;
     bump->x = hm->obj.pos.x - (0x40000000 >> hm->shift);
     bump->y = hm->obj.pos.y - (0x40000000 >> hm->shift);

@@ -6,7 +6,6 @@
 #include "orig.h"
 #include "qvm/qvm.h"
 #include "qasm/qasmtypes.h"
-#include "qvm/qvmtypes.h"
 
 /* Assembles QVM assembler text into a "LOOP" file. */
 

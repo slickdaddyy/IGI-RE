@@ -4,7 +4,6 @@
 #include <stddef.h>
 
 #include "igi.h"
-#include "types.h"
 #include "qasm/qasmtypes.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));

@@ -4,9 +4,7 @@
 
 #include "hook.h"
 #include "igi.h"
-#include "types.h"
 #include "sysmisc/sysmisctypes.h"
-#include "graphnode/graphnodetypes.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));

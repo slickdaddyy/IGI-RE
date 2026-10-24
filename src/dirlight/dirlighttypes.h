@@ -1,8 +1,6 @@
 #ifndef DIRLIGHT_DIRLIGHTTYPES_H
 #define DIRLIGHT_DIRLIGHTTYPES_H
 
-#include "types.h"
-#include "task/tasktypes.h"
 #include "sector/sectortypes.h"
 
 typedef struct DirlightKeyframe {

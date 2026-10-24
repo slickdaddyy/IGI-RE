@@ -1,6 +1,5 @@
 #include "hook.h"
 #include "statgun/statgun.h"
-#include "guncasing/guncasingtypes.h"
 
 FN_EXTERN(Mine_DeleteHandler);
 FN_EXTERN(Mine_GetParamTableHandler);

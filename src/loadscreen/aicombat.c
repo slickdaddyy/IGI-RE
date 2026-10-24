@@ -9,14 +9,10 @@
 
 #include "hook.h"
 #include "igi.h"
-#include "types.h"
-#include "task/tasktypes.h"
 #include "sysmisc/sysmisctypes.h"
 #include "humanai/humanaitypes.h"
 #include "statgun/statguntypes.h"
-#include "graphnode/graphnodetypes.h"
 #include "weapon/weapontypes.h"
-#include "patrol/patroltypes.h"
 #include "humanbase/humanbasetypes.h"
 
 FN_EXTERN(AICombat_End);

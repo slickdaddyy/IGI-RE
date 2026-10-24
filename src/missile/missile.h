@@ -5,12 +5,6 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "types.h"
-#include "task/tasktypes.h"
-#include "param/paramtypes.h"
-#include "coll/colltypes.h"
-#include "graphtask/graphtasktypes.h"
-#include "vehbase/vehbasetypes.h"
 #include "missile/missiletypes.h"
 
 typedef void (*TaskFn1)(Task *task);

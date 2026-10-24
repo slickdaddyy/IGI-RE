@@ -5,10 +5,8 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "task/tasktypes.h"
 #include "qasm/qasmtypes.h"
 #include "weapon/weapontypes.h"
-#include "humanbase/humanbasetypes.h"
 #include "viewcam/viewcamtypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);

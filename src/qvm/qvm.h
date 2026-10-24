@@ -2,7 +2,6 @@
 #define QVM_QVM_H
 
 #include "igi.h"
-#include "types.h"
 #include "script/scripttypes.h"
 #include "qvm/qvmtypes.h"
 

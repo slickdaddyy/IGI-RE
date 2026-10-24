@@ -1,7 +1,6 @@
 #ifndef GRAPHNODE_GRAPHNODETYPES_H
 #define GRAPHNODE_GRAPHNODETYPES_H
 
-#include "types.h"
 #include "task/tasktypes.h"
 
 typedef struct GraphStream {

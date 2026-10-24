@@ -6,10 +6,7 @@
 #include <string.h>
 
 #include "igi.h"
-#include "types.h"
-#include "task/tasktypes.h"
 #include "litmap/litmaptypes.h"
-#include "sector/sectortypes.h"
 #include "dirlight/dirlighttypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);

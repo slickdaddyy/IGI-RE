@@ -3,7 +3,6 @@
 #include "hook.h"
 #include "igi.h"
 #include "orig.h"
-#include "res/restypes.h"
 #include "sysmisc/sysmisctypes.h"
 
 /* Header of a .tex file, version 2. */

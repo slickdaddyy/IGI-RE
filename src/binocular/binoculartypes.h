@@ -1,7 +1,6 @@
 #ifndef BINOCULAR_BINOCULARTYPES_H
 #define BINOCULAR_BINOCULARTYPES_H
 
-#include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "res/restypes.h"
 

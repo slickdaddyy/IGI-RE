@@ -6,8 +6,6 @@
 #include <string.h>
 
 #include "igi.h"
-#include "types.h"
-#include "task/tasktypes.h"
 #include "magicobj/magicobjtypes.h"
 
 FN_EXTERN(Task_Nothing);

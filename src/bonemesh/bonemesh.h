@@ -6,13 +6,11 @@
 
 #include "igi.h"
 #include "model/model.h"
-#include "types.h"
 #include "task/tasktypes.h"
 #include "render/rendertypes.h"
 #include "glowmesh/glowmeshtypes.h"
 #include "transctx/transctxtypes.h"
 #include "res/restypes.h"
-#include "model/modeltypes.h"
 
 typedef void (*TaskHandler)(Task *task, void *arg);
 

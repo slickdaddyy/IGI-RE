@@ -9,7 +9,6 @@
 #include "ammotype/ammotype.h"
 #include "material/materialtypes.h"
 #include "coll/colltypes.h"
-#include "ammotype/ammotypetypes.h"
 
 /* the filter Coll_Lines passes to the objects it meets */
 typedef struct BulletFilter {

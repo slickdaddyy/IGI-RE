@@ -5,8 +5,6 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "types.h"
-#include "task/tasktypes.h"
 #include "editobj/editobjtypes.h"
 #include "sound/soundtypes.h"
 

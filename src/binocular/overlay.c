@@ -6,7 +6,6 @@
 #include "qvertex/qvertextypes.h"
 #include "coll/colltypes.h"
 #include "win/wintypes.h"
-#include "res/restypes.h"
 #include "binocular/binoculartypes.h"
 
 FN_EXTERN(BinocularHolder_Changed);

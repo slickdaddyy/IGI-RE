@@ -3,10 +3,6 @@
 
 #include <stdint.h>
 
-#include "types.h"
-#include "task/tasktypes.h"
-#include "coll/colltypes.h"
-#include "loadscreen/loadscreentypes.h"
 #include "humanbase/humanbasetypes.h"
 
 typedef struct HumanMotion {

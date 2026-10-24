@@ -5,12 +5,8 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "types.h"
-#include "task/tasktypes.h"
 #include "script/scripttypes.h"
 #include "sound/soundtypes.h"
-#include "transctx/transctxtypes.h"
-#include "viewport/viewporttypes.h"
 #include "define/definetypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);

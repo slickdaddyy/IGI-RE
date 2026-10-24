@@ -2,7 +2,6 @@
 
 #include "hook.h"
 #include "statgun/statgun.h"
-#include "statgun/statguntypes.h"
 #include "props/propstypes.h"
 
 /* Game event 4: a human takes the gun */

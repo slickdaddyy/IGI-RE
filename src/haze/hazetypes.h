@@ -1,7 +1,6 @@
 #ifndef HAZE_HAZETYPES_H
 #define HAZE_HAZETYPES_H
 
-#include "types.h"
 #include "task/tasktypes.h"
 #include "boneobj/boneobjtypes.h"
 

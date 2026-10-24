@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-#include "loadscreen/loadscreentypes.h"
 #include "humanbase/humanbasetypes.h"
 
 typedef struct SoldierSM SoldierSM;

@@ -1,8 +1,6 @@
 #ifndef HUMANAI_HUMANAITYPES_H
 #define HUMANAI_HUMANAITYPES_H
 
-#include "types.h"
-#include "task/tasktypes.h"
 #include "graphnode/graphnodetypes.h"
 #include "patrol/patroltypes.h"
 

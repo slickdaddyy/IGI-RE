@@ -1,8 +1,6 @@
 #ifndef HELI_HELITYPES_H
 #define HELI_HELITYPES_H
 
-#include "types.h"
-#include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "humanai/humanaitypes.h"
 #include "vehbase/vehbasetypes.h"

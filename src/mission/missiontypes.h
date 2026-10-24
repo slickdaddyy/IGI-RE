@@ -1,7 +1,6 @@
 #ifndef MISSION_MISSIONTYPES_H
 #define MISSION_MISSIONTYPES_H
 
-#include "task/tasktypes.h"
 #include "param/paramtypes.h"
 
 typedef struct ConditionalContainer {

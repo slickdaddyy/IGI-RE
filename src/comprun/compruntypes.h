@@ -1,8 +1,6 @@
 #ifndef COMPRUN_COMPRUNTYPES_H
 #define COMPRUN_COMPRUNTYPES_H
 
-#include "types.h"
-#include "task/tasktypes.h"
 #include "magicobj/magicobjtypes.h"
 
 typedef struct Computer {

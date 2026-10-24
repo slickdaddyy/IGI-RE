@@ -2,7 +2,6 @@
 
 #include "hook.h"
 #include "statgun/statgun.h"
-#include "coll/colltypes.h"
 
 FN_EXTERN(Missile_GetModelSize);
 

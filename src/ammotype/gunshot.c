@@ -4,7 +4,6 @@
 #include "igi.h"
 #include "ammotype/ammotype.h"
 #include "qasm/qasmtypes.h"
-#include "ammotype/ammotypetypes.h"
 
 /* "GunShot" (0xC38 bytes): the bullets in flight of one gun and the
    tracer trails they leave. */

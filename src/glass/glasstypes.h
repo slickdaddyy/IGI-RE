@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-#include "types.h"
 #include "task/tasktypes.h"
 
 /* the collision mesh of a model LOD */

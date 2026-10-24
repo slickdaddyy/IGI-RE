@@ -3,8 +3,6 @@
 
 #include <stdint.h>
 
-#include "types.h"
-#include "task/tasktypes.h"
 #include "coll/colltypes.h"
 #include "res/restypes.h"
 

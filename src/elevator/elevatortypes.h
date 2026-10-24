@@ -1,7 +1,6 @@
 #ifndef ELEVATOR_ELEVATORTYPES_H
 #define ELEVATOR_ELEVATORTYPES_H
 
-#include "types.h"
 #include "magicobj/magicobjtypes.h"
 #include "param/paramtypes.h"
 

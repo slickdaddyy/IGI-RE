@@ -8,8 +8,6 @@
 #include "hook.h"
 #include "igi.h"
 #include "soldier/soldier.h"
-#include "types.h"
-#include "coll/colltypes.h"
 #include "material/materialtypes.h"
 
 FN_EXTERN(SoldierPistol_BlastHandler);

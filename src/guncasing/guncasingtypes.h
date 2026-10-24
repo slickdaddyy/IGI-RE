@@ -1,7 +1,6 @@
 #ifndef GUNCASING_GUNCASINGTYPES_H
 #define GUNCASING_GUNCASINGTYPES_H
 
-#include "types.h"
 #include "magicobj/magicobjtypes.h"
 #include "weapon/weapontypes.h"
 

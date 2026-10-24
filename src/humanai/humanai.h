@@ -5,15 +5,11 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "types.h"
-#include "task/tasktypes.h"
 #include "qasm/qasmtypes.h"
 #include "graphtask/graphtasktypes.h"
 #include "sysmisc/sysmisctypes.h"
 #include "humanai/humanaitypes.h"
-#include "graphnode/graphnodetypes.h"
 #include "weapon/weapontypes.h"
-#include "humanbase/humanbasetypes.h"
 #include "humanplayer/humanplayertypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);

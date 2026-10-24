@@ -1,8 +1,6 @@
 #ifndef VEHBASE_VEHBASETYPES_H
 #define VEHBASE_VEHBASETYPES_H
 
-#include "types.h"
-#include "task/tasktypes.h"
 #include "graphtask/graphtasktypes.h"
 
 typedef struct AnimKey {

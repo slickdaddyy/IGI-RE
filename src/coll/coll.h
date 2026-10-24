@@ -4,7 +4,6 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "types.h"
 #include "coll/colltypes.h"
 #include "terrain/terraintypes.h"
 

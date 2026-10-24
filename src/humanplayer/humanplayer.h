@@ -4,9 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "task/tasktypes.h"
 #include "script/scripttypes.h"
-#include "loadscreen/loadscreentypes.h"
 #include "humanplayer/humanplayertypes.h"
 #include "weapon/weapontypes.h"
 #include "ammotype/ammotypetypes.h"

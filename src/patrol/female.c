@@ -5,7 +5,6 @@
 
 #include "hook.h"
 #include "patrol/patrol.h"
-#include "loadscreen/loadscreentypes.h"
 #include "soldier/soldiertypes.h"
 #include "humanplayer/humanplayertypes.h"
 #include "material/materialtypes.h"

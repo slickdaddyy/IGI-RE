@@ -1,7 +1,6 @@
 #ifndef EXPLOSION_EXPLOSIONTYPES_H
 #define EXPLOSION_EXPLOSIONTYPES_H
 
-#include "types.h"
 #include "task/tasktypes.h"
 
 typedef struct Explosion {

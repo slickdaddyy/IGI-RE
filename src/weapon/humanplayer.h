@@ -4,8 +4,6 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "types.h"
-#include "loadscreen/loadscreentypes.h"
 #include "humanplayer/humanplayertypes.h"
 #include "viewcam/viewcamtypes.h"
 

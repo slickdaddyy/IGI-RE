@@ -2,8 +2,6 @@
 
 #include "hook.h"
 #include "igi.h"
-#include "task/tasktypes.h"
-#include "res/restypes.h"
 #include "d3d/d3dtypes.h"
 #include "camfeed/camfeedtypes.h"
 #include "qvertex/qvertextypes.h"

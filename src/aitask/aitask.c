@@ -6,13 +6,9 @@
 
 #include "igi.h"
 #include "hook.h"
-#include "types.h"
-#include "task/tasktypes.h"
 #include "terrain/terraintypes.h"
 #include "humanai/humanaitypes.h"
-#include "graphnode/graphnodetypes.h"
 #include "weapon/weapontypes.h"
-#include "patrol/patroltypes.h"
 #include "humanbase/humanbasetypes.h"
 
 typedef void (*AIActionFn)(HumanAI *ai, AIAction *a);

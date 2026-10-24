@@ -1,7 +1,6 @@
 #include "hook.h"
 #include "orig.h"
 #include "qsc/qsc.h"
-#include "qsc/qsctypes.h"
 
 typedef void (*SymbolFunc)(const char *name, void *value, void *data);
 typedef int (*SymbolFilter)(const char *name, void *value, void *data);

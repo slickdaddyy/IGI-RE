@@ -6,10 +6,8 @@
 
 #include "igi.h"
 #include "math/vecmath.h"
-#include "task/tasktypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "qasm/qasmtypes.h"
-#include "boneobj/boneobjtypes.h"
 #include "haze/hazetypes.h"
 
 typedef void (*HzHandler)(void *task, void *arg);

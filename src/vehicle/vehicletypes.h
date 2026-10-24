@@ -1,8 +1,6 @@
 #ifndef VEHICLE_VEHICLETYPES_H
 #define VEHICLE_VEHICLETYPES_H
 
-#include "types.h"
-#include "task/tasktypes.h"
 #include "magicobj/magicobjtypes.h"
 
 /* node of a list of task references (vehicle seats, targets) */

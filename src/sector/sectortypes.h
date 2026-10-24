@@ -1,7 +1,6 @@
 #ifndef SECTOR_SECTORTYPES_H
 #define SECTOR_SECTORTYPES_H
 
-#include "types.h"
 #include "magicobj/magicobjtypes.h"
 
 typedef struct Light {

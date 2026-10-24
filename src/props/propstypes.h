@@ -1,7 +1,6 @@
 #ifndef PROPS_PROPSTYPES_H
 #define PROPS_PROPSTYPES_H
 
-#include "types.h"
 #include "task/tasktypes.h"
 
 typedef struct UseQuery {

@@ -5,15 +5,10 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "types.h"
-#include "task/tasktypes.h"
-#include "coll/colltypes.h"
-#include "magicobj/magicobjtypes.h"
 #include "graphtask/graphtasktypes.h"
 #include "humanai/humanaitypes.h"
 #include "computer/computertypes.h"
 #include "guncasing/guncasingtypes.h"
-#include "weapon/weapontypes.h"
 
 typedef void (*TaskFn)();
 

@@ -1,7 +1,6 @@
 #ifndef EDITCAM_EDITCAMTYPES_H
 #define EDITCAM_EDITCAMTYPES_H
 
-#include "types.h"
 #include "task/tasktypes.h"
 
 typedef struct EditCamera {

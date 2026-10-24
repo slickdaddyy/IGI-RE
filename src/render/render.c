@@ -10,7 +10,6 @@
 #include "hook.h"
 #include "igi.h"
 #include "model/model.h"
-#include "res/restypes.h"
 #include "d3d/d3dtypes.h"
 #include "litmap/litmaptypes.h"
 #include "render/rendertypes.h"

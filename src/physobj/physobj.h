@@ -5,7 +5,6 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "task/tasktypes.h"
 #include "script/scripttypes.h"
 #include "physobj/physobjtypes.h"
 #include "param/paramtypes.h"

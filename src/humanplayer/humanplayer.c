@@ -9,7 +9,6 @@
 #include "igi.h"
 #include "humanplayer/humanplayer.h"
 #include "qasm/qasmtypes.h"
-#include "weapon/weapontypes.h"
 #include "game/gametypes.h"
 
 FN_EXTERN(HumanPlayer_BlastHandler);

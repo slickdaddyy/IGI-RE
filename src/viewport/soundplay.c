@@ -4,7 +4,6 @@
 #include "viewport/viewport.h"
 #include "qasm/qasmtypes.h"
 #include "sound/soundtypes.h"
-#include "transctx/transctxtypes.h"
 #include "viewport/viewporttypes.h"
 
 /* Playing sounds by name or through a handle, on top of the sound system of src/sound. */

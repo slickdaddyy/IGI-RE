@@ -1,8 +1,6 @@
 #ifndef HUMANBASE_HUMANBASETYPES_H
 #define HUMANBASE_HUMANBASETYPES_H
 
-#include "types.h"
-#include "task/tasktypes.h"
 #include "coll/colltypes.h"
 #include "loadscreen/loadscreentypes.h"
 

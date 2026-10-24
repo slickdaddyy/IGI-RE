@@ -1,7 +1,6 @@
 #ifndef AMMOTYPE_AMMOTYPETYPES_H
 #define AMMOTYPE_AMMOTYPETYPES_H
 
-#include "types.h"
 #include "task/tasktypes.h"
 
 typedef struct Bullet {

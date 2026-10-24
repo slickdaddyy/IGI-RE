@@ -1,7 +1,6 @@
 #ifndef PARAM_PARAMTYPES_H
 #define PARAM_PARAMTYPES_H
 
-#include "types.h"
 #include "task/tasktypes.h"
 
 /* A script expression kept as text. Bind expands "this." and task ids

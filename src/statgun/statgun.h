@@ -6,16 +6,11 @@
 #include <string.h>
 
 #include "igi.h"
-#include "types.h"
-#include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "win/wintypes.h"
-#include "magicobj/magicobjtypes.h"
-#include "weapon/weapontypes.h"
 #include "statgun/statguntypes.h"
 #include "guncasing/guncasingtypes.h"
 #include "ammotype/ammotypetypes.h"
-#include "humanbase/humanbasetypes.h"
 #include "viewcam/viewcamtypes.h"
 
 FN_EXTERN(Task_Nothing);

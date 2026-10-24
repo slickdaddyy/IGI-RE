@@ -5,9 +5,6 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "types.h"
-#include "task/tasktypes.h"
-#include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "qasm/qasmtypes.h"
 #include "computer/computertypes.h"

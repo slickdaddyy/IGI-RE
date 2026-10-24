@@ -10,9 +10,7 @@
 #include "weapon/humanplayer.h"
 #include "weapon/weapon.h"
 #include "qvertex/qvertextypes.h"
-#include "coll/colltypes.h"
 #include "humanai/humanaitypes.h"
-#include "loadscreen/loadscreentypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401AE0, void *, TaskRef_Add, (void *task));

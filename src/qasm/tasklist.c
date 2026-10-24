@@ -1,6 +1,5 @@
 #include "hook.h"
 #include "qasm/qasm.h"
-#include "qasm/qasmtypes.h"
 
 void QTaskList_Add(QTaskList *l, void *task)
 {

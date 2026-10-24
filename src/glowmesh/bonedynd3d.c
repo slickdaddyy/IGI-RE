@@ -5,8 +5,6 @@
 
 #include "hook.h"
 #include "glowmesh/glowmesh.h"
-#include "types.h"
-#include "task/tasktypes.h"
 #include "bonemesh/bonemeshtypes.h"
 #include "glowmesh/glowmeshtypes.h"
 #include "haze/hazetypes.h"

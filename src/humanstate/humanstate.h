@@ -4,7 +4,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "humanbase/humanbasetypes.h"
 #include "humanplayer/humanplayertypes.h"
 
 typedef void (*HumanStateFn)(HumanPlayerSM *sm, HumanPlayer *h);

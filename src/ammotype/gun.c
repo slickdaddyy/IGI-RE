@@ -7,7 +7,6 @@
 #include "win/wintypes.h"
 #include "res/restypes.h"
 #include "humanai/humanaitypes.h"
-#include "weapon/weapontypes.h"
 #include "guncasing/guncasingtypes.h"
 
 /* The "Gun" task (0x1B0 bytes, 0x5BE3C6), base of the hand weapons. These

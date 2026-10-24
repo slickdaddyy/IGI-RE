@@ -5,7 +5,6 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "types.h"
 #include "task/tasktypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);

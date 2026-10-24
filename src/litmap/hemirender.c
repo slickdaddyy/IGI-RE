@@ -6,7 +6,6 @@
 
 #include "igi.h"
 #include "hook.h"
-#include "types.h"
 #include "litmap/litmaptypes.h"
 
 ORIG(0x521110, void, Hemicube_DrawTriangle, (int *color, float *depth, int pitch, int *ids, int idW, int idH,

@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-#include "types.h"
 #include "task/tasktypes.h"
 
 /* A task that lives in a dyncube tree. */

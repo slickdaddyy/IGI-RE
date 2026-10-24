@@ -8,7 +8,6 @@
 #include "hook.h"
 #include "igi.h"
 #include "viewcam/viewcam.h"
-#include "coll/colltypes.h"
 #include "material/materialtypes.h"
 #include "humanai/humanaitypes.h"
 #include "statgun/statguntypes.h"

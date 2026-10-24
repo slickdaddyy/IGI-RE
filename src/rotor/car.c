@@ -3,7 +3,6 @@
 #include "hook.h"
 #include "igi.h"
 #include "rotor/rotor.h"
-#include "coll/colltypes.h"
 
 FN_EXTERN(Car_Blast);
 FN_EXTERN(Car_CollFilter);

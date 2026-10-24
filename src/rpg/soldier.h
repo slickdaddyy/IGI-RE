@@ -5,7 +5,6 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "loadscreen/loadscreentypes.h"
 #include "soldier/soldiertypes.h"
 #include "humanplayer/humanplayertypes.h"
 #include "humanai/humanaitypes.h"

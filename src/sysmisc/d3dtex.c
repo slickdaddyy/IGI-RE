@@ -7,8 +7,6 @@
 
 #include "hook.h"
 #include "igi.h"
-#include "types.h"
-#include "res/restypes.h"
 #include "sysmisc/sysmisctypes.h"
 
 /* Texture functions of the Direct3D render mode: textures are DirectDraw

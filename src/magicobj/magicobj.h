@@ -4,7 +4,6 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "task/tasktypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "litmap/litmaptypes.h"
 

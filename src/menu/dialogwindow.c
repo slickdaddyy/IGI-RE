@@ -1,7 +1,6 @@
 #include "hook.h"
 #include "igi.h"
 #include "menu/menu.h"
-#include "widget/widgettypes.h"
 
 FN_EXTERN(MenuWindow_ForwardEvent914);
 

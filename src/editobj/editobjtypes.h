@@ -1,7 +1,6 @@
 #ifndef EDITOBJ_EDITOBJTYPES_H
 #define EDITOBJ_EDITOBJTYPES_H
 
-#include "types.h"
 #include "magicobj/magicobjtypes.h"
 
 typedef struct SplineObjWaypoint {

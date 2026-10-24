@@ -5,14 +5,8 @@
 #include <stdint.h>
 
 #include "igi.h"
-#include "types.h"
-#include "task/tasktypes.h"
-#include "param/paramtypes.h"
-#include "magicobj/magicobjtypes.h"
 #include "vehicle/vehicletypes.h"
-#include "graphtask/graphtasktypes.h"
 #include "plane/planetypes.h"
-#include "vehbase/vehbasetypes.h"
 #include "heli/helitypes.h"
 
 typedef struct Joint {

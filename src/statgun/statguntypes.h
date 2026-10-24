@@ -1,8 +1,6 @@
 #ifndef STATGUN_STATGUNTYPES_H
 #define STATGUN_STATGUNTYPES_H
 
-#include "types.h"
-#include "task/tasktypes.h"
 #include "magicobj/magicobjtypes.h"
 
 typedef struct StatGun {
