@@ -7,6 +7,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "loadscreen/loadscreentypes.h"
+#include "humanai/humanaitypes.h"
 
 typedef struct HumanDamage {
     float total;
@@ -98,26 +99,6 @@ typedef struct SightFilter {
     Task *target;
 } SightFilter;
 
-typedef struct AISeenNode {
-    struct AISeenNode *next;
-    struct AISeenNode *prev;
-    Task **ref;
-    char unkC[0x1E];
-    char valid;
-} AISeenNode;
-
-typedef struct AISeenList {
-    AISeenNode *head;
-    AISeenNode *tail;
-    AISeenNode *tailpred;
-} AISeenList;
-
-typedef struct AIDetection {
-    char unk0[0x18];
-    AISeenList enemies;
-    AISeenList friends;
-} AIDetection;
-
 extern const int gHitZones[];
 
 static const float kZero = 0.0f;
@@ -162,23 +143,23 @@ HOOK(0x489B20, AIDetection_IsVisible);
 
 void AIDetection_RemoveRefs(AIDetection *d)
 {
-    AISeenNode *n, *next;
+    AISeen *n, *next;
 
-    for (n = d->enemies.head; (next = n->next) != NULL; n = next)
+    for (n = (AISeen *)d->enemies.head; (next = (AISeen *)n->node.next) != NULL; n = next)
         TaskRef_Remove(n->ref);
-    for (n = d->friends.head; (next = n->next) != NULL; n = next)
+    for (n = (AISeen *)d->friends.head; (next = (AISeen *)n->node.next) != NULL; n = next)
         TaskRef_Remove(n->ref);
 }
 HOOK(0x489B90, AIDetection_RemoveRefs);
 
-AISeenNode *AIDetection_FindSeen(AIDetection *d, Task *t)
+AISeen *AIDetection_FindSeen(AIDetection *d, Task *t)
 {
-    AISeenNode *n;
+    AISeen *n;
 
-    for (n = d->enemies.head; n->next; n = n->next)
+    for (n = (AISeen *)d->enemies.head; n->node.next; n = (AISeen *)n->node.next)
         if (n->valid && *n->ref == t)
             return n;
-    for (n = d->friends.head; n->next; n = n->next)
+    for (n = (AISeen *)d->friends.head; n->node.next; n = (AISeen *)n->node.next)
         if (n->valid && *n->ref == t)
             return n;
     return NULL;

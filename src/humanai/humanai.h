@@ -155,22 +155,6 @@ typedef struct AITarget {
     int removed;
 } AITarget;
 
-/* detection lists, the seen tasks sit in nodes with the ref at +8 */
-typedef struct AISeen {
-    Node node;
-    Task **ref;
-    char unkC[0x1D];
-    char isNew;
-    char unk2A[6];
-} AISeen;
-
-typedef struct AIDetection {
-    char unk0[0x18];
-    List enemies;
-    List friends;
-    char unk30[0x2400];
-} AIDetection;
-
 #define AI_EVENT_TYPES 24
 #define AI_POOL 32
 
@@ -335,7 +319,6 @@ _Static_assert(sizeof(AIDetectView) == 0x78, "AIDetectView");
 _Static_assert(sizeof(AIEvent) == 0x30, "AIEvent");
 _Static_assert(sizeof(AIAction) == 0x30, "AIAction");
 _Static_assert(sizeof(AITarget) == 0x130, "AITarget");
-_Static_assert(sizeof(AISeen) == 0x30, "AISeen");
 _Static_assert(offsetof(GraphNode, flags) == 0x30, "GraphNode");
 _Static_assert(offsetof(HumanAI, eventPool) == 0xF0, "eventPool");
 _Static_assert(offsetof(HumanAI, events) == 0x6F0, "events");

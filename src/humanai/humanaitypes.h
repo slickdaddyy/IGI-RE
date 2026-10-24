@@ -2,6 +2,7 @@
 #define HUMANAI_HUMANAITYPES_H
 
 #include "types.h"
+#include "task/tasktypes.h"
 
 /* a point of the walk queue */
 typedef struct MoveItem {
@@ -10,5 +11,25 @@ typedef struct MoveItem {
     int door;
     int id;
 } MoveItem;
+
+/* an enemy or friend an AIDetection knows of */
+typedef struct AISeen {
+    Node node;
+    Task **ref;
+    char unkC[0x1C];
+    char unk28;
+    char visible;
+    char valid;
+    char unk2B[5];
+} AISeen;
+_Static_assert(sizeof(AISeen) == 0x30, "AISeen");
+
+typedef struct AIDetection {
+    char unk0[0x18];
+    List enemies;       /* AISeen */
+    List friends;
+    char unk30[0x2400];
+} AIDetection;
+_Static_assert(sizeof(AIDetection) == 0x2430, "AIDetection");
 
 #endif

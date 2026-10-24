@@ -309,7 +309,7 @@ void HumanAI_Update(HumanAI *ai, void *arg)
         for (next = n->next; next; next = next->next) {
             AISeen *s = (AISeen *)n;
 
-            if (s->isNew && *s->ref && !Human_IsDead(*s->ref))
+            if (s->visible && *s->ref && !Human_IsDead(*s->ref))
                 HumanAI_SendSeen(ai, EVENT_ENEMYDETECTION, *s->ref);
             n = next;
         }
@@ -317,7 +317,7 @@ void HumanAI_Update(HumanAI *ai, void *arg)
         for (next = n->next; next; next = next->next) {
             AISeen *s = (AISeen *)n;
 
-            if (s->isNew && *s->ref && Human_IsDead(*s->ref))
+            if (s->visible && *s->ref && Human_IsDead(*s->ref))
                 HumanAI_SendSeen(ai, EVENT_FRIENDLYDETECTION, *s->ref);
             n = next;
         }

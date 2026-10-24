@@ -12,6 +12,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "sysmisc/sysmisctypes.h"
+#include "humanai/humanaitypes.h"
 
 FN_EXTERN(AICombat_End);
 FN_EXTERN(AICombat_KneelFire);
@@ -96,14 +97,6 @@ typedef struct AITarget {
     char unk0[0x110];
     Vec3d pos;
 } AITarget;
-
-typedef struct AISeen {
-    Node node;
-    Task **ref;
-    char unkC[0x1C];
-    char unk28;
-    char visible;
-} AISeen;
 
 typedef struct AIEvent {
     Node node;
@@ -253,7 +246,6 @@ _Static_assert(offsetof(GraphNode, radius) == 0x24, "radius");
 _Static_assert(offsetof(GraphNode, graph) == 0x134, "graph");
 _Static_assert(offsetof(GraphNode, links) == 0x13C, "links");
 _Static_assert(offsetof(NodeGrid, cells) == 0x20, "cells");
-_Static_assert(offsetof(AISeen, visible) == 0x29, "visible");
 _Static_assert(offsetof(AIEvent, about) == 0x2C, "about");
 _Static_assert(offsetof(CombatData, first) == 0x20, "first");
 _Static_assert(offsetof(AIAction, param) == 0x28, "param");
