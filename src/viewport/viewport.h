@@ -6,6 +6,7 @@
 #include "igi.h"
 #include "transctx/transctx.h"
 #include "task/tasktypes.h"
+#include "haze/hazetypes.h"
 
 FN_EXTERN(SubLevel_Run);
 FN_EXTERN(Task_Nothing);
@@ -38,15 +39,6 @@ extern int gTaskStackTop;
             c_ = gTaskStack[--gTaskStackTop];               \
         } while (c_);                                       \
     } while (0)
-
-/* rotation (9 floats and a spare word), position and fov, what a view looks through */
-typedef struct Camera {
-    float m[9];
-    int unk24;
-    double pos[3];
-    float fov;
-    float squeeze; /* 0x44, vertical scale of the view around its centre */
-} Camera;
 
 /* "ViewportQTask", 200 bytes */
 typedef struct Viewport {

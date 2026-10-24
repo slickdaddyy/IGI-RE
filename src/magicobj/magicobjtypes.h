@@ -94,4 +94,13 @@ typedef struct Frame {
     Matrix matrix;
 } Frame;
 
+typedef struct MeshPart {
+    int triCount;
+    int vertCount;
+    int unk08[2];
+    uint16_t (*tris)[4];
+    float (*verts)[4];
+    int unk18[2];
+} MeshPart;
+
 #endif

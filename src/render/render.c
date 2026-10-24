@@ -18,14 +18,6 @@
 
 /* Direct3D mesh renderer: rigid, spline and lightmapped meshes. */
 
-/* screen area being drawn (0xBCABA0) */
-typedef struct Scene {
-    char unk0[0x20];
-    float w, h;
-    float halfW, halfH;
-    float minX, minY, maxX, maxY;
-} Scene;
-
 typedef struct VBUpload {
     struct VBUpload *next;
     char unk4[8];
@@ -160,7 +152,6 @@ typedef struct SortedPrim {
     int unk64;
 } SortedPrim;
 
-_Static_assert(offsetof(Scene, minX) == 0x30, "Scene");
 _Static_assert(sizeof(ModelVB) == 0x24, "ModelVB");
 _Static_assert(sizeof(ModelSlot) == 0xFA8, "ModelSlot");
 _Static_assert(offsetof(LmGroup, indices) == 0x20, "LmGroup");

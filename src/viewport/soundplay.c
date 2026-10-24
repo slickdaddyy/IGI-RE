@@ -9,22 +9,7 @@
 
 /* Playing sounds by name or through a handle, on top of the sound system of src/sound. */
 
-/* one playing (or wanted) sound, there is one per DirectSound voice */
-typedef struct SoundInst {
-    struct SoundInst *prev;
-    struct SoundInst *next;
-    uint32_t flags;
-    int bucket;
-    int hash;
-    int id;
-    uint32_t age;
-    void *voice;
-    SoundParams params;
-} SoundInst;
-
 typedef void (*TaskFn2)(Task *task, void *arg);
-
-_Static_assert(sizeof(SoundInst) == 0x78, "SoundInst");
 
 extern int gUnkA5E5E8;
 extern SoundInst *gSoundFree;

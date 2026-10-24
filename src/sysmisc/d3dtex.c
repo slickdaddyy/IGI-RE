@@ -9,31 +9,10 @@
 #include "igi.h"
 #include "types.h"
 #include "res/restypes.h"
+#include "sysmisc/sysmisctypes.h"
 
 /* Texture functions of the Direct3D render mode: textures are DirectDraw
    surfaces, created and filled when the engine downloads them. */
-
-typedef struct PaletteDesc {
-    Palette *pal;
-    int unk4;
-    uint32_t *colors;
-} PaletteDesc;
-
-/* what AllocTexture and DownloadTexture get from the engine */
-typedef struct TextureDesc {
-    Texture *tex;
-    Palette *palette;
-    int unk08;
-    int pitch;
-    int unk10;
-    int unk14;
-    int width;
-    int height;
-    int format;             /* 0x40: with mipmaps */
-    unsigned flags;
-    int mipmap;
-    void *data;
-} TextureDesc;
 
 /* argument of the GetTextureSize render function */
 typedef struct TexSize {
@@ -170,7 +149,7 @@ HOOK(0x50A620, D3DTex_AlphaCoverage);
 
 void D3DTex_AllocPalette(PaletteDesc *d)
 {
-    Palette *p = d->pal;
+    Palette *p = d->palette;
 
     p->colors = Mem_Alloc(0x400, 4);
     if (d->colors)

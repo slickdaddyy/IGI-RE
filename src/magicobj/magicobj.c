@@ -102,15 +102,6 @@ void RigidDynCubeObj_GetInfo(RigidDynCubeObj *o, ObjInfo *info)
 }
 HOOK(0x4C3110, RigidDynCubeObj_GetInfo);
 
-typedef struct MeshPart {
-    int triCount;
-    int vertCount;
-    int unk08[2];
-    uint16_t (*tris)[4];
-    float (*verts)[4];
-    int unk18[2];
-} MeshPart;
-
 /* draws both collision meshes from above as 2D triangles */
 void RigidDynCubeObj_DrawCellMask(RigidDynCubeObj *o, RigidDrawView *view)
 {

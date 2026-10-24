@@ -4,39 +4,13 @@
 #include "hook.h"
 #include "editobj/editobj.h"
 #include "editobj/editobjtypes.h"
+#include "sound/soundtypes.h"
 
 FN_EXTERN(ConditionalContainer_ForwardEvent4);
 FN_EXTERN(SplineObjWaypoint_Changed);
 FN_EXTERN(SplineObjWaypoint_Create);
 FN_EXTERN(SplineObjWaypoint_Delete);
 FN_EXTERN(Task_Nothing);
-
-/* "SplineObj" (0x68) */
-typedef struct SplineObj {
-    Task task;
-    int unk20;
-    int maxSegments;
-    float length;
-    Vec3f pos;          /* moves all waypoints when changed */
-    Vec3f oldPos;
-    float angle;        /* turns all waypoints around the first one */
-    float oldAngle;
-    char unk4C;
-    char collide;
-    char unk4E;
-    char unk4F;
-    Vec3f color1;
-    Vec3f color2;
-} SplineObj;
-
-typedef struct SplineObjSegment {
-    char unk0[0xF8];
-    float length;
-    float start;
-    float end;
-} SplineObjSegment;
-
-_Static_assert(sizeof(SplineObj) == 0x68, "SplineObj");
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -227,10 +201,10 @@ void SplineObj_Open(void)
     gSplineObjSegmentRange.min = 2;
     gSplineObjSegmentRange.max = 20;
     gSplineObjParams = ParamTable_New(10);
-    ParamTable_Add(gSplineObjParams, &o, &o.unk4E, Param_Bool8(), 7, NULL);
+    ParamTable_Add(gSplineObjParams, &o, &o.rigid, Param_Bool8(), 7, NULL);
     ParamTable_Add(gSplineObjParams, &o, &o.collide, Param_Bool8(), 7, NULL);
-    ParamTable_Add(gSplineObjParams, &o, &o.unk4C, Param_Bool8(), 7, NULL);
-    ParamTable_Add(gSplineObjParams, &o, &o.unk4F, Param_Bool8(), 7, NULL);
+    ParamTable_Add(gSplineObjParams, &o, &o.snap, Param_Bool8(), 7, NULL);
+    ParamTable_Add(gSplineObjParams, &o, &o.autoOrient, Param_Bool8(), 7, NULL);
     ParamTable_Add(gSplineObjParams, &o, &o.maxSegments, Param_Int32(), 7, &gSplineObjSegmentRange);
     ParamTable_Add(gSplineObjParams, &o, &o.unk20, Param_Int32(), 7, NULL);
     ParamTable_Add(gSplineObjParams, &o, &o.pos, Param_Real32x3(), 7, NULL);
@@ -254,9 +228,9 @@ void SplineObj_Create(SplineObj *o)
     o->angle = kPi;
     o->oldAngle = kPi;
     o->unk20 = 0;
-    o->unk4E = 0;
+    o->rigid = 0;
     o->collide = 0;
-    o->unk4C = 0;
+    o->snap = 0;
     o->maxSegments = 20;
     o->length = 0.0f;
     o->pos = (Vec3f){0.0f, 0.0f, 0.0f};

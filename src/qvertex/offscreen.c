@@ -3,6 +3,7 @@
 
 #include "hook.h"
 #include "qvertex/qvertex.h"
+#include "sysmisc/sysmisctypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -39,24 +40,6 @@ QV_F32(kZero, 0x00000000);
 QV_F32(kOne, 0x3F800000);
 QV_F32(k255, 0x437F0000);
 QV_F32(kInv255, 0x3B808081);
-
-/* What AllocTexture gets. */
-typedef struct TextureDesc {
-    QTexture *tex;
-    int unk04, unk08;
-    int pitch;
-    int unk10, unk14;
-    int width, height;
-    int format;
-    int unk24, fromFile;
-    void *data;
-} TextureDesc;
-
-typedef struct PaletteDesc {
-    QPalette *palette;
-    int count;
-    const uint32_t *colors;
-} PaletteDesc;
 
 /* A sprite primitive of the offscreen driver: one textured or plain
    rectangle. */
@@ -106,7 +89,7 @@ HOOK(0x50BD80, OffscreenBuffer_InitTextures);
 
 void OffscreenBuffer_AllocTexture(TextureDesc *d)
 {
-    QTexture *t = d->tex;
+    QTexture *t = (QTexture *)d->tex;
 
     t->pixels = Mem_Alloc(d->pitch * d->height, 4);
     memcpy(t->pixels, d->data, (unsigned)(d->pitch * d->height));
@@ -127,7 +110,7 @@ HOOK(0x50BE70, OffscreenBuffer_DeAllocTexture);
 /* Converts the 256 colours to RGB565. Hangs if the slot is taken. */
 void OffscreenBuffer_AllocPalette(PaletteDesc *d)
 {
-    QPalette *p = d->palette;
+    QPalette *p = (QPalette *)d->palette;
     const uint8_t *c;
     int i;
 

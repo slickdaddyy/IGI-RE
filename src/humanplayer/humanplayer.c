@@ -45,10 +45,10 @@ typedef struct AmmoLimit {
     int limit;
 } AmmoLimit;
 
-typedef struct Camera {
+typedef struct CameraTask {
     char unk0[0x38];
     float m[10];
-} Camera;
+} CameraTask;
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -1383,7 +1383,7 @@ void HumanPlayer_Update(HumanPlayer *h)
     float *d = h->delta;
     float x, y, z, pitch, yaw, v[3];
     long double speed, a;
-    Camera *cam;
+    CameraTask *cam;
 
     HumanPlayer_CheckDeath(h);
     Human_UpdatePlatformMove(h);

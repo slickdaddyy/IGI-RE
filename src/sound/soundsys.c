@@ -51,20 +51,6 @@ ORIG(0x4E7350, void, sub_4E7350, (int unk));
 #define DefineGraph (FN(0x4EAD20, DefineGraph))
 #define DefineTriggerOnce (FN(0x4E9EC0, DefineTriggerOnce))
 
-/* one playing (or wanted) sound, there is one per DirectSound voice */
-typedef struct SoundInst {
-    struct SoundInst *prev;
-    struct SoundInst *next;
-    uint32_t flags;
-    int bucket;
-    int hash;
-    int id;
-    uint32_t age;
-    void *voice;
-    float volume;           /* first field of the 0x58 byte SoundParams */
-    char params[0x54];
-} SoundInst;
-
 /* a "sounds.qsc" script, its tasks are the sound definitions */
 typedef struct SoundSysDef {
     Task task;
@@ -76,7 +62,6 @@ typedef struct ResourceEntry {
     void *data;
 } ResourceEntry;
 
-_Static_assert(sizeof(SoundInst) == 0x78, "SoundInst");
 _Static_assert(sizeof(SoundSysDef) == 0xA0, "SoundSysDef");
 
 extern SoundInst *gSoundFree;
@@ -247,8 +232,8 @@ void SoundSys_Update(void)
                 continue;
             }
             if (s->voice)
-                Voice_SetParams(s->voice, &s->volume);
-            if (s->volume != kZero)
+                Voice_SetParams(s->voice, &s->params.volume);
+            if (s->params.volume != kZero)
                 continue;
         } else if (s->age == 0) {
             s->age++;

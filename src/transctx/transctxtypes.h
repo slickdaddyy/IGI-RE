@@ -82,4 +82,17 @@ typedef struct TransCtx {
     int unkA4;
 } TransCtx;
 
+typedef struct Scene {
+    struct Scene *next;
+    struct Scene *prev;
+    int renderMode; /* -1 = the current one */
+    RenderNode clip; /* ClipWindowPrimitive for the area below */
+    float x, y, w, h;
+    float halfW, halfH;
+    float minX, minY, maxX, maxY;
+    int queueCount;
+    RenderNode *queues; /* drawn from the last one down */
+    RenderNode *extra;
+} Scene;
+
 #endif

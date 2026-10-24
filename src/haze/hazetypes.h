@@ -23,4 +23,17 @@ typedef struct BoneDynCubeObj {
 } BoneDynCubeObj;
 _Static_assert(sizeof(BoneDynCubeObj) == 0xD8, "BoneDynCubeObj");
 
+typedef struct Camera {
+    Matrix axes;
+    Vec3d pos;
+    float fov;
+    float aspect;       /* vertical scale of the view around its centre */
+    float priority;
+    int frame;
+    int count;
+    void *owner;
+    int unk58;
+    int unk5C;
+} Camera;
+
 #endif

@@ -4,22 +4,7 @@
 #include "igi.h"
 #include "orig.h"
 #include "res/restypes.h"
-
-/* What AllocTexture and DownloadTexture get from the engine. */
-typedef struct TextureDesc {
-    void *tex;
-    int unk04;
-    int unk08;
-    int pitch;
-    int unk10;
-    int unk14;
-    int width;
-    int height;
-    int format;
-    int unk24;
-    int fromFile;
-    void *data;
-} TextureDesc;
+#include "sysmisc/sysmisctypes.h"
 
 /* Header of a .tex file, version 2. */
 typedef struct LoopHeader2 {
@@ -194,14 +179,14 @@ void Texture_Alloc(Texture *tex, int a2, int pitch, int width, int height, int f
     tex->device = RenderMode_GetCurrent();
     memset(&d, 0, sizeof(d));
     d.tex = tex;
-    d.unk04 = a2;
+    d.palette = (Palette *)a2;
     d.unk08 = a7;
     d.pitch = pitch;
     d.width = width;
     d.height = height;
     d.format = format;
-    d.unk24 = a8;
-    d.fromFile = gTexFromFile;
+    d.flags = a8;
+    d.mipmap = gTexFromFile;
     d.data = NULL;
     gRenderFuncs[gAllocTextureId](&d);
 }
@@ -214,14 +199,14 @@ void Texture_Create(Texture *tex, int a2, int pitch, int width, int height, int 
     tex->device = RenderMode_GetCurrent();
     memset(&d, 0, sizeof(d));
     d.tex = tex;
-    d.unk04 = a2;
+    d.palette = (Palette *)a2;
     d.unk08 = a7;
     d.pitch = pitch;
     d.width = width;
     d.height = height;
     d.format = format;
-    d.unk24 = a8;
-    d.fromFile = gTexFromFile;
+    d.flags = a8;
+    d.mipmap = gTexFromFile;
     d.data = data;
     gRenderFuncs[gAllocTextureId](&d);
     gRenderFuncs[gDownloadTextureId](&d);
@@ -234,14 +219,14 @@ void Texture_Download(void *tex, int a2, int pitch, int width, int height, int f
     TextureDesc d;
 
     d.tex = tex;
-    d.unk04 = a2;
+    d.palette = (Palette *)a2;
     d.unk08 = 0;
     d.pitch = pitch;
     d.width = width;
     d.height = height;
     d.format = format;
-    d.unk24 = 0;
-    d.fromFile = gTexFromFile;
+    d.flags = 0;
+    d.mipmap = gTexFromFile;
     d.data = data;
     gRenderFuncs[gDownloadTextureId](&d);
 }

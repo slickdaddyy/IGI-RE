@@ -92,10 +92,10 @@ static inline int fne(long double a, long double b)
     return a < b || a > b;
 }
 
-typedef struct ParseMsg {
+typedef struct TaskParseMsg {
     int next;
     void *args;
-} ParseMsg;
+} TaskParseMsg;
 
 typedef struct ArgCountMsg {
     int count;
@@ -114,7 +114,7 @@ uint8_t Vehicle_GetStateSizeEvent(void);
 uint8_t Vehicle_GetSaveEvent(void);
 uint8_t Vehicle_GetLoadEvent(void);
 
-void AnimData_Parse(AnimTask *t, ParseMsg *msg);
+void AnimData_Parse(AnimTask *t, TaskParseMsg *msg);
 void AnimData_ArgCount(void *t, ArgCountMsg *msg);
 void AnimData_Copy(AnimTask *t, AnimData **out);
 void AnimData_Paste(AnimTask *t, AnimData **in);
@@ -141,7 +141,7 @@ void AnimTask_Open(void)
 HOOK(0x4F3440, AnimTask_Open);
 
 /* script arguments: key count, then (channel, value) pairs */
-void AnimData_Parse(AnimTask *t, ParseMsg *msg)
+void AnimData_Parse(AnimTask *t, TaskParseMsg *msg)
 {
     int i = msg->next, k;
 

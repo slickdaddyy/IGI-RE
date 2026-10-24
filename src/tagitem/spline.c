@@ -840,8 +840,8 @@ void SplineObjWaypoint_Changed(Waypoint *w)
                 obj->length = p->seg->length + obj->length;
     }
     if (w->seg) {
-        memcpy(&w->seg->unkA8, &obj->unk50, sizeof(Vec3f));
-        memcpy(&w->seg->unkB4, &obj->unk5C, sizeof(Vec3f));
+        memcpy(&w->seg->color1, &obj->color1, sizeof(Vec3f));
+        memcpy(&w->seg->color2, &obj->color2, sizeof(Vec3f));
     }
     SplineObjWaypoint_UpdateAttach(w);
 }

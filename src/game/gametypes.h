@@ -18,7 +18,7 @@ typedef struct Game {
     int unk50;
     Task **ref54;
     int unk58;
-    struct Camera *camera;
+    struct CameraTask *camera;
     char unk60[0x60];
     Task **players[4];
     int unkD0[4];

@@ -4,20 +4,6 @@
 #include "igi.h"
 #include "transctx/transctxtypes.h"
 
-/* A screen area with its own render queues, 0x4C bytes. The one being drawn is copied to gScene. */
-typedef struct Scene {
-    struct Scene *next;
-    struct Scene *prev;
-    int renderMode; /* -1 = the current one */
-    RenderNode clip; /* ClipWindowPrimitive for the area below */
-    float x, y, w, h;
-    float halfW, halfH;
-    float minX, minY, maxX, maxY;
-    int queueCount;
-    RenderNode *queues; /* drawn from the last one down */
-    RenderNode *extra;
-} Scene;
-
 /* Camera for one view, 0xA8 bytes. gTransContext (0xBCAAE0) is the active one. */
 typedef struct TransContext {
     float m[9]; /* world to view, transposed from the camera matrix */
@@ -34,7 +20,6 @@ typedef struct TransContext {
     int unkA4;
 } TransContext;
 
-_Static_assert(sizeof(Scene) == 0x4C, "Scene");
 _Static_assert(sizeof(TransContext) == 0xA8, "TransContext");
 
 extern void (*gRenderFuncs[])(void *);

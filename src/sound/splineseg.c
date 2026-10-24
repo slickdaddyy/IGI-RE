@@ -34,56 +34,6 @@ typedef void (*RenderFn)(void *arg);
 extern RenderFn gRenderFuncs[];
 extern uint16_t gSplineObjSegmentType;
 
-/* a collision mesh part */
-typedef struct MeshPart {
-    int triCount;
-    int vertCount;
-    int unk08[2];
-    uint16_t (*tris)[4];
-    int unk14[3];
-} MeshPart;
-
-typedef struct SplineBuffer {
-    void *data;
-    int count;
-} SplineBuffer;
-
-/* "SplineObjSegment" (0x5B8 bytes), a RigidDynCubeObj whose model is bent
-   along a curve; see SplineMesh_GetVerts */
-typedef struct SplineObjSegment {
-    Task task;
-    Vec3d pos;
-    char unk38[0x34];
-    char **models;
-    float rot[10];
-    char unk98[0xC];
-    int lod;
-    char unkA8[0x48];
-    void *tree;
-    float radius;
-    float length;
-    float start;
-    float end;
-    float segPos[21][3];
-    float segRot[20][10];
-    float lastRot[9];
-    float segLength[21];        /* [0] is lastRot's spare tenth word */
-    int unk598;
-    int segments;
-    SplineBuffer buffers[2];
-    char **lastModel;
-    char rigid;
-    char reversed;
-    char pad5B6[2];
-} SplineObjSegment;
-
-_Static_assert(offsetof(SplineObjSegment, lod) == 0xA4, "lod");
-_Static_assert(offsetof(SplineObjSegment, tree) == 0xF0, "tree");
-_Static_assert(offsetof(SplineObjSegment, segRot) == 0x200, "segRot");
-_Static_assert(offsetof(SplineObjSegment, segLength) == 0x544, "segLength");
-_Static_assert(offsetof(SplineObjSegment, buffers) == 0x5A0, "buffers");
-_Static_assert(sizeof(SplineObjSegment) == 0x5B8, "SplineObjSegment");
-
 /* the argument of the spline draw method */
 typedef struct SplineDrawArg {
     SplineObjSegment *obj;

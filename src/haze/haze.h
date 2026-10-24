@@ -55,19 +55,6 @@ typedef struct MagicMoveArg {
     Matrix *matrix;
 } MagicMoveArg;
 
-typedef struct Camera {
-    Matrix axes;
-    Vec3d pos;
-    float fov;
-    float aspect;
-    float priority;
-    int frame;
-    int count;
-    void *owner;
-    int unk58;
-    int unk5C;
-} Camera;
-
 /* "Hazinglayers", 0x90 bytes: a fog box */
 typedef struct HazeLayer {
     Task task;
@@ -82,7 +69,6 @@ typedef struct HazeLayer {
 
 _Static_assert(sizeof(QObj) == 0x50, "QObj");
 _Static_assert(sizeof(MagicObj) == 0x138, "MagicObj");
-_Static_assert(sizeof(Camera) == 0x60, "Camera");
 _Static_assert(sizeof(HazeLayer) == 0x90, "HazeLayer");
 
 extern HzHandler gTaskHandlers[][0x180];
