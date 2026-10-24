@@ -32,7 +32,7 @@ ORIG(0x4C9A30, int, Coll_Descend_, (Terrain *t, CollCursor *c, CollCursor *unuse
 
 extern const int gCollChildTable[];
 extern int gCollWalkTasks;
-extern int gCollBumpCount;
+extern int gCollBumpTop;
 extern int gCollLineCalls;
 extern int gCollLineCount;
 
@@ -268,8 +268,8 @@ int Coll_LeafLineHit(const short *leaf, const Vec3d *base, const Vec3d *s, const
     double scale;
     Vec3f d, bn = {0, 0, 0};
 
-    if (gCollBumpCount) {
-        const CollBump *b = &gCollBumps[gCollBumpCount];
+    if (gCollBumpTop) {
+        const CollBump *b = &gCollBumps[gCollBumpTop - 1];
 
         bump_x = (float)b->x;
         bump_scale = b->scale;
@@ -306,7 +306,7 @@ int Coll_LeafLineHit(const short *leaf, const Vec3d *base, const Vec3d *s, const
         X = (double)(x + base->x);
         Y = (double)((long double)y + base->y);
         Z = (double)((long double)z + base->z);
-        if (gCollBumpCount) {
+        if (gCollBumpTop) {
             long double fx = ((long double)X - bump_x) * bump_scale;
             float fy = (float)(((long double)Y - bump_y) * bump_scale);
             int ix = fistp(fx), iy = fistp(fy);

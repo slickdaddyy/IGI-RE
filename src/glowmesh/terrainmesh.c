@@ -9,6 +9,7 @@
 #include "bonemesh/bonemeshtypes.h"
 #include "lod/lodtypes.h"
 #include "terrain/terraintypes.h"
+#include "coll/colltypes.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -81,27 +82,6 @@ typedef struct TerrainLightMapInfo {
     char unk1C[0x14];
 } TerrainLightMapInfo;
 
-typedef struct TerrainHeightMapInfo {
-    char unk0[0xC];
-    int shift;
-    float scale;
-    int unk14;
-    double x0, y0;
-    const signed char *data;
-    int unk2C;
-} TerrainHeightMapInfo;
-
-typedef struct TerrainMaterialMapInfo {
-    int id;
-    char unk4[8];
-    int shift;
-    float scale;
-    int unk14;
-    double x0, y0;
-    const uint8_t *bits;
-    int unk2C;
-} TerrainMaterialMapInfo;
-
 typedef struct TerrainMatEntry {
     int shift; /* 0 ends the list */
     float scale;
@@ -138,8 +118,6 @@ typedef struct TerrainPoly {
 
 _Static_assert(sizeof(TerrainCell) == 0x30, "TerrainCell");
 _Static_assert(sizeof(TerrainLightMapInfo) == 0x30, "TerrainLightMapInfo");
-_Static_assert(sizeof(TerrainHeightMapInfo) == 0x30, "TerrainHeightMapInfo");
-_Static_assert(sizeof(TerrainMaterialMapInfo) == 0x30, "TerrainMaterialMapInfo");
 _Static_assert(sizeof(TerrainVertRec) == 0x24, "TerrainVertRec");
 _Static_assert(sizeof(TerrainMatRec) == 0x28, "TerrainMatRec");
 _Static_assert(offsetof(TerrainPoly, fogLayers) == 0x84, "TerrainPoly");
@@ -159,8 +137,8 @@ extern Pool gQCubePool1;
 extern Pool gQCubePool2;
 extern double gQCubeOriginD[];
 extern TerrainLightMapInfo gTerrainLightMaps[];
-extern TerrainHeightMapInfo gCollBumps[];
-extern TerrainMaterialMapInfo gTerrainMaterialMaps[];
+extern CollBump gCollBumps[];
+extern CollHole gCollHoles[];
 extern uint8_t gTerrainTileMaps[][8];
 extern int gTerrainMeshRenderAll;
 extern Pool gLightPool;
@@ -574,13 +552,13 @@ void TerrainMesh_Build(void)
         if (level < 0xE) {
             height = 0;
         } else if (height) {
-            const TerrainHeightMapInfo *r = &gCollBumps[height];
+            const CollBump *r = &gCollBumps[height - 1];
 
-            hmap = r->data;
-            hmX0 = r->x0;
-            hmY0 = r->y0;
+            hmap = r->heights;
+            hmX0 = r->x;
+            hmY0 = r->y;
             hmScale = r->scale;
-            hmShift = r->shift + 3;
+            hmShift = r->sizeShift + 3;
         }
         if (key != cell->materials) {
             int k = cell->materials;
@@ -590,14 +568,14 @@ void TerrainMesh_Build(void)
                 int b = k & 0xFF;
 
                 if (b) {
-                    const TerrainMaterialMapInfo *r = &gTerrainMaterialMaps[b];
+                    const CollHole *r = &gCollHoles[b - 1];
 
-                    mats[i].id = r->id;
+                    mats[i].id = r->material;
                     mats[i].bits = r->bits;
-                    mats[i].x0 = r->x0;
-                    mats[i].y0 = r->y0;
+                    mats[i].x0 = r->x;
+                    mats[i].y0 = r->y;
                     mats[i].scale = r->scale;
-                    mats[i].shift = r->shift;
+                    mats[i].shift = r->sizeShift;
                 } else {
                     mats[i].shift = 0;
                 }
@@ -1142,8 +1120,6 @@ STORE(igb, B12C60, 4) __typeof__(gTerrainMeshes[0]) store_B12C60[4096];
 ALIAS(gTerrainMeshes, store_B12C60, 0);
 BSS(B16C6C) int gQCubeMinSize;
 BSS(B16CC0) Pool gQCubePool2;
-PAD(igb, BA5050, BA5050, 0x10);
-ALIAS(gTerrainMaterialMaps, pad_BA5050, 0);
 PAD(igb, BA80B0, BA80B0, 0x17FF0);
 ALIAS(gTerrainLightMaps, pad_BA80B0, 0);
 BSS(C28FBC) int gTerrMeshTotal;

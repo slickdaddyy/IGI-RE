@@ -46,7 +46,7 @@ extern int gCollHoleList[];
 extern int gCollHoleCount;
 extern int gCollSavedHoleCount;
 extern CollBump gCollBumps[];
-extern int gCollBumpCount;
+extern int gCollBumpTop;
 extern CollHole gCollHoles[];
 extern int gCollLineCalls;
 extern int gCollLineCount;
@@ -307,8 +307,8 @@ int Coll_LeafHit(const short *leaf, const Vec3d *base, const Vec3d *p, Vec3d *hi
     const int *verts;
     Vec3f bn;
 
-    if (gCollBumpCount) {
-        const CollBump *bump = &gCollBumps[gCollBumpCount];
+    if (gCollBumpTop) {
+        const CollBump *bump = &gCollBumps[gCollBumpTop - 1];
 
         bump_x = (float)((long double)bump->x - base->x);
         bump_y = (float)((long double)bump->y - base->y);
@@ -357,7 +357,7 @@ int Coll_LeafHit(const short *leaf, const Vec3d *base, const Vec3d *p, Vec3d *hi
             x = -x;
             y = -y;
         }
-        if (gCollBumpCount) {
+        if (gCollBumpTop) {
             long double fx = (x - bump_x) * bump_scale;
             float fy = (float)((y - bump_y) * bump_scale);
             int ix = Coll_Fistp(fx);

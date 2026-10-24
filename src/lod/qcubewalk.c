@@ -112,7 +112,7 @@ extern char *gTerrainMeshes[];
 extern int gTerrainMeshCount;
 extern int gVisibleLightMapCount;
 extern int gVisibleLightMaps[];
-extern int gCollBumpCount;
+extern int gCollBumpTop;
 extern int gCollHoleBits;
 
 F32(kSlope, 0x3fddb574);     /* 1.7321 */
@@ -480,9 +480,9 @@ void QCube_Walk(WWorld *w)
                         out->cache = ce;
                         out->holes = gCollHoleBits;
                         if (gVisibleLightMapCount)
-                            out->lights = gVisibleLightMaps[gVisibleLightMapCount - 1] | gCollBumpCount << 16;
+                            out->lights = gVisibleLightMaps[gVisibleLightMapCount - 1] | gCollBumpTop << 16;
                         else
-                            out->lights = gCollBumpCount << 16 | 0xFFFF;
+                            out->lights = gCollBumpTop << 16 | 0xFFFF;
                         out->unk20 = cc->unk1C;
                         out->sub = sub;
                         out->depth = depth + 1;

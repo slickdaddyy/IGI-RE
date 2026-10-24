@@ -85,9 +85,8 @@ extern char gHmpResident[];
 extern int gCollWalkTasks;
 extern int gCollBumpList[];
 extern int gCollBumpDepth;
-extern int gCollBumpCount;
+extern int gCollBumpTop;
 extern CollBump gCollBumps[];
-#define gSlotBumps (gCollBumps + 1) /* slots count from 1 */
 
 static const double kLiftZ = 268435456.0;
 static const double kHalf = 0.5;
@@ -129,7 +128,7 @@ void HeightMap_Enter(HeightMap *hm)
     if (hm->hmpIndex >= 0 && hm->world->hmp[hm->hmpIndex].data) {
         hm->shown = 1;
         gCollBumpList[gCollBumpDepth] = hm->slot + 1;
-        gCollBumpCount = hm->slot + 1;
+        gCollBumpTop = hm->slot + 1;
         gCollBumpDepth++;
         return;
     }
@@ -143,10 +142,10 @@ void HeightMap_Leave(HeightMap *hm)
 
     if (!hm->shown)
         return;
-    gCollBumpCount = 0;
+    gCollBumpTop = 0;
     n = --gCollBumpDepth;
     if (n - 1 >= 0)
-        gCollBumpCount = gCollBumpList[n - 1];
+        gCollBumpTop = gCollBumpList[n - 1];
 }
 HOOK(0x506F60, HeightMap_Leave);
 
@@ -277,7 +276,7 @@ void HeightMap_Changed(HeightMap *hm)
             }
         }
     }
-    gSlotBumps[hm->slot].heights = NULL;
+    gCollBumps[hm->slot].heights = NULL;
     p = hm->place;
     if (!hm->isChild) {
         Vec3d q = hm->place;
@@ -451,7 +450,7 @@ void HeightMap_Changed(HeightMap *hm)
         if (!mode)
             Mem_ClearMode();
     }
-    bump = &gSlotBumps[hm->slot];
+    bump = &gCollBumps[hm->slot];
     maps = hm->world->hmp;
     bump->sizeShift = hm->sizeShift;
     bump->scale = kOne;
@@ -469,7 +468,7 @@ HOOK(0x507410, HeightMap_Changed);
 
 void HeightMap_Collect(HeightMap *hm)
 {
-    if (hm->hmpIndex >= 0 && gSlotBumps[hm->slot].heights)
+    if (hm->hmpIndex >= 0 && gCollBumps[hm->slot].heights)
         gCollBumpList[gCollBumpDepth++] = hm->slot;
 }
 HOOK(0x507D00, HeightMap_Collect);
@@ -526,3 +525,5 @@ ALIAS(gHmpResident, store_B81920, 0);
 STORE(igb, B97D40, 4) int store_B97D40[16];
 ALIAS(gCollBumpList, store_B97D40, 0);
 BSS(B97DF4) int gCollBumpDepth;
+STORE(igb, BA2060, 8) __typeof__(gCollBumps[0]) store_BA2060[256];
+ALIAS(gCollBumps, store_BA2060, 0);

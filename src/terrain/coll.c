@@ -14,9 +14,8 @@ ORIG(0x4B2D90, char, Vec3_TriangleCoords, (float *u, float *v, const Vec3f *p, c
 ORIG(0x4B3100, void, Vec3d_Normalize, (Vec3d *v));
 ORIG(0x4B3190, void, Vec3d_Cross, (Vec3d *out, const Vec3d *a, const Vec3d *b));
 
-/* entry 0 overlaps the count, so the current bump is gCollBumps[count] */
 extern const CollBump gCollBumps[];
-extern int gCollBumpCount;
+extern int gCollBumpTop;
 
 static inline int fistp(long double x)
 {
@@ -49,8 +48,8 @@ int Coll_LeafPointInside(const short *leaf, const Vec3d *base, const Vec3d *p, u
     double scale, best;
     Vec3f normal = {0, 0, 0};
 
-    if (gCollBumpCount) {
-        const CollBump *b = &gCollBumps[gCollBumpCount];
+    if (gCollBumpTop) {
+        const CollBump *b = &gCollBumps[gCollBumpTop - 1];
 
         bump_x = (float)b->x;
         bump_scale = b->scale;
@@ -87,7 +86,7 @@ int Coll_LeafPointInside(const short *leaf, const Vec3d *base, const Vec3d *p, u
         X = x + base->x;
         Y = (long double)y + base->y;
         Z = (long double)z + base->z;
-        if (gCollBumpCount) {
+        if (gCollBumpTop) {
             long double fx = ((long double)X - bump_x) * bump_scale;
             float fy = ((long double)Y - bump_y) * bump_scale;
             int ix = fistp(fx), iy = fistp(fy);
@@ -178,7 +177,4 @@ int Coll_LeafPointInside(const short *leaf, const Vec3d *base, const Vec3d *p, u
 HOOK(0x4C9020, Coll_LeafPointInside);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igb, BA2030, BA2030, 0x10);
-ALIAS(gCollBumps, pad_BA2030, 0);
-ALIAS(gWaterTint, pad_BA2030, 0);
-BSS(BA2058) int gCollBumpCount;
+BSS(BA2058) int gCollBumpTop;

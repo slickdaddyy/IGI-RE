@@ -51,7 +51,7 @@ extern int gCollWalkTasks;
 extern int gCollBumpDepth;
 extern int gVisibleLightMapCount;
 extern int gCollHoleCount;
-extern int gCollBumpCount;
+extern int gCollBumpTop;
 extern int gCollHoleBits;
 extern int gSavedCounters[];
 
@@ -60,7 +60,7 @@ void Coll_ResetMods(void)
     gCollBumpDepth = 0;
     gVisibleLightMapCount = 0;
     gCollHoleCount = 0;
-    gCollBumpCount = 0;
+    gCollBumpTop = 0;
     gCollHoleBits = 0;
 }
 HOOK(0x4C5810, Coll_ResetMods);
@@ -70,7 +70,7 @@ void Coll_SaveMods(void)
     gSavedCounters[0] = gCollBumpDepth;
     gSavedCounters[1] = gVisibleLightMapCount;
     gSavedCounters[2] = gCollHoleCount;
-    gSavedCounters[3] = gCollBumpCount;
+    gSavedCounters[3] = gCollBumpTop;
     gSavedCounters[4] = gCollHoleBits;
 }
 HOOK(0x4C5830, Coll_SaveMods);
@@ -80,7 +80,7 @@ void Coll_RestoreMods(void)
     gCollBumpDepth = gSavedCounters[0];
     gVisibleLightMapCount = gSavedCounters[1];
     gCollHoleCount = gSavedCounters[2];
-    gCollBumpCount = gSavedCounters[3];
+    gCollBumpTop = gSavedCounters[3];
     gCollHoleBits = gSavedCounters[4];
 }
 HOOK(0x4C5870, Coll_RestoreMods);
