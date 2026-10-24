@@ -8,6 +8,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "humanplayer/humanplayer.h"
+#include "qasm/qasmtypes.h"
 
 FN_EXTERN(HumanPlayer_BlastHandler);
 FN_EXTERN(HumanPlayer_FenceHandler);
@@ -23,12 +24,6 @@ FN_EXTERN(HumanPlayer_MapMarkerHandler);
 
 typedef void (*TaskHandler)(void *task, void *arg);
 typedef void (*TaskHandler1)(void *task);
-
-typedef struct QTaskList {
-    int count;
-    int max;
-    Task *items[1];
-} QTaskList;
 
 typedef struct ReloadMsg {
     HumanPlayer *h;

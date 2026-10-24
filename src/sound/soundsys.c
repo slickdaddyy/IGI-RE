@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "sound/sound.h"
+#include "qasm/qasmtypes.h"
 
 FN_EXTERN(DefineGraph);
 FN_EXTERN(DefineGroup);
@@ -67,12 +68,6 @@ typedef struct SoundSysDef {
     Task task;
     char path[0x80];
 } SoundSysDef;
-
-typedef struct QTaskList {
-    int count;
-    int capacity;
-    Task *items[1];
-} QTaskList;
 
 typedef struct SoundFindArg {
     const char *name;

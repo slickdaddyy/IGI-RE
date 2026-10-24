@@ -6,6 +6,7 @@
 #include "igi.h"
 #include "task/task.h"
 #include "script/scripttypes.h"
+#include "terrain/terraintypes.h"
 
 #define DYNCUBE_TREES 6
 #define DYNCUBE_MIN_SIZE 0x2000
@@ -28,22 +29,6 @@ typedef struct DynCubeNode {
     uint16_t sub_mask;         /* event masks of all children */
     void *unk3C;
 } DynCubeNode;
-
-/* A task that lives in a dyncube tree. */
-struct DynCubeObj {
-    Task task;
-    Vec3d pos;
-    char unk38[0xC];
-    float radius;
-    int unk48;
-    int unk4C;
-    DynCubeNode *node;
-    DynCubeObj *prev;
-    DynCubeObj *next;
-    uint16_t mask;             /* copy of the task type's event mask */
-    uint16_t unk5E;
-    int unk60;
-};
 
 /* 256 entries at the start of the .bit and .hmp files. */
 typedef struct TerrainMap {

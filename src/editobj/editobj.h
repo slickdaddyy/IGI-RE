@@ -12,22 +12,11 @@
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-/* filled by the slot 7 (GetInfo) handlers */
-typedef struct ObjInfo {
-    Vec3d pos;
-    int unk18[3];
-    Matrix matrix;
-    float radius;
-    char *name;
-} ObjInfo;
-
 /* sent to children with the MagicObj move event */
 typedef struct MoveArg {
     Vec3d *pos;
     Matrix *matrix;
 } MoveArg;
-
-_Static_assert(offsetof(ObjInfo, radius) == 0x4C, "ObjInfo");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

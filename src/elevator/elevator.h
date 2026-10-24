@@ -12,22 +12,11 @@
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-/* filled by the RigidDynCubeObj slot 7 handler */
-typedef struct ObjInfo {
-    Vec3d pos;
-    int unk18[3];
-    Matrix matrix;
-    float radius;
-    char *name;
-} ObjInfo;
-
 /* sent to children with the RigidDynCubeObj event 4 */
 typedef struct MoveArg {
     Vec3d *pos;
     Matrix *matrix;
 } MoveArg;
-
-_Static_assert(offsetof(ObjInfo, name) == 0x50, "ObjInfo");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

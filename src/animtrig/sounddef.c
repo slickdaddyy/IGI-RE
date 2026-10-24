@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "animtrig/animtrig.h"
+#include "qasm/qasmtypes.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4974A0, void, SoundParams_Init, (void *params));
@@ -110,12 +111,6 @@ typedef struct SoundPlayArg {
     SoundSysMicrophone *listener;
     char defs; /* 1: definitions do not play */
 } SoundPlayArg;
-
-typedef struct QTaskList {
-    int count;
-    int capacity;
-    Task *items[1];
-} QTaskList;
 
 ORIG(0x4E7330, QTaskList *, Sound_GetTasks, (void));
 

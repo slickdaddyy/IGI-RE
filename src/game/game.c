@@ -8,6 +8,7 @@
 #include "igi.h"
 #include "game/game.h"
 #include "win/wintypes.h"
+#include "qasm/qasmtypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A5234, int, crt_fclose, (void *f));
@@ -165,13 +166,6 @@ typedef struct GameSprite {
     char name[0x18];
     char sprite[0x18];
 } GameSprite;
-
-/* only the fields read here */
-typedef struct QTaskList {
-    int count;
-    int max;
-    Task *items[];
-} QTaskList;
 
 typedef struct WeaponGive {
     int id;

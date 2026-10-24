@@ -8,12 +8,7 @@
 #include "hook.h"
 #include "types.h"
 #include "task/tasktypes.h"
-
-/* a task with a position */
-typedef struct DynCubeObj {
-    Task task;
-    Vec3d pos;
-} DynCubeObj;
+#include "terrain/terraintypes.h"
 
 typedef struct Human {
     Task task;

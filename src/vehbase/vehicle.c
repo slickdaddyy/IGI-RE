@@ -118,7 +118,7 @@ void Vehicle_GetInfo(Vehicle *v, ObjInfo *out)
     out->velocity = v->velocity;
     out->matrix = v->obj.matrix;
     s = max_scale(&v->obj);
-    out->unk50 = 0;
+    out->name = 0;
     out->radius = VirModel_GetRadius(v->obj.model) * s;
 }
 HOOK(0x4F42D0, Vehicle_GetInfo);

@@ -110,15 +110,6 @@ typedef struct VehicleState {
     float steer[3];
 } VehicleState;
 
-/* RigidDynCubeObj slot 7 */
-typedef struct ObjInfo {
-    Vec3d pos;
-    Vec3f velocity;     /* 0x18 */
-    Matrix matrix;      /* 0x24 */
-    float radius;       /* 0x4C */
-    int unk50;
-} ObjInfo;
-
 _Static_assert(offsetof(EditRigidObj, offset) == 0x158, "offset");
 _Static_assert(sizeof(EditRigidObj) == 0x1A0, "EditRigidObj");
 _Static_assert(offsetof(AnimTask, channels) == 0x6C, "channels");
@@ -130,7 +121,6 @@ _Static_assert(sizeof(AnimData) == 0x2008C, "AnimData");
 _Static_assert(offsetof(Vehicle, speed) == 0x720, "speed");
 _Static_assert(sizeof(Vehicle) == 0x748, "Vehicle");
 _Static_assert(sizeof(VehicleState) == 0x70, "VehicleState");
-_Static_assert(offsetof(ObjInfo, unk50) == 0x50, "ObjInfo");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

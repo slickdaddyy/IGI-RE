@@ -17,14 +17,6 @@ typedef struct RigidCreateArg {
     Matrix matrix;
 } RigidCreateArg;
 
-typedef struct RigidInfo {
-    double pos[3];
-    int unk18[3];
-    Matrix matrix;
-    float radius;
-    char *name;
-} RigidInfo;
-
 typedef struct RigidDrawView {
     int target;
     int size;
@@ -109,7 +101,7 @@ typedef struct Lightmap {
 } Lightmap;
 
 void RigidDynCubeObj_CreateHandler(RigidDynCubeObj *o, RigidCreateArg *arg);
-void RigidDynCubeObj_GetInfo(RigidDynCubeObj *o, RigidInfo *info);
+void RigidDynCubeObj_GetInfo(RigidDynCubeObj *o, ObjInfo *info);
 void RigidDynCubeObj_DrawCellMask(RigidDynCubeObj *o, RigidDrawView *view);
 double *DynCubeObj_GetPosition(RigidDynCubeObj *o);
 void RigidDynCubeObj_Open(void);

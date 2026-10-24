@@ -6,31 +6,11 @@
 
 #include "igi.h"
 #include "math/vecmath.h"
-
-typedef struct HzNode {
-    struct HzNode *next;
-    struct HzNode *prev;
-} HzNode;
-
-typedef struct HzTask {
-    HzNode node;
-    HzNode *head;       /* child list */
-    HzNode *tail;
-    HzNode *tailpred;
-    struct HzTask *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} HzTask;
+#include "task/tasktypes.h"
+#include "magicobj/magicobjtypes.h"
+#include "qasm/qasmtypes.h"
 
 typedef void (*HzHandler)(void *task, void *arg);
-
-typedef struct QTaskList {
-    int count;
-    int max;
-    HzTask *items[];
-} QTaskList;
 
 /* --- animation data, shared with the bone code before 0x4D6D40 --- */
 
@@ -117,7 +97,7 @@ extern int gBoneSmoothAnims;
 
 /* "QObj", 0x50 bytes: anything the qcube renderer can draw */
 typedef struct QObj {
-    HzTask task;
+    Task task;
     char unk20[0x28];
     void *renderData;   /* argument of handler slots 4 and 5 */
     char unk4C[4];
@@ -125,7 +105,7 @@ typedef struct QObj {
 
 /* "BoneDynCubeObj", 0xD8 bytes */
 typedef struct BoneDynCubeObj {
-    HzTask task;
+    Task task;
     Vec3d pos;
     char unk38[0x30];
     BoneObj bones;
@@ -143,7 +123,7 @@ typedef struct BoneDynCubeObj {
 
 /* "MagicObj", 0x138 bytes: a RigidDynCubeObj placed relative to its parent */
 typedef struct MagicObj {
-    HzTask task;
+    Task task;
     Vec3d pos;
     char unk38[0x30];
     void *world;
@@ -174,15 +154,6 @@ typedef struct MagicMoveArg {
     Matrix *matrix;
 } MagicMoveArg;
 
-/* the info block filled by handler slot 7 */
-typedef struct ObjInfo {
-    Vec3d pos;
-    int unk18[3];
-    Matrix matrix;
-    float radius;
-    char *name;
-} ObjInfo;
-
 typedef struct Camera {
     Matrix axes;
     Vec3d pos;
@@ -198,7 +169,7 @@ typedef struct Camera {
 
 /* "Hazinglayers", 0x90 bytes: a fog box */
 typedef struct HazeLayer {
-    HzTask task;
+    Task task;
     char unk20[0x48];
     void *world;
     float density;
@@ -219,7 +190,7 @@ _Static_assert(sizeof(Camera) == 0x60, "Camera");
 _Static_assert(sizeof(HazeLayer) == 0x90, "HazeLayer");
 
 extern HzHandler gTaskHandlers[][0x180];
-extern HzNode *gTaskStack[];
+extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern void *gWorld;
 

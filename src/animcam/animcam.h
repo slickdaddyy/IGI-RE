@@ -8,19 +8,11 @@
 #include "igi.h"
 #include "types.h"
 #include "task/tasktypes.h"
+#include "magicobj/magicobjtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)();
-
-/* filled by the slot 7 (GetInfo) handlers */
-typedef struct ObjInfo {
-    Vec3d pos;
-    Vec3f velocity;
-    Matrix matrix;      /* 0x24 */
-    float radius;       /* 0x4C */
-    int unk50;
-} ObjInfo;
 
 /* {name, default, min, max} of one animation input channel */
 typedef struct AnimInput {
@@ -40,8 +32,6 @@ typedef struct AnimInputMsg {
     int index;
     const AnimInput *out;
 } AnimInputMsg;
-
-_Static_assert(offsetof(ObjInfo, unk50) == 0x50, "ObjInfo");
 
 extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

@@ -91,12 +91,10 @@ void RigidDynCubeObj_CreateHandler(RigidDynCubeObj *o, RigidCreateArg *arg)
 }
 HOOK(0x4C3010, RigidDynCubeObj_CreateHandler);
 
-void RigidDynCubeObj_GetInfo(RigidDynCubeObj *o, RigidInfo *info)
+void RigidDynCubeObj_GetInfo(RigidDynCubeObj *o, ObjInfo *info)
 {
-    memcpy(info->pos, &o->pos, sizeof(info->pos));
-    info->unk18[0] = 0;
-    info->unk18[1] = 0;
-    info->unk18[2] = 0;
+    memcpy(&info->pos, &o->pos, sizeof(info->pos));
+    info->velocity = (Vec3f){0};
     info->matrix = o->matrix;
     info->radius = radius(o);
     if (info->name)

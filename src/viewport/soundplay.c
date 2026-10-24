@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "viewport/viewport.h"
+#include "qasm/qasmtypes.h"
 
 /* Playing sounds by name or through a handle, on top of the sound system of src/sound. */
 
@@ -36,12 +37,6 @@ typedef struct SoundHandle {
     uint32_t flags;
     SoundParams params;
 } SoundHandle;
-
-typedef struct QTaskList {
-    int count;
-    int capacity;
-    Task *items[1];
-} QTaskList;
 
 typedef struct SoundFindArg {
     const char *name;

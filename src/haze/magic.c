@@ -51,7 +51,7 @@ static float max_scale(const MagicObj *o)
 /* Runs every child */
 void MagicObj_RunHandler(MagicObj *o)
 {
-    HzNode *n = o->task.head;
+    Task *n = o->task.head;
 
     if (!n->next)
         return;
@@ -59,7 +59,7 @@ void MagicObj_RunHandler(MagicObj *o)
         void (*h)(void *);
 
         gTaskStack[gTaskStackTop++] = n->next && n->next->next ? n->next : NULL;
-        h = (void (*)(void *))gTaskHandlers[1][((HzTask *)n)->type];
+        h = (void (*)(void *))gTaskHandlers[1][((Task *)n)->type];
         if (h)
             h(n);
         n = gTaskStack[--gTaskStackTop];
@@ -118,7 +118,7 @@ void MagicObj_MoveHandler(MagicObj *o, MagicMoveArg *arg)
     Vec3d pos;
     Matrix r;
     MagicMoveArg next;
-    HzNode *n;
+    Task *n;
     float s;
 
     d0 = m[2] * o->offset.z + m[1] * o->offset.y + m[0] * o->offset.x;
@@ -150,7 +150,7 @@ void MagicObj_MoveHandler(MagicObj *o, MagicMoveArg *arg)
         HzHandler h;
 
         gTaskStack[gTaskStackTop++] = n->next && n->next->next ? n->next : NULL;
-        h = gTaskHandlers[MagicObj_GetMoveEvent()][((HzTask *)n)->type];
+        h = gTaskHandlers[MagicObj_GetMoveEvent()][((Task *)n)->type];
         if (h)
             h(n, &next);
         n = gTaskStack[--gTaskStackTop];

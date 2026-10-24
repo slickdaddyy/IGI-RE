@@ -8,6 +8,7 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "coll/colltypes.h"
+#include "terrain/terraintypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -69,15 +70,6 @@ typedef struct Terrain {
 } Terrain;
 extern Terrain *gCurrentWorld;
 
-/* a task kept in the dynamic cube trees */
-typedef struct DynCubeObj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    Terrain *world;
-    int unk6C;
-} DynCubeObj;
-
 /* MenuItem: one selectable item of a menu panel */
 typedef struct MenuItem {
     Task task;
@@ -100,6 +92,5 @@ typedef struct MenuItemEvent {
 
 _Static_assert(sizeof(MenuItem) == 0x54, "MenuItem");
 _Static_assert(offsetof(Terrain, offset) == 0xDE0, "Terrain");
-_Static_assert(sizeof(DynCubeObj) == 0x70, "DynCubeObj");
 
 #endif

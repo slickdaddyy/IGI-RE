@@ -46,6 +46,8 @@ ORIG(0x506C60, int, TextureModifier_RoundSize, (int n));
 /* a box of terrain whose .hmp map entry raises or lowers the ground */
 typedef struct HeightMap {
     DynCubeObj obj;
+    Terrain *world;
+    int unk6C;
     Vec3d place;
     Vec3d min;
     Vec3d max;
@@ -110,7 +112,7 @@ void HeightMap_Create(HeightMap *hm)
 {
     hm->lastHmp = -1;
     hm->slot = -1;
-    hm->obj.world = gCurrentWorld;
+    hm->world = gCurrentWorld;
     hm->moved = 1;
     hm->dropToGround = 1;
     hm->place.x = hm->place.y = hm->place.z = 0;
@@ -138,7 +140,7 @@ HOOK(0x506DE0, HeightMap_Create);
 
 void HeightMap_Enter(HeightMap *hm)
 {
-    if (hm->hmpIndex >= 0 && hm->obj.world->hmp[hm->hmpIndex].data) {
+    if (hm->hmpIndex >= 0 && hm->world->hmp[hm->hmpIndex].data) {
         hm->shown = 1;
         gCollBumpList[gCollBumpDepth] = hm->slot + 1;
         gCollBumpCount = hm->slot + 1;
@@ -215,9 +217,9 @@ void HeightMap_Delete(HeightMap *hm)
 {
     if (!hm->isChild) {
         if (hm->lastHmp != -1 && !gHmpResident[hm->lastHmp]) {
-            Mem_Free(hm->obj.world->hmp[hm->lastHmp].data);
-            hm->obj.world->hmp[hm->lastHmp].data = NULL;
-            hm->obj.world->hmp[hm->lastHmp].data = NULL;
+            Mem_Free(hm->world->hmp[hm->lastHmp].data);
+            hm->world->hmp[hm->lastHmp].data = NULL;
+            hm->world->hmp[hm->lastHmp].data = NULL;
         }
         if (hm->slot != -1) {
             int last = gHeightMapCount - 1;
@@ -231,7 +233,7 @@ void HeightMap_Delete(HeightMap *hm)
             gHeightMapCount--;
         }
     }
-    DynCube_Remove(hm->obj.world, hm);
+    DynCube_Remove(hm->world, hm);
 }
 HOOK(0x507340, HeightMap_Delete);
 
@@ -278,7 +280,7 @@ void HeightMap_Changed(HeightMap *hm)
             Task_Delete(hm->children);
             hm->children = NULL;
         }
-        maps = hm->obj.world->hmp;
+        maps = hm->world->hmp;
         if (hm->slot == -1) {
             gHeightMaps[gHeightMapCount] = hm;
             hm->slot = gHeightMapCount;
@@ -297,14 +299,14 @@ void HeightMap_Changed(HeightMap *hm)
 
         hit.found = 0;
         for (i = 0; i < 5; i++) {
-            Coll_DropPointsMat(hm->obj.world, &hit, &q, 1, &dz, 0xFF, 0, 0x80000000);
+            Coll_DropPointsMat(hm->world, &hit, &q, 1, &dz, 0xFF, 0, 0x80000000);
             if (hit.found)
                 break;
         }
         if (hit.found)
             p.z = hit.pos.z;
     }
-    w = hm->obj.world;
+    w = hm->world;
     p.x = w->offset[0] + p.x;
     p.y = w->offset[1] + p.y;
     p.z = w->offset[2] + p.z;
@@ -335,7 +337,7 @@ void HeightMap_Changed(HeightMap *hm)
     hm->max.z = hm->max.z - w->offset[2];
     if (hm->moved)
         DynCube_AddBox(w, hm, &p, &hm->min, &hm->max, 4);
-    DynCube_MoveBox(hm->obj.world, hm, &p, &hm->min, &hm->max);
+    DynCube_MoveBox(hm->world, hm, &p, &hm->min, &hm->max);
     if (!hm->isChild) {
         if (hm->hmpIndex != -1) {
             int size = TextureModifier_RoundSize(hm->size);
@@ -427,7 +429,7 @@ void HeightMap_Changed(HeightMap *hm)
                 r = Random_Float(gHeightMapRandom);
                 q.y = (r + r - kOne) * cell + q.y;
                 q.z = q.z + kLiftZ;
-                Coll_DropPointsMat(hm->obj.world, &hit, &q, 1, &dz, 0xFF, 0, 0x80000000);
+                Coll_DropPointsMat(hm->world, &hit, &q, 1, &dz, 0xFF, 0, 0x80000000);
                 if (hit.found) {
                     long double v = hit.pos.z;
 
@@ -464,7 +466,7 @@ void HeightMap_Changed(HeightMap *hm)
             Mem_ClearMode();
     }
     bump = &gSlotBumps[hm->slot];
-    maps = hm->obj.world->hmp;
+    maps = hm->world->hmp;
     bump->sizeShift = hm->sizeShift;
     bump->scale = kOne;
     bump->unk0 = hm->unkC4;

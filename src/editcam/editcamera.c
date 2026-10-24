@@ -3,6 +3,7 @@
 
 #include "hook.h"
 #include "editcam/editcam.h"
+#include "magicobj/magicobjtypes.h"
 
 FN_EXTERN(SubLevel_Run);
 
@@ -63,19 +64,9 @@ typedef struct EditCamera {
     int unkE4;
 } EditCamera;
 
-/* filled by the slot 7 handler of a task */
-typedef struct ObjInfo {
-    Vec3d pos;
-    int unk18[3];
-    Matrix matrix;
-    float radius;
-    char *name;
-} ObjInfo;
-
 _Static_assert(sizeof(EditCamera) == 0xE8, "EditCamera");
 _Static_assert(offsetof(EditCamera, filterName) == 0xA9, "EditCamera.filterName");
 _Static_assert(offsetof(EditCamera, filter) == 0xCC, "EditCamera.filter");
-_Static_assert(offsetof(ObjInfo, name) == 0x50, "ObjInfo");
 
 extern uint16_t gEditCameraType;
 extern char gEditCameraFilterEnum[];

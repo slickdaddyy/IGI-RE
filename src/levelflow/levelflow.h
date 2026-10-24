@@ -9,6 +9,7 @@
 #include "task/tasktypes.h"
 #include "param/paramtypes.h"
 #include "script/scripttypes.h"
+#include "qasm/qasmtypes.h"
 
 FN_EXTERN(MagicObjContainer_Event);
 FN_EXTERN(Task_Nothing);
@@ -28,12 +29,6 @@ typedef struct ParamTable {
     int max;
     ParamEntry *entries;
 } ParamTable;
-
-typedef struct QTaskList {
-    int count;
-    int max;
-    Task *items[];
-} QTaskList;
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

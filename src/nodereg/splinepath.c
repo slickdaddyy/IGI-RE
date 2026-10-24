@@ -105,9 +105,7 @@ HOOK(0x519850, SplinePathNode_Open);
 void SplinePathNode_GetInfo(SplinePathNode *n, ObjInfo *info)
 {
     info->pos = n->pos;
-    info->unk18[0] = 0;
-    info->unk18[1] = 0;
-    info->unk18[2] = 0;
+    info->velocity = (Vec3f){0};
     info->matrix = n->matrix;
     info->radius = kNodeRadius;
     if (info->name)

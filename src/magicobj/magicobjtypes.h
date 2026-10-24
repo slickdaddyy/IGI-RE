@@ -31,4 +31,14 @@ typedef struct RigidDynCubeObj {
 _Static_assert(offsetof(RigidDynCubeObj, scale) == 0x98, "RigidDynCubeObj");
 _Static_assert(sizeof(RigidDynCubeObj) == 0xF0, "RigidDynCubeObj");
 
+/* filled by the RigidDynCubeObj slot 7 handler */
+typedef struct ObjInfo {
+    Vec3d pos;
+    Vec3f velocity;
+    Matrix matrix;
+    float radius;
+    char *name;
+} ObjInfo;
+_Static_assert(offsetof(ObjInfo, name) == 0x50, "ObjInfo");
+
 #endif

@@ -197,7 +197,7 @@ void AnimCam_Relative(AnimCam *c)
         Matrix e, r;
         const float *m = e.m, *n = a.m;
 
-        info.unk50 = 0;
+        info.name = 0;
         fn(t, &info);
         p = info.pos;
         b = info.matrix;
@@ -349,7 +349,7 @@ static void object_pos(int id, Vec3d *pos)
     if ((t = Task_FindById(id)) && (fn = HANDLER(7, t->type))) {
         ObjInfo info;
 
-        info.unk50 = 0;
+        info.name = 0;
         fn(t, &info);
         *pos = info.pos;
     }
@@ -578,7 +578,7 @@ void AnimCam_ReadModeKeys(AnimCam *c, float **msg)
             double a1, a2, b1, b2;
             long double sx;
 
-            info.unk50 = 0;
+            info.name = 0;
             fn(t, &info);
             a1 = m[4] * kAimBack;
             a2 = m[7] * kAimBack;

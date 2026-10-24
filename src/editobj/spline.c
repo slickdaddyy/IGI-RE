@@ -388,9 +388,7 @@ void SplineObj_GetInfo(SplineObj *o, ObjInfo *out)
         s = max_scale(&w->obj);
         out->radius = VirModel_GetRadius(w->obj.model) * s;
     }
-    out->unk18[0] = 0;
-    out->unk18[1] = 0;
-    out->unk18[2] = 0;
+    out->velocity = (Vec3f){0};
     out->matrix = (Matrix){{1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f}, 0};
     out->name = NULL;
 }
@@ -407,9 +405,7 @@ void SplineObjWaypoint_GetInfo(SplineObjWaypoint *w, ObjInfo *out)
     float s;
 
     out->pos = w->point;
-    out->unk18[0] = 0;
-    out->unk18[1] = 0;
-    out->unk18[2] = 0;
+    out->velocity = (Vec3f){0};
     out->matrix = (Matrix){{1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f}, 0};
     s = max_scale(&w->obj);
     out->name = NULL;
