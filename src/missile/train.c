@@ -14,7 +14,7 @@ ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401BE0, Task *, Task_FindChild, (Task *task, uint16_t type));
 ORIG(0x401C40, Task *, Task_FindNext, (Task *task, uint16_t type));
-ORIG(0x4028B0, int, Timer_GetTicks, (void));
+ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x414ED0, void, sub_414ED0, (Vec3f *out, void *obj, int i));
 ORIG(0x416890, uint8_t, Game_GetEvent14, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
@@ -25,18 +25,18 @@ ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4C48D0, void, RigidDynCubeObj_SetModel, (void *obj, void **model));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model));
 ORIG(0x4C5800, uint8_t, RigidDynCubeObj_GetEvent4, (void));
-ORIG(0x4C6940, void, sub_4C6940, (void *world, void *obj, Vec3d *pos, float radius));
-ORIG(0x4C7140, void, sub_4C7140, (void *world, void *obj, Vec3d *pos, float radius, int n));
-ORIG(0x4C7560, void, sub_4C7560, (void *world, void *obj));
+ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, float radius));
+ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int n));
+ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *obj));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
-ORIG(0x4D9FB0, uint8_t, RigidDynCubeObj_GetMoveEvent, (void));
-ORIG(0x4E6610, uint8_t, sub_4E6610, (void));
-ORIG(0x4E6AB0, float *, sub_4E6AB0, (int n));
+ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
+ORIG(0x4E6610, uint8_t, Sound_GetInfoEvent, (void));
+ORIG(0x4E6AB0, float *, SoundParams_New, (int n));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
-ORIG(0x4ECDB0, void, sub_4ECDB0, (void *body));
+ORIG(0x4ECDB0, void, Body_Update, (void *body));
 ORIG(0x4F0F50, void *, Param_Real32, (void));
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
 ORIG(0x4F0FC0, void *, Param_VarString, (void));
@@ -51,21 +51,21 @@ ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
-ORIG(0x4F40D0, uint8_t, sub_4F40D0, (void));
-ORIG(0x4F40E0, uint8_t, sub_4F40E0, (void));
-ORIG(0x4F4110, uint8_t, sub_4F4110, (void));
-ORIG(0x4F4120, uint8_t, sub_4F4120, (void));
-ORIG(0x4F4130, uint8_t, sub_4F4130, (void));
-ORIG(0x4F4140, uint8_t, sub_4F4140, (void));
+ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
+ORIG(0x4F40E0, uint8_t, Vehicle_GetInputInfoEvent, (void));
+ORIG(0x4F4110, uint8_t, Vehicle_GetStateSizeEvent, (void));
+ORIG(0x4F4120, uint8_t, Vehicle_GetSaveEvent, (void));
+ORIG(0x4F4130, uint8_t, Vehicle_GetLoadEvent, (void));
+ORIG(0x4F4140, uint8_t, Vehicle_GetKeysEvent, (void));
 ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
-ORIG(0x4F4600, void, sub_4F4600, (void *obj));
-ORIG(0x4F4640, void, sub_4F4640, (void *obj));
-ORIG(0x4F4660, void, sub_4F4660, (void *obj));
-ORIG(0x4F4680, void, sub_4F4680, (void *obj));
-ORIG(0x4F4800, void, sub_4F4800, (void *obj));
-ORIG(0x4F4820, void, sub_4F4820, (void *obj));
-ORIG(0x4FB700, void, Vehicle_SetPhysType, (void *obj, PhysType *phys));
-ORIG(0x4FEC10, void, Path_GetPoints, (int path, int unk, Vec3d *out, char *found, float dist, int count,
+ORIG(0x4F4600, void, Vehicle_ResetControls, (void *obj));
+ORIG(0x4F4640, void, Vehicle_Free, (void *obj));
+ORIG(0x4F4660, void, Vehicle_RunParts, (void *obj));
+ORIG(0x4F4680, void, Vehicle_Init, (void *obj));
+ORIG(0x4F4800, void, Vehicle_NewParts, (void *obj));
+ORIG(0x4F4820, void, Vehicle_DeleteParts, (void *obj));
+ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (void *obj, PhysType *phys));
+ORIG(0x4FEC10, void, SplineObj_GetPoints, (int path, int unk, Vec3d *out, char *found, float dist, int count,
                                        float *offsets, int unk2));
 
 #define gTrainType VAR(uint16_t, 0x57BCB8)
@@ -116,9 +116,9 @@ void Train_CreateHandler(Train *t)
     RigidDynCubeObj_Init(Game_GetWorld(), t, NULL);
     scale = max_scale(&t->v);
     radius = VirModel_GetRadius(t->v.model) * scale;
-    sub_4C7140(Game_GetWorld(), t, &t->v.pos, radius, 2);
-    t->sound_params = sub_4E6AB0(2);
-    sub_4F4680(t);
+    DynCube_Add(Game_GetWorld(), t, &t->v.pos, radius, 2);
+    t->sound_params = SoundParams_New(2);
+    Vehicle_Init(t);
     t->last_tick = -1;
     t->loop_sound = NULL;
     VarString_Init(&t->script);
@@ -127,11 +127,11 @@ HOOK(0x429F80, Train_CreateHandler);
 
 void Train_DeleteHandler(Train *t)
 {
-    sub_4F4640(t);
+    Vehicle_Free(t);
     if (t->v.task.parent->type == gTrainType)
         ((Train *)t->v.task.parent)->wagons--;
     VarString_Free(&t->script);
-    sub_4C7560(Game_GetWorld(), t);
+    DynCube_Remove(Game_GetWorld(), t);
     QTaskList_Free(t->sound_params);
 }
 HOOK(0x42A100, Train_DeleteHandler);
@@ -156,10 +156,10 @@ void Train_ParamsChanged(Train *t, char *arg)
     if (!(x >= kZero))
         x = -x;
     t->frac = x / len;
-    Vehicle_SetPhysType(t, NULL);
-    sub_4F4600(t);
-    sub_4F4820(t);
-    sub_4F4800(t);
+    PhysicsObj_SetPhysType(t, NULL);
+    Vehicle_ResetControls(t);
+    Vehicle_DeleteParts(t);
+    Vehicle_NewParts(t);
     Train_Place(head_of(t), changed);
     BROADCAST(t->v.coll->head, Param_GetChangedEvent(), arg);
     VarString_Bind(&t->script, t);
@@ -221,7 +221,7 @@ void Train_Place(Train *t, int quiet)
         offsets[++i] = t->reverse ? ((Train *)w)->length : -((Train *)w)->length;
         w = Task_FindNext(w, gTrainType);
     }
-    Path_GetPoints(t->path, 0, pts, &found, t->dist, t->wagons + 1, offsets, 0);
+    SplineObj_GetPoints(t->path, 0, pts, &found, t->dist, t->wagons + 1, offsets, 0);
     if (!found)
         return;
     t->v.prev_pos = t->v.pos;
@@ -250,7 +250,7 @@ void Train_Place(Train *t, int quiet)
     pos.z = oz + z;
     scale = max_scale(&t->v);
     radius = VirModel_GetRadius(t->v.model) * scale;
-    sub_4C6940(Game_GetWorld(), t, &pos, radius);
+    DynCube_Move(Game_GetWorld(), t, &pos, radius);
     if (!quiet) {
         struct {
             Vec3d *pos;
@@ -266,7 +266,7 @@ void Train_Place(Train *t, int quiet)
             Train *t;
         } msg = {&t->v.pos, &t->v.matrix, t};
 
-        BROADCAST(t->v.coll->head, RigidDynCubeObj_GetMoveEvent(), &msg);
+        BROADCAST(t->v.coll->head, MagicObj_GetMoveEvent(), &msg);
     }
     Train_PlaceWagons(t, &pts[1], quiet);
 }
@@ -309,7 +309,7 @@ void Train_PlaceWagons(Train *t, Vec3d *p, int quiet)
         pos.z = oz + pos.z;
         scale = max_scale(&w->v);
         radius = VirModel_GetRadius(w->v.model) * scale;
-        sub_4C6940(Game_GetWorld(), w, &pos, radius);
+        DynCube_Move(Game_GetWorld(), w, &pos, radius);
         if (!quiet) {
             struct {
                 Vec3d *pos;
@@ -325,7 +325,7 @@ void Train_PlaceWagons(Train *t, Vec3d *p, int quiet)
                 Train *t;
             } msg = {&w->v.pos, &w->v.matrix, w};
 
-            BROADCAST(w->v.coll->head, RigidDynCubeObj_GetMoveEvent(), &msg);
+            BROADCAST(w->v.coll->head, MagicObj_GetMoveEvent(), &msg);
         }
         w = (Train *)Task_FindNext(&w->v.task, gTrainType);
     }
@@ -364,13 +364,13 @@ void Train_Open(void)
     TaskType_SetHandler(gTrainType, Param_GetTableEvent(), Train_GetParams);
     TaskType_SetHandler(gTrainType, 7, Train_GetInfo);
     TaskType_SetHandler2(gTrainType, 1, Train_Run);
-    TaskType_SetHandler(gTrainType, sub_4E6610(), Train_GetSoundSource);
-    TaskType_SetHandler(gTrainType, sub_4F40D0(), Train_InputHandler);
-    TaskType_SetHandler(gTrainType, sub_4F40E0(), Train_InputChannelHandler);
-    TaskType_SetHandler(gTrainType, sub_4F4110(), sub_4EFF20);
-    TaskType_SetHandler(gTrainType, sub_4F4120(), Train_SaveState);
-    TaskType_SetHandler(gTrainType, sub_4F4130(), Train_LoadState);
-    TaskType_SetHandler(gTrainType, sub_4F4140(), Train_ReadInputHandler);
+    TaskType_SetHandler(gTrainType, Sound_GetInfoEvent(), Train_GetSoundSource);
+    TaskType_SetHandler(gTrainType, Vehicle_GetControlEvent(), Train_InputHandler);
+    TaskType_SetHandler(gTrainType, Vehicle_GetInputInfoEvent(), Train_InputChannelHandler);
+    TaskType_SetHandler(gTrainType, Vehicle_GetStateSizeEvent(), sub_4EFF20);
+    TaskType_SetHandler(gTrainType, Vehicle_GetSaveEvent(), Train_SaveState);
+    TaskType_SetHandler(gTrainType, Vehicle_GetLoadEvent(), Train_LoadState);
+    TaskType_SetHandler(gTrainType, Vehicle_GetKeysEvent(), Train_ReadInputHandler);
     TaskType_SetHandler(gTrainType, Game_GetEvent14(), sub_42B930);
     TaskType_SetHandler(gTrainType, RigidDynCubeObj_GetEvent4(), Train_MoveHandler);
     TaskType_SetHandler(gTrainType, World_GetEvent1(), sub_42BBA0);
@@ -412,17 +412,17 @@ void Train_InputHandler(Train *t, void **msg)
     if (!msg[0]) {
         ((float *)msg[1])[1] = -2.0f;
         t->dist = t->start_dist;
-        Vehicle_SetPhysType(t, NULL);
-        sub_4F4600(t);
-        sub_4F4820(t);
-        sub_4F4800(t);
+        PhysicsObj_SetPhysType(t, NULL);
+        Vehicle_ResetControls(t);
+        Vehicle_DeleteParts(t);
+        Vehicle_NewParts(t);
         Train_Place(t, 1);
         v = t->max_speed * t->start_speed * kKmhToFrame;
         t->velocity = v;
         t->v.body.velocity.x = v;
         t->v.body.velocity.y = 0;
         t->v.body.velocity.z = 0;
-        sub_4ECDB0(&t->v.body);
+        Body_Update(&t->v.body);
         t->v.target_speed = t->start_speed;
         t->v.speed = t->start_speed;
         return;
@@ -443,9 +443,9 @@ void Train_InputHandler(Train *t, void **msg)
     t->v.body.velocity.x = v;
     t->v.body.velocity.y = 0;
     t->v.body.velocity.z = 0;
-    sub_4ECDB0(&t->v.body);
+    Body_Update(&t->v.body);
     t->dist = (t->reverse ? -t->velocity : t->velocity) + t->dist;
-    sub_4F4660(t);
+    Vehicle_RunParts(t);
     Train_Place(t, 0);
 }
 HOOK(0x42B040, Train_InputHandler);
@@ -546,9 +546,9 @@ HOOK(0x42B500, Train_GetInfo);
 
 void Train_Run(Train *t)
 {
-    if (t->last_tick == Timer_GetTicks())
+    if (t->last_tick == Flow_GetFrames())
         return;
-    t->last_tick = Timer_GetTicks();
+    t->last_tick = Flow_GetFrames();
     if (VarString_HasExpr(&t->script) && !round_int(VarString_EvalReal(&t->script, t))) {
         if (t->loop_sound) {
             Task_Delete(t->loop_sound);

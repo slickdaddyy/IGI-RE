@@ -262,8 +262,8 @@ def test_ids(addr, name):
 
 
 def test_from_file_flag():
-    check(0x4B26A0, "sub_4B26A0", check_eax=False)
-    check(0x4B26B0, "sub_4B26B0", setup=lambda e: e.write(FROM_FILE, b"\x01"), check_eax=False)
+    check(0x4B26A0, "Texture_BeginFileLoad", check_eax=False)
+    check(0x4B26B0, "Texture_EndFileLoad", setup=lambda e: e.write(FROM_FILE, b"\x01"), check_eax=False)
 
 
 def test_params():

@@ -8,8 +8,8 @@ ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
-ORIG(0x491CF0, int *, Display_Get, (void));
-ORIG(0x491D80, void, Display_ReadPixels, (void *rgb));
+ORIG(0x491CF0, int *, Display_GetMode, (void));
+ORIG(0x491D80, void, Display_Snapshot, (void *rgb));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
@@ -212,8 +212,8 @@ void ScreenGrab_Save(char *dir)
     mode = Mem_GetMode();
     if (!mode)
         Mem_SetDefaultMode();
-    d1 = Display_Get();
-    d2 = Display_Get();
+    d1 = Display_GetMode();
+    d2 = Display_GetMode();
     rgb = Mem_Alloc(d1[2] * d2[1] * 3, 4);
     if (!mode)
         Mem_ClearMode();
@@ -223,12 +223,12 @@ void ScreenGrab_Save(char *dir)
     if (f) {
         uint16_t w, h;
 
-        Display_ReadPixels(rgb);
-        h = Display_Get()[2];
-        w = Display_Get()[1];
+        Display_Snapshot(rgb);
+        h = Display_GetMode()[2];
+        w = Display_GetMode()[1];
         Tga_WriteHeader(f, &gScreenGrabHeader, w, h);
-        d1 = Display_Get();
-        d2 = Display_Get();
+        d1 = Display_GetMode();
+        d2 = Display_GetMode();
         File_Write(f, rgb, d1[2] * d2[1] * 3);
         File_Flush(f);
         File_Close(f);

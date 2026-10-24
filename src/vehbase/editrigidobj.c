@@ -17,7 +17,7 @@ ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4C3440, Vec3d *, DynCubeObj_GetPosition, (void *obj));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x4C48D0, void, RigidDynCubeObj_SetModel, (void *obj, void **model));
-ORIG(0x4C4950, void, sub_4C4950, (Task *parts, void *obj, void *owner));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (Task *parts, void *obj, void *owner));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model));
 ORIG(0x4C5800, uint8_t, RigidDynCubeObj_GetEvent4, (void));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, float radius));
@@ -189,7 +189,7 @@ void EditRigidObj_ParamsChanged(EditRigidObj *o, void *arg)
     if (o->obj.parts)
         Task_Delete(o->obj.parts);
     o->obj.parts = MagicObjContainer_New(NULL, o);
-    sub_4C4950(o->obj.parts, o, o);
+    RigidDynCubeObj_CreateMagicObjs(o->obj.parts, o, o);
     BROADCAST(o->obj.parts, Param_GetChangedEvent(), NULL);
     EditRigidObj_Attach(o);
 }

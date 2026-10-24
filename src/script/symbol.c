@@ -9,8 +9,8 @@
 #include "script/symtab.h"
 
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
-ORIG(0x4C0360, SymbolTable *, SymbolTable_New, (unsigned int count));
-ORIG(0x4C03C0, void, SymbolTable_Delete, (SymbolTable *table));
+ORIG(0x4C0360, SymbolTable *, SymbolTable_Create, (unsigned int count));
+ORIG(0x4C03C0, void, SymbolTable_Destroy, (SymbolTable *table));
 ORIG(0x4C0460, void, SymbolTable_Remove, (SymbolTable *table, const char *name));
 
 /* symbols keep the original handler addresses, which are hooked to the functions below */
@@ -289,7 +289,7 @@ static void List_Init(List *l)
 
 void Script_InitSymbols(void)
 {
-    gScriptSymbols = SymbolTable_New(4999);
+    gScriptSymbols = SymbolTable_Create(4999);
     gScriptRefPeak = 0;
     gScriptRefCount = 0;
     List_Init(&gScriptRefBlocks);
@@ -303,7 +303,7 @@ void Script_FreeSymbols(void)
     Node *n, *next;
 
     if (gScriptSymbols) {
-        SymbolTable_Delete(gScriptSymbols);
+        SymbolTable_Destroy(gScriptSymbols);
         gScriptSymbols = NULL;
     }
     for (n = gScriptRefBlocks.head; (next = n->next) != NULL; n = next)

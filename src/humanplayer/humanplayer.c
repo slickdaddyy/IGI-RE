@@ -56,57 +56,57 @@ ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x401FA0, void, TaskType_SetFlags, (uint16_t type, uint32_t flags));
-ORIG(0x408420, void, sub_408420, (HumanPlayer *h));
-ORIG(0x408460, void, sub_408460, (HumanPlayer *h));
+ORIG(0x408420, void, HumanPlayer_CheckDeath, (HumanPlayer *h));
+ORIG(0x408460, void, HumanPlayer_UpdateFall, (HumanPlayer *h));
 ORIG(0x408720, int, Weapon_HasAmmo, (Task *weapon));
-ORIG(0x40C140, void, HumanPlayer_LockWeapon, (HumanPlayer *h));
-ORIG(0x40C2D0, void, HumanPlayer_UnlockWeapon, (HumanPlayer *h));
+ORIG(0x40C140, void, HumanPlayer_SetFlagD44, (HumanPlayer *h));
+ORIG(0x40C2D0, void, HumanPlayer_ClearFlagD44, (HumanPlayer *h));
 ORIG(0x40CD30, void, HumanPlayer_StartAction, (HumanPlayer *h, int arg));
-ORIG(0x411000, void, sub_411000, (HumanPlayer *h));
-ORIG(0x411240, void, sub_411240, (HumanPlayer *h));
-ORIG(0x411300, void, sub_411300, (HumanPlayer *h));
-ORIG(0x411350, void, sub_411350, (HumanPlayer *h));
-ORIG(0x4113C0, void, sub_4113C0, (HumanPlayer *h));
-ORIG(0x4113E0, void, sub_4113E0, (HumanPlayer *h));
+ORIG(0x411000, void, HumanPlayer_SelectWeaponCategory, (HumanPlayer *h));
+ORIG(0x411240, void, HumanPlayer_UpdateEarRinging, (HumanPlayer *h));
+ORIG(0x411300, void, HumanPlayer_FadeHitFlash, (HumanPlayer *h));
+ORIG(0x411350, void, HumanPlayer_FadeFlash, (HumanPlayer *h));
+ORIG(0x4113C0, void, HumanPlayer_UpdateFenceTimer, (HumanPlayer *h));
+ORIG(0x4113E0, void, HumanPlayer_UpdateLadder, (HumanPlayer *h));
 ORIG(0x411770, void, sub_411770, (HumanPlayer *h));
-ORIG(0x411AE0, void, sub_411AE0, (HumanPlayer *h));
-ORIG(0x411F20, void, sub_411F20, (HumanPlayer *h));
+ORIG(0x411AE0, void, HumanPlayer_UpdateWire, (HumanPlayer *h));
+ORIG(0x411F20, void, HumanPlayer_UpdateZipline, (HumanPlayer *h));
 ORIG(0x4137E0, void, HumanPlayer_SetWeaponAnim, (HumanPlayer *h, int anim));
 ORIG(0x413A60, void, HumanPlayer_RequestWeaponAnim, (HumanPlayer *h, int anim));
-ORIG(0x413C80, WeaponInfo *, Weapon_GetInfo, (Task *weapon));
-ORIG(0x413CC0, Task *, HumanPlayer_FindWeapon, (HumanPlayer *h, int id));
-ORIG(0x415020, int, sub_415020, (int key));
-ORIG(0x4167E0, uint8_t, sub_4167E0, (void));
-ORIG(0x416810, uint8_t, sub_416810, (void));
-ORIG(0x4168C0, QTaskList *, sub_4168C0, (void));
-ORIG(0x416920, void *, sub_416920, (void));
-ORIG(0x416D20, void *, sub_416D20, (void));
-ORIG(0x416D40, Game *, sub_416D40, (void));
+ORIG(0x413C80, WeaponInfo *, Weapon_GetType, (Task *weapon));
+ORIG(0x413CC0, Task *, Task_FindWeapon, (HumanPlayer *h, int id));
+ORIG(0x415020, int, Game_CheatKeyPressed, (int key));
+ORIG(0x4167E0, uint8_t, Game_GetEvent1, (void));
+ORIG(0x416810, uint8_t, Game_GetEvent3, (void));
+ORIG(0x4168C0, QTaskList *, Game_GetTaskList2, (void));
+ORIG(0x416920, void *, Game_GetWorld, (void));
+ORIG(0x416D20, void *, Game_GetRandom, (void));
+ORIG(0x416D40, Game *, Game_Get, (void));
 ORIG(0x460BE0, uint16_t, Human_GetType, (void));
-ORIG(0x460C10, uint8_t, sub_460C10, (void));
+ORIG(0x460C10, uint8_t, Human_GetEvent1, (void));
 ORIG(0x460C80, void, Human_printf, (HumanPlayer *h, const char *fmt, ...));
 ORIG(0x460CF0, void, sub_460CF0, (HumanPlayer *h));
 ORIG(0x460EE0, void, sub_460EE0, (HumanPlayer *h));
 ORIG(0x4610C0, void, Human_UpdateBody, (HumanPlayer *h));
 ORIG(0x4613D0, void, sub_4613D0, (HumanPlayer *h));
-ORIG(0x4614B0, void, sub_4614B0, (HumanPlayer *h));
-ORIG(0x462CF0, void, sub_462CF0, (HumanPlayer *h));
-ORIG(0x462E50, void, sub_462E50, (HumanPlayer *h));
-ORIG(0x463080, void, sub_463080, (HumanPlayer *h));
-ORIG(0x463170, char, sub_463170, (HumanPlayer *h));
-ORIG(0x4632D0, void, sub_4632D0, (HumanPlayer *h));
+ORIG(0x4614B0, void, Human_UpdateMove, (HumanPlayer *h));
+ORIG(0x462CF0, void, Human_MoveOnPlatform, (HumanPlayer *h));
+ORIG(0x462E50, void, Human_UpdateWeapon, (HumanPlayer *h));
+ORIG(0x463080, void, Human_SendPosition, (HumanPlayer *h));
+ORIG(0x463170, char, Human_IsDead, (HumanPlayer *h));
+ORIG(0x4632D0, void, Human_LeaveGround, (HumanPlayer *h));
 ORIG(0x4635F0, void, sub_4635F0, (HumanPlayer *h));
 ORIG(0x463600, void, sub_463600, (HumanPlayer *h));
 ORIG(0x463610, void, sub_463610, (HumanPlayer *h));
 ORIG(0x463620, void, sub_463620, (HumanPlayer *h));
-ORIG(0x463680, int, sub_463680, (HumanPlayer *h));
+ORIG(0x463680, int, Human_GetGround, (HumanPlayer *h));
 ORIG(0x463740, Task *, Human_GetAttached, (HumanPlayer *h));
 ORIG(0x463760, void, HumanViewCam, (HumanPlayer *h, int mode));
-ORIG(0x4638A0, void, sub_4638A0, (HumanPlayer *h, const char *name, int n));
-ORIG(0x463920, void, sub_463920, (HumanPlayer *h));
-ORIG(0x464660, void, sub_464660, (HumanView *v));
-ORIG(0x464700, void, sub_464700, (HumanView *v));
-ORIG(0x464710, void, sub_464710, (HumanView *v));
+ORIG(0x4638A0, void, Human_Say, (HumanPlayer *h, const char *name, int n));
+ORIG(0x463920, void, Human_Footstep, (HumanPlayer *h));
+ORIG(0x464660, void, HumanView_AddToWorld, (HumanView *v));
+ORIG(0x464700, void, HumanView_LockPitch, (HumanView *v));
+ORIG(0x464710, void, HumanView_UnlockPitch, (HumanView *v));
 ORIG(0x464770, void, HumanView_SetWeaponTarget, (HumanView *v, float a, float b, float c, float d));
 ORIG(0x4647A0, void, HumanView_SetWeaponAngles, (HumanView *v, float a, float b));
 ORIG(0x4647D0, char, HumanView_WeaponAtTarget, (HumanView *v));
@@ -120,12 +120,12 @@ ORIG(0x46C060, Task *, Computer_Get, (void));
 ORIG(0x47CDA0, int, Script_EvalConst, (const char *expr));
 ORIG(0x47CE70, void, AmmoList_SetLimit, (int *list, int id, int limit));
 ORIG(0x47CEE0, AmmoEntry *, AmmoList_Find, (int *list, int id));
-ORIG(0x489C30, void, sub_489C30, (HumanPlayer *h, void *speeds));
-ORIG(0x489E10, HitAnims *, sub_489E10, (float *damage, int zone));
+ORIG(0x489C30, void, Human_InitDamage, (HumanPlayer *h, void *speeds));
+ORIG(0x489E10, HitAnims *, HumanDamage_GetZone, (float *damage, int zone));
 ORIG(0x489E70, void, Human_PlayAnimSlot, (HumanPlayer *h, int slot, float blend));
 ORIG(0x489EA0, void, Human_PlayAnim, (HumanPlayer *h, int anim, int flag, float blend));
-ORIG(0x48A330, void, sub_48A330, (HumanPlayer *h));
-ORIG(0x48F360, void, Console_AddCommand, (const char *name, void (*fn)(void)));
+ORIG(0x48A330, void, Human_DisableLook, (HumanPlayer *h));
+ORIG(0x48F360, void, AppMain_ParseCmdLineArgs, (const char *name, void (*fn)(void)));
 ORIG(0x4B2D00, void, Vec3_ToAngles, (float *v, float *pitch, float *yaw));
 ORIG(0x4B47C0, unsigned int, Random_Int, (void *r, unsigned int n));
 ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
@@ -134,44 +134,44 @@ ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
 ORIG(0x4C1790, void, QTaskList_Add, (QTaskList *list, void *item));
 ORIG(0x4C17C0, void, QTaskList_Remove, (QTaskList *list, void *item));
 ORIG(0x4C1800, QTaskList *, QTaskList_New, (int max));
-ORIG(0x4C6940, void, sub_4C6940, (void *world, HumanPlayer *h, double *pos, int unk));
-ORIG(0x4C7140, void, sub_4C7140, (void *world, HumanPlayer *h, double *pos, int unk, int n));
-ORIG(0x4C7560, void, sub_4C7560, (void *world, HumanPlayer *h));
-ORIG(0x4CEA20, uint8_t, sub_4CEA20, (void));
-ORIG(0x4D2FB0, void, sub_4D2FB0, (void *a, float *delta, void *anim));
-ORIG(0x4D38C0, void, sub_4D38C0, (float *matrix, void *anim));
+ORIG(0x4C6940, void, DynCube_Move, (void *world, HumanPlayer *h, double *pos, int unk));
+ORIG(0x4C7140, void, DynCube_Add, (void *world, HumanPlayer *h, double *pos, int unk, int n));
+ORIG(0x4C7560, void, DynCube_Remove, (void *world, HumanPlayer *h));
+ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
+ORIG(0x4D2FB0, void, BoneObj_GetRootMotion, (void *a, float *delta, void *anim));
+ORIG(0x4D38C0, void, BoneObj_Update, (float *matrix, void *anim));
 ORIG(0x4D61D0, void, Anim_Play, (void *anim, int track, int id, int flag, float blend));
-ORIG(0x4D9610, uint16_t, sub_4D9610, (void));
-ORIG(0x4D9620, void, sub_4D9620, (void *world, HumanPlayer *h, int a, int b));
-ORIG(0x4D96F0, void, sub_4D96F0, (HumanPlayer *h));
+ORIG(0x4D9610, uint16_t, BoneDynCubeObj_GetType, (void));
+ORIG(0x4D9620, void, BoneDynCubeObj_Init, (void *world, HumanPlayer *h, int a, int b));
+ORIG(0x4D96F0, void, BoneDynCubeObj_Deinit, (HumanPlayer *h));
 ORIG(0x4E6B00, int, Sound_Play, (HumanView *v, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (int sound));
 ORIG(0x4E7BD0, void, Debug_printf, (const char *fmt, ...));
 ORIG(0x4EC190, void, StateMachine_Init, (StateMachine *sm, StateFn update, StateFn *states, int state,
                                          int combo_count, void *combos));
 ORIG(0x4EC1E0, void, StateMachine_Update, (StateMachine *sm, HumanPlayer *h));
-ORIG(0x4EE140, char *, sub_4EE140, (void *p));
-ORIG(0x4F1980, void *, sub_4F1980, (void *p, int n));
-ORIG(0x4F1A60, uint8_t, sub_4F1A60, (void));
-ORIG(0x4F1A70, uint8_t, sub_4F1A70, (void));
-ORIG(0x4F2030, int, sub_4F2030, (void));
+ORIG(0x4EE140, char *, PhysicsObjType_Find, (void *p));
+ORIG(0x4F1980, void *, ParamTable_Extend, (void *p, int n));
+ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
+ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
+ORIG(0x4F2030, int, Weapon_GetDeselectEvent, (void));
 ORIG(0x4F2060, Task *, WeaponSlots_Get, (Task **slots, int i));
 ORIG(0x4F2070, void, WeaponSlots_Set, (Task **slots, int i, Task *weapon));
-ORIG(0x4F2290, void, sub_4F2290, (HumanPlayer *h));
+ORIG(0x4F2290, void, Weapon_DeleteAll, (HumanPlayer *h));
 ORIG(0x4F2350, void, Weapon_UseAmmo, (Task *weapon, char unlimited));
-ORIG(0x4F2390, void, sub_4F2390, (Task *weapon));
+ORIG(0x4F2390, void, Weapon_Drop, (Task *weapon));
 ORIG(0x4F23D0, void, Weapon_GetAmmo, (Task *weapon, WeaponAmmo *out));
-ORIG(0x4F40D0, uint8_t, sub_4F40D0, (void));
-ORIG(0x4F40E0, uint8_t, sub_4F40E0, (void));
-ORIG(0x4F4140, uint8_t, sub_4F4140, (void));
-ORIG(0x416840, uint8_t, sub_416840, (void));
-ORIG(0x416860, uint8_t, sub_416860, (void));
-ORIG(0x416870, uint8_t, sub_416870, (void));
-ORIG(0x460C40, uint8_t, sub_460C40, (void));
-ORIG(0x460C50, void *, sub_460C50, (void));
-ORIG(0x467D90, uint8_t, sub_467D90, (void));
-ORIG(0x47E990, uint8_t, sub_47E990, (void));
-ORIG(0x487190, uint8_t, sub_487190, (void));
+ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
+ORIG(0x4F40E0, uint8_t, Vehicle_GetInputInfoEvent, (void));
+ORIG(0x4F4140, uint8_t, Vehicle_GetKeysEvent, (void));
+ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
+ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
+ORIG(0x416870, uint8_t, Game_GetEvent12, (void));
+ORIG(0x460C40, uint8_t, Human_GetPunchEvent, (void));
+ORIG(0x460C50, void *, Human_GetParamTable, (void));
+ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
+ORIG(0x47E990, uint8_t, FlashBang_GetEvent, (void));
+ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 
 /* handlers registered by HumanPlayer_Open that live outside this file */
 #define Human_RunBase ((void *)0x454EE0)
@@ -386,7 +386,7 @@ void HumanPlayer_BodyComputerEnter(StateMachine *sm, HumanPlayer *h)
     h->crouch = 1;
     Human_PlayAnimSlot(h, sm->state, BLEND);
     HumanPlayer_RequestWeaponAnim(h, 4);
-    sub_464700(h->view);
+    HumanView_LockPitch(h->view);
     sub_4635F0(h);
     Computer_New(h);
     sm->run = HumanPlayer_BodyComputerRun;
@@ -400,7 +400,7 @@ void HumanPlayer_BodyComputerRun(StateMachine *sm, HumanPlayer *h)
     if (!pressed(h, INPUT_MAP) && !(in & SM_DEAD))
         return;
     Computer_Delete();
-    sub_464710(h->view);
+    HumanView_UnlockPitch(h->view);
     sub_463600(h);
     h->unk670[0] = 0;
     h->unk670[1] = 0;
@@ -417,10 +417,10 @@ void HumanPlayer_BodyHitEnter(StateMachine *sm, HumanPlayer *h)
     HitAnims *a;
 
     h->crouch = 0;
-    a = sub_489E10(&h->damage, h->hit_zone);
+    a = HumanDamage_GetZone(&h->damage, h->hit_zone);
     Anim_Play(h->anim, 0, a->hit, 0, BLEND);
     HumanPlayer_SetWeaponAnim(h, 0);
-    HumanPlayer_LockWeapon(h);
+    HumanPlayer_SetFlagD44(h);
     sm->run = HumanPlayer_BodyHitRun;
 }
 HOOK(0x40E470, HumanPlayer_BodyHitEnter);
@@ -434,7 +434,7 @@ void HumanPlayer_BodyHitRun(StateMachine *sm, HumanPlayer *h)
     } else if (in & SM_HIT) {
         sm_set(sm, BODY_HIT, h);
     } else if (in & SM_ANIM_DONE) {
-        HumanPlayer_UnlockWeapon(h);
+        HumanPlayer_ClearFlagD44(h);
         sm_set(sm, 0, h);
     }
 }
@@ -446,16 +446,16 @@ void HumanPlayer_BodyDeathEnter(StateMachine *sm, HumanPlayer *h)
     unsigned int r;
 
     h->crouch = 0;
-    a = sub_489E10(&h->damage, h->hit_zone);
-    r = Random_Int(sub_416D20(), 2);
+    a = HumanDamage_GetZone(&h->damage, h->hit_zone);
+    r = Random_Int(Game_GetRandom(), 2);
     Anim_Play(h->anim, 0, a->death[r], 0, BLEND);
     HumanPlayer_SetWeaponAnim(h, 0);
-    sub_48A330(h);
-    HumanPlayer_LockWeapon(h);
+    Human_DisableLook(h);
+    HumanPlayer_SetFlagD44(h);
     HumanViewCam(h, 5);
-    sub_464700(h->view);
+    HumanView_LockPitch(h->view);
     sub_4635F0(h);
-    sub_4638A0(h, "player_death_", 3);
+    Human_Say(h, "player_death_", 3);
     memcpy(h->unk664, h->unk688, sizeof(h->unk664));
     sm->run = HumanPlayer_BodyDeathRun;
 }
@@ -466,7 +466,7 @@ void HumanPlayer_BodyDeathRun(StateMachine *sm, HumanPlayer *h)
     uint32_t in;
     Task *w;
 
-    sub_408460(h);
+    HumanPlayer_UpdateFall(h);
     in = sm->input;
     if (!(in & 4))
         return;
@@ -476,11 +476,11 @@ void HumanPlayer_BodyDeathRun(StateMachine *sm, HumanPlayer *h)
         return;
     w = WeaponSlots_Get(h->weapons, 0);
     if (w) {
-        sub_4F2390(w);
+        Weapon_Drop(w);
         WeaponSlots_Set(h->weapons, 0, NULL);
         sm_set(&h->weapon, WEAPON_IDLE, h);
     }
-    sub_4F2290(h);
+    Weapon_DeleteAll(h);
     sm->run = HumanPlayer_DeadRun;
 }
 HOOK(0x40E620, HumanPlayer_BodyDeathRun);
@@ -491,7 +491,7 @@ void HumanPlayer_BodyFlyEnter(StateMachine *sm, HumanPlayer *h)
     Human_PlayAnimSlot(h, sm->state, BLEND);
     memset(h->unk664, 0, sizeof(h->unk664));
     memset(h->unk670, 0, sizeof(h->unk670));
-    sub_4632D0(h);
+    Human_LeaveGround(h);
     sm->run = HumanPlayer_BodyFlyRun;
 }
 HOOK(0x40E6E0, HumanPlayer_BodyFlyEnter);
@@ -543,7 +543,7 @@ void HumanPlayer_BodyFlyRun(StateMachine *sm, HumanPlayer *h)
     z = fspeed * z;
     pos[1] = y + pos[1];
     pos[2] = z + pos[2];
-    sub_4C6940(sub_416920(), h, pos, h->unkA0);
+    DynCube_Move(Game_GetWorld(), h, pos, h->unkA0);
 }
 HOOK(0x40E740, HumanPlayer_BodyFlyRun);
 
@@ -589,11 +589,11 @@ void HumanPlayer_WeaponIdleRun(StateMachine *sm, HumanPlayer *h)
     }
     if (pressed(h, INPUT_BINOCULARS)) {
         cur = WeaponSlots_Get(h->weapons, 0);
-        b = HumanPlayer_FindWeapon(h, Script_EvalConst("WEAPON_ID_BINOCULARS"));
+        b = Task_FindWeapon(h, Script_EvalConst("WEAPON_ID_BINOCULARS"));
         if (b) {
             if (b == cur) {
-                ((TaskHandler1)TASK_HANDLER(sub_4F2030(), b->type))(b);
-                h->next_weapon = Weapon_GetInfo(h->saved_weapon)->id;
+                ((TaskHandler1)TASK_HANDLER(Weapon_GetDeselectEvent(), b->type))(b);
+                h->next_weapon = Weapon_GetType(h->saved_weapon)->id;
                 h->saved_weapon = NULL;
             } else {
                 WeaponSlots_Set(h->weapons, 0, b);
@@ -605,7 +605,7 @@ void HumanPlayer_WeaponIdleRun(StateMachine *sm, HumanPlayer *h)
     if (h->saved_weapon)
         return;
     if (w) {
-        info = Weapon_GetInfo(w);
+        info = Weapon_GetType(w);
         Weapon_GetAmmo(w, &ammo);
         if (in & 0x200) {
             switch (info->kind) {
@@ -674,7 +674,7 @@ no_action:
     if (Human_GetAttached(h) && !h->unk7B9 && h->input[INPUT_USE] != 0) {
         arg = 0;
         type = Human_GetAttached(h)->type;
-        fn = (TaskHandler)TASK_HANDLER(sub_416810(), type);
+        fn = (TaskHandler)TASK_HANDLER(Game_GetEvent3(), type);
         att = Human_GetAttached(h);
         fn(att, &arg);
         HumanTaskViewReset(h->view);
@@ -697,7 +697,7 @@ HOOK(0x40EF60, HumanPlayer_WeaponFireEnter);
 void HumanPlayer_WeaponFireRun(StateMachine *sm, HumanPlayer *h)
 {
     Task *w = WeaponSlots_Get(h->weapons, 0);
-    WeaponInfo *info = Weapon_GetInfo(w);
+    WeaponInfo *info = Weapon_GetType(w);
     WeaponAmmo ammo;
     uint32_t in;
 
@@ -759,7 +759,7 @@ void HumanPlayer_WeaponReloadRun(StateMachine *sm, HumanPlayer *h)
     msg.h = h;
     memcpy(msg.anim, v->unk208, sizeof(msg.anim));
     msg.unlimited = gUnlimitedAmmo;
-    slot = sub_460C10();
+    slot = Human_GetEvent1();
     ((TaskHandler)TASK_HANDLER(slot, w->type))(w, &msg);
     if (msg.done) {
         h->unk4D0 = 1;
@@ -783,7 +783,7 @@ void HumanPlayer_WeaponLowerRun(StateMachine *sm, HumanPlayer *h)
 
     if (!HumanView_WeaponAtTarget(h->view))
         return;
-    w = HumanPlayer_FindWeapon(h, h->next_weapon);
+    w = Task_FindWeapon(h, h->next_weapon);
     if (w)
         WeaponSlots_Set(h->weapons, 0, w);
     h->next_weapon = -1;
@@ -833,7 +833,7 @@ HOOK(0x40F3F0, HumanPlayer_WeaponLeanRun);
 void HumanPlayer_WeaponAltFireEnter(StateMachine *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
-    WeaponInfo *info = Weapon_GetInfo(WeaponSlots_Get(h->weapons, 0));
+    WeaponInfo *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
 
     h->unk4D2 = 1;
     Anim_Play(v->anim, 0, info->anim688, 0, 0);
@@ -844,12 +844,12 @@ HOOK(0x40F4A0, HumanPlayer_WeaponAltFireEnter);
 void HumanPlayer_WeaponThrowEnter(StateMachine *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
-    WeaponInfo *info = Weapon_GetInfo(WeaponSlots_Get(h->weapons, 0));
+    WeaponInfo *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
     char *p;
     long double fuse;
 
     Anim_Play(v->anim, 0, info->anim684, 0, 0);
-    p = sub_4EE140(info->unk61C);
+    p = PhysicsObjType_Find(info->unk61C);
     fuse = **(float **)(p + 0x2D4) * VAR(float, 0x5333BC);
     h->grenade_ticking = 0;
     h->grenade_ticks = 0;
@@ -862,7 +862,7 @@ HOOK(0x40F4F0, HumanPlayer_WeaponThrowEnter);
 void HumanPlayer_WeaponThrowRun(StateMachine *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
-    WeaponInfo *info = Weapon_GetInfo(WeaponSlots_Get(h->weapons, 0));
+    WeaponInfo *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
 
     if (v->unk208[1] == 4) {
         h->grenade_ticking = 1;
@@ -881,7 +881,7 @@ void HumanPlayer_WeaponReleaseRun(StateMachine *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
     Task *w = WeaponSlots_Get(h->weapons, 0);
-    WeaponInfo *info = Weapon_GetInfo(w);
+    WeaponInfo *info = Weapon_GetType(w);
     WeaponAmmo ammo;
 
     h->grenade_ticks++;
@@ -913,7 +913,7 @@ HOOK(0x40F640, HumanPlayer_WeaponReleaseRun);
 void HumanPlayer_CycleWeapon(HumanPlayer *h, int force)
 {
     Task *w = WeaponSlots_Get(h->weapons, 0);
-    int cur = w ? Weapon_GetInfo(w)->id : -1;
+    int cur = w ? Weapon_GetType(w)->id : -1;
     int dir = 0, id = -1, i, n;
 
     if (h->cycle_index == -1 || force || pressed(h, INPUT_NEXT_WEAPON))
@@ -923,7 +923,7 @@ void HumanPlayer_CycleWeapon(HumanPlayer *h, int force)
     else if (!dir)
         goto select;
     if (h->saved_weapon) {
-        id = Weapon_GetInfo(h->saved_weapon)->id;
+        id = Weapon_GetType(h->saved_weapon)->id;
         h->saved_weapon = NULL;
         if (id != -1)
             goto done;
@@ -937,7 +937,7 @@ void HumanPlayer_CycleWeapon(HumanPlayer *h, int force)
         else if (h->cycle_index < 0)
             h->cycle_index = gWeaponCycleCount - 1;
         id = gWeaponCycle[h->cycle_index];
-        w = HumanPlayer_FindWeapon(h, id);
+        w = Task_FindWeapon(h, id);
         if (w && Weapon_HasAmmo(w)) {
             if (id != -1)
                 goto done;
@@ -946,7 +946,7 @@ void HumanPlayer_CycleWeapon(HumanPlayer *h, int force)
     }
 select:
     id = (int)llrintl(h->input[INPUT_WEAPON]);
-    w = HumanPlayer_FindWeapon(h, id);
+    w = Task_FindWeapon(h, id);
     if (w) {
         if (!Weapon_HasAmmo(w)) {
             id = -1;
@@ -958,7 +958,7 @@ select:
         }
     }
 done:
-    if (id != cur && HumanPlayer_FindWeapon(h, id))
+    if (id != cur && Task_FindWeapon(h, id))
         h->next_weapon = id;
 }
 HOOK(0x40F760, HumanPlayer_CycleWeapon);
@@ -1013,7 +1013,7 @@ void HumanPlayer_WeaponMeleeRun(StateMachine *sm, HumanPlayer *h)
     WeaponAmmo ammo;
     uint32_t in;
 
-    Weapon_GetInfo(w);
+    Weapon_GetType(w);
     Weapon_GetAmmo(w, &ammo);
     if (h->input[INPUT_FIRE] != 0 && h->melee_count < 3)
         h->fire = 1;
@@ -1030,7 +1030,7 @@ HOOK(0x40FA80, HumanPlayer_WeaponMeleeRun);
 void HumanPlayer_WeaponMedipackEnter(StateMachine *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
-    WeaponInfo *info = Weapon_GetInfo(WeaponSlots_Get(h->weapons, 0));
+    WeaponInfo *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
 
     Anim_Play(v->anim, 0, info->anim684, 0, 0);
     h->medipack_delay = 0;
@@ -1045,7 +1045,7 @@ void HumanPlayer_WeaponMedipackStartRun(StateMachine *sm, HumanPlayer *h)
 
     if (!(sm->input & SM_ANIM_DONE))
         return;
-    info = Weapon_GetInfo(WeaponSlots_Get(h->weapons, 0));
+    info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
     Anim_Play(v->anim, 0, info->anim688, 1, 0);
     sm->run = HumanPlayer_WeaponMedipackRun;
 }
@@ -1054,12 +1054,12 @@ HOOK(0x40FB90, HumanPlayer_WeaponMedipackStartRun);
 void HumanPlayer_WeaponMedipackRun(StateMachine *sm, HumanPlayer *h)
 {
     HumanView *v = h->view;
-    WeaponInfo *info = Weapon_GetInfo(WeaponSlots_Get(h->weapons, 0));
+    WeaponInfo *info = Weapon_GetType(WeaponSlots_Get(h->weapons, 0));
     AmmoEntry *a;
     long double t;
 
     if (h->input[INPUT_FIRE] == 0) {
-        Anim_Play(v->anim, 0, Weapon_GetInfo(WeaponSlots_Get(h->weapons, 0))->anim68C, 0, 0);
+        Anim_Play(v->anim, 0, Weapon_GetType(WeaponSlots_Get(h->weapons, 0))->anim68C, 0, 0);
         sm->run = HumanPlayer_WeaponWaitRun;
     }
     if (h->medipack_delay) {
@@ -1070,7 +1070,7 @@ void HumanPlayer_WeaponMedipackRun(StateMachine *sm, HumanPlayer *h)
     if (!a)
         return;
     if (!a->count || h->damage == 0) {
-        Anim_Play(v->anim, 0, Weapon_GetInfo(WeaponSlots_Get(h->weapons, 0))->anim68C, 0, 0);
+        Anim_Play(v->anim, 0, Weapon_GetType(WeaponSlots_Get(h->weapons, 0))->anim68C, 0, 0);
         sm->run = HumanPlayer_WeaponWaitRun;
         return;
     }
@@ -1117,25 +1117,25 @@ void HumanPlayer_Open(void)
     TaskType_SetHandler(gHumanPlayerType, 0, HumanPlayer_CreateHandler);
     TaskType_SetHandler2(gHumanPlayerType, 1, Human_RunBase);
     TaskType_SetHandler2(gHumanPlayerType, 2, HumanPlayer_DeleteHandler);
-    TaskType_SetHandler(gHumanPlayerType, sub_4F1A60(), sub_4108B0);
-    TaskType_SetHandler(gHumanPlayerType, sub_4F1A70(), sub_4108C0);
-    TaskType_SetHandler(gHumanPlayerType, sub_4CEA20(), sub_410900);
-    TaskType_SetHandler(gHumanPlayerType, sub_4F40D0(), HumanPlayer_InputHandler);
-    TaskType_SetHandler(gHumanPlayerType, sub_4F40E0(), sub_4123F0);
-    TaskType_SetHandler(gHumanPlayerType, sub_4F4140(), sub_412420);
-    TaskType_SetHandler(gHumanPlayerType, sub_416840(), sub_412440);
-    TaskType_SetHandler(gHumanPlayerType, sub_416860(), sub_412990);
-    TaskType_SetHandler(gHumanPlayerType, sub_460C40(), sub_412CE0);
-    TaskType_SetHandler(gHumanPlayerType, sub_416870(), sub_412F80);
-    TaskType_SetHandler(gHumanPlayerType, sub_47E990(), sub_413090);
-    TaskType_SetHandler(gHumanPlayerType, sub_487190(), sub_413120);
-    TaskType_SetHandler(gHumanPlayerType, sub_467D90(), sub_413730);
-    gUnk56E09C = sub_4F1980(sub_460C50(), 1);
+    TaskType_SetHandler(gHumanPlayerType, Param_GetTableEvent(), sub_4108B0);
+    TaskType_SetHandler(gHumanPlayerType, Param_GetChangedEvent(), sub_4108C0);
+    TaskType_SetHandler(gHumanPlayerType, World_GetEvent1(), sub_410900);
+    TaskType_SetHandler(gHumanPlayerType, Vehicle_GetControlEvent(), HumanPlayer_InputHandler);
+    TaskType_SetHandler(gHumanPlayerType, Vehicle_GetInputInfoEvent(), sub_4123F0);
+    TaskType_SetHandler(gHumanPlayerType, Vehicle_GetKeysEvent(), sub_412420);
+    TaskType_SetHandler(gHumanPlayerType, Game_GetEvent9(), sub_412440);
+    TaskType_SetHandler(gHumanPlayerType, Game_GetEvent11(), sub_412990);
+    TaskType_SetHandler(gHumanPlayerType, Human_GetPunchEvent(), sub_412CE0);
+    TaskType_SetHandler(gHumanPlayerType, Game_GetEvent12(), sub_412F80);
+    TaskType_SetHandler(gHumanPlayerType, FlashBang_GetEvent(), sub_413090);
+    TaskType_SetHandler(gHumanPlayerType, StatusScreen_GetEvent(), sub_413120);
+    TaskType_SetHandler(gHumanPlayerType, ComputerObject_GetEvent0(), sub_413730);
+    gUnk56E09C = ParamTable_Extend(Human_GetParamTable(), 1);
     Script_RegisterFunction("DefineHumanPlayerGeneral", DefineHumanPlayerGeneral, NULL, -1);
     Script_RegisterFunction("DefineHumanPlayerWeaponCycle", DefineHumanPlayerWeaponCycle, NULL, -1);
     Script_RegisterFunction("DefineHumanPlayerWeaponCategory", DefineHumanPlayerWeaponCategory, NULL, -1);
     Script_RegisterFunction("DefineHumanPlayerAmmoLimit", DefineHumanPlayerAmmoLimit, NULL, -1);
-    Console_AddCommand("UnlimitedAmmo", HumanPlayer_SetUnlimitedAmmo);
+    AppMain_ParseCmdLineArgs("UnlimitedAmmo", HumanPlayer_SetUnlimitedAmmo);
 }
 HOOK(0x40FE30, HumanPlayer_Open);
 
@@ -1228,18 +1228,18 @@ void HumanPlayer_CreateHandler(HumanPlayer *h, void *arg)
     h->unk696 = 1;
     h->unk697 = 1;
     h->unk698 = 1;
-    sub_4D9620(sub_416920(), h, 0, 0);
+    BoneDynCubeObj_Init(Game_GetWorld(), h, 0, 0);
     h->unkCC = 2;
     Human_PlayAnim(h, 2, 0, 0);
-    sub_4D38C0(h->matrix, h->anim);
+    BoneObj_Update(h->matrix, h->anim);
     memcpy(h->unk650, h->motion->unk4C, sizeof(h->unk650));
-    sub_4C7140(sub_416920(), h, pos, h->unkA0, 2);
-    sub_464660(h->view);
+    DynCube_Add(Game_GetWorld(), h, pos, h->unkA0, 2);
+    HumanView_AddToWorld(h->view);
     for (i = 0; i < gAmmoLimitCount; i++)
         AmmoList_SetLimit(h->ammo, gAmmoLimits[i].id, gAmmoLimits[i].limit);
     StateMachine_Init(&h->body, HumanPlayer_UpdateBodyInput, gBodyStates, 0, 2, gBodyCombos);
     h->anim_slots = gAnimSlots;
-    sub_489C30(h, gMoveSpeeds);
+    Human_InitDamage(h, gMoveSpeeds);
     h->max_damage = gMaxDamage;
     StateMachine_Init(&h->weapon, HumanPlayer_UpdateWeaponInput, gWeaponStates, WEAPON_IDLE, 0, NULL);
     h->weapon_lock = 0;
@@ -1327,8 +1327,8 @@ void HumanPlayer_DeleteHandler(HumanPlayer *h)
         h->unkDE8 = NULL;
     }
     QTaskList_Remove(gHumanPlayerList, h);
-    sub_4D96F0(h);
-    sub_4C7560(sub_416920(), h);
+    BoneDynCubeObj_Deinit(h);
+    DynCube_Remove(Game_GetWorld(), h);
     ((TaskHandler1)TASK_HANDLER(2, Human_GetType()))(h);
     if (h->unkDBC)
         TaskRef_Remove(h->unkDBC);
@@ -1344,7 +1344,7 @@ HOOK(0x4108B0, sub_4108B0);
 
 void sub_4108C0(HumanPlayer *h, void *arg)
 {
-    uint8_t slot = sub_4F1A70();
+    uint8_t slot = Param_GetChangedEvent();
 
     ((TaskHandler)TASK_HANDLER(slot, Human_GetType()))(h, arg);
 }
@@ -1358,8 +1358,8 @@ void sub_410900(HumanPlayer *h, void *arg)
         Computer_Delete();
     if (h->unkCF6) {
         h->unkCF6 = 0;
-        slot = sub_4CEA20();
-        ((TaskHandler)TASK_HANDLER(slot, sub_4D9610()))(h, arg);
+        slot = World_GetEvent1();
+        ((TaskHandler)TASK_HANDLER(slot, BoneDynCubeObj_GetType()))(h, arg);
     }
 }
 HOOK(0x410900, sub_410900);
@@ -1381,11 +1381,11 @@ void HumanPlayer_Update(HumanPlayer *h)
     long double speed, a;
     Camera *cam;
 
-    sub_408420(h);
+    HumanPlayer_CheckDeath(h);
     sub_460CF0(h);
     sub_460EE0(h);
     if (!Computer_Get()) {
-        sub_411000(h);
+        HumanPlayer_SelectWeaponCategory(h);
         HumanPlayer_CycleWeapon(h, 0);
     }
     StateMachine_Update(&h->body, h);
@@ -1402,18 +1402,18 @@ void HumanPlayer_Update(HumanPlayer *h)
         sm_set(&h->body, BODY_FLY, h);
     }
     if (h->unkD78 || h->unkD79)
-        sub_4113E0(h);
+        HumanPlayer_UpdateLadder(h);
     if (h->unkD90 || h->unkD91)
         sub_411770(h);
     if (h->unkD93 || h->unkD94)
-        sub_411AE0(h);
+        HumanPlayer_UpdateWire(h);
     if (h->unkDA0 || h->unkDA1)
-        sub_411F20(h);
+        HumanPlayer_UpdateZipline(h);
     h->body.input &= ~SM_HIT;
     Human_UpdateBody(h);
     HumanView_UpdateView(h->view, h);
     h->unkD8 = 1;
-    sub_4D2FB0(h->unk514, d, h->anim);
+    BoneObj_GetRootMotion(h->unk514, d, h->anim);
     if (!h->delta_scaled) {
         d[0] = gMoveScale * d[0];
         d[1] = gMoveScale * d[1];
@@ -1428,24 +1428,24 @@ void HumanPlayer_Update(HumanPlayer *h)
     sub_4613D0(h);
     if (h->body.state != BODY_FLY) {
         if (!h->attach)
-            sub_4614B0(h);
+            Human_UpdateMove(h);
         else
-            sub_462CF0(h);
+            Human_MoveOnPlatform(h);
     }
     HumanView_UpdateBody(h->view, h);
-    sub_462E50(h);
-    sub_463080(h);
+    Human_UpdateWeapon(h);
+    Human_SendPosition(h);
     HumanPlayer_SendPosition(h);
-    sub_463920(h);
-    sub_411240(h);
-    sub_411300(h);
-    sub_411350(h);
-    sub_4113C0(h);
+    Human_Footstep(h);
+    HumanPlayer_UpdateEarRinging(h);
+    HumanPlayer_FadeHitFlash(h);
+    HumanPlayer_FadeFlash(h);
+    HumanPlayer_UpdateFenceTimer(h);
     speed = h->unk664[2];
     if (h->unk664[2] < 0)
         speed = -speed;
     Human_printf(h, "Speed Z (m/s): %.2f\n", (double)(speed * kUnitsToMetersF * VAR(float, 0x5333BC)));
-    Human_printf(h, "Ground task: %x\n", sub_463680(h));
+    Human_printf(h, "Ground task: %x\n", Human_GetGround(h));
     Human_printf(h, "Attach task: %x\n", h->attach);
     Human_printf(h, "Delta move pos X: %.2f\n", (double)h->move_pos[0]);
     Human_printf(h, "Delta move pos Y: %.2f\n", (double)h->move_pos[1]);
@@ -1460,15 +1460,15 @@ void HumanPlayer_Update(HumanPlayer *h)
     Human_printf(h, "Delta translation Z: %.2f\n", (double)h->delta[2]);
     if (h->body.input & 4)
         Human_printf(h, "Ground!\n");
-    if (sub_415020(0x57))
+    if (Game_CheatKeyPressed(0x57))
         gShowPosition ^= 1;
     if (!gShowPosition)
         return;
     Debug_printf("Player position: %.2f, %.2f, %.2f\n", (double)(h->pos[0] * kUnitsToMeters),
                  (double)(h->pos[1] * kUnitsToMeters), (double)(h->pos[2] * kUnitsToMeters));
-    if (!sub_416D40()->camera)
+    if (!Game_Get()->camera)
         return;
-    cam = sub_416D40()->camera;
+    cam = Game_Get()->camera;
     v[0] = cam->m[2];
     v[1] = cam->m[5];
     v[2] = cam->m[8];
@@ -1490,14 +1490,14 @@ void HumanPlayer_SendPosition(HumanPlayer *h)
     uint16_t type;
     int i;
 
-    if (sub_463170(h))
+    if (Human_IsDead(h))
         return;
     msg.h = h;
     memcpy(msg.pos, h->pos, sizeof(msg.pos));
-    for (i = 0; i < sub_4168C0()->count; i++) {
-        type = sub_4168C0()->items[i]->type;
-        fn = (TaskHandler)TASK_HANDLER(sub_4167E0(), type);
-        fn(sub_4168C0()->items[i], &msg);
+    for (i = 0; i < Game_GetTaskList2()->count; i++) {
+        type = Game_GetTaskList2()->items[i]->type;
+        fn = (TaskHandler)TASK_HANDLER(Game_GetEvent1(), type);
+        fn(Game_GetTaskList2()->items[i], &msg);
     }
 }
 HOOK(0x410F70, HumanPlayer_SendPosition);

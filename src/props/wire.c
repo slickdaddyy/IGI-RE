@@ -20,8 +20,8 @@ ORIG(0x416820, uint8_t, Game_GetEvent6, (void));
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
 ORIG(0x4168A0, void *, Game_GetTaskList0, (void));
 ORIG(0x416AD0, char, sub_416AD0, (UseQuery *q, void *obj, const Vec3d *pos));
-ORIG(0x47E6F0, uint8_t, sub_47E6F0, (void));
-ORIG(0x4871C0, void, sub_4871C0, (Task *human, void *sprite));
+ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
+ORIG(0x4871C0, void, StatusScreen_DrawActionIcon, (Task *human, void *sprite));
 ORIG(0x4B3100, void, Vec3d_Normalize, (Vec3d *v));
 ORIG(0x4B3130, long double, Vec3d_Length, (const Vec3d *v));
 ORIG(0x4B3C50, void, Matrix_GetEuler, (const Matrix *m, float *ax, float *ay, float *az));
@@ -104,7 +104,7 @@ void Wire_Open(void)
     TaskType_SetHandler2(gWireType, Level_GetEventDA8(), Wire_Activate);
     TaskType_SetHandler2(gWireType, Level_GetEventDAC(), Wire_Deactivate);
     TaskType_SetHandler(gWireType, 8, NULL);
-    TaskType_SetHandler(gWireType, sub_47E6F0(), NULL);
+    TaskType_SetHandler(gWireType, BulletHole_GetEvent(), NULL);
     gWireParams = ParamTable_New(3);
     ParamTable_Add(gWireParams, &w, &w.start, Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gWireParams, &w, &w.end, Param_ObjectPos(), 7, NULL);
@@ -239,7 +239,7 @@ HOOK(0x43F6D0, Wire_SetInUse);
 
 void Wire_DrawIcon(Wire *w, Task **human)
 {
-    sub_4871C0(*human, (char *)*human + 0x4AC);
+    StatusScreen_DrawActionIcon(*human, (char *)*human + 0x4AC);
 }
 HOOK(0x43F6E0, Wire_DrawIcon);
 

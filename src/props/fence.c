@@ -20,9 +20,9 @@ ORIG(0x416870, uint8_t, Game_GetEvent12, (void));
 ORIG(0x4168A0, void *, Game_GetTaskList0, (void));
 ORIG(0x4168B0, void *, Game_GetTaskList1, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
-ORIG(0x44C830, Task *, sub_44C830, (void *parent));
-ORIG(0x44C860, void, sub_44C860, (Task *t, const Vec3d *pos, const Matrix *m, const Vec3d *size, const char *sound));
-ORIG(0x4871C0, void, sub_4871C0, (Task *human, void *sprite));
+ORIG(0x44C830, Task *, AmbientArea_New, (void *parent));
+ORIG(0x44C860, void, AmbientArea_Set, (Task *t, const Vec3d *pos, const Matrix *m, const Vec3d *size, const char *sound));
+ORIG(0x4871C0, void, StatusScreen_DrawActionIcon, (Task *human, void *sprite));
 ORIG(0x4B2B30, long double, Vec3_Angle, (const Vec3f *a, const Vec3f *b));
 ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Matrix *m, float a));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
@@ -37,7 +37,7 @@ ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float rad
 ORIG(0x4C7560, void, DynCube_Remove, (void *room, void *obj));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
-ORIG(0x4F0F20, void *, sub_4F0F20, (void));
+ORIG(0x4F0F20, void *, Param_Angle, (void));
 ORIG(0x4F0FC0, void *, Param_VarString, (void));
 ORIG(0x4F0FD0, void *, Param_String16, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
@@ -114,7 +114,7 @@ void Fence_Open(void)
     TaskType_SetHandler(gFenceType, Game_GetEvent6(), Fence_DrawIcon);
     gFenceParams = ParamTable_New(4);
     ParamTable_Add(gFenceParams, &f, &f.pos, Param_ObjectPos(), 7, NULL);
-    ParamTable_Add(gFenceParams, &f, &f.angle, sub_4F0F20(), 7, NULL);
+    ParamTable_Add(gFenceParams, &f, &f.angle, Param_Angle(), 7, NULL);
     ParamTable_Add(gFenceParams, &f, f.model, Param_String16(), 7, NULL);
     ParamTable_Add(gFenceParams, &f, &f.cond, Param_VarString(), 7, NULL);
     Script_RegisterConstant("TASKTYPE_FENCE", gFenceType);
@@ -155,7 +155,7 @@ void Fence_Run(Fence *f)
             long double c;
             TaskFn fn;
 
-            f->spark = sub_44C830(f);
+            f->spark = AmbientArea_New(f);
             sub_414ED0(&a, f, 0);
             sub_414ED0(&b, f, 1);
             c = (b.x + a.x) * kHalf;
@@ -168,7 +168,7 @@ void Fence_Run(Fence *f)
             size.x = (b.x - a.x) * kSparkScale + kSparkBase;
             size.y = 1.75;
             size.z = 2.0;
-            sub_44C860(f->spark, &p, &f->obj.matrix, &size, "elfence_loop");
+            AmbientArea_Set(f->spark, &p, &f->obj.matrix, &size, "elfence_loop");
             fn = HANDLER(Param_GetChangedEvent(), f->spark->type);
             if (fn)
                 fn(f->spark, NULL);
@@ -289,7 +289,7 @@ HOOK(0x4400C0, Fence_Use);
 
 void Fence_DrawIcon(Fence *f, Task **human)
 {
-    sub_4871C0(*human, (char *)*human + 0x47C);
+    StatusScreen_DrawActionIcon(*human, (char *)*human + 0x47C);
 }
 HOOK(0x440230, Fence_DrawIcon);
 

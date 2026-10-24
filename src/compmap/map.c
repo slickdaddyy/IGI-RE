@@ -22,17 +22,17 @@ ORIG(0x4B4770, long double, Random_Float, (void *r));
 ORIG(0x4B47C0, int, Random_Int, (void *r, int n));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
-ORIG(0x489470, long double, sub_489470, (void));
-ORIG(0x4E75A0, int, sub_4E75A0, (void));
+ORIG(0x489470, long double, LevelFlow_GetHour, (void));
+ORIG(0x4E75A0, int, Screen_GetFrame, (void));
 ORIG(0x4D9870, void, Camera_Set, (void *cam, const Vec3d *pos, const Matrix *axes, float fov, float aspect,
                                   float range, int frame, void *owner, float time, int unk10));
-ORIG(0x4E8200, const float *, View_GetRect, (void *view));
-ORIG(0x4E8210, MapCamera *, View_GetCamera, (void *view));
-ORIG(0x4E8220, void, sub_4E8220, (void *view, int i, char on));
-ORIG(0x4E8250, void, View_SetEnabled, (void *view, char on));
+ORIG(0x4E8200, const float *, Viewport_GetRect, (void *view));
+ORIG(0x4E8210, MapCamera *, Viewport_GetCamera, (void *view));
+ORIG(0x4E8220, void, Viewport_SetList, (void *view, int i, char on));
+ORIG(0x4E8250, void, Viewport_SetDrawWorld, (void *view, char on));
 ORIG(0x491D40, long double, Display_GetAspect, (void));
-ORIG(0x460C60, TaskArray *, HumanAI_GetList, (void));
-ORIG(0x476030, TaskArray *, sub_476030, (void));
+ORIG(0x460C60, TaskArray *, Human_GetList, (void));
+ORIG(0x476030, TaskArray *, Mine_GetList, (void));
 ORIG(0x443660, TaskArray *, SCameraLens_GetList, (void));
 ORIG(0x4C3440, Vec3d *, DynCubeObj_GetPosition, (Task *obj));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, MapHit *results, Vec3d *starts, Vec3d *ends, int count, int unk,
@@ -41,13 +41,13 @@ ORIG(0x4CB9F0, void, Coll_DropPointsMat, (void *world, MapHit *results, Vec3d *p
                                           int unk, int unk2, unsigned int flags));
 ORIG(0x466F60, MapLimit *, ComputerLimit_Get, (void));
 ORIG(0x467D70, char *, ComputerObject_New, (void *parent));
-ORIG(0x4A23E0, void *, sub_4A23E0, (void *parent, int a, int b, int c, float z, int d));
-ORIG(0x4A4FF0, void, sub_4A4FF0, (void *noise, float level));
+ORIG(0x4A23E0, void *, LineFilter_New, (void *parent, int a, int b, int c, float z, int d));
+ORIG(0x4A4FF0, void, LineFilter_SetLevel, (void *noise, float level));
 ORIG(0x466240, char *, ComputerStartup_New, (void *parent, int count, const float *sizes, const char **names,
                                              const float *colors, const float *colors2, float z));
 ORIG(0x466390, void, ComputerStartup_SetCallback, (char *status, int i, void *fn));
-ORIG(0x505A30, int, sub_505A30, (Task *panel));
-ORIG(0x488700, void, Task_RunChildren, (void *task));
+ORIG(0x505A30, int, MenuItem_FindSelected, (Task *panel));
+ORIG(0x488700, void, SubLevel_Run, (void *task));
 ORIG(0x424280, void, MenuWindow_Draw, (void *task));
 
 static const float kHalfPi = 0x1.921fb6p+0f;
@@ -145,15 +145,15 @@ void ComputerMap_Create(ComputerMap *map)
         ComputerMap_SetStartTask(NULL);
     }
     map->fov = ftan(gMapZoomAngle[gMapZoom]);
-    t = sub_489470();
-    frame = sub_4E75A0();
+    t = LevelFlow_GetHour();
+    frame = Screen_GetFrame();
     Camera_Set(vp, &gMapPos, &map->view, map->fov, 1.0f, 300.0f, frame, map, t, 0);
-    View_SetEnabled(Computer_GetView(), 1);
-    sub_4E8220(Computer_GetView(), 0, 1);
+    Viewport_SetDrawWorld(Computer_GetView(), 1);
+    Viewport_SetList(Computer_GetView(), 0, 1);
     map->clickTime = 0;
     map->rclickTime = 0;
     map->object = ComputerObject_New(map);
-    map->noise = sub_4A23E0(map, 0, 0, 0, kViewZ, 0);
+    map->noise = LineFilter_New(map, 0, 0, 0, kViewZ, 0);
     map->noiseLevel = 1.0f;
     map->noiseTime = 60;
     panel = ComputerPanel_New(map);
@@ -364,8 +364,8 @@ void ComputerMap_Run(ComputerMap *map)
     ComputerMap_Trace(map);
     ComputerMap_DropCamera(map);
     ComputerMap_ClampCamera(map);
-    t = sub_489470();
-    frame = sub_4E75A0();
+    t = LevelFlow_GetHour();
+    frame = Screen_GetFrame();
     Camera_Set(vp, &gMapPos, &map->view, map->fov, 1.0f, 300.0f, frame, map, t, 0);
     if (map->noiseTime) {
         map->noiseTime--;
@@ -380,7 +380,7 @@ void ComputerMap_Run(ComputerMap *map)
     }
     level = map->noiseLevel - kNoiseFade;
     map->noiseLevel = level;
-    sub_4A4FF0(map->noise, level);
+    LineFilter_SetLevel(map->noise, level);
 }
 HOOK(0x46A0D0, ComputerMap_Run);
 
@@ -429,7 +429,7 @@ void ComputerMap_Trace(ComputerMap *map)
     char clicked = 0;
 
     Computer_Get();
-    if (!sub_505A30(ComputerMenu_GetPanel())) {
+    if (!MenuItem_FindSelected(ComputerMenu_GetPanel())) {
         int dbl = 0, rdbl = 0;
 
         if (ComputerMenu_GetPressed() & 0x10) {
@@ -474,7 +474,7 @@ void ComputerMap_Trace(ComputerMap *map)
         map->rclickTime--;
     if (clicked) {
         float mx = map->clickX, my = map->clickY;
-        const float *rect = View_GetRect(Computer_GetView());
+        const float *rect = Viewport_GetRect(Computer_GetView());
         MapCamera *cam;
         TaskArray *humans, *objs, *cams;
         float aspect;
@@ -487,14 +487,14 @@ void ComputerMap_Trace(ComputerMap *map)
 
         if (!(mx >= rect[0]) || !(my >= rect[1]) || !(rect[2] + rect[0] > mx) || !(rect[3] + rect[1] > my))
             goto done;
-        cam = View_GetCamera(Computer_GetView());
+        cam = Viewport_GetCamera(Computer_GetView());
         aspect = Display_GetAspect();
         t = ((double)(mx + mx) - Display_Get()->width) * cam->fov;
         sx = t / Display_Get()->width;
         t = ((double)(my + my) - Display_Get()->height) * (aspect * cam->fov);
         sy = t / Display_Get()->width;
-        humans = HumanAI_GetList();
-        objs = sub_476030();
+        humans = Human_GetList();
+        objs = Mine_GetList();
         cams = SCameraLens_GetList();
         start = cam->pos;
         dir.x = cam->m[1] * sy + cam->m[0] * sx + cam->m[2];
@@ -614,8 +614,8 @@ void ComputerMap_Delete(ComputerMap *map)
     if (map->target)
         TaskRef_Remove(map->target);
     if (view) {
-        View_SetEnabled(view, 0);
-        sub_4E8220(view, 0, 0);
+        Viewport_SetDrawWorld(view, 0);
+        Viewport_SetList(view, 0, 0);
     }
 }
 HOOK(0x46AA80, ComputerMap_Delete);

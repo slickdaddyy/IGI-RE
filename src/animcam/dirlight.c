@@ -39,7 +39,7 @@ _Static_assert(sizeof(DirlightKeyframe) == 0x54, "DirlightKeyframe");
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
-ORIG(0x5269C0, void, sub_5269C0, (Dirlight *d));
+ORIG(0x5269C0, void, Dirlight_Update, (Dirlight *d));
 
 #define gDirlightParams VAR(void *, 0xA83D30)
 #define gDirlightType VAR(uint16_t, 0xA83D34)
@@ -84,7 +84,7 @@ void Dirlight_SetTime(float time)
 
         if (time < d->time || time > d->time) {
             d->time = time;
-            sub_5269C0(d);
+            Dirlight_Update(d);
         }
     }
 }

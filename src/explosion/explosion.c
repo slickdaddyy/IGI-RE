@@ -26,7 +26,7 @@ ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
 ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Matrix *m, float a));
 ORIG(0x4B4010, void, Matrix_SetDirection, (Matrix *m, const Vec3f *dir));
 ORIG(0x4B4770, long double, Random_Float, (void *rng));
-ORIG(0x4C1780, void, sub_4C1780, (void *a, void *b));
+ORIG(0x4C1780, void, Debug_Log, (void *a, void *b));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x4C48D0, void, RigidDynCubeObj_SetModel, (void *obj, void **model));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
@@ -34,25 +34,25 @@ ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, float radius));
 ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int category));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
-ORIG(0x4CFC30, int, sub_4CFC30, (void));
+ORIG(0x4CFC30, int, Mesh3D_GetDrawRigidMethod, (void));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
-ORIG(0x4D0D90, int, sub_4D0D90, (void *model));
-ORIG(0x4D0DA0, int, sub_4D0DA0, (void *model, int a));
-ORIG(0x4D0DC0, void, sub_4D0DC0, (void *model, int a, int frame));
-ORIG(0x4DA180, void, sub_4DA180, (int *a, int *b));
-ORIG(0x4DAA20, int, sub_4DAA20, (int *a));
+ORIG(0x4D0D90, int, ModelLod_GetTexAnimCount, (void *model));
+ORIG(0x4D0DA0, int, ModelLod_GetTexAnimFrames, (void *model, int a));
+ORIG(0x4D0DC0, void, ModelLod_SetTexAnimFrame, (void *model, int a, int frame));
+ORIG(0x4DA180, void, Haze_GetVisible, (int *a, int *b));
+ORIG(0x4DAA20, int, Light_GetActive, (int *a));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (void));
-ORIG(0x4FDF00, void *, sub_4FDF00, (void *root, void *world, void *sprite, Vec3f *dir, Vec3f *color, float *size,
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
+ORIG(0x4FDF00, void *, Particle2D_New, (void *root, void *world, void *sprite, Vec3f *dir, Vec3f *color, float *size,
                                     float life, int blend, int d, float e, int f, int count, void *h));
-ORIG(0x4FE120, void, sub_4FE120, (void *ps, Vec3d *pos, Vec3f *dir, float size, float a, float b, float c, int d,
+ORIG(0x4FE120, void, Particle2D_Add, (void *ps, Vec3d *pos, Vec3f *dir, float size, float a, float b, float c, int d,
                                   int e));
-ORIG(0x4FE5D0, void, sub_4FE5D0, (void *ps, int on));
-ORIG(0x4FE5E0, void, sub_4FE5E0, (void *ps, float a));
+ORIG(0x4FE5D0, void, Particle2D_SetAutoDelete, (void *ps, int on));
+ORIG(0x4FE5E0, void, Particle2D_SetLevel, (void *ps, float a));
 ORIG(0x503BF0, uint16_t, SimpointObj_GetType, (void));
-ORIG(0x503CC0, Fragment *, SimpointObjGroup_Add, (void *group, uint16_t type, Vec3d *pos, Matrix *m, Vec3f *vel));
-ORIG(0x503D50, void, sub_503D50, (void *group, int a));
+ORIG(0x503CC0, Fragment *, SimpointObjContainer_Add, (void *group, uint16_t type, Vec3d *pos, Matrix *m, Vec3f *vel));
+ORIG(0x503D50, void, SimpointObjContainer_SetAutoDelete, (void *group, int a));
 
 #define gExplosionType VAR(uint16_t, 0x5C1154)
 #define gFragmentType VAR(uint16_t, 0x5C1156)
@@ -118,14 +118,14 @@ void *ExplosionSmoke_Emit(ExplosionSmoke *s, int blend, float *size, float life,
     Vec3f color = {kSmokeColor, kSmokeColor, kSmokeColor};
     Vec3f up = {0.0f, 0.0f, 1.0f};
     void *world = Game_GetWorld();
-    void *root = sub_4F0EE0();
-    void *ps = sub_4FDF00(root, world, gSmoke2Sprite + 0x18, &dir, &color, size, kLife, blend, 0, life, 0, 1, NULL);
+    void *root = Level_GetDynamic();
+    void *ps = Particle2D_New(root, world, gSmoke2Sprite + 0x18, &dir, &color, size, kLife, blend, 0, life, 0, 1, NULL);
     float a, b;
 
-    sub_4FE5D0(ps, 1);
+    Particle2D_SetAutoDelete(ps, 1);
     a = (float)(Random_Float(Game_GetRandom()) * kTwoPi);
     b = (float)((kHalf - Random_Float(Game_GetRandom())) * kSmokeSpin);
-    sub_4FE120(ps, &s->pos, &up, psize, b, a, 1.0f, a5, a6);
+    Particle2D_Add(ps, &s->pos, &up, psize, b, a, 1.0f, a5, a6);
     return ps;
 }
 HOOK(0x47EAD0, ExplosionSmoke_Emit);
@@ -145,18 +145,18 @@ void Fragment_InitSmoke(Fragment *f, float size)
     if (f->kind == 2) {
         life = (float)(kOneF / t);
         world = Game_GetWorld();
-        f->ps = sub_4FDF00(f, world, gFireballSprite + 0x18, &dir, &color, sz, kLife, 8, 0, life, 0, 200, NULL);
-        sub_4FE5D0(f->ps, 0);
+        f->ps = Particle2D_New(f, world, gFireballSprite + 0x18, &dir, &color, sz, kLife, 8, 0, life, 0, 200, NULL);
+        Particle2D_SetAutoDelete(f->ps, 0);
         world = Game_GetWorld();
-        root = sub_4F0EE0();
-        f->ps2 = sub_4FDF00(root, world, gSmoke2Sprite + 0x18, &dir, &color, sz, kLife, 0x10, 0, life, 0, 200, NULL);
-        sub_4FE5D0(f->ps2, 0);
+        root = Level_GetDynamic();
+        f->ps2 = Particle2D_New(root, world, gSmoke2Sprite + 0x18, &dir, &color, sz, kLife, 0x10, 0, life, 0, 200, NULL);
+        Particle2D_SetAutoDelete(f->ps2, 0);
     } else if (f->kind == 1) {
         life = (float)(kOneF / t);
         world = Game_GetWorld();
-        root = sub_4F0EE0();
-        f->ps2 = sub_4FDF00(root, world, gSmoke2Sprite + 0x18, &dir, &color, sz, kLife, 8, 0, life, 0, 200, NULL);
-        sub_4FE5D0(f->ps2, 0);
+        root = Level_GetDynamic();
+        f->ps2 = Particle2D_New(root, world, gSmoke2Sprite + 0x18, &dir, &color, sz, kLife, 8, 0, life, 0, 200, NULL);
+        Particle2D_SetAutoDelete(f->ps2, 0);
     }
 }
 HOOK(0x47EBD0, Fragment_InitSmoke);
@@ -166,7 +166,7 @@ static void puff(void *ps, Vec3d *pos, Vec3f *zero, float size, int n1, int n2)
     float a = (float)(Random_Float(Game_GetRandom()) * kTwoPi);
     float b = (float)((kHalf - Random_Float(Game_GetRandom())) * kFragmentSpin);
 
-    sub_4FE120(ps, pos, zero, size, b, a, 1.0f, n1, n2);
+    Particle2D_Add(ps, pos, zero, size, b, a, 1.0f, n1, n2);
 }
 
 /* fire while young, then smoke; or a trail of smoke along the last move */
@@ -232,7 +232,7 @@ Fragment *Fragment_New(Explosion *e, Vec3d *pos, Vec3f *vel, int kind, float siz
     ay = (float)(Random_Float(Game_GetRandom()) * kTumble);
     ax = (float)(Random_Float(Game_GetRandom()) * kTumble);
     Matrix_SetEuler(&m, ax, ay, az);
-    f = SimpointObjGroup_Add(e->group, gFragmentType, pos, &m, vel);
+    f = SimpointObjContainer_Add(e->group, gFragmentType, pos, &m, vel);
     s = size * kFragmentScale;
     f->size = s;
     f->scale[0] = s;
@@ -250,7 +250,7 @@ HOOK(0x47F0D0, Fragment_New);
 
 ExplosionSmoke *ExplosionSmoke_New(Vec3d *pos, float size, int frames)
 {
-    ExplosionSmoke *s = (ExplosionSmoke *)Task_New(sub_4F0EE0(), gExplosionSmokeType, NULL);
+    ExplosionSmoke *s = (ExplosionSmoke *)Task_New(Level_GetDynamic(), gExplosionSmokeType, NULL);
 
     s->pos = *pos;
     s->timer = frames;
@@ -342,10 +342,10 @@ void Explosion_Burst(Explosion *e)
             Random_Float(Game_GetRandom());
             Fragment_New(e, &pos, &vel, 0, kFragmentSize);
         }
-        sub_503D50(e->group, 1);
+        SimpointObjContainer_SetAutoDelete(e->group, 1);
     }
     {
-        Task *sound = Sound_Play(sub_4F0EE0(), e->sound);
+        Task *sound = Sound_Play(Level_GetDynamic(), e->sound);
 
         if (sound)
             Sound_SetPos(sound, &pos);
@@ -380,7 +380,7 @@ static long double max_scale(const float *s)
 FireBall *FireBall_New(Vec3d *pos, const char *model, float scale, int life, int a5, int a6, int delay,
                        int animFrames, float angle, float spin)
 {
-    FireBall *fb = (FireBall *)Task_New(sub_4F0EE0(), gFireBallType, NULL);
+    FireBall *fb = (FireBall *)Task_New(Level_GetDynamic(), gFireBallType, NULL);
     void **vm = VirModel_Find(model);
     float r;
 
@@ -405,7 +405,7 @@ FireBall *FireBall_New(Vec3d *pos, const char *model, float scale, int life, int
     fb->size = scale * kFireballScale;
     fb->angle = angle;
     fb->spin = spin;
-    sub_4C1780(fb->obj.unkA4 + 0x1C, vm);
+    Debug_Log(fb->obj.unkA4 + 0x1C, vm);
     return fb;
 }
 HOOK(0x480060, FireBall_New);
@@ -484,7 +484,7 @@ void ExplosionSmoke_Run(ExplosionSmoke *s)
             v = kOneF - (t - h) / (tf * kNineTenths - h);
         else
             v = t / h;
-        sub_4FE5E0(s->ps2, (float)(v * kThreeTenths));
+        Particle2D_SetLevel(s->ps2, (float)(v * kThreeTenths));
     }
     s->timer--;
 }
@@ -519,8 +519,8 @@ void FireBall_Run(FireBall *fb)
         fb->delay--;
         return;
     }
-    if (sub_4D0D90(*fb->obj.model)) {
-        int n = sub_4D0DA0(*fb->obj.model, 0);
+    if (ModelLod_GetTexAnimCount(*fb->obj.model)) {
+        int n = ModelLod_GetTexAnimFrames(*fb->obj.model, 0);
 
         fb->frame = round_int((long double)(fb->frames - fb->life) / fb->animFrames * n) % n;
     } else {
@@ -630,16 +630,16 @@ void FireBall_Draw(FireBall *fb)
         m[6 + i] = (n.m[6 + i] * t.m[8] + n.m[3 + i] * t.m[7]) + n.m[i] * t.m[6];
     }
     fb->obj.matrix.stamp = t.stamp + n.stamp + 1;
-    sub_4DAA20(&junk[0]);
-    sub_4DA180(&junk[1], &junk[2]);
+    Light_GetActive(&junk[0]);
+    Haze_GetVisible(&junk[1], &junk[2]);
     if (fb->frame >= 0) {
         RenderArg ra;
 
-        sub_4D0DC0(*fb->obj.model, 0, fb->frame);
+        ModelLod_SetTexAnimFrame(*fb->obj.model, 0, fb->frame);
         ra.obj = fb;
-        ra.unk4 = sub_4DAA20(&ra.unk8);
-        sub_4DA180(&ra.unkC, &ra.unk10);
-        gRenderFuncs[sub_4CFC30()](&ra);
+        ra.unk4 = Light_GetActive(&ra.unk8);
+        Haze_GetVisible(&ra.unkC, &ra.unk10);
+        gRenderFuncs[Mesh3D_GetDrawRigidMethod()](&ra);
     }
     msg.pos = fb->obj.pos;
     msg.matrix = fb->obj.matrix;

@@ -31,13 +31,13 @@ ORIG(0x416A70, Task *, Game_GetPlayer, (int unk));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x460BF0, uint8_t, Human_GetEvent0, (void));
 ORIG(0x460C10, uint8_t, Human_GetEvent1, (void));
-ORIG(0x47B100, uint8_t, Shots_GetEvent, (void));
-ORIG(0x47B110, Task *, Shots_New, (void *parent, Task *gun, Task *owner));
-ORIG(0x47B170, void, Shots_Release, (Task *shots, int unk));
-ORIG(0x47B270, void, Shots_SetPos, (Task *shots, Vec3d *pos));
-ORIG(0x47CD70, void *, AmmoType_Find, (int id));
-ORIG(0x47E6F0, uint8_t, sub_47E6F0, (void));
-ORIG(0x487190, uint8_t, Human_GetHudEvent, (void));
+ORIG(0x47B100, uint8_t, GunShot_GetEvent, (void));
+ORIG(0x47B110, Task *, GunShot_New, (void *parent, Task *gun, Task *owner));
+ORIG(0x47B170, void, GunShot_Release, (Task *shots, int unk));
+ORIG(0x47B270, void, GunShot_SetUnk78, (Task *shots, Vec3d *pos));
+ORIG(0x47CD70, void *, AmmoType_FindByCaliber, (int id));
+ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
+ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
@@ -54,7 +54,7 @@ ORIG(0x4C1790, void, QTaskList_Add, (void *list, void *item));
 ORIG(0x4C17C0, void, QTaskList_Remove, (void *list, void *item));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x4C48D0, void, RigidDynCubeObj_SetModel, (void *obj, void **model));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, void *c));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, void *c));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model));
 ORIG(0x4C6840, void, DynCube_ListRemove, (void *world, void *obj, int list));
 ORIG(0x4C6890, void, DynCube_ListAdd, (void *world, void *obj, int list));
@@ -64,28 +64,28 @@ ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
-ORIG(0x4D9850, uint8_t, MagicObj_GetHideEvent, (void));
-ORIG(0x4D9860, void *, MagicObj_GetList, (void));
-ORIG(0x4E0930, Task *, Coll_NewTask, (void *parent, void *obj));
-ORIG(0x4E81F0, char *, Render_GetView, (void));
+ORIG(0x4D9850, uint8_t, Camera_GetChangedEvent, (void));
+ORIG(0x4D9860, void *, Camera_GetListeners, (void));
+ORIG(0x4E0930, Task *, MagicObjContainer_New, (void *parent, void *obj));
+ORIG(0x4E81F0, char *, Viewport_GetCurrentCamera, (void));
 ORIG(0x4E6B00, void *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (void *sound));
 ORIG(0x4E6C30, void, Sound_SetPos, (void *sound, Vec3d *pos));
-ORIG(0x4E75A0, int, sub_4E75A0, (void));
-ORIG(0x4F0EE0, void *, Sound_GetOwner, (void));
+ORIG(0x4E75A0, int, Screen_GetFrame, (void));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 ORIG(0x4F0FB0, void *, Param_Int16, (void));
 ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *extra));
-ORIG(0x4F1E20, void *, Param_Enum, (void));
+ORIG(0x4F1E20, void *, Param_EnumString32, (void));
 ORIG(0x4F1FD0, uint8_t, Weapon_GetStateEvent, (void));
 ORIG(0x4F1FE0, uint8_t, Weapon_GetMoveEvent, (void));
 ORIG(0x4F1FF0, uint8_t, Weapon_GetTriggerEvent, (void));
 ORIG(0x4F2000, uint8_t, Weapon_GetEvent3, (void));
 ORIG(0x4F2010, uint8_t, Weapon_GetEvent4, (void));
-ORIG(0x4F2020, uint8_t, Weapon_GetEvent5, (void));
-ORIG(0x4F2030, uint8_t, Weapon_GetEvent6, (void));
+ORIG(0x4F2020, uint8_t, Weapon_GetSelectEvent, (void));
+ORIG(0x4F2030, uint8_t, Weapon_GetDeselectEvent, (void));
 ORIG(0x4F2040, uint8_t, Weapon_GetEvent7b, (void));
 
 #define gGunParams VAR(void *, 0x5BE3C0)
@@ -211,7 +211,7 @@ void Gun_Open(void)
     TaskType_SetHandler(gGunType, 0, Gun_CreateHandler);
     TaskType_SetHandler2(gGunType, 1, Gun_RunHandler);
     TaskType_SetHandler2(gGunType, 2, Gun_DeleteHandler);
-    TaskType_SetHandler(gGunType, MagicObj_GetHideEvent(), Gun_HideHandler);
+    TaskType_SetHandler(gGunType, Camera_GetChangedEvent(), Gun_HideHandler);
     TaskType_SetHandler(gGunType, 4, Gun_DrawHandler);
     TaskType_SetHandler(gGunType, 7, NULL);
     TaskType_SetHandler(gGunType, Param_GetTableEvent(), Gun_GetParamTableHandler);
@@ -225,22 +225,22 @@ void Gun_Open(void)
     TaskType_SetHandler(gGunType, Weapon_GetTriggerEvent(), Gun_FireHandler);
     TaskType_SetHandler(gGunType, Weapon_GetEvent3(), (void *)0x4798C0);
     TaskType_SetHandler(gGunType, Weapon_GetEvent4(), (void *)0x479AA0);
-    TaskType_SetHandler2(gGunType, Weapon_GetEvent5(), (void *)0x479B20);
-    TaskType_SetHandler2(gGunType, Weapon_GetEvent6(), (void *)0x479C10);
+    TaskType_SetHandler2(gGunType, Weapon_GetSelectEvent(), (void *)0x479B20);
+    TaskType_SetHandler2(gGunType, Weapon_GetDeselectEvent(), (void *)0x479C10);
     TaskType_SetHandler(gGunType, Weapon_GetEvent7b(), (void *)0x479C20);
     TaskType_SetHandler(gGunType, Weapon_GetTypeEvent(), (void *)0x479C80);
     TaskType_SetHandler(gGunType, Weapon_GetEvent7(), (void *)0x479CA0);
-    TaskType_SetHandler(gGunType, Human_GetHudEvent(), (void *)0x479D20);
+    TaskType_SetHandler(gGunType, StatusScreen_GetEvent(), (void *)0x479D20);
     TaskType_SetHandler(gGunType, AIDetection_GetEvent0(), (void *)0x47A8E0);
-    TaskType_SetHandler(gGunType, Shots_GetEvent(), (void *)0x47A940);
+    TaskType_SetHandler(gGunType, GunShot_GetEvent(), (void *)0x47A940);
     TaskType_SetHandler(gGunType, Human_GetEvent0(), (void *)0x479780);
     TaskType_SetHandler(gGunType, Human_GetEvent1(), (void *)0x479990);
     TaskType_SetHandler(gGunType, World_GetEvent1(), (void *)0x47A960);
     TaskType_SetHandler(gGunType, World_GetEvent0(), (void *)0x47A9E0);
-    TaskType_SetHandler(gGunType, sub_47E6F0(), NULL);
+    TaskType_SetHandler(gGunType, BulletHole_GetEvent(), NULL);
     gGunParams = ParamTable_New(3);
     e = WeaponType_GetIdEnum();
-    ParamTable_Add(gGunParams, &p, p.name, Param_Enum(), 7, e);
+    ParamTable_Add(gGunParams, &p, p.name, Param_EnumString32(), 7, e);
     ParamTable_Add(gGunParams, &p, &p.unk124, Param_Int16(), 7, NULL);
     gGunCasingType = TaskType_New("GunCasing", 0x128, RigidDynCubeObj_GetType(), 0x32, 0);
     TaskType_SetHandler(gGunCasingType, 0, GunCasing_CreateHandler);
@@ -306,7 +306,7 @@ HOOK(0x4784F0, GunCasing_DeleteHandler);
 
 void GunCasing_DrawHandler(GunCasing *c)
 {
-    if (*(int *)(Render_GetView() + 0x5C))
+    if (*(int *)(Viewport_GetCurrentCamera() + 0x5C))
         TASK_HANDLER(4, RigidDynCubeObj_GetType())(c, 0);
 }
 HOOK(0x478510, GunCasing_DrawHandler);
@@ -317,7 +317,7 @@ void Gun_CreateHandler(Gun *g)
 {
     Task *shots;
 
-    QTaskList_Add(MagicObj_GetList(), g);
+    QTaskList_Add(Camera_GetListeners(), g);
     RigidDynCubeObj_Init(Game_GetWorld(), g, NULL);
     g->unkF1 = 1;
     g->id = 0;
@@ -331,9 +331,9 @@ void Gun_CreateHandler(Gun *g)
     g->unk190 = NULL;
     g->wt = NULL;
     g->ammoType = NULL;
-    shots = Shots_New(Sound_GetOwner(), &g->o.task, g->o.task.parent);
+    shots = GunShot_New(Level_GetDynamic(), &g->o.task, g->o.task.parent);
     g->shots = TaskRef_Add(shots);
-    g->o.coll = Coll_NewTask(NULL, g);
+    g->o.coll = MagicObjContainer_New(NULL, g);
 }
 HOOK(0x478540, Gun_CreateHandler);
 
@@ -405,10 +405,10 @@ void Gun_DeleteHandler(Gun *g)
 {
     Task **ref;
 
-    QTaskList_Remove(MagicObj_GetList(), g);
+    QTaskList_Remove(Camera_GetListeners(), g);
     Gun_RemoveFromWorld(g);
     if (*g->shots)
-        Shots_Release(*g->shots, 1);
+        GunShot_Release(*g->shots, 1);
     TaskRef_Remove(g->shots);
     ref = g->loopSound;
     if (ref) {
@@ -477,13 +477,13 @@ void Gun_ParamChangedHandler(Gun *g)
         g->ammoType = NULL;
         return;
     }
-    g->ammoType = AmmoType_Find(wt->ammo);
+    g->ammoType = AmmoType_FindByCaliber(wt->ammo);
     model = VirModel_Find(wt->key);
     if (model)
         RigidDynCubeObj_SetModel(g, model);
     if (g->o.coll)
         Task_DeleteChildren(g->o.coll);
-    sub_4C4950(g->o.coll, g, g);
+    RigidDynCubeObj_CreateMagicObjs(g->o.coll, g, g);
 }
 HOOK(0x4789C0, Gun_ParamChangedHandler);
 
@@ -507,7 +507,7 @@ void Gun_MoveHandler(Gun *g, MoveMsg *msg)
     g->point.x = g->o.pos.x + g->point.x;
     g->point.y = g->o.pos.y + g->point.y;
     g->point.z = g->o.pos.z + g->point.z;
-    Shots_SetPos(*g->shots, &g->point);
+    GunShot_SetUnk78(*g->shots, &g->point);
 }
 HOOK(0x478A90, Gun_MoveHandler);
 
@@ -551,7 +551,7 @@ void Gun_FireHandler(Gun *g, GunFire *msg)
         /* automatic fire loops one sound while the trigger is held */
         if (trigger) {
             if (!g->loopSound) {
-                snd = Sound_Play(Sound_GetOwner(), wt->sound);
+                snd = Sound_Play(Level_GetDynamic(), wt->sound);
                 if (snd) {
                     g->loopSound = TaskRef_Add(snd);
                     Sound_SetPos(*g->loopSound, &g->o.pos);
@@ -564,10 +564,10 @@ void Gun_FireHandler(Gun *g, GunFire *msg)
                 Sound_Stop(*g->loopSound);
             TaskRef_Remove(g->loopSound);
             g->loopSound = NULL;
-            snd = Sound_Play(Sound_GetOwner(), wt->sound2);
+            snd = Sound_Play(Level_GetDynamic(), wt->sound2);
         }
     } else if (fire)
-        snd = Sound_Play(Sound_GetOwner(), Random_Next(Game_GetRandom()) & 1 ? wt->sound : wt->sound2);
+        snd = Sound_Play(Level_GetDynamic(), Random_Next(Game_GetRandom()) & 1 ? wt->sound : wt->sound2);
     if (snd)
         Sound_SetPos(snd, &g->o.pos);
 
@@ -641,7 +641,7 @@ void Gun_FireHandler(Gun *g, GunFire *msg)
             cv.x = u0 + vel.x;
             cv.y = u1 + vel.y;
             cv.z = u2 + vel.z;
-            GunCasing_New(Sound_GetOwner(), &eject, &cv, &g->o.matrix, wt->casing);
+            GunCasing_New(Level_GetDynamic(), &eject, &cv, &g->o.matrix, wt->casing);
         }
         Model_GetPoint(&top, g, 2); /* never used */
         if (g->unk190) {
@@ -656,7 +656,7 @@ void Gun_FireHandler(Gun *g, GunFire *msg)
         g->cooldown = round_int((kMinute / (long double)wt->rate) * kFpsD);
         if (g->ammoType && g->rounds > 0)
             g->rounds--;
-        g->lastShot = sub_4E75A0();
+        g->lastShot = Screen_GetFrame();
         g->recoil = 60.0f;
         g->unk1A4 = -2;
         g->unk19C = -9;

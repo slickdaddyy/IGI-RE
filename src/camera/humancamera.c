@@ -76,8 +76,8 @@ ORIG(0x414FD0, int, Game_CheatKeyDown, (int key));
 ORIG(0x415020, int, Game_CheatKeyPressed, (int key));
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
-ORIG(0x4849B0, void, sub_4849B0, (HumanCamera *c));
-ORIG(0x489470, long double, sub_489470, (void));
+ORIG(0x4849B0, void, HumanCamera_WatchKiller, (HumanCamera *c));
+ORIG(0x489470, long double, LevelFlow_GetHour, (void));
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4B3100, void, Vec3d_Normalize, (Vec3d *v));
 ORIG(0x4B3130, long double, Vec3d_Length, (const Vec3d *v));
@@ -88,7 +88,7 @@ ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, Vec3d *starts, Vec
 ORIG(0x4D3710, void, Task_Nothing, (void *task));
 ORIG(0x4D9870, void, Camera_Set, (void *cam, const Vec3d *pos, const Matrix *axes, float fov, float aspect,
                                   float range, int frame, void *owner, float unk9, int unk10));
-ORIG(0x4E75A0, int, sub_4E75A0, (void));
+ORIG(0x4E75A0, int, Screen_GetFrame, (void));
 
 #define gHumanCameraType VAR(uint16_t, 0x540990)
 #define gHumanCameraEvent VAR(uint8_t, 0x540992)
@@ -274,8 +274,8 @@ void HumanCamera_RunHandler(HumanCamera *c)
         break;
     }
     HumanCamera_ControlListInput(c);
-    unk9 = sub_489470();
-    frame = sub_4E75A0();
+    unk9 = LevelFlow_GetHour();
+    frame = Screen_GetFrame();
     Camera_Set(c->camera, &c->pos, &c->matrix, c->fov, 1.0f, 300.0f, frame, c, unk9, firstPerson);
     gCameraUnkB81700 = c->info.unk6C;
 }
@@ -825,7 +825,7 @@ HOOK(0x483EC0, HumanCamera_DeathCameraCollide);
 void HumanCamera_DeathCameraUpdate(HumanCamera *c)
 {
     if (HumanCamera_HasKiller(c) && (c->flags & 1)) {
-        sub_4849B0(c);
+        HumanCamera_WatchKiller(c);
         return;
     }
     follow(c);

@@ -32,7 +32,7 @@ ORIG(0x4ECF50, void, Body_AddForce, (Body *b, const float *force));
 ORIG(0x4ECF80, void, Body_GetPointVelocity, (float *out, Body *b, const float *p));
 ORIG(0x4EE100, uint8_t, PhysicsObjType_GetFreeEvent, (void));
 ORIG(0x4EE1B0, float *, PhysicsObjType_GetSize, (PhysType *t));
-ORIG(0x4F4390, void, sub_4F4390, (void *task, void *arg));
+ORIG(0x4F4390, void, Vehicle_CollFilter, (void *task, void *arg));
 
 #define gPhysicsObjType VAR(uint16_t, 0xA774B0)
 #define gPhysicsObjUnkA774B8 VAR(int, 0xA774B8)
@@ -67,7 +67,7 @@ void PhysicsObj_Open(void)
     TaskType_SetHandler(gPhysicsObjType, 0, PhysicsObj_CreateHandler);
     TaskType_SetHandler2(gPhysicsObjType, 2, PhysicsObj_DeleteHandler);
     TaskType_SetHandler2(gPhysicsObjType, 1, PhysicsObj_RunHandler);
-    TaskType_SetHandler(gPhysicsObjType, 12, sub_4F4390);
+    TaskType_SetHandler(gPhysicsObjType, 12, Vehicle_CollFilter);
     TaskType_SetHandler(gPhysicsObjType, PhysicsObj_GetMotionEvent(), PhysicsObj_GetPointMotion);
     TaskType_SetHandler(gPhysicsObjType, PhysicsObjType_GetFreeEvent(), Rotor_FreeDef);
     gPhysicsObjUnkA774B8 = 0;

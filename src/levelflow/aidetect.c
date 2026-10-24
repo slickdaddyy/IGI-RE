@@ -7,7 +7,7 @@ ORIG(0x4017C0, int, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x401AE0, Task **, TaskRef_Add, (void *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
-ORIG(0x4028B0, int, Timer_GetTicks, (void));
+ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x4148F0, long double, Vec3d_PitchAngle, (Vec3d v));
 ORIG(0x414950, long double, Vec3d_YawAngle, (Vec3d v));
 ORIG(0x4AF8F0, void, List_AddTail, (void *list, void *node));
@@ -18,7 +18,7 @@ ORIG(0x4C1790, void, QTaskList_Add, (QTaskList *list, void *task));
 ORIG(0x4C17C0, void, QTaskList_Remove, (QTaskList *list, void *task));
 ORIG(0x4C1800, QTaskList *, QTaskList_New, (int max));
 /* line of sight from the viewer to the target */
-ORIG(0x489B20, char, sub_489B20, (Task *self, void *view, Task *target, Vec3d *pos));
+ORIG(0x489B20, char, AIDetection_IsVisible, (Task *self, void *view, Task *target, Vec3d *pos));
 
 #define AIDETECT_MAX 0xC0
 #define AIDETECT_NO_TYPE 0x181
@@ -109,7 +109,7 @@ AIDetectSlot *AIDetector_AddSlot(AIDetector *d, List *list, Task *task, int i)
     s->ref = TaskRef_Add(task);
     s->viewTimer = 0;
     s->sightTimer = 0;
-    s->since = Timer_GetTicks();
+    s->since = Flow_GetFrames();
     s->dist = 0.0;
     s->inView = 0;
     s->seen = 0;
@@ -225,7 +225,7 @@ void AIDetector_Update(AIDetector *d, AIView *view, Task *self, int team)
     int n = gAIDetectList->count;
     int i;
 
-    if (d->phase != Timer_GetTicks() % 4)
+    if (d->phase != Flow_GetFrames() % 4)
         return;
     for (i = 0; i < n; i++) {
         AIDetectSlot *s = &d->slots[i];
@@ -281,7 +281,7 @@ void AIDetector_UpdateSlot(AIDetector *d, AIDetectSlot *s, Vec3d *pos, AIView *v
     }
     if (s->inView) {
         if (!s->sightTimer) {
-            s->seen = sub_489B20(self, view, *s->ref, pos);
+            s->seen = AIDetection_IsVisible(self, view, *s->ref, pos);
             s->sightTimer = d->sightInterval + 1;
         }
         s->sightTimer--;

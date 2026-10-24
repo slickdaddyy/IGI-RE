@@ -3,7 +3,7 @@
 #include "math/vecmath.h"
 #include "math/x87.h"
 
-ORIG(0x4B2760, long double, Math_Acos, (float x));
+ORIG(0x4B2760, long double, Math_ACosF, (float x));
 
 void Quat_SlerpPrepare(char *flip, float *angle, float *inv_sin, const Quat *a, const Quat *b)
 {
@@ -21,7 +21,7 @@ void Quat_SlerpPrepare(char *flip, float *angle, float *inv_sin, const Quat *a, 
             d = 0.0f;
         }
     }
-    ang = Math_Acos(d);
+    ang = Math_ACosF(d);
     *angle = (float)ang;
     if (ang != 0.0f)
         *inv_sin = (float)(1.0f / x87_sin(ang));

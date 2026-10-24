@@ -5,9 +5,9 @@
 
 ORIG(0x44A630, void, GlassShatter_PlaySound, (const Vec3d *pos));
 ORIG(0x44A670, void, GlassShatter_AddTri, (float *a, float *b, float *c));
-ORIG(0x49A450, void *, sub_49A450, (void *world, int a, const Vec3d *pos, const Matrix *m, void *polys, int count,
+ORIG(0x49A450, void *, PolyList_New, (void *world, int a, const Vec3d *pos, const Matrix *m, void *polys, int count,
                                     int b, int c, int d, int e, int f));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (void));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 
 /* "GlassShatter" (0x2B048), the pieces of a broken Glass */
 typedef struct GlassShatter {
@@ -55,7 +55,7 @@ void GlassShatter_SpawnFrom(void **model, const Matrix *matrix, const Vec3d *pos
                             float scale)
 {
     char *info = *(char **)(*(char **)((char *)model[0] + 0xC) + 0xC);
-    GlassShatter *g = (GlassShatter *)Task_New(sub_4F0EE0(), gShatterType, NULL);
+    GlassShatter *g = (GlassShatter *)Task_New(Level_GetDynamic(), gShatterType, NULL);
     const float *m = matrix->m;
     TriMesh *mesh;
     long double z, k, f, zs;
@@ -126,7 +126,7 @@ void GlassShatter_SpawnFrom(void **model, const Matrix *matrix, const Vec3d *pos
         if (!(((pos->z - from->z) * nz + (pos->y - from->y) * ny) + (pos->x - from->x) * nx >= kZero))
             GlassShatter_AddTri(p0, p1, p2);
     }
-    g->mesh = sub_49A450(Game_GetWorld(), 0, pos, matrix, g->polys, g->count, 0, 1, 0, 0, 0);
+    g->mesh = PolyList_New(Game_GetWorld(), 0, pos, matrix, g->polys, g->count, 0, 1, 0, 0, 0);
     GlassShatter_PlaySound(pos);
 }
 HOOK(0x44BD70, GlassShatter_SpawnFrom);

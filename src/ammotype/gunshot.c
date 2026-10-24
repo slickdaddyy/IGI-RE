@@ -115,16 +115,16 @@ ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t par
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401AE0, Task **, TaskRef_Add, (void *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
-ORIG(0x4028B0, int, Timer_GetTicks, (void));
+ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x413B20, uint8_t, Weapon_GetFireEvent, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x460C30, uint8_t, Human_GetGunshotEvent, (void));
 ORIG(0x460C60, TaskArray *, Human_GetList, (void));
 ORIG(0x47B750, void, GunShot_MoveBullets, (GunShot *s));
-ORIG(0x497F20, void, sub_497F20, (float *screen, float *depth, Vec3d *pos));
-ORIG(0x49A430, void, sub_49A430, (PolyObj *p, Vec3d *pos));
-ORIG(0x49A450, PolyObj *, sub_49A450, (void *world, void *owner, Vec3d *pos, float *matrix, ShotPoly *polys,
+ORIG(0x497F20, void, TransContext_Project, (float *screen, float *depth, Vec3d *pos));
+ORIG(0x49A430, void, PolyList_SetPos, (PolyObj *p, Vec3d *pos));
+ORIG(0x49A450, PolyObj *, PolyList_New, (void *world, void *owner, Vec3d *pos, float *matrix, ShotPoly *polys,
                                        int a, int b, int c, int d, int e, int f));
 ORIG(0x4B0D60, void, Mem_PushMode, (int mode));
 ORIG(0x4B0D90, void, Mem_PopMode, (void));
@@ -134,10 +134,10 @@ ORIG(0x4B47C0, int, Random_Int, (void *rng, int n));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4C6840, void, DynCube_ListRemove, (void *world, void *obj, int list));
 ORIG(0x4C6890, void, DynCube_ListAdd, (void *world, void *obj, int list));
-ORIG(0x4E0E20, void, sub_4E0E20, (Trail *t, Vec3d *b, float *c0, float a0, float *c1, float a1));
+ORIG(0x4E0E20, void, Line3D_Draw, (Trail *t, Vec3d *b, float *c0, float a0, float *c1, float a1));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (void));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 
 #define gGunShotEvent VAR(uint8_t, 0x5BE3CC)
 #define gGunShotType VAR(uint16_t, 0x5BE3CE)
@@ -214,8 +214,8 @@ void GunShot_Render(GunShot *s)
                 c1[k] = clamp01(c1[k]);
             a0 = clamp01(rf(t->from / t->len));
             a1 = clamp01(rf(t->to / t->len));
-            sub_497F20(scr0, &depth0, &t->a);
-            sub_497F20(scr1, &depth1, &t->b);
+            TransContext_Project(scr0, &depth0, &t->a);
+            TransContext_Project(scr1, &depth1, &t->b);
             if ((depth1 < kZero) != (depth0 < kZero)) {
                 if (!t->hasPoly)
                     GunShot_AddTrailPoly(s, i, a0, a1, c0[0], c0[1], c0[2], c1[0], c1[1], c1[2], depth0 > kZero);
@@ -237,13 +237,13 @@ void GunShot_Render(GunShot *s)
                     a0 = kMinAlpha;
                 if (!(a1 > kMinAlpha))
                     a1 = kMinAlpha;
-                sub_4E0E20(t, &t->b, c0, a0, c1, a1);
+                Line3D_Draw(t, &t->b, c0, a0, c1, a1);
             }
             s->trailList[i]->life = 0;
         }
     }
     if (s->poly->count > 0) {
-        sub_49A430(s->poly, &s->trails[0].a);
+        PolyList_SetPos(s->poly, &s->trails[0].a);
         gRenderHandlers[s->poly->task.type](s->poly, 0);
     }
 }
@@ -418,7 +418,7 @@ void GunShot_Create(GunShot *s)
     }
     memset(s->trailList, 0, sizeof(s->trailList));
     memcpy(m, identity, sizeof(m));
-    s->poly = sub_49A450(Game_GetWorld(), s, &s->pos, m, s->polys, 0, 0, 0, 0, 0, 0);
+    s->poly = PolyList_New(Game_GetWorld(), s, &s->pos, m, s->polys, 0, 0, 0, 0, 0, 0);
     DynCube_ListAdd(Game_GetWorld(), s, 0);
 }
 HOOK(0x47B560, GunShot_Create);
@@ -454,18 +454,18 @@ void GunShot_PlayRicochet(Vec3d *pos)
     if (gRicochetTime != -1) {
         int d;
 
-        if ((int)((unsigned)Timer_GetTicks() - gRicochetTime) < 0)
-            d = (int)((unsigned)gRicochetTime - Timer_GetTicks());
+        if ((int)((unsigned)Flow_GetFrames() - gRicochetTime) < 0)
+            d = (int)((unsigned)gRicochetTime - Flow_GetFrames());
         else
-            d = (int)((unsigned)Timer_GetTicks() - gRicochetTime);
+            d = (int)((unsigned)Flow_GetFrames() - gRicochetTime);
         if (d <= gRicochetDelay)
             return;
     }
     name = gRicochetSounds[Random_Int(Game_GetRandom(), 4)];
-    snd = Sound_Play(sub_4F0EE0(), name);
+    snd = Sound_Play(Level_GetDynamic(), name);
     if (snd)
         Sound_SetPos(snd, pos);
-    gRicochetTime = Timer_GetTicks();
+    gRicochetTime = Flow_GetFrames();
     gRicochetDelay = Random_Int(Game_GetRandom(), 6) + 6;
 }
 HOOK(0x47C330, GunShot_PlayRicochet);

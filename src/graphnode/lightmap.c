@@ -22,7 +22,7 @@ ORIG(0x4F0EF0, void *, Param_PushButton, (void));
 ORIG(0x4F1000, void *, Param_Bool8, (void));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
-ORIG(0x4F1160, char, sub_4F1160, (void));
+ORIG(0x4F1160, char, Level_IsRunning, (void));
 ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 ORIG(0x4B4720, void, Random_Init, (void *r));
 ORIG(0x4B47E0, void, Random_Seed, (void *r, unsigned int seed));
@@ -40,9 +40,9 @@ ORIG(0x4B5B60, int, Resource_Exists, (const char *path));
 ORIG(0x4B5F00, void *, Resource_Load, (const char *path, int *size));
 ORIG(0x4B6380, void, Resource_Unload, (const char *path));
 ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *obj));
-ORIG(0x4C7350, void, sub_4C7350, (void *world, void *obj, Vec3d *center, const Vec3d *min, const Vec3d *max,
+ORIG(0x4C7350, void, DynCube_AddBox, (void *world, void *obj, Vec3d *center, const Vec3d *min, const Vec3d *max,
                                   int tree));
-ORIG(0x4C6E70, void, sub_4C6E70, (void *world, void *obj, Vec3d *center, const Vec3d *min, const Vec3d *max));
+ORIG(0x4C6E70, void, DynCube_MoveBox, (void *world, void *obj, Vec3d *center, const Vec3d *min, const Vec3d *max));
 ORIG(0x4CB9F0, void, Coll_DropPointsMat, (void *world, void *results, Vec3d *points, int count, const double *dz,
                                           int unk, int unk2, unsigned int flags));
 
@@ -170,7 +170,7 @@ HOOK(0x4F8190, TerrainLightMap_Create);
 /* both branches of the original do the same */
 void TerrainLightMap_Show(TerrainLightMap *lm)
 {
-    sub_4F1160();
+    Level_IsRunning();
     if (lm->texture) {
         lm->visible = 1;
         gVisibleLightMaps[gVisibleLightMapCount++] = lm->slot;
@@ -384,8 +384,8 @@ void TerrainLightMap_Changed(TerrainLightMap *lm)
     lm->placed = 1;
     lm->max.z = lm->max.z - w->offset[2];
     if (!was_placed)
-        sub_4C7350(w, lm, &p, &lm->min, &lm->max, 4);
-    sub_4C6E70(lm->world, lm, &p, &lm->min, &lm->max);
+        DynCube_AddBox(w, lm, &p, &lm->min, &lm->max, 4);
+    DynCube_MoveBox(lm->world, lm, &p, &lm->min, &lm->max);
     if (!lm->isChild) {
         int s, n, spawned = 0;
         Vec3d c, q;

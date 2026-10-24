@@ -8,7 +8,7 @@ ORIG(0x4A5AD5, void, crt_exit, (int code));
 ORIG(0x401000, char, Game_Start, (void));
 ORIG(0x401050, void, Game_Update, (void));
 ORIG(0x4010B0, void, Game_Shutdown, (void));
-ORIG(0x498460, void, FPU_SaveControlWord, (void));
+ORIG(0x498460, void, FPU_SetTruncate, (void));
 ORIG(0x498480, void, DirectX_GetVersion, (DWORD *dx, DWORD *platform));
 
 #define WINPROC_MAX 16
@@ -209,7 +209,7 @@ int WINAPI AppMain_WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR c
     ShowCursor(FALSE);
     ShowWindow(hwnd, SW_SHOWDEFAULT);
     AppContext_SethWnd(hwnd);
-    FPU_SaveControlWord();
+    FPU_SetTruncate();
     gRunning = Game_Start();
     AppMain_ParseCmdLineArgs("HardcoreGerman", Main_ParseHardcoreGermanCB);
 
@@ -220,7 +220,7 @@ int WINAPI AppMain_WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR c
             for (;;)
                 ;
         }
-        FPU_SaveControlWord();
+        FPU_SetTruncate();
         if (AppContext_IsActive())
             Game_Update();
         else
@@ -271,7 +271,7 @@ LRESULT WINAPI AppMain_WinProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam
         PostQuitMessage(0);
         return 0;
     case WM_ACTIVATEAPP:
-        FPU_SaveControlWord();
+        FPU_SetTruncate();
         return 0;
     case WM_SYSKEYDOWN:
         if (wparam == VK_F4) {

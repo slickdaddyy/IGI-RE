@@ -3,7 +3,7 @@
 #include "qsc/qsc.h"
 
 ORIG(0x4B9BE0, void, Expr_Free, (void *expr));
-ORIG(0x4B9120, int, Expr_Eval, (void *expr));
+ORIG(0x4B9120, int, Expr_EvalInt, (void *expr));
 
 void Block_Free(Block *b)
 {
@@ -67,12 +67,12 @@ void Block_Exec(Block *b)
             Block_Exec((Block *)n);
         break;
     case BLOCK_IF:
-        if (Expr_Eval(b->cond.cond)) {
+        if (Expr_EvalInt(b->cond.cond)) {
             Block_Exec(b->cond.then);
             break;
         }
         for (n = b->cond.elifs.head; (next = n->next); n = next) {
-            if (Expr_Eval(((Block *)n)->loop.cond)) {
+            if (Expr_EvalInt(((Block *)n)->loop.cond)) {
                 Block_Exec(((Block *)n)->loop.body);
                 return;
             }
@@ -81,26 +81,26 @@ void Block_Exec(Block *b)
             Block_Exec(b->cond.otherwise);
         break;
     case BLOCK_WHILE:
-        while (Expr_Eval(b->loop.cond))
+        while (Expr_EvalInt(b->loop.cond))
             Block_Exec(b->loop.body);
         break;
     case BLOCK_DO:
         do
             Block_Exec(b->loop.body);
-        while (Expr_Eval(b->loop.cond));
+        while (Expr_EvalInt(b->loop.cond));
         break;
     case BLOCK_FOR:
         if (b->loopfor.init)
-            Expr_Eval(b->loopfor.init);
-        while (!b->loopfor.cond || Expr_Eval(b->loopfor.cond)) {
+            Expr_EvalInt(b->loopfor.init);
+        while (!b->loopfor.cond || Expr_EvalInt(b->loopfor.cond)) {
             Block_Exec(b->loopfor.body);
             if (b->loopfor.step)
-                Expr_Eval(b->loopfor.step);
+                Expr_EvalInt(b->loopfor.step);
         }
         break;
     case BLOCK_EXPR:
         if (b->expr)
-            Expr_Eval(b->expr);
+            Expr_EvalInt(b->expr);
         break;
     default:
         Error_Show("Unknown block type.");

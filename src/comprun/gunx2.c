@@ -10,12 +10,12 @@ ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x416830, uint8_t, Game_GetEvent7, (void));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, void *c));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, void *c));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
-ORIG(0x4E0930, Task *, sub_4E0930, (void *parent, void *obj));
+ORIG(0x4E0930, Task *, MagicObjContainer_New, (void *parent, void *obj));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 
 #define Gunx2_Handler472880 ((void *)0x472880)
@@ -75,8 +75,8 @@ void Gunx2_Create(Gunx2 *t, PartCreateArg *a)
     t->obj.unkEC = 0;
     t->obj.matrix = a->matrix;
     t->owner = a->owner;
-    t->obj.child = sub_4E0930(NULL, a->owner);
-    sub_4C4950(t->obj.child, t, t->owner);
+    t->obj.child = MagicObjContainer_New(NULL, a->owner);
+    RigidDynCubeObj_CreateMagicObjs(t->obj.child, t, t->owner);
 }
 HOOK(0x46DDC0, Gunx2_Create);
 

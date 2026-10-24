@@ -7,7 +7,7 @@ ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
-ORIG(0x414E20, void, sub_414E20, (Vec3d *out, void *obj, int point));
+ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int point));
 ORIG(0x4167F0, uint8_t, Game_GetEvent2, (void));
 ORIG(0x416800, uint8_t, Game_GetEvent4, (void));
 ORIG(0x416810, uint8_t, Game_GetEvent3, (void));
@@ -15,14 +15,14 @@ ORIG(0x416820, uint8_t, Game_GetEvent6, (void));
 ORIG(0x4168A0, void *, Game_GetTaskList0, (void));
 ORIG(0x416AD0, void, sub_416AD0, (void *user, void *obj, Vec3d *pos));
 ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
-ORIG(0x467DF0, void, sub_467DF0, (char *arg));
-ORIG(0x467F30, void, sub_467F30, (char *arg));
-ORIG(0x4680B0, void, sub_4680B0, (char *arg));
+ORIG(0x467DF0, void, ComputerObject_DrawSprite, (char *arg));
+ORIG(0x467F30, void, ComputerObject_DrawMarker, (char *arg));
+ORIG(0x4680B0, void, ComputerObject_DrawText, (char *arg));
 ORIG(0x481340, uint16_t, ExplodeObject_GetType, (void));
 ORIG(0x481350, void *, ExplodeObject_GetParams, (void));
 ORIG(0x481360, void, ExplodeObject_Setup, (void *o, float a, float b, float c, float d, int e, int f, int g,
                                           const char *sound));
-ORIG(0x4871C0, void, sub_4871C0, (char *p, char *q));
+ORIG(0x4871C0, void, StatusScreen_DrawActionIcon, (char *p, char *q));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B7EE0, void, Script_RegisterBool8, (const char *name, char *value));
 ORIG(0x4B80A0, void, Script_RemoveSymbol, (const char *name));
@@ -205,7 +205,7 @@ void Terminal_CheckUse(Terminal *t, char *user)
 
     if (!t->on)
         return;
-    sub_414E20(&p, t, 1);
+    Model_GetPoint(&p, t, 1);
     px = p.x + t->o.pos.x;
     p.x = px;
     p.y = p.y + t->o.pos.y;
@@ -239,7 +239,7 @@ HOOK(0x443D80, Terminal_Use);
 
 void sub_443DA0(Terminal *t, char **arg)
 {
-    sub_4871C0(*arg, *arg + 0x404);
+    StatusScreen_DrawActionIcon(*arg, *arg + 0x404);
 }
 HOOK(0x443DA0, sub_443DA0);
 
@@ -252,9 +252,9 @@ void Terminal_MapHandler(SObj *o, char *arg)
     *(Matrix **)(arg + 0x10) = &o->matrix;
     scale = sobj_scale(o);
     *(float *)(arg + 0x14) = VirModel_GetRadius(o->model) * scale;
-    sub_467DF0(arg);
-    sub_467F30(arg);
-    sub_4680B0(arg);
+    ComputerObject_DrawSprite(arg);
+    ComputerObject_DrawMarker(arg);
+    ComputerObject_DrawText(arg);
 }
 HOOK(0x443DC0, Terminal_MapHandler);
 

@@ -18,7 +18,7 @@ ORIG(0x401E70, void, Task_BroadcastType, (void *task, uint8_t slot, uint16_t typ
 ORIG(0x4D3710, void, Task_Nothing, (void *task));
 ORIG(0x4B0B00, void, Pool_Init, (Pool *pool, int size, int count, unsigned int align));
 ORIG(0x4B4720, void, Random_Init, (void *r));
-ORIG(0x4B2760, long double, Math_Acos, (float x));
+ORIG(0x4B2760, long double, Math_ACosF, (float x));
 ORIG(0x4B38E0, void, Matrix_SetEuler, (Matrix *m, float ax, float ay, float az));
 ORIG(0x4B3EF0, void, Matrix_SetAxisAngle, (Matrix *m, const Vec3f *axis, float angle));
 ORIG(0x4F1950, void *, ParamTable_New, (int count));
@@ -37,10 +37,10 @@ ORIG(0x4DAA60, Light *, Light_Add, (const Vec3f *dir, const Vec3f *color, const 
                                     char on));
 ORIG(0x4DAAF0, void, Light_Remove, (Light *l));
 ORIG(0x4E8290, void, Viewport_AddCallback, (void *fn));
-ORIG(0x521030, uint16_t, sub_521030, (void));
-ORIG(0x527460, void, sub_527460, (void *kf, void **out));
-ORIG(0x527470, void, sub_527470, (void *kf));
-ORIG(0x5274D0, void, sub_5274D0, (float time));
+ORIG(0x521030, uint16_t, Lensflare_GetType, (void));
+ORIG(0x527460, void, DirlightKeyframe_GetParams, (void *kf, void **out));
+ORIG(0x527470, void, DirlightKeyframe_Delete, (void *kf));
+ORIG(0x5274D0, void, Dirlight_SetTime, (float time));
 
 #define gCurrentWorld VAR(void *, 0xA44344)
 #define gDirlightParams VAR(void *, 0xA83D30)
@@ -102,7 +102,7 @@ void Dirlight_Update(Dirlight *dl)
         dl->ambient.x = (hi->ambient.x - lo->ambient.x) * f + lo->ambient.x;
         dl->ambient.y = (hi->ambient.y - lo->ambient.y) * f + lo->ambient.y;
         dl->ambient.z = (hi->ambient.z - lo->ambient.z) * f + lo->ambient.z;
-        angle = Math_Acos(hi->dir.x * lo->dir.x + lo->dir.y * hi->dir.y + lo->dir.z * hi->dir.z);
+        angle = Math_ACosF(hi->dir.x * lo->dir.x + lo->dir.y * hi->dir.y + lo->dir.z * hi->dir.z);
         axis.x = hi->dir.z * lo->dir.y - lo->dir.z * hi->dir.y;
         axis.y = -(hi->dir.z * lo->dir.x - hi->dir.x * lo->dir.z);
         axis.z = hi->dir.y * lo->dir.x - hi->dir.x * lo->dir.y;
@@ -153,8 +153,8 @@ void Dirlight_Init(void)
     TaskType_SetHandler(gDirlightType, Param_GetTableEvent(), Dirlight_GetParams);
     TaskType_SetHandler(gDirlightType, Param_GetChangedEvent(), Dirlight_Changed);
     TaskType_SetHandler(gDirlightKeyframeType, 0, DirlightKeyframe_Create);
-    TaskType_SetHandler2(gDirlightKeyframeType, 2, sub_527470);
-    TaskType_SetHandler(gDirlightKeyframeType, Param_GetTableEvent(), sub_527460);
+    TaskType_SetHandler2(gDirlightKeyframeType, 2, DirlightKeyframe_Delete);
+    TaskType_SetHandler(gDirlightKeyframeType, Param_GetTableEvent(), DirlightKeyframe_GetParams);
     TaskType_SetHandler(gDirlightKeyframeType, Param_GetChangedEvent(), DirlightKeyframe_Changed);
     gDirlightParams = ParamTable_New(4);
     gDirlightKeyframeParams = ParamTable_New(6);
@@ -237,7 +237,7 @@ void Dirlight_Changed(Dirlight *dl)
         if (!(k->time >= dl->minTime))
             dl->minTime = k->time;
     }
-    sub_5274D0(0);
+    Dirlight_SetTime(0);
 }
 HOOK(0x527270, Dirlight_Changed);
 
@@ -278,7 +278,7 @@ void DirlightKeyframe_Changed(DirlightKeyframe *k)
     parent = k->task.parent;
     if (parent && parent->type == gDirlightType)
         TASK_HANDLER(Param_GetChangedEvent(), parent->type)(parent, k);
-    type = sub_521030();
+    type = Lensflare_GetType();
     ev = Param_GetChangedEvent();
     Task_BroadcastType(Level_Get(), ev, type, NULL);
     if (gDirlightKeyframeChanging == k)

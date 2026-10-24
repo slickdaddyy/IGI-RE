@@ -6,28 +6,28 @@
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
-ORIG(0x405300, void, Config_SetDefaults, (void));
+ORIG(0x405300, void, Config_ResetProfiles, (void));
 ORIG(0x417090, int, Mission_GetFirst, (void));
 ORIG(0x485170, char *, Mission_Find, (int id));
-ORIG(0x48F240, void, sub_48F240, (char on));
-ORIG(0x48F260, void, sub_48F260, (char on));
-ORIG(0x48F340, int, Config_GetQvmOnly, (void));
+ORIG(0x48F240, void, AppContext_SetLightmapsUsed, (char on));
+ORIG(0x48F260, void, AppContext_SetTerrainLightmapsUsed, (char on));
+ORIG(0x48F340, int, AppContext_GetQvmOnly, (void));
 ORIG(0x495E70, void, Music_SetVolume, (float volume, float volume2));
 ORIG(0x495F30, void, Music_SetSfxVolume, (float volume));
-ORIG(0x499FD0, void, sub_499FD0, (int on));
+ORIG(0x499FD0, void, Rain_Enable, (int on));
 ORIG(0x4B12F0, void, Alias_Set, (const char *name, const char *path));
 ORIG(0x4B13A0, void, Alias_Remove, (const char *name));
 ORIG(0x4B1510, void *, File_Open, (const char *path, const char *mode));
 ORIG(0x4B1690, void, File_Close, (void *f));
 ORIG(0x4B1700, int, File_Write, (void *f, const void *buf, int size));
 ORIG(0x4B1AC0, void, File_Delete, (const char *path));
-ORIG(0x4B2710, int, sub_4B2710, (void));
+ORIG(0x4B2710, int, Texture_GetSetLODId, (void));
 ORIG(0x4B80B0, void *, Script_Load, (const char *path));
 ORIG(0x4B83D0, void, Script_Free, (void *s));
 ORIG(0x4B8410, void, Script_Compile, (const char *path));
 ORIG(0x4B85B0, void, Script_Run, (void *s));
-ORIG(0x4D0EE0, void, sub_4D0EE0, (float v));
-ORIG(0x4D2C20, void, sub_4D2C20, (int v));
+ORIG(0x4D0EE0, void, Mesh3D_SetLodScale, (float v));
+ORIG(0x4D2C20, void, QCube_SetDetail, (int v));
 
 #define gDriverCount VAR(int, 0x567C90)
 #define gDrivers ((D3DDriver *)0x567C98)
@@ -61,7 +61,7 @@ void Config_Read(const char *path)
         Script_Run(s);
         Script_Free(s);
     } else {
-        Config_SetDefaults();
+        Config_ResetProfiles();
     }
     Config_AddMissingKeys();
     Config_FixDisplayModes();
@@ -172,7 +172,7 @@ void Config_Write(const char *path)
     for (i = 0; i < gProfileCount; i++)
         Config_WritePlayer(f, i);
     File_Close(f);
-    if (Config_GetQvmOnly()) {
+    if (AppContext_GetQvmOnly()) {
         Script_Compile(path);
         File_Delete(path);
     }
@@ -409,11 +409,11 @@ void Profile_ApplyPerformance(void)
     unsigned flags = Profile_GetActive()->performance;
     int v = flags & 1 ? 1 : flags & 2;
 
-    gUnkA94E84[sub_4B2710()](&v);
-    sub_48F260(~flags >> 2 & 1);
-    sub_48F240(~flags >> 3 & 1);
-    sub_4D2C20(flags & 0x10 ? 0x60 : flags & 0x20 ? 0x81 : 0xA3);
-    sub_4D0EE0(flags & 0x80 ? 2.0f : flags & 0x40 ? 1.5f : 1.0f);
-    sub_499FD0(flags & 0x100 ? 0 : 1);
+    gUnkA94E84[Texture_GetSetLODId()](&v);
+    AppContext_SetTerrainLightmapsUsed(~flags >> 2 & 1);
+    AppContext_SetLightmapsUsed(~flags >> 3 & 1);
+    QCube_SetDetail(flags & 0x10 ? 0x60 : flags & 0x20 ? 0x81 : 0xA3);
+    Mesh3D_SetLodScale(flags & 0x80 ? 2.0f : flags & 0x40 ? 1.5f : 1.0f);
+    Rain_Enable(flags & 0x100 ? 0 : 1);
 }
 HOOK(0x406390, Profile_ApplyPerformance);

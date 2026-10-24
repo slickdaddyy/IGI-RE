@@ -11,7 +11,7 @@
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4012A0, MagicTask *, Task_New, (void *parent, uint16_t type, void *arg));
-ORIG(0x4BD070, int, sub_4BD070, (void *lod, void *tri, float v, float u));
+ORIG(0x4BD070, int, Qvm_GetArgLine, (void *lod, void *tri, float v, float u));
 ORIG(0x4D0950, float, VirModel_GetRadius, (void **model));
 ORIG(0x4D0CF0, void *, ModelLod_GetAttach, (void *lod, int i));
 ORIG(0x4D0D10, int, ModelLod_GetAttachCount, (void *lod));
@@ -233,7 +233,7 @@ static int coll_node_tris(RigidDynCubeObj *o, CollLineQuery *q, CollMesh *mesh, 
         if (!(v >= kZeroD) || v + u > kOneD)
             continue;
 
-        if (sub_4BD070(lod, t, (float)v, (float)u))
+        if (Qvm_GetArgLine(lod, t, (float)v, (float)u))
             continue;
         q->blocked = 1;
         if (sf->material == 0xFFFF) {

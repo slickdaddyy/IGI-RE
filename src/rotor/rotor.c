@@ -12,22 +12,22 @@ ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
 ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
-ORIG(0x47E6F0, uint8_t, sub_47E6F0, (void));
+ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
 ORIG(0x497800, Prim *, Frame_Alloc, (int size));
 ORIG(0x497860, void, Primitive_Draw, (void *prim));
-ORIG(0x4978D0, int, RenderTask_Register, (const char *name));
-ORIG(0x4978E0, void, RenderTask_Unregister, (int id));
-ORIG(0x4978F0, void, RenderTask_SetHandler, (int id, void *fn));
+ORIG(0x4978D0, int, Primitive_Register, (const char *name));
+ORIG(0x4978E0, void, Primitive_Unregister, (int id));
+ORIG(0x4978F0, void, Primitive_SetHandler, (int id, void *fn));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
 ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Matrix *m, float a));
-ORIG(0x4CFC30, int, sub_4CFC30, (void));
+ORIG(0x4CFC30, int, Mesh3D_GetDrawRigidMethod, (void));
 ORIG(0x4B2B30, long double, Vec3_Angle, (const float *a, const float *b));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
 ORIG(0x4B8A80, char *, Script_GetArgString, (void *args, int i, char *buf, int size));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, void *c));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, void *c));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (int unk, void *o, void **model));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *o, Vec3d *pos, float radius));
@@ -36,14 +36,14 @@ ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
 ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
-ORIG(0x4DA180, void, sub_4DA180, (int *a, int *b));
-ORIG(0x4DAA20, int, sub_4DAA20, (int *a));
-ORIG(0x4E7530, int, sub_4E7530, (void));
+ORIG(0x4DA180, void, Haze_GetVisible, (int *a, int *b));
+ORIG(0x4DAA20, int, Light_GetActive, (int *a));
+ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 ORIG(0x4ECF50, void, Body_AddForce, (float *body, float *force));
-ORIG(0x4EE0E0, uint8_t, MagicDef_GetParseEvent, (void));
-ORIG(0x4EE0F0, uint8_t, MagicDef_GetSizeEvent, (void));
-ORIG(0x4EE100, uint8_t, MagicDef_GetFreeEvent, (void));
-ORIG(0x4EE140, MagicDef *, MagicDef_Find, (const char *name));
+ORIG(0x4EE0E0, uint8_t, PhysicsObjType_GetParseEvent, (void));
+ORIG(0x4EE0F0, uint8_t, PhysicsObjType_GetSizeEvent, (void));
+ORIG(0x4EE100, uint8_t, PhysicsObjType_GetFreeEvent, (void));
+ORIG(0x4EE140, MagicDef *, PhysicsObjType_Find, (const char *name));
 
 #define MAGICOBJ_DELETE ((void *)0x51B940)
 
@@ -91,7 +91,7 @@ void Rotor_Create(Part *o, PartCreateArg *arg)
         for (;;)
             ;
     }
-    o->def = MagicDef_Find(arg->model);
+    o->def = PhysicsObjType_Find(arg->model);
     o->offset = arg->offset;
     o->local = arg->local;
     RigidDynCubeObj_Init(arg->unk4, o, model);
@@ -99,7 +99,7 @@ void Rotor_Create(Part *o, PartCreateArg *arg)
     o->obj.matrix = arg->matrix;
     o->value = 0;
     o->owner = arg->owner;
-    sub_4C4950(o, o, arg->owner);
+    RigidDynCubeObj_CreateMagicObjs(o, o, arg->owner);
 }
 HOOK(0x42C500, Rotor_Create);
 
@@ -156,7 +156,7 @@ void Rotor_DrawPrim(Prim *p)
         arg.unk18 = p->unk18;
         arg.unk20 = p->unk20;
         arg.unk1C = p->unk1C;
-        gRenderFuncs[sub_4CFC30()](&arg);
+        gRenderFuncs[Mesh3D_GetDrawRigidMethod()](&arg);
         a = a + step;
     }
 }
@@ -169,8 +169,8 @@ void Rotor_Draw(Part *o)
 
     p->type = gRotorPrim;
     p->obj = o;
-    p->unk14 = sub_4DAA20(&p->unk18);
-    sub_4DA180(&p->unk20, &p->unk1C);
+    p->unk14 = Light_GetActive(&p->unk18);
+    Haze_GetVisible(&p->unk20, &p->unk1C);
     Primitive_Draw(p);
     f.pos = o->obj.pos;
     f.matrix = o->obj.matrix;
@@ -188,21 +188,21 @@ void Rotor_FreeDef(void *unused, MagicDef **def);
 void Rotor_Init(void)
 {
     gRotorType = TaskType_New("Rotor", 0x140, MagicObj_GetType(), 0);
-    gRotorPrim = RenderTask_Register("RotorPrimitive");
-    RenderTask_SetHandler(gRotorPrim, Rotor_DrawPrim);
+    gRotorPrim = Primitive_Register("RotorPrimitive");
+    Primitive_SetHandler(gRotorPrim, Rotor_DrawPrim);
     TaskType_SetHandler(gRotorType, 0, Rotor_Create);
     TaskType_SetHandler2(gRotorType, 1, Rotor_Run);
     TaskType_SetHandler2(gRotorType, 2, MAGICOBJ_DELETE);
     TaskType_SetHandler(gRotorType, MagicObj_GetMoveEvent(), Rotor_Move);
     TaskType_SetHandler(gRotorType, Game_GetEvent9(), Rotor_ForwardEvent9);
     TaskType_SetHandler(gRotorType, Game_GetEvent11(), NULL);
-    TaskType_SetHandler(gRotorType, MagicDef_GetParseEvent(), Rotor_ParseDef);
-    TaskType_SetHandler(gRotorType, MagicDef_GetSizeEvent(), Rotor_GetDefSize);
+    TaskType_SetHandler(gRotorType, PhysicsObjType_GetParseEvent(), Rotor_ParseDef);
+    TaskType_SetHandler(gRotorType, PhysicsObjType_GetSizeEvent(), Rotor_GetDefSize);
     TaskType_SetHandler(gRotorType, 4, Rotor_Draw);
-    TaskType_SetHandler2(gRotorType, sub_4E7530(), NULL);
+    TaskType_SetHandler2(gRotorType, Screen_GetDrawEvent(), NULL);
     TaskType_SetHandler(gRotorType, RigidDynCubeObj_GetEvent2(), NULL);
-    TaskType_SetHandler(gRotorType, MagicDef_GetFreeEvent(), Rotor_FreeDef);
-    TaskType_SetHandler(gRotorType, sub_47E6F0(), NULL);
+    TaskType_SetHandler(gRotorType, PhysicsObjType_GetFreeEvent(), Rotor_FreeDef);
+    TaskType_SetHandler(gRotorType, BulletHole_GetEvent(), NULL);
     Script_RegisterConstant("TASKTYPE_ROTOR", gRotorType);
 }
 HOOK(0x42D2B0, Rotor_Init);
@@ -332,6 +332,6 @@ HOOK(0x42DA70, Rotor_FreeDef);
 void Rotor_Close(void)
 {
     TaskType_Free(gRotorType);
-    RenderTask_Unregister(gRotorPrim);
+    Primitive_Unregister(gRotorPrim);
 }
 HOOK(0x42DAA0, Rotor_Close);

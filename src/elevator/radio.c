@@ -5,7 +5,7 @@
 
 #define HANDLER_443DC0 ((void *)0x443DC0)
 
-ORIG(0x467D90, uint8_t, sub_467D90, (void));
+ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
 
 /* plays a random one of four sounds every few seconds while on */
 typedef struct Radio {
@@ -54,7 +54,7 @@ void Radio_Init(void)
     TaskType_SetHandler(gRadioType, Param_GetChangedEvent(), Radio_Changed);
     TaskType_SetHandler2(gRadioType, Level_GetEventDA8(), Radio_Activate);
     TaskType_SetHandler2(gRadioType, Level_GetEventDAC(), Radio_Deactivate);
-    TaskType_SetHandler(gRadioType, sub_467D90(), HANDLER_443DC0);
+    TaskType_SetHandler(gRadioType, ComputerObject_GetEvent0(), HANDLER_443DC0);
     gRadioParams = ParamTable_Extend(sub_481350(), 6);
     for (i = 0; i < 4; i++) {
         crt_sprintf(gRadioSoundNames[i], "Radio sound %d", i);

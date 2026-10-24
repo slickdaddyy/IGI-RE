@@ -16,7 +16,7 @@ ORIG(0x4B1730, int, File_Seek, (void *f, int pos, int whence));
 ORIG(0x4B1760, int, File_Eof, (void *f));
 ORIG(0x4B17C0, void, File_Flush, (void *f));
 ORIG(0x4C1780, void, Debug_Log, (void *task, int level));
-ORIG(0x4CE400, void *, World_GetMaterial, (void *world, int index));
+ORIG(0x4CE400, void *, Terrain_GetMaterial, (void *world, int index));
 ORIG(0x4FAA10, int, GraphStream_PeekByte, (GraphStream *s));
 
 #define gStreamHandlers VAR(List, 0xA774A0)
@@ -285,7 +285,7 @@ void Graph_Read(Graph *g, GraphStream *s)
         if (GraphStream_PeekByte(s) == TAG_INT)
             GraphStream_ReadInt(s, &mat);
         if (mat != -1)
-            material = World_GetMaterial(gCurrentWorld, mat);
+            material = Terrain_GetMaterial(gCurrentWorld, mat);
         GraphStream_ReadString(s, criteria, sizeof(criteria));
         n = Graph_AddNode(g, id, &pos, gamma, radius, material, criteria);
         if (n) {

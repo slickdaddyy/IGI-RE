@@ -14,7 +14,7 @@ ORIG(0x4C7140, void, DynCube_Add, (void *tree, void *o, Vec3d *pos, float radius
 ORIG(0x4C7560, void, DynCube_Remove, (void *tree, void *o));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4CFC50, int, Mesh3D_GetDrawSplineMethod, (void));
-ORIG(0x4DA180, void, sub_4DA180, (int **layers, int *count));
+ORIG(0x4DA180, void, Haze_GetVisible, (int **layers, int *count));
 ORIG(0x4DAA20, int *, Light_GetActive, (int *count));
 ORIG(0x4E5360, uint8_t, DynCubeObj_GetMaskVisibleEvent, (void));
 ORIG(0x4E55B0, uint8_t, CellMask_GetDrawEvent, (void));
@@ -217,7 +217,7 @@ void SplineObjSegment_Render(SplineObjSegment *o)
 
     draw.obj = o;
     draw.lights = Light_GetActive(&draw.lightCount);
-    sub_4DA180(&draw.layers, &draw.layerCount);
+    Haze_GetVisible(&draw.layers, &draw.layerCount);
     gRenderFuncs[Mesh3D_GetDrawSplineMethod()](&draw);
     move.pos = o->pos;
     move.m[0] = 1.0f;

@@ -25,10 +25,10 @@ _Static_assert(sizeof(M203Data) == 0x1C, "M203Data");
 #define kIconGap VAR(float, 0x534114)
 
 ORIG(0x414A60, void, Matrix_SetYAxis, (Matrix *m, const Vec3f *dir));
-ORIG(0x476670, void, Grenade_Launch, (void *a, void *gun, void *owner, Vec3d *pos, Matrix *m, Vec3f *vel,
+ORIG(0x476670, void, M203_New, (void *a, void *gun, void *owner, Vec3d *pos, Matrix *m, Vec3f *vel,
                                       char *model, float radius, float activate));
 ORIG(0x47CDA0, int, Script_EvalConst, (const char *expr));
-ORIG(0x47AAB0, void, sub_47AAB0, (float *x, float *y, void *gun, char *hud));
+ORIG(0x47AAB0, void, Gun_GetAmmoTextPos, (float *x, float *y, void *gun, char *hud));
 ORIG(0x4B6E90, void, Text_SetString, (void *t, const char *s));
 ORIG(0x4B7DF0, int, Text_GetWidth, (void *t));
 ORIG(0x4B6F50, void, Text_DrawAlt, (void *t));
@@ -84,7 +84,7 @@ void M16A2_Use(Gun *g, WeaponUseMsg *msg)
     snd = Sound_Play(sub_4F0EE0(), "m203_launch_1");
     if (snd)
         Sound_SetPos(snd, &g->muzzle);
-    Grenade_Launch(sub_4F0EE0(), g, g->obj.task.parent, &g->muzzle, &m, &vel, d->model, d->radius, d->activate);
+    M203_New(sub_4F0EE0(), g, g->obj.task.parent, &g->muzzle, &m, &vel, d->model, d->radius, d->activate);
 }
 HOOK(0x473510, M16A2_Use);
 
@@ -111,7 +111,7 @@ void M16A2_Render(Gun *g, HudMsg *msg)
     ammo = AmmoList_Find(list, Script_EvalConst("AMMO_ID_M203"));
     if (ammo)
         count = ammo->count;
-    sub_47AAB0(&x, &y, g, hud);
+    Gun_GetAmmoTextPos(&x, &y, g, hud);
     crt_sprintf(buf, "%-4d", count);
     Text_SetString(*text, buf);
     x = x - Text_GetWidth(*text);

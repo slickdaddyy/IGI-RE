@@ -10,7 +10,7 @@ ORIG(0x4B1020, int, File_ResolvePath, (char *out, const char *path, int index));
 ORIG(0x4B11A0, int, Device_Find, (const char *path));
 ORIG(0x4F0EF0, void *, Param_PushButton, (void));
 ORIG(0x4F0FF0, void *, Param_String256, (void));
-ORIG(0x4F1110, void, Window_UnregisterAll, (Task *task));
+ORIG(0x4F1110, void, Level_ClearTaskIdTree, (Task *task));
 
 /* a script task that loads or unloads a menu script when its buttons are pushed */
 typedef struct MenuLoader {
@@ -74,7 +74,7 @@ void MenuLoader_Changed(MenuLoader *ml)
         Task *mm = Task_FindChild(g->root, MenuManager_GetType());
 
         if (mm) {
-            Window_UnregisterAll(mm);
+            Level_ClearTaskIdTree(mm);
             Task_Delete(mm);
         }
     }

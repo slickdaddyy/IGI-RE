@@ -106,7 +106,7 @@ _Static_assert(sizeof(BoneLineHit) == 0x70, "BoneLineHit");
 _Static_assert(offsetof(BoneLineQuery, results) == 0x20, "BoneLineQuery");
 _Static_assert(offsetof(BoneSightQuery, visibility) == 0x18, "BoneSightQuery");
 
-ORIG(0x4BD070, int, sub_4BD070, (BoneLod *lod, BoneCollTri *tri, float u, float v));
+ORIG(0x4BD070, int, Qvm_GetArgLine, (BoneLod *lod, BoneCollTri *tri, float u, float v));
 
 static const float kBoxSlack = 0x1.99999ap-4f;   /* 0.1f */
 static const double kCloseRange = 0x1.999999999999ap-4; /* 0.1 */
@@ -353,7 +353,7 @@ void BoneDynCubeObj_CollLine(BoneDynCubeObj *obj, BoneSightQuery *q)
         p[2] = t * d[2] + a[2];
         if (!BoneColl_Bary(p, v0, e1, e2, nx, ny, nyl, nz, &u, &w))
             continue;
-        if (sub_4BD070(lod, tri, (float)u, (float)w))
+        if (Qvm_GetArgLine(lod, tri, (float)u, (float)w))
             continue;
 
         q->blocked = 1;
@@ -474,7 +474,7 @@ void BoneDynCubeObj_LineHit(BoneDynCubeObj *obj, BoneLineQuery *q)
             p[2] = t * d[2] + a[2];
             if (!BoneColl_Bary(p, v0, e1, e2, nx, ny, nyl, nz, &u, &w))
                 continue;
-            if (sub_4BD070(lod, tri, (float)u, (float)w))
+            if (Qvm_GetArgLine(lod, tri, (float)u, (float)w))
                 continue;
 
             /* nearest hit wins; within 0.1 of it the side decides */

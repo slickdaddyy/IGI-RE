@@ -13,8 +13,8 @@ typedef struct CameraControl {
 #define gCameraControlType VAR(uint16_t, 0x54D974)
 #define gCameraControlCurrent VAR(CameraControl *, 0xA5EBDC)
 
-ORIG(0x4EBBA0, Task *, SoundListener_New, (void *parent, void *arg));
-ORIG(0x4EBBF0, void, SoundListener_Set, (Task *listener, Camera *rot, double *pos));
+ORIG(0x4EBBA0, Task *, SoundSysMicrophone_New, (void *parent, void *arg));
+ORIG(0x4EBBF0, void, SoundSysMicrophone_Set, (Task *listener, Camera *rot, double *pos));
 
 void CameraControl_Run(CameraControl *cc);
 
@@ -32,7 +32,7 @@ void CameraControl_Run(CameraControl *cc)
     CALL_CHILDREN(&cc->task, 1, 1);
     gCameraControlCurrent = NULL;
     if (cc->listener)
-        SoundListener_Set(cc->listener, cc->camera, cc->camera->pos);
+        SoundSysMicrophone_Set(cc->listener, cc->camera, cc->camera->pos);
 }
 HOOK(0x4E7C90, CameraControl_Run);
 
@@ -55,6 +55,6 @@ HOOK(0x4E7D40, CameraControl_New);
 
 Task *CameraControl_AddListener(void *parent, CameraControl *cc, void *arg)
 {
-    return cc->listener = SoundListener_New(parent, arg);
+    return cc->listener = SoundSysMicrophone_New(parent, arg);
 }
 HOOK(0x4E7D70, CameraControl_AddListener);

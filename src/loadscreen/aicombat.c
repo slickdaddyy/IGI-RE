@@ -362,7 +362,7 @@ ORIG(0x463180, char, Human_IsCrouching, (Task *human));
 ORIG(0x463130, int, Human_GetTeam, (Task *human));
 ORIG(0x451380, void, HumanAI_GetTargetPos, (Vec3d *out, HumanAI *ai));
 ORIG(0x413A70, uint16_t, HumanPlayer_GetType, (void));
-ORIG(0x4028B0, int, Timer_GetTicks, (void));
+ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x4B47C0, int, Random_Int, (void *r, int n));
 ORIG(0x4B4770, long double, Random_Float, (void *r));
@@ -386,9 +386,9 @@ ORIG(0x4F9720, GraphNode *, Graph_GetNode, (Graph *g, int id));
 ORIG(0x4F9770, void, Graph_GetNodePos, (Vec3d *out, GraphNode *node));
 ORIG(0x4F98A0, void, Graph_GetNodeMatrix, (float *out, GraphNode *node, int unk));
 ORIG(0x4F9A40, char, Graph_IsInNode, (const Vec3d *pos, GraphNode *node, double tol, int unk));
-ORIG(0x5096C0, GraphStep *, Graph_NextStep, (Graph *g, int from, int to));
-ORIG(0x509880, unsigned, sub_509880, (void));
-ORIG(0x509890, char, sub_509890, (GraphNode *node, unsigned mask));
+ORIG(0x5096C0, GraphStep *, AIGraph_GetStep, (Graph *g, int from, int to));
+ORIG(0x509880, unsigned, AIGraph_GetStairCriteria, (void));
+ORIG(0x509890, char, GraphNode_HasCriteria, (GraphNode *node, unsigned mask));
 ORIG(0x452BE0, NodeGrid *, NodeGrid_Find, (int graphId, int nodeId));
 ORIG(0x452C10, void, NodeGrid_Release, (NodeGrid *g, int x, int y));
 ORIG(0x452C60, NodeGrid *, NodeGrid_Acquire, (Graph *g, int nodeId, int x, int y));
@@ -440,9 +440,9 @@ void AICombat_Update(HumanAI *ai, CombatData *cd)
     if (seen->visible) {
         HumanAI_GetTargetPos(&ai->target->pos, ai);
         if (!cd->spoke && (*seen->ref)->type == HumanPlayer_GetType()) {
-            if (gLastDetectedTick == -1 || Timer_GetTicks() - gLastDetectedTick > 90) {
+            if (gLastDetectedTick == -1 || Flow_GetFrames() - gLastDetectedTick > 90) {
                 Sound_Play(human, gDetectedSounds[Random_Int(Game_GetRandom(), 6)]);
-                gLastDetectedTick = Timer_GetTicks();
+                gLastDetectedTick = Flow_GetFrames();
             }
             cd->spoke = 1;
         }
@@ -847,9 +847,9 @@ char AICombat_TryNode(HumanAI *ai, GraphNode *node, char visible, char check)
     int x, y;
 
     if (visible) {
-        GraphStep *toTarget = Graph_NextStep(node->graph, node->id, gCoverTargetNode);
-        GraphStep *toFrom = Graph_NextStep(node->graph, node->id, gCoverFromNode);
-        GraphStep *between = Graph_NextStep(node->graph, gCoverFromNode, gCoverTargetNode);
+        GraphStep *toTarget = AIGraph_GetStep(node->graph, node->id, gCoverTargetNode);
+        GraphStep *toFrom = AIGraph_GetStep(node->graph, node->id, gCoverFromNode);
+        GraphStep *between = AIGraph_GetStep(node->graph, gCoverFromNode, gCoverTargetNode);
 
         if (!toTarget || !between || !toFrom)
             return 0;
@@ -1022,7 +1022,7 @@ void AICombat_StartBurst(HumanAI *ai, char half)
         }
     }
     ai->lastAmmo = ammo[0];
-    ai->unk3E5C = Timer_GetTicks();
+    ai->unk3E5C = Flow_GetFrames();
     ai->shotDelay = 0;
     ai->unk3E6A = 0;
     ai->unk3E69 = 1;
@@ -1097,15 +1097,15 @@ int AICombat_ChooseEvade(HumanAI *ai, CombatData *cd)
     uint8_t sides;
     char left, right;
 
-    if (ai->nextEvade >= 0 && ai->nextEvade >= Timer_GetTicks())
+    if (ai->nextEvade >= 0 && ai->nextEvade >= Flow_GetFrames())
         return -1;
-    ai->nextEvade = Timer_GetTicks() + 10;
+    ai->nextEvade = Flow_GetFrames() + 10;
     if (!ai->eventCounts[EV_GUNSHOTMISS] && !ai->eventCounts[EV_GUNSHOT] && !ai->eventCounts[EV_TAKINGDAMAGE])
         return -1;
     {
         GraphNode *node = Graph_GetNode(ai->graph, ai->node);
 
-        if (sub_509890(node, sub_509880()))
+        if (GraphNode_HasCriteria(node, AIGraph_GetStairCriteria()))
             return -1;
     }
     if (Random_Float(Game_GetRandom()) > ai->evadeChance)

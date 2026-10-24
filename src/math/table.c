@@ -3,7 +3,7 @@
 #include "math/vecmath.h"
 #include "math/x87.h"
 
-ORIG(0x4B27D0, long double, Math_Asin, (float x));
+ORIG(0x4B27D0, long double, Math_ASinF, (float x));
 
 #define gSinTable ((float *)0xA88A60)
 #define gCosTable ((float *)0xA84A60)
@@ -21,6 +21,6 @@ void Math_InitTables(void)
         gCosTable[i] = (float)x87_cos(a);
     }
     for (i = 0; i <= 8192; i++)
-        gAsinTable[i] = (float)Math_Asin((float)(i * (long double)(1.0f / 4096) - 1.0f));
+        gAsinTable[i] = (float)Math_ASinF((float)(i * (long double)(1.0f / 4096) - 1.0f));
 }
 HOOK(0x4B46A0, Math_InitTables);

@@ -3,7 +3,7 @@
 #include "hook.h"
 #include "qsc/qsc.h"
 
-ORIG(0x517260, int, sub_517260, (const char *s, Reader *r, char *out, unsigned int size));
+ORIG(0x517260, int, Lex_ReadToken, (const char *s, Reader *r, char *out, unsigned int size));
 ORIG(0x517510, int, Str_ToInt, (const char *s));
 ORIG(0x517570, double, Str_ToFloat, (const char *s));
 
@@ -80,13 +80,13 @@ int Lexer_Next(Lexer *lex, Token *tok)
         }
         break;
     case '"':
-        if (sub_517260(r->cur, r, tok->text, tok->bufsize)) {
+        if (Lex_ReadToken(r->cur, r, tok->text, tok->bufsize)) {
             tok->type = TOK_STRING;
             skip = 0;
         }
         goto advance;
     default:
-        if (sub_517260(r->cur, r, tok->text, tok->bufsize)) {
+        if (Lex_ReadToken(r->cur, r, tok->text, tok->bufsize)) {
             tok->type = TOK_WORD;
             skip = 0;
         }

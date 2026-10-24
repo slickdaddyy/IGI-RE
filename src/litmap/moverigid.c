@@ -4,9 +4,9 @@
 ORIG(0x4B3360, char, Vec3d_Equal, (const Vec3d *a, const Vec3d *b));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4C48D0, void, RigidDynCubeObj_SetModel, (void *obj, void **model));
-ORIG(0x51FBA0, void, sub_51FBA0, (void *obj, void *obj2, char force));
+ORIG(0x51FBA0, void, MoveRigidObj_Apply, (void *obj, void *obj2, char force));
 ORIG(0x401780, void, Task_DeleteChildren, (void *task));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, void *c));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, void *c));
 
 /* the parts of a MoveRigidObj used here: a model moved between two keys */
 typedef struct MoveRigidObj {
@@ -48,9 +48,9 @@ void MoveRigidObj_Changed(MoveRigidObj *m, const char *arg)
         }
     }
     RigidDynCubeObj_SetModel(m, VirModel_Find(m->model));
-    sub_51FBA0(m, m, 1);
+    MoveRigidObj_Apply(m, m, 1);
     Task_DeleteChildren(m->path);
-    sub_4C4950(m->path, m, m);
+    RigidDynCubeObj_CreateMagicObjs(m->path, m, m);
     if (!arg || !*arg)
         BROADCAST(m->task.head, Param_GetChangedEvent(), 0);
     VarString_Bind(&m->expr, m);

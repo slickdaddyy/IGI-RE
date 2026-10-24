@@ -7,7 +7,7 @@ ORIG(0x4B4AF0, void, Draw_RectAZ, (float x, float y, float w, float h, float r, 
 ORIG(0x418D80, Text *, MenuManager_FindPic, (void *mm, const char *name));
 ORIG(0x419040, Task *, MenuManager_GetBackgroundFX, (void *mm));
 ORIG(0x48F2D0, int, AppContext_IsUSA, (void));
-ORIG(0x4F1050, int, Window_IndexOf, (void *task));
+ORIG(0x4F1050, int, Task_GetId, (void *task));
 ORIG(0x4B6E60, void, Text_Draw, (Text *t));
 ORIG(0x4B6E70, int, Text_Width, (Text *t));
 ORIG(0x4B6E80, int, Text_Height, (Text *t));
@@ -92,7 +92,7 @@ void MenuScreen_Delete(MenuScreen *ms)
     VarString_Free(&ms->onBack);
     VarString_Free(&ms->onLayout);
     VarString_Free(&ms->onForward);
-    if (Window_IndexOf(ms) >= 0) {
+    if (Task_GetId(ms) >= 0) {
         TaskFn fn = HANDLER(Level_GetEventDAC(), ms->w.task.type);
 
         if (fn)

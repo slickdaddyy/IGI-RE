@@ -5,7 +5,7 @@
 
 #define HANDLER_449950 ((void *)0x449950)
 
-ORIG(0x4D0D80, int, sub_4D0D80, (void));
+ORIG(0x4D0D80, int, Mesh3D_GetEvent5, (void));
 
 /* script arguments of an ExplodeMagicObj (0x3C bytes) */
 typedef struct ExplodeParams {
@@ -130,7 +130,7 @@ void ExplodeMagicObj_Run(ExplodeMagicObj *o)
     }
     RigidDynCubeObj_SetModel(o, model);
     o->obj.unkDC = 0;
-    CALL_CHILDREN(&o->obj.task, sub_4D0D80());
+    CALL_CHILDREN(&o->obj.task, Mesh3D_GetEvent5());
     p = o->params;
     Explosion_Spawn(&o->obj.pos, 1, 0, o->unk144, p->unk14 * kUnits, p->unk18 * kUnits, 6144.0f, p->unk24, p->unk28, 0,
                     "1009_01_1", p->sound, 0x15, 2, 102400.0f, 0);

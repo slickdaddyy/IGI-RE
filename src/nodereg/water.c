@@ -163,7 +163,7 @@ ORIG(0x4F1A40, void, ParamType_Free, (int type));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, int type, int flags, void *extra));
-ORIG(0x52D6C0, void, sub_52D6C0, (void **neighbors));
+ORIG(0x52D6C0, void, WaterMesh_Init, (void **neighbors));
 
 #define gWaters ((Water **)0xA80200)
 #define gWaterLevelType VAR(int, 0xA80300)
@@ -506,7 +506,7 @@ void Water_ParamsChanged(Water *w)
     w->neighbors[1] = Water_FindById(w->neighborIds[1]);
     w->neighbors[2] = Water_FindById(w->neighborIds[2]);
     w->neighbors[3] = Water_FindById(w->neighborIds[3]);
-    sub_52D6C0(w->neighbors);
+    WaterMesh_Init(w->neighbors);
 }
 HOOK(0x519290, Water_ParamsChanged);
 

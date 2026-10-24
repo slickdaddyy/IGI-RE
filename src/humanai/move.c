@@ -13,16 +13,16 @@ ORIG(0x4B32B0, long double, Vec3d_Distance, (const Vec3d *a, const Vec3d *b));
 ORIG(0x4B3320, char, Vec3d_IsZero, (const Vec3d *v));
 ORIG(0x447D70, int, Door_GetState, (Task *door));
 ORIG(0x447DA0, void, Door_Toggle, (Task *door));
-ORIG(0x452D20, void *, sub_452D20, (int *len, void *a, void *b, void *graph, int node, const Vec3d *pos));
-ORIG(0x455980, uint16_t, sub_455980, (void));
-ORIG(0x457800, uint16_t, sub_457800, (void));
-ORIG(0x45A7E0, uint16_t, sub_45A7E0, (void));
-ORIG(0x45D5A0, uint16_t, sub_45D5A0, (void));
+ORIG(0x452D20, void *, NodeGrid_Place, (int *len, void *a, void *b, void *graph, int node, const Vec3d *pos));
+ORIG(0x455980, uint16_t, SoldierFemale_GetType, (void));
+ORIG(0x457800, uint16_t, SoldierRPG_GetType, (void));
+ORIG(0x45A7E0, uint16_t, SoldierPistol_GetType, (void));
+ORIG(0x45D5A0, uint16_t, Soldier_GetType, (void));
 ORIG(0x463140, float *, Human_GetMatrix, (Task *human));
-ORIG(0x489BE0, void *, sub_489BE0, (AIDetection *d, Task *t));
+ORIG(0x489BE0, void *, AIDetection_FindSeen, (AIDetection *d, Task *t));
 ORIG(0x48EF70, void, HumanAI_SetChannel, (HumanAI *ai, int channel, float value));
-ORIG(0x5096C0, GraphStep *, Graph_NextStep, (void *graph, int from, int to));
-ORIG(0x509860, unsigned, sub_509860, (void));
+ORIG(0x5096C0, GraphStep *, AIGraph_GetStep, (void *graph, int from, int to));
+ORIG(0x509860, unsigned, AIGraph_GetDoorCriteria, (void));
 
 static const float kInvPi = 0x1.45f306p-2f;
 static const float kPi = 0x1.921fb6p+1f;
@@ -92,7 +92,7 @@ void *HumanAI_CanSeeTarget(HumanAI *ai)
     Task *t = *ai->target->ref;
 
     if (t)
-        return sub_489BE0(&ai->detection, t);
+        return AIDetection_FindSeen(&ai->detection, t);
     return NULL;
 }
 HOOK(0x451350, HumanAI_CanSeeTarget);
@@ -251,7 +251,7 @@ HOOK(0x451540, HumanAI_MoveStep);
 
 static char HumanAI_MoveDoor(GraphNode *a, GraphNode *b)
 {
-    return (a->flags & sub_509860()) && (b->flags & sub_509860());
+    return (a->flags & AIGraph_GetDoorCriteria()) && (b->flags & AIGraph_GetDoorCriteria());
 }
 
 /* fills the walk queue with the route to node dest (and on to pos), then walks it */
@@ -287,12 +287,12 @@ again:
             ai->path = NULL;
         }
         if (pos) {
-            ai->path = sub_452D20(&ai->pathLen, ai->pathA, ai->pathB, graph, dest, pos);
+            ai->path = NodeGrid_Place(&ai->pathLen, ai->pathA, ai->pathB, graph, dest, pos);
         } else {
             Vec3d p;
 
             Graph_GetNodePos(&p, Graph_GetNode(ai->graph, dest));
-            ai->path = sub_452D20(&ai->pathLen, ai->pathA, ai->pathB, graph, dest, &p);
+            ai->path = NodeGrid_Place(&ai->pathLen, ai->pathA, ai->pathB, graph, dest, &p);
         }
     }
 
@@ -330,7 +330,7 @@ again:
                     if (!(Vec3d_Distance(&np, DynCubeObj_GetPosition(ai->task.parent)) >= d))
                         from = id;
                 } else {
-                    GraphStep *s = Graph_NextStep(ai->graph, id, dest);
+                    GraphStep *s = AIGraph_GetStep(ai->graph, id, dest);
 
                     if (!s)
                         Warning_Show("ERROR IN ROUTENET: %d to %d or %d to %d", from, dest, id, dest);
@@ -385,7 +385,7 @@ again:
     }
 
     do {
-        GraphStep *s = Graph_NextStep(graph, from, dest);
+        GraphStep *s = AIGraph_GetStep(graph, from, dest);
         GraphNode *a, *b;
         Vec3d ap, bp, dir;
 
@@ -627,13 +627,13 @@ static char HumanAI_GetD00(HumanAI *ai)
 {
     Human *h = (Human *)ai->task.parent;
 
-    if (h->task.type == sub_45D5A0())
+    if (h->task.type == Soldier_GetType())
         return h->unkD00;
-    if (h->task.type == sub_45A7E0())
+    if (h->task.type == SoldierPistol_GetType())
         return h->unkD00;
-    if (h->task.type == sub_455980())
+    if (h->task.type == SoldierFemale_GetType())
         return h->unkD00;
-    if (h->task.type == sub_457800())
+    if (h->task.type == SoldierRPG_GetType())
         return h->unkD00;
     return (char)(uintptr_t)ai;
 }

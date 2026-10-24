@@ -46,26 +46,26 @@ ORIG(0x406390, void, Profile_ApplyPerformance, (void));
 ORIG(0x408390, void, GameMaterial_Attach, (void *world));
 ORIG(0x413B90, int *, WeaponType_Get, (int i));
 ORIG(0x413BB0, int, WeaponType_GetCount, (void));
-ORIG(0x437500, void, sub_437500, (void *p));
-ORIG(0x453270, void, sub_453270, (void));
-ORIG(0x4635B0, void, sub_4635B0, (Task *player));
-ORIG(0x4635E0, void, sub_4635E0, (Task *player));
-ORIG(0x468DD0, void, sub_468DD0, (void));
-ORIG(0x46B070, void, sub_46B070, (void));
-ORIG(0x46B310, void, sub_46B310, (void));
-ORIG(0x46C970, uint8_t, sub_46C970, (void));
+ORIG(0x437500, void, EnvironmentSound_SetListener, (void *p));
+ORIG(0x453270, void, HumanMonitor_Reset, (void));
+ORIG(0x4635B0, void, Human_LockInput, (Task *player));
+ORIG(0x4635E0, void, Human_UnlockInput, (Task *player));
+ORIG(0x468DD0, void, ComputerLog_Clear, (void));
+ORIG(0x46B070, void, ComputerRes_Load, (void));
+ORIG(0x46B310, void, ComputerRes_Free, (void));
+ORIG(0x46C970, uint8_t, GunPickup_GetEvent, (void));
 ORIG(0x47CDA0, int, Script_EvalConst, (const char *expr));
-ORIG(0x47CE00, void, sub_47CE00, (void *p, int ammo, int count));
-ORIG(0x484D40, void *, sub_484D40, (Task *task, void *p));
-ORIG(0x484D60, void, sub_484D60, (void *p, Task *task));
+ORIG(0x47CE00, void, AmmoList_Add, (void *p, int ammo, int count));
+ORIG(0x484D40, void *, HumanCamera_New, (Task *task, void *p));
+ORIG(0x484D60, void, HumanCamera_SetHuman, (void *p, Task *task));
 ORIG(0x485170, char *, Mission_Find, (int id));
-ORIG(0x485300, Task *, sub_485300, (Task *parent));
-ORIG(0x485320, void *, sub_485320, (Task *task));
-ORIG(0x4868A0, void, sub_4868A0, (void));
-ORIG(0x4868C0, void, sub_4868C0, (void));
-ORIG(0x4868D0, void, sub_4868D0, (int unk));
-ORIG(0x487180, char *, sub_487180, (void));
-ORIG(0x489450, char, sub_489450, (void));
+ORIG(0x485300, Task *, GameScreen_New, (Task *parent));
+ORIG(0x485320, void *, GameScreen_GetView, (Task *task));
+ORIG(0x4868A0, void, StatusMessages_Load, (void));
+ORIG(0x4868C0, void, StatusMessages_Free, (void));
+ORIG(0x4868D0, void, StatusMessageScreen_Clear, (int unk));
+ORIG(0x487180, char *, StatusScreen_Get, (void));
+ORIG(0x489450, char, LevelFlow_IsComplete, (void));
 ORIG(0x48A440, void *, LoadingScreen_New, (int steps));
 ORIG(0x48A5D0, void, LoadingScreen_Delete, (void *ls));
 ORIG(0x48A620, void, LoadingScreen_Step, (void *ls, int steps));
@@ -77,12 +77,12 @@ ORIG(0x491E70, void, Display_SetClearColor, (int r, int g, int b));
 ORIG(0x4950E0, int, Direct3D_GetRenderMode, (void));
 ORIG(0x495E70, void, Music_SetVolume, (float volume, float volume2));
 ORIG(0x495F30, void, Music_SetSfxVolume, (float volume));
-ORIG(0x497410, int, sub_497410, (const char *name));
-ORIG(0x497450, int, sub_497450, (const char *name));
-ORIG(0x4974A0, void, sub_4974A0, (void *p));
-ORIG(0x4A28B0, void, sub_4A28B0, (const char *font, float a, float b, float c, int d));
-ORIG(0x4A29C0, void, sub_4A29C0, (const char *sprite, int a, int b));
-ORIG(0x4A29E0, void, sub_4A29E0, (const char *font, int a, int b));
+ORIG(0x497410, int, Sound_HashName, (const char *name));
+ORIG(0x497450, int, Sound_HashBucket, (const char *name));
+ORIG(0x4974A0, void, SoundParams_Init, (void *p));
+ORIG(0x4A28B0, void, BandFilter_SetFont, (const char *font, float a, float b, float c, int d));
+ORIG(0x4A29C0, void, HandiCamFilter_SetSprite, (const char *sprite, int a, int b));
+ORIG(0x4A29E0, void, HandiCamFilter_SetFont, (const char *font, int a, int b));
 ORIG(0x4B0D40, void, Mem_SetDefaultMode, (void));
 ORIG(0x4B0D50, void, Mem_ClearMode, (void));
 ORIG(0x4B0D60, void, Mem_PushMode, (char mode));
@@ -107,11 +107,11 @@ ORIG(0x4B8870, void, Script_RegisterRealConstant, (const char *name, const doubl
 ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
 ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
-ORIG(0x4C1780, void, sub_4C1780, (void *world));
+ORIG(0x4C1780, void, Debug_Log, (void *world));
 ORIG(0x4C1800, void *, QTaskList_New, (int max));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
-ORIG(0x4C5B20, void *, sub_4C5B20, (int size));
-ORIG(0x4C5CE0, void, sub_4C5CE0, (void *world));
+ORIG(0x4C5B20, void *, World_New, (int size));
+ORIG(0x4C5CE0, void, World_Free, (void *world));
 ORIG(0x4C5F00, void, sub_4C5F00, (void *world, const char *path));
 ORIG(0x4C6240, void, Terrain_Load, (void *world, const char *path));
 ORIG(0x4CE830, void, DynCube_BuildMasks, (void *world, int i));
@@ -120,37 +120,37 @@ ORIG(0x4CEA70, int, Model_GetDeinitMethod, (void));
 ORIG(0x4CEEA0, void, VirModel_RestoreCount, (void));
 ORIG(0x4CEFA0, void *, ModelFile_Load, (const char *name));
 ORIG(0x4CF9D0, void, ModelFile_Free, (void *f));
-ORIG(0x4CFBD0, void, sub_4CFBD0, (const char *path));
-ORIG(0x4CFC00, void, sub_4CFC00, (const char *path));
-ORIG(0x4D2D30, void, sub_4D2D30, (float unk));
-ORIG(0x4D65D0, void, sub_4D65D0, (void));
-ORIG(0x4D9950, void, sub_4D9950, (void *p));
+ORIG(0x4CFBD0, void, Model_SetDir, (const char *path));
+ORIG(0x4CFC00, void, Model_SetAnimDir, (const char *path));
+ORIG(0x4D2D30, void, BoneObj_SetFrameRate, (float unk));
+ORIG(0x4D65D0, void, BoneObj_FreeAll, (void));
+ORIG(0x4D9950, void, Camera_Init, (void *p));
 ORIG(0x4E6060, void, sub_4E6060, (int unk));
-ORIG(0x4E6550, void, sub_4E6550, (Game *game, const char *path));
+ORIG(0x4E6550, void, SoundSys_LoadDefs, (Game *game, const char *path));
 ORIG(0x4E68D0, void, SoundLoad, (const char *path));
 ORIG(0x4E69C0, void, SoundFree, (const char *path));
-ORIG(0x4E6D60, void, sub_4E6D60, (int *music));
-ORIG(0x4E7130, void, sub_4E7130, (void));
+ORIG(0x4E6D60, void, SoundHandle_Play, (int *music));
+ORIG(0x4E7130, void, Sound_StopAll, (void));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
-ORIG(0x4E75B0, int, sub_4E75B0, (int event));
+ORIG(0x4E75B0, int, Screen_GetType, (int event));
 ORIG(0x4E7BD0, void, Debug_printf, (const char *fmt, ...));
-ORIG(0x4E7D40, Task *, sub_4E7D40, (Game *game, void *p, void *world));
-ORIG(0x4E7D70, void, sub_4E7D70, (Game *game, Task *task, void *world));
-ORIG(0x4EDCC0, void, sub_4EDCC0, (void));
-ORIG(0x4ED5E0, void, sub_4ED5E0, (int a, int b));
-ORIG(0x4F0CB0, void *, sub_4F0CB0, (Game *game));
-ORIG(0x4F0CD0, void, sub_4F0CD0, (void));
-ORIG(0x4F0CE0, void, sub_4F0CE0, (void *models));
+ORIG(0x4E7D40, Task *, CameraControl_New, (Game *game, void *p, void *world));
+ORIG(0x4E7D70, void, CameraControl_AddListener, (Game *game, Task *task, void *world));
+ORIG(0x4EDCC0, void, Lod_SendChanged, (void));
+ORIG(0x4ED5E0, void, InputPort_Setup, (int a, int b));
+ORIG(0x4F0CB0, void *, Level_New, (Game *game));
+ORIG(0x4F0CD0, void, Level_FreeModels, (void));
+ORIG(0x4F0CE0, void, Level_SetModels, (void *models));
 ORIG(0x4F0E10, void, LevelLoad, (const char *path, int frames));
-ORIG(0x4F0E90, void, QtaskUpdate, (void));
-ORIG(0x4F0ED0, Task *, sub_4F0ED0, (void));
-ORIG(0x4F1030, Task *, sub_4F1030, (int id));
-ORIG(0x4F4870, void, sub_4F4870, (void *list));
-ORIG(0x4F65B0, void, sub_4F65B0, (void *p));
-ORIG(0x4F65C0, void, sub_4F65C0, (void *p));
-ORIG(0x4F65D0, void, sub_4F65D0, (int frames));
-ORIG(0x4F80E0, void, sub_4F80E0, (void (*fn)(const char *weather)));
-ORIG(0x4F8FD0, uint16_t, sub_4F8FD0, (void));
+ORIG(0x4F0E90, void, Level_Clear, (void));
+ORIG(0x4F0ED0, Task *, Level_GetStatic, (void));
+ORIG(0x4F1030, Task *, Task_FindById, (int id));
+ORIG(0x4F4870, void, Vehicle_SetTaskList, (void *list));
+ORIG(0x4F65B0, void, CutScene_SetCamera, (void *p));
+ORIG(0x4F65C0, void, CutScene_SetFilterParent, (void *p));
+ORIG(0x4F65D0, void, CutScene_SetTicksPerSecond, (int frames));
+ORIG(0x4F80E0, void, RainDynCubeObj_SetCallback, (void (*fn)(const char *weather)));
+ORIG(0x4F8FD0, uint16_t, TerrainLightMap_GetType, (void));
 
 /* a texture or sprite the mission asked for by name, loaded from common/ */
 typedef struct GameTexture {
@@ -274,7 +274,7 @@ void Game_Init(void)
     gGameTaskLists[3] = QTaskList_New(0x100);
     gGameTaskLists[4] = QTaskList_New(0x10);
     gGameTaskLists[5] = QTaskList_New(0x80);
-    sub_4F4870(gGameTaskLists[4]);
+    Vehicle_SetTaskList(gGameTaskLists[4]);
     Script_RegisterConstant("GAME_FREQUENCY", 30);
     Script_RegisterRealConstant("WORLD_METER", gWorldMeter);
     Script_RegisterRealConstant("MATH_PI", gMathPi);
@@ -287,9 +287,9 @@ void Game_Init(void)
     Script_RegisterFunction("Game_EnableMusic", Game_EnableMusic, NULL, 0);
     Script_RegisterFunction("Game_DisableMusic", Game_DisableMusic, NULL, 0);
     Script_RegisterFunction("Game_CutsceneDelete", Game_CutsceneDelete, NULL, 1);
-    sub_4A29E0("LOCAL:computer/font1.fnt", 0x75, 0x14);
-    sub_4A29C0("LOCAL:common/sprites/battery.spr", 4, 2);
-    sub_4A28B0("LOCAL:computer/font1.fnt", 0.9f, 0.2f, -50.0f, 0);
+    HandiCamFilter_SetFont("LOCAL:computer/font1.fnt", 0x75, 0x14);
+    HandiCamFilter_SetSprite("LOCAL:common/sprites/battery.spr", 4, 2);
+    BandFilter_SetFont("LOCAL:computer/font1.fnt", 0.9f, 0.2f, -50.0f, 0);
 }
 HOOK(0x415530, Game_Init);
 
@@ -301,7 +301,7 @@ ScriptValue *Game_DisablePlayerInput(ScriptValue *out)
     for (i = 0; i < 4; i++) {
         p = Game_GetPlayer(i);
         if (p)
-            sub_4635B0(p);
+            Human_LockInput(p);
     }
     return Game_ReturnOne(out, 1, 1.0);
 }
@@ -315,7 +315,7 @@ ScriptValue *Game_EnablePlayerInput(ScriptValue *out)
     for (i = 0; i < 4; i++) {
         p = Game_GetPlayer(i);
         if (p)
-            sub_4635E0(p);
+            Human_UnlockInput(p);
     }
     return Game_ReturnOne(out, 1, 1.0);
 }
@@ -408,16 +408,16 @@ void LevelStart(Game *g)
     crt_sprintf(gMissionPath, "LOCAL:%s/", mission + 0x144);
     Alias_Set("MISSION:", gMissionPath);
     gGame = g;
-    sub_453270();
-    sub_4D9950(gGame->unk60);
+    HumanMonitor_Reset();
+    Camera_Init(gGame->unk60);
     Game_SetDisplayMode();
     Profile_ApplyPerformance();
     loading = LoadingScreen_New(9);
-    gGame->world = sub_4C5B20(0xDAC);
+    gGame->world = World_New(0xDAC);
     gGame->unkE4 = 0;
     GameMaterial_Attach(gGame->world);
     gCurrentWorld = gGame->world;
-    sub_4C1780(gGame->world);
+    Debug_Log(gGame->world);
     crt_sprintf(terrain, "%sterrain/terrain", gMissionPath);
     sub_4C5F00(gGame->world, terrain);
     Terrain_Load(gGame->world, terrain);
@@ -425,13 +425,13 @@ void LevelStart(Game *g)
     Texture_BeginList(1.0f, 0xDB840);
     VirModel_RestoreCount();
     crt_sprintf(path, "LOCAL:%s/", mission + 0x244);
-    sub_4CFBD0(path);
-    sub_4CFC00("LOCAL:common/");
+    Model_SetDir(path);
+    Model_SetAnimDir("LOCAL:common/");
     gGame->models = ModelFile_Load(mission + 0x444);
     LoadingScreen_Step(loading, 1);
     crt_sprintf(path2, "LOCAL:%s/", mission + 0x344);
-    sub_4CFBD0(path2);
-    sub_4F0CE0(ModelFile_Load(mission + 0x464));
+    Model_SetDir(path2);
+    Level_SetModels(ModelFile_Load(mission + 0x464));
     LoadingScreen_Step(loading, 1);
     Texture_EndList();
     Texture_SetActiveTMU(-1);
@@ -446,37 +446,37 @@ void LevelStart(Game *g)
     gGame->textures = Resource_Load("LOCAL:common/textures/textures.res", NULL);
     Game_LoadTextures();
     LoadingScreen_Step(loading, 1);
-    sub_46B070();
+    ComputerRes_Load();
     LoadingScreen_Step(loading, 1);
-    sub_4868A0();
+    StatusMessages_Load();
     LoadingScreen_Step(loading, 1);
-    gGame->unk44 = sub_485300(Flow_GetUnk20());
-    gGame->unk4C = sub_4F0CB0(Game_Get());
+    gGame->unk44 = GameScreen_New(Flow_GetUnk20());
+    gGame->unk4C = Level_New(Game_Get());
     LoadingScreen_Step(loading, 1);
     sub_4E6060(0);
-    sub_4E6550(g, "LOCAL:common/sounds/");
-    sub_4E6550(g, "MISSION:sounds/");
+    SoundSys_LoadDefs(g, "LOCAL:common/sounds/");
+    SoundSys_LoadDefs(g, "MISSION:sounds/");
     world = Game_GetWorld();
-    t = sub_4E7D40(Game_Get(), gGame->unk60, world);
+    t = CameraControl_New(Game_Get(), gGame->unk60, world);
     gGame->ref54 = TaskRef_Add(t);
     world = Game_GetWorld();
-    sub_4E7D70(Game_Get(), t, world);
+    CameraControl_AddListener(Game_Get(), t, world);
     gGame->unk48 = NULL;
-    sub_4D2D30(30.0f);
+    BoneObj_SetFrameRate(30.0f);
     if (gUnkC28C61) {
         void *keys = Profile_GetKeys(gUnkC28F80 ? 3 : 0, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f,
                                      0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f,
                                      0x1.2c5f92p-5f, 0x1.2c5f92p-5f);
 
-        sub_4ED5E0(0, Profile_GetKeyCount(keys));
+        InputPort_Setup(0, Profile_GetKeyCount(keys));
         gUnkBC20A0 = 1;
     }
-    sub_4F80E0(Game_SetRaining);
-    sub_437500(gGame->unk60);
-    sub_4EDCC0();
-    sub_4F65B0(gGame->unk60);
-    sub_4F65D0(30);
-    sub_4F65C0(sub_485320(Game_Get()->unk44));
+    RainDynCubeObj_SetCallback(Game_SetRaining);
+    EnvironmentSound_SetListener(gGame->unk60);
+    Lod_SendChanged();
+    CutScene_SetCamera(gGame->unk60);
+    CutScene_SetTicksPerSecond(30);
+    CutScene_SetFilterParent(GameScreen_GetView(Game_Get()->unk44));
     LevelLoad(gMissionPath, 30);
     LoadingScreen_Step(loading, 1);
     for (i = 0; i < 6; i++)
@@ -495,10 +495,10 @@ void LevelStart(Game *g)
             ;
     }
     gGame->music[2] = 0;
-    gGame->music[0] = sub_497450("game_music");
-    gGame->music[1] = sub_497410("game_music");
+    gGame->music[0] = Sound_HashBucket("game_music");
+    gGame->music[1] = Sound_HashName("game_music");
     gGame->music[3] = 0x30;
-    sub_4974A0(gGame->unk100);
+    SoundParams_Init(gGame->unk100);
     Mem_ClearMode();
     LoadingScreen_Delete(loading);
     Flow_PauseEnd();
@@ -584,7 +584,7 @@ void Game_RunHandler(Game *g)
     int ok;
 
     Game_UpdateCheats();
-    if (sub_489450() || Game_CheatKeyPressed(KEY_F12)) {
+    if (LevelFlow_IsComplete() || Game_CheatKeyPressed(KEY_F12)) {
         Mem_PushMode(1);
         loading = LoadingScreen_New(1);
         Mem_PopMode();
@@ -616,7 +616,7 @@ void Game_RunHandler(Game *g)
     if (!g->paused)
         RunChildren(&g->task);
     if (gMusicEnabled)
-        sub_4E6D60(g->music);
+        SoundHandle_Play(g->music);
     else
         g->music[2] = 0;
 }
@@ -633,7 +633,7 @@ void Game_UpdateCheats(void)
     int i, ammo;
 
     Task_ClearPair(&total, &unused, Flow_GetType(1));
-    Task_ClearPair(&redraw, &unused, sub_4E75B0(Screen_GetDrawEvent()));
+    Task_ClearPair(&redraw, &unused, Screen_GetType(Screen_GetDrawEvent()));
     if (total)
         Debug_printf("Time spent redrawing: %.2f%%\n", (double)((long double)redraw / total * 100.0f));
     if (Game_CheatKeyDown(KEY_P) && Game_GetPlayer(0)) {
@@ -642,12 +642,12 @@ void Game_UpdateCheats(void)
             give.id = w[0];
             give.ammo = w[0x648 / 4] > 0 ? w[0x648 / 4] : 0;
             type = Game_GetPlayer(0)->type;
-            fn = gTaskHandlers[sub_46C970()][type];
+            fn = gTaskHandlers[GunPickup_GetEvent()][type];
             if (fn)
                 fn(Game_GetPlayer(0), &give);
         }
         ammo = Script_EvalConst("AMMO_ID_M203");
-        sub_47CE00((char *)Game_GetPlayer(0) + 0x340, ammo, 10);
+        AmmoList_Add((char *)Game_GetPlayer(0) + 0x340, ammo, 10);
     }
     if (Game_CheatKeyPressed(KEY_R))
         Flow_SetRequest(5);
@@ -661,8 +661,8 @@ void LevelQuit(void)
 {
     if (!Mem_GetMode())
         Mem_SetDefaultMode();
-    sub_4E7130();
-    QtaskUpdate();
+    Sound_StopAll();
+    Level_Clear();
     TaskRef_Remove(gGame->ref54);
     if (gGame->unk48)
         Task_Delete(gGame->unk48);
@@ -671,17 +671,17 @@ void LevelQuit(void)
     Resource_Flush(gGame->sprites);
     Game_FreeTextures();
     Resource_Flush(gGame->textures);
-    sub_46B310();
-    sub_4868C0();
+    ComputerRes_Free();
+    StatusMessages_Free();
     if (gRenderFuncs[Model_GetDeinitMethod()])
         gRenderFuncs[Model_GetDeinitMethod()](NULL);
-    sub_4F0CD0();
+    Level_FreeModels();
     SoundFree("MISSION:sounds");
     SoundFree("LOCAL:common/sounds");
-    sub_4D65D0();
+    BoneObj_FreeAll();
     ModelFile_Free(gGame->models);
-    sub_4C5CE0(gGame->world);
-    sub_4C1780(NULL);
+    World_Free(gGame->world);
+    Debug_Log(NULL);
     Alias_Remove("MISSION:");
     gGame = NULL;
 }
@@ -941,7 +941,7 @@ char sub_416AD0(ViewQuery *q, void *item, const Vec3d *pos)
 HOOK(0x416AD0, sub_416AD0);
 
 /* full value inside the offset, fading to 0 over range */
-long double sub_416C90(Falloff *s, void *unused, const Vec3d *pos, float radius)
+long double Game_BlastFalloff(Falloff *s, void *unused, const Vec3d *pos, float radius)
 {
     Vec3d d;
     long double v;
@@ -958,7 +958,7 @@ long double sub_416C90(Falloff *s, void *unused, const Vec3d *pos, float radius)
         return ((long double)s->range - f) * s->max / s->range;
     return 0.0f;
 }
-HOOK(0x416C90, sub_416C90);
+HOOK(0x416C90, Game_BlastFalloff);
 
 Random *Game_GetRandom(void)
 {
@@ -1012,7 +1012,7 @@ void Game_ResetState(void)
         gGame->players[i] = NULL;
     for (i = 0; i < 4; i++)
         gGame->unkD0[i] = 0;
-    t = sub_4F1030(0);
+    t = Task_FindById(0);
     if (gGame->players[0]) {
         TaskRef_Remove(gGame->players[0]);
         gGame->players[0] = NULL;
@@ -1020,9 +1020,9 @@ void Game_ResetState(void)
     if (t)
         gGame->players[0] = TaskRef_Add(t);
     gGame->unk58 = 0;
-    gGame->unk5C = sub_484D40(*gGame->ref54, gGame->unk60);
+    gGame->unk5C = HumanCamera_New(*gGame->ref54, gGame->unk60);
     if (t)
-        sub_484D60(gGame->unk5C, t);
+        HumanCamera_SetHuman(gGame->unk5C, t);
     {
         float music = Profile_GetMusicVolume();
 
@@ -1030,7 +1030,7 @@ void Game_ResetState(void)
     }
     Music_SetSfxVolume(Profile_GetSfxVolume());
     if (!AppContext_GetTerrainLightmapsUsed())
-        Game_DeleteTasksOfType(sub_4F0ED0());
+        Game_DeleteTasksOfType(Level_GetStatic());
 }
 HOOK(0x416D90, Game_ResetState);
 
@@ -1042,7 +1042,7 @@ void Game_DeleteTasksOfType(Task *parent)
         return;
     while (n) {
         next = n->next && n->next->next ? n->next : NULL;
-        if (((Task *)n)->type == sub_4F8FD0())
+        if (((Task *)n)->type == TerrainLightMap_GetType())
             Task_Delete(n);
         else
             Game_DeleteTasksOfType((Task *)n);
@@ -1055,8 +1055,8 @@ void Game_ClearPlayers(void)
 {
     int i;
 
-    if (sub_487180())
-        sub_4868D0(*(int *)(sub_487180() + 0x4E4));
+    if (StatusScreen_Get())
+        StatusMessageScreen_Clear(*(int *)(StatusScreen_Get() + 0x4E4));
     if (*gGame->ref54)
         Task_DeleteChildren(*gGame->ref54);
     for (i = 0; i < 4; i++) {
@@ -1088,15 +1088,15 @@ void LevelRestart(void)
     Flow_PauseBegin();
     Mem_SetDefaultMode();
     loading = LoadingScreen_New(5);
-    sub_4E7130();
-    sub_453270();
+    Sound_StopAll();
+    HumanMonitor_Reset();
     LoadingScreen_Step(loading, 1);
-    sub_4868D0(*(int *)(sub_487180() + 0x4E4));
-    sub_468DD0();
+    StatusMessageScreen_Clear(*(int *)(StatusScreen_Get() + 0x4E4));
+    ComputerLog_Clear();
     LoadingScreen_Step(loading, 1);
-    QtaskUpdate();
+    Level_Clear();
     LoadingScreen_Step(loading, 1);
-    sub_4EDCC0();
+    Lod_SendChanged();
     LevelLoad(gMissionPath, 30);
     LoadingScreen_Step(loading, 1);
     for (i = 0; i < 6; i++)

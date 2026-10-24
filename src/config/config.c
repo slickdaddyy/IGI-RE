@@ -16,20 +16,20 @@ ORIG(0x4B8A80, char *, Script_GetArgString, (void *args, int i, char *buf, int s
 ORIG(0x4B0FD0, void, RenderMode_Push, (int mode));
 ORIG(0x4B0F90, void, RenderMode_Pop, (void));
 ORIG(0x4B13A0, void, Alias_Remove, (const char *name));
-ORIG(0x406220, PlayerProfile *, IsPlayerProfileActive, (void));
-ORIG(0x417090, int, sub_417090, (void));
-ORIG(0x485170, char *, sub_485170, (int mission));
-ORIG(0x48F2C0, int, sub_48F2C0, (void));
-ORIG(0x48F2F0, const char *, sub_48F2F0, (void));
-ORIG(0x4950E0, int, sub_4950E0, (void));
-ORIG(0x491EA0, int, sub_491EA0, (char (*names)[0x100], int max));
-ORIG(0x491CF0, DisplayMode *, sub_491CF0, (void));
-ORIG(0x491980, int, sub_491980, (DisplayMode *mode, int flags, void (*fn)(DisplayMode *mode)));
-ORIG(0x41F2D0, void, sub_41F2D0, (const char *text, int id));
-ORIG(0x41DC20, void, sub_41DC20, (const char *text));
-ORIG(0x41C690, void, sub_41C690, (const char *text, int id));
-ORIG(0x41B870, void, sub_41B870, (const char *text, int id));
-ORIG(0x41B290, void, sub_41B290, (const char *text, int id));
+ORIG(0x406220, PlayerProfile *, Profile_GetActive, (void));
+ORIG(0x417090, int, Mission_GetFirst, (void));
+ORIG(0x485170, char *, Mission_Find, (int mission));
+ORIG(0x48F2C0, int, AppContext_IsGerman, (void));
+ORIG(0x48F2F0, const char *, AppContext_GetCountry, (void));
+ORIG(0x4950E0, int, Direct3D_GetRenderMode, (void));
+ORIG(0x491EA0, int, Display_EnumModes, (char (*names)[0x100], int max));
+ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
+ORIG(0x491980, int, Display_FindModes, (DisplayMode *mode, int flags, void (*fn)(DisplayMode *mode)));
+ORIG(0x41F2D0, void, ListBox_AddItem, (const char *text, int id));
+ORIG(0x41DC20, void, InputBox_SetText, (const char *text));
+ORIG(0x41C690, void, ScrollListBox_AddItem, (const char *text, int id));
+ORIG(0x41B870, void, PictureBox_AddItem, (const char *text, int id));
+ORIG(0x41B290, void, TextBox_AddItem, (const char *text, int id));
 
 #define gScriptEmptyString ((const char *)0x567C74)
 #define gLanguageAliasSet VAR(char, 0x537B90)
@@ -175,14 +175,14 @@ void Config_RegisterScriptSymbols(void)
     for (i = 0; i < NUM_DIFFICULTIES; i++)
         Script_RegisterConstant(gDifficultyNames[i], i);
 
-    RenderMode_Push(sub_4950E0());
-    n = sub_491EA0(names, CONFIG_MAX_DEVICES);
+    RenderMode_Push(Direct3D_GetRenderMode());
+    n = Display_EnumModes(names, CONFIG_MAX_DEVICES);
     gDeviceCount = n;
     for (i = 0; i < n; i++) {
         memcpy(gDevices[i].name, names[i], sizeof(names[i]));
         gDevices[i].mode_count = 0;
     }
-    sub_491980(sub_491CF0(), 8, Config_AddDisplayMode);
+    Display_FindModes(Display_GetMode(), 8, Config_AddDisplayMode);
     RenderMode_Pop();
     gContentControlPassword[0] = 0;
 }
@@ -200,7 +200,7 @@ ScriptValue *GOPlayer(ScriptValue *out, void *data, void *args)
 {
     gProfileCount++;
     last_profile()->remap_count = 0;
-    last_profile()->active_mission = sub_417090();
+    last_profile()->active_mission = Mission_GetFirst();
     Script_GetArgString(args, 0, last_profile()->name, sizeof(last_profile()->name));
     return ret_int(out, 0);
 }
@@ -252,7 +252,7 @@ HOOK(0x403950, GOGfxDisp);
 /* the US build always uses the USA language, other builds never do */
 ScriptValue *GOGameLang(ScriptValue *out, void *data, void *args)
 {
-    if (crt_stricmp(sub_48F2F0(), "USA") == 0) {
+    if (crt_stricmp(AppContext_GetCountry(), "USA") == 0) {
         last_profile()->language = CONFIG_LANG_USA;
     } else {
         last_profile()->language = Script_GetArgInt(args, 0);
@@ -272,8 +272,8 @@ HOOK(0x403AC0, GOGameDiff);
 
 ScriptValue *Config_IsGermany(ScriptValue *out)
 {
-    out->i = sub_48F2C0();
-    out->d = sub_48F2C0();
+    out->i = AppContext_IsGerman();
+    out->d = AppContext_IsGerman();
     out->s = gScriptEmptyString;
     return out;
 }
@@ -281,16 +281,16 @@ HOOK(0x403B30, Config_IsGermany);
 
 ScriptValue *Config_ResetGraphicOptions(ScriptValue *out)
 {
-    IsPlayerProfileActive()->gfx.unk11 = 1;
-    IsPlayerProfileActive()->gfx.unk12 = 1;
-    IsPlayerProfileActive()->gfx.transparency = 1;
-    IsPlayerProfileActive()->gfx.height = 480;
-    IsPlayerProfileActive()->gfx.width = 640;
-    IsPlayerProfileActive()->gfx.depth = 32;
-    IsPlayerProfileActive()->gfx.device_desc[0] = 0;
-    IsPlayerProfileActive()->gfx.device[0] = 0;
-    IsPlayerProfileActive()->gfx.gamma = 1.0f;
-    IsPlayerProfileActive()->gfx.perf_flags = 0;
+    Profile_GetActive()->gfx.unk11 = 1;
+    Profile_GetActive()->gfx.unk12 = 1;
+    Profile_GetActive()->gfx.transparency = 1;
+    Profile_GetActive()->gfx.height = 480;
+    Profile_GetActive()->gfx.width = 640;
+    Profile_GetActive()->gfx.depth = 32;
+    Profile_GetActive()->gfx.device_desc[0] = 0;
+    Profile_GetActive()->gfx.device[0] = 0;
+    Profile_GetActive()->gfx.gamma = 1.0f;
+    Profile_GetActive()->gfx.perf_flags = 0;
     return ret_int(out, 0);
 }
 HOOK(0x403B70, Config_ResetGraphicOptions);
@@ -304,7 +304,7 @@ HOOK(0x403C10, GOContentControlPW);
 
 ScriptValue *Config_GetContentControlPassword(ScriptValue *out)
 {
-    sub_41DC20(gContentControlPassword);
+    InputBox_SetText(gContentControlPassword);
     return ret_int(out, 0);
 }
 HOOK(0x403C70, Config_GetContentControlPassword);
@@ -381,15 +381,15 @@ ScriptValue *Config_GameOptionsInputSetInvertMouse(ScriptValue *out, void *data,
 {
     int invert = Script_GetArgReal(args, 0) == 0.0;
 
-    IsPlayerProfileActive()->invert_mouse = invert;
+    Profile_GetActive()->invert_mouse = invert;
     return ret_int(out, 0);
 }
 HOOK(0x404160, Config_GameOptionsInputSetInvertMouse);
 
 ScriptValue *Config_GameOptionsInputGetInvertMouse(ScriptValue *out)
 {
-    out->i = IsPlayerProfileActive()->invert_mouse == 0;
-    out->d = IsPlayerProfileActive()->invert_mouse == 0;
+    out->i = Profile_GetActive()->invert_mouse == 0;
+    out->d = Profile_GetActive()->invert_mouse == 0;
     out->s = gScriptEmptyString;
     return out;
 }
@@ -399,15 +399,15 @@ ScriptValue *Config_GameOptionsInputSetMouseSensitivity(ScriptValue *out, void *
 {
     float sens = Script_GetArgReal(args, 0);
 
-    IsPlayerProfileActive()->mouse_sensitivity = sens;
+    Profile_GetActive()->mouse_sensitivity = sens;
     return ret_int(out, 0);
 }
 HOOK(0x404230, Config_GameOptionsInputSetMouseSensitivity);
 
 ScriptValue *Config_GameOptionsInputGetMouseSensitivity(ScriptValue *out)
 {
-    out->i = round_x87(IsPlayerProfileActive()->mouse_sensitivity);
-    out->d = IsPlayerProfileActive()->mouse_sensitivity;
+    out->i = round_x87(Profile_GetActive()->mouse_sensitivity);
+    out->d = Profile_GetActive()->mouse_sensitivity;
     out->s = gScriptEmptyString;
     return out;
 }
@@ -417,15 +417,15 @@ ScriptValue *Config_GameOptionsInputSetBloodEnabled(ScriptValue *out, void *data
 {
     char blood = round_x87(Script_GetArgReal(args, 0));
 
-    IsPlayerProfileActive()->blood = blood;
+    Profile_GetActive()->blood = blood;
     return ret_int(out, 0);
 }
 HOOK(0x4042E0, Config_GameOptionsInputSetBloodEnabled);
 
 ScriptValue *Config_GameOptionsInputGetBloodEnabled(ScriptValue *out)
 {
-    out->i = IsPlayerProfileActive()->blood;
-    out->d = IsPlayerProfileActive()->blood;
+    out->i = Profile_GetActive()->blood;
+    out->d = Profile_GetActive()->blood;
     out->s = gScriptEmptyString;
     return out;
 }
@@ -467,7 +467,7 @@ ScriptValue *Config_FillScreenResolutionListBox(ScriptValue *out, void *data, vo
         ConfigDisplayMode *m = &d->modes[i];
 
         crt_sprintf(text, "%dx%dx%d", m->width, m->height, m->depth);
-        sub_41F2D0(text, pack_mode(m));
+        ListBox_AddItem(text, pack_mode(m));
     }
     return ret_int(out, 0);
 }
@@ -529,7 +529,7 @@ ScriptValue *Config_FillRenderDeviceListBox(ScriptValue *out)
     int i;
 
     for (i = 0; i < gDeviceCount; i++)
-        sub_41F2D0(gDevices[i].desc, i);
+        ListBox_AddItem(gDevices[i].desc, i);
     return ret_int(out, 0);
 }
 HOOK(0x4046A0, Config_FillRenderDeviceListBox);
@@ -748,7 +748,7 @@ ScriptValue *Config_FillPlayerProfileListBox(ScriptValue *out)
     int i;
 
     for (i = 0; i < gProfileCount; i++)
-        sub_41F2D0(gProfiles[i].name, i);
+        ListBox_AddItem(gProfiles[i].name, i);
     return ret_int(out, 0);
 }
 HOOK(0x404FA0, Config_FillPlayerProfileListBox);
@@ -792,7 +792,7 @@ ScriptValue *Config_CreateNewPlayerProfile(ScriptValue *out, void *data, void *a
         p->difficulty = Script_GetArgInt(args, 1);
         gActiveProfile = gProfileCount++;
         Script_GetArgString(args, 0, p->name, sizeof(p->name));
-        p->active_mission = sub_417090();
+        p->active_mission = Mission_GetFirst();
     } else {
         Config_ResetProfiles();
         Script_GetArgString(args, 0, gProfiles[0].name, sizeof(gProfiles[0].name));
@@ -811,14 +811,14 @@ void Config_ResetProfiles(void)
     gActiveProfile = 0;
     memcpy(p->name, "Joe", 4);
     gProfileCount = 1;
-    p->active_mission = sub_417090();
+    p->active_mission = Mission_GetFirst();
     p->difficulty = 1;
-    if (crt_stricmp(sub_48F2F0(), "USA") == 0) {
+    if (crt_stricmp(AppContext_GetCountry(), "USA") == 0) {
         p->language = CONFIG_LANG_USA;
         p->blood = 1;
     } else {
-        p->language = sub_48F2C0() != 0;
-        p->blood = sub_48F2C0() == 0;
+        p->language = AppContext_IsGerman() != 0;
+        p->blood = AppContext_IsGerman() == 0;
     }
     Config_ResetGraphicOptions(&unused);
     p->sound.music = 1;
@@ -893,13 +893,13 @@ HOOK(0x405620, Config_GraphicOptionsNumPerfLevels);
 /* missions up to and including the active profile's current one */
 ScriptValue *Config_FillMissionSelectionBox(ScriptValue *out)
 {
-    int id = sub_417090();
+    int id = Mission_GetFirst();
 
     while (id != -1) {
-        char *m = sub_485170(id);
+        char *m = Mission_Find(id);
 
-        sub_41C690(m + MISSION_NAME, id);
-        if (id == IsPlayerProfileActive()->active_mission)
+        ScrollListBox_AddItem(m + MISSION_NAME, id);
+        if (id == Profile_GetActive()->active_mission)
             break;
         id = *(int *)(m + MISSION_NEXT);
     }
@@ -909,12 +909,12 @@ HOOK(0x405660, Config_FillMissionSelectionBox);
 
 ScriptValue *Config_FillMissionPictureBox(ScriptValue *out)
 {
-    int id = sub_417090();
+    int id = Mission_GetFirst();
 
     while (id != -1) {
-        char *m = sub_485170(id);
+        char *m = Mission_Find(id);
 
-        sub_41B870(m + MISSION_PICTURE, id);
+        PictureBox_AddItem(m + MISSION_PICTURE, id);
         id = *(int *)(m + MISSION_NEXT);
     }
     return ret_int(out, 0);
@@ -923,12 +923,12 @@ HOOK(0x4056F0, Config_FillMissionPictureBox);
 
 ScriptValue *Config_FillMissionTextBox(ScriptValue *out)
 {
-    int id = sub_417090();
+    int id = Mission_GetFirst();
 
     while (id != -1) {
-        char *m = sub_485170(id);
+        char *m = Mission_Find(id);
 
-        sub_41B290(m + MISSION_TEXT, id);
+        TextBox_AddItem(m + MISSION_TEXT, id);
         id = *(int *)(m + MISSION_NEXT);
     }
     return ret_int(out, 0);

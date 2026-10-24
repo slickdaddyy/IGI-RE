@@ -201,7 +201,7 @@ def file_fakes(e, open_ret=0x4444):
                                                                             e.read_cstr(e.arg(1)))))
     pyfake(e, 0x4B16D0, "File_Read", 3, before=read)
     pyfake(e, 0x4B1730, "File_Seek", 3)
-    pyfake(e, 0x4B17C0, "sub_4B17C0", 1)
+    pyfake(e, 0x4B17C0, "File_Flush", 1)
     pyfake(e, 0x4B1690, "File_Close", 1)
 
 

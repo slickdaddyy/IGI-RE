@@ -11,7 +11,7 @@ ORIG(0x401860, void, TaskEvent_Set, (uint16_t type, uint8_t index));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x401D30, void, TaskEvent_MapSlot, (uint8_t slot, int bit));
 ORIG(0x401D50, void, TaskEvent_UnmapSlot, (uint8_t slot));
-ORIG(0x48F250, int, sub_48F250, (void));
+ORIG(0x48F250, int, AppContext_GetTerrainLightmapsUsed, (void));
 ORIG(0x4B0B00, void, Pool_Init, (MagicPool *pool, int stride, int count, int index_offset));
 ORIG(0x4B0B70, void, Pool_Free, (MagicPool *pool));
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
@@ -27,13 +27,13 @@ ORIG(0x4B6380, void, Resource_Unload, (const char *path));
 ORIG(0x4B63D0, void, Resource_Flush, (void *res));
 ORIG(0x4B7CF0, void, Palette_Create, (void *palette, int *colors, int unk));
 ORIG(0x4B7D30, void, Palette_Free, (void *palette));
-ORIG(0x4C7560, void, sub_4C7560, (void *world, MagicTask *t));
-ORIG(0x4CE620, void, sub_4CE620, (World *w, int room));
-ORIG(0x4CEA20, uint8_t, sub_4CEA20, (void));
-ORIG(0x4D1220, void, sub_4D1220, (void));
-ORIG(0x4E54E0, void, sub_4E54E0, (void *p));
-ORIG(0x5175A0, void *, sub_5175A0, (const char *path));
-ORIG(0x5177F0, void, sub_5177F0, (void *p));
+ORIG(0x4C7560, void, DynCube_Remove, (void *world, MagicTask *t));
+ORIG(0x4CE620, void, DynCube_UpdateStart, (World *w, int room));
+ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
+ORIG(0x4D1220, void, QCube_Clear, (void));
+ORIG(0x4E54E0, void, CellMask_Free, (void *p));
+ORIG(0x5175A0, void *, TexSet_Load, (const char *path));
+ORIG(0x5177F0, void, TexSet_Free, (void *p));
 
 #define gTaskHandlers ((MagicHandler (*)[0x180])0xA96AE0)
 #define gTaskStack ((MagicNode **)0xAFA6E0)
@@ -133,13 +133,13 @@ void sub_4C5A10(MagicTask *t, void **arg)
     if (n->next) {
         while (n) {
             gTaskStack[gTaskStackTop++] = n->next && n->next->next ? n->next : NULL;
-            h = gTaskHandlers[sub_4CEA20()][((MagicTask *)n)->type];
+            h = gTaskHandlers[World_GetEvent1()][((MagicTask *)n)->type];
             if (h)
                 h(n, arg);
             n = gTaskStack[--gTaskStackTop];
         }
     }
-    sub_4C7560(*arg, t);
+    DynCube_Remove(*arg, t);
 }
 HOOK(0x4C5A10, sub_4C5A10);
 
@@ -163,7 +163,7 @@ void sub_4C5AA0(void)
 }
 HOOK(0x4C5AA0, sub_4C5AA0);
 
-World *sub_4C5B20(int rooms)
+World *World_New(int rooms)
 {
     World *w = Mem_Alloc(sizeof(World), 4);
     WorldRoom *r;
@@ -197,9 +197,9 @@ World *sub_4C5B20(int rooms)
         *(int *)((char *)r + w->pool.index_offset) = w->pool.used;
         w->pool.used++;
         w->rooms[i] = r;
-        sub_4C5C90(w, r, 0, 0x40000000, i);
+        DynCubeNode_Init(w, r, 0, 0x40000000, i);
         w->unkE8[i] = 0;
-        sub_4CE620(w, i);
+        DynCube_UpdateStart(w, i);
         memset(w->unk118[i], 0, sizeof(w->unk118[i]));
         w->unk100[i] = gTaskHandlerDepth;
     }
@@ -209,9 +209,9 @@ World *sub_4C5B20(int rooms)
     Coll_ResetMods();
     return w;
 }
-HOOK(0x4C5B20, sub_4C5B20);
+HOOK(0x4C5B20, World_New);
 
-void sub_4C5C90(World *w, WorldRoom *r, int unk04, int unk00, int index)
+void DynCubeNode_Init(World *w, WorldRoom *r, int unk04, int unk00, int index)
 {
     (void)w;
     r->unk38 = 0x8000;
@@ -223,7 +223,7 @@ void sub_4C5C90(World *w, WorldRoom *r, int unk04, int unk00, int index)
     r->index = index;
     r->unk3C = NULL;
 }
-HOOK(0x4C5C90, sub_4C5C90);
+HOOK(0x4C5C90, DynCubeNode_Init);
 
 static void free_unshared(void **list, const char *shared)
 {
@@ -237,7 +237,7 @@ static void free_unshared(void **list, const char *shared)
     }
 }
 
-void sub_4C5CE0(World *w)
+void World_Free(World *w)
 {
     int i, slot, last, other, tmp;
     char *lastItem;
@@ -252,7 +252,7 @@ void sub_4C5CE0(World *w)
         w->unkDC4 = NULL;
     }
     if (w->texbank) {
-        sub_5177F0(w->texbank);
+        TexSet_Free(w->texbank);
         w->texbank = NULL;
     }
     if (w->palette) {
@@ -268,7 +268,7 @@ void sub_4C5CE0(World *w)
         Resource_Flush(w->unk08);
     if (w->unk0C) {
         Resource_Flush(w->unk0C);
-        sub_4D1220();
+        QCube_Clear();
     }
     if (w->unk04)
         Resource_Flush(w->unk04);
@@ -282,7 +282,7 @@ void sub_4C5CE0(World *w)
     }
     for (i = 0; i < 6; i++) {
         if (w->rooms[i]->unk3C)
-            sub_4E54E0(w->rooms[i]->unk3C);
+            CellMask_Free(w->rooms[i]->unk3C);
         /* inlined pool release: swap the room's slot with the last used one */
         slot = *(int *)((char *)w->rooms[i] + w->pool.index_offset);
         last = --w->pool.used;
@@ -299,7 +299,7 @@ void sub_4C5CE0(World *w)
     Pool_Free(&w->pool);
     Mem_Free(w);
 }
-HOOK(0x4C5CE0, sub_4C5CE0);
+HOOK(0x4C5CE0, World_Free);
 
 /* loads <name>.tex and, when enabled, the <name>.lmp lightmaps */
 void sub_4C5F00(World *w, const char *name)
@@ -315,14 +315,14 @@ void sub_4C5F00(World *w, const char *name)
     strcat(path, ".tex");
     if (Texture_GetTMUs() > 1)
         Texture_SetActiveTMU(0);
-    w->texbank = sub_5175A0(path);
+    w->texbank = TexSet_Load(path);
     if (Texture_GetTMUs() > 1)
         Texture_SetActiveTMU(-1);
     for (i = 0; i < 256; i++)
         colors[i] = i << 16;
     w->palette = Mem_Alloc(0xC, 4);
     Palette_Create(w->palette, colors, 1);
-    if (!sub_48F250())
+    if (!AppContext_GetTerrainLightmapsUsed())
         return;
     strcpy(path, name);
     strcat(path, ".lmp");

@@ -264,21 +264,21 @@ ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x491D40, long double, Display_GetAspect, (void));
 ORIG(0x4950F0, void, Direct3D_MakeMatrix, (D3DMATRIX *out, const float *rot, const float *pos));
 ORIG(0x497E70, void, TransContext_Select, (View *v));
-ORIG(0x49B2D0, void, sub_49B2D0, (const double *pos, float radius));
-ORIG(0x49B4B0, void, sub_49B4B0, (int slot));
-ORIG(0x4A0340, void, sub_4A0340, (ProjVert a, ProjVert b, ProjVert c, float *nearZ, float nearPlane));
+ORIG(0x49B2D0, void, Fog_SetRange, (const double *pos, float radius));
+ORIG(0x49B4B0, void, MeshBatch_Flush, (int slot));
+ORIG(0x4A0340, void, Direct3DRender_ClipTriangleDepth, (ProjVert a, ProjVert b, ProjVert c, float *nearZ, float nearPlane));
 ORIG(0x4B72E0, void *, SortRender_Add, (void (*fn)(void *), int size, float key));
-ORIG(0x4CFCA0, uint8_t, sub_4CFCA0, (void));
+ORIG(0x4CFCA0, uint8_t, Mesh3D_GetEvent4, (void));
 ORIG(0x4CFCB0, int, ModelObj_GetLOD, (ModelObj *o));
 ORIG(0x4D0180, int, Mesh3D_GetSplineMeshLOD, (ModelObj *o));
-ORIG(0x4D03D0, int, sub_4D03D0, (float *v, float radius, void *out));
-ORIG(0x4D0510, int, sub_4D0510, (ModelObj *o, int *inside));
-ORIG(0x4D0790, int, sub_4D0790, (ModelObj *o, int *inside));
-ORIG(0x4D0DE0, void, sub_4D0DE0, (ModelLod *l));
-ORIG(0x4D0E20, void, sub_4D0E20, (ModelLod *l));
-ORIG(0x4D0E50, int, sub_4D0E50, (ModelLod *l));
-ORIG(0x4D0E60, void, sub_4D0E60, (ModelLod *l, int *out));
-ORIG(0x4D0EA0, void, sub_4D0EA0, (ModelLod *l, const int *in));
+ORIG(0x4D03D0, int, Mesh3D_Exclude, (float *v, float radius, void *out));
+ORIG(0x4D0510, int, Mesh3D_ExcludeRigid, (ModelObj *o, int *inside));
+ORIG(0x4D0790, int, Mesh3D_ExcludeSpline, (ModelObj *o, int *inside));
+ORIG(0x4D0DE0, void, ModelLod_ApplyTexAnims, (ModelLod *l));
+ORIG(0x4D0E20, void, ModelLod_RestoreTexAnims, (ModelLod *l));
+ORIG(0x4D0E50, int, ModelLod_GetTexAnimStateSize, (ModelLod *l));
+ORIG(0x4D0E60, void, ModelLod_SaveTexAnimState, (ModelLod *l, int *out));
+ORIG(0x4D0EA0, void, ModelLod_LoadTexAnimState, (ModelLod *l, const int *in));
 
 #define gD3D VAR(IDirect3D7 *, 0x5CA110)
 #define gD3DDevice VAR(IDirect3DDevice7 *, 0x5CA114)
@@ -413,7 +413,7 @@ static void set_fog_at(const Matrix *m, const double *pos, MeshHeader *h)
     p[0] = x + pos[0];
     p[1] = y + pos[1];
     p[2] = z + pos[2];
-    sub_49B2D0(p, h->radius);
+    Fog_SetRange(p, h->radius);
 }
 
 /* Bends v along the spline of o; returns the segment. tmp gets the last two
@@ -529,7 +529,7 @@ void Direct3DRender_SplineNearZ(ModelObj *o, NearZQuery *q)
         c[2] = (vm[8] * dz + vm[7] * dy) + vm[6] * dx;
         radius = o->radius;
     }
-    if (sub_4D03D0(c, radius, NULL))
+    if (Mesh3D_Exclude(c, radius, NULL))
         return;
     zmin = (long double)c[2] - radius;
     if (zmin > q->z || h->type)
@@ -617,7 +617,7 @@ void Direct3DRender_SplineNearZ(ModelObj *o, NearZQuery *q)
 
                 if ((a->clip | b->clip | cc->clip) && !(cc->clip & a->clip & b->clip)
                     && (!(a->z >= best) || !(b->z >= best) || !(cc->z >= best)))
-                    sub_4A0340(*a, *b, *cc, &best, nearPlane);
+                    Direct3DRender_ClipTriangleDepth(*a, *b, *cc, &best, nearPlane);
             }
             if (g->next == 0xFFFF)
                 break;
@@ -634,7 +634,7 @@ void Direct3DRender_InitModels(void)
 
     for (i = 0; i < 3; i++)
         if (gModelSlots[i].used)
-            sub_49B4B0(i);
+            MeshBatch_Flush(i);
 }
 HOOK(0x49C7D0, Direct3DRender_InitModels);
 
@@ -683,7 +683,7 @@ void Direct3DRender_DrawSplineMesh(ModelObj **prim)
     Matrix rot;
     D3DMATRIX mat;
 
-    if (!vm || sub_4D0790(o, inside))
+    if (!vm || Mesh3D_ExcludeSpline(o, inside))
         return;
     lod = Mesh3D_GetSplineMeshLOD(o);
     if (lod == -1)
@@ -853,7 +853,7 @@ void Direct3DRender_DrawSortedFaceGroup_Spline(SplinePrim *p)
         c[0] = ((MeshHeader *)p->lod->mesh->header)->center[0] + p->pos[0];
         c[1] = ((MeshHeader *)p->lod->mesh->header)->center[1] + p->pos[1];
         c[2] = ((MeshHeader *)p->lod->mesh->header)->center[2] + p->pos[2];
-        sub_49B2D0(c, ((MeshHeader *)p->lod->mesh->header)->radius);
+        Fog_SetRange(c, ((MeshHeader *)p->lod->mesh->header)->radius);
     }
     set_alpha_test(g->alpha);
     view_offset(pos, p->pos);
@@ -1082,7 +1082,7 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
         for (;;)
             ;
     }
-    if (sub_4D0510(o, inside))
+    if (Mesh3D_ExcludeRigid(o, inside))
         return;
     lod = ModelObj_GetLOD(o);
     if (!o->layer)
@@ -1093,7 +1093,7 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
     h = (MeshHeader *)ml->mesh->header;
     if (!h->data)
         return;
-    sub_4D0DE0(ml);
+    ModelLod_ApplyTexAnims(ml);
     if (!o->layer)
         select_layer_view(&saved, &tc);
     pos[0] = o->pos[0] - gView.pos[0];
@@ -1132,13 +1132,13 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
                 } else {
                     float gd = ((long double)g->center[2] * vz[2] + (long double)g->center[1] * vz[1])
                                + (long double)g->center[0] * vz[0];
-                    int n = sub_4D0E50(ml);
+                    int n = ModelLod_GetTexAnimStateSize(ml);
                     SortedPrim *p = SortRender_Add((void (*)(void *))Direct3DRender_DrawSortedFaceGroup_Rigid,
                                                    n + sizeof(SortedPrim), gd + depth);
                     int *anim = n ? (int *)(p + 1) : NULL;
 
                     p->anim = anim;
-                    sub_4D0E60(ml, anim);
+                    ModelLod_SaveTexAnimState(ml, anim);
                     fill_prim(p, o, ml, d, g);
                 }
                 if (g->next == 0xFFFF)
@@ -1154,7 +1154,7 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
         if (o->lightmaps && (set = o->lightmaps[lod].set) != NULL) {
             g = d->groups;
             base = d->vbBase;
-            gTaskHandlers[sub_4CFCA0()][o->type](o, NULL);
+            gTaskHandlers[Mesh3D_GetEvent4()][o->type](o, NULL);
             Direct3DRender_UploadLightmapMesh(d, &o->lightmaps[lod]);
             use_state(gD3DListA, gLmStageIdx);
             use_state(gD3DListB, gOpaqueBlendIdx);
@@ -1220,7 +1220,7 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
     }
     if (!o->layer)
         TransContext_Select(&saved);
-    sub_4D0E20(ml);
+    ModelLod_RestoreTexAnims(ml);
 }
 HOOK(0x49DF60, Direct3DRender_DrawRigidMesh);
 
@@ -1271,8 +1271,8 @@ void Direct3DRender_DrawSortedFaceGroup_Rigid(SortedPrim *p)
     Matrix rot;
     D3DMATRIX mat;
 
-    sub_4D0EA0(ml, p->anim);
-    sub_4D0DE0(ml);
+    ModelLod_LoadTexAnimState(ml, p->anim);
+    ModelLod_ApplyTexAnims(ml);
     d = p->mesh;
     use_state(gD3DListA, gTexStageIdx);
     use_state(gD3DListB, gOpaqueBlendIdx);
@@ -1293,7 +1293,7 @@ void Direct3DRender_DrawSortedFaceGroup_Rigid(SortedPrim *p)
     draw_group(d, *d->vb, d->vbBase, ml, g);
     if (!p->layer)
         TransContext_Select(&saved);
-    sub_4D0E20(ml);
+    ModelLod_RestoreTexAnims(ml);
 }
 HOOK(0x49EC70, Direct3DRender_DrawSortedFaceGroup_Rigid);
 

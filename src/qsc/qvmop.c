@@ -108,7 +108,7 @@ ORIG(0x4BCC00, int, Qvm_PopString, (Qvm *vm, char **s, unsigned int *size, int t
 ORIG(0x4BCE40, void, Qvm_PushString, (Qvm *vm, const char *s, int type));
 ORIG(0x4BAB80, const char *, Script_FindSymbol, (const char *name, ScriptSymbol **out));
 ORIG(0x4BABB0, ScriptRef *, Script_RefSymbol, (const char *name));
-ORIG(0x4C10E0, void, sub_4C10E0, (void));
+ORIG(0x4C10E0, void, QvmDis_RegisterOps, (void));
 
 static int Read32(const unsigned char *p)
 {
@@ -553,6 +553,6 @@ HOOK(0x4BECB0, Qvm_OpName);
 
 void sub_4C0250(void)
 {
-    sub_4C10E0();
+    QvmDis_RegisterOps();
 }
 HOOK(0x4C0250, sub_4C0250);

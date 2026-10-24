@@ -10,9 +10,9 @@
 ORIG(0x491D40, long double, Display_GetAspect, (void));
 ORIG(0x4950F0, void, Direct3D_MakeMatrix, (void *out, const Matrix *rot, const Vec3f *pos));
 ORIG(0x497E70, void, TransContext_Select, (TransCtx *ctx));
-ORIG(0x49B2D0, void, sub_49B2D0, (Vec3d *pos, float radius));
-ORIG(0x49B430, void, sub_49B430, (int kind, MeshHeader *h, void *data));
-ORIG(0x49B700, int, sub_49B700, (MeshRender *r, VirModel *model, void *anim, int lod));
+ORIG(0x49B2D0, void, Fog_SetRange, (Vec3d *pos, float radius));
+ORIG(0x49B430, void, MeshBatch_Add, (int kind, MeshHeader *h, void *data));
+ORIG(0x49B700, int, BoneMesh_Skin, (MeshRender *r, VirModel *model, void *anim, int lod));
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4B7450, void, PtrList_Clear, (void *list, int index));
 ORIG(0x4B7470, void *, Chunk_Next, (void *c));
@@ -26,12 +26,12 @@ ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
 ORIG(0x4CFC30, int, Mesh3D_GetDrawRigidMethod, (void));
 ORIG(0x4CFF70, int, Mesh3D_GetBoneMeshLOD, (void *obj));
-ORIG(0x4D03D0, int, sub_4D03D0, (Vec3f *center, float radius, void *out));
-ORIG(0x4D06C0, int, sub_4D06C0, (void *obj, int *clip));
-ORIG(0x4D14D0, uint8_t, sub_4D14D0, (void));
-ORIG(0x4D97E0, uint8_t, sub_4D97E0, (void));
-ORIG(0x4DA180, void, sub_4DA180, (int *a, int *b));
-ORIG(0x4DAA20, int, sub_4DAA20, (int *a));
+ORIG(0x4D03D0, int, Mesh3D_Exclude, (Vec3f *center, float radius, void *out));
+ORIG(0x4D06C0, int, Mesh3D_ExcludeBone, (void *obj, int *clip));
+ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
+ORIG(0x4D97E0, uint8_t, QObj_GetEvent, (void));
+ORIG(0x4DA180, void, Haze_GetVisible, (int *a, int *b));
+ORIG(0x4DAA20, int, Light_GetActive, (int *a));
 
 #define ID_RD3D 0x52443344
 #define ID_VRTX 0x56525458
@@ -187,7 +187,7 @@ void Direct3DRender_DrawBoneMesh(MeshDrawArg *arg)
     float fovH;
     int clip, n, base;
 
-    if (!model || sub_4D06C0(obj, &clip))
+    if (!model || Mesh3D_ExcludeBone(obj, &clip))
         return;
     n = Mesh3D_GetBoneMeshLOD(obj);
     if (obj->layer == 0)
@@ -224,11 +224,11 @@ void Direct3DRender_DrawBoneMesh(MeshDrawArg *arg)
     rot.unk24 = 0;
     Direct3D_MakeMatrix(d3dm, &rot, &pos);
     DEV_SetTransform(gDevice, 1, d3dm);
-    sub_49B2D0(&obj->pos, h->radius);
+    Fog_SetRange(&obj->pos, h->radius);
     if (h->format == 1) {
         r = h->render;
         g = r->unk1C;
-        base = sub_49B700(r, model, obj->anim, n);
+        base = BoneMesh_Skin(r, model, obj->anim, n);
         STATE_SELECT(gStateListA, gStateA0);
         STATE_SELECT(gStateListB, gStateB0);
         STATE_SELECT(gStateListC, gStateC0);
@@ -280,7 +280,7 @@ void Direct3DRender_LoadModel(MeshLoadArg *arg)
         r = arg->header->render;
         r->unk10 = find_data(arg->res, ID_VRTX);
         r->unk14 = find_data(arg->res, ID_REND);
-        sub_49B430(0, arg->header, r->unkC);
+        MeshBatch_Add(0, arg->header, r->unkC);
         break;
     case 1:
         arg->header->render = find_data(arg->res, ID_RD3D);
@@ -294,7 +294,7 @@ void Direct3DRender_LoadModel(MeshLoadArg *arg)
         r->unk14 = find_data(arg->res, ID_VRTX);
         r->unk1C = find_data(arg->res, ID_REND);
         r->unk18 = find_data(arg->res, ID_LTMP);
-        sub_49B430(1, arg->header, r->unk10);
+        MeshBatch_Add(1, arg->header, r->unk10);
         break;
     default:
         Error_Show("Mesh format not supported");
@@ -415,8 +415,8 @@ void RigidDynCubeObj_EnterHandler(RigidObj *obj)
     PlaceArg a;
 
     d.obj = obj;
-    d.unk4 = sub_4DAA20(&d.unk8);
-    sub_4DA180(&d.unkC, &d.unk10);
+    d.unk4 = Light_GetActive(&d.unk8);
+    Haze_GetVisible(&d.unkC, &d.unk10);
     gRenderFuncs[Mesh3D_GetDrawRigidMethod()](&d);
     a.pos = obj->pos;
     a.matrix = obj->matrix;
@@ -713,9 +713,9 @@ void RigidDynCubeObj_OpenD3D(void)
     uint8_t ev;
 
     RigidDynCubeObj_Open();
-    ev = sub_4D14D0();
+    ev = QCube_GetNearClipEvent();
     TaskType_SetHandler(RigidDynCubeObj_GetType(), ev, RigidDynCubeObj_NearZHandler);
-    ev = sub_4D97E0();
+    ev = QObj_GetEvent();
     TaskType_SetHandler(RigidDynCubeObj_GetType(), ev, RigidDynCubeObj_GetSphereHandler);
 }
 HOOK(0x4A1470, RigidDynCubeObj_OpenD3D);
@@ -830,7 +830,7 @@ void RigidDynCubeObj_NearZHandler(RigidObj *obj, NearZArg *arg)
     else
         s = obj->scale[2];
     radius = s * h->radius;
-    if (sub_4D03D0(&pos, radius, NULL))
+    if (Mesh3D_Exclude(&pos, radius, NULL))
         return;
     near = pos.z - radius;
     if (near > arg->minZ)
@@ -913,7 +913,7 @@ void RigidDynCubeObj_NearZHandler(RigidObj *obj, NearZArg *arg)
         arg->minZ = minZ;
     }
     if (obj->attached)
-        EACH_CHILD(obj->attached, sub_4D14D0, arg);
+        EACH_CHILD(obj->attached, QCube_GetNearClipEvent, arg);
 }
 HOOK(0x4A1570, RigidDynCubeObj_NearZHandler);
 

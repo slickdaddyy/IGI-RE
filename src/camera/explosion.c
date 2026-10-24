@@ -56,14 +56,14 @@ ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x450CE0, void, HumanAI_Broadcast, (Noise *noise));
-ORIG(0x47E6F0, uint8_t, sub_47E6F0, (void));
-ORIG(0x47F200, void, sub_47F200, (Explosion *e));
+ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
+ORIG(0x47F200, void, Explosion_Burst, (Explosion *e));
 ORIG(0x4B4770, long double, Random_Float, (void *rng));
 ORIG(0x4B47C0, int, Random_Int, (void *rng, int n));
 ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *obj));
-ORIG(0x4D0D30, void, sub_4D0D30, (void *p));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (void));
-ORIG(0x503C00, void *, SimpointObjGroup_New, (int frames, const char *a, const char *b, float c, float d, float e,
+ORIG(0x4D0D30, void, ModelObj_FreeLodData, (void *p));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
+ORIG(0x503C00, void *, SimpointObjContainer_New, (int frames, const char *a, const char *b, float c, float d, float e,
                                               float f, float *dir, int h));
 
 #define gExplosionType VAR(uint16_t, 0x5C1154)
@@ -80,7 +80,7 @@ static const float kSmokeScale = 0x1.ccccccp-13f;
 
 void FireBall_DeleteHandler(char *f)
 {
-    sub_4D0D30(f + 0xC0);
+    ModelObj_FreeLodData(f + 0xC0);
     DynCube_Remove(Game_GetWorld(), f);
 }
 HOOK(0x480F00, FireBall_DeleteHandler);
@@ -98,7 +98,7 @@ void Explosion_RunHandler(Explosion *e)
         e->timer--;
     if (e->timer || !e->count)
         return;
-    sub_47F200(e);
+    Explosion_Burst(e);
     if (--e->count == 0) {
         Task_Delete(e);
         return;
@@ -141,7 +141,7 @@ Explosion *Explosion_New(Vec3d *pos, int count, int delay, float unk50, float ra
                          int noiseUnk8, float noiseRadius, float *dir, float angle, float speedMin, float speedMax,
                          int unk84)
 {
-    Explosion *e = (Explosion *)Task_New(sub_4F0EE0(), gExplosionType, NULL);
+    Explosion *e = (Explosion *)Task_New(Level_GetDynamic(), gExplosionType, NULL);
     float v[3];
 
     e->pos = *pos;
@@ -166,7 +166,7 @@ Explosion *Explosion_New(Vec3d *pos, int count, int delay, float unk50, float ra
     e->speedMax = speedMax;
     e->unk68 = unk68;
     e->unk6C = unk6C;
-    if (burn && *burn && gTaskHandlers[sub_47E6F0()][(*burn)->type]) {
+    if (burn && *burn && gTaskHandlers[BulletHole_GetEvent()][(*burn)->type]) {
         BurnMsg msg;
         Task *t = *burn;
 
@@ -174,13 +174,13 @@ Explosion *Explosion_New(Vec3d *pos, int count, int delay, float unk50, float ra
         msg.texture = gBurnTexture + 0x18;
         msg.unk4 = 0;
         msg.unkC = burnSize;
-        gTaskHandlers[sub_47E6F0()][t->type](t, &msg);
+        gTaskHandlers[BulletHole_GetEvent()][t->type](t, &msg);
     }
     strcpy(e->sound, sound);
     v[0] = Random_Float(Game_GetRandom()) * kSpin;
     v[1] = Random_Float(Game_GetRandom()) * kSpin;
     v[2] = Random_Float(Game_GetRandom()) * kSpin;
-    e->smoke = SimpointObjGroup_New(0x2D, sprite, NULL, 0x1.f5c29p-1f, 0x1.333334p-1f, 0x1.64ce9ep+5f,
+    e->smoke = SimpointObjContainer_New(0x2D, sprite, NULL, 0x1.f5c29p-1f, 0x1.333334p-1f, 0x1.64ce9ep+5f,
                                     e->radius * kSmokeScale, v, 0);
     if (noiseType != -1) {
         Noise n;

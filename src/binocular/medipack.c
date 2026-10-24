@@ -12,15 +12,15 @@ ORIG(0x413B30, uint8_t, WeaponType_GetSizeEvent2, (void));
 ORIG(0x413B40, uint8_t, WeaponType_GetInitEvent2, (void));
 ORIG(0x460BF0, uint8_t, Human_GetEvent0, (void));
 ORIG(0x460C10, uint8_t, Human_GetEvent1, (void));
-ORIG(0x477BF0, uint16_t, Weapon_GetType, (void));
+ORIG(0x477BF0, uint16_t, Gun_GetType, (void));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B0C60, void *, Mem_Alloc, (int size, int align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
-ORIG(0x4F1FE0, uint8_t, sub_4F1FE0, (void));
-ORIG(0x4FE650, char *, ConfigVar_New, (void *config, const char *name, float value));
-ORIG(0x4FE730, char *, ConfigVar_Find, (void *config, const char *name));
+ORIG(0x4F1FE0, uint8_t, Weapon_GetMoveEvent, (void));
+ORIG(0x4FE650, char *, TagItem_AddReal32, (void *config, const char *name, float value));
+ORIG(0x4FE730, char *, TagItem_Find, (void *config, const char *name));
 
 #define WEAPON_HANDLER_4754C0 ((void *)0x4754C0)
 #define ROCKETPOD_GETARGSIZE ((void *)0x427D70)
@@ -33,9 +33,9 @@ void Medipack_Config(void *unused, ConfigArg *a);
 
 void Medipack_Open(void)
 {
-    gMedipackType = TaskType_New("Medipack", 0x1B0, Weapon_GetType(), 0);
+    gMedipackType = TaskType_New("Medipack", 0x1B0, Gun_GetType(), 0);
     TaskType_SetHandler(gMedipackType, 0, Medipack_Create);
-    TaskType_SetHandler(gMedipackType, sub_4F1FE0(), WEAPON_HANDLER_4754C0);
+    TaskType_SetHandler(gMedipackType, Weapon_GetMoveEvent(), WEAPON_HANDLER_4754C0);
     TaskType_SetHandler(gMedipackType, Human_GetEvent0(), TASK_NOTHING);
     TaskType_SetHandler(gMedipackType, Human_GetEvent1(), TASK_NOTHING);
     TaskType_SetHandler(gMedipackType, WeaponType_GetInitEvent2(), Medipack_ParseArg);
@@ -47,7 +47,7 @@ HOOK(0x470410, Medipack_Open);
 
 void Medipack_Create(char *t, void *arg)
 {
-    HANDLER(0, Weapon_GetType())(t, arg);
+    HANDLER(0, Gun_GetType())(t, arg);
     crt_sprintf(t + 0x104, "WEAPON_ID_MEDIPACK");
 }
 HOOK(0x470500, Medipack_Create);
@@ -73,9 +73,9 @@ void Medipack_Config(void *unused, ConfigArg *a)
         Mem_Free(*(void **)(a->weaponType + 0x6E4));
         *(void **)(a->weaponType + 0x6E4) = NULL;
     }
-    e = ConfigVar_Find(a->config, kName);
+    e = TagItem_Find(a->config, kName);
     if (!e)
-        e = ConfigVar_New(a->config, kName, kDefault.f);
+        e = TagItem_AddReal32(a->config, kName, kDefault.f);
     v = *(uint32_t *)(e + 0x124);
     *(void **)(a->weaponType + 0x6E4) = Mem_Alloc(4, 4);
     **(uint32_t **)(a->weaponType + 0x6E4) = v;

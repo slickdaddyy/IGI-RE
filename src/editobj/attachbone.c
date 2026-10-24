@@ -29,7 +29,7 @@ ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model));
 ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int unk));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
-ORIG(0x4D0950, long double, VirModel_GetRadius2, (void **model, int unk));
+ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model, int unk));
 ORIG(0x4F0F60, void *, Param_Real32x3, (void));
 ORIG(0x4F0F70, void *, Param_Real32x9, (void));
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
@@ -53,7 +53,7 @@ void EditRigidObjAttachedToBone_Create(EditRigidObjAttachedToBone *o)
     o->unk124 = 0;
     memcpy(o->model, "*", 2);
     RigidDynCubeObj_Init(gCurrentWorld, o, NULL);
-    DynCube_Add(o->obj.world, o, &zero, VirModel_GetRadius2(o->obj.model, 2), 2);
+    DynCube_Add(o->obj.world, o, &zero, VirModel_GetRadius(o->obj.model, 2), 2);
 }
 HOOK(0x504AD0, EditRigidObjAttachedToBone_Create);
 

@@ -6,7 +6,7 @@
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
-ORIG(0x504E00, uint8_t, MenuPanel_GetPointerEvent, (void));
+ORIG(0x504E00, uint8_t, MenuItemTask_GetPointerEvent, (void));
 
 #define gMenuItemCommitEvent VAR(uint8_t, 0x54E71C)
 #define gMenuItemSelectEvent VAR(uint8_t, 0x54E71D)
@@ -73,7 +73,7 @@ HOOK(0x505840, MenuItem_Identify);
 
 void MenuItem_ForwardPointer(MenuItem *item, void *arg)
 {
-    CALL_CHILDREN(item, MenuPanel_GetPointerEvent(), arg);
+    CALL_CHILDREN(item, MenuItemTask_GetPointerEvent(), arg);
 }
 HOOK(0x505850, MenuItem_ForwardPointer);
 

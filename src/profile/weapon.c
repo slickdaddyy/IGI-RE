@@ -12,10 +12,10 @@ ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x413BD0, void *, WeaponType_Find, (int id));
-ORIG(0x413DB0, void *, sub_413DB0, (void));
-ORIG(0x413DC0, void *, sub_413DC0, (void));
-ORIG(0x413DD0, void *, sub_413DD0, (void));
-ORIG(0x4D3710, void, sub_4D3710, (void *task, void *arg));
+ORIG(0x413DB0, void *, WeaponType_GetCategoryEnum, (void));
+ORIG(0x413DC0, void *, WeaponType_GetSightEnum, (void));
+ORIG(0x413DD0, void *, WeaponType_GetAmmoEnum, (void));
+ORIG(0x4D3710, void, Task_Nothing, (void *task, void *arg));
 
 /* the task loaded from weapons/weaponconfig.qsc */
 typedef struct WeaponConfigContainer {
@@ -147,7 +147,7 @@ void WeaponConfig_Init(void)
     gWeaponConfigContainerType = TaskType_New("WeaponConfigContainer", sizeof(WeaponConfigContainer),
                                               Task_GetRootType(), 0);
     TaskType_SetHandler(gWeaponConfigContainerType, 0, WeaponConfigContainer_Create);
-    TaskType_SetHandler(gWeaponConfigContainerType, Param_GetChangedEvent(), sub_4D3710);
+    TaskType_SetHandler(gWeaponConfigContainerType, Param_GetChangedEvent(), Task_Nothing);
     TaskType_SetHandler(gWeaponConfigContainerType, Param_GetTableEvent(), WeaponConfigContainer_GetParams);
     gWeaponConfigType = TaskType_New("WeaponConfig", sizeof(WeaponConfig), Task_GetRootType(), 0);
     TaskType_SetHandler(gWeaponConfigType, 0, WeaponConfig_Create);
@@ -166,9 +166,9 @@ void WeaponConfig_Init(void)
     ParamTable_Add(gWeaponConfigParams, &cfg, &cfg.unk130, Param_String256(), 7, NULL);
     ParamTable_Add(gWeaponConfigParams, &cfg, &cfg.unk330, Param_String256(), 7, NULL);
     ParamTable_Add(gWeaponConfigParams, &cfg, &cfg.unk230, Param_String256(), 7, NULL);
-    ParamTable_Add(gWeaponConfigParams, &cfg, &cfg.unk630, Param_EnumInt32(), 7, sub_413DB0());
-    ParamTable_Add(gWeaponConfigParams, &cfg, &cfg.unk634, Param_EnumInt32(), 7, sub_413DC0());
-    ParamTable_Add(gWeaponConfigParams, &cfg, &cfg.unk638, Param_EnumInt32(), 7, sub_413DD0());
+    ParamTable_Add(gWeaponConfigParams, &cfg, &cfg.unk630, Param_EnumInt32(), 7, WeaponType_GetCategoryEnum());
+    ParamTable_Add(gWeaponConfigParams, &cfg, &cfg.unk634, Param_EnumInt32(), 7, WeaponType_GetSightEnum());
+    ParamTable_Add(gWeaponConfigParams, &cfg, &cfg.unk638, Param_EnumInt32(), 7, WeaponType_GetAmmoEnum());
     ParamTable_Add(gWeaponConfigParams, &cfg, &cfg.unk24, Param_Int32(), 7, NULL);
     ParamTable_Add(gWeaponConfigParams, &cfg, &cfg.unk65C, Param_Int32(), 7, NULL);
     ParamTable_Add(gWeaponConfigParams, &cfg, &cfg.unk674, Param_Real32(), 7, NULL);

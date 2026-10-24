@@ -10,7 +10,7 @@
 ORIG(0x4B0E70, int, RenderMode_CreateMethod, (const char *name));
 ORIG(0x4B0F80, int, RenderMode_GetCurrent, (void));
 ORIG(0x4950E0, int, Direct3D_GetRenderMode, (void));
-ORIG(0x516600, void, sub_516600, (void));
+ORIG(0x516600, void, TerrDraw_Init, (void));
 ORIG(0x4B0D60, void, Mem_PushMode, (int mode));
 ORIG(0x4B0D90, void, Mem_PopMode, (void));
 ORIG(0x4B7CF0, void, Palette_Create, (void *palette, int *colors, int unk));
@@ -18,9 +18,9 @@ ORIG(0x4B7D30, void, Palette_Free, (void *palette));
 ORIG(0x4C6160, void, Terrain_LoadLightmaps, (void *terrain));
 ORIG(0x4D2A20, void, QCube_FlushCache, (void));
 ORIG(0x499FF0, int, Float_Log2, (float f));
-ORIG(0x518240, int, sub_518240, (void));
-ORIG(0x512C30, void, sub_512C30, (void));
-ORIG(0x4C1780, void, sub_4C1780, (int unk));
+ORIG(0x518240, int, ViewSlot_GetCurrent, (void));
+ORIG(0x512C30, void, TerrainMesh_DrawD3D, (void));
+ORIG(0x4C1780, void, Debug_Log, (int unk));
 ORIG(0x4DA790, void, Fog_Compute, (float *out, const double *pos, float depth, float scale, void *layers, int count));
 
 /* view space vertex with its screen position and outcode, as
@@ -325,7 +325,7 @@ HOOK(0x50F770, TerrainMesh_UpdateNearZ);
 void TerrainMesh_Init(void)
 {
     gTerrainMeshRenderAll = RenderMode_CreateMethod("TerrainMesh_RenderAll");
-    sub_516600();
+    TerrDraw_Init();
 }
 HOOK(0x50FAC0, TerrainMesh_Init);
 
@@ -442,7 +442,7 @@ static void setup_view(void)
     gTerrainInvSize = kOne.f / (long double)(gQCubeMinSize - 0x40);
     gUnkC31088 = x87_fistp((long double)(gQCubeMinSize + 0x40) * kThreeEighths.d);
     gUnkC28FC0 = gTerrainInvSize * k8Thirds.f;
-    c = sub_518240();
+    c = ViewSlot_GetCurrent();
     nx = -(long double)gViewPos[0];
     py = gViewPos[1];
     pz = gViewPos[2];
@@ -925,7 +925,7 @@ void TerrainMesh_Render(void)
 {
     setup_view();
     if (gTerrainMeshCount && Direct3D_GetRenderMode() == RenderMode_GetCurrent())
-        sub_512C30();
+        TerrainMesh_DrawD3D();
 }
 HOOK(0x511500, TerrainMesh_Render);
 
@@ -991,7 +991,7 @@ void sub_5116D0(TerrainPoly *t)
     rel[2][0] = t->pos[2][0] - cx;
     rel[2][1] = t->pos[2][1] - c[1];
     rel[2][2] = t->pos[2][2] - c[2];
-    sub_4C1780(0);
+    Debug_Log(0);
     if (t->mode == 0) {
         double a;
         long double b;
@@ -1032,7 +1032,7 @@ void sub_5116D0(TerrainPoly *t)
     m = m * kMaxZScale.d;
     if (m >= kOneD.d)
         m = kOneD.d;
-    sub_4C1780((unsigned int)x87_fistp((m * (kOne.f - k) + k) * k255.f) << 24);
+    Debug_Log((unsigned int)x87_fistp((m * (kOne.f - k) + k) * k255.f) << 24);
     for (i = 0; i < 3; i++) {
         long double r, sx, py, q;
         float rhw, sy;

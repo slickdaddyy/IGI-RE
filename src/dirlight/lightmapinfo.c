@@ -39,22 +39,22 @@ ORIG(0x4F0FA0, void *, Param_Int32, (void));
 ORIG(0x4F0FD0, void *, Param_String16, (void));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
-ORIG(0x4CFC70, uint8_t, Lightmap_GetLoadEvent, (void));
-ORIG(0x4CFC90, uint8_t, Lightmap_GetMatchEvent, (void));
+ORIG(0x4CFC70, uint8_t, Mesh3D_GetEvent1, (void));
+ORIG(0x4CFC90, uint8_t, Mesh3D_GetEvent3, (void));
 ORIG(0x4CFCA0, uint8_t, Mesh3D_GetEvent4, (void));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x48F230, int, AppContext_GetLightmapsUsed, (void));
-ORIG(0x4BD070, VertexLights *, sub_4BD070, (LightmapInfo *info));
+ORIG(0x4BD070, VertexLights *, Qvm_GetArgLine, (LightmapInfo *info));
 ORIG(0x497570, void, Scene_Init, (void *scene, int queues));
 ORIG(0x497680, void, Scene_SetRect, (void *scene, const float *rect));
 ORIG(0x4975F0, void, Scene_Free, (void *scene));
-ORIG(0x521040, void, sub_521040, (void));
-ORIG(0x523110, void *, sub_523110, (int unk));
-ORIG(0x5233A0, void, sub_5233A0, (void *p));
-ORIG(0x523450, void, sub_523450, (LightmapInfo *info));
-ORIG(0x523670, void, sub_523670, (VertexLights *vl));
-ORIG(0x5236C0, void, sub_5236C0, (LightmapInfo *info));
-ORIG(0x5237E0, void, sub_5237E0, (Lightmaps *lm));
+ORIG(0x521040, void, Lightmap_FreeBuffers, (void));
+ORIG(0x523110, void *, Hemicube_New, (int unk));
+ORIG(0x5233A0, void, Hemicube_Free, (void *p));
+ORIG(0x523450, void, LightmapInfo_Create, (LightmapInfo *info));
+ORIG(0x523670, void, VertexLights_Free, (VertexLights *vl));
+ORIG(0x5236C0, void, LightmapInfo_Delete, (LightmapInfo *info));
+ORIG(0x5237E0, void, Lightmaps_Free, (Lightmaps *lm));
 ORIG(0x5274C0, uint16_t, Dirlight_GetType, (void));
 /* Lightmap_BuildLod, called through the exe so tests can replace it */
 ORIG(0x523D40, Lightmaps *, BuildLod, (void *lod, int lodIndex, float scale, const char *name, int index, int full,
@@ -119,7 +119,7 @@ void LightmapInfo_Changed(LightmapInfo *info)
     info->unkCC = 0;
     stale |= missing;
     match[0] = info->set;
-    TASK_HANDLER(Lightmap_GetMatchEvent(), parent->type)(parent, match);
+    TASK_HANDLER(Mesh3D_GetEvent3(), parent->type)(parent, match);
     if (match[1] && feq(info->lastScale, info->scale) && !stale && !info->unkDC)
         goto done;
 
@@ -128,17 +128,17 @@ void LightmapInfo_Changed(LightmapInfo *info)
             LightmapRef *r = &info->set->refs[i];
 
             if (r->lightmaps) {
-                sub_5237E0(r->lightmaps);
+                Lightmaps_Free(r->lightmaps);
                 r->lightmaps = NULL;
             }
         }
     if (info->vertexLights) {
-        sub_523670(info->vertexLights);
+        VertexLights_Free(info->vertexLights);
         info->vertexLights = NULL;
     }
     loaded = info->set;
     if (AppContext_GetLightmapsUsed())
-        TASK_HANDLER(Lightmap_GetLoadEvent(), parent->type)(parent, &loaded);
+        TASK_HANDLER(Mesh3D_GetEvent1(), parent->type)(parent, &loaded);
     info->set = loaded;
     if (!loaded)
         goto done;
@@ -180,12 +180,12 @@ done:
     if (info->unk6F || info->unk70) {
         VertexLights *vl;
 
-        info->unkBC = sub_523110(info->unkA4);
+        info->unkBC = Hemicube_New(info->unkA4);
         if (info->vertexLights) {
-            sub_523670(info->vertexLights);
+            VertexLights_Free(info->vertexLights);
             info->vertexLights = NULL;
         }
-        vl = sub_4BD070(info);
+        vl = Qvm_GetArgLine(info);
         info->vertexLights = vl;
         if (!vl) {
             info->vertexLightSize = 0;
@@ -194,7 +194,7 @@ done:
             for (i = 0; i < vl->count; i++)
                 info->vertexLightSize += vl->lights[i].count * 8 + 4;
         }
-        sub_5233A0(info->unkBC);
+        Hemicube_Free(info->unkBC);
         info->unkBC = NULL;
     }
     if (info->unk71)
@@ -361,8 +361,8 @@ void LightmapInfo_Init(void)
 
     type = TaskType_New("LightmapInfo", sizeof(LightmapInfo), Task_GetRootType(), 0, 0);
     gLightmapInfoType = type;
-    TaskType_SetHandler(type, 0, sub_523450);
-    TaskType_SetHandler2(gLightmapInfoType, 3, sub_5236C0);
+    TaskType_SetHandler(type, 0, LightmapInfo_Create);
+    TaskType_SetHandler2(gLightmapInfoType, 3, LightmapInfo_Delete);
     TaskType_SetHandler(gLightmapInfoType, Param_GetChangedEvent(), LightmapInfo_Changed);
     TaskType_SetHandler(gLightmapInfoType, Param_GetTableEvent(), LightmapInfo_GetParams);
     gLightmapInfoParams = ParamTable_New(0x15);
@@ -416,7 +416,7 @@ HOOK(0x526330, LightmapInfo_Init);
 
 void LightmapInfo_Shutdown(void)
 {
-    sub_521040();
+    Lightmap_FreeBuffers();
     Mem_Free(gLightmapBuffer);
     gLightmapBuffer = NULL;
     Scene_Free(gLightmapScene);

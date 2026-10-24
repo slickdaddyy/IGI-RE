@@ -13,11 +13,11 @@ ORIG(0x4CC2A0, void, Coll_Lines, (void *world, void *results, const Vec3d *start
 ORIG(0x4E6B00, void *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (void *sound));
 ORIG(0x4E6C30, void, Sound_SetPos, (void *sound, const Vec3d *pos));
-ORIG(0x4E6C60, void, sub_4E6C60, (void *sound, float unk, float level));
+ORIG(0x4E6C60, void, Sound_SetVolume, (void *sound, float unk, float level));
 ORIG(0x4E7BD0, void, Debug_printf, (const char *fmt, ...));
-ORIG(0x4E8C50, uint16_t, Sound_GetType, (void));
-ORIG(0x4F80F0, long double, sub_4F80F0, (const Vec3d *pos));
-ORIG(0x4F8140, void, sub_4F8140, (void **hits, int *counts, int *n));
+ORIG(0x4E8C50, uint16_t, SoundDefSound_GetType, (void));
+ORIG(0x4F80F0, long double, RainDynCubeObj_IsRainingAt, (const Vec3d *pos));
+ORIG(0x4F8140, void, RainDynCubeObj_GetHits, (void **hits, int *counts, int *n));
 
 /* plays the ambient rain loop and the sounds of the surfaces around the
    listener ("EnvironmentSound", 0x5C bytes) */
@@ -131,7 +131,7 @@ void EnvironmentSound_Reset(EnvSound *t)
         t->sound = NULL;
     }
     t->sound = Sound_Play(t, t->name);
-    sub_4E6C60(t->sound, -1.0f, t->volume);
+    Sound_SetVolume(t->sound, -1.0f, t->volume);
     for (i = 0; i < 4; i++) {
         t->left[i] = 0.0f;
         t->right[i] = 0.0f;
@@ -227,10 +227,10 @@ void EnvironmentSound_UpdateEcho(EnvSound *t)
 }
 HOOK(0x436DA0, EnvironmentSound_UpdateEcho);
 
-/* the rain loop fades in while sub_4F80F0 is non zero at the listener */
+/* the rain loop fades in while RainDynCubeObj_IsRainingAt is non zero at the listener */
 void EnvironmentSound_UpdateAmbient(EnvSound *t)
 {
-    long double r = sub_4F80F0(&gEnvSoundListener->pos);
+    long double r = RainDynCubeObj_IsRainingAt(&gEnvSoundListener->pos);
     float v;
 
     if (EQ_OR_NAN(r, kZeroF)) {
@@ -246,7 +246,7 @@ void EnvironmentSound_UpdateAmbient(EnvSound *t)
     else
         v = kOneF;
     t->volume = v;
-    sub_4E6C60(t->sound, -1.0f, v);
+    Sound_SetVolume(t->sound, -1.0f, v);
     Sound_SetPos(t->sound, &gEnvSoundListener->pos);
 }
 HOOK(0x4370A0, EnvironmentSound_UpdateAmbient);
@@ -274,8 +274,8 @@ void EnvironmentSound_UpdateSurfaces(EnvSound *t)
     int n, i, j, k;
     SoundTask *s;
 
-    sub_4F8140((void **)lists, counts, &n);
-    for (s = Task_FindChild(t, Sound_GetType()); s; s = Task_FindNext(s, Sound_GetType())) {
+    RainDynCubeObj_GetHits((void **)lists, counts, &n);
+    for (s = Task_FindChild(t, SoundDefSound_GetType()); s; s = Task_FindNext(s, SoundDefSound_GetType())) {
         if (s != t->sound)
             s->volume = fade(s->volume - kFade);
     }
@@ -318,7 +318,7 @@ void EnvironmentSound_UpdateSurfaces(EnvSound *t)
         for (k = 0; k < nm; k++) {
             char *m = mats[k];
 
-            for (s = Task_FindChild(t, Sound_GetType()); s; s = Task_FindNext(s, Sound_GetType()))
+            for (s = Task_FindChild(t, SoundDefSound_GetType()); s; s = Task_FindNext(s, SoundDefSound_GetType()))
                 if (!strcmp(m + 0x134, s->name))
                     break;
             if (!s)

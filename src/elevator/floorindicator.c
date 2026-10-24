@@ -5,8 +5,8 @@
 
 #define TASK_NOTHING ((void *)0x4D3710)
 
-ORIG(0x47E6F0, uint8_t, sub_47E6F0, (void));
-ORIG(0x4453E0, void, sub_4453E0, (void *obj));
+ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
+ORIG(0x4453E0, void, Switch_UpdateLocal, (void *obj));
 
 /* a lamp that rides along with an elevator, lit while a script condition holds */
 typedef struct ElevatorFloorIndicator {
@@ -84,7 +84,7 @@ void ElevatorFloorIndicator_Init(void)
     TaskType_SetHandler(gElevatorFloorIndicatorType, Param_GetChangedEvent(), ElevatorFloorIndicator_Changed);
     TaskType_SetHandler(gElevatorFloorIndicatorType, Game_GetEvent9(), TASK_NOTHING);
     TaskType_SetHandler(gElevatorFloorIndicatorType, RigidDynCubeObj_GetEvent4(), ElevatorFloorIndicator_Move);
-    TaskType_SetHandler(gElevatorFloorIndicatorType, sub_47E6F0(), NULL);
+    TaskType_SetHandler(gElevatorFloorIndicatorType, BulletHole_GetEvent(), NULL);
     gElevatorFloorIndicatorParams = ParamTable_New(7);
     ParamTable_Add(gElevatorFloorIndicatorParams, &f, &f.place, Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gElevatorFloorIndicatorParams, &f, &f.placeMatrix, Param_Real32x9(), 7, NULL);
@@ -156,7 +156,7 @@ void ElevatorFloorIndicator_Changed(ElevatorFloorIndicator *f)
     RigidDynCubeObj_SetModel(f, VirModel_Find(f->model));
     DynCube_Move(f->obj.world, f, &f->place, obj_radius(&f->obj));
     f->obj.matrix = f->placeMatrix;
-    sub_4453E0(f);
+    Switch_UpdateLocal(f);
     VarString_Bind(&f->lit, f);
     VarString_Bind(&f->ring, f);
 }

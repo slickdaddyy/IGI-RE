@@ -12,9 +12,9 @@
 #define Elevator_GetMotion ((void *)0x43E290)
 
 ORIG(0x43D960, void, Elevator_UpdatePlace, (void *elevator));
-ORIG(0x5020C0, long double, Graph_GetLength, (int id));
-ORIG(0x502130, int, Graph_GetFloorCount, (int id));
-ORIG(0x502180, long double, Graph_GetFloorHeight, (int id, int floor));
+ORIG(0x5020C0, long double, SplineObj_GetLength, (int id));
+ORIG(0x502130, int, SplineObj_GetWaypointCount, (int id));
+ORIG(0x502180, long double, SplineObj_GetLengthTo, (int id, int floor));
 
 /* a platform moving between the floors of a graph task */
 typedef struct Elevator {
@@ -183,7 +183,7 @@ static int eval_int(VarString *v, Elevator *e, int def)
 
 void Elevator_RunHandler(Elevator *e)
 {
-    int count = Graph_GetFloorCount(e->graph);
+    int count = SplineObj_GetWaypointCount(e->graph);
     float prev = e->height;
     float start, target, below = 0.0f;
     int up = 0, down = 0, move = 1;
@@ -195,7 +195,7 @@ void Elevator_RunHandler(Elevator *e)
         return;
     e->lastTick = Timer_GetTicks();
     CALL_CHILDREN(&e->obj.task, 1);
-    start = Graph_GetFloorHeight(e->graph, e->wanted);
+    start = SplineObj_GetLengthTo(e->graph, e->wanted);
     for (i = 0; i < 10; i++) {
         if (VarString_HasExpr(&e->wantedFloor[i]))
             e->request[i] = (char)round_ll(VarString_EvalReal(&e->wantedFloor[i], e));
@@ -227,7 +227,7 @@ void Elevator_RunHandler(Elevator *e)
     i = 1;
     if (count > 1) {
         for (; i < count; i++) {
-            h = Graph_GetFloorHeight(e->graph, i);
+            h = SplineObj_GetLengthTo(e->graph, i);
             if (h > e->height) {
                 e->floorPos = i - (h - e->height) / (h - below);
                 break;
@@ -238,7 +238,7 @@ void Elevator_RunHandler(Elevator *e)
     if (i == count)
         e->floorPos = count - 1;
 
-    target = Graph_GetFloorHeight(e->graph, e->wanted);
+    target = SplineObj_GetLengthTo(e->graph, e->wanted);
     e->isMoving = e->height < target || e->height > target;
     if (e->isMoving) {
         if (!e->moving) {
@@ -283,10 +283,10 @@ void Elevator_Move(Elevator *e)
 
     if (e->graph == -1)
         return;
-    Graph_GetLength(e->graph);
-    if (!Graph_GetFloorCount(e->graph))
+    SplineObj_GetLength(e->graph);
+    if (!SplineObj_GetWaypointCount(e->graph))
         return;
-    h = Graph_GetFloorHeight(e->graph, e->wanted);
+    h = SplineObj_GetLengthTo(e->graph, e->wanted);
     d = h - e->height;
     a = d >= kZero ? d : -d;
     if (!(a >= kNear)) {

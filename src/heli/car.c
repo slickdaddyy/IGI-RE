@@ -9,14 +9,14 @@
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401BE0, Task *, Task_FindChild, (Task *task, uint16_t type));
-ORIG(0x414E20, void, sub_414E20, (Vec3d *out, void *obj, int point));
+ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int point));
 ORIG(0x414ED0, void, sub_414ED0, (Vec3f *out, void *obj, int point));
 ORIG(0x416920, void *, Game_GetWorld, (void));
-ORIG(0x416C90, long double, sub_416C90, (void *blast, void *obj, Vec3d *pos, float radius, int unk));
-ORIG(0x42EC30, void, sub_42EC30, (Car *c));
-ORIG(0x464250, int, sub_464250, (int a, int b));
-ORIG(0x475300, uint16_t, sub_475300, (void));
-ORIG(0x4896C0, void, sub_4896C0, (void *light, int a, int b, int c));
+ORIG(0x416C90, long double, Game_BlastFalloff, (void *blast, void *obj, Vec3d *pos, float radius, int unk));
+ORIG(0x42EC30, void, Car_ApplyWheelDrop, (Car *c));
+ORIG(0x464250, int, Human_GetMaskType, (int a, int b));
+ORIG(0x475300, uint16_t, StationaryGun_GetType, (void));
+ORIG(0x4896C0, void, AIDetector_Init, (void *light, int a, int b, int c));
 ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Matrix *m, float a));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B7EE0, void, Script_RegisterBool8, (const char *name, char *value));
@@ -29,7 +29,7 @@ ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4ECF50, void, Body_AddForce, (void *body, float *force));
 ORIG(0x4ECF80, void, Body_GetPointVelocity, (Vec3f *out, void *body, Vec3f *point));
-ORIG(0x4EE140, PhysType *, PhysType_Find, (const char *name));
+ORIG(0x4EE140, PhysType *, PhysicsObjType_Find, (const char *name));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1400, void, VarString_Bind, (VarString *v, void *task));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
@@ -37,9 +37,9 @@ ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
 ORIG(0x4F4600, void, Vehicle_ResetControls, (void *v));
 ORIG(0x4F46E0, void, Vehicle_SaveState, (void *v, void **arg));
 ORIG(0x4F4780, void, Vehicle_LoadState, (void *v, void **arg));
-ORIG(0x4F4800, void, sub_4F4800, (void *v));
-ORIG(0x4F4820, void, sub_4F4820, (void *v));
-ORIG(0x4FB700, void, Vehicle_SetPhysType, (void *v, PhysType *phys));
+ORIG(0x4F4800, void, Vehicle_NewParts, (void *v));
+ORIG(0x4F4820, void, Vehicle_DeleteParts, (void *v));
+ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (void *v, PhysType *phys));
 
 #define gCarType VAR(uint16_t, 0x53BDA8)
 #define gCarParams VAR(void *, 0x57BD28)
@@ -67,16 +67,16 @@ void Car_ParamsChanged(Car *c)
         PhysType *phys;
 
         RigidDynCubeObj_SetModel(c, model);
-        phys = PhysType_Find(c->v.name);
+        phys = PhysicsObjType_Find(c->v.name);
         if (phys) {
-            Vehicle_SetPhysType(c, phys);
+            PhysicsObj_SetPhysType(c, phys);
             Vehicle_ResetControls(c);
-            sub_42EC30(c);
+            Car_ApplyWheelDrop(c);
             Car_InitWheels(c);
             c->light_cfg[0] = c->light_params[0] * kDegToRad;
             c->light_cfg[1] = c->light_params[1] * kDegToRad;
             c->light_cfg[2] = c->light_params[2] * kFixed;
-            sub_4896C0(c->light, 1, 4, sub_464250(4, 8));
+            AIDetector_Init(c->light, 1, 4, Human_GetMaskType(4, 8));
         }
     } else if (c->v.name[0] && c->v.name[1] != '*') {
         crt_sprintf(buf, "Model \"%s\" not available", c->v.name);
@@ -89,8 +89,8 @@ void Car_ParamsChanged(Car *c)
     r = radius(c);
     DynCube_Move(Game_GetWorld(), c, &c->v.pos2, r);
     c->v.matrix = c->v.matrix2;
-    sub_4F4820(c);
-    sub_4F4800(c);
+    Vehicle_DeleteParts(c);
+    Vehicle_NewParts(c);
     BROADCAST(c->v.coll->head, Param_GetChangedEvent(), NULL);
     VarString_Bind(&c->vars[0], c);
     VarString_Bind(&c->vars[1], c);
@@ -213,7 +213,7 @@ void Car_Blast(Car *c, char *blast)
     int *kind = *(int **)(blast + 0x18);
 
     if (kind && *kind == 12) {
-        if (fne(sub_416C90(blast, c, &c->v.pos, radius(c), 1), kZero))
+        if (fne(Game_BlastFalloff(blast, c, &c->v.pos, radius(c), 1), kZero))
             c->exploding = 1;
     }
 }
@@ -311,7 +311,7 @@ Task *sub_42FDD0(Car *c)
 {
     Task *coll = c->v.coll;
 
-    return Task_FindChild(coll, sub_475300());
+    return Task_FindChild(coll, StationaryGun_GetType());
 }
 HOOK(0x42FDD0, sub_42FDD0);
 
@@ -319,7 +319,7 @@ HOOK(0x42FDD0, sub_42FDD0);
 void sub_42FDF0(Car *c, Vec3d *pos, Matrix *m)
 {
     *m = c->v.matrix;
-    sub_414E20(pos, c, 8);
+    Model_GetPoint(pos, c, 8);
     pos->x = c->v.pos.x + pos->x;
     pos->y = c->v.pos.y + pos->y;
     pos->z = c->v.pos.z + pos->z;

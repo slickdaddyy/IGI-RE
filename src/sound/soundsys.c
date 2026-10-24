@@ -5,7 +5,7 @@
 #include "sound/sound.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
-ORIG(0x517580, char *, crt_strupr, (char *s));
+ORIG(0x517580, char *, Str_ToUpper, (char *s));
 ORIG(0x4B1420, void, File_ScanDir, (const char *dir, void *fn, void *user));
 ORIG(0x4B1E90, void, Path_GetExtension, (char *out, int size, const char *path));
 ORIG(0x4B1EE0, void, Path_GetDir, (char *out, int size, const char *path));
@@ -519,7 +519,7 @@ void SoundLoad_File(FileInfo *f)
     if (f->isDir)
         return;
     Path_GetExtension(ext, 10, f->path);
-    crt_strupr(ext);
+    Str_ToUpper(ext);
     if (strcmp(ext, ".RES") == 0) {
         Sound_LoadResource(f->path);
         return;
@@ -544,7 +544,7 @@ void SoundFree_File(FileInfo *f)
     if (f->isDir)
         return;
     Path_GetExtension(ext, 10, f->path);
-    crt_strupr(ext);
+    Str_ToUpper(ext);
     if (strcmp(ext, ".RES") == 0) {
         Sound_FreeResource(f->path);
         return;

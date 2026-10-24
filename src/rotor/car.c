@@ -11,8 +11,8 @@ ORIG(0x401780, void, Task_DeleteChildren, (void *task));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401BE0, Task *, Task_FindChild, (Task *task, uint16_t type));
 ORIG(0x401C40, Task *, Task_FindNext, (Task *task, uint16_t type));
-ORIG(0x4028B0, int, Timer_GetTicks, (void));
-ORIG(0x414E20, void, sub_414E20, (Vec3d *out, void *obj, int point));
+ORIG(0x4028B0, int, Flow_GetFrames, (void));
+ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int point));
 ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
 ORIG(0x416890, uint8_t, Game_GetEvent14, (void));
 ORIG(0x4168D0, void *, Game_GetTaskList3, (void));
@@ -21,19 +21,19 @@ ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x426D70, uint16_t, CarDoor_GetType, (void));
 ORIG(0x426D80, void, CarDoor_SetOpen, (Task *door, int open));
-ORIG(0x430D10, void, sub_430D10, (Car *o, int wheel, int joint));
-ORIG(0x42FC80, void, sub_42FC80, (Car *o, void **world));
+ORIG(0x430D10, void, Car_UpdateWheel, (Car *o, int wheel, int joint));
+ORIG(0x42FC80, void, Car_OnWorldEvent1, (Car *o, void **world));
 ORIG(0x42FDC0, uint16_t, Car_GetType, (void));
-ORIG(0x464250, int, sub_464250, (void));
-ORIG(0x46AB20, uint8_t, sub_46AB20, (void));
+ORIG(0x464250, int, Human_GetMaskType, (void));
+ORIG(0x46AB20, uint8_t, ComputerMap_GetSelectEvent, (void));
 ORIG(0x470400, uint16_t, AIStationaryGun_GetType, (void));
 ORIG(0x480FE0, void, Explosion_Spawn, (Vec3d *pos, int a, int b, float c, float d, float e, float f, int g, int h,
                                        int i, const char *sprite, const char *sound, int j, int k, float l, int m));
-ORIG(0x489610, uint8_t, sub_489610, (void));
-ORIG(0x489630, uint8_t, sub_489630, (void));
-ORIG(0x4896C0, void, sub_4896C0, (void *p, int a, int b, int c, int d, int e));
-ORIG(0x489750, void, sub_489750, (void *p, Vec3d *pos, Car *o, int a));
-ORIG(0x489B90, void, sub_489B90, (void *p));
+ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
+ORIG(0x489630, uint8_t, AIDetection_GetEvent2, (void));
+ORIG(0x4896C0, void, AIDetector_Init, (void *p, int a, int b, int c, int d, int e));
+ORIG(0x489750, void, AIDetector_Update, (void *p, Vec3d *pos, Car *o, int a));
+ORIG(0x489B90, void, AIDetection_RemoveRefs, (void *p));
 ORIG(0x4B47C0, int, Random_Int, (void *r, int n));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
@@ -51,14 +51,14 @@ ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *o));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
-ORIG(0x4E6610, uint8_t, sub_4E6610, (void));
+ORIG(0x4E6610, uint8_t, Sound_GetInfoEvent, (void));
 ORIG(0x4ECF50, void, Body_AddForce, (float *body, float *force));
-ORIG(0x4E6AB0, float *, sub_4E6AB0, (int n));
+ORIG(0x4E6AB0, float *, SoundParams_New, (int n));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
-ORIG(0x4EC2C0, void, sub_4EC2C0, (void *a, int n, float k, float *body, Matrix *m, float *v));
-ORIG(0x4EE0E0, uint8_t, MagicDef_GetParseEvent, (void));
-ORIG(0x4EE0F0, uint8_t, MagicDef_GetSizeEvent, (void));
-ORIG(0x4F0EE0, int, sub_4F0EE0, (void));
+ORIG(0x4EC2C0, void, Body_AddAeroForces, (void *a, int n, float k, float *body, Matrix *m, float *v));
+ORIG(0x4EE0E0, uint8_t, PhysicsObjType_GetParseEvent, (void));
+ORIG(0x4EE0F0, uint8_t, PhysicsObjType_GetSizeEvent, (void));
+ORIG(0x4F0EE0, int, Level_GetDynamic, (void));
 ORIG(0x4F0F30, void *, Param_Degrees, (void));
 ORIG(0x4F0F50, void *, Param_Real32, (void));
 ORIG(0x4F0F60, void *, Param_Real32x3, (void));
@@ -78,23 +78,23 @@ ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
-ORIG(0x4F3390, void, sub_4F3390, (int a, const char *name, Vec3d *pos, Matrix *m, float *scale, int *b));
+ORIG(0x4F3390, void, EditRigidObj_New, (int a, const char *name, Vec3d *pos, Matrix *m, float *scale, int *b));
 ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
-ORIG(0x4F40E0, uint8_t, sub_4F40E0, (void));
-ORIG(0x4F4110, uint8_t, sub_4F4110, (void));
-ORIG(0x4F4120, uint8_t, sub_4F4120, (void));
-ORIG(0x4F4130, uint8_t, sub_4F4130, (void));
-ORIG(0x4F4140, uint8_t, sub_4F4140, (void));
+ORIG(0x4F40E0, uint8_t, Vehicle_GetInputInfoEvent, (void));
+ORIG(0x4F4110, uint8_t, Vehicle_GetStateSizeEvent, (void));
+ORIG(0x4F4120, uint8_t, Vehicle_GetSaveEvent, (void));
+ORIG(0x4F4130, uint8_t, Vehicle_GetLoadEvent, (void));
+ORIG(0x4F4140, uint8_t, Vehicle_GetKeysEvent, (void));
 ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
-ORIG(0x4F4600, void, sub_4F4600, (Car *o));
-ORIG(0x4F4640, void, sub_4F4640, (Car *o));
-ORIG(0x4F4660, void, sub_4F4660, (Car *o));
-ORIG(0x4F4680, void, sub_4F4680, (Car *o));
+ORIG(0x4F4600, void, Vehicle_ResetControls, (Car *o));
+ORIG(0x4F4640, void, Vehicle_Free, (Car *o));
+ORIG(0x4F4660, void, Vehicle_RunParts, (Car *o));
+ORIG(0x4F4680, void, Vehicle_Init, (Car *o));
 ORIG(0x4F4820, void, Vehicle_DeleteParts, (Car *o));
-ORIG(0x4F4850, uint8_t, sub_4F4850, (void));
-ORIG(0x4FB700, void, sub_4FB700, (Car *o, MagicDef *def));
-ORIG(0x4FC0E0, void, sub_4FC0E0, (Car *o, float a, float b, float c, void *world, int n, void *arg));
-ORIG(0x4FC7B0, int, sub_4FC7B0, (Car *o));
+ORIG(0x4F4850, uint8_t, Vehicle_GetExplodeEvent, (void));
+ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (Car *o, MagicDef *def));
+ORIG(0x4FC0E0, void, PhysicsObj_Collide, (Car *o, float a, float b, float c, void *world, int n, void *arg));
+ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (Car *o));
 
 #define CAR_PARAMS_CHANGED ((void *)0x42F530)
 #define CAR_HANDLER_42F850 ((void *)0x42F850)
@@ -178,10 +178,10 @@ void Car_GetDefSize(void *unused, int *size);
 
 void Car_RegisterDefHandlers(void)
 {
-    uint8_t ev = MagicDef_GetParseEvent();
+    uint8_t ev = PhysicsObjType_GetParseEvent();
 
     TaskType_SetHandler(Car_GetType(), ev, Car_ParseDef);
-    ev = MagicDef_GetSizeEvent();
+    ev = PhysicsObjType_GetSizeEvent();
     TaskType_SetHandler(Car_GetType(), ev, Car_GetDefSize);
 }
 HOOK(0x42DAC0, Car_RegisterDefHandlers);
@@ -190,7 +190,7 @@ void Car_ParseDef(void *task, DefParseArg *a)
 {
     CarData *d = a->out;
     void *args = a->args;
-    uint8_t ev = MagicDef_GetParseEvent();
+    uint8_t ev = PhysicsObjType_GetParseEvent();
     int i;
 
     gTaskHandlers[ev][Vehicle_GetType()](task, a);
@@ -239,19 +239,19 @@ void Car_Init(void)
     TaskType_SetHandler2(gCarType, 2, Car_Delete);
     TaskType_SetHandler(gCarType, Param_GetTableEvent(), Car_GetParamTable);
     TaskType_SetHandler(gCarType, Param_GetChangedEvent(), CAR_PARAMS_CHANGED);
-    TaskType_SetHandler(gCarType, sub_4E6610(), CAR_HANDLER_42F850);
+    TaskType_SetHandler(gCarType, Sound_GetInfoEvent(), CAR_HANDLER_42F850);
     TaskType_SetHandler(gCarType, Game_GetEvent11(), CAR_HANDLER_42FB40);
     TaskType_SetHandler(gCarType, Game_GetEvent14(), CAR_HANDLER_42FC00);
     TaskType_SetHandler(gCarType, Vehicle_GetControlEvent(), Car_Control);
-    TaskType_SetHandler(gCarType, sub_4F40E0(), CAR_HANDLER_42F870);
-    TaskType_SetHandler(gCarType, sub_4F4110(), CAR_HANDLER_432BD0);
-    TaskType_SetHandler(gCarType, sub_4F4140(), CAR_HANDLER_42F8A0);
-    TaskType_SetHandler(gCarType, sub_4F4130(), CAR_HANDLER_42FA60);
-    TaskType_SetHandler(gCarType, sub_4F4120(), CAR_HANDLER_42FB10);
-    TaskType_SetHandler(gCarType, sub_489610(), CAR_HANDLER_42FC50);
-    TaskType_SetHandler(gCarType, sub_4F4850(), CAR_HANDLER_42FC40);
-    TaskType_SetHandler(gCarType, sub_46AB20(), TASK_HANDLER_4E4280);
-    TaskType_SetHandler(gCarType, sub_489630(), CAR_HANDLER_42FC70);
+    TaskType_SetHandler(gCarType, Vehicle_GetInputInfoEvent(), CAR_HANDLER_42F870);
+    TaskType_SetHandler(gCarType, Vehicle_GetStateSizeEvent(), CAR_HANDLER_432BD0);
+    TaskType_SetHandler(gCarType, Vehicle_GetKeysEvent(), CAR_HANDLER_42F8A0);
+    TaskType_SetHandler(gCarType, Vehicle_GetLoadEvent(), CAR_HANDLER_42FA60);
+    TaskType_SetHandler(gCarType, Vehicle_GetSaveEvent(), CAR_HANDLER_42FB10);
+    TaskType_SetHandler(gCarType, AIDetection_GetEvent0(), CAR_HANDLER_42FC50);
+    TaskType_SetHandler(gCarType, Vehicle_GetExplodeEvent(), CAR_HANDLER_42FC40);
+    TaskType_SetHandler(gCarType, ComputerMap_GetSelectEvent(), TASK_HANDLER_4E4280);
+    TaskType_SetHandler(gCarType, AIDetection_GetEvent2(), CAR_HANDLER_42FC70);
     TaskType_SetHandler(gCarType, World_GetEvent1(), CAR_HANDLER_42FC80);
     TaskType_SetHandler2(gCarType, Level_GetEventDA8(), CAR_HANDLER_42FCE0);
     TaskType_SetHandler2(gCarType, Level_GetEventDAC(), CAR_HANDLER_42FD40);
@@ -292,13 +292,13 @@ void Car_Reset(Car *o)
     RigidDynCubeObj_Init(Game_GetWorld(), o, NULL);
     radius = car_radius(o);
     DynCube_Add(Game_GetWorld(), o, &zero, radius, 2);
-    o->engineParams = sub_4E6AB0(3);
+    o->engineParams = SoundParams_New(3);
     o->engineSound = NULL;
     o->name[0] = 0;
     o->unk754 = 0;
     o->unk750 = 0;
     o->unk758 = 0;
-    sub_4F4680(o);
+    Vehicle_Init(o);
     o->maxThrottle = 0;
     o->unk91D = 0;
     o->lastTick = -1;
@@ -324,9 +324,9 @@ void Car_UpdateExplosion(Car *o);
 
 void Car_Run(Car *o)
 {
-    if (o->lastTick == Timer_GetTicks())
+    if (o->lastTick == Flow_GetFrames())
         return;
-    o->lastTick = Timer_GetTicks();
+    o->lastTick = Flow_GetFrames();
     if (o->wrecked)
         return;
     if (VarString_HasExpr(&o->unk9C8) && (int)x87_round(VarString_EvalReal(&o->unk9C8, o)) == 0) {
@@ -384,7 +384,7 @@ void Car_UpdateExplosion(Car *o)
                     int r = Random_Int(Game_GetRandom(), 30);
                     Vec3d v;
 
-                    sub_414E20(&v, o, *pt);
+                    Model_GetPoint(&v, o, *pt);
                     v.x = v.x + o->pos.x;
                     v.y = v.y + o->pos.y;
                     v.z = v.z + o->pos.z;
@@ -407,12 +407,12 @@ void Car_UpdateExplosion(Car *o)
 
         zero[0] = zero[1] = zero[2] = 0;
         scale[0] = scale[1] = scale[2] = 1.0f;
-        sub_4F3390(sub_4F0EE0(), d->explodeObj, &o->pos, &o->matrix, scale, zero);
+        EditRigidObj_New(Level_GetDynamic(), d->explodeObj, &o->pos, &o->matrix, scale, zero);
         world = Game_GetWorld();
         Task_DeleteChildren(o);
         o->engineSound = NULL;
         Vehicle_DeleteParts(o);
-        sub_42FC80(o, &world);
+        Car_OnWorldEvent1(o, &world);
         o->wrecked = 1;
     }
 }
@@ -441,11 +441,11 @@ void sub_42E870(Car *o)
             o->unkA18.z = o->unkA18.z + kEffectUp;
             o->unkA30 = o->matrix;
             o->unkA88 = 0;
-            sub_489750(o->unkA90, &o->unkA18, o, 1);
+            AIDetector_Update(o->unkA90, &o->unkA18, o, 1);
         }
         if (!o->unk91D && was) {
-            sub_489B90(o->unkA90);
-            sub_4896C0(o->unkA90, 1, 4, sub_464250(), 4, 8);
+            AIDetection_RemoveRefs(o->unkA90);
+            AIDetector_Init(o->unkA90, 1, 4, Human_GetMaskType(), 4, 8);
         }
     }
 }
@@ -453,7 +453,7 @@ HOOK(0x42E870, sub_42E870);
 
 void Car_Delete(Car *o)
 {
-    sub_4F4640(o);
+    Vehicle_Free(o);
     if (!o->wrecked)
         DynCube_Remove(Game_GetWorld(), o);
     QTaskList_Remove(Game_GetTaskList3(), o);
@@ -469,7 +469,7 @@ void Car_Delete(Car *o)
     VarString_Free(&o->unk978);
     VarString_Free(&o->unk9C8);
     QTaskList_Remove(Game_GetTaskList4(), o);
-    sub_489B90(o->unkA90);
+    AIDetection_RemoveRefs(o->unkA90);
 }
 HOOK(0x42E940, Car_Delete);
 
@@ -494,7 +494,7 @@ void Car_Control(Car *o, CarControlArg *arg)
     o->targetSteer = arg->input[0];
     o->unk744 = arg->input[3] < kMinusOne.f || arg->input[3] > kMinusOne.f;
     if (arg->unk0) {
-        sub_4F4660(o);
+        Vehicle_RunParts(o);
         o->unk2ECC = 1;
         Car_Drive(o);
         return;
@@ -504,8 +504,8 @@ void Car_Control(Car *o, CarControlArg *arg)
     o->matrix = o->spawnMatrix;
     *(uint32_t *)&arg->input[1] = 0xBF800000;
     *(uint32_t *)&arg->input[2] = 0xC0000000;
-    sub_4FB700(o, o->def);
-    sub_4F4600(o);
+    PhysicsObj_SetPhysType(o, o->def);
+    Vehicle_ResetControls(o);
     Car_ApplyWheelDrop(o);
     o->throttle = o->maxThrottle;
     o->targetThrottle = o->maxThrottle;
@@ -561,7 +561,7 @@ void Car_Drive(Car *o)
             o->throttle = 0;
     }
     Car_UpdateWheels(o);
-    if (!sub_4FC7B0(o)) {
+    if (!PhysicsObj_IsResting(o)) {
         ctx.car = o;
         if (car_data(o)->unk28) {
             float v[3];
@@ -570,9 +570,9 @@ void Car_Drive(Car *o)
             v[1] = -o->spin[1];
             v[2] = -o->spin[2];
             d = car_data(o);
-            sub_4EC2C0(d->unk2C, d->unk28, kDamp.f, o->body, &o->matrix, v);
+            Body_AddAeroForces(d->unk2C, d->unk28, kDamp.f, o->body, &o->matrix, v);
         }
-        sub_4FC0E0(o, kLift.f, kGripB.f, kGripC.f, Game_GetWorld(), 0xC, &ctx);
+        PhysicsObj_Collide(o, kLift.f, kGripB.f, kGripC.f, Game_GetWorld(), 0xC, &ctx);
     }
     if (o->engineParams) {
         long double p;
@@ -715,7 +715,7 @@ void Car_UpdateWheels(Car *o)
             ct->pos[2] = jp->pos[2];
             ct->pos[2] = (float)(ct->pos[2] + (long double)kWheelUp.f);
             o->unk1B8 = 1;
-            sub_430D10(o, w, j);
+            Car_UpdateWheel(o, w, j);
         }
     }
     if (any) {

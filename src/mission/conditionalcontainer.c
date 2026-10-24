@@ -28,7 +28,7 @@ ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
 ORIG(0x4C5800, uint8_t, RigidDynCubeObj_GetEvent4, (void));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
-ORIG(0x505D40, uint16_t, sub_505D40, (void));
+ORIG(0x505D40, uint16_t, Container_GetType, (void));
 
 #define Handler4E0890 ((void *)0x4E0890)
 #define ConditionalContainer_Activate ((void *)0x487920)
@@ -52,7 +52,7 @@ void ConditionalContainer_Init(void)
 {
     ConditionalContainer c;
 
-    gConditionalContainerType = TaskType_New("ConditionalContainer", sizeof(ConditionalContainer), sub_505D40(), 0, 0);
+    gConditionalContainerType = TaskType_New("ConditionalContainer", sizeof(ConditionalContainer), Container_GetType(), 0, 0);
     TaskType_SetHandler(gConditionalContainerType, 0, ConditionalContainer_Create);
     TaskType_SetHandler2(gConditionalContainerType, 1, ConditionalContainer_Run);
     TaskType_SetHandler2(gConditionalContainerType, 2, ConditionalContainer_Delete);

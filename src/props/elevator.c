@@ -25,11 +25,11 @@ ORIG(0x4F1220, int, Level_GetEventDAC, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1340, void, VarString_Free, (VarString *v));
 ORIG(0x4F1400, void, VarString_Bind, (VarString *v, void *task));
-ORIG(0x4FEC10, void, Graph_GetPoint, (int graph, Matrix *m, Vec3d *pos, char *found, float dist, int unk5,
+ORIG(0x4FEC10, void, SplineObj_GetPoints, (int graph, Matrix *m, Vec3d *pos, char *found, float dist, int unk5,
                                       int unk6, float *offset));
-ORIG(0x5020C0, long double, Graph_GetLength, (int id));
-ORIG(0x502130, int, Graph_GetFloorCount, (int id));
-ORIG(0x502200, void, Graph_GetFloorPos, (Vec3d *out, int id, int floor));
+ORIG(0x5020C0, long double, SplineObj_GetLength, (int id));
+ORIG(0x502130, int, SplineObj_GetWaypointCount, (int id));
+ORIG(0x502200, void, SplineObj_GetWaypointPos, (Vec3d *out, int id, int floor));
 
 /* "Elevator" (0x648 bytes): a platform moving along a graph between floors.
    Field names follow src/elevator. */
@@ -94,7 +94,7 @@ void Elevator_UpdatePlace(Elevator *e)
 
     if (e->graph == -1)
         return;
-    len = Graph_GetLength(e->graph);
+    len = SplineObj_GetLength(e->graph);
     dist = e->height;
     if (dist >= len) {
         dist = len - kTenth;
@@ -105,12 +105,12 @@ void Elevator_UpdatePlace(Elevator *e)
         e->height = 0;
     }
     if (e->unk18C) {
-        int n = Graph_GetFloorCount(e->graph);
+        int n = SplineObj_GetWaypointCount(e->graph);
         Vec3d a, b;
         long double t;
 
-        Graph_GetFloorPos(&a, e->graph, 0);
-        Graph_GetFloorPos(&b, e->graph, n - 1);
+        SplineObj_GetWaypointPos(&a, e->graph, 0);
+        SplineObj_GetWaypointPos(&b, e->graph, n - 1);
         t = e->height / (long double)len;
         e->place.x = (b.x - a.x) * t + a.x;
         e->place.y = (b.y - a.y) * t + a.y;
@@ -119,7 +119,7 @@ void Elevator_UpdatePlace(Elevator *e)
         Matrix m;
         float offset[3] = {0, 0, 0};
 
-        Graph_GetPoint(e->graph, &m, &e->place, &found, dist, 0, 0, offset);
+        SplineObj_GetPoints(e->graph, &m, &e->place, &found, dist, 0, 0, offset);
         if (!found)
             return;
         if (!e->unk18D)
@@ -175,7 +175,7 @@ void Elevator_ParamsChanged(Elevator *e, char *arg)
     VarString_Bind(&e->down, e);
     VarString_Bind(&e->up, e);
     VarString_Bind(&e->move, e);
-    len = Graph_GetLength(e->graph);
+    len = SplineObj_GetLength(e->graph);
     MOV32(e->height, e->unk188);
     if (!(e->unk188 >= kZero))
         e->height = 0;

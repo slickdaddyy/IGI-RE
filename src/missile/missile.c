@@ -23,12 +23,12 @@ ORIG(0x413B10, uint8_t, WeaponType_GetInitEvent, (void));
 ORIG(0x413B20, uint8_t, Weapon_GetFireEvent, (void));
 ORIG(0x4148F0, long double, Vec3d_PitchAngle, (Vec3d v));
 ORIG(0x414950, long double, Vec3d_YawAngle, (Vec3d v));
-ORIG(0x414E20, void, sub_414E20, (Vec3d *out, void *obj, int i));
+ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int i));
 ORIG(0x414ED0, void, sub_414ED0, (Vec3f *out, void *obj, int i));
 ORIG(0x416830, uint8_t, Game_GetEvent7, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x4169D0, void *, Game_AddSprite, (const char *name));
-ORIG(0x480FE0, void, sub_480FE0, (Vec3d *pos, int a, int b, float c, float d, float e, float f, int g, int h,
+ORIG(0x480FE0, void, Explosion_Spawn, (Vec3d *pos, int a, int b, float c, float d, float e, float f, int g, int h,
                                   CollHit *hit, const char *sprite, const char *sound, int i, int j, float k,
                                   int weapon));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -51,23 +51,23 @@ ORIG(0x4B8A80, void, Script_GetArgString, (void *args, int i, char *out, int siz
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4C48D0, void, RigidDynCubeObj_SetModel, (void *obj, void **model));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model));
-ORIG(0x4C6940, void, sub_4C6940, (void *world, void *obj, Vec3d *pos, float radius));
-ORIG(0x4C7140, void, sub_4C7140, (void *world, void *obj, Vec3d *pos, float radius, int n));
-ORIG(0x4C7560, void, sub_4C7560, (void *world, void *obj));
+ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, float radius));
+ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int n));
+ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *obj));
 ORIG(0x4CABF0, void, Coll_DropPoints, (void *world, CollHit *hit, Vec3d *points, int count, double *dz,
                                        int event, CollIgnore *ignore, int flags));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
-ORIG(0x4D9FB0, uint8_t, RigidDynCubeObj_GetMoveEvent, (void));
+ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
 ORIG(0x4E6B00, void *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (void *sound, Vec3d *pos));
-ORIG(0x4EC2C0, void, sub_4EC2C0, (void *parts, int count, float k, void *body, Matrix *m, Vec3f *v));
-ORIG(0x4ECDB0, void, sub_4ECDB0, (void *body));
-ORIG(0x4ECF50, void, sub_4ECF50, (void *body, float *force));
-ORIG(0x4EE0E0, uint8_t, PhysType_GetArgsEvent, (void));
-ORIG(0x4EE0F0, uint8_t, PhysType_GetSizeEvent, (void));
-ORIG(0x4EE140, PhysType *, PhysType_Find, (const char *name));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (void));
+ORIG(0x4EC2C0, void, Body_AddAeroForces, (void *parts, int count, float k, void *body, Matrix *m, Vec3f *v));
+ORIG(0x4ECDB0, void, Body_Update, (void *body));
+ORIG(0x4ECF50, void, Body_AddForce, (void *body, float *force));
+ORIG(0x4EE0E0, uint8_t, PhysicsObjType_GetParseEvent, (void));
+ORIG(0x4EE0F0, uint8_t, PhysicsObjType_GetSizeEvent, (void));
+ORIG(0x4EE140, PhysType *, PhysicsObjType_Find, (const char *name));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 ORIG(0x4F0F70, void *, Param_Real32x9, (void));
 ORIG(0x4F0FD0, void *, Param_String16, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
@@ -76,22 +76,22 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
-ORIG(0x4F4640, void, sub_4F4640, (void *obj));
-ORIG(0x4F4660, void, sub_4F4660, (void *obj));
-ORIG(0x4F4680, void, sub_4F4680, (void *obj));
-ORIG(0x4F4800, void, sub_4F4800, (void *obj));
-ORIG(0x4F4820, void, sub_4F4820, (void *obj));
-ORIG(0x4FB700, void, Vehicle_SetPhysType, (void *obj, PhysType *phys));
-ORIG(0x4FC0E0, void, sub_4FC0E0, (void *obj, float a, float b, float c, void *world, int event, void *msg));
-ORIG(0x4FC7B0, int, sub_4FC7B0, (void *obj));
-ORIG(0x4FC840, uint8_t, sub_4FC840, (void));
-ORIG(0x4FDF00, void *, sub_4FDF00, (void *a, void *world, void *sprite, Vec3f *dir, Vec3f *scale, float *size,
+ORIG(0x4F4640, void, Vehicle_Free, (void *obj));
+ORIG(0x4F4660, void, Vehicle_RunParts, (void *obj));
+ORIG(0x4F4680, void, Vehicle_Init, (void *obj));
+ORIG(0x4F4800, void, Vehicle_NewParts, (void *obj));
+ORIG(0x4F4820, void, Vehicle_DeleteParts, (void *obj));
+ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (void *obj, PhysType *phys));
+ORIG(0x4FC0E0, void, PhysicsObj_Collide, (void *obj, float a, float b, float c, void *world, int event, void *msg));
+ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (void *obj));
+ORIG(0x4FC840, uint8_t, PhysicsObj_GetEvent0, (void));
+ORIG(0x4FDF00, void *, Particle2D_New, (void *a, void *world, void *sprite, Vec3f *dir, Vec3f *scale, float *size,
                                     float b, int c, int d, float e, int f, int g, int h));
-ORIG(0x4FE120, void, sub_4FE120, (void *smoke, Vec3d *pos, Vec3f *color, float size, float a, float b, float c,
+ORIG(0x4FE120, void, Particle2D_Add, (void *smoke, Vec3d *pos, Vec3f *color, float size, float a, float b, float c,
                                   int d, int e));
-ORIG(0x4FE5D0, void, sub_4FE5D0, (void *smoke, int on));
-ORIG(0x4FE6B0, char *, sub_4FE6B0, (void *task, const char *name, const char *def));
-ORIG(0x4FE730, char *, sub_4FE730, (void *task, const char *name));
+ORIG(0x4FE5D0, void, Particle2D_SetAutoDelete, (void *smoke, int on));
+ORIG(0x4FE6B0, char *, TagItem_AddString16, (void *task, const char *name, const char *def));
+ORIG(0x4FE730, char *, TagItem_Find, (void *task, const char *name));
 
 #define gMissileType VAR(uint16_t, 0x53BB8C)
 #define gMissileParams VAR(void *, 0x57BC94)
@@ -148,13 +148,13 @@ void Missile_Open(void)
     TaskType_SetHandler2(gMissileType, 2, Missile_DeleteHandler);
     TaskType_SetHandler(gMissileType, Param_GetTableEvent(), Missile_GetParams);
     TaskType_SetHandler(gMissileType, Param_GetChangedEvent(), Missile_ParamsChanged);
-    TaskType_SetHandler(gMissileType, PhysType_GetArgsEvent(), Missile_ParseArgs);
-    TaskType_SetHandler(gMissileType, PhysType_GetSizeEvent(), Missile_GetSize);
+    TaskType_SetHandler(gMissileType, PhysicsObjType_GetParseEvent(), Missile_ParseArgs);
+    TaskType_SetHandler(gMissileType, PhysicsObjType_GetSizeEvent(), Missile_GetSize);
     TaskType_SetHandler(gMissileType, Weapon_GetFireEvent(), Missile_Fire);
     TaskType_SetHandler(gMissileType, WeaponType_GetInitEvent(), Missile_ReadModelArg);
     TaskType_SetHandler(gMissileType, WeaponType_GetSizeEvent(), Missile_GetModelSize);
     TaskType_SetHandler(gMissileType, Game_GetEvent7(), Missile_CollFilter);
-    TaskType_SetHandler(gMissileType, sub_4FC840(), NULL);
+    TaskType_SetHandler(gMissileType, PhysicsObj_GetEvent0(), NULL);
     TaskType_SetHandler(gMissileType, 12, Missile_UnkHandlerC);
     TaskType_SetHandler(gMissileType, WeaponConfig_GetEvent(), Missile_ConfigWeapon);
     gMissileParams = ParamTable_New(3);
@@ -192,9 +192,9 @@ void Missile_Reset(Missile *m)
     RigidDynCubeObj_Init(Game_GetWorld(), m, NULL);
     scale = max_scale(&m->v);
     radius = VirModel_GetRadius(m->v.model) * scale;
-    sub_4C7140(Game_GetWorld(), m, &zero, radius, 2);
+    DynCube_Add(Game_GetWorld(), m, &zero, radius, 2);
     m->v.name[0] = 0;
-    sub_4F4680(m);
+    Vehicle_Init(m);
     m->v.unk740 = 0;
     m->follow = NULL;
     m->target_task = NULL;
@@ -245,14 +245,14 @@ void Missile_Run(Missile *m)
         Missile_EmitSmoke(m);
     Missile_Move(m);
     Missile_UpdateSound(m);
-    sub_4F4660(m);
+    Vehicle_RunParts(m);
     BROADCAST(m->v.task.head, 1);
     if (m->v.unk1B8) {
         pos = m->v.pos;
         ignore.task = &m->v.task;
         dz = -12288.0;
         Coll_DropPoints(Game_GetWorld(), &hit, &pos, 1, &dz, 0xC, &ignore, -1);
-        sub_480FE0(&pos, 1, 1, 5.0f, 10240.0f, 7168.0f, 6144.0f, 10, 5, &hit, "1009_01_1", "explo_03_l", 0x15, 2,
+        Explosion_Spawn(&pos, 1, 1, 5.0f, 10240.0f, 7168.0f, 6144.0f, 10, 5, &hit, "1009_01_1", "explo_03_l", 0x15, 2,
                    102400.0f, m->unk894);
         Task_Delete(m);
         return;
@@ -309,7 +309,7 @@ void Missile_EmitSmoke(Missile *m)
         break;
     }
     default:
-        sub_414E20(&pos, m, 1);
+        Model_GetPoint(&pos, m, 1);
         pos.x = pos.x + m->v.pos.x;
         pos.y = pos.y + m->v.pos.y;
         pos.z = pos.z + m->v.pos.z;
@@ -331,7 +331,7 @@ void Missile_EmitSmoke(Missile *m)
         fade = round_int((Random_Float(gMissileRandom) * kSmokeSize + kSmokeFade) * m->smoke_size * kThirty);
         a = Random_Float(gMissileRandom) * kTwoPi;
         b = (kHalf - Random_Float(gMissileRandom)) * kSmokeSpin;
-        sub_4FE120(m->smoke, &pos, &color, size, b, a, 1.0f, life, fade);
+        Particle2D_Add(m->smoke, &pos, &color, size, b, a, 1.0f, life, fade);
         pos.x = step.x + pos.x;
         pos.y = step.y + pos.y;
         pos.z = step.z + pos.z;
@@ -440,14 +440,14 @@ HOOK(0x428B60, Missile_SteerTo);
 
 void Missile_DeleteHandler(Missile *m)
 {
-    sub_4F4640(m);
+    Vehicle_Free(m);
     if (m->owner)
         TaskRef_Remove(m->owner);
     if (m->target_task)
         TaskRef_Remove(m->target_task);
     if (m->follow)
         TaskRef_Remove(m->follow);
-    sub_4C7560(Game_GetWorld(), m);
+    DynCube_Remove(Game_GetWorld(), m);
 }
 HOOK(0x428CA0, Missile_DeleteHandler);
 
@@ -504,7 +504,7 @@ void Missile_Move(Missile *m)
         force[3] = 0;
         force[4] = 0;
         force[5] = 0;
-        sub_4ECF50(&m->v.body, force);
+        Body_AddForce(&m->v.body, force);
     }
     {
         long double f = m->fuel - cfg->burn;
@@ -512,7 +512,7 @@ void Missile_Move(Missile *m)
         m->fuel = f;
         m->fuel = 0 > f ? kZero : f;
     }
-    if (!sub_4FC7B0(m)) {
+    if (!PhysicsObj_IsResting(m)) {
         void *world;
         int event;
         struct {
@@ -533,11 +533,11 @@ void Missile_Move(Missile *m)
             v.x = -m->v.body.velocity.x;
             v.y = -m->v.body.velocity.y;
             v.z = -m->v.body.velocity.z;
-            sub_4EC2C0(m->parts, cfg->part_count, 0x1.56e264p-12f, &m->v.body, &m->v.matrix, &v);
+            Body_AddAeroForces(m->parts, cfg->part_count, 0x1.56e264p-12f, &m->v.body, &m->v.matrix, &v);
         }
         event = Game_GetEvent7();
         world = Game_GetWorld();
-        sub_4FC0E0(m, 0x1.64ce9ep+5f, 0x1.e66666p-1f, 0x1.d70a3ep-1f, world, event, &msg);
+        PhysicsObj_Collide(m, 0x1.64ce9ep+5f, 0x1.e66666p-1f, 0x1.d70a3ep-1f, world, event, &msg);
     }
     if (m->v.coll) {
         struct {
@@ -546,7 +546,7 @@ void Missile_Move(Missile *m)
             Missile *m;
         } msg = {&m->v.pos, &m->v.matrix, m};
 
-        BROADCAST(m->v.coll->head, RigidDynCubeObj_GetMoveEvent(), &msg);
+        BROADCAST(m->v.coll->head, MagicObj_GetMoveEvent(), &msg);
     }
 }
 HOOK(0x428D00, Missile_Move);
@@ -559,10 +559,10 @@ void Missile_ParamsChanged(Missile *m)
 
     m->v.matrix2 = m->v.matrix;
     model = VirModel_Find(m->v.name);
-    sub_4F4820(m);
+    Vehicle_DeleteParts(m);
     if (model) {
         RigidDynCubeObj_SetModel(m, model);
-        Vehicle_SetPhysType(m, PhysType_Find(m->v.name));
+        PhysicsObj_SetPhysType(m, PhysicsObjType_Find(m->v.name));
     } else if (m->v.name[0] && m->v.name[1] != '*') {
         crt_sprintf(buf, "Model \"%s\" not available", m->v.name);
         strcpy(name, m->v.name);
@@ -572,8 +572,8 @@ void Missile_ParamsChanged(Missile *m)
     m->v.speed = m->v.unk740;
     scale = max_scale(&m->v);
     radius = VirModel_GetRadius(m->v.model) * scale;
-    sub_4C6940(Game_GetWorld(), m, &m->v.pos2, radius);
-    sub_4F4800(m);
+    DynCube_Move(Game_GetWorld(), m, &m->v.pos2, radius);
+    Vehicle_NewParts(m);
     BROADCAST(m->v.coll->head, Param_GetChangedEvent(), NULL);
 }
 HOOK(0x429540, Missile_ParamsChanged);
@@ -590,7 +590,7 @@ void Missile_ParseArgs(Task *t, void **msg)
     MissileConfig *cfg = msg[0];
     void *args = msg[1];
     int *next = (int *)&msg[2];
-    uint8_t event = PhysType_GetArgsEvent();
+    uint8_t event = PhysicsObjType_GetParseEvent();
 
     ((TaskFn2)TASK_HANDLER(event, Vehicle_GetType()))(t, msg);
     cfg->smoke = Script_GetArgInt(args, (*next)++);
@@ -622,7 +622,7 @@ void Missile_Fire(Task *t, void **msg)
 {
     char *w = msg[8];
 
-    Missile_New(sub_4F0EE0(), msg[0], msg[1], msg[2], msg[5], *(float *)(w + 0x660), msg[6], msg[7],
+    Missile_New(Level_GetDynamic(), msg[0], msg[1], msg[2], msg[5], *(float *)(w + 0x660), msg[6], msg[7],
                 *(char **)(w + 0x6E0), w);
 }
 HOOK(0x4298A0, Missile_Fire);
@@ -652,9 +652,9 @@ void Missile_ConfigWeapon(Task *t, void **msg)
         *(char **)((char *)msg[1] + 0x6E4) = NULL;
     }
     memcpy(buf, "110_02_1", 9);
-    s = sub_4FE730(msg[0], "Missile - Model");
+    s = TagItem_Find(msg[0], "Missile - Model");
     if (!s)
-        s = sub_4FE6B0(msg[0], "Missile - Model", buf);
+        s = TagItem_AddString16(msg[0], "Missile - Model", buf);
     strcpy(buf, s + 0x124);
     *(char **)((char *)msg[1] + 0x6E4) = Mem_Alloc(16, 4);
     memcpy(*(char **)((char *)msg[1] + 0x6E4), buf, 16);
@@ -704,16 +704,16 @@ Missile *Missile_New(void *parent, Task *owner, Task *target, Vec3d *pos, float 
     RigidDynCubeObj_SetModel(m, vm);
     scale = max_scale(&m->v);
     radius = VirModel_GetRadius(m->v.model) * scale;
-    sub_4C6940(Game_GetWorld(), m, pos, radius);
-    phys = PhysType_Find(model);
-    Vehicle_SetPhysType(m, phys);
+    DynCube_Move(Game_GetWorld(), m, pos, radius);
+    phys = PhysicsObjType_Find(model);
+    PhysicsObj_SetPhysType(m, phys);
     m->fuel = ((MissileConfig *)phys->data)->fuel;
     Missile_CopyParts(m);
     strcpy(m->v.name, model);
     m->v.target_speed = 1.0f;
     m->v.speed = 1.0f;
-    sub_4F4820(m);
-    sub_4F4800(m);
+    Vehicle_DeleteParts(m);
+    Vehicle_NewParts(m);
     Missile_InitSmoke(m);
     Missile_StartSound(m);
     cfg = m->v.phys->data;
@@ -747,7 +747,7 @@ Missile *Missile_New(void *parent, Task *owner, Task *target, Vec3d *pos, float 
     m->v.body.velocity.x = matrix[1] * speed * kSpeedScale;
     m->v.body.velocity.y = matrix[4] * speed * kSpeedScale;
     m->v.body.velocity.z = matrix[7] * speed * kSpeedScale;
-    sub_4ECDB0(&m->v.body);
+    Body_Update(&m->v.body);
     m->unk894 = (int)weapon;
     return m;
 }
@@ -789,9 +789,9 @@ void Missile_InitSmoke(Missile *m)
     size[1] = cfg->smoke_spacing;
     k = (cfg->unk130 / cfg->smoke_spacing - kOne) / (m->smoke_size * kThirty);
     world = Game_GetWorld();
-    m->smoke = sub_4FDF00(sub_4F0EE0(), world, (char *)cfg->sprite_handle + 0x18, &dir, &scale, size, 2048000.0f,
+    m->smoke = Particle2D_New(Level_GetDynamic(), world, (char *)cfg->sprite_handle + 0x18, &dir, &scale, size, 2048000.0f,
                           0x1080000, 0, k, 0, 2000, 0);
-    sub_4FE5D0(m->smoke, 1);
+    Particle2D_SetAutoDelete(m->smoke, 1);
     m->smoke_tick = 0;
 }
 HOOK(0x429DC0, Missile_InitSmoke);

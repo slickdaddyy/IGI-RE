@@ -25,7 +25,7 @@ ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x460BE0, uint16_t, Human_GetType, (void));
 ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
 ORIG(0x47CD40, char *, AmmoType_Find, (int id));
-ORIG(0x47CE00, void, Ammo_Add, (void *ammo, int id, int count));
+ORIG(0x47CE00, void, AmmoList_Add, (void *ammo, int id, int count));
 ORIG(0x47CF10, void *, AmmoType_GetEnum, (void));
 ORIG(0x485970, void, StatusMessageShow, (void *owner, const char *text, const char *sprite, const char *unk));
 ORIG(0x4A53B3, int, crt_sprintf, (char *out, const char *fmt, ...));
@@ -59,8 +59,8 @@ ORIG(0x4DCF00, void, Sector_MoveObject, (void *world, void *obj, Vec3d *pos));
 ORIG(0x4E0830, uint16_t, SectorInteriorObject_GetType, (void));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (void *sound, Vec3d *pos));
-ORIG(0x4E7200, void, Sound_Play2D, (const char *name, int a, void *b));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (void));
+ORIG(0x4E7200, void, Sound_PlayDefined, (const char *name, int a, void *b));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 ORIG(0x4F0F70, void *, Param_Real32x9, (void));
 ORIG(0x4F0FB0, void *, Param_Int16, (void));
 ORIG(0x4F0FD0, void *, Param_String16, (void));
@@ -73,7 +73,7 @@ ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
-ORIG(0x4F1E20, void *, Param_Enum, (void));
+ORIG(0x4F1E20, void *, Param_EnumString32, (void));
 
 #define Task_HandlerNothing45F920 ((void *)0x45F920)
 #define ComputerObject_Draw443DC0 ((void *)0x443DC0)
@@ -301,7 +301,7 @@ HOOK(0x46C2B0, GenericPickup_Create);
 void GenericPickup_Run(GenericPickup *t)
 {
     if (t->pickedUp && t->inWorld) {
-        Sound_Play2D("pickup", 0, NULL);
+        Sound_PlayDefined("pickup", 0, NULL);
         generic_remove(t);
         t->inWorld = 0;
     }
@@ -471,7 +471,7 @@ void GunPickup_Init(void)
     gGunPickupParams = ParamTable_New(3);
     ParamTable_Add(gGunPickupParams, &p, &p.pos, Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gGunPickupParams, &p, &p.obj.matrix, Param_Real32x9(), 7, NULL);
-    ParamTable_Add(gGunPickupParams, &p, p.weaponName, Param_Enum(), 7, WeaponType_GetIdEnum());
+    ParamTable_Add(gGunPickupParams, &p, p.weaponName, Param_EnumString32(), 7, WeaponType_GetIdEnum());
 }
 HOOK(0x46CB70, GunPickup_Init);
 
@@ -525,7 +525,7 @@ void GunPickup_Run(GunPickup *t)
         t->pos.z = t->ground.z;
         t->fall = f;
         name = Random_Float(Game_GetRandom()) > kHalf ? "weapondrop_01" : "weapondrop_02";
-        s = Sound_Play(sub_4F0EE0(), name);
+        s = Sound_Play(Level_GetDynamic(), name);
         if (s)
             Sound_SetPos(s, &t->pos);
     }
@@ -606,7 +606,7 @@ void GunPickup_Touch(GunPickup *t, Toucher *by)
         fn(by->task, &msg);
     t->pickedUp = 1;
     crt_sprintf(buf, "PICKEDUPWEAPON%s", WeaponType_Find(t->weapon) + 0x110);
-    StatusMessageShow(sub_4F0EE0(), buf, gScriptEmptyString, gScriptEmptyString);
+    StatusMessageShow(Level_GetDynamic(), buf, gScriptEmptyString, gScriptEmptyString);
 }
 HOOK(0x46D230, GunPickup_Touch);
 
@@ -653,7 +653,7 @@ void AmmoPickup_Init(void)
     gAmmoPickupParams = ParamTable_New(4);
     ParamTable_Add(gAmmoPickupParams, &p, &p.pos, Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gAmmoPickupParams, &p, &p.obj.matrix, Param_Real32x9(), 7, NULL);
-    ParamTable_Add(gAmmoPickupParams, &p, p.ammoName, Param_Enum(), 7, AmmoType_GetEnum());
+    ParamTable_Add(gAmmoPickupParams, &p, p.ammoName, Param_EnumString32(), 7, AmmoType_GetEnum());
     ParamTable_Add(gAmmoPickupParams, &p, &p.count, Param_Int16(), 7, NULL);
 }
 HOOK(0x46D420, AmmoPickup_Init);
@@ -739,7 +739,7 @@ void AmmoPickup_Touch(AmmoPickup *t, Toucher *by)
     if (fn)
         fn(by->task, &msg);
     t->pickedUp = 1;
-    StatusMessageShow(sub_4F0EE0(), "PICKEDUPAMMO", "STATUSSCREEN:ammo.spr", gScriptEmptyString);
+    StatusMessageShow(Level_GetDynamic(), "PICKEDUPAMMO", "STATUSSCREEN:ammo.spr", gScriptEmptyString);
 }
 HOOK(0x46D990, AmmoPickup_Touch);
 
@@ -769,7 +769,7 @@ void AddAmmo_Init(void)
     TaskType_SetHandler(gAddAmmoType, Param_GetTableEvent(), AddAmmo_GetParams);
     TaskType_SetHandler(gAddAmmoType, Param_GetChangedEvent(), AddAmmo_Changed);
     gAddAmmoParams = ParamTable_New(2);
-    ParamTable_Add(gAddAmmoParams, &p, p.ammoName, Param_Enum(), 7, AmmoType_GetEnum());
+    ParamTable_Add(gAddAmmoParams, &p, p.ammoName, Param_EnumString32(), 7, AmmoType_GetEnum());
     ParamTable_Add(gAddAmmoParams, &p, &p.count, Param_Int16(), 7, NULL);
 }
 HOOK(0x46DB40, AddAmmo_Init);
@@ -787,7 +787,7 @@ void AddAmmo_Run(AddAmmo *t)
     char *h = (char *)t->task.parent;
 
     if (TaskType_IsA(((Task *)h)->type, Human_GetType()) && AmmoType_Find(t->ammo))
-        Ammo_Add(h + 0x340, t->ammo, t->count);
+        AmmoList_Add(h + 0x340, t->ammo, t->count);
     Task_Delete(t);
 }
 HOOK(0x46DC40, AddAmmo_Run);

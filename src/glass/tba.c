@@ -10,14 +10,14 @@ ORIG(0x416800, uint8_t, Game_GetEvent4, (void));
 ORIG(0x416810, uint8_t, Game_GetEvent3, (void));
 ORIG(0x416820, uint8_t, Game_GetEvent6, (void));
 ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
-ORIG(0x487180, char *, sub_487180, (void));
-ORIG(0x4871B0, char **, sub_4871B0, (void));
-ORIG(0x4871C0, void, sub_4871C0, (char *user, char *icon));
+ORIG(0x487180, char *, StatusScreen_Get, (void));
+ORIG(0x4871B0, char **, StatusScreen_GetActionSprites, (void));
+ORIG(0x4871C0, void, StatusScreen_DrawActionIcon, (char *user, char *icon));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
-ORIG(0x4F0F00, void *, Param_Enum, (void));
+ORIG(0x4F0F00, void *, Param_DropDownCombo, (void));
 ORIG(0x4F0FB0, void *, Param_Int16, (void));
 ORIG(0x4F1000, void *, Param_Bool8, (void));
-ORIG(0x414E20, void, sub_414E20, (Vec3d *out, void *obj, int point));
+ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int point));
 
 /* "GenericTBA" (0x2A8), an ExplodeObject the player can use, like a Terminal */
 typedef struct GenericTBA {
@@ -68,7 +68,7 @@ void GenericTBA_DrawIcon(GenericTBA *t, char **arg);
 void GenericTBA_Open(void)
 {
     gTBAIcons.count = 10;
-    gTBAIcons.names = sub_4871B0();
+    gTBAIcons.names = StatusScreen_GetActionSprites();
     gTBAType = TaskType_New("GenericTBA", sizeof(GenericTBA), ExplodeObject_GetType(), 0);
     TaskType_SetHandler(gTBAType, 0, GenericTBA_Create);
     TaskType_SetHandler2(gTBAType, 1, GenericTBA_Run);
@@ -87,7 +87,7 @@ void GenericTBA_Open(void)
     ParamTable_Add(gTBAParams, NULL, FIELD(script), Param_VarString(), 7, NULL);
     ParamTable_Add(gTBAParams, NULL, FIELD(anim), Param_Int16(), 7, NULL);
     ParamTable_Add(gTBAParams, NULL, FIELD(use_time), Param_Real32(), 7, NULL);
-    ParamTable_Add(gTBAParams, NULL, FIELD(icon_name), Param_Enum(), 7, &gTBAIcons);
+    ParamTable_Add(gTBAParams, NULL, FIELD(icon_name), Param_DropDownCombo(), 7, &gTBAIcons);
 }
 HOOK(0x447DB0, GenericTBA_Open);
 
@@ -155,14 +155,14 @@ HOOK(0x4481F0, GenericTBA_GetParamsHandler);
 /* looks the icon name up in the 10 entry icon table */
 void GenericTBA_ParamsChanged(GenericTBA *t, void *arg)
 {
-    char *icons = sub_487180();
+    char *icons = StatusScreen_Get();
     uint8_t slot = Param_GetChangedEvent();
     int i;
 
     HANDLER(slot, ExplodeObject_GetType())(t, arg);
     t->icon = NULL;
     if (t->icon_name) {
-        char **names = sub_4871B0();
+        char **names = StatusScreen_GetActionSprites();
 
         for (i = 0; i < 10; i++) {
             if (strcmp(t->icon_name, names[i]) == 0) {
@@ -232,7 +232,7 @@ HOOK(0x4484F0, GenericTBA_Use);
 
 void GenericTBA_DrawIcon(GenericTBA *t, char **arg)
 {
-    sub_4871C0(*arg, t->icon);
+    StatusScreen_DrawActionIcon(*arg, t->icon);
 }
 HOOK(0x448510, GenericTBA_DrawIcon);
 
@@ -259,7 +259,7 @@ HOOK(0x448560, GenericTBA_GetParams);
 void GenericTBA_GetUsePos(GenericTBA *t, Vec3d *pos, Matrix *m)
 {
     *m = t->e.o.matrix;
-    sub_414E20(pos, t, 1);
+    Model_GetPoint(pos, t, 1);
     pos->x = t->e.o.pos.x + pos->x;
     pos->y = t->e.o.pos.y + pos->y;
     pos->z = t->e.o.pos.z + pos->z;

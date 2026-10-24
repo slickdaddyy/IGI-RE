@@ -11,8 +11,8 @@ _Static_assert(sizeof(LoadedFile) == 0x1C, "LoadedFile size");
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4AF8F0, void, List_AddTail, (void *list, void *node));
-ORIG(0x4BADA0, void, Node_Free, (void *node));
-ORIG(0x4B1020, int, File_ExpandAlias, (char *out, const char *path, int index));
+ORIG(0x4BADA0, void, Script_FreeRefBlock, (void *node));
+ORIG(0x4B1020, int, File_ResolvePath, (char *out, const char *path, int index));
 ORIG(0x4B11A0, int, Device_Find, (const char *path));
 
 #define gDevices ((Device *)0x9436B0)
@@ -53,7 +53,7 @@ int File_ParseMode(const char *mode);
 File *File_Open(const char *path, const char *mode)
 {
     int m = File_ParseMode(mode);
-    int next = File_ExpandAlias(gOpenPath, path, 0);
+    int next = File_ResolvePath(gOpenPath, path, 0);
     int dev = Device_Find(gOpenPath);
     File *f;
 
@@ -64,7 +64,7 @@ File *File_Open(const char *path, const char *mode)
             break;
         if (!next)
             return NULL;
-        next = File_ExpandAlias(gOpenPath, path, next);
+        next = File_ResolvePath(gOpenPath, path, next);
         dev = Device_Find(gOpenPath);
     }
     f->device = dev;
@@ -130,11 +130,11 @@ int File_GetError(File *f)
 }
 HOOK(0x4B17A0, File_GetError);
 
-int sub_4B17C0(File *f)
+int File_Flush(File *f)
 {
     return gDevices[f->device].unk34(f->device, f, 0);
 }
-HOOK(0x4B17C0, sub_4B17C0);
+HOOK(0x4B17C0, File_Flush);
 
 int sub_4B17F0(File *f, int arg)
 {
@@ -149,7 +149,7 @@ int File_GetTime(void *filetime, const char *path)
     int dev;
 
     for (;;) {
-        next = File_ExpandAlias(buf, path, next);
+        next = File_ResolvePath(buf, path, next);
         dev = Device_Find(buf);
         if (gDevices[dev].gettime(dev, filetime, AfterDevice(buf)) == 0)
             return 0;
@@ -193,7 +193,7 @@ void *File_Load(const char *path, int *size_out)
         File_Close(f);
         return data;
     }
-    Node_Free(lf);
+    Script_FreeRefBlock(lf);
     Mem_Free(data);
     File_Close(f);
     if (size_out)
@@ -222,11 +222,11 @@ void File_Unload(void *data)
 
     if (gDevices[lf->device].unload) {
         gDevices[lf->device].unload(lf->device, lf);
-        Node_Free(lf);
+        Script_FreeRefBlock(lf);
         return;
     }
     Mem_Free(data);
-    Node_Free(lf);
+    Script_FreeRefBlock(lf);
 }
 HOOK(0x4B1A30, File_Unload);
 
@@ -245,7 +245,7 @@ HOOK(0x4B1A90, File_FindLoaded);
 
 void File_Delete(const char *path)
 {
-    int next = File_ExpandAlias(gDeletePath, path, 0);
+    int next = File_ResolvePath(gDeletePath, path, 0);
     int dev = Device_Find(gDeletePath);
 
     for (;;) {
@@ -254,7 +254,7 @@ void File_Delete(const char *path)
             gDevices[dev].remove(dev, AfterDevice(gDeletePath));
         if (!next)
             return;
-        next = File_ExpandAlias(gDeletePath, path, next);
+        next = File_ResolvePath(gDeletePath, path, next);
         dev = Device_Find(gDeletePath);
     }
 }

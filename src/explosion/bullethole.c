@@ -9,15 +9,15 @@ ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x490370, unsigned int, Timer_GetMs, (void));
-ORIG(0x49A430, void, sub_49A430, (void *mesh, DrawMsg *msg));
-ORIG(0x49A450, void *, sub_49A450, (void *world, void *owner, const Vec3d *pos, const Matrix *m, HoleTri *tris,
+ORIG(0x49A430, void, PolyList_SetPos, (void *mesh, DrawMsg *msg));
+ORIG(0x49A450, void *, PolyList_New, (void *world, void *owner, const Vec3d *pos, const Matrix *m, HoleTri *tris,
                                     int count, int a, int b, int c, int d, int e));
-ORIG(0x49A510, void, sub_49A510, (void *mesh, int a));
+ORIG(0x49A510, void, PolyList_SetUnk98, (void *mesh, int a));
 ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));
 ORIG(0x4B4010, void, Matrix_SetDirection, (Matrix *m, const Vec3f *dir));
 ORIG(0x4CE410, char, Coll_LineOfSight, (void *world, const Vec3d *from, const Vec3d *to, int unk, int unk2,
                                         int flags, int trees, float *vis));
-ORIG(0x4E0810, void, sub_4E0810, (void *mesh, Matrix *m));
+ORIG(0x4E0810, void, SectorObject_SetMatrix, (void *mesh, Matrix *m));
 
 #define gWorld VAR(void *, 0xA44344)
 #define gWhite ((const Vec3f *)0x5408F8)
@@ -173,8 +173,8 @@ static void add_hole(Task *obj, HoleMsg *msg, const Vec3d *pos, const Matrix *m,
     bh->poolItem = item;
     *item = bh;
     bh->obj = obj;
-    bh->mesh = sub_49A450(Game_GetWorld(), bh, pos, m, bh->tris, 0, 0, 0, 1, 0, 0);
-    sub_49A510(bh->mesh, 2);
+    bh->mesh = PolyList_New(Game_GetWorld(), bh, pos, m, bh->tris, 0, 0, 0, 1, 0, 0);
+    PolyList_SetUnk98(bh->mesh, 2);
     bh->count = 1;
     bh->last = 0;
     bh->next = 0;
@@ -248,8 +248,8 @@ void BulletHole_Draw(BulletHole *bh, DrawMsg *msg)
         }
         bh->dirty = 0;
     }
-    sub_49A430(mesh, msg);
-    sub_4E0810(mesh, &msg->matrix);
+    PolyList_SetPos(mesh, msg);
+    SectorObject_SetMatrix(mesh, &msg->matrix);
     HANDLER(4, ((Task *)mesh)->type)(mesh, NULL);
 }
 HOOK(0x47D0B0, BulletHole_Draw);

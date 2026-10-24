@@ -47,7 +47,7 @@ ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x406220, Profile *, Profile_GetActive, (void));
 ORIG(0x414FD0, int, Game_CheatKeyDown, (int key));
 ORIG(0x415020, int, Game_CheatKeyPressed, (int key));
-ORIG(0x46C0A0, void, sub_46C0A0, (int value));
+ORIG(0x46C0A0, void, Computer_SetMapEnabled, (int value));
 ORIG(0x4B0C60, void *, Mem_Alloc, (int size, int align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4B1510, void *, File_Open, (const char *path, const char *mode));
@@ -160,9 +160,9 @@ void HumanPlayerInput_RunHandler(HumanPlayerInput *t)
         }
     }
     if (VarString_HasExpr(t->speed))
-        sub_46C0A0(x87_fistp(VarString_EvalReal(t->speed, t)));
+        Computer_SetMapEnabled(x87_fistp(VarString_EvalReal(t->speed, t)));
     else
-        sub_46C0A0(1);
+        Computer_SetMapEnabled(1);
     msg.unk0 = -1;
     msg.input = input;
     fn = (TaskHandler)TASK_HANDLER(Vehicle_GetControlEvent(), human->type);

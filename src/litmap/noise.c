@@ -3,7 +3,7 @@
 #include "hook.h"
 #include "litmap/litmap.h"
 
-ORIG(0x5034D0, uint16_t, Position_GetType, (void));
+ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 ORIG(0x4F1210, int, Level_GetEventDA8, (void));
 ORIG(0x4F1220, int, Level_GetEventDAC, (void));
 ORIG(0x4F0F70, void *, Param_Real32x9, (void));
@@ -74,7 +74,7 @@ void NoiseQTask_Init(void)
     NoiseQTask t;
     uint16_t type;
 
-    type = TaskType_New("NoiseQTask", sizeof(NoiseQTask), Position_GetType(), 0, 0);
+    type = TaskType_New("NoiseQTask", sizeof(NoiseQTask), EditorRigidObj_GetType(), 0, 0);
     gNoiseQTaskType = type;
     TaskType_SetHandler(type, 0, NoiseQTask_Create);
     TaskType_SetHandler2(gNoiseQTaskType, 1, NoiseQTask_Update);

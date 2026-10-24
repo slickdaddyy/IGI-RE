@@ -12,10 +12,10 @@
 ORIG(0x401BE0, Task *, Task_FindChild, (Task *task, uint16_t type));
 ORIG(0x401C40, Task *, Task_FindNext, (Task *task, uint16_t type));
 ORIG(0x401C80, Task *, Task_FindPrev, (Task *task, uint16_t type));
-ORIG(0x418D70, void, Task_Delete2, (void *task));
+ORIG(0x418D70, void, MenuManager_Free, (void *task));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
-ORIG(0x4B2760, long double, Math_Acos, (float x));
-ORIG(0x4B27D0, long double, Math_Asin, (float x));
+ORIG(0x4B2760, long double, Math_ACosF, (float x));
+ORIG(0x4B27D0, long double, Math_ASinF, (float x));
 ORIG(0x4B32F0, long double, Vec3d_DistanceSq, (const Vec3d *a, const Vec3d *b));
 ORIG(0x4B44D0, void, Quat_SlerpPrepare, (char *flip, float *angle, float *inv_sin, const float *a, const float *b));
 ORIG(0x4B2D00, void, Vec3_ToAngles, (const Vec3f *v, float *pitch, float *yaw));
@@ -34,7 +34,7 @@ ORIG(0x4E4530, void, SplineObjSegment_Setup, (SplineObjSegment *o, Vec3d *from, 
                                               const char *model));
 ORIG(0x4F1030, Task *, Task_FindById, (int id));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
-ORIG(0x501D70, void, sub_501D70, (SplineObjWaypoint *w));
+ORIG(0x501D70, void, SplineObjWaypoint_UpdateAttach, (SplineObjWaypoint *w));
 
 #define gWaypointType VAR(uint16_t, 0xA7A620)
 #define gWorld VAR(void *, 0xA44344)
@@ -378,11 +378,11 @@ void SplineObj_GetPoints(int id, Matrix *m, Vec3d *out, char *found, float dist,
             }
             len = SEG_LEN(seg, i);
             r = x87_sqrt(d1);
-            ang = Math_Acos(((d0 - d1) - len * len) / (r * len * kMinusTwo));
+            ang = Math_ACosF(((d0 - d1) - len * len) / (r * len * kMinusTwo));
             sp = -sp;
             sinA = x87_sin(ang);
             rest = kPi - ang;
-            c = rest - Math_Asin(sinA / sp * r);
+            c = rest - Math_ASinF(sinA / sp * r);
             if (c > kTiny) {
                 t = 1.0f - x87_sin(c) * sp / sinA / len;
             } else {
@@ -424,10 +424,10 @@ void SplineObj_GetPoints(int id, Matrix *m, Vec3d *out, char *found, float dist,
             }
             len = SEG_LEN(seg, i);
             r = x87_sqrt(d0);
-            ang = Math_Acos(((d1 - d0) - len * len) / (r * len * kMinusTwo));
+            ang = Math_ACosF(((d1 - d0) - len * len) / (r * len * kMinusTwo));
             sinA = x87_sin(ang);
             rest = kPi - ang;
-            c = rest - Math_Asin(sinA / sp * r);
+            c = rest - Math_ASinF(sinA / sp * r);
             if (c > kTiny)
                 t = x87_sin(c) * sp / sinA / len;
             else
@@ -571,12 +571,12 @@ void SplineObjWaypoint_Delete(Waypoint *w)
     /* looks for a waypoint below this one, so it finds none */
     w->seg = (SplineObjSegment *)Task_FindChild(&w->task, gWaypointType);
     if (w->seg)
-        Task_Delete2(w->seg);
+        MenuManager_Free(w->seg);
     if (prev) {
         if (next)
             Waypoint_SetupSegment(next, prev, obj);
     } else if (next) {
-        Task_Delete2(next->seg);
+        MenuManager_Free(next->seg);
         next->seg = NULL;
     }
     if (w->inTree)
@@ -823,7 +823,7 @@ void SplineObjWaypoint_Changed(Waypoint *w)
         else
             Waypoint_SetupSegment(w, prev, obj);
     } else if (w->seg) {
-        Task_Delete2(w->seg);
+        MenuManager_Free(w->seg);
         w->seg = NULL;
     }
     if (next && next->seg)
@@ -843,6 +843,6 @@ void SplineObjWaypoint_Changed(Waypoint *w)
         memcpy(&w->seg->unkA8, &obj->unk50, sizeof(Vec3f));
         memcpy(&w->seg->unkB4, &obj->unk5C, sizeof(Vec3f));
     }
-    sub_501D70(w);
+    SplineObjWaypoint_UpdateAttach(w);
 }
 HOOK(0x500EF0, SplineObjWaypoint_Changed);

@@ -51,7 +51,7 @@ ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x416D40, char *, Game_Get, (void));
 ORIG(0x46C060, Task *, Computer_Get, (void));
-ORIG(0x477C20, uint8_t, sub_477C20, (void));
+ORIG(0x477C20, uint8_t, Gun_GetEvent2, (void));
 ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
 ORIG(0x4B0D40, void, Mem_SetDefaultMode, (void));
 ORIG(0x4B0D50, void, Mem_ClearMode, (void));
@@ -73,18 +73,18 @@ ORIG(0x4CDB20, void, Coll_LinesEx, (void *world, CollHit *hits, double *from, do
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4CEC10, void *, VirModel_Find, (const char *name));
-ORIG(0x4D2FB0, void, sub_4D2FB0, (float *out, float *unk, void *anim));
-ORIG(0x4D3210, void, sub_4D3210, (int *out, void *anim));
-ORIG(0x4D38C0, void, sub_4D38C0, (Rot *m, void *anim));
-ORIG(0x4D6110, void, sub_4D6110, (void *anim, int a, int b, int c));
-ORIG(0x4D9610, uint16_t, sub_4D9610, (void));
-ORIG(0x4D9620, void, sub_4D9620, (void *world, void *obj, int a, void *model));
-ORIG(0x4D96F0, void, sub_4D96F0, (void *obj));
+ORIG(0x4D2FB0, void, BoneObj_GetRootMotion, (float *out, float *unk, void *anim));
+ORIG(0x4D3210, void, BoneObj_GetEvents, (int *out, void *anim));
+ORIG(0x4D38C0, void, BoneObj_Update, (Rot *m, void *anim));
+ORIG(0x4D6110, void, Anim_PlayNow, (void *anim, int a, int b, int c));
+ORIG(0x4D9610, uint16_t, BoneDynCubeObj_GetType, (void));
+ORIG(0x4D9620, void, BoneDynCubeObj_Init, (void *world, void *obj, int a, void *model));
+ORIG(0x4D96F0, void, BoneDynCubeObj_Deinit, (void *obj));
 ORIG(0x4E6610, uint8_t, Sound_GetInfoEvent, (void));
-ORIG(0x4E81F0, char *, sub_4E81F0, (void));
-ORIG(0x4EC0E0, void, sub_4EC0E0, (int bone, void *obj, double *pos));
+ORIG(0x4E81F0, char *, Viewport_GetCurrentCamera, (void));
+ORIG(0x4EC0E0, void, AnimTrigger_Fire, (int bone, void *obj, double *pos));
 ORIG(0x4F2060, Task *, WeaponSlots_Get, (Task **slots, int i));
-ORIG(0x4F2310, void, sub_4F2310, (Task *w, double *pos, Rot *m));
+ORIG(0x4F2310, void, Weapon_Move, (Task *w, double *pos, Rot *m));
 
 #define gHumanViewType VAR(uint16_t, 0x5BDC40)
 #define gHumanMaskType VAR(int, 0x5BDC3C)
@@ -113,7 +113,7 @@ HOOK(0x464250, Human_GetMaskType);
 
 void HumanView_Init(void)
 {
-    uint16_t parent = sub_4D9610();
+    uint16_t parent = BoneDynCubeObj_GetType();
 
     gHumanViewType = TaskType_New("HumanView", sizeof(HumanView), parent, 0, 0);
     TaskType_SetHandler(gHumanViewType, 0, HumanView_CreateHandler);
@@ -159,7 +159,7 @@ void HumanView_DeleteHandler(HumanView *v)
 {
     if (v->inWorld) {
         v->inWorld = 0;
-        sub_4D96F0(v);
+        BoneDynCubeObj_Deinit(v);
         DynCube_Remove(Game_GetWorld(), v);
     }
 }
@@ -175,18 +175,18 @@ void HumanView_EnterHandler(HumanView *v, void *arg)
     Rot m;
     int msg;
 
-    if (*(char **)(sub_4E81F0() + 0x54) != cam || **(Human ***)(cam + 0x68) != h || *(int *)(cam + 0xE8) != 1)
+    if (*(char **)(Viewport_GetCurrentCamera() + 0x54) != cam || **(Human ***)(cam + 0x68) != h || *(int *)(cam + 0xE8) != 1)
         return;
     if (Computer_Get())
         return;
     HumanView_ApplyRot(v);
-    gTaskHandlers[4][sub_4D9610()](v, arg);
+    gTaskHandlers[4][BoneDynCubeObj_GetType()](v, arg);
     w = WeaponSlots_Get(h->weapons, 0);
     if (!w)
         return;
     msg = 1;
-    gTaskHandlers[sub_477C20()][h->task.type](h, &msg);
-    sub_4F2310(w, pos, &m);
+    gTaskHandlers[Gun_GetEvent2()][h->task.type](h, &msg);
+    Weapon_Move(w, pos, &m);
     gTaskHandlers[4][RigidDynCubeObj_GetType()](w, NULL);
 }
 HOOK(0x4644A0, HumanView_EnterHandler);
@@ -194,7 +194,7 @@ HOOK(0x4644A0, HumanView_EnterHandler);
 void HumanView_LeaveWorldHandler(HumanView *v, void **world)
 {
     if (v->inWorld) {
-        sub_4D96F0(v);
+        BoneDynCubeObj_Deinit(v);
         DynCube_Remove(*world, v);
         v->inWorld = 0;
     }
@@ -245,9 +245,9 @@ void HumanView_AddToWorld(HumanView *v)
     v->unkD8 = 1;
     v->inWorld = 1;
     model = VirModel_Find("005_01_1");
-    sub_4D9620(Game_GetWorld(), v, 5, model);
+    BoneDynCubeObj_Init(Game_GetWorld(), v, 5, model);
     DynCube_Add(Game_GetWorld(), v, zero, v->radius, 2);
-    sub_4D6110(v->anim, 0, 2, 0);
+    Anim_PlayNow(v->anim, 0, 2, 0);
     v->unkD4 = 0;
 }
 HOOK(0x464660, HumanView_AddToWorld);
@@ -581,9 +581,9 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
         rot.serial = v->cam.serial + m.serial + 1;
         v->rotDirty = 1;
         v->rot = rot;
-        sub_4D2FB0(v->weaponPos, v->unk1FC, v->anim);
+        BoneObj_GetRootMotion(v->weaponPos, v->unk1FC, v->anim);
         v->bone = -1;
-        sub_4D3210(&v->unk208, v->anim);
+        BoneObj_GetEvents(&v->unk208, v->anim);
         r = v->rot.m;
         if (v->bone != -1) {
             const float *b = v->bonePos;
@@ -594,7 +594,7 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
             pos[0] = x + v->pos[0];
             pos[1] = y + v->pos[1];
             pos[2] = zz + v->pos[2];
-            sub_4EC0E0(v->bone, v, pos);
+            AnimTrigger_Fire(v->bone, v, pos);
         }
         HumanView_GetEye(eye, h->view);
         w = v->weaponPos;
@@ -615,7 +615,7 @@ HOOK(0x464BD0, HumanView_UpdateBody);
 void HumanView_ApplyRot(HumanView *v)
 {
     if (v->rotDirty) {
-        sub_4D38C0(&v->rot, v->anim);
+        BoneObj_Update(&v->rot, v->anim);
         v->rotDirty = 0;
     }
 }

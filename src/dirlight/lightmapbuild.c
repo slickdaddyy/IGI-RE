@@ -19,8 +19,8 @@ ORIG(0x4B2950, long double, Vec2_Distance, (const float *a, const float *b));
 ORIG(0x4B2D90, char, Vec3_TriangleCoords, (float *s, float *t, const float *p, const float *e1, const float *e2,
                                            const float *n));
 ORIG(0x5210C0, const char *, Lightmap_GetDir, (void));
-ORIG(0x52D440, void, SystemTime_Get, (int *time));
-ORIG(0x52D630, int, SystemTime_Compare, (const int *a, const int *b));
+ORIG(0x52D440, void, DateTime_Get, (int *time));
+ORIG(0x52D630, int, DateTime_Compare, (const int *a, const int *b));
 
 #define gLightmapCountA839F4 VAR(int, 0xA839F4)
 #define gLightmapCountA83B4C VAR(int, 0xA83B4C)
@@ -117,7 +117,7 @@ Lightmaps *Lightmap_BuildLod(void *lodp, int lodIndex, float scale, const char *
         Lightmaps *file = Resource_Load(path, 0);
 
         if (file->magic == LIGHTMAP_MAGIC && feq(mh->version, file->version) &&
-            SystemTime_Compare(mh->time, file->time) < 0 && mesh->texCount == file->count) {
+            DateTime_Compare(mh->time, file->time) < 0 && mesh->texCount == file->count) {
             if (!full) {
                 char *px;
 
@@ -153,7 +153,7 @@ Lightmaps *Lightmap_BuildLod(void *lodp, int lodIndex, float scale, const char *
     lm->texels2 = 0;
     memcpy(&lm->version, &(uint32_t){ 0x3DCCCCCD }, 4); /* 0.1f, kept exact under any rounding mode */
     lm->magic = LIGHTMAP_MAGIC;
-    SystemTime_Get(lm->time);
+    DateTime_Get(lm->time);
 
     for (i = 0; i < lm->count; i++) {
         short *size = mesh->sizes[i];

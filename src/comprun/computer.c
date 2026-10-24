@@ -20,12 +20,12 @@ ORIG(0x465800, void, HumanView_GetEye, (Vec3d *eye, void *view));
 ORIG(0x465880, void, HumanView_GetMatrix, (float *m, void *view));
 ORIG(0x46AB40, void, ComputerMap_ResetZoom, (void));
 ORIG(0x46AB50, void, ComputerMap_SetStartTask, (void *task));
-ORIG(0x46AFB0, void, ComputerMenu_Open, (int page));
+ORIG(0x46AFB0, void, ComputerMenu_OpenScreen, (int page));
 ORIG(0x46B030, Task *, ComputerMenu_Get, (void));
-ORIG(0x485320, void *, sub_485320, (void *task));
-ORIG(0x489470, long double, sub_489470, (void));
-ORIG(0x499FD0, void, sub_499FD0, (int v));
-ORIG(0x499FE0, int, sub_499FE0, (void));
+ORIG(0x485320, void *, GameScreen_GetView, (void *task));
+ORIG(0x489470, long double, LevelFlow_GetHour, (void));
+ORIG(0x499FD0, void, Rain_Enable, (int v));
+ORIG(0x499FE0, int, Rain_IsEnabled, (void));
 ORIG(0x4B0D60, void, Mem_PushMode, (int mode));
 ORIG(0x4B0D90, void, Mem_PopMode, (void));
 ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
@@ -37,13 +37,13 @@ ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D9870, void, Camera_Set, (void *cam, const Vec3d *pos, const Matrix *axes, float fov, float aspect,
                                   float range, int frame, void *owner, float unk9, int unk10));
 ORIG(0x4D9950, void, Camera_Init, (void *cam));
-ORIG(0x4E75A0, int, sub_4E75A0, (void));
-ORIG(0x4E8110, Task *, View_New, (void *parent, float x, float y, float w, float h, void *world, void *cam,
+ORIG(0x4E75A0, int, Screen_GetFrame, (void));
+ORIG(0x4E8110, Task *, Viewport_New, (void *parent, float x, float y, float w, float h, void *world, void *cam,
                                   int unk8, int unk9, int unk10, int unk11, float unk12));
-ORIG(0x4E8220, void, View_SetLayer, (void *view, int layer, int on));
-ORIG(0x4E8250, void, View_SetEnabled, (void *view, int on));
-ORIG(0x4E8270, void, View_SetUnkBC, (void *view, int v));
-ORIG(0x4E8370, void, View_SetWorld, (void *view, void *world));
+ORIG(0x4E8220, void, Viewport_SetList, (void *view, int layer, int on));
+ORIG(0x4E8250, void, Viewport_SetDrawWorld, (void *view, int on));
+ORIG(0x4E8270, void, Viewport_SetFog, (void *view, int v));
+ORIG(0x4E8370, void, TerraDrawTask_New, (void *view, void *world));
 
 /* "Computer" (0x198 bytes), the in-game computer the player looks at */
 typedef struct Computer {
@@ -114,27 +114,27 @@ void Computer_Create(Computer *t)
     t->view = NULL;
     Camera_Init(t->camera);
     axes = ident;
-    unk9 = sub_489470();
-    frame = sub_4E75A0();
+    unk9 = LevelFlow_GetHour();
+    frame = Screen_GetFrame();
     Camera_Set(t->camera, &zero, &axes, x87_tan(kQuarterPi), 1.0f, 300.0f, frame, t, unk9, 0);
     world = Game_GetWorld();
     game = Game_Get();
-    t->view = View_New(*(void **)(game + 0x44), 0.0f, 0.0f, 1.0f, 1.0f, world, t->camera, 0, 0, 0, 0, 1.0f);
-    Task_MoveAfter(t->view, sub_485320(*(void **)(Game_Get() + 0x44)));
-    View_SetWorld(t->view, Game_GetWorld());
-    View_SetLayer(t->view, 1, 0);
-    View_SetEnabled(t->view, 0);
-    View_SetLayer(t->view, 0, 0);
-    View_SetUnkBC(t->view, 0);
-    gComputerSaved499 = sub_499FE0();
-    sub_499FD0(0);
-    root = sub_485320(*(void **)(Game_Get() + 0x44));
-    View_SetEnabled(root, 0);
-    View_SetLayer(root, -1, 0);
-    View_SetLayer(root, 0, 0);
+    t->view = Viewport_New(*(void **)(game + 0x44), 0.0f, 0.0f, 1.0f, 1.0f, world, t->camera, 0, 0, 0, 0, 1.0f);
+    Task_MoveAfter(t->view, GameScreen_GetView(*(void **)(Game_Get() + 0x44)));
+    TerraDrawTask_New(t->view, Game_GetWorld());
+    Viewport_SetList(t->view, 1, 0);
+    Viewport_SetDrawWorld(t->view, 0);
+    Viewport_SetList(t->view, 0, 0);
+    Viewport_SetFog(t->view, 0);
+    gComputerSaved499 = Rain_IsEnabled();
+    Rain_Enable(0);
+    root = GameScreen_GetView(*(void **)(Game_Get() + 0x44));
+    Viewport_SetDrawWorld(root, 0);
+    Viewport_SetList(root, -1, 0);
+    Viewport_SetList(root, 0, 0);
     ComputerMap_ResetZoom();
     ComputerMap_SetStartTask(Computer_Get()->obj.task.parent);
-    ComputerMenu_Open(Computer_IsMapEnabled() ? 1 : 2);
+    ComputerMenu_OpenScreen(Computer_IsMapEnabled() ? 1 : 2);
 }
 HOOK(0x46BB10, Computer_Create);
 
@@ -185,11 +185,11 @@ void Computer_Destroy(Computer *t)
         Task_Delete(menu);
     if (t->view)
         Task_Delete(t->view);
-    root = sub_485320(*(void **)(Game_Get() + 0x44));
-    View_SetEnabled(root, 1);
-    View_SetLayer(root, -1, 1);
-    View_SetLayer(root, 0, 1);
-    sub_499FD0(gComputerSaved499);
+    root = GameScreen_GetView(*(void **)(Game_Get() + 0x44));
+    Viewport_SetDrawWorld(root, 1);
+    Viewport_SetList(root, -1, 1);
+    Viewport_SetList(root, 0, 1);
+    Rain_Enable(gComputerSaved499);
 }
 HOOK(0x46BF80, Computer_Destroy);
 

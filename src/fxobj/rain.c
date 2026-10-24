@@ -6,9 +6,9 @@
 
 ORIG(0x498960, void *, Rain_New, (void *world, void *texture, int unk, float a, float b));
 ORIG(0x498A70, void, Rain_Free, (void *rain, void *world));
-ORIG(0x499CF0, void, sub_499CF0, (void *rain));
-ORIG(0x499F90, void, sub_499F90, (void *rain, int count));
-ORIG(0x499FA0, void, sub_499FA0, (void *rain, float level));
+ORIG(0x499CF0, void, Rain_Update, (void *rain));
+ORIG(0x499F90, void, Rain_SetFalling, (void *rain, int count));
+ORIG(0x499FA0, void, Rain_SetAlpha, (void *rain, float level));
 
 /* weather particles around the camera ("RainEffect", 0x88 bytes) */
 typedef struct RainEffect {
@@ -104,8 +104,8 @@ void RainEffect_Run(RainEffect *t)
     if (!t->rain)
         return;
     if (VarString_HasExpr(&t->expr))
-        sub_499F90(t->rain, round_int(VarString_EvalReal(&t->expr, t)));
-    sub_499CF0(t->rain);
+        Rain_SetFalling(t->rain, round_int(VarString_EvalReal(&t->expr, t)));
+    Rain_Update(t->rain);
 }
 HOOK(0x436990, RainEffect_Run);
 
@@ -144,7 +144,7 @@ void RainEffect_Changed(RainEffect *t)
 
         t->rain = Rain_New(Game_GetWorld(), gRainTexture + 0x18, t->unk24, a, b);
     }
-    sub_499FA0(t->rain, t->level);
+    Rain_SetAlpha(t->rain, t->level);
     t->lastLevel = t->level;
     VarString_Bind(&t->expr, t);
 }

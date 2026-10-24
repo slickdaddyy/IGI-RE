@@ -82,7 +82,7 @@ def test_has_unk3aa8():
             ai = e.alloc(0x3C00)
             u32(e, ai + 0x3AA8, v)
             return (ai,)
-        run(e, 0x4528F0, "sub_4528F0", setup, check_eax=True)
+        run(e, 0x4528F0, "AI_HasTarget", setup, check_eax=True)
 
 
 @pytest.mark.parametrize("t", range(20))

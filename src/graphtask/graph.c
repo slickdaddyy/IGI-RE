@@ -96,7 +96,7 @@ ORIG(0x4B1730, int, File_Seek, (void *file, int offset, int whence));
 ORIG(0x4B17C0, void, File_Flush, (void *file));
 ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int index));
 ORIG(0x4C1780, void, Debug_Log, (void));
-ORIG(0x4C1830, void, ParamTable_Free, (void *table));
+ORIG(0x4C1830, void, QTaskList_Free, (void *table));
 ORIG(0x4CE400, void *, Terrain_GetMaterial, (void *terrain, int id));
 ORIG(0x4F0EF0, void *, Param_PushButton, (void));
 ORIG(0x4F1000, void *, Param_Bool8, (void));
@@ -123,7 +123,7 @@ ORIG(0x4F9C50, void, GraphLink_Free, (GraphLink *link));
 ORIG(0x4F9CD0, void, GraphStream_ReadValue, (GraphStreamValue *v, void *out, int size));
 ORIG(0x4F9DF0, void, GraphStream_AddHandler, (const char *name, int type, void (*fn)(GraphStreamValue *v)));
 ORIG(0x4F9FF0, void, GraphOpen, (Graph *g, const char *path));
-ORIG(0x5034D0, uint16_t, Graph_GetParentType, (void));
+ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
 #define gGraphType VAR(uint16_t, 0x54E364)
 #define gGraphEvents ((uint8_t *)0x54E368)
@@ -175,7 +175,7 @@ void Graph_Open(void)
     GraphStreamHandler *h;
     int i, op;
 
-    gGraphType = TaskType_New("Graph", 0x80, Graph_GetParentType(), 0, 0);
+    gGraphType = TaskType_New("Graph", 0x80, EditorRigidObj_GetType(), 0, 0);
     for (i = 0; i < 10; i++)
         gGraphEvents[order[i]] = TaskEvent_Alloc(0);
     TaskType_SetHandler(gGraphType, 0, Graph_Create);
@@ -375,7 +375,7 @@ void Graph_Close(void)
     static const int order[10] = {0, 1, 2, 3, 4, 5, 6, 8, 7, 9};
     int i;
 
-    ParamTable_Free(gGraphParams);
+    QTaskList_Free(gGraphParams);
     for (i = 0; i < 10; i++)
         TaskEvent_Free(gGraphEvents[order[i]]);
     TaskType_Free(gGraphType);

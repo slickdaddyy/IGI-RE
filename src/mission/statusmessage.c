@@ -21,14 +21,14 @@ ORIG(0x4B4E00, void, Draw_Sprite, (void *s, float x, float y, float r, float g, 
                                    int unk8));
 ORIG(0x4B64E0, int, Resource_Find, (const char *path));
 ORIG(0x4B7050, int, Sprite_StringWidth, (void *font, const char *str));
-ORIG(0x4E7200, void, Sound_Play2D, (const char *name, int unk, float *params));
+ORIG(0x4E7200, void, Sound_PlayDefined, (const char *name, int unk, float *params));
 ORIG(0x4F0F50, void *, Param_Real32, (void));
 ORIG(0x4F0F70, void *, Param_Real32x9, (void));
 ORIG(0x4F0FD0, void *, Param_String16, (void));
 ORIG(0x4F0FF0, void *, Param_String256, (void));
 ORIG(0x4F1000, void *, Param_Bool8, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
-ORIG(0x5034D0, uint16_t, Position_GetType, (void));
+ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
 #define gStatusMessageType VAR(uint16_t, 0x540A8C)
 #define gStatusMessageParams VAR(void *, 0x5C8A38)
@@ -73,7 +73,7 @@ void StatusMessage_Init(void)
 {
     StatusMessage m;
 
-    gStatusMessageType = TaskType_New("StatusMessage", sizeof(StatusMessage), Position_GetType(), 0, 0);
+    gStatusMessageType = TaskType_New("StatusMessage", sizeof(StatusMessage), EditorRigidObj_GetType(), 0, 0);
     TaskType_SetHandler(gStatusMessageType, 0, StatusMessage_Create);
     TaskType_SetHandler2(gStatusMessageType, 1, StatusMessage_Run);
     TaskType_SetHandler2(gStatusMessageType, 2, StatusMessage_Delete);
@@ -651,7 +651,7 @@ void StatusMessageScreen_AddMessage(StatusMessageScreen *s, StatusMessage *m)
     if (m->sound[0]) {
         float params[3] = {1.0f, 1.0f, 0.0f};
 
-        Sound_Play2D(m->sound, 1, params);
+        Sound_PlayDefined(m->sound, 1, params);
     }
     if (strlen(m->text) < 0x80 && Resource_Find(m->text)) {
         char *text = Resource_Load(m->text, NULL);

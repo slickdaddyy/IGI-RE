@@ -104,12 +104,12 @@ ORIG(0x4B2710, int, Texture_GetSetLODId, (void));
 ORIG(0x4B2640, int, Texture_GetActiveTMU, (void));
 ORIG(0x4C1780, void, Debug_Log, (void));
 ORIG(0x4D3710, void, Task_Nothing, (void *task));
-ORIG(0x517FD0, void, sub_517FD0, (uint32_t *dst, int w, int h, int unk, const void *src, const uint32_t *colors,
+ORIG(0x517FD0, void, Pixel_8To32, (uint32_t *dst, int w, int h, int unk, const void *src, const uint32_t *colors,
                                   int pitch, int rows, int unk2));
-ORIG(0x517C90, void, sub_517C90, (uint32_t *dst, int w, int h, const void *src, int pitch, int rows, int unk));
-ORIG(0x517F00, void, sub_517F00, (uint32_t *dst, int w, int h, const void *src, int pitch, int rows, int unk));
-ORIG(0x517DD0, void, sub_517DD0, (uint32_t *dst, int w, int h, const void *src, int pitch, int rows, int unk));
-ORIG(0x517B00, void, sub_517B00, (uint32_t *dst, const uint32_t *src, int w, int h));
+ORIG(0x517C90, void, Pixel_1555To32, (uint32_t *dst, int w, int h, const void *src, int pitch, int rows, int unk));
+ORIG(0x517F00, void, Pixel_Copy32, (uint32_t *dst, int w, int h, const void *src, int pitch, int rows, int unk));
+ORIG(0x517DD0, void, Pixel_565To32, (uint32_t *dst, int w, int h, const void *src, int pitch, int rows, int unk));
+ORIG(0x517B00, void, Pixel_Halve32, (uint32_t *dst, const uint32_t *src, int w, int h));
 
 #define gAllocTextureId VAR(int, 0x546FA8)
 #define gDeAllocTextureId VAR(int, 0x546FAC)
@@ -468,18 +468,18 @@ void D3DTex_DownloadTexture(TextureDesc *d)
     do {
         switch (d->format) {
         case 1:
-            sub_517FD0(cur, w, h, 0, data, d->palette->colors, pitch, h, 0);
+            Pixel_8To32(cur, w, h, 0, data, d->palette->colors, pitch, h, 0);
             break;
         case 2:
-            sub_517C90(cur, w, h, data, pitch >> 1, h, 0);
+            Pixel_1555To32(cur, w, h, data, pitch >> 1, h, 0);
             break;
         case 3:
         case 4:
         case 0x43:
-            sub_517F00(cur, w, h, data, pitch >> 2, h, 0);
+            Pixel_Copy32(cur, w, h, data, pitch >> 2, h, 0);
             break;
         case 5:
-            sub_517DD0(cur, w, h, data, pitch >> 1, h, 0);
+            Pixel_565To32(cur, w, h, data, pitch >> 1, h, 0);
             break;
         default:
             Error_Show("Unsupported texture format");
@@ -604,7 +604,7 @@ void D3DTex_DownloadTexture(TextureDesc *d)
                 }
             }
             next = cur + w * h;
-            sub_517B00(next, cur, w, h);
+            Pixel_Halve32(next, cur, w, h);
             cur = next;
             w >>= 1;
             h >>= 1;

@@ -9,8 +9,8 @@ ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4DEE80, uint16_t, SectorObject_GetType, (void));
 ORIG(0x4DEE90, void, SectorObject_SetModel, (void *o, const char *name));
-ORIG(0x4DEEC0, void, sub_4DEEC0, (void *o));
-ORIG(0x4E0810, void, sub_4E0810, (void *o, Matrix *m));
+ORIG(0x4DEEC0, void, SectorObject_Update, (void *o));
+ORIG(0x4E0810, void, SectorObject_SetMatrix, (void *o, Matrix *m));
 ORIG(0x4F0F70, void *, Param_Real32x9, (void));
 ORIG(0x4F0FD0, void *, Param_String16, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
@@ -105,8 +105,8 @@ void Building_ParamsChanged(Building *b)
     scale = obj_scale(&b->o);
     radius = VirModel_GetRadius(b->o.model) * scale;
     DynCube_Move(Game_GetWorld(), b, &b->place, radius);
-    sub_4E0810(b, &b->matrix);
-    sub_4DEEC0(b);
+    SectorObject_SetMatrix(b, &b->matrix);
+    SectorObject_Update(b);
 }
 HOOK(0x448890, Building_ParamsChanged);
 

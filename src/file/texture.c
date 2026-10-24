@@ -71,18 +71,18 @@ typedef struct TexHeader {
 #define CHUNK_TEXH 0x48584554
 #define CHUNK_BODY 0x59444F42
 
-ORIG(0x4B0E70, int, RenderMode_AddFunction, (const char *name));
-ORIG(0x4B0EB0, void, RenderMode_RemoveFunction, (int id));
-ORIG(0x4B0F80, int, Render_GetDevice, (void));
-ORIG(0x4B1000, void, Render_CallDevice, (int device, int id, void *arg));
+ORIG(0x4B0E70, int, RenderMode_CreateMethod, (const char *name));
+ORIG(0x4B0EB0, void, RenderMode_DeleteMethod, (int id));
+ORIG(0x4B0F80, int, RenderMode_GetCurrent, (void));
+ORIG(0x4B1000, void, RenderMode_Call, (int device, int id, void *arg));
 ORIG(0x4B5F00, void *, Resource_Load, (const char *name, int flags));
 ORIG(0x4B6380, void, Resource_Unload, (const char *name));
-ORIG(0x4B7490, void *, Chunk_First, (void *file));
+ORIG(0x4B7490, void *, Chunk_FirstChild, (void *file));
 ORIG(0x4B7470, void *, Chunk_Next, (void *chunk));
-ORIG(0x4B7580, int, Chunk_GetId, (void *chunk));
-ORIG(0x4B74D0, void *, Chunk_GetData, (void *chunk, void *file));
-ORIG(0x509910, void, sub_509910, (void));
-ORIG(0x509920, void, sub_509920, (void));
+ORIG(0x4B7580, int, Chunk_Id, (void *chunk));
+ORIG(0x4B74D0, void *, Chunk_Data, (void *chunk, void *file));
+ORIG(0x509910, void, D3DTex_Register, (void));
+ORIG(0x509920, void, D3DTex_Unregister, (void));
 
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
 #define gTexFromFile VAR(char, 0x943B3C)
@@ -106,12 +106,12 @@ void Texture_Create(Texture *tex, int a2, int pitch, int width, int height, int 
 int TexRes_Count(void *file)
 {
     int count = 0;
-    void *chunk = Chunk_First(file);
+    void *chunk = Chunk_FirstChild(file);
 
     while (chunk) {
-        if (Chunk_GetId(chunk) == CHUNK_TEXH) {
+        if (Chunk_Id(chunk) == CHUNK_TEXH) {
             chunk = Chunk_Next(chunk);
-            if (!chunk || Chunk_GetId(chunk) != CHUNK_BODY || !Chunk_GetData(chunk, file))
+            if (!chunk || Chunk_Id(chunk) != CHUNK_BODY || !Chunk_Data(chunk, file))
                 return 0;
             count++;
         }
@@ -124,17 +124,17 @@ HOOK(0x4B1FF0, TexRes_Count);
 int TexRes_Load(void *file, Texture *tex, int max, int a4)
 {
     int count = 0;
-    void *chunk = Chunk_First(file);
+    void *chunk = Chunk_FirstChild(file);
 
     while (chunk && count < max) {
-        if (Chunk_GetId(chunk) == CHUNK_TEXH) {
-            TexHeader *h = Chunk_GetData(chunk, file);
+        if (Chunk_Id(chunk) == CHUNK_TEXH) {
+            TexHeader *h = Chunk_Data(chunk, file);
 
             chunk = Chunk_Next(chunk);
-            if (!h || !chunk || Chunk_GetId(chunk) != CHUNK_BODY || !Chunk_GetData(chunk, file))
+            if (!h || !chunk || Chunk_Id(chunk) != CHUNK_BODY || !Chunk_Data(chunk, file))
                 return 0;
             Texture_Create(tex, a4, h->bitsPerPixel * h->unk12 / 8, h->width, h->height, h->format,
-                           h->unk0C, h->unk04, Chunk_GetData(chunk, file));
+                           h->unk0C, h->unk04, Chunk_Data(chunk, file));
             count++;
             tex++;
         }
@@ -145,49 +145,49 @@ int TexRes_Load(void *file, Texture *tex, int max, int a4)
 HOOK(0x4B2070, TexRes_Load);
 
 void sub_4B2740(float *p);
-void sub_4B26B0(void);
+void Texture_EndFileLoad(void);
 
 void Texture_Init(void)
 {
     sub_4B2740(gTexParams);
-    sub_4B26B0();
-    gAllocTextureId = RenderMode_AddFunction("AllocTexture");
-    gDeAllocTextureId = RenderMode_AddFunction("DeAllocTexture");
-    gDownloadTextureId = RenderMode_AddFunction("DownloadTexture");
-    gBeginTextureListId = RenderMode_AddFunction("BeginTextureList");
-    gEndTextureListId = RenderMode_AddFunction("EndTextureList");
-    gGetTMUsId = RenderMode_AddFunction("GetTMUs");
-    gSetActiveTMUId = RenderMode_AddFunction("SetActiveTMU");
-    gGetActiveTMUId = RenderMode_AddFunction("GetActiveTMU");
-    gRefreshTextureId = RenderMode_AddFunction("RefreshTexture");
-    gReloadTextureId = RenderMode_AddFunction("ReloadTexture");
-    gGetTextureSizeId = RenderMode_AddFunction("GetTextureSize");
-    gSetLODId = RenderMode_AddFunction("SetLOD");
-    sub_509910();
+    Texture_EndFileLoad();
+    gAllocTextureId = RenderMode_CreateMethod("AllocTexture");
+    gDeAllocTextureId = RenderMode_CreateMethod("DeAllocTexture");
+    gDownloadTextureId = RenderMode_CreateMethod("DownloadTexture");
+    gBeginTextureListId = RenderMode_CreateMethod("BeginTextureList");
+    gEndTextureListId = RenderMode_CreateMethod("EndTextureList");
+    gGetTMUsId = RenderMode_CreateMethod("GetTMUs");
+    gSetActiveTMUId = RenderMode_CreateMethod("SetActiveTMU");
+    gGetActiveTMUId = RenderMode_CreateMethod("GetActiveTMU");
+    gRefreshTextureId = RenderMode_CreateMethod("RefreshTexture");
+    gReloadTextureId = RenderMode_CreateMethod("ReloadTexture");
+    gGetTextureSizeId = RenderMode_CreateMethod("GetTextureSize");
+    gSetLODId = RenderMode_CreateMethod("SetLOD");
+    D3DTex_Register();
 }
 HOOK(0x4B2180, Texture_Init);
 
 void Texture_Shutdown(void)
 {
-    sub_509920();
-    RenderMode_RemoveFunction(gAllocTextureId);
-    RenderMode_RemoveFunction(gDeAllocTextureId);
-    RenderMode_RemoveFunction(gDownloadTextureId);
-    RenderMode_RemoveFunction(gBeginTextureListId);
-    RenderMode_RemoveFunction(gEndTextureListId);
-    RenderMode_RemoveFunction(gGetTMUsId);
-    RenderMode_RemoveFunction(gSetActiveTMUId);
-    RenderMode_RemoveFunction(gGetActiveTMUId);
-    RenderMode_RemoveFunction(gReloadTextureId);
-    RenderMode_RemoveFunction(gRefreshTextureId);
-    RenderMode_RemoveFunction(gGetTextureSizeId);
-    RenderMode_RemoveFunction(gSetLODId);
+    D3DTex_Unregister();
+    RenderMode_DeleteMethod(gAllocTextureId);
+    RenderMode_DeleteMethod(gDeAllocTextureId);
+    RenderMode_DeleteMethod(gDownloadTextureId);
+    RenderMode_DeleteMethod(gBeginTextureListId);
+    RenderMode_DeleteMethod(gEndTextureListId);
+    RenderMode_DeleteMethod(gGetTMUsId);
+    RenderMode_DeleteMethod(gSetActiveTMUId);
+    RenderMode_DeleteMethod(gGetActiveTMUId);
+    RenderMode_DeleteMethod(gReloadTextureId);
+    RenderMode_DeleteMethod(gRefreshTextureId);
+    RenderMode_DeleteMethod(gGetTextureSizeId);
+    RenderMode_DeleteMethod(gSetLODId);
 }
 HOOK(0x4B2250, Texture_Shutdown);
 
 void Texture_Free(Texture *tex)
 {
-    Render_CallDevice(tex->device, gDeAllocTextureId, tex);
+    RenderMode_Call(tex->device, gDeAllocTextureId, tex);
     memset(tex, 0, sizeof(*tex));
 }
 HOOK(0x4B22F0, Texture_Free);
@@ -196,7 +196,7 @@ void Texture_Alloc(Texture *tex, int a2, int pitch, int width, int height, int f
 {
     TextureDesc d;
 
-    tex->device = Render_GetDevice();
+    tex->device = RenderMode_GetCurrent();
     memset(&d, 0, sizeof(d));
     d.tex = tex;
     d.unk04 = a2;
@@ -216,7 +216,7 @@ void Texture_Create(Texture *tex, int a2, int pitch, int width, int height, int 
 {
     TextureDesc d;
 
-    tex->device = Render_GetDevice();
+    tex->device = RenderMode_GetCurrent();
     memset(&d, 0, sizeof(d));
     d.tex = tex;
     d.unk04 = a2;
@@ -252,7 +252,7 @@ void Texture_Download(void *tex, int a2, int pitch, int width, int height, int f
 }
 HOOK(0x4B2450, Texture_Download);
 
-void sub_4B26A0(void);
+void Texture_BeginFileLoad(void);
 
 void Texture_LoadFile(Texture *tex, int a2, const char *name)
 {
@@ -261,10 +261,10 @@ void Texture_LoadFile(Texture *tex, int a2, const char *name)
     LoopHeader11 *h11 = (LoopHeader11 *)p;
 
     if (h2->magic == LOOP_MAGIC && h2->version == 2) {
-        sub_4B26A0();
+        Texture_BeginFileLoad();
         Texture_Create(tex, a2, h2->pitch, h2->width, h2->height, h2->format, h2->unk08, 0, p + 0x18);
     } else if (h11->magic == LOOP_MAGIC && h11->version == 11) {
-        sub_4B26A0();
+        Texture_BeginFileLoad();
         Texture_Create(tex, a2, h11->bytesPerPixel * h11->unk1A, h11->width, h11->height, h11->format,
                        h11->unk14, h11->unk0C, p + 0x20);
     } else {
@@ -273,7 +273,7 @@ void Texture_LoadFile(Texture *tex, int a2, const char *name)
             ;
     }
     Resource_Unload(name);
-    sub_4B26B0();
+    Texture_EndFileLoad();
 }
 HOOK(0x4B24C0, Texture_LoadFile);
 
@@ -320,17 +320,17 @@ int Texture_GetTMUs(void)
 }
 HOOK(0x4B2670, Texture_GetTMUs);
 
-void sub_4B26A0(void)
+void Texture_BeginFileLoad(void)
 {
     gTexFromFile = 1;
 }
-HOOK(0x4B26A0, sub_4B26A0);
+HOOK(0x4B26A0, Texture_BeginFileLoad);
 
-void sub_4B26B0(void)
+void Texture_EndFileLoad(void)
 {
     gTexFromFile = 0;
 }
-HOOK(0x4B26B0, sub_4B26B0);
+HOOK(0x4B26B0, Texture_EndFileLoad);
 
 int Texture_GetReloadId(void);
 

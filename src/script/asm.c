@@ -11,7 +11,7 @@
 /* Helpers of the QVM assembler (QvmAssemble at 0x4BB270). */
 
 ORIG(0x4A5702, int, crt_vsprintf, (char *buf, const char *fmt, va_list ap));
-ORIG(0x4C0780, int, AsmLexer_Read, (void *lex, void *token));
+ORIG(0x4C0780, int, QvmLex_Scan, (void *lex, void *token));
 
 typedef void (*AsmErrorHandler)(const char *text, void *context);
 
@@ -219,7 +219,7 @@ HOOK(0x4BB180, Asm_AddName);
 int Asm_NextToken(void *lex, void *token)
 {
     do {
-        if (!AsmLexer_Read(lex, token))
+        if (!QvmLex_Scan(lex, token))
             return 0;
     } while (*(int *)((char *)lex + 0x2C4) == 1);
     return 1;

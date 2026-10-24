@@ -47,7 +47,7 @@ typedef struct WaterTri {
     int envMap;
 } WaterTri;
 
-/* filled by sub_52DAE0 */
+/* filled by WaterMesh_GetVertex */
 typedef struct WaterVertex {
     char unk0[8];
     Vec3d pos;
@@ -72,10 +72,10 @@ ORIG(0x4B4010, void, Matrix_SetDirection, (float *m, const float *dir));
 ORIG(0x4B3C50, void, Matrix_GetEuler, (const float *m, float *ax, float *ay, float *az));
 ORIG(0x4B38E0, void, Matrix_SetEuler, (float *m, float ax, float ay, float az));
 ORIG(0x4B2900, void, Vec2_Normalize, (float *v));
-ORIG(0x4B2760, long double, Math_Acos, (float x));
+ORIG(0x4B2760, long double, Math_ACosF, (float x));
 ORIG(0x4B2B30, long double, Vec3_Angle, (const float *a, const float *b));
-ORIG(0x52DAE0, void, sub_52DAE0, (WaterMesh *w, WaterVertex *out, const Vec3d *pos));
-ORIG(0x52E180, void, sub_52E180, (WaterMesh *w, float *color, const float *normal));
+ORIG(0x52DAE0, void, WaterMesh_GetVertex, (WaterMesh *w, WaterVertex *out, const Vec3d *pos));
+ORIG(0x52E180, void, WaterMesh_Light, (WaterMesh *w, float *color, const float *normal));
 ORIG(0x5116D0, void, sub_5116D0, (WaterTri *t));
 ORIG(0x4978E0, void, Primitive_Unregister, (int id));
 
@@ -128,7 +128,7 @@ void WaterMesh_CalcEnvUV(WaterMesh *w, float *uv, const Vec3d *pos, const float 
     len = __builtin_sqrtl(ny * ny + nx * nx);
     v[0] = nx;
     Vec2_Normalize(v);
-    uv[0] = __builtin_fabsl(Math_Acos(v[0])) * kEnvAngleScale;
+    uv[0] = __builtin_fabsl(Math_ACosF(v[0])) * kEnvAngleScale;
     uv[1] = len * kEnvDistScale;
 }
 HOOK(0x52F3D0, WaterMesh_CalcEnvUV);
@@ -215,9 +215,9 @@ void WaterMesh_DrawSplitTri(WaterMesh *w, WaterNode *node, WaterTri *t, int base
     memcpy(uv[count], ub, 8);
     if (recalc && count > 1) {
         for (i = 1; i < count; i++) {
-            sub_52DAE0(w, &v, &pos[i]);
+            WaterMesh_GetVertex(w, &v, &pos[i]);
             memcpy(&pos[i].z, &v.pos.z, 8);
-            sub_52E180(w, color[i], v.normal);
+            WaterMesh_Light(w, color[i], v.normal);
             if (t->envMap == 1)
                 WaterMesh_CalcEnvUV(w, uv[i], &v.pos, v.normal);
         }

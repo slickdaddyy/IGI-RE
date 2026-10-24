@@ -4,10 +4,10 @@
 #include "res/resource.h"
 #include "res/sprite.h"
 
-ORIG(0x4B0E70, int, Render_Register, (const char *name));
-ORIG(0x4B0EB0, void, Render_Unregister, (int id));
-ORIG(0x4B0F80, int, Render_GetDevice, (void));
-ORIG(0x4B1000, void, Render_Call, (int device, int id, void *arg));
+ORIG(0x4B0E70, int, RenderMode_CreateMethod, (const char *name));
+ORIG(0x4B0EB0, void, RenderMode_DeleteMethod, (int id));
+ORIG(0x4B0F80, int, RenderMode_GetCurrent, (void));
+ORIG(0x4B1000, void, RenderMode_Call, (int device, int id, void *arg));
 
 #define gRenderFuncs ((void (**)(void *))0xA94E84)
 #define gAllocPalette VAR(int, 0xA84A48)
@@ -16,17 +16,17 @@ ORIG(0x4B1000, void, Render_Call, (int device, int id, void *arg));
 
 void Palette_Register(void)
 {
-    gAllocPalette = Render_Register("AllocPalette");
-    gDeAllocPalette = Render_Register("DeAllocPalette");
-    gDownloadPalette = Render_Register("DownloadPalette");
+    gAllocPalette = RenderMode_CreateMethod("AllocPalette");
+    gDeAllocPalette = RenderMode_CreateMethod("DeAllocPalette");
+    gDownloadPalette = RenderMode_CreateMethod("DownloadPalette");
 }
 HOOK(0x4B7C80, Palette_Register);
 
 void Palette_Unregister(void)
 {
-    Render_Unregister(gAllocPalette);
-    Render_Unregister(gDeAllocPalette);
-    Render_Unregister(gDownloadPalette);
+    RenderMode_DeleteMethod(gAllocPalette);
+    RenderMode_DeleteMethod(gDeAllocPalette);
+    RenderMode_DeleteMethod(gDownloadPalette);
 }
 HOOK(0x4B7CC0, Palette_Unregister);
 
@@ -38,7 +38,7 @@ void Palette_Create(Palette *p, void *colors, int count)
         void *colors;
     } args;
 
-    p->device = Render_GetDevice();
+    p->device = RenderMode_GetCurrent();
     args.palette = p;
     args.count = count;
     args.colors = colors;
@@ -48,7 +48,7 @@ HOOK(0x4B7CF0, Palette_Create);
 
 void Palette_Free(Palette *p)
 {
-    Render_Call(p->device, gDeAllocPalette, p);
+    RenderMode_Call(p->device, gDeAllocPalette, p);
 }
 HOOK(0x4B7D30, Palette_Free);
 

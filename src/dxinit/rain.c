@@ -27,7 +27,7 @@ ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 ORIG(0x4950E0, int, Direct3D_GetRenderMode, (void));
 ORIG(0x495200, void, Direct3D_AddRestoreCallback, (void (*fn)(void)));
-ORIG(0x498000, void, View_ProjectPoint, (float *out, const float *in));
+ORIG(0x498000, void, TransContext_ProjectView, (float *out, const float *in));
 ORIG(0x4A55FE, double, crt_floor, (double x));
 ORIG(0x4A5C30, double, crt_ceil, (double x));
 ORIG(0x4B0F80, int, RenderMode_GetCurrent, (void));
@@ -529,7 +529,7 @@ void Rain_ClipCells(Rain *r, double z)
                 depth = gView.m[8] * pz + gView.m[7] * py + gView.m[6] * px;
                 v[2] = depth;
                 if (depth > kZero) {
-                    View_ProjectPoint(s, v);
+                    TransContext_ProjectView(s, v);
                     flags = (s[0] > kZero ? ~1u : ~0u) & 0x3F;
                     if (s[1] > kZero)
                         flags &= ~2u;
@@ -549,7 +549,7 @@ void Rain_ClipCells(Rain *r, double z)
                 depth = gView.m[8] * pz + gView.m[7] * py + gView.m[6] * px;
                 u[2] = depth;
                 if (depth > kZero) {
-                    View_ProjectPoint(s, u);
+                    TransContext_ProjectView(s, u);
                     if (s[0] > kZero)
                         flags &= ~1u;
                     if (s[1] > kZero)

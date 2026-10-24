@@ -40,31 +40,31 @@ ORIG(0x416930, int, Game_AddTexture, (const char *name));
 ORIG(0x4169D0, int, Game_AddSprite, (const char *name));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x416FC0, int, Game_CountHuman, (void));
-ORIG(0x450C80, uint8_t, sub_450C80, (void));
-ORIG(0x450CC0, uint8_t, sub_450CC0, (void));
+ORIG(0x450C80, uint8_t, HumanAI_GetEventSlot, (void));
+ORIG(0x450CC0, uint8_t, HumanAI_GetEvent3Slot, (void));
 ORIG(0x463130, int, Human_GetTeam, (Human *h));
-ORIG(0x463150, char, sub_463150, (Human *h));
+ORIG(0x463150, char, Human_IsPlayer, (Human *h));
 ORIG(0x463580, void, sub_463580, (Human *h));
 ORIG(0x464610, void *, HumanView_New, (Human *h));
-ORIG(0x466230, uint8_t, sub_466230, (void));
+ORIG(0x466230, uint8_t, DeathZone_GetEvent, (void));
 ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
-ORIG(0x46AB20, uint8_t, sub_46AB20, (void));
-ORIG(0x46C970, uint8_t, sub_46C970, (void));
-ORIG(0x46D410, uint8_t, sub_46D410, (void));
-ORIG(0x477030, uint8_t, sub_477030, (void));
-ORIG(0x477C00, uint8_t, sub_477C00, (void));
-ORIG(0x477C10, uint8_t, sub_477C10, (void));
-ORIG(0x477C20, uint8_t, sub_477C20, (void));
-ORIG(0x477C30, uint8_t, sub_477C30, (void));
-ORIG(0x477C40, uint8_t, sub_477C40, (void));
-ORIG(0x47CDC0, uint8_t, sub_47CDC0, (void));
+ORIG(0x46AB20, uint8_t, ComputerMap_GetSelectEvent, (void));
+ORIG(0x46C970, uint8_t, GunPickup_GetEvent, (void));
+ORIG(0x46D410, uint8_t, AmmoPickup_GetEvent, (void));
+ORIG(0x477030, uint8_t, Grenade_GetEvent, (void));
+ORIG(0x477C00, uint8_t, Gun_GetEvent0, (void));
+ORIG(0x477C10, uint8_t, Gun_GetEvent1, (void));
+ORIG(0x477C20, uint8_t, Gun_GetEvent2, (void));
+ORIG(0x477C30, uint8_t, Gun_GetEvent3, (void));
+ORIG(0x477C40, uint8_t, Gun_GetEvent4, (void));
+ORIG(0x47CDC0, uint8_t, AmmoList_GetEvent, (void));
 ORIG(0x47CDD0, void, AmmoList_Init, (void *list));
-ORIG(0x484D30, uint8_t, sub_484D30, (void));
-ORIG(0x484DC0, void, sub_484DC0, (Human *h));
-ORIG(0x484E00, void, sub_484E00, (Human *h));
-ORIG(0x487190, uint8_t, sub_487190, (void));
-ORIG(0x489610, uint8_t, sub_489610, (void));
-ORIG(0x489620, uint8_t, sub_489620, (void));
+ORIG(0x484D30, uint8_t, HumanCamera_GetEvent, (void));
+ORIG(0x484DC0, void, HumanCamera_AddHuman, (Human *h));
+ORIG(0x484E00, void, HumanCamera_RemoveHuman, (Human *h));
+ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
+ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
+ORIG(0x489620, uint8_t, AIDetection_GetEvent1, (void));
 ORIG(0x489640, int, AIDetection_AddMaskType, (uint16_t type));
 ORIG(0x489680, void, AIDetection_Add, (Human *h));
 ORIG(0x4896A0, void, AIDetection_Remove, (Human *h));
@@ -78,29 +78,29 @@ ORIG(0x4C17C0, void, QTaskList_Remove, (void *list, void *item));
 ORIG(0x4C1800, void *, QTaskList_New, (int max));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
-ORIG(0x4D14D0, uint8_t, sub_4D14D0, (void));
-ORIG(0x4D9610, uint16_t, sub_4D9610, (void));
+ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
+ORIG(0x4D9610, uint16_t, BoneDynCubeObj_GetType, (void));
 ORIG(0x4E0CC0, void *, Shadow_New, (Human *h, void *a, int *b, int *c, void *d, void *e, float size, float height,
                                    int tex));
-ORIG(0x4E6610, uint8_t, sub_4E6610, (void));
-ORIG(0x4F0F20, void *, Param_4F0F20, (void));
+ORIG(0x4E6610, uint8_t, Sound_GetInfoEvent, (void));
+ORIG(0x4F0F20, void *, Param_Angle, (void));
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
 ORIG(0x4F0FD0, void *, Param_String16, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1030, Human *, Task_FindById, (int id));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, int, sub_4F1210, (void));
-ORIG(0x4F1220, int, sub_4F1220, (void));
+ORIG(0x4F1210, int, Level_GetEventDA8, (void));
+ORIG(0x4F1220, int, Level_GetEventDAC, (void));
 ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *extra));
-ORIG(0x4F1FC0, uint8_t, sub_4F1FC0, (void));
+ORIG(0x4F1FC0, uint8_t, Weapon_GetSlotsEvent, (void));
 ORIG(0x4F2050, void, WeaponSlots_Init, (void **slots));
-ORIG(0x4FC840, uint8_t, sub_4FC840, (void));
-ORIG(0x4FDEF0, uint8_t, sub_4FDEF0, (void));
-ORIG(0x504A30, int, sub_504A30, (const char *name, void *fn));
-ORIG(0x5096A0, uint8_t, sub_5096A0, (void));
+ORIG(0x4FC840, uint8_t, PhysicsObj_GetEvent0, (void));
+ORIG(0x4FDEF0, uint8_t, Particle2D_GetCollideEvent, (void));
+ORIG(0x504A30, int, AreaActivate_AddCriteria, (const char *name, void *fn));
+ORIG(0x5096A0, uint8_t, AIGraph_GetEvent, (void));
 
 #define gHumanType VAR(uint16_t, 0x5BDAF8)
 #define gHumanEvent0 VAR(uint8_t, 0x53F316)
@@ -191,7 +191,7 @@ HOOK(0x45E3D0, Human_ClearResult);
 void sub_45E3E0(Human *h, TargetQuery *q)
 {
     if (h != q->skip[0] && h != q->skip[1] && h != q->skip[2]) {
-        if (sub_463150(h)) {
+        if (Human_IsPlayer(h)) {
             if (!(Random_Float(Game_GetRandom()) > q->chance)) {
                 q->result = 1;
                 return;
@@ -223,7 +223,7 @@ void Human_Open(void)
     int i;
 
     Task_SetGlobalFlags(1);
-    gHumanType = TaskType_New("Human", sizeof(Human), sub_4D9610(), 0);
+    gHumanType = TaskType_New("Human", sizeof(Human), BoneDynCubeObj_GetType(), 0);
     TaskType_SetFlags(gHumanType, 1);
     gHumanEvent0 = TaskEvent_Alloc(0);
     gHumanEvent1 = TaskEvent_Alloc(0);
@@ -232,55 +232,55 @@ void Human_Open(void)
     TaskType_SetHandler2(gHumanType, 1, Human_RunHandler);
     TaskType_SetHandler2(gHumanType, 2, Human_DeleteHandler);
     TaskType_SetHandler(gHumanType, 4, Human_Handler45F280);
-    TaskType_SetHandler(gHumanType, sub_4D14D0(), Human_Handler45F050);
+    TaskType_SetHandler(gHumanType, QCube_GetNearClipEvent(), Human_Handler45F050);
     TaskType_SetHandler(gHumanType, 9, Human_Handler45F500);
     TaskType_SetHandler(gHumanType, 8, Human_Handler45F800);
     TaskType_SetHandler(gHumanType, Param_GetTableEvent(), Human_GetParams);
     TaskType_SetHandler(gHumanType, Param_GetChangedEvent(), Human_ParamsChanged);
-    TaskType_SetHandler(gHumanType, sub_4F1FC0(), Human_Handler45F900);
-    TaskType_SetHandler(gHumanType, sub_47CDC0(), Human_Handler45F910);
+    TaskType_SetHandler(gHumanType, Weapon_GetSlotsEvent(), Human_Handler45F900);
+    TaskType_SetHandler(gHumanType, AmmoList_GetEvent(), Human_Handler45F910);
     TaskType_SetHandler(gHumanType, Game_GetEvent7(), sub_45E3E0);
     TaskType_SetHandler(gHumanType, Game_GetEvent9(), Human_Handler45F930);
     TaskType_SetHandler(gHumanType, Game_GetEvent8(), Human_Handler45F920);
-    TaskType_SetHandler(gHumanType, sub_4FDEF0(), Human_Handler45F920);
+    TaskType_SetHandler(gHumanType, Particle2D_GetCollideEvent(), Human_Handler45F920);
     TaskType_SetHandler(gHumanType, Game_GetEvent11(), Human_Handler45F9D0);
-    TaskType_SetHandler(gHumanType, sub_466230(), Human_Handler45FA80);
+    TaskType_SetHandler(gHumanType, DeathZone_GetEvent(), Human_Handler45FA80);
     TaskType_SetHandler(gHumanType, Game_GetEvent13(), Human_Handler416AB0);
-    TaskType_SetHandler(gHumanType, sub_484D30(), Human_GetHumanCameraInfoHandler);
-    TaskType_SetHandler(gHumanType, sub_450C80(), Human_Handler45FDA0);
-    TaskType_SetHandler(gHumanType, sub_489620(), Human_Handler45FE30);
-    TaskType_SetHandler(gHumanType, sub_489610(), Human_Handler42FC50);
-    TaskType_SetHandler(gHumanType, sub_450CC0(), Human_Handler45FE70);
-    TaskType_SetHandler(gHumanType, sub_46D410(), WeaponAmmoPickup);
-    TaskType_SetHandler(gHumanType, sub_46C970(), WeaponGunPickup);
-    TaskType_SetHandler(gHumanType, sub_477C00(), Human_Handler460070);
-    TaskType_SetHandler(gHumanType, sub_477C10(), Human_Handler460090);
-    TaskType_SetHandler(gHumanType, sub_477C20(), Human_gun_event_related_3);
-    TaskType_SetHandler(gHumanType, sub_477C30(), Human_gun_event_related_4);
-    TaskType_SetHandler(gHumanType, sub_477C40(), Human_gun_event_related_5);
-    TaskType_SetHandler(gHumanType, sub_4FC840(), Human_Handler4D3710);
+    TaskType_SetHandler(gHumanType, HumanCamera_GetEvent(), Human_GetHumanCameraInfoHandler);
+    TaskType_SetHandler(gHumanType, HumanAI_GetEventSlot(), Human_Handler45FDA0);
+    TaskType_SetHandler(gHumanType, AIDetection_GetEvent1(), Human_Handler45FE30);
+    TaskType_SetHandler(gHumanType, AIDetection_GetEvent0(), Human_Handler42FC50);
+    TaskType_SetHandler(gHumanType, HumanAI_GetEvent3Slot(), Human_Handler45FE70);
+    TaskType_SetHandler(gHumanType, AmmoPickup_GetEvent(), WeaponAmmoPickup);
+    TaskType_SetHandler(gHumanType, GunPickup_GetEvent(), WeaponGunPickup);
+    TaskType_SetHandler(gHumanType, Gun_GetEvent0(), Human_Handler460070);
+    TaskType_SetHandler(gHumanType, Gun_GetEvent1(), Human_Handler460090);
+    TaskType_SetHandler(gHumanType, Gun_GetEvent2(), Human_gun_event_related_3);
+    TaskType_SetHandler(gHumanType, Gun_GetEvent3(), Human_gun_event_related_4);
+    TaskType_SetHandler(gHumanType, Gun_GetEvent4(), Human_gun_event_related_5);
+    TaskType_SetHandler(gHumanType, PhysicsObj_GetEvent0(), Human_Handler4D3710);
     TaskType_SetHandler(gHumanType, ComputerObject_GetEvent0(), Human_Handler460280);
-    TaskType_SetHandler(gHumanType, sub_487190(), Human_Handler460400);
-    TaskType_SetHandler(gHumanType, sub_4E6610(), Human_Handler4606D0);
+    TaskType_SetHandler(gHumanType, StatusScreen_GetEvent(), Human_Handler460400);
+    TaskType_SetHandler(gHumanType, Sound_GetInfoEvent(), Human_Handler4606D0);
     TaskType_SetHandler(gHumanType, gHumanEvent0, Human_Handler4606F0);
-    TaskType_SetHandler(gHumanType, sub_477030(), Human_Handler4F64E0);
+    TaskType_SetHandler(gHumanType, Grenade_GetEvent(), Human_Handler4F64E0);
     TaskType_SetHandler(gHumanType, 0xC, Human_Handler45F920);
-    TaskType_SetHandler(gHumanType, sub_5096A0(), Human_ClearResult);
-    TaskType_SetHandler2(gHumanType, sub_4F1210(), Human_Handler460850);
-    TaskType_SetHandler2(gHumanType, sub_4F1220(), Human_Handler4608D0);
+    TaskType_SetHandler(gHumanType, AIGraph_GetEvent(), Human_ClearResult);
+    TaskType_SetHandler2(gHumanType, Level_GetEventDA8(), Human_Handler460850);
+    TaskType_SetHandler2(gHumanType, Level_GetEventDAC(), Human_Handler4608D0);
     TaskType_SetHandler(gHumanType, World_GetEvent0(), Human_Handler460950);
     TaskType_SetHandler(gHumanType, World_GetEvent1(), Human_Handler4609A0);
-    TaskType_SetHandler(gHumanType, sub_46AB20(), Human_Handler4609F0);
+    TaskType_SetHandler(gHumanType, ComputerMap_GetSelectEvent(), Human_Handler4609F0);
     TaskType_SetHandler2(gHumanType, 3, Human_Handler460AC0);
     gHumanParams = ParamTable_New(9);
     ParamTable_Add(gHumanParams, &tmp, tmp.unkE0, Param_ObjectPos(), 7, NULL);
-    ParamTable_Add(gHumanParams, &tmp, &tmp.unkF8, Param_4F0F20(), 7, NULL);
+    ParamTable_Add(gHumanParams, &tmp, &tmp.unkF8, Param_Angle(), 7, NULL);
     ParamTable_Add(gHumanParams, &tmp, tmp.unk100, Param_String16(), 7, NULL);
     ParamTable_Add(gHumanParams, &tmp, &tmp.unkFC, Param_Int32(), 7, NULL);
-    gHumanCriteria = sub_504A30("CRITERIA_HUMAN", Human_Criteria);
+    gHumanCriteria = AreaActivate_AddCriteria("CRITERIA_HUMAN", Human_Criteria);
     for (i = 0; i < 8; i++) {
         crt_sprintf(gHumanCriteriaNames[i], "CRITERIA_HUMAN%d", i);
-        gHumanCriteriaN[i] = sub_504A30(gHumanCriteriaNames[i], Human_CriteriaN);
+        gHumanCriteriaN[i] = AreaActivate_AddCriteria(gHumanCriteriaNames[i], Human_CriteriaN);
     }
     for (i = 0; i < 2; i++)
         Script_RegisterConstant(gHumanTeamNames[i], i);
@@ -320,7 +320,7 @@ void Human_CreateHandler(Human *h)
     QTaskList_Add(gHumanList, h);
     AIDetection_Add(h);
     QTaskList_Add(Game_GetTaskList3(), h);
-    sub_484DC0(h);
+    HumanCamera_AddHuman(h);
     Human_Reset(h);
     memset(h->unkE0, 0, sizeof(h->unkE0));
     h->unkF8 = 0;
@@ -439,13 +439,13 @@ void Human_DeleteHandler(Human *h)
     QTaskList_Remove(Game_GetTaskList3(), h);
     QTaskList_Remove(gHumanList, h);
     AIDetection_Remove(h);
-    sub_484E00(h);
+    HumanCamera_RemoveHuman(h);
     Human_RemoveRefs(h);
     for (i = 0; i < 32; i++)
         if (h->texts[i])
             Text_Free(h->texts[i]);
     if (Task_GetId(h) >= 0) {
-        fn = (TaskHandler1)TASK_HANDLER(sub_4F1220(), h->task.type);
+        fn = (TaskHandler1)TASK_HANDLER(Level_GetEventDAC(), h->task.type);
         if (fn)
             fn(h);
     }

@@ -82,7 +82,7 @@ ORIG(0x4CEF40, void, Model_Shutdown, (void));
 ORIG(0x4E5D90, void, QCube_InitTables, (void));
 ORIG(0x4D0EF0, void, QCube_Init, (void));
 ORIG(0x50FAC0, void, TerrainMesh_Init, (void));
-ORIG(0x52DD70, void, sub_52DD70, (void));
+ORIG(0x52DD70, void, WaterMesh_Open, (void));
 ORIG(0x4DA1D0, void, HazeLayer_Open, (void));
 ORIG(0x4DA2E0, void, HazeLayer_Close, (void));
 ORIG(0x4D1260, void, QCube_Shutdown, (void));
@@ -343,7 +343,7 @@ void sub_531D30(void)
     Debug_Log();
     Debug_Log();
     TerrainMesh_Init();
-    sub_52DD70();
+    WaterMesh_Open();
     HazeLayer_Open();
     TransparencyList_Init();
 }

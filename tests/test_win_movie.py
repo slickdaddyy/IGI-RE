@@ -60,7 +60,7 @@ FAKES = [
     (0x4B7050, "Sprite_StringWidth", 2, lambda e: (10 * len(e.read_cstr(e.arg(1))), e.read_cstr(e.arg(1)))),
     (0x4B7E00, "Text_GetHeight", 1, lambda e: 13),
     (0x4950E0, "sub_4950E0", 0, lambda e: 2), (0x495CB0, "sub_495CB0", 0, lambda e: SOUND[0]),
-    (0x495CC0, "sub_495CC0", 1, None), (0x496650, "sub_496650", 1, None),
+    (0x495CC0, "Sound_SetUpdateRate", 1, None), (0x496650, "sub_496650", 1, None),
     (0x4966E0, "sub_4966E0", 1, lambda e: SOUND[1]), (0x496770, "sub_496770", 4, lambda e: SOUND[0] * 0x6600),
     (0x496E40, "sub_496E40", 1, None), (0x496E60, "sub_496E60", 2, None),
     (0x497390, "sub_497390", 2, lambda e: (e.write(e.arg(0), b"snd/" + e.read_cstr(e.arg(1)) + b"\0"),

@@ -25,7 +25,7 @@ ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4E6B00, void *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (void *sound, Vec3d *pos));
-ORIG(0x4F0EE0, void *, Sound_GetOwner, (void));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 
 #define gMineParams VAR(void *, 0x5BE39C)
@@ -97,7 +97,7 @@ void Mine_ProximityHandler(Mine *m, MineProbe *p)
     if (m->armDelay || m->triggered)
         return;
     {
-        void *snd = Sound_Play(Sound_GetOwner(), "proxy_arm");
+        void *snd = Sound_Play(Level_GetDynamic(), "proxy_arm");
 
         if (snd)
             Sound_SetPos(snd, &m->o.pos);

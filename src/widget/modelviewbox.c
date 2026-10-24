@@ -3,7 +3,7 @@
 #include "widget/widget.h"
 
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
-ORIG(0x4028B0, int, Timer_GetTicks, (void));
+ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x4C5B20, void *, World_New, (int size));
 ORIG(0x4C5CE0, void, World_Free, (void *world));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
@@ -13,11 +13,11 @@ ORIG(0x4CEC10, void *, VirModel_Find, (const char *name));
 ORIG(0x4D9950, void, Camera_Init, (void *cam));
 ORIG(0x4D9870, void, Camera_Set, (void *cam, const float *pos, const float *axes, float fov, float aspect,
                                   float priority, int frame, void *owner, int unk9, int unk10));
-ORIG(0x4E75A0, int, sub_4E75A0, (void));
-ORIG(0x4E8110, Task *, View_New, (void *parent, float x, float y, float w, float h, void *world, void *cam,
+ORIG(0x4E75A0, int, Screen_GetFrame, (void));
+ORIG(0x4E8110, Task *, Viewport_New, (void *parent, float x, float y, float w, float h, void *world, void *cam,
                                   int unk8, int unk9, int unk10, int unk11, float unk12));
-ORIG(0x4E8370, void, View_SetWorld, (void *view, void *world));
-ORIG(0x4E8250, void, View_SetEnabled, (void *view, char on));
+ORIG(0x4E8370, void, TerraDrawTask_New, (void *view, void *world));
+ORIG(0x4E8250, void, Viewport_SetDrawWorld, (void *view, char on));
 
 /* a 3D view of a model in the menus, made from "minefield" */
 typedef struct ModelViewBox {
@@ -92,10 +92,10 @@ void ModelViewBox_Create(ModelViewBox *mv, void *arg)
     mv->isOn = 0;
     mv->world = World_New(0x1000);
     Camera_Init(cam);
-    Camera_Set(cam, pos, axes, fov(), 1.0f, 300.0f, sub_4E75A0(), mv, 0, 0);
-    mv->view = View_New(((Task *)mv->w.menu)->parent, 0.0f, 0.0f, 1.0f, 1.0f, mv->world, cam, 0, 0, 0, 0, 1.0f);
-    View_SetWorld(mv->view, mv->world);
-    View_SetEnabled(mv->view, 0);
+    Camera_Set(cam, pos, axes, fov(), 1.0f, 300.0f, Screen_GetFrame(), mv, 0, 0);
+    mv->view = Viewport_New(((Task *)mv->w.menu)->parent, 0.0f, 0.0f, 1.0f, 1.0f, mv->world, cam, 0, 0, 0, 0, 1.0f);
+    TerraDrawTask_New(mv->view, mv->world);
+    Viewport_SetDrawWorld(mv->view, 0);
 }
 HOOK(0x422C90, ModelViewBox_Create);
 
@@ -132,7 +132,7 @@ HOOK(0x422E40, ModelViewBox_Changed);
 
 void ModelViewBox_Run(ModelViewBox *mv)
 {
-    Timer_GetTicks();
+    Flow_GetFrames();
     CALL_BASE(1, mv);
 }
 HOOK(0x422F10, ModelViewBox_Run);

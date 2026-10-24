@@ -4,23 +4,23 @@
 #include "igi.h"
 #include "fxobj/fxobj.h"
 
-ORIG(0x414E20, void, sub_414E20, (Vec3d *out, void *obj, int i));
+ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int i));
 ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
 ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
-ORIG(0x497F20, void, sub_497F20, (float *screen, float *w, Vec3d *pos));
-ORIG(0x498040, void, sub_498040, (float *out, float *size, float w));
+ORIG(0x497F20, void, TransContext_Project, (float *screen, float *w, Vec3d *pos));
+ORIG(0x498040, void, TransContext_ScaleSize, (float *out, float *size, float w));
 ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
 ORIG(0x4B53B0, void, QVertex_DrawQuadEx, (void *s, float x0, float y0, float x1, float y1, float x2, float y2,
                                           float x3, float y3, float r, float g, float b, float z, float a, int frame,
                                           unsigned int flags, int unk20));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, void *c));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, void *c));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *o, void **model));
 ORIG(0x4C7140, void, DynCube_Add, (void *world, void *o, Vec3d *pos, float radius, int unk));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
-ORIG(0x4D9FA0, uint16_t, sub_4D9FA0, (void));
-ORIG(0x4E0830, uint16_t, sub_4E0830, (void));
+ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
+ORIG(0x4E0830, uint16_t, SectorInteriorObject_GetType, (void));
 ORIG(0x4F0F70, void *, Param_Real32x9, (void));
 
 #define AlarmLight_Create ((void *)0x43A0E0)
@@ -98,7 +98,7 @@ void AlarmLight_Init(void)
     AlarmLight l;
     int i;
 
-    gAlarmLightType = TaskType_New("AlarmLight", sizeof(AlarmLight), sub_4E0830(), 0);
+    gAlarmLightType = TaskType_New("AlarmLight", sizeof(AlarmLight), SectorInteriorObject_GetType(), 0);
     TaskType_SetHandler(gAlarmLightType, 0, AlarmLight_Create);
     TaskType_SetHandler2(gAlarmLightType, 1, AlarmLight_Run);
     TaskType_SetHandler2(gAlarmLightType, 2, AlarmLight_Delete);
@@ -117,7 +117,7 @@ void AlarmLight_Init(void)
         ParamTable_Add(gAlarmLightParams, &l, l.offModel + 0x10 * i, Param_String16(), 7, NULL);
     for (i = 0; i < 2; i++)
         ParamTable_Add(gAlarmLightParams, &l, l.onSound + 0x20 * i, Param_String16(), 7, NULL);
-    gAlarmLightReflectorType = TaskType_New("AlarmLightReflector", sizeof(Reflector), sub_4D9FA0(), 0);
+    gAlarmLightReflectorType = TaskType_New("AlarmLightReflector", sizeof(Reflector), MagicObj_GetType(), 0);
     TaskType_SetHandler(gAlarmLightReflectorType, 0, AlarmLightReflector_Create);
     TaskType_SetHandler2(gAlarmLightReflectorType, 1, AlarmLightReflector_Run);
     TaskType_SetHandler2(gAlarmLightReflectorType, 2, VehiclePart_Delete);
@@ -149,7 +149,7 @@ void AlarmLightReflector_Create(Reflector *t, PartCreateArg *a)
     DynCube_Add((void *)(intptr_t)a->unk4, t, &a->pos, r, 1);
     t->obj.matrix = a->matrix;
     t->light = (AlarmLight *)a->owner;
-    sub_4C4950(t, t, a->owner);
+    RigidDynCubeObj_CreateMagicObjs(t, t, a->owner);
     t->angle = 0.0f;
 }
 HOOK(0x439A50, AlarmLightReflector_Create);
@@ -217,7 +217,7 @@ void AlarmLightReflector_DrawFlare(Reflector *t, int point)
     long double k;
     Vec3d p;
 
-    sub_414E20(&p, t, point);
+    Model_GetPoint(&p, t, point);
     p.x = p.x + t->obj.pos.x;
     p.y = p.y + t->obj.pos.y;
     p.z = p.z + t->obj.pos.z;
@@ -230,12 +230,12 @@ void AlarmLightReflector_DrawFlare(Reflector *t, int point)
         if (!(dz * m7 + dy * m4 + dx * m1 > kZero))
             return;
     }
-    sub_497F20(scr, &w, &p);
+    TransContext_Project(scr, &w, &p);
     if (!(w > kZeroF))
         return;
     size[0] = 6144.0f;
     size[1] = 6144.0f;
-    sub_498040(size, size, w);
+    TransContext_ScaleSize(size, size, w);
     k = crt_fmod(t->angle, kPi) * kInvPi - kHalfF;
     if (k < kZeroF || k != k)
         k = -k;

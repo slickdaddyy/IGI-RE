@@ -46,8 +46,8 @@ ORIG(0x505A30, Task *, MenuItem_FindSelected, (MenuItemTask *t));
 ORIG(0x505C50, uint8_t, MenuItem_GetFindEvent, (void));
 ORIG(0x505C60, uint8_t, MenuItem_GetSelectEvent, (void));
 ORIG(0x505C70, uint8_t, MenuItem_GetCommitEvent, (void));
-ORIG(0x508F60, uint8_t, sub_508F60, (void));
-ORIG(0x508F70, uint8_t, sub_508F70, (void));
+ORIG(0x508F60, uint8_t, Sync_GetEvent0, (void));
+ORIG(0x508F70, uint8_t, Sync_GetEvent1, (void));
 
 #define MENUWINDOW_DRAW ((void *)0x424280)
 #define TASK_RUNCHILDREN ((void *)0x488700)
@@ -98,8 +98,8 @@ void MenuItemTask_Open(void)
     gMenuItemTaskPointerEvent = TaskEvent_Alloc(0);
     TaskType_SetHandler2(gMenuItemTaskType, 1, MenuItemTask_Run);
     TaskType_SetHandler2(gMenuItemTaskType, Screen_GetDrawEvent(), MENUWINDOW_DRAW);
-    TaskType_SetHandler(gMenuItemTaskType, sub_508F70(), MenuItemTask_Forward508F70);
-    TaskType_SetHandler(gMenuItemTaskType, sub_508F60(), MenuItemTask_Forward508F60);
+    TaskType_SetHandler(gMenuItemTaskType, Sync_GetEvent1(), MenuItemTask_Forward508F70);
+    TaskType_SetHandler(gMenuItemTaskType, Sync_GetEvent0(), MenuItemTask_Forward508F60);
     TaskType_SetHandler(gMenuItemTaskType, MenuItemTask_GetListEvent(), MenuItemTask_ForwardList);
     TaskType_SetHandler(gMenuItemTaskType, MenuItemTask_GetPointerEvent(), MenuItemTask_SetPointer);
 }
@@ -178,13 +178,13 @@ HOOK(0x5053B0, MenuItemTask_SetPointer);
 
 void MenuItemTask_Forward508F70(MenuItemTask *t, void *arg)
 {
-    CALL_CHILDREN(&t->task, sub_508F70(), arg);
+    CALL_CHILDREN(&t->task, Sync_GetEvent1(), arg);
 }
 HOOK(0x5053F0, MenuItemTask_Forward508F70);
 
 void MenuItemTask_Forward508F60(MenuItemTask *t, void *arg)
 {
-    CALL_CHILDREN(&t->task, sub_508F60(), arg);
+    CALL_CHILDREN(&t->task, Sync_GetEvent0(), arg);
 }
 HOOK(0x505480, MenuItemTask_Forward508F60);
 

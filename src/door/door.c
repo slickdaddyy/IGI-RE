@@ -18,9 +18,9 @@ ORIG(0x416810, uint8_t, Game_GetEvent3, (void));
 ORIG(0x416820, uint8_t, Game_GetEvent6, (void));
 ORIG(0x4168A0, void *, Game_GetTaskList0, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
-ORIG(0x450CA0, uint8_t, sub_450CA0, (void));
+ORIG(0x450CA0, uint8_t, HumanAI_GetDoorSlot, (void));
 ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
-ORIG(0x4871C0, void, sub_4871C0, (char *p, char *q));
+ORIG(0x4871C0, void, StatusScreen_DrawActionIcon, (char *p, char *q));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B32F0, long double, Vec3d_DistanceSq, (const Vec3d *a, const Vec3d *b));
 ORIG(0x4B3790, void, Matrix_RotateZ, (Matrix *out, const Matrix *m, float a));
@@ -32,7 +32,7 @@ ORIG(0x4C17C0, void, QTaskList_Remove, (void *list, void *item));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x4C48D0, void, RigidDynCubeObj_SetModel, (void *obj, void **model));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, void *c));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, void *c));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model));
 ORIG(0x4C5800, uint8_t, RigidDynCubeObj_GetEvent4, (void));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, float radius));
@@ -43,7 +43,7 @@ ORIG(0x4CC2A0, void, Coll_Lines, (void *world, void *results, Vec3d *starts, Vec
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
-ORIG(0x4E0930, Task *, sub_4E0930, (void *parent, void *obj));
+ORIG(0x4E0930, Task *, MagicObjContainer_New, (void *parent, void *obj));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (Task *sound));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
@@ -66,7 +66,7 @@ ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
-ORIG(0x5096A0, uint8_t, sub_5096A0, (void));
+ORIG(0x5096A0, uint8_t, AIGraph_GetEvent, (void));
 
 typedef struct RangeF {
     float min, max;
@@ -264,8 +264,8 @@ void Door_Open(void)
     TaskType_SetHandler2(gDoorType, Level_GetEventDA8(), Door_AddSymbols);
     TaskType_SetHandler2(gDoorType, Level_GetEventDAC(), Door_RemoveSymbols);
     TaskType_SetHandler(gDoorType, RigidDynCubeObj_GetEvent4(), Door_MoveHandler);
-    TaskType_SetHandler(gDoorType, sub_450CA0(), Door_FindNearest);
-    TaskType_SetHandler(gDoorType, sub_5096A0(), sub_4464B0);
+    TaskType_SetHandler(gDoorType, HumanAI_GetDoorSlot(), Door_FindNearest);
+    TaskType_SetHandler(gDoorType, AIGraph_GetEvent(), sub_4464B0);
     TaskType_SetHandler(gDoorType, ComputerObject_GetEvent0(), Terminal_MapHandler);
     gDoorParams = ParamTable_New(16);
     gDoorSlideRange.min = -10.0f;
@@ -388,7 +388,7 @@ void sub_446CE0(Door *d, char **arg)
 {
     char *h = *arg;
 
-    sub_4871C0(h, h + (d->isLocked ? 0x41C : 0x464));
+    StatusScreen_DrawActionIcon(h, h + (d->isLocked ? 0x41C : 0x464));
 }
 HOOK(0x446CE0, sub_446CE0);
 
@@ -610,9 +610,9 @@ void Door_ParamsChanged(Door *d, char *arg)
     }
     if (d->o.unkE8)
         Task_Delete(d->o.unkE8);
-    t = sub_4E0930(NULL, d);
+    t = MagicObjContainer_New(NULL, d);
     d->o.unkE8 = t;
-    sub_4C4950(t, d, d);
+    RigidDynCubeObj_CreateMagicObjs(t, d, d);
     BROADCAST(&d->o.task, Param_GetChangedEvent(), arg);
     d->lastPos = d->o.pos;
     d->lastMatrix = d->o.matrix;

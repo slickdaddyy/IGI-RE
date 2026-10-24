@@ -26,23 +26,23 @@ ORIG(0x424860, int, MenuWindow_GetEvent910, (void));
 ORIG(0x424870, int, MenuWindow_GetEvent914, (void));
 ORIG(0x424880, int, MenuWindow_GetEvent918, (void));
 ORIG(0x424890, int, MenuWindow_GetEvent91C, (void));
-ORIG(0x424E20, Task *, sub_424E20, (void *mm));
-ORIG(0x489460, char, sub_489460, (void));
-ORIG(0x48A710, void, sub_48A710, (void));
+ORIG(0x424E20, Task *, Cursor_New, (void *mm));
+ORIG(0x489460, char, LevelFlow_IsFailed, (void));
+ORIG(0x48A710, void, Keys_Install, (void));
 ORIG(0x491CF0, int *, Display_GetMode, (void));
-ORIG(0x497570, void, sub_497570, (void *scene, int on));
-ORIG(0x497680, void, sub_497680, (void *scene, float *rect));
+ORIG(0x497570, void, Scene_Init, (void *scene, int on));
+ORIG(0x497680, void, Scene_SetRect, (void *scene, float *rect));
 ORIG(0x4B12F0, void, Alias_Set, (const char *name, const char *path));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
 ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
-ORIG(0x4ED5E0, void, sub_4ED5E0, (int a, int b));
+ORIG(0x4ED5E0, void, InputPort_Setup, (int a, int b));
 ORIG(0x4F0EF0, void *, Param_PushButton, (void));
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
 ORIG(0x4F0FF0, void *, Param_String256, (void));
 ORIG(0x4F1000, void *, Param_Bool8, (void));
-ORIG(0x4F1030, Task *, Window_Find, (int id));
+ORIG(0x4F1030, Task *, Task_FindById, (int id));
 ORIG(0x4F1210, int, Level_GetEventDA8, (void));
 ORIG(0x4F1220, int, Level_GetEventDAC, (void));
 ORIG(0x4F1950, void *, ParamTable_New, (int count));
@@ -169,17 +169,17 @@ void MenuManager_Create(MenuManager *mm)
                                      0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.05f, 0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.25f,
                                      0x1.b4e81cp-9f, 0x1.b4e81cp-9f);
 
-        sub_4ED5E0(0, Profile_GetKeyCount(keys));
+        InputPort_Setup(0, Profile_GetKeyCount(keys));
         gUnkBC20A0 = 1;
     }
-    sub_48A710();
+    Keys_Install();
     mm->unk26BE = 1;
     rect[0] = 0.0f;
     rect[1] = 0.0f;
     rect[2] = Display_GetMode()[1];
     rect[3] = Display_GetMode()[2];
-    sub_497570(mm->unk266C, 1);
-    sub_497680(mm->unk266C, rect);
+    Scene_Init(mm->unk266C, 1);
+    Scene_SetRect(mm->unk266C, rect);
     mm->screen = -1;
     mm->popup = -1;
     mm->screenTask = NULL;
@@ -197,7 +197,7 @@ void MenuManager_Create(MenuManager *mm)
     mm->soundsLoaded = 0;
     mm->focus = NULL;
     mm->picCount = 0;
-    mm->pointer = sub_424E20(mm);
+    mm->pointer = Cursor_New(mm);
     mm->backgroundFX = NULL;
     mm->depth = 0;
 }
@@ -295,7 +295,7 @@ ScriptValue *MenuManager_LeaveMenus(ScriptValue *out, MenuManager *mm, void *arg
     int screen = Script_GetArgInt(args, 0);
     int next = Script_GetArgInt(args, 1);
 
-    if (!sub_489460() || next != 9) {
+    if (!LevelFlow_IsFailed() || next != 9) {
         mm->screen = screen;
         mm->state = 6;
         mm->nextState = next;
@@ -315,7 +315,7 @@ HOOK(0x417810, MenuManager_SetLanguage);
 
 ScriptValue *MenuManager_ForceUpdateWindow(ScriptValue *out, MenuManager *mm, void *args)
 {
-    Task *w = Window_Find(Script_GetArgInt(args, 0));
+    Task *w = Task_FindById(Script_GetArgInt(args, 0));
     TaskFn1 fn;
 
     if (w) {

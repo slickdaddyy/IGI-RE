@@ -9,11 +9,11 @@ ORIG(0x4B3BA0, void, Matrix_SetRotY, (Matrix *m, float a));
 ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Matrix *m, float a));
 ORIG(0x4CE410, char, Coll_LineOfSight, (void *world, const Vec3d *from, const Vec3d *to, int event, void *filter,
                                          int flags, int trees, float *visibility));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (void));
-ORIG(0x429A30, void, sub_429A30, (void *parent, void *owner, void *shooter, Vec3d *pos, Matrix *dir, float speed,
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
+ORIG(0x429A30, void, Missile_New, (void *parent, void *owner, void *shooter, Vec3d *pos, Matrix *dir, float speed,
                                   Vec3d *target, int unk, const char *name, int unk2));
-ORIG(0x4F4860, uint8_t, sub_4F4860, (void));
-ORIG(0x4D14D0, uint8_t, sub_4D14D0, (void));
+ORIG(0x4F4860, uint8_t, Vehicle_GetClearHitEvent, (void));
+ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 
 /* a moving part of a vehicle: door, wheel, rocket pod */
 typedef struct VehiclePart {
@@ -508,7 +508,7 @@ void RocketPod_Run(VehiclePart *p)
             pos.z = (float)(m[7] * kRocketReach) + pos.z;
             target = ((RigidObj *)*n->ref)->pos;
             speed = owner->speed * kRocketSpeed + kRocketSpeedMin;
-            sub_429A30(sub_4F0EE0(), p, p, &pos, &p->obj.matrix, speed, &target, 0, "700_10_1", 0);
+            Missile_New(Level_GetDynamic(), p, p, &pos, &p->obj.matrix, speed, &target, 0, "700_10_1", 0);
             delay = *(int *)p->params;
             p->cooldown = Random_Int(Game_GetRandom(), delay) + *(int *)p->params;
         }
@@ -551,8 +551,8 @@ void HitZone_Init(void)
     TaskType_SetHandler(gHitZoneType, Game_GetEvent11(), NULL);
     TaskType_SetHandler(gHitZoneType, RigidDynCubeObj_GetEvent0(), HitZone_ParseArgs);
     TaskType_SetHandler(gHitZoneType, RigidDynCubeObj_GetEvent1(), HitZone_GetArgSize);
-    TaskType_SetHandler(gHitZoneType, sub_4F4860(), HitZone_ClearHit);
-    TaskType_SetHandler(gHitZoneType, sub_4D14D0(), NULL);
+    TaskType_SetHandler(gHitZoneType, Vehicle_GetClearHitEvent(), HitZone_ClearHit);
+    TaskType_SetHandler(gHitZoneType, QCube_GetNearClipEvent(), NULL);
     TaskType_SetHandler(gHitZoneType, 9, NULL);
     TaskType_SetHandler(gHitZoneType, 12, HANDLER_45F920);
     TaskType_SetHandler(gHitZoneType, World_GetEvent1(), NULL);

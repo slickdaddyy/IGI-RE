@@ -3,10 +3,10 @@
 #include "hook.h"
 #include "elevator/elevator.h"
 
-ORIG(0x4DCCB0, int, sub_4DCCB0, (int world, void *obj, Vec3d *pos));
-ORIG(0x4DCDD0, void, sub_4DCDD0, (void *obj));
-ORIG(0x4DCF00, void, sub_4DCF00, (int world, void *obj, Vec3d *pos));
-ORIG(0x4E0930, Task *, sub_4E0930, (void *parent, void *obj));
+ORIG(0x4DCCB0, int, Sector_AddObject, (int world, void *obj, Vec3d *pos));
+ORIG(0x4DCDD0, void, Sector_RemoveObject, (void *obj));
+ORIG(0x4DCF00, void, Sector_MoveObject, (int world, void *obj, Vec3d *pos));
+ORIG(0x4E0930, Task *, MagicObjContainer_New, (void *parent, void *obj));
 
 /* a light that turns on and off with a script condition and breaks when hit */
 typedef struct AlarmLight {
@@ -44,7 +44,7 @@ void AlarmLight_Create(AlarmLight *al)
     al->place.y = 0;
     al->place.z = 0;
     DynCube_Add(gCurrentWorld, al, &al->place, obj_radius(&al->obj), 1);
-    sub_4DCCB0(al->obj.world, al, DynCubeObj_GetPosition(al));
+    Sector_AddObject(al->obj.world, al, DynCubeObj_GetPosition(al));
     for (i = 0; i < 9; i++)
         al->placeMatrix.m[i] = i % 4 == 0 ? 1.0f : 0.0f;
     al->placeMatrix.unk24 = 0;
@@ -102,7 +102,7 @@ void AlarmLight_Delete(AlarmLight *al)
     }
     if (al->obj.unkE8)
         Task_Delete(al->obj.unkE8);
-    sub_4DCDD0(al);
+    Sector_RemoveObject(al);
     DynCube_Remove(al->obj.world, al);
 }
 HOOK(0x43A3C0, AlarmLight_Delete);
@@ -119,12 +119,12 @@ void AlarmLight_Changed(AlarmLight *al, const char *arg)
 
     RigidDynCubeObj_SetModel(al, VirModel_Find(al->onModel));
     DynCube_Move(al->obj.world, al, &al->place, obj_radius(&al->obj));
-    sub_4DCF00(al->obj.world, al, DynCubeObj_GetPosition(al));
+    Sector_MoveObject(al->obj.world, al, DynCubeObj_GetPosition(al));
     t = al->obj.unkE8;
     al->obj.matrix = al->placeMatrix;
     if (t)
         Task_Delete(t);
-    t = sub_4E0930(NULL, al);
+    t = MagicObjContainer_New(NULL, al);
     al->obj.unkE8 = t;
     sub_4C4950(t, al, al);
     if (!arg || !*arg)

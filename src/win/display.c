@@ -22,19 +22,19 @@ ORIG(0x4B0F70, void, RenderMode_Deselect, (void));
 ORIG(0x4B1000, int, RenderMode_Call, (int mode, int method, void *arg));
 ORIG(0x492230, HRESULT, Direct3D_FindDeviceCB, (void));
 ORIG(0x4922B0, HRESULT, Direct3D_ListDeviceCB, (void));
-ORIG(0x492370, void, sub_492370, (char *out, GUID guid));
+ORIG(0x492370, void, Guid_ToString, (char *out, GUID guid));
 ORIG(0x492BE0, const char *, DDraw_GetErrorString, (HRESULT hr));
-ORIG(0x493580, void, sub_493580, (void));
-ORIG(0x495060, void, sub_495060, (void));
-ORIG(0x495220, void, Display_RemoveCallback, (void (*fn)(void), void *list));
-ORIG(0x497700, void, sub_497700, (void));
-ORIG(0x4977F0, void, sub_4977F0, (void));
+ORIG(0x493580, void, Direct3D_Init, (void));
+ORIG(0x495060, void, Direct3D_Shutdown, (void));
+ORIG(0x495220, void, Direct3D_RemoveCallback, (void (*fn)(void), void *list));
+ORIG(0x497700, void, Scene_DrawAll, (void));
+ORIG(0x4977F0, void, Frame_Reset, (void));
 ORIG(0x497860, void, Primitive_Draw, (void *prim));
 ORIG(0x4978D0, int, Primitive_Register, (const char *name));
-ORIG(0x498080, void, sub_498080, (void));
-ORIG(0x498350, void, sub_498350, (void));
-ORIG(0x4988D0, void, sub_4988D0, (const char *text));
-ORIG(0x4C1780, void, sub_4C1780, (void));
+ORIG(0x498080, void, Offscreen_Init, (void));
+ORIG(0x498350, void, Offscreen_Shutdown, (void));
+ORIG(0x4988D0, void, App_MessageBox, (const char *text));
+ORIG(0x4C1780, void, Debug_Log, (void));
 
 /* the exe's import thunks; DDRAW.dll is not linked into our DLL */
 ORIG_STD(0x4AF74C, HRESULT, DirectDrawEnumerateExA_, (LPDDENUMCALLBACKEXA fn, void *ctx, DWORD flags));
@@ -147,7 +147,7 @@ HOOK(0x491650, Display_AddCallback);
 
 void Display_RemoveSetModeCallback(void (*fn)(void))
 {
-    Display_RemoveCallback(fn, &gDisplaySetModeCallbacks);
+    Direct3D_RemoveCallback(fn, &gDisplaySetModeCallbacks);
 }
 HOOK(0x4916A0, Display_RemoveSetModeCallback);
 
@@ -159,7 +159,7 @@ HOOK(0x4916C0, Display_AddFrameCallback);
 
 void Display_RemoveFrameCallback(void (*fn)(void))
 {
-    Display_RemoveCallback(fn, &gDisplayFrameCallbacks);
+    Direct3D_RemoveCallback(fn, &gDisplayFrameCallbacks);
 }
 HOOK(0x4916E0, Display_RemoveFrameCallback);
 
@@ -192,12 +192,12 @@ void Display_Open(void)
     gDisplayModeSet = 0;
     gDisplayModeCount = 0;
     Display_ClearCallbacks();
-    sub_4C1780();
+    Debug_Log();
     gPrimClipWindow = Primitive_Register("ClipWindowPrimitive");
     gPrimBlit = Primitive_Register("BlitPrimitive");
     gPrimSnapshot = Primitive_Register("SnapshotPrimitive");
-    sub_493580();
-    sub_498080();
+    Direct3D_Init();
+    Offscreen_Init();
     args[0] = Display_GetOpenMethod();
     args[1] = 0;
     RenderMode_ForEach((void (*)(RenderModeInfo *, void *))Display_CallMethodCB, args);
@@ -229,7 +229,7 @@ void Display_WarningHandler(const char *text)
 
     if (gDisplayOpen)
         Display_UnsetMode(NULL);
-    sub_4988D0(text);
+    App_MessageBox(text);
     if (gDisplayOpen)
         Display_SetMode(&mode);
 }
@@ -239,7 +239,7 @@ void Display_ErrorHandler(const char *text)
 {
     if (gDisplayOpen)
         Display_UnsetMode(NULL);
-    sub_4988D0(text);
+    App_MessageBox(text);
 }
 HOOK(0x4918F0, Display_ErrorHandler);
 
@@ -260,8 +260,8 @@ void Display_Close(void)
     args[0] = Display_GetCloseMethod();
     args[1] = 0;
     RenderMode_ForEach((void (*)(RenderModeInfo *, void *))Display_CallMethodCB, args);
-    sub_495060();
-    sub_498350();
+    Direct3D_Shutdown();
+    Offscreen_Shutdown();
     gDisplayOpen = 0;
 }
 HOOK(0x491930, Display_Close);
@@ -390,14 +390,14 @@ void Display_NextFrame(void)
 {
     Display_SwapBuffers();
     Display_Clear();
-    sub_4977F0();
+    Frame_Reset();
     Display_RunCallbacks(gDisplayFrameCallbacks);
 }
 HOOK(0x491D00, Display_NextFrame);
 
 void Display_EndFrame(void)
 {
-    sub_497700();
+    Scene_DrawAll();
     Display_RunCallbacks(gDisplayEndFrameCallbacks);
 }
 HOOK(0x491D20, Display_EndFrame);
@@ -570,7 +570,7 @@ BOOL WINAPI Display_EnumDriverCB(GUID *guid, char *desc, char *name, void *conte
         ctx->cur.guidData = *guid;
     else
         memset(&ctx->cur.guidData, 0, sizeof(GUID));
-    sub_492370(ctx->cur.name, ctx->cur.guidData);
+    Guid_ToString(ctx->cur.name, ctx->cur.guidData);
     ctx->cur.halCaps.dwSize = sizeof(DDCAPS);
     ctx->cur.helCaps.dwSize = sizeof(DDCAPS);
     hr = dd->lpVtbl->GetCaps(dd, &ctx->cur.halCaps, &ctx->cur.helCaps);

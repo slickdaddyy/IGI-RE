@@ -48,11 +48,11 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 ORIG(0x4F1B60, uint8_t, ParamOp_Parse, (void));
 ORIG(0x4F1B70, uint8_t, ParamOp_ArgCount, (void));
 ORIG(0x4F1B80, uint8_t, ParamOp_Format, (void));
-ORIG(0x4F1B90, uint8_t, ParamOp_GetSize, (void));
+ORIG(0x4F1B90, uint8_t, ParamOp_Size, (void));
 ORIG(0x4F1BA0, uint8_t, ParamOp_Copy, (void));
 ORIG(0x4F1BB0, uint8_t, ParamOp_Paste, (void));
 ORIG(0x4F1BC0, void, ParamType_SetOp, (int type, uint8_t op, void *fn));
-ORIG(0x5034D0, uint16_t, Position_GetType, (void));
+ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
 #define gAnimTaskType VAR(uint16_t, 0x54E1D8)
 #define gVehicleControlEvent VAR(uint8_t, 0x54E1DA)
@@ -122,7 +122,7 @@ void AnimData_GetSize(void *t, int *out);
 
 void AnimTask_Open(void)
 {
-    gAnimTaskType = TaskType_New("AnimTask", 0x20160, Position_GetType(), 0);
+    gAnimTaskType = TaskType_New("AnimTask", 0x20160, EditorRigidObj_GetType(), 0);
     gVehicleControlEvent = TaskEvent_Alloc(0);
     gAnimEventDB = TaskEvent_Alloc(0);
     gVehicleInputInfoEvent = TaskEvent_Alloc(0);
@@ -135,7 +135,7 @@ void AnimTask_Open(void)
     ParamType_SetOp(gAnimDataType, ParamOp_Format(), TASK_NOTHING);
     ParamType_SetOp(gAnimDataType, ParamOp_Copy(), AnimData_Copy);
     ParamType_SetOp(gAnimDataType, ParamOp_Paste(), AnimData_Paste);
-    ParamType_SetOp(gAnimDataType, ParamOp_GetSize(), AnimData_GetSize);
+    ParamType_SetOp(gAnimDataType, ParamOp_Size(), AnimData_GetSize);
     ParamType_SetOp(gAnimDataType, ParamOp_ArgCount(), AnimData_ArgCount);
 }
 HOOK(0x4F3440, AnimTask_Open);

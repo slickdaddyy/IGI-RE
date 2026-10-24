@@ -21,17 +21,17 @@ ORIG(0x4CE090, void, Coll_SendEvent, (int world, uint8_t slot, void *arg, const 
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4CFC30, int, Mesh3D_GetDrawRigidMethod, (void));
-ORIG(0x4CFC70, uint8_t, Lightmap_GetLoadEvent, (void));
-ORIG(0x4CFC80, uint8_t, Lightmap_GetFreeEvent, (void));
-ORIG(0x4CFC90, uint8_t, Lightmap_GetMatchEvent, (void));
+ORIG(0x4CFC70, uint8_t, Mesh3D_GetEvent1, (void));
+ORIG(0x4CFC80, uint8_t, Mesh3D_GetEvent2, (void));
+ORIG(0x4CFC90, uint8_t, Mesh3D_GetEvent3, (void));
 ORIG(0x4CFCB0, int, ModelObj_GetLOD, (void *obj));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (VirModel *model));
-ORIG(0x4D14C0, uint8_t, Sector_GetLocateEvent, (void));
-ORIG(0x4D14D0, uint8_t, sub_4D14D0, (void));
+ORIG(0x4D14C0, uint8_t, QCube_GetEnclosingEvent, (void));
+ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
-ORIG(0x4DA180, void, sub_4DA180, (int **layers, int *count));
+ORIG(0x4DA180, void, Haze_GetVisible, (int **layers, int *count));
 ORIG(0x4DEE80, uint16_t, SectorObject_GetType, (void));
-ORIG(0x4E55B0, uint8_t, sub_4E55B0, (void));
+ORIG(0x4E55B0, uint8_t, CellMask_GetDrawEvent, (void));
 
 /* handlers of the next range */
 #define Sector_Create ((void *)0x4DE6B0)
@@ -709,7 +709,7 @@ void SectorObject_LoadLightmaps(SectorObject *so, LightmapSet **arg)
     int count = 0, n = 0;
     Obj *o;
 
-    HANDLER(Lightmap_GetFreeEvent(), so->s.o.task.type)(so, &old);
+    HANDLER(Mesh3D_GetEvent2(), so->s.o.task.type)(so, &old);
     if (so->sectors) {
         for (o = &so->s.o; o; o = next_part(so, o)) {
             if (o->model) {
@@ -901,7 +901,7 @@ int Sector_AddObject(int world, Obj *obj, Vec3d *pos)
     q.raise = 1;
     q.sector = NULL;
     q.owner = NULL;
-    Coll_SendEvent(world, Sector_GetLocateEvent(), &q, pos, 0xFFFFFFFF, 5);
+    Coll_SendEvent(world, QCube_GetEnclosingEvent(), &q, pos, 0xFFFFFFFF, 5);
     s = q.sector;
     if (s && s != &q.owner->s && s->objects.used < s->objects.count && gSectorLinks.used < gSectorLinks.count) {
         SectorLink *l = pool_take(&gSectorLinks);
@@ -958,19 +958,19 @@ void Sector_Open(void)
     TaskType_SetHandler(gSectorType, World_GetEvent1(), Sector_WorldRemove);
     gSectorObjectType = TaskType_New("SectorObject", sizeof(SectorObject), gSectorType, 0);
     TaskType_SetHandler(gSectorObjectType, 4, SectorObject_Render);
-    TaskType_SetHandler(gSectorObjectType, sub_4E55B0(), sub_4D3710);
+    TaskType_SetHandler(gSectorObjectType, CellMask_GetDrawEvent(), sub_4D3710);
     TaskType_SetHandler(gSectorObjectType, 0, SectorObject_Create);
     TaskType_SetHandler2(gSectorObjectType, 2, SectorObject_Delete);
     TaskType_SetHandler(gSectorObjectType, 10, SectorObject_Handler10);
     TaskType_SetHandler(gSectorObjectType, 9, SectorObject_Handler9);
     TaskType_SetHandler(gSectorObjectType, 8, SectorObject_Handler8);
     TaskType_SetHandler(gSectorObjectType, 11, SectorObject_Handler11);
-    TaskType_SetHandler(gSectorObjectType, Sector_GetLocateEvent(), SectorObject_LocateHandler);
+    TaskType_SetHandler(gSectorObjectType, QCube_GetEnclosingEvent(), SectorObject_LocateHandler);
     TaskType_SetHandler2(gSectorObjectType, 1, SectorObject_Run);
-    TaskType_SetHandler(gSectorObjectType, Lightmap_GetLoadEvent(), SectorObject_LoadLightmaps);
-    TaskType_SetHandler(gSectorObjectType, Lightmap_GetFreeEvent(), SectorObject_FreeLightmaps);
-    TaskType_SetHandler(gSectorObjectType, Lightmap_GetMatchEvent(), SectorObject_MatchLightmaps);
-    TaskType_SetHandler(gSectorObjectType, sub_4D14D0(), SectorObject_NearZHandler);
+    TaskType_SetHandler(gSectorObjectType, Mesh3D_GetEvent1(), SectorObject_LoadLightmaps);
+    TaskType_SetHandler(gSectorObjectType, Mesh3D_GetEvent2(), SectorObject_FreeLightmaps);
+    TaskType_SetHandler(gSectorObjectType, Mesh3D_GetEvent3(), SectorObject_MatchLightmaps);
+    TaskType_SetHandler(gSectorObjectType, QCube_GetNearClipEvent(), SectorObject_NearZHandler);
     TaskType_SetHandler(gSectorObjectType, World_GetEvent0(), SectorObject_WorldAdd);
     TaskType_SetHandler(gSectorObjectType, World_GetEvent1(), SectorObject_WorldRemove);
     Pool_Init(&gVisSectors, sizeof(VisSector), 20, 0);
@@ -1051,7 +1051,7 @@ void SectorObject_Render(SectorObject *so)
         s = gViewSector;
     }
     gSectorLights = Light_GetActive(&gSectorLightCount);
-    sub_4DA180(&gSectorFog, &gSectorFogCount);
+    Haze_GetVisible(&gSectorFog, &gSectorFogCount);
     min[0] = gSceneArea.minX;
     min[1] = gSceneArea.minY;
     max[0] = gSceneArea.maxX;

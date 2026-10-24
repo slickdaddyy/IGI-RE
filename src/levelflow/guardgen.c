@@ -15,7 +15,7 @@ ORIG(0x4B0D90, void, Mem_PopMode, (void));
 ORIG(0x4F1090, void, Level_SetTaskId, (int id, Task *task));
 /* runs operation op of parameter value type `type` on a field */
 ORIG(0x4F1AF0, void, ParamType_Call, (void *field, int type, uint8_t op, void *arg));
-ORIG(0x4F1B90, uint8_t, ParamOp_GetSize, (void));
+ORIG(0x4F1B90, uint8_t, ParamOp_Size, (void));
 ORIG(0x4F1BA0, uint8_t, ParamOp_Copy, (void));
 
 /* a saved copy of one task of the guard: its type, level id and the
@@ -269,7 +269,7 @@ void GuardGenerator_Snapshot(GuardGenerator *g)
                 int size;
                 void *dst;
 
-                ParamType_Call(field, e->type, ParamOp_GetSize(), &size);
+                ParamType_Call(field, e->type, ParamOp_Size(), &size);
                 if (size) {
                     t->values[i] = Mem_Alloc(size, 4);
                     dst = t->values[i];

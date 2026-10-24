@@ -5,7 +5,7 @@
 
 ORIG(0x49A050, float *, SplineMesh_GetVerts, (void *obj, int model, int part, int unk3, int unk4, int *count));
 ORIG(0x4B32B0, long double, Vec3d_Distance, (const Vec3d *a, const Vec3d *b));
-ORIG(0x4BD070, int, Ray_SkipTriangle, (void *model, uint16_t *tri, float v, float u));
+ORIG(0x4BD070, int, Qvm_GetArgLine, (void *model, uint16_t *tri, float v, float u));
 
 /* a node of a bounding sphere tree (0x18 bytes) */
 typedef struct RayNode {
@@ -385,7 +385,7 @@ static void tri_test(Ray *r, uint16_t *tri, int rigid)
         return;
     if (!(v >= kZeroD) || v + u > kOneD)
         return;
-    if (Ray_SkipTriangle(r->lodModel, tri, v, u))
+    if (Qvm_GetArgLine(r->lodModel, tri, v, u))
         return;
     tri_accept(r, tri, t, denom, P);
 }

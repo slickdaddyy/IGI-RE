@@ -72,20 +72,20 @@ typedef struct HumanNoise {
 
 ORIG(0x416D80, char, PlayerXPHit, (void));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
-ORIG(0x4C1780, void, sub_4C1780, (HumanPlayer *p));
-ORIG(0x413A60, void, sub_413A60, (HumanPlayer *p, int mode));
-ORIG(0x413C80, char *, sub_413C80, (void *task));
-ORIG(0x4F23D0, void, sub_4F23D0, (void *task, int *out));
-ORIG(0x489E70, void, sub_489E70, (HumanPlayer *p, int anim, float blend));
-ORIG(0x489E10, void, sub_489E10, (float *damage, int kind));
-ORIG(0x4D6520, long double, sub_4D6520, (void *model, int track));
-ORIG(0x4D64E0, long double, sub_4D64E0, (void *model, int track));
-ORIG(0x4D65B0, void, sub_4D65B0, (void *model, int track, float time));
-ORIG(0x4659B0, void, sub_4659B0, (void *obj, float v));
-ORIG(0x4E6B00, void, sub_4E6B00, (void *obj, const char *sound));
-ORIG(0x4C3440, int, sub_4C3440, (HumanPlayer *p));
-ORIG(0x450CE0, void, sub_450CE0, (HumanNoise *e));
-ORIG(0x40AEF0, void, HumanState_Update21, (HumanStateMachine *sm, HumanPlayer *p));
+ORIG(0x4C1780, void, Debug_Log, (HumanPlayer *p));
+ORIG(0x413A60, void, HumanPlayer_RequestWeaponAnim, (HumanPlayer *p, int mode));
+ORIG(0x413C80, char *, Weapon_GetType, (void *task));
+ORIG(0x4F23D0, void, Weapon_GetAmmo, (void *task, int *out));
+ORIG(0x489E70, void, Human_PlayAnimSlot, (HumanPlayer *p, int anim, float blend));
+ORIG(0x489E10, void, HumanDamage_GetZone, (float *damage, int kind));
+ORIG(0x4D6520, long double, Anim_GetPhase, (void *model, int track));
+ORIG(0x4D64E0, long double, Anim_GetLength, (void *model, int track));
+ORIG(0x4D65B0, void, Anim_SetTime, (void *model, int track, float time));
+ORIG(0x4659B0, void, HumanView_SetDip, (void *obj, float v));
+ORIG(0x4E6B00, void, Sound_Play, (void *obj, const char *sound));
+ORIG(0x4C3440, int, DynCubeObj_GetPosition, (HumanPlayer *p));
+ORIG(0x450CE0, void, HumanAI_Broadcast, (HumanNoise *e));
+ORIG(0x40AEF0, void, HumanPlayer_RunForwardLeftUpdate, (HumanStateMachine *sm, HumanPlayer *p));
 
 #define gHumanAirSpeed VAR(float, 0x56E1F4)
 
@@ -135,12 +135,12 @@ void HumanPlayer_UpdateFall(HumanPlayer *p)
         b = 0;
     else if (b > 1)
         b = 1;
-    sub_4659B0(p->unk4EC, b * -1024.0);
+    HumanView_SetDip(p->unk4EC, b * -1024.0);
     d = speed - 14.0f;
     e.radius = 20480.0f;
     if (d > 0) {
         p->unk2E8 = 13;
-        sub_489E10(&p->damage, 13);
+        HumanDamage_GetZone(&p->damage, 13);
         dmg = (long double)d * 0.07692307978868484f * p->health;
         if (!PlayerXPHit()) {
             p->unk2C8 = dmg + (long double)p->unk2C8;
@@ -154,30 +154,30 @@ void HumanPlayer_UpdateFall(HumanPlayer *p)
             else
                 sound = "player_fall_3";
             crt_sprintf(buf, sound);
-            sub_4E6B00(p->unk4EC, buf);
+            Sound_Play(p->unk4EC, buf);
             e.radius = 40960.0f;
         }
     }
     e.kind = 11;
     e.unk04 = p->unkFC;
     e.unk08 = 0x46;
-    e.unk10 = sub_4C3440(p);
+    e.unk10 = DynCubeObj_GetPosition(p);
     e.src = p;
     e.unk18 = p;
-    sub_450CE0(&e);
+    HumanAI_Broadcast(&e);
 }
 HOOK(0x408460, HumanPlayer_UpdateFall);
 
-int sub_408720(void *task)
+int Weapon_HasAmmo(void *task)
 {
     int v[2];
 
-    sub_4F23D0(task, v);
+    Weapon_GetAmmo(task, v);
     if (v[0] + v[1] == 0)
-        return sub_413C80(task)[0x6DC];
+        return Weapon_GetType(task)[0x6DC];
     return 1;
 }
-HOOK(0x408720, sub_408720);
+HOOK(0x408720, Weapon_HasAmmo);
 
 static void HumanState_Goto(HumanStateMachine *sm, HumanPlayer *p, int state)
 {
@@ -200,7 +200,7 @@ static float HumanState_Blend(HumanStateMachine *sm)
 /* keeps the animation at the same relative position */
 static void HumanState_KeepPhase(HumanPlayer *p, float phase)
 {
-    sub_4D65B0(p->model, 0, sub_4D64E0(p->model, 0) * phase);
+    Anim_SetTime(p->model, 0, Anim_GetLength(p->model, 0) * phase);
 }
 
 static int HumanState_Is(HumanStateMachine *sm, int a, int b, int c)
@@ -233,8 +233,8 @@ void HumanState_Update20(HumanStateMachine *sm, HumanPlayer *p);
 void HumanState_Enter00(HumanStateMachine *sm, HumanPlayer *p)
 {
     p->unk33D = 0;
-    sub_489E70(p, sm->state, 0.2f);
-    sub_413A60(p, 1);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
+    HumanPlayer_RequestWeaponAnim(p, 1);
     sm->update = HumanState_Update00;
 }
 HOOK(0x408770, HumanState_Enter00);
@@ -289,9 +289,9 @@ HOOK(0x4087B0, HumanState_Update00);
 void HumanState_Enter01(HumanStateMachine *sm, HumanPlayer *p)
 {
     p->unk33D = 0;
-    sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, HumanState_Blend(sm));
-    sub_413A60(p, 3);
+    Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, HumanState_Blend(sm));
+    HumanPlayer_RequestWeaponAnim(p, 3);
     sm->update = HumanState_Update01;
 }
 HOOK(0x408A40, HumanState_Enter01);
@@ -341,7 +341,7 @@ void HumanState_Update01(HumanStateMachine *sm, HumanPlayer *p)
     uint32_t in = sm->input;
     int next;
 
-    sub_4C1780(p);
+    Debug_Log(p);
     if (HumanState_Common(sm, p, 9, &next))
         ;
     else if (in & 0x40)
@@ -361,9 +361,9 @@ HOOK(0x408AA0, HumanState_Update01);
 void HumanState_Enter02(HumanStateMachine *sm, HumanPlayer *p)
 {
     p->unk33D = 0;
-    sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, 0.2f);
-    sub_413A60(p, 3);
+    Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
+    HumanPlayer_RequestWeaponAnim(p, 3);
     sm->update = HumanState_Update02;
 }
 HOOK(0x408C30, HumanState_Enter02);
@@ -373,7 +373,7 @@ void HumanState_Update02(HumanStateMachine *sm, HumanPlayer *p)
     uint32_t in = sm->input;
     int next;
 
-    sub_4C1780(p);
+    Debug_Log(p);
     if (HumanState_Common(sm, p, 10, &next))
         ;
     else if (!(in & 0x80))
@@ -393,11 +393,11 @@ void HumanState_Enter03(HumanStateMachine *sm, HumanPlayer *p)
     float phase;
 
     p->unk33D = 0;
-    phase = sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, 0.2f);
+    phase = Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
     if (HumanState_Is(sm, 1, 11, 22))
         HumanState_KeepPhase(p, phase);
-    sub_413A60(p, 3);
+    HumanPlayer_RequestWeaponAnim(p, 3);
     sm->update = HumanState_Update03;
 }
 HOOK(0x408DF0, HumanState_Enter03);
@@ -407,7 +407,7 @@ void HumanState_Update03(HumanStateMachine *sm, HumanPlayer *p)
     uint32_t in = sm->input;
     int next;
 
-    sub_4C1780(p);
+    Debug_Log(p);
     if (HumanState_Common(sm, p, 11, &next))
         ;
     else if (!(in & 0x80))
@@ -427,8 +427,8 @@ void HumanState_Enter04(HumanStateMachine *sm, HumanPlayer *p)
     float phase;
 
     p->unk33D = 0;
-    phase = sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, HumanState_Blend(sm));
+    phase = Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, HumanState_Blend(sm));
     switch (sm->prev) {
     case 5:
     case 6:
@@ -436,7 +436,7 @@ void HumanState_Enter04(HumanStateMachine *sm, HumanPlayer *p)
     case 23:
         HumanState_KeepPhase(p, phase);
     }
-    sub_413A60(p, 3);
+    HumanPlayer_RequestWeaponAnim(p, 3);
     sm->update = HumanState_Update04;
 }
 HOOK(0x408FE0, HumanState_Enter04);
@@ -446,7 +446,7 @@ void HumanState_Update04(HumanStateMachine *sm, HumanPlayer *p)
     uint32_t in = sm->input;
     int next;
 
-    sub_4C1780(p);
+    Debug_Log(p);
     if (HumanState_Common(sm, p, 12, &next))
         ;
     else if (in & 0x40)
@@ -468,11 +468,11 @@ void HumanState_Enter05(HumanStateMachine *sm, HumanPlayer *p)
     float phase;
 
     p->unk33D = 0;
-    phase = sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, 0.2f);
+    phase = Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
     if (HumanState_Is(sm, 4, 13, 24))
         HumanState_KeepPhase(p, phase);
-    sub_413A60(p, 3);
+    HumanPlayer_RequestWeaponAnim(p, 3);
     sm->update = HumanState_Update05;
 }
 HOOK(0x409220, HumanState_Enter05);
@@ -482,7 +482,7 @@ void HumanState_Update05(HumanStateMachine *sm, HumanPlayer *p)
     uint32_t in = sm->input;
     int next;
 
-    sub_4C1780(p);
+    Debug_Log(p);
     if (HumanState_Common(sm, p, 13, &next))
         ;
     else if (!(in & 0x100))
@@ -502,11 +502,11 @@ void HumanState_Enter06(HumanStateMachine *sm, HumanPlayer *p)
     float phase;
 
     p->unk33D = 0;
-    phase = sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, 0.2f);
+    phase = Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
     if (HumanState_Is(sm, 4, 14, 25))
         HumanState_KeepPhase(p, phase);
-    sub_413A60(p, 3);
+    HumanPlayer_RequestWeaponAnim(p, 3);
     sm->update = HumanState_Update06;
 }
 HOOK(0x409410, HumanState_Enter06);
@@ -516,7 +516,7 @@ void HumanState_Update06(HumanStateMachine *sm, HumanPlayer *p)
     uint32_t in = sm->input;
     int next;
 
-    sub_4C1780(p);
+    Debug_Log(p);
     if (HumanState_Common(sm, p, 14, &next))
         ;
     else if (!(in & 0x100))
@@ -534,9 +534,9 @@ HOOK(0x409490, HumanState_Update06);
 void HumanState_Enter07(HumanStateMachine *sm, HumanPlayer *p)
 {
     p->unk33D = 0;
-    sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, HumanState_Blend(sm));
-    sub_413A60(p, 3);
+    Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, HumanState_Blend(sm));
+    HumanPlayer_RequestWeaponAnim(p, 3);
     sm->update = HumanState_Update07;
 }
 HOOK(0x409600, HumanState_Enter07);
@@ -546,7 +546,7 @@ void HumanState_Update07(HumanStateMachine *sm, HumanPlayer *p)
     uint32_t in = sm->input;
     int next;
 
-    sub_4C1780(p);
+    Debug_Log(p);
     if (HumanState_Common(sm, p, 15, &next))
         ;
     else if (!(in & 0x40))
@@ -566,9 +566,9 @@ HOOK(0x409660, HumanState_Update07);
 void HumanState_Enter08(HumanStateMachine *sm, HumanPlayer *p)
 {
     p->unk33D = 0;
-    sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, HumanState_Blend(sm));
-    sub_413A60(p, 3);
+    Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, HumanState_Blend(sm));
+    HumanPlayer_RequestWeaponAnim(p, 3);
     sm->update = HumanState_Update08;
 }
 HOOK(0x4097F0, HumanState_Enter08);
@@ -578,7 +578,7 @@ void HumanState_Update08(HumanStateMachine *sm, HumanPlayer *p)
     uint32_t in = sm->input;
     int next;
 
-    sub_4C1780(p);
+    Debug_Log(p);
     if (HumanState_Common(sm, p, 16, &next))
         ;
     else if (!(in & 0x20))
@@ -600,8 +600,8 @@ void HumanState_Enter09(HumanStateMachine *sm, HumanPlayer *p)
     float phase;
 
     p->unk33D = 0;
-    phase = sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, 0.2f);
+    phase = Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
     switch (sm->prev) {
     case 1:
     case 10:
@@ -609,7 +609,7 @@ void HumanState_Enter09(HumanStateMachine *sm, HumanPlayer *p)
     case 20:
         HumanState_KeepPhase(p, phase);
     }
-    sub_413A60(p, 2);
+    HumanPlayer_RequestWeaponAnim(p, 2);
     sm->update = HumanState_Update09;
 }
 HOOK(0x4099E0, HumanState_Enter09);
@@ -640,11 +640,11 @@ void HumanState_Enter10(HumanStateMachine *sm, HumanPlayer *p)
     float phase;
 
     p->unk33D = 0;
-    phase = sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, 0.2f);
+    phase = Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
     if (HumanState_Is(sm, 2, 9, 21))
         HumanState_KeepPhase(p, phase);
-    sub_413A60(p, 2);
+    HumanPlayer_RequestWeaponAnim(p, 2);
     sm->update = HumanState_Update10;
 }
 HOOK(0x409C10, HumanState_Enter10);
@@ -673,11 +673,11 @@ void HumanState_Enter11(HumanStateMachine *sm, HumanPlayer *p)
     float phase;
 
     p->unk33D = 0;
-    phase = sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, 0.2f);
+    phase = Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
     if (HumanState_Is(sm, 3, 9, 22))
         HumanState_KeepPhase(p, phase);
-    sub_413A60(p, 2);
+    HumanPlayer_RequestWeaponAnim(p, 2);
     sm->update = HumanState_Update11;
 }
 HOOK(0x409E00, HumanState_Enter11);
@@ -706,8 +706,8 @@ void HumanState_Enter12(HumanStateMachine *sm, HumanPlayer *p)
     float phase;
 
     p->unk33D = 0;
-    phase = sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, 0.2f);
+    phase = Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
     switch (sm->prev) {
     case 4:
     case 13:
@@ -715,7 +715,7 @@ void HumanState_Enter12(HumanStateMachine *sm, HumanPlayer *p)
     case 23:
         HumanState_KeepPhase(p, phase);
     }
-    sub_413A60(p, 2);
+    HumanPlayer_RequestWeaponAnim(p, 2);
     sm->update = HumanState_Update12;
 }
 HOOK(0x409FF0, HumanState_Enter12);
@@ -746,11 +746,11 @@ void HumanState_Enter13(HumanStateMachine *sm, HumanPlayer *p)
     float phase;
 
     p->unk33D = 0;
-    phase = sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, 0.2f);
+    phase = Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
     if (HumanState_Is(sm, 5, 12, 24))
         HumanState_KeepPhase(p, phase);
-    sub_413A60(p, 2);
+    HumanPlayer_RequestWeaponAnim(p, 2);
     sm->update = HumanState_Update13;
 }
 HOOK(0x40A220, HumanState_Enter13);
@@ -779,11 +779,11 @@ void HumanState_Enter14(HumanStateMachine *sm, HumanPlayer *p)
     float phase;
 
     p->unk33D = 0;
-    phase = sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, 0.2f);
+    phase = Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
     if (HumanState_Is(sm, 6, 12, 25))
         HumanState_KeepPhase(p, phase);
-    sub_413A60(p, 2);
+    HumanPlayer_RequestWeaponAnim(p, 2);
     sm->update = HumanState_Update14;
 }
 HOOK(0x40A410, HumanState_Enter14);
@@ -812,11 +812,11 @@ void HumanState_Enter15(HumanStateMachine *sm, HumanPlayer *p)
     float phase;
 
     p->unk33D = 0;
-    phase = sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, 0.2f);
+    phase = Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
     if (sm->prev == 26)
         HumanState_KeepPhase(p, phase);
-    sub_413A60(p, 2);
+    HumanPlayer_RequestWeaponAnim(p, 2);
     sm->update = HumanState_Update15;
 }
 HOOK(0x40A600, HumanState_Enter15);
@@ -847,11 +847,11 @@ void HumanState_Enter16(HumanStateMachine *sm, HumanPlayer *p)
     float phase;
 
     p->unk33D = 0;
-    phase = sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, 0.2f);
+    phase = Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
     if (sm->prev == 27)
         HumanState_KeepPhase(p, phase);
-    sub_413A60(p, 2);
+    HumanPlayer_RequestWeaponAnim(p, 2);
     sm->update = HumanState_Update16;
 }
 HOOK(0x40A800, HumanState_Enter16);
@@ -880,7 +880,7 @@ HOOK(0x40A870, HumanState_Update16);
 void HumanState_Enter17(HumanStateMachine *sm, HumanPlayer *p)
 {
     p->unk33D = 0;
-    sub_489E70(p, sm->state, 0.2f);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
     sm->update = HumanState_Update17;
 }
 HOOK(0x40AA00, HumanState_Enter17);
@@ -897,7 +897,7 @@ HOOK(0x40AA30, HumanState_Update17);
 void HumanState_Enter18(HumanStateMachine *sm, HumanPlayer *p)
 {
     p->unk33D = 0;
-    sub_489E70(p, sm->state, 0.2f);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
     sm->update = HumanState_Update18;
 }
 HOOK(0x40AA90, HumanState_Enter18);
@@ -914,8 +914,8 @@ HOOK(0x40AAC0, HumanState_Update18);
 void HumanState_Enter19(HumanStateMachine *sm, HumanPlayer *p)
 {
     p->unk33D = 1;
-    sub_489E70(p, sm->state, 0.2f);
-    sub_413A60(p, 4);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
+    HumanPlayer_RequestWeaponAnim(p, 4);
     sm->update = HumanState_Update19;
 }
 HOOK(0x40AB20, HumanState_Enter19);
@@ -952,11 +952,11 @@ void HumanState_Enter20(HumanStateMachine *sm, HumanPlayer *p)
     float phase;
 
     p->unk33D = 1;
-    phase = sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, 0.2f);
+    phase = Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
     if (sm->prev == 1)
         HumanState_KeepPhase(p, phase);
-    sub_413A60(p, 5);
+    HumanPlayer_RequestWeaponAnim(p, 5);
     sm->update = HumanState_Update20;
 }
 HOOK(0x40ACB0, HumanState_Enter20);
@@ -991,11 +991,11 @@ void HumanState_Enter21(HumanStateMachine *sm, HumanPlayer *p)
     float phase;
 
     p->unk33D = 1;
-    phase = sub_4D6520(p->model, 0);
-    sub_489E70(p, sm->state, 0.2f);
+    phase = Anim_GetPhase(p->model, 0);
+    Human_PlayAnimSlot(p, sm->state, 0.2f);
     if (HumanState_Is(sm, 2, 20, 26))
         HumanState_KeepPhase(p, phase);
-    sub_413A60(p, 5);
-    sm->update = HumanState_Update21;
+    HumanPlayer_RequestWeaponAnim(p, 5);
+    sm->update = HumanPlayer_RunForwardLeftUpdate;
 }
 HOOK(0x40AE70, HumanState_Enter21);

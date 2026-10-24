@@ -8,11 +8,11 @@
 #include "core/pool.h"
 #include "transctx/transctx.h"
 
-ORIG(0x401860, void, TaskEvent_Set_, (uint16_t type, uint8_t index));
-ORIG(0x4017C0, uint8_t, TaskEvent_Alloc_, (uint16_t type));
-ORIG(0x4018C0, void, TaskEvent_Free_, (uint8_t index));
-ORIG(0x401D30, void, TaskEvent_MapSlot_, (uint8_t slot, int bit));
-ORIG(0x401D50, void, TaskEvent_UnmapSlot_, (uint8_t slot));
+ORIG(0x401860, void, TaskEvent_Set, (uint16_t type, uint8_t index));
+ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
+ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
+ORIG(0x401D30, void, TaskEvent_MapSlot, (uint8_t slot, int bit));
+ORIG(0x401D50, void, TaskEvent_UnmapSlot, (uint8_t slot));
 ORIG(0x497520, void, Scene_SetBounds, (Scene *s, const float *min, const float *max));
 ORIG(0x498070, int, TransContext_GetNearClipMethod, (void));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -25,15 +25,15 @@ ORIG(0x4B32F0, long double, Vec3d_DistanceSq, (const double *a, const double *b)
 ORIG(0x4CE090, void, Coll_SendEvent, (void *world, uint8_t slot, void *arg, const double *pos, int mask, int tree));
 ORIG(0x4CE390, void, Coll_SendEventAll, (void *world, uint8_t slot, void *arg, const double *pos, int mask));
 ORIG(0x4D14E0, void, QCube_Walk, (void *world));
-ORIG(0x4D9800, void *, sub_4D9800, (void *task));
-ORIG(0x4DA2F0, void, sub_4DA2F0, (void));
-ORIG(0x4DA8B0, void, sub_4DA8B0, (void));
-ORIG(0x4E5CB0, void, sub_4E5CB0, (void));
-ORIG(0x50F770, void, sub_50F770, (float *nearq));
-ORIG(0x50FAE0, void, sub_50FAE0, (void *world, int unk));
-ORIG(0x50FD00, void, sub_50FD00, (void *world));
-ORIG(0x50FE60, void, sub_50FE60, (void));
-ORIG(0x511500, void, sub_511500, (void));
+ORIG(0x4D9800, void *, QObj_GetRenderData, (void *task));
+ORIG(0x4DA2F0, void, Haze_ResetFrame, (void));
+ORIG(0x4DA8B0, void, Light_ResetFrame, (void));
+ORIG(0x4E5CB0, void, QCube_UpdateViewScale, (void));
+ORIG(0x50F770, void, TerrainMesh_UpdateNearZ, (float *nearq));
+ORIG(0x50FAE0, void, TerrainMesh_SetupLighting, (void *world, int unk));
+ORIG(0x50FD00, void, TerrainMesh_SetTextures, (void *world));
+ORIG(0x50FE60, void, TerrainMesh_Update, (void));
+ORIG(0x511500, void, TerrainMesh_Render, (void));
 ORIG(0x5116B0, void, sub_5116B0, (void *world));
 
 /* The parts of a task the walk uses */
@@ -218,14 +218,14 @@ void QCube_Init(void)
             }
         }
     }
-    TaskEvent_Set_(0, 0xF);
-    TaskEvent_Set_(0, 0x10);
-    TaskEvent_Set_(0, 0x11);
-    TaskEvent_Set_(0, 0x12);
-    TaskEvent_MapSlot_(0xF, 7);
-    TaskEvent_MapSlot_(0x10, 8);
-    gQCubeEnclosingEvent = TaskEvent_Alloc_(0x181);
-    gQCubeNearClipEvent = TaskEvent_Alloc_(0x181);
+    TaskEvent_Set(0, 0xF);
+    TaskEvent_Set(0, 0x10);
+    TaskEvent_Set(0, 0x11);
+    TaskEvent_Set(0, 0x12);
+    TaskEvent_MapSlot(0xF, 7);
+    TaskEvent_MapSlot(0x10, 8);
+    gQCubeEnclosingEvent = TaskEvent_Alloc(0x181);
+    gQCubeNearClipEvent = TaskEvent_Alloc(0x181);
     QCube_AddCallback((void (*)(void *))1);
     QCube_RemoveCallback((void (*)(void *))1);
 }
@@ -261,14 +261,14 @@ HOOK(0x4D1220, QCube_Clear);
 
 void QCube_Shutdown(void)
 {
-    TaskEvent_UnmapSlot_(0xF);
-    TaskEvent_UnmapSlot_(0x10);
-    TaskEvent_Free_(0xF);
-    TaskEvent_Free_(0x10);
-    TaskEvent_Free_(0x11);
-    TaskEvent_Free_(0x12);
-    TaskEvent_Free_(gQCubeEnclosingEvent);
-    TaskEvent_Free_(gQCubeNearClipEvent);
+    TaskEvent_UnmapSlot(0xF);
+    TaskEvent_UnmapSlot(0x10);
+    TaskEvent_Free(0xF);
+    TaskEvent_Free(0x10);
+    TaskEvent_Free(0x11);
+    TaskEvent_Free(0x12);
+    TaskEvent_Free(gQCubeEnclosingEvent);
+    TaskEvent_Free(gQCubeNearClipEvent);
     Mem_Free(gQCubeList);
     gQCubeList = NULL;
 }
@@ -393,18 +393,18 @@ void QCube_Render(QWorld *w, const char *flags, int full)
     VAR(int, 0xB12BCC) = VAR(int, 0xB16C68);
     VAR(int, 0xB16C68) = 0;
     if (!w->ready) {
-        sub_50FAE0(w, 0);
+        TerrainMesh_SetupLighting(w, 0);
         w->ready = 1;
     }
-    sub_4E5CB0();
-    sub_4DA8B0();
-    sub_4DA2F0();
+    QCube_UpdateViewScale();
+    Light_ResetFrame();
+    Haze_ResetFrame();
     if (VAR(int, 0xBCAB38)) {
         if (full)
             QCube_Begin(w);
         if (w->terrain && full) {
-            sub_50FD00(w);
-            sub_50FE60();
+            TerrainMesh_SetTextures(w);
+            TerrainMesh_Update();
         }
         QCube_UpdateNearPlane(w, flags);
         if (flags[0])
@@ -430,8 +430,8 @@ void QCube_Render(QWorld *w, const char *flags, int full)
         }
         if (!w->terrain || full) {
             if (w->terrain) {
-                sub_50FD00(w);
-                sub_511500();
+                TerrainMesh_SetTextures(w);
+                TerrainMesh_Render();
             }
             if (full)
                 QCube_DrawObjects(w);
@@ -454,10 +454,10 @@ void QCube_RunTaskList(QTask *t)
         QHandler h = gTaskHandlers[4 * 0x180 + t->type];
 
         if (h)
-            h(t, sub_4D9800(t));
+            h(t, QObj_GetRenderData(t));
         h = gTaskHandlers[5 * 0x180 + t->type];
         if (h)
-            h(t, sub_4D9800(t));
+            h(t, QObj_GetRenderData(t));
     }
 }
 HOOK(0x4D27F0, QCube_RunTaskList);
@@ -509,7 +509,7 @@ void QCube_UpdateNearPlane(QWorld *w, const char *flags)
     for (i = 0; i < 8; i++)
         if (flags[i + 1])
             near_clip_list(w->lists[i], nearq);
-    sub_50F770(nearq);
+    TerrainMesh_UpdateNearZ(nearq);
     nearq[2] = nearq[2] * kNearScale;
     arg.dist = nearq[2];
     arg.zbuffer = 0;

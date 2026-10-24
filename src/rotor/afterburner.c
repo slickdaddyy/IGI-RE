@@ -12,15 +12,15 @@ ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x497800, Prim *, Frame_Alloc, (int size));
 ORIG(0x4978B0, void, RenderQueue_Add, (int queue, void *node));
-ORIG(0x4978D0, int, RenderTask_Register, (const char *name));
-ORIG(0x4978E0, void, RenderTask_Unregister, (int id));
-ORIG(0x4978F0, void, RenderTask_SetHandler, (int id, void *fn));
+ORIG(0x4978D0, int, Primitive_Register, (const char *name));
+ORIG(0x4978E0, void, Primitive_Unregister, (int id));
+ORIG(0x4978F0, void, Primitive_SetHandler, (int id, void *fn));
 ORIG(0x499FF0, int, Float_Log2, (float f));
 ORIG(0x4B3BA0, void, Matrix_SetRotY, (Matrix *m, float a));
 ORIG(0x4B4720, void, Random_Init, (void *r));
 ORIG(0x4B4770, long double, Random_Float, (void *r));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
-ORIG(0x4C1780, void, sub_4C1780, (void *obj, int a, int b, int c, int d, int e, int f, float *color));
+ORIG(0x4C1780, void, Debug_Log, (void *obj, int a, int b, int c, int d, int e, int f, float *color));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (int unk, void *o, void **model));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *o, Vec3d *pos, float radius));
@@ -29,9 +29,9 @@ ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
 ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
-ORIG(0x4DA180, void, sub_4DA180, (int *a, int *b));
-ORIG(0x4DAA20, int, sub_4DAA20, (int *a));
-ORIG(0x4E7530, int, sub_4E7530, (void));
+ORIG(0x4DA180, void, Haze_GetVisible, (int *a, int *b));
+ORIG(0x4DAA20, int, Light_GetActive, (int *a));
+ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 
 #define MAGICOBJ_DELETE ((void *)0x51B940)
 
@@ -89,8 +89,8 @@ void Afterburner_Draw(Part *o)
     p->color[0] = (float)(o->value * kColor.f);
     p->color[1] = (float)(o->value * kColor.f);
     p->color[2] = (float)(o->value * kColor.f);
-    p->unk14 = sub_4DAA20(&p->unk18);
-    sub_4DA180(&p->unk20, &p->unk1C);
+    p->unk14 = Light_GetActive(&p->unk18);
+    Haze_GetVisible(&p->unk20, &p->unk1C);
     depth = (float)((long double)gViewDir[2] * ((long double)o->obj.pos.z - gViewPos.z)
                     + (long double)gViewDir[1] * ((long double)o->obj.pos.y - gViewPos.y)
                     + (long double)gViewDir[0] * ((long double)o->obj.pos.x - gViewPos.x));
@@ -112,14 +112,14 @@ void Afterburner_DrawPrim(Prim *p);
 void Afterburner_Init(void)
 {
     gAfterburnerType = TaskType_New("Afterburner", 0x140, MagicObj_GetType(), 0);
-    gAfterburnerPrim = RenderTask_Register("AfterburnerPrimitive");
-    RenderTask_SetHandler(gAfterburnerPrim, Afterburner_DrawPrim);
+    gAfterburnerPrim = Primitive_Register("AfterburnerPrimitive");
+    Primitive_SetHandler(gAfterburnerPrim, Afterburner_DrawPrim);
     TaskType_SetHandler(gAfterburnerType, 0, Afterburner_Create);
     TaskType_SetHandler2(gAfterburnerType, 1, Afterburner_Run);
     TaskType_SetHandler2(gAfterburnerType, 2, MAGICOBJ_DELETE);
     TaskType_SetHandler(gAfterburnerType, MagicObj_GetMoveEvent(), Afterburner_Move);
     TaskType_SetHandler(gAfterburnerType, 4, Afterburner_Draw);
-    TaskType_SetHandler2(gAfterburnerType, sub_4E7530(), NULL);
+    TaskType_SetHandler2(gAfterburnerType, Screen_GetDrawEvent(), NULL);
     TaskType_SetHandler(gAfterburnerType, RigidDynCubeObj_GetEvent2(), NULL);
     Script_RegisterConstant("TASKTYPE_AFTERBURNER", gAfterburnerType);
 }
@@ -169,13 +169,13 @@ void Afterburner_DrawPrim(Prim *p)
 {
     RigidObj *o = p->obj;
 
-    sub_4C1780(o, p->unk10, o->unk48, p->unk14, p->unk18, p->unk20, p->unk1C, p->color);
+    Debug_Log(o, p->unk10, o->unk48, p->unk14, p->unk18, p->unk20, p->unk1C, p->color);
 }
 HOOK(0x42C4B0, Afterburner_DrawPrim);
 
 void Afterburner_Close(void)
 {
     TaskType_Free(gAfterburnerType);
-    RenderTask_Unregister(gAfterburnerPrim);
+    Primitive_Unregister(gAfterburnerPrim);
 }
 HOOK(0x42C4E0, Afterburner_Close);

@@ -17,7 +17,7 @@ ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
 ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
 ORIG(0x416920, int, Game_GetWorld, (void));
 ORIG(0x42BC20, uint16_t, Train_GetType, (void));
-ORIG(0x460C60, TaskArray *, sub_460C60, (void));
+ORIG(0x460C60, TaskArray *, Human_GetList, (void));
 ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (int world, void *obj, void **model));
@@ -25,7 +25,7 @@ ORIG(0x4C6940, void, DynCube_Move, (int world, void *obj, Vec3d *pos, float radi
 ORIG(0x4C7140, void, DynCube_Add, (int world, void *obj, Vec3d *pos, float radius, int unk));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
-ORIG(0x4D14D0, uint8_t, sub_4D14D0, (void));
+ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
 ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
 ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
@@ -89,7 +89,7 @@ void DeathZone_Open(void)
     TaskType_SetHandler(gDeathZoneType, MagicObj_GetMoveEvent(), DeathZone_Move);
     TaskType_SetHandler(gDeathZoneType, Game_GetEvent9(), NULL);
     TaskType_SetHandler(gDeathZoneType, Game_GetEvent11(), NULL);
-    TaskType_SetHandler(gDeathZoneType, sub_4D14D0(), NULL);
+    TaskType_SetHandler(gDeathZoneType, QCube_GetNearClipEvent(), NULL);
     TaskType_SetHandler(gDeathZoneType, 9, NULL);
     TaskType_SetHandler(gDeathZoneType, AIDetection_GetEvent0(), HANDLER_45F920);
     Script_RegisterConstant("TASKTYPE_DEATHZONE", gDeathZoneType);
@@ -125,11 +125,11 @@ static void send_all(DeathZone *z, float *speed)
 
     m.zone = z;
     m.speed = speed;
-    for (i = 0; i < sub_460C60()->count; i++) {
-        uint16_t type = sub_460C60()->items[i]->type;
+    for (i = 0; i < Human_GetList()->count; i++) {
+        uint16_t type = Human_GetList()->items[i]->type;
 
         fn = HANDLER(DeathZone_GetEvent(), type);
-        fn(sub_460C60()->items[i], &m);
+        fn(Human_GetList()->items[i], &m);
     }
 }
 

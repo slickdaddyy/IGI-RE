@@ -8,9 +8,9 @@
 
 ORIG(0x4AAD10, int, crt_strncmp, (const char *a, const char *b, size_t n));
 ORIG(0x4AA0A0, char *, crt_strchr, (const char *s, int c));
-ORIG(0x5098B0, void, sub_5098B0, (void));
-ORIG(0x5098D0, void, sub_5098D0, (void));
-ORIG(0x4BADA0, void, sub_4BADA0, (Node *file));
+ORIG(0x5098B0, void, LocalDevice_Register, (void));
+ORIG(0x5098D0, void, LocalDevice_Unregister, (void));
+ORIG(0x4BADA0, void, Script_FreeRefBlock, (Node *file));
 ORIG(0x4B1DE0, const char *, Device_GetName, (int device));
 
 #define gAliases ((FileAlias *)0x942330)
@@ -91,7 +91,7 @@ void File_Init(void)
     gDeviceCount = 1;
     memset(gDevices, 0, sizeof(FileDevice) * FILE_DEVICE_MAX);
     gLastPath[0] = 0;
-    sub_5098B0();
+    LocalDevice_Register();
     gUnk943988 = 0;
     gFileList.head = (Node *)&gFileList.tail;
     gFileList.tailpred = (Node *)&gFileList;
@@ -104,10 +104,10 @@ void File_Shutdown(void)
     Node *n = gFileList.head, *next;
 
     for (next = n->next; next; next = next->next) {
-        sub_4BADA0(n);
+        Script_FreeRefBlock(n);
         n = next;
     }
-    sub_5098D0();
+    LocalDevice_Unregister();
 }
 HOOK(0x4B1260, File_Shutdown);
 

@@ -16,7 +16,7 @@ ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x401AE0, Task **, TaskRef_Add, (void *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
-ORIG(0x4028B0, int, Timer_GetTicks, (void));
+ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x4071D0, uint8_t, WeaponConfig_GetEvent, (void));
 ORIG(0x413B20, uint8_t, Weapon_GetFireEvent, (void));
 ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
@@ -27,7 +27,7 @@ ORIG(0x4168F0, void *, Game_GetCutsceneList, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416C90, long double, Game_BlastFalloff, (void *blast, void *obj, Vec3d *pos, float radius, int unk));
 ORIG(0x450CE0, void, HumanAI_Broadcast, (Noise *noise));
-ORIG(0x47E9A0, void, Flashbang_Explode, (Vec3d *pos, CollHit *hit, float radius, float falloff));
+ORIG(0x47E9A0, void, FlashBang_Explode, (Vec3d *pos, CollHit *hit, float radius, float falloff));
 ORIG(0x480FE0, void, Explosion_Spawn, (Vec3d *pos, int a, int b, float c, float d, float e, float f, int g, int h,
                                        CollHit *hit, const char *sprite, const char *sound, int j, int k, float l,
                                        int m));
@@ -54,10 +54,10 @@ ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4E6B00, void *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (void *sound, Vec3d *pos));
 ORIG(0x4ECDB0, void, Body_Update, (Body *body));
-ORIG(0x4EE0E0, uint8_t, MagicDef_GetParseEvent, (void));
-ORIG(0x4EE0F0, uint8_t, MagicDef_GetSizeEvent, (void));
-ORIG(0x4EE140, PhysType *, PhysType_Find, (const char *name));
-ORIG(0x4F0EE0, void *, Sound_GetOwner, (void));
+ORIG(0x4EE0E0, uint8_t, PhysicsObjType_GetParseEvent, (void));
+ORIG(0x4EE0F0, uint8_t, PhysicsObjType_GetSizeEvent, (void));
+ORIG(0x4EE140, PhysType *, PhysicsObjType_Find, (const char *name));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 ORIG(0x4FB5E0, uint16_t, PhysicsObj_GetType, (void));
 ORIG(0x4FB5F0, void, PhysicsObj_Init, (void *obj));
 ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (void *obj, PhysType *phys));
@@ -65,8 +65,8 @@ ORIG(0x4FB980, void, PhysicsObj_Free, (void *obj));
 ORIG(0x4FC0E0, void, PhysicsObj_Collide, (void *obj, float a, float b, float c, void *world, int event,
                                           CollIgnore *msg));
 ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (void *obj));
-ORIG(0x4FE650, float *, Config_Add, (void *table, const char *name, float value));
-ORIG(0x4FE730, float *, Config_Find, (void *table, const char *name));
+ORIG(0x4FE650, float *, TagItem_AddReal32, (void *table, const char *name, float value));
+ORIG(0x4FE730, float *, TagItem_Find, (void *table, const char *name));
 
 #define gGrenadeType VAR(uint16_t, 0x54066C)
 #define gGrenadeEvent VAR(uint8_t, 0x5BE3B8)
@@ -110,8 +110,8 @@ void Grenade_Open(void)
     TaskType_SetHandler(gGrenadeType, Game_GetEvent11(), Grenade_BlastHandler);
     TaskType_SetHandler(gGrenadeType, Game_GetEvent8(), Task_FalseHandler);
     TaskType_SetHandler(gGrenadeType, Game_GetEvent13(), Task_FalseHandler);
-    TaskType_SetHandler(gGrenadeType, MagicDef_GetParseEvent(), Grenade_ParseArgsHandler);
-    TaskType_SetHandler(gGrenadeType, MagicDef_GetSizeEvent(), HitZone_GetArgSize);
+    TaskType_SetHandler(gGrenadeType, PhysicsObjType_GetParseEvent(), Grenade_ParseArgsHandler);
+    TaskType_SetHandler(gGrenadeType, PhysicsObjType_GetSizeEvent(), HitZone_GetArgSize);
     TaskType_SetHandler(gGrenadeType, Weapon_GetFireEvent(), Grenade_FireHandler);
     TaskType_SetHandler(gGrenadeType, WeaponConfig_GetEvent(), Grenade_WeaponConfigHandler);
     Script_RegisterConstant("TASKTYPE_GRENADE", gGrenadeType);
@@ -135,15 +135,15 @@ void Grenade_WeaponConfigHandler(void *type, GrenadeConfigMsg *msg)
         Mem_Free(msg->wt->grenade);
         msg->wt->grenade = NULL;
     }
-    falloff = Config_Find(msg->table, kFalloff);
+    falloff = TagItem_Find(msg->table, kFalloff);
     if (!falloff)
-        falloff = Config_Add(msg->table, kFalloff, 0.0f);
-    radius = Config_Find(msg->table, kRadius);
+        falloff = TagItem_AddReal32(msg->table, kFalloff, 0.0f);
+    radius = TagItem_Find(msg->table, kRadius);
     if (!radius)
-        radius = Config_Add(msg->table, kRadius, 5.0f);
-    damage = Config_Find(msg->table, kDamage);
+        radius = TagItem_AddReal32(msg->table, kRadius, 5.0f);
+    damage = TagItem_Find(msg->table, kDamage);
     if (!damage)
-        damage = Config_Add(msg->table, kDamage, 1.0f);
+        damage = TagItem_AddReal32(msg->table, kDamage, 1.0f);
     f = *(uint32_t *)&CONFIG_VALUE(falloff);
     r = *(uint32_t *)&CONFIG_VALUE(radius);
     d = *(uint32_t *)&CONFIG_VALUE(damage);
@@ -161,7 +161,7 @@ void Grenade_CreateHandler(Grenade *g)
     float s, radius;
 
     g->bounced = 0;
-    g->bounceTick = Timer_GetTicks();
+    g->bounceTick = Flow_GetFrames();
     g->owner = NULL;
     g->weapon = NULL;
     RigidDynCubeObj_Init(Game_GetWorld(), g, NULL);
@@ -200,7 +200,7 @@ void Grenade_RunHandler(Grenade *g)
             Explosion_Spawn(&g->o.pos, 1, 1, c->damage, c->radius * kMeter, c->falloff * kMeter, 6144.0f, 3, 1,
                             &hit, "1009_01_1", "explo_02_m", 0x15, 2, 40960.0f, 0);
         else if (gt->explosion == 1) {
-            Flashbang_Explode(&g->o.pos, &hit, c->radius * kMeter, c->falloff * kMeter);
+            FlashBang_Explode(&g->o.pos, &hit, c->radius * kMeter, c->falloff * kMeter);
             Task_Delete(g);
             return;
         }
@@ -208,7 +208,7 @@ void Grenade_RunHandler(Grenade *g)
         Explosion_Spawn(&g->o.pos, 1, 1, 1.0f, 20480.0f, 0, 6144.0f, 3, 1, &hit, "1009_01_1", "explo_02_m", 0x15, 2,
                         40960.0f, 0);
     else if (gt->explosion == 1)
-        Flashbang_Explode(&g->o.pos, &hit, 20480.0f, 40960.0f);
+        FlashBang_Explode(&g->o.pos, &hit, 20480.0f, 40960.0f);
     Task_Delete(g);
 }
 HOOK(0x476AC0, Grenade_RunHandler);
@@ -219,21 +219,21 @@ void Grenade_MakeNoise(Grenade *g, int kind, int unk8, float radius);
 void Grenade_UpdateBounce(Grenade *g)
 {
     if (!g->hit) {
-        if (Timer_GetTicks() - g->bounceTick > 10)
+        if (Flow_GetFrames() - g->bounceTick > 10)
             g->bounced = 0;
         return;
     }
     if (g->bounced)
         return;
     {
-        void *snd = Sound_Play(Sound_GetOwner(), "grenade_bnc_1");
+        void *snd = Sound_Play(Level_GetDynamic(), "grenade_bnc_1");
 
         if (snd)
             Sound_SetPos(snd, &g->o.pos);
     }
     Grenade_MakeNoise(g, 0x12, 2, 20480.0f);
     g->bounced = 1;
-    g->bounceTick = Timer_GetTicks();
+    g->bounceTick = Flow_GetFrames();
 }
 HOOK(0x476CC0, Grenade_UpdateBounce);
 
@@ -333,7 +333,7 @@ void Grenade_FireHandler(void *type, Task **msg)
         fn(thrower, &slot);
         cooked = (int)(intptr_t)slot;
     }
-    Grenade_Throw(Sound_GetOwner(), msg[1], (Vec3d *)msg[2], (Matrix *)msg[3], (Vec3f *)msg[4],
+    Grenade_Throw(Level_GetDynamic(), msg[1], (Vec3d *)msg[2], (Matrix *)msg[3], (Vec3f *)msg[4],
                   (WeaponType *)msg[8], cooked);
 }
 HOOK(0x476FA0, Grenade_FireHandler);
@@ -381,7 +381,7 @@ Grenade *Grenade_Throw(void *parent, Task *owner, Vec3d *pos, const Matrix *matr
         Mem_ClearMode();
     } else
         PhysicsObj_Init(g);
-    phys = PhysType_Find(wt->key);
+    phys = PhysicsObjType_Find(wt->key);
     n = (int)(0u - (unsigned)cooked - (unsigned)round_int(((GrenadeType *)phys->data)->fuse * kFuseFrames));
     g->fuse = n;
     if (n < 0)

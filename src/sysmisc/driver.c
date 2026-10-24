@@ -7,9 +7,9 @@
 ORIG(0x4C1780, void, Debug_Log, (void));
 ORIG(0x4B0E70, int, RenderMode_CreateMethod, (const char *name));
 ORIG(0x4B0EB0, void, RenderMode_DeleteMethod, (int method));
-ORIG(0x50BD80, void, sub_50BD80, (void));
-ORIG(0x50EC00, void, sub_50EC00, (void));
-ORIG(0x50DC30, void, sub_50DC30, (void));
+ORIG(0x50BD80, void, OffscreenBuffer_InitTextures, (void));
+ORIG(0x50EC00, void, OffscreenBuffer_InitQVertex, (void));
+ORIG(0x50DC30, void, D3DQVertex_Init, (void));
 
 void D3DTex_Init(void);
 void D3DTex_Shutdown(void);
@@ -18,7 +18,7 @@ void D3DTex_Shutdown(void);
 
 void D3DTex_Register(void)
 {
-    sub_50BD80();
+    OffscreenBuffer_InitTextures();
     D3DTex_Init();
 }
 HOOK(0x509910, D3DTex_Register);
@@ -34,8 +34,8 @@ void QVertex_InitDriver(void)
 {
     gQVertexDrawStrip = RenderMode_CreateMethod("QVertex:DrawStrip");
     Debug_Log();
-    sub_50EC00();
-    sub_50DC30();
+    OffscreenBuffer_InitQVertex();
+    D3DQVertex_Init();
 }
 HOOK(0x509930, QVertex_InitDriver);
 

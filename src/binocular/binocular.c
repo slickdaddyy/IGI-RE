@@ -19,8 +19,8 @@ ORIG(0x4659D0, void, HumanView_SetZoomed, (void *view));
 ORIG(0x472600, Task *, BinocularOverlay_New, (void *parent));
 ORIG(0x472630, void, BinocularOverlay_SetPos, (Task *o, const Vec3d *pos));
 ORIG(0x472650, void, BinocularOverlay_SetUnk7C, (Task *o, const float *v));
-ORIG(0x477BF0, uint16_t, Weapon_GetType, (void));
-ORIG(0x487190, uint8_t, sub_487190, (void));
+ORIG(0x477BF0, uint16_t, Gun_GetType, (void));
+ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B0C60, void *, Mem_Alloc, (int size, int align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -29,10 +29,10 @@ ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (Task *sound));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
-ORIG(0x4F1FE0, uint8_t, sub_4F1FE0, (void));
-ORIG(0x4F2030, int, sub_4F2030, (void));
-ORIG(0x4FE650, char *, ConfigVar_New, (void *config, const char *name, float value));
-ORIG(0x4FE730, char *, ConfigVar_Find, (void *config, const char *name));
+ORIG(0x4F1FE0, uint8_t, Weapon_GetMoveEvent, (void));
+ORIG(0x4F2030, int, Weapon_GetDeselectEvent, (void));
+ORIG(0x4FE650, char *, TagItem_AddReal32, (void *config, const char *name, float value));
+ORIG(0x4FE730, char *, TagItem_Find, (void *config, const char *name));
 
 #define WEAPON_HANDLER_4754C0 ((void *)0x4754C0)
 #define WEAPON_GETARGSIZE_51BAA0 ((void *)0x51BAA0)
@@ -82,17 +82,17 @@ void Binocular_Config(void *unused, ConfigArg *a);
 
 void Binocular_Open(void)
 {
-    gBinocularType = TaskType_New("Binocular", 0x1C8, Weapon_GetType(), 0);
+    gBinocularType = TaskType_New("Binocular", 0x1C8, Gun_GetType(), 0);
     TaskType_SetHandler(gBinocularType, 0, Binocular_Create);
     TaskType_SetHandler2(gBinocularType, 2, Binocular_Delete);
-    TaskType_SetHandler(gBinocularType, sub_4F1FE0(), WEAPON_HANDLER_4754C0);
+    TaskType_SetHandler(gBinocularType, Weapon_GetMoveEvent(), WEAPON_HANDLER_4754C0);
     TaskType_SetHandler(gBinocularType, Human_GetEvent0(), Binocular_Use);
     TaskType_SetHandler(gBinocularType, Human_GetEvent1(), TASK_NOTHING);
-    TaskType_SetHandler(gBinocularType, sub_487190(), Binocular_StatusDisplay);
+    TaskType_SetHandler(gBinocularType, StatusScreen_GetEvent(), Binocular_StatusDisplay);
     TaskType_SetHandler(gBinocularType, Param_GetChangedEvent(), Binocular_ParamsChanged);
     TaskType_SetHandler(gBinocularType, WeaponType_GetInitEvent2(), Binocular_ParseArg);
     TaskType_SetHandler(gBinocularType, WeaponType_GetSizeEvent2(), WEAPON_GETARGSIZE_51BAA0);
-    TaskType_SetHandler2(gBinocularType, sub_4F2030(), Binocular_Unzoom);
+    TaskType_SetHandler2(gBinocularType, Weapon_GetDeselectEvent(), Binocular_Unzoom);
     TaskType_SetHandler(gBinocularType, WeaponConfig_GetEvent(), Binocular_Config);
     Script_RegisterConstant("TASKTYPE_BINOCULAR", gBinocularType);
 }
@@ -100,7 +100,7 @@ HOOK(0x470610, Binocular_Open);
 
 void Binocular_Create(Binocular *b, void *arg)
 {
-    HANDLER(0, Weapon_GetType())(b, arg);
+    HANDLER(0, Gun_GetType())(b, arg);
     crt_sprintf(b->id, "WEAPON_ID_BINOCULARS");
     b->zoomed = 0;
     b->unk1B4 = 0;
@@ -117,7 +117,7 @@ void Binocular_Delete(Binocular *b)
 {
     Binocular_StopSound(b);
     TaskRef_Remove(b->overlay);
-    ((void (*)(void *))HANDLER(2, Weapon_GetType()))(b);
+    ((void (*)(void *))HANDLER(2, Gun_GetType()))(b);
 }
 HOOK(0x4707D0, Binocular_Delete);
 
@@ -140,8 +140,8 @@ void Binocular_Unzoom(Binocular *b)
     Binocular_StopSound(b);
     b->zoomed = 0;
     b->busy = 1;
-    type = Weapon_GetType();
-    slot = sub_4F2030();
+    type = Gun_GetType();
+    slot = Weapon_GetDeselectEvent();
     ((void (*)(void *))gTaskHandlers[slot][type])(b);
 }
 HOOK(0x470840, Binocular_Unzoom);
@@ -226,7 +226,7 @@ void Binocular_StatusDisplay(Binocular *b, void *arg)
         return;
     BinocularOverlay_SetPos(*b->overlay, &b->pos);
     BinocularOverlay_SetUnk7C(*b->overlay, b->dir);
-    EACH_CHILD(&b->obj.task, sub_487190(), arg);
+    EACH_CHILD(&b->obj.task, StatusScreen_GetEvent(), arg);
 }
 HOOK(0x470BC0, Binocular_StatusDisplay);
 
@@ -234,7 +234,7 @@ void Binocular_ParamsChanged(Binocular *b, void *arg)
 {
     uint8_t slot = Param_GetChangedEvent();
 
-    gTaskHandlers[slot][Weapon_GetType()](b, arg);
+    gTaskHandlers[slot][Gun_GetType()](b, arg);
     if (!*b->overlay) {
         TaskRef_Remove(b->overlay);
         b->overlay = TaskRef_Add(BinocularOverlay_New(b));
@@ -270,15 +270,15 @@ void Binocular_Config(void *unused, ConfigArg *a)
         Mem_Free(*(void **)(a->weaponType + 0x6E4));
         *(void **)(a->weaponType + 0x6E4) = NULL;
     }
-    def = ConfigVar_Find(a->config, kDefault);
+    def = TagItem_Find(a->config, kDefault);
     if (!def)
-        def = ConfigVar_New(a->config, kDefault, k70.f);
-    max = ConfigVar_Find(a->config, kMax);
+        def = TagItem_AddReal32(a->config, kDefault, k70.f);
+    max = TagItem_Find(a->config, kMax);
     if (!max)
-        max = ConfigVar_New(a->config, kMax, k90.f);
-    min = ConfigVar_Find(a->config, kMin);
+        max = TagItem_AddReal32(a->config, kMax, k90.f);
+    min = TagItem_Find(a->config, kMin);
     if (!min)
-        min = ConfigVar_New(a->config, kMin, k5.f);
+        min = TagItem_AddReal32(a->config, kMin, k5.f);
     tdef = x87_tan(*(float *)(def + 0x124) * kHalf.f * kDegToRad.f);
     tmax = x87_tan(*(float *)(max + 0x124) * kHalf.f * kDegToRad.f);
     tmin = x87_tan(*(float *)(min + 0x124) * kHalf.f * kDegToRad.f);

@@ -94,7 +94,7 @@ typedef struct Profile {
 
 ORIG(0x401AE0, Task **, TaskRef_Add, (Task *t));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
-ORIG(0x4028B0, int, Timer_GetTicks, (void));
+ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x406220, Profile *, Profile_GetActive, (void));
 ORIG(0x413C80, WeaponInfo *, Weapon_GetType, (Task *w));
 ORIG(0x4167D0, uint8_t, Game_GetEvent0, (void));
@@ -105,10 +105,10 @@ ORIG(0x416A70, Task *, Game_GetPlayer, (int i));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x416FB0, int, Game_IsRaining, (void));
 ORIG(0x450CE0, void, HumanAI_Broadcast, (HumanNoise *noise));
-ORIG(0x460BF0, uint8_t, sub_460BF0, (void));
-ORIG(0x460C60, TaskArray *, sub_460C60, (void));
-ORIG(0x462390, void, sub_462390, (Human *h, double *pos, double *to, float *vel, unsigned *bits, float dist));
-ORIG(0x47E6F0, uint8_t, sub_47E6F0, (void));
+ORIG(0x460BF0, uint8_t, Human_GetEvent0, (void));
+ORIG(0x460C60, TaskArray *, Human_GetList, (void));
+ORIG(0x462390, void, Human_ProbeGround, (Human *h, double *pos, double *to, float *vel, unsigned *bits, float dist));
+ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B3130, long double, Vec3d_Length, (const double *v));
 ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Rot *m, float a));
@@ -117,20 +117,20 @@ ORIG(0x4B47C0, unsigned, Random_Int, (void *rng, unsigned n));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, double *pos, float radius));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, double *from, double *to, int count, uint8_t event,
                                   void *filter, unsigned flags));
-ORIG(0x4D38C0, void, sub_4D38C0, (Rot *m, void *anim));
-ORIG(0x4D64C0, int, Anim_GetFrame, (void *anim, int track));
+ORIG(0x4D38C0, void, BoneObj_Update, (Rot *m, void *anim));
+ORIG(0x4D64C0, int, Anim_GetId, (void *anim, int track));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (Task *sound));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, double *pos));
-ORIG(0x4E6C60, void, sub_4E6C60, (Task *sound, float a, float level));
+ORIG(0x4E6C60, void, Sound_SetVolume, (Task *sound, float a, float level));
 ORIG(0x4E6CA0, void, Sound_SetPitch, (Task *sound, float pitch));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (void));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 ORIG(0x4F2060, Task *, WeaponSlots_Get, (Task **slots, int i));
-ORIG(0x4FDF00, Task *, sub_4FDF00, (void *root, void *world, void *sprite, float *dir, float *color, float *size,
+ORIG(0x4FDF00, Task *, Particle2D_New, (void *root, void *world, void *sprite, float *dir, float *color, float *size,
                                     float b, int flags, int frames, float e, int f, int count, void *callback));
-ORIG(0x4FE120, void, sub_4FE120, (Task *ps, double *pos, float *dir, float size, float a, float b, float c, int d,
+ORIG(0x4FE120, void, Particle2D_Add, (Task *ps, double *pos, float *dir, float size, float a, float b, float c, int d,
                                   int e));
-ORIG(0x4FE210, void, sub_4FE210, (Task *ps, double *pos, float *dir, float spread, float a, float b, float c,
+ORIG(0x4FE210, void, Particle2D_Emit, (Task *ps, double *pos, float *dir, float spread, float a, float b, float c,
                                   float d, int e, float f, int g, int h));
 
 #define gFootstepSounds ((const int *)0x53F318)
@@ -167,7 +167,7 @@ static __attribute__((noinline)) long double crt_pow(long double x, long double 
 /* keeps `to` away from other humans standing near it; out = to - from */
 void sub_462BA0(Human *h, double *from, double *to, float *out)
 {
-    TaskArray *list = sub_460C60();
+    TaskArray *list = Human_GetList();
     int i;
 
     for (i = 0; i < list->count; i++) {
@@ -286,7 +286,7 @@ void Human_UpdateWeapon(Human *h)
     msg.recoilYaw = 0.0f;
     msg.h = h;
     msg.unk4D4 = h->unk4D4;
-    gTaskHandlers[sub_460BF0()][w->type](w, &msg);
+    gTaskHandlers[Human_GetEvent0()][w->type](w, &msg);
     h->fire = 0;
     h->unk4D2 = 0;
     h->shot = msg.shot;
@@ -379,7 +379,7 @@ void Human_SetYaw(Human *h, float yaw)
     h->yaw2 = yaw;
     h->yaw = yaw;
     Matrix_SetRotZ(&h->rot, yaw);
-    sub_4D38C0(&h->rot, h->anim);
+    BoneObj_Update(&h->rot, h->anim);
 }
 HOOK(0x463220, Human_SetYaw);
 
@@ -392,7 +392,7 @@ void sub_463260(Human *h)
     zero[0] = 0.0f;
     zero[1] = 0.0f;
     zero[2] = 0.0f;
-    sub_462390(h, pos, pos, zero, &h->stateInput, 0x1.f4p+21f);
+    Human_ProbeGround(h, pos, pos, zero, &h->stateInput, 0x1.f4p+21f);
     Human_SetPosition(h, pos);
 }
 HOOK(0x463260, sub_463260);
@@ -588,7 +588,7 @@ void Human_SayTimed(Human *h, const char *name, int n)
     char buf[32];
     int r, now;
 
-    if (Timer_GetTicks() < h->voiceTime)
+    if (Flow_GetFrames() < h->voiceTime)
         return;
     if (h->voiceRef) {
         old = *h->voiceRef;
@@ -598,7 +598,7 @@ void Human_SayTimed(Human *h, const char *name, int n)
         h->voiceRef = NULL;
     }
     r = x87_fistp(Random_Float(Game_GetRandom()) * -30.0f);
-    now = Timer_GetTicks();
+    now = Flow_GetFrames();
     h->voiceTime = 30 - r + now;
     crt_sprintf(buf, "%s%d", name, Random_Int(Game_GetRandom(), n) + 1);
     Sound_Play(h->view, buf);
@@ -633,7 +633,7 @@ void Human_Footstep(Human *h)
     float pitch;
     Task *s;
 
-    if (h->animId != ANIM_WALK || h->animFrame != Anim_GetFrame(h->anim, 0) || !h->unk6F8)
+    if (h->animId != ANIM_WALK || h->animFrame != Anim_GetId(h->anim, 0) || !h->unk6F8)
         return;
     ground = h->ground;
     id = gFootstepSounds[h->footstep];
@@ -641,16 +641,16 @@ void Human_Footstep(Human *h)
     if (!ground)
         return;
     pitch = (Random_Float(Game_GetRandom()) * 0.5f + 1.0f) - kPitchLow;
-    s = Sound_Play(sub_4F0EE0(), ground + 0x54 + id * 0x20);
+    s = Sound_Play(Level_GetDynamic(), ground + 0x54 + id * 0x20);
     if (s) {
         if (Human_IsCrouching(h))
-            sub_4E6C60(s, -1.0f, kQuietLevel);
+            Sound_SetVolume(s, -1.0f, kQuietLevel);
         Sound_SetPos(s, h->soundPos);
         Sound_SetPitch(s, pitch);
     }
     if (Game_IsRaining()) {
         crt_sprintf(buf, "walk_rain_%1d", id + 1);
-        s = Sound_Play(sub_4F0EE0(), buf);
+        s = Sound_Play(Level_GetDynamic(), buf);
         if (s) {
             Sound_SetPos(s, h->soundPos);
             Sound_SetPitch(s, pitch);
@@ -739,7 +739,7 @@ void Human_Bleed(Human *h, const float *dir, CollHit *src)
         msg.texture = tex;
         msg.unk4 = 0;
         msg.size = sz;
-        fn = gTaskHandlers[sub_47E6F0()][hit.task->type];
+        fn = gTaskHandlers[BulletHole_GetEvent()][hit.task->type];
         if (fn)
             fn(hit.task, &msg);
     }
@@ -753,7 +753,7 @@ void Human_Bleed(Human *h, const float *dir, CollHit *src)
         int frames = 15 / *(short *)(*(char **)(gBloodSprite1 + 0x24) + 4);
 
         world = Game_GetWorld();
-        ps = sub_4FDF00(sub_4F0EE0(), world, gBloodSprite1 + 0x18, a, color, size, 409600.0f, 0x1080000,
+        ps = Particle2D_New(Level_GetDynamic(), world, gBloodSprite1 + 0x18, a, color, size, 409600.0f, 0x1080000,
                         frames, 0.0f, 0, 2, NULL);
         if (h->bloodRef)
             TaskRef_Remove(h->bloodRef);
@@ -763,7 +763,7 @@ void Human_Bleed(Human *h, const float *dir, CollHit *src)
     zero[0] = 0.0f;
     zero[1] = 0.0f;
     zero[2] = 0.0f;
-    sub_4FE120(ps, from, zero, 1.0f, 0.0f, 0.0f, 1.0f, 15, 0);
+    Particle2D_Add(ps, from, zero, 1.0f, 0.0f, 0.0f, 1.0f, 15, 0);
 
     a[0] = 0.0f;
     a[1] = 0.0f;
@@ -771,7 +771,7 @@ void Human_Bleed(Human *h, const float *dir, CollHit *src)
     size[0] = size[1] = 0x1.99999ap+6f; /* 102.4 */
     if (!h->dropRef || !(ps = *h->dropRef)) {
         world = Game_GetWorld();
-        ps = sub_4FDF00(sub_4F0EE0(), world, gBloodSprite2 + 0x18, a, color, size, 409600.0f, 0x80000, 0,
+        ps = Particle2D_New(Level_GetDynamic(), world, gBloodSprite2 + 0x18, a, color, size, 409600.0f, 0x80000, 0,
                         0.0f, 0, 10, Human_BloodDrop);
         if (h->dropRef)
             TaskRef_Remove(h->dropRef);
@@ -780,7 +780,7 @@ void Human_Bleed(Human *h, const float *dir, CollHit *src)
     for (n = Random_Int(Game_GetRandom(), 3) + 3; n > 0; n--) {
         long double r = Random_Float(Game_GetRandom()) - 0.5f;
 
-        sub_4FE210(ps, pos, d, 0x1.657186p-3f, 379.0f, 606.0f, 1.0f, (r + r) * kSpread + kSpreadBase, 0, 1.0f, 30, 7);
+        Particle2D_Emit(ps, pos, d, 0x1.657186p-3f, 379.0f, 606.0f, 1.0f, (r + r) * kSpread + kSpreadBase, 0, 1.0f, 30, 7);
     }
 
     d[0] = dir[0];
@@ -793,7 +793,7 @@ void Human_Bleed(Human *h, const float *dir, CollHit *src)
     for (n = Random_Int(Game_GetRandom(), 3) + 2; n > 0; n--) {
         long double r = Random_Float(Game_GetRandom()) - 0.5f;
 
-        sub_4FE210(ps, pos, d, 0x1.38c354p+0f, 37.0f, 113.0f, 1.0f, (r + r) * kSpread + kSpreadBase, 0, 1.0f, 30, 7);
+        Particle2D_Emit(ps, pos, d, 0x1.38c354p+0f, 37.0f, 113.0f, 1.0f, (r + r) * kSpread + kSpreadBase, 0, 1.0f, 30, 7);
     }
 }
 HOOK(0x463AD0, Human_Bleed);
@@ -810,7 +810,7 @@ void Human_BloodDrop(void *arg)
     unsigned k;
     float sz;
 
-    if (!gTaskHandlers[sub_47E6F0()][hit->task->type])
+    if (!gTaskHandlers[BulletHole_GetEvent()][hit->task->type])
         return;
     dx = (long double)p->pos[0] - p->prev[0];
     dy = (long double)p->pos[1] - p->prev[1];
@@ -824,7 +824,7 @@ void Human_BloodDrop(void *arg)
     msg.hit = hit;
     msg.unk4 = 0;
     msg.size = sz;
-    gTaskHandlers[sub_47E6F0()][hit->task->type](hit->task, &msg);
+    gTaskHandlers[BulletHole_GetEvent()][hit->task->type](hit->task, &msg);
 }
 HOOK(0x4640B0, Human_BloodDrop);
 

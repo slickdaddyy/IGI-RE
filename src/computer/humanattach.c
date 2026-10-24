@@ -11,10 +11,10 @@ ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
 ORIG(0x416880, uint8_t, Game_GetEvent13, (void));
 ORIG(0x43EF10, Task *, GenericPhysicsObj_New, (void *parent, Vec3d *pos, Matrix *matrix, char *name, float *vel));
 ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
-ORIG(0x4C1780, void, sub_4C1780, (void *task));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (void));
-ORIG(0x504AD0, void, sub_504AD0, (void *task, void *arg));
-ORIG(0x504DB0, uint16_t, sub_504DB0, (void));
+ORIG(0x4C1780, void, Debug_Log, (void *task));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
+ORIG(0x504AD0, void, EditRigidObjAttachedToBone_Create, (void *task, void *arg));
+ORIG(0x504DB0, uint16_t, EditRigidObjAttachedToBone_GetType, (void));
 
 #define HANDLER_45F920 ((void *)0x45F920)
 
@@ -50,7 +50,7 @@ void HumanAttach_Detect(HumanAttach *h, DetectQuery *q);
 
 void HumanAttach_Open(void)
 {
-    gHumanAttachType = TaskType_New("HumanAttach", sizeof(HumanAttach), sub_504DB0(), 0);
+    gHumanAttachType = TaskType_New("HumanAttach", sizeof(HumanAttach), EditRigidObjAttachedToBone_GetType(), 0);
     TaskType_SetHandler(gHumanAttachType, 0, HumanAttach_Create);
     TaskType_SetHandler2(gHumanAttachType, 1, HumanAttach_Run);
     TaskType_SetHandler(gHumanAttachType, Game_GetEvent9(), HumanAttach_Detach);
@@ -63,7 +63,7 @@ HOOK(0x465A10, HumanAttach_Open);
 void HumanAttach_Create(HumanAttach *h, void *arg)
 {
     h->detached = 0;
-    sub_504AD0(h, arg);
+    EditRigidObjAttachedToBone_Create(h, arg);
 }
 HOOK(0x465AC0, HumanAttach_Create);
 
@@ -73,14 +73,14 @@ void HumanAttach_Run(HumanAttach *h)
         Task_Delete(h);
         return;
     }
-    sub_4C1780(h);
+    Debug_Log(h);
 }
 HOOK(0x465AE0, HumanAttach_Run);
 
 void HumanAttach_Detach(HumanAttach *h, void *arg)
 {
     float vel[3] = {0, 0, 0};
-    Task *o = GenericPhysicsObj_New(sub_4F0EE0(), &h->pos, &h->matrix, h->name, vel);
+    Task *o = GenericPhysicsObj_New(Level_GetDynamic(), &h->pos, &h->matrix, h->name, vel);
     TaskFn fn = HANDLER(Game_GetEvent9(), o->type);
 
     if (fn)

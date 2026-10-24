@@ -27,7 +27,7 @@ ORIG(0x4B8A80, char *, Script_GetArgString, (ScriptArgs *args, int i, char *buf,
 ORIG(0x4B8AD0, int, Script_GetArgLine, (ScriptArgs *args, int i));
 ORIG(0x4B8B00, int, Script_HasArg, (ScriptArgs *args, int i));
 /* empty in this build */
-ORIG(0x4C1780, void, TaskNote_Set, (Task *task, const char *text));
+ORIG(0x4C1780, void, Debug_Log, (Task *task, const char *text));
 ORIG(0x4CF9D0, void, ModelFile_Free, (void *models));
 ORIG(0x4F1210, int, Level_GetEventDA8, (void));
 ORIG(0x4F1230, int, Level_GetEventDB0, (void));
@@ -193,7 +193,7 @@ ScriptValue *Level_NewTask(ScriptValue *out, Task *parent, ScriptArgs *args)
     }
     if (!gLevelFirstTask)
         gLevelFirstTask = task;
-    TaskNote_Set(task, name);
+    Debug_Log(task, name);
     if (id >= 0) {
         if (Task_FindById(id))
             id = -1;

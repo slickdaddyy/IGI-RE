@@ -3,8 +3,8 @@
 #include "hook.h"
 #include "qsc/qsc.h"
 
-ORIG(0x4B9CD0, int, Expr_Parse, (Lexer *lex, void **out, int unk3, int unk4));
-ORIG(0x4B9CA0, int, Expr_ParseNext, (Lexer *lex, void **out, int unk3));
+ORIG(0x4B9CD0, int, Expr_ParseTokens, (Lexer *lex, void **out, int unk3, int unk4));
+ORIG(0x4B9CA0, int, Expr_Parse, (Lexer *lex, void **out, int unk3));
 
 static Block *NewBlock(size_t size, int type)
 {
@@ -44,7 +44,7 @@ int Parse_Block(Lexer *lex, Block **out)
     for (;;) {
         switch (Parse_Keyword(lex)) {
         case KW_NONE:
-            if (!Expr_Parse(lex, &expr, 0, 0)) {
+            if (!Expr_ParseTokens(lex, &expr, 0, 0)) {
                 if (gScriptError)
                     Script_Error("Script error: Aborting.\n");
                 goto fail;
@@ -141,7 +141,7 @@ int Parse_If(Lexer *lex, Block **out)
 
     if (!Lexer_Next(lex, tok))
         goto eof;
-    if (tok->text[0] != '(' || !Expr_ParseNext(lex, &b->cond.cond, 0))
+    if (tok->text[0] != '(' || !Expr_Parse(lex, &b->cond.cond, 0))
         goto fail;
     if (!Lexer_Next(lex, tok))
         goto eof;
@@ -165,7 +165,7 @@ int Parse_If(Lexer *lex, Block **out)
             goto fail;
         e = NewBlock(0x14, BLOCK_ELSEIF);
         List_AddTail(&b->cond.elifs, &e->node);
-        if (!Expr_ParseNext(lex, &e->loop.cond, 0))
+        if (!Expr_Parse(lex, &e->loop.cond, 0))
             goto fail;
         if (!Lexer_Next(lex, tok))
             goto eof;
@@ -202,7 +202,7 @@ int Parse_While(Lexer *lex, Block **out)
     *out = b;
     /* on failure the block is neither freed nor cleared */
     return Lexer_Next(lex, &lex->tok) && lex->tok.text[0] == '(' &&
-           Expr_ParseNext(lex, &b->loop.cond, 0) && Lexer_Next(lex, &lex->tok) &&
+           Expr_Parse(lex, &b->loop.cond, 0) && Lexer_Next(lex, &lex->tok) &&
            Parse_Block(lex, &b->loop.body);
 }
 HOOK(0x4BF850, Parse_While);

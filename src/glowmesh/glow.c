@@ -13,8 +13,8 @@ ORIG(0x4978B0, void, RenderQueue_Add, (int queue, void *node));
 ORIG(0x4978D0, int, Primitive_Register, (const char *name));
 ORIG(0x4978E0, void, Primitive_Unregister, (int id));
 ORIG(0x4978F0, void, Primitive_SetHandler, (int id, void *fn));
-ORIG(0x4D3710, void, sub_4D3710, (void *buf, int x, int y, int w, int h));
-ORIG(0x5182B0, void, sub_5182B0, (int unk, float *pos, float *color));
+ORIG(0x4D3710, void, Task_Nothing, (void *buf, int x, int y, int w, int h));
+ORIG(0x5182B0, void, LensFlare_Draw, (int unk, float *pos, float *color));
 
 typedef struct Pool {
     char *data;
@@ -110,7 +110,7 @@ void Glow_ReadBufferHandler(GlowReadPrim *p)
     int y = x87_fistp(p->y - k16.f);
     int x = x87_fistp(p->x - k16.f);
 
-    sub_4D3710(p->buffer, x, y, 32, 32);
+    Task_Nothing(p->buffer, x, y, 32, 32);
 }
 HOOK(0x5127E0, Glow_ReadBufferHandler);
 
@@ -172,7 +172,7 @@ void Glow_InstanceHandler(GlowInstancePrim *p)
     buf = (uint16_t *)pool_alloc(&gGlowPool);
     y = x87_fistp(g->y - k16.f);
     x = x87_fistp(g->x - k16.f);
-    sub_4D3710(buf, x, y, 32, 32);
+    Task_Nothing(buf, x, y, 32, 32);
     n = sx = sy = kZero.f;
     for (j = -16; j < 16; j++) {
         for (i = -16; i < 16; i++, k++) {
@@ -192,7 +192,7 @@ void Glow_InstanceHandler(GlowInstancePrim *p)
     c[0] = w * g->color[0];
     c[1] = w * g->color[1];
     c[2] = w * g->color[2];
-    sub_5182B0(g->unk0, &g->x, c);
+    LensFlare_Draw(g->unk0, &g->x, c);
     pool_release(&gGlowPool, buf);
     pool_release(&gGlowPool, g->buffer);
 }

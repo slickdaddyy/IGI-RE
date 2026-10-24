@@ -20,7 +20,7 @@ ORIG(0x4B8920, void, Script_UnregisterSymbol, (const char *name));
 ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
 ORIG(0x4CE3D0, void, sub_4CE3D0, (Terrain *t));
-ORIG(0x4D11C0, void, sub_4D11C0, (void));
+ORIG(0x4D11C0, void, QCube_Reset, (void));
 
 #define gScriptEmptyString ((const char *)0x567C74)
 #define gHmpResident ((char *)0xB81920)
@@ -83,7 +83,7 @@ void Terrain_Load(Terrain *t, const char *path)
     void *script;
     int i, j;
 
-    sub_4D11C0();
+    QCube_Reset();
 
     strcpy(buf, path);
     strcat(buf, ".bit");

@@ -14,16 +14,16 @@ ORIG(0x4B80A0, void, Script_RemoveSymbol, (const char *name));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x4C5800, uint8_t, RigidDynCubeObj_GetEvent4, (void));
 ORIG(0x4CEBA0, void *, VirModel_Add, (const char *name));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (void));
-ORIG(0x4F0F40, void *, sub_4F0F40, (void));
-ORIG(0x4F0F80, void *, sub_4F0F80, (void));
-ORIG(0x4FDF00, void *, sub_4FDF00, (void *root, void *world, void *sprite, Vec3f *dir, Vec3f *scale, float *size,
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
+ORIG(0x4F0F40, void *, Param_RGB, (void));
+ORIG(0x4F0F80, void *, Param_Real64, (void));
+ORIG(0x4FDF00, void *, Particle2D_New, (void *root, void *world, void *sprite, Vec3f *dir, Vec3f *scale, float *size,
                                     float b, int blend, int d, float e, int f, int count, int h));
-ORIG(0x4FE210, void, sub_4FE210, (void *ps, Vec3d *pos, Vec3f *dir, float spread, float a, float b, float c, float d,
+ORIG(0x4FE210, void, Particle2D_Emit, (void *ps, Vec3d *pos, Vec3f *dir, float spread, float a, float b, float c, float d,
                                   int e, float f, int g, int h));
-ORIG(0x4FE5D0, void, sub_4FE5D0, (void *ps, int on));
-ORIG(0x4FE610, void, sub_4FE610, (void *ps, Vec3d *delta));
-ORIG(0x5034D0, uint16_t, sub_5034D0, (void));
+ORIG(0x4FE5D0, void, Particle2D_SetAutoDelete, (void *ps, int on));
+ORIG(0x4FE610, void, Particle2D_Translate, (void *ps, Vec3d *delta));
+ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
 /* a particle emitter ("Smoke", 0x178 bytes) */
 typedef struct Smoke {
@@ -145,7 +145,7 @@ void Smoke_Init(void)
     VAR(float, 0x57BE30) = 0.0f;
     VAR(float, 0x57BE34) = 1.0f;
     gSmokeModel = VirModel_Add("1729_01_1");
-    gSmokeType = TaskType_New("Smoke", sizeof(Smoke), sub_5034D0(), 0);
+    gSmokeType = TaskType_New("Smoke", sizeof(Smoke), EditorRigidObj_GetType(), 0);
     TaskType_SetHandler(gSmokeType, 0, Smoke_Create);
     TaskType_SetHandler2(gSmokeType, 1, Smoke_Run);
     TaskType_SetHandler2(gSmokeType, 2, Smoke_Delete);
@@ -164,7 +164,7 @@ void Smoke_Init(void)
     ParamTable_Add(gSmokeParams, &s, &s.spread, sub_4F0F20(), 7, NULL);
     ParamTable_Add(gSmokeParams, &s, &s.unk88, Param_Real32(), 7, (void *)0x57BDF8);
     ParamTable_Add(gSmokeParams, &s, &s.unk8C, Param_Real32(), 7, (void *)0x57BDF8);
-    ParamTable_Add(gSmokeParams, &s, &s.unk104, sub_4F0F40(), 7, NULL);
+    ParamTable_Add(gSmokeParams, &s, &s.unk104, Param_RGB(), 7, NULL);
     ParamTable_Add(gSmokeParams, &s, &s.unkFC, Param_Real32(), 7, (void *)0x57BE70);
     ParamTable_Add(gSmokeParams, &s, &s.unk100, Param_Real32(), 7, (void *)0x57BE70);
     ParamTable_Add(gSmokeParams, &s, &s.blend, Param_Int32(), 7, (void *)0x57BE68);
@@ -174,7 +174,7 @@ void Smoke_Init(void)
     ParamTable_Add(gSmokeParams, &s, &s.unk120, sub_4F0F20(), 7, NULL);
     ParamTable_Add(gSmokeParams, &s, &s.unk11C, sub_4F0F20(), 7, NULL);
     ParamTable_Add(gSmokeParams, &s, &s.unk124, Param_Real32(), 7, (void *)0x57BE30);
-    ParamTable_Add(gSmokeParams, &s, &s.rate, sub_4F0F80(), 7, (void *)0x57BE20);
+    ParamTable_Add(gSmokeParams, &s, &s.rate, Param_Real64(), 7, (void *)0x57BE20);
     ParamTable_Add(gSmokeParams, &s, &s.expr, Param_VarString(), 7, NULL);
     ParamTable_Add(gSmokeParams, &s, &s.enabled, Param_Bool8(), 7, NULL);
     Script_RegisterConstant("TASKTYPE_SMOKE", gSmokeType);
@@ -298,7 +298,7 @@ void Smoke_Run(Smoke *t)
         d.x = t->pos.x - t->lastPos.x;
         d.y = t->pos.y - t->lastPos.y;
         d.z = t->pos.z - t->lastPos.z;
-        sub_4FE610(t->ps, &d);
+        Particle2D_Translate(t->ps, &d);
     }
     t->moved = 1;
     t->lastPos = t->pos;
@@ -322,7 +322,7 @@ void Smoke_Run(Smoke *t)
         p.y = x87_sin(angle) * r + t->pos.y;
         n1 = round_int(t->unk100 * kRate / c);
         n2 = round_int(t->unkFC * kRate);
-        sub_4FE210(ps, &p, &t->dir, t->spread, t->unk8C * kSpeed, t->unk88 * kSpeed, c, x * kPerFrame, 0, kOneF,
+        Particle2D_Emit(ps, &p, &t->dir, t->spread, t->unk8C * kSpeed, t->unk88 * kSpeed, c, x * kPerFrame, 0, kOneF,
                    n2, n1);
         acc = t->acc - kRate;
         t->acc = acc;
@@ -391,10 +391,10 @@ void Smoke_Changed(Smoke *t)
         scale.y = t->unk104.y * kScale;
         scale.z = t->unk104.z * kScale;
         world = Game_GetWorld();
-        root = sub_4F0EE0();
-        t->ps = sub_4FDF00(root, world, sprite, &zero, &scale, &size, kLife, blend, 0, t->unk114 * kPerFrame, 0,
+        root = Level_GetDynamic();
+        t->ps = Particle2D_New(root, world, sprite, &zero, &scale, &size, kLife, blend, 0, t->unk114 * kPerFrame, 0,
                            t->count, 0);
-        sub_4FE5D0(t->ps, 0);
+        Particle2D_SetAutoDelete(t->ps, 0);
     }
     VarString_Bind(&t->expr, t);
     Smoke_UpdateLocal(t);

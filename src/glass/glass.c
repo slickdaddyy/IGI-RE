@@ -10,7 +10,7 @@ ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
 ORIG(0x416C90, long double, Game_BlastFalloff, (void *blast, void *obj, Vec3d *pos, float radius, int unk));
 ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
 ORIG(0x4B4770, long double, Random_Float, (void *r));
-ORIG(0x4FC860, uint8_t, sub_4FC860, (void));
+ORIG(0x4FC860, uint8_t, PhysicsObj_GetHitEvent, (void));
 ORIG(0x44BD70, void, GlassShatter_SpawnFrom, (void **model, Matrix *m, Vec3d *pos, Vec3d *from, float force,
                                                float scale));
 
@@ -111,7 +111,7 @@ void Glass_Open(void)
     TaskType_SetHandler(gGlassType, RigidDynCubeObj_GetEvent1(), sub_427D70);
     TaskType_SetHandler(gGlassType, Game_GetEvent9(), Glass_Hit);
     TaskType_SetHandler(gGlassType, Game_GetEvent11(), Glass_Blast);
-    TaskType_SetHandler(gGlassType, sub_4FC860(), Glass_Touch);
+    TaskType_SetHandler(gGlassType, PhysicsObj_GetHitEvent(), Glass_Touch);
     TaskType_SetHandler(gGlassType, AIDetection_GetEvent0(), sub_45F920);
     Script_RegisterConstant("TASKTYPE_GLASS", gGlassType);
 }

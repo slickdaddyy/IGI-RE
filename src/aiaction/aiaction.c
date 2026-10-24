@@ -4,12 +4,12 @@
 #include "hook.h"
 
 ORIG(0x440C00, char, AlarmControl_IsAlarm, (Task *t));
-ORIG(0x450C80, uint8_t, HumanAI_GetEvent, (void));
-ORIG(0x450D80, void, HumanAI_SendEvent, (Task *to, int event, int unk));
-ORIG(0x450E10, void, HumanAI_AddAction, (void *fn, void *data, int flags));
-ORIG(0x450FF0, void, HumanAI_RemoveAction, (void *ai, void *action));
-ORIG(0x451030, void *, HumanAI_NewActionData, (void *ai));
-ORIG(0x475370, char, sub_475370, (Task *t));
+ORIG(0x450C80, uint8_t, HumanAI_GetEventSlot, (void));
+ORIG(0x450D80, void, HumanAI_SendSimple, (Task *to, int event, int unk));
+ORIG(0x450E10, void, HumanAI_PushAction, (void *fn, void *data, int flags));
+ORIG(0x450FF0, void, HumanAI_EndAction, (void *ai, void *action));
+ORIG(0x451030, void *, HumanAI_AllocParam, (void *ai));
+ORIG(0x475370, char, StationaryGun_IsUsed, (Task *t));
 ORIG(0x4B80B0, void *, Script_Load, (const char *path));
 ORIG(0x4B85B0, void, Script_Run, (void *script));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
@@ -21,15 +21,15 @@ ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
 ORIG(0x4B8A80, void, Script_GetArgString, (void *args, int i, char *out, int size));
 ORIG(0x4C3440, Vec3d *, DynCubeObj_GetPosition, (void *obj));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
-ORIG(0x4F0F10, void *, sub_4F0F10, (void));
+ORIG(0x4F0F10, void *, Param_ScriptFile, (void));
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
 ORIG(0x4F0FE0, void *, Param_String32, (void));
 ORIG(0x4F1030, Task *, Task_FindById, (int id));
 ORIG(0x4F1210, int, Level_GetEventDA8, (void));
 ORIG(0x4F1220, int, Level_GetEventDAC, (void));
 ORIG(0x4F9720, void *, Graph_GetNode, (void *graph, int id));
-ORIG(0x509880, unsigned, sub_509880, (void));
-ORIG(0x509890, char, sub_509890, (void *node, unsigned mask));
+ORIG(0x509880, unsigned, AIGraph_GetStairCriteria, (void));
+ORIG(0x509890, char, GraphNode_HasCriteria, (void *node, unsigned mask));
 
 /* handlers of HumanAI and of the queued actions */
 #define HumanAI_Create ((void *)0x44F060)
@@ -250,7 +250,7 @@ void HumanAI_Init(void)
     TaskType_SetHandler(gHumanAIType, 0, HumanAI_Create);
     TaskType_SetHandler2(gHumanAIType, 1, HumanAI_Run);
     TaskType_SetHandler2(gHumanAIType, 2, HumanAI_Delete);
-    TaskType_SetHandler(gHumanAIType, HumanAI_GetEvent(), HumanAI_OnEvent);
+    TaskType_SetHandler(gHumanAIType, HumanAI_GetEventSlot(), HumanAI_OnEvent);
     TaskType_SetHandler(gHumanAIType, Param_GetTableEvent(), HumanAI_GetParams);
     TaskType_SetHandler(gHumanAIType, Param_GetChangedEvent(), HumanAI_Changed);
     TaskType_SetHandler2(gHumanAIType, Level_GetEventDA8(), HumanAI_OnLevelDA8);
@@ -259,7 +259,7 @@ void HumanAI_Init(void)
     gHumanAIParams = ParamTable_New(3);
     ParamTable_Add(gHumanAIParams, &t, t.name, Param_String32(), 7, NULL);
     ParamTable_Add(gHumanAIParams, &t, &t.graphId, Param_Int32(), 7, NULL);
-    ParamTable_Add(gHumanAIParams, &t, &t.unk3B70, sub_4F0F10(), 2, NULL);
+    ParamTable_Add(gHumanAIParams, &t, &t.unk3B70, Param_ScriptFile(), 2, NULL);
     HumanAI_RegisterFunctions();
     HumanAI_RegisterConstants();
 
@@ -442,11 +442,11 @@ HOOK(0x44CCA0, HumanAI_RegisterFunctions);
 
 ScriptValue *AIAction_Patrol(ScriptValue *out, void *data, void *args)
 {
-    NodeData *d = HumanAI_NewActionData(gHumanAI);
+    NodeData *d = HumanAI_AllocParam(gHumanAI);
 
     d->id = Script_GetArgInt(args, 0);
     d->unkC = Script_GetArgInt(args, 1);
-    HumanAI_AddAction(AI_PATROL, d, Script_GetArgInt(args, 2));
+    HumanAI_PushAction(AI_PATROL, d, Script_GetArgInt(args, 2));
     return ret_int(out, 3);
 }
 HOOK(0x44D0E0, AIAction_Patrol);
@@ -454,7 +454,7 @@ HOOK(0x44D0E0, AIAction_Patrol);
 /* each AI type fights its own way, civilians not at all */
 ScriptValue *AIAction_Combat(ScriptValue *out, void *data, void *args)
 {
-    CombatData *d = HumanAI_NewActionData(gHumanAI);
+    CombatData *d = HumanAI_AllocParam(gHumanAI);
     int flags = Script_GetArgInt(args, 0);
     void *fn;
 
@@ -481,19 +481,19 @@ ScriptValue *AIAction_Combat(ScriptValue *out, void *data, void *args)
     default:
         return ret_int(out, 1);
     }
-    HumanAI_AddAction(fn, d, flags);
+    HumanAI_PushAction(fn, d, flags);
     return ret_int(out, 1);
 }
 HOOK(0x44D160, AIAction_Combat);
 
 ScriptValue *AIAction_Dead(ScriptValue *out, void *data, void *args)
 {
-    HumanAI_AddAction(AI_DEAD, NULL, Script_GetArgInt(args, 0));
+    HumanAI_PushAction(AI_DEAD, NULL, Script_GetArgInt(args, 0));
     return ret_int(out, 1);
 }
 HOOK(0x44D260, AIAction_Dead);
 
-/* does nothing when the AI stands on a node with the sub_509880 flag or
+/* does nothing when the AI stands on a node with the AIGraph_GetStairCriteria flag or
    the target of the current event is nearer than fallFlatRange */
 ScriptValue *AIAction_FallFlat(ScriptValue *out, void *data, void *args)
 {
@@ -501,7 +501,7 @@ ScriptValue *AIAction_FallFlat(ScriptValue *out, void *data, void *args)
     AIEvent *e;
     NodeData *d;
 
-    if (sub_509890(node, sub_509880()))
+    if (GraphNode_HasCriteria(node, AIGraph_GetStairCriteria()))
         return ret_int(out, 2);
     e = AIEvent_GetCurrent();
     if (e->target && *e->target) {
@@ -511,40 +511,40 @@ ScriptValue *AIAction_FallFlat(ScriptValue *out, void *data, void *args)
         if (!(Vec3d_Distance(DynCubeObj_GetPosition(t), a) >= gHumanAI->fallFlatRange))
             return ret_int(out, 2);
     }
-    d = HumanAI_NewActionData(gHumanAI);
+    d = HumanAI_AllocParam(gHumanAI);
     *(float *)&d->id = Script_GetArgReal(args, 0);
-    HumanAI_AddAction(AI_FALL_FLAT, d, Script_GetArgInt(args, 1));
+    HumanAI_PushAction(AI_FALL_FLAT, d, Script_GetArgInt(args, 1));
     return ret_int(out, 2);
 }
 HOOK(0x44D2C0, AIAction_FallFlat);
 
 ScriptValue *AIAction_Activate(ScriptValue *out, void *data, void *args)
 {
-    NodeData *d = HumanAI_NewActionData(gHumanAI);
+    NodeData *d = HumanAI_AllocParam(gHumanAI);
 
     d->id = Script_GetArgInt(args, 0);
     d->unk14 = Script_GetArgInt(args, 1);
-    HumanAI_AddAction(AI_ACTIVATE, d, Script_GetArgInt(args, 2));
+    HumanAI_PushAction(AI_ACTIVATE, d, Script_GetArgInt(args, 2));
     return ret_int(out, 3);
 }
 HOOK(0x44D420, AIAction_Activate);
 
 ScriptValue *AIAction_WalkToNode(ScriptValue *out, void *data, void *args)
 {
-    NodeData *d = HumanAI_NewActionData(gHumanAI);
+    NodeData *d = HumanAI_AllocParam(gHumanAI);
 
     d->id = Script_GetArgInt(args, 0);
-    HumanAI_AddAction(AI_WALK_TO_NODE, d, Script_GetArgInt(args, 1));
+    HumanAI_PushAction(AI_WALK_TO_NODE, d, Script_GetArgInt(args, 1));
     return ret_int(out, 2);
 }
 HOOK(0x44D4A0, AIAction_WalkToNode);
 
 ScriptValue *AIAction_RunToNode(ScriptValue *out, void *data, void *args)
 {
-    NodeData *d = HumanAI_NewActionData(gHumanAI);
+    NodeData *d = HumanAI_AllocParam(gHumanAI);
 
     d->id = Script_GetArgInt(args, 0);
-    HumanAI_AddAction(AI_RUN_TO_NODE, d, Script_GetArgInt(args, 1));
+    HumanAI_PushAction(AI_RUN_TO_NODE, d, Script_GetArgInt(args, 1));
     return ret_int(out, 2);
 }
 HOOK(0x44D510, AIAction_RunToNode);
@@ -552,13 +552,13 @@ HOOK(0x44D510, AIAction_RunToNode);
 /* target, min and max time in seconds, a flag, action flags */
 static void fire_at(void *fn, void *args)
 {
-    NodeData *d = HumanAI_NewActionData(gHumanAI);
+    NodeData *d = HumanAI_AllocParam(gHumanAI);
 
     d->id = Script_GetArgInt(args, 0);
     d->unkC = round_int(Script_GetArgReal(args, 1) * kFps);
     d->unk10 = round_int(Script_GetArgReal(args, 2) * kFps);
     d->unk18 = Script_GetArgInt(args, 3);
-    HumanAI_AddAction(fn, d, Script_GetArgInt(args, 4));
+    HumanAI_PushAction(fn, d, Script_GetArgInt(args, 4));
 }
 
 ScriptValue *AIAction_FireAtNode(ScriptValue *out, void *data, void *args)
@@ -577,32 +577,32 @@ HOOK(0x44D630, AIAction_FireAtTask);
 
 ScriptValue *AIAction_PlayAnimation(ScriptValue *out, void *data, void *args)
 {
-    NodeData *d = HumanAI_NewActionData(gHumanAI);
+    NodeData *d = HumanAI_AllocParam(gHumanAI);
 
     d->id = Script_GetArgInt(args, 0);
-    HumanAI_AddAction(AI_PLAY_ANIMATION, d, Script_GetArgInt(args, 1));
+    HumanAI_PushAction(AI_PLAY_ANIMATION, d, Script_GetArgInt(args, 1));
     return ret_int(out, 2);
 }
 HOOK(0x44D6E0, AIAction_PlayAnimation);
 
 ScriptValue *AIAction_PlaySound(ScriptValue *out, void *data, void *args)
 {
-    SoundData *d = HumanAI_NewActionData(gHumanAI);
+    SoundData *d = HumanAI_AllocParam(gHumanAI);
 
     Script_GetArgString(args, 0, d->name, sizeof(d->name));
     d->unk28 = Script_GetArgInt(args, 1);
-    HumanAI_AddAction(AI_PLAY_SOUND, d, Script_GetArgInt(args, 2));
+    HumanAI_PushAction(AI_PLAY_SOUND, d, Script_GetArgInt(args, 2));
     return ret_int(out, 3);
 }
 HOOK(0x44D750, AIAction_PlaySound);
 
 ScriptValue *AIAction_MoveToEvent(ScriptValue *out, void *data, void *args)
 {
-    EventData *d = HumanAI_NewActionData(gHumanAI);
+    EventData *d = HumanAI_AllocParam(gHumanAI);
 
     AIEvent_GetPos(&d->pos);
     d->unk24.c = Script_GetArgInt(args, 0);
-    HumanAI_AddAction(AI_MOVE_TO_EVENT, d, Script_GetArgInt(args, 1));
+    HumanAI_PushAction(AI_MOVE_TO_EVENT, d, Script_GetArgInt(args, 1));
     return ret_int(out, 2);
 }
 HOOK(0x44D7D0, AIAction_MoveToEvent);
@@ -619,21 +619,21 @@ HOOK(0x44D850, AIEvent_GetPos);
 
 ScriptValue *AIAction_LookAtEvent(ScriptValue *out, void *data, void *args)
 {
-    EventData *d = HumanAI_NewActionData(gHumanAI);
+    EventData *d = HumanAI_AllocParam(gHumanAI);
 
     AIEvent_GetPos(&d->pos);
     d->unk20.f = Script_GetArgReal(args, 0);
-    HumanAI_AddAction(AI_LOOK_AT_EVENT, d, Script_GetArgInt(args, 1));
+    HumanAI_PushAction(AI_LOOK_AT_EVENT, d, Script_GetArgInt(args, 1));
     return ret_int(out, 2);
 }
 HOOK(0x44D870, AIAction_LookAtEvent);
 
 ScriptValue *AIAction_Stunned(ScriptValue *out, void *data, void *args)
 {
-    NodeData *d = HumanAI_NewActionData(gHumanAI);
+    NodeData *d = HumanAI_AllocParam(gHumanAI);
 
     *(float *)&d->id = Script_GetArgReal(args, 0);
-    HumanAI_AddAction(AI_STUNNED, d, Script_GetArgInt(args, 1));
+    HumanAI_PushAction(AI_STUNNED, d, Script_GetArgInt(args, 1));
     return ret_int(out, 2);
 }
 HOOK(0x44D8F0, AIAction_Stunned);
@@ -644,11 +644,11 @@ ScriptValue *AIAction_KickGrenade(ScriptValue *out, void *data, void *args)
     int flags = Script_GetArgInt(args, 0);
 
     if (*e->source) {
-        EventData *d = HumanAI_NewActionData(gHumanAI);
+        EventData *d = HumanAI_AllocParam(gHumanAI);
 
         d->pos = e->pos;
         d->ref = TaskRef_Add(*e->source);
-        HumanAI_AddAction(AI_KICK_GRENADE, d, flags);
+        HumanAI_PushAction(AI_KICK_GRENADE, d, flags);
     }
     return ret_int(out, 1);
 }
@@ -656,27 +656,27 @@ HOOK(0x44D960, AIAction_KickGrenade);
 
 ScriptValue *AIAction_RunPanicking(ScriptValue *out, void *data, void *args)
 {
-    EventData *d = HumanAI_NewActionData(gHumanAI);
+    EventData *d = HumanAI_AllocParam(gHumanAI);
     int flags;
 
     d->time = Script_GetArgReal(args, 0);
     flags = Script_GetArgInt(args, 1);
     AIEvent_GetPos(&d->pos);
-    HumanAI_AddAction(AI_RUN_PANICKING, d, flags);
+    HumanAI_PushAction(AI_RUN_PANICKING, d, flags);
     return ret_int(out, 2);
 }
 HOOK(0x44DA00, AIAction_RunPanicking);
 
 ScriptValue *AIAction_Idle(ScriptValue *out, void *data, void *args)
 {
-    HumanAI_AddAction(AI_IDLE, NULL, Script_GetArgInt(args, 0));
+    HumanAI_PushAction(AI_IDLE, NULL, Script_GetArgInt(args, 0));
     return ret_int(out, 1);
 }
 HOOK(0x44DA80, AIAction_Idle);
 
 ScriptValue *AIAction_SetCombat(ScriptValue *out, void *data, void *args)
 {
-    EventData *d = HumanAI_NewActionData(gHumanAI);
+    EventData *d = HumanAI_AllocParam(gHumanAI);
     AIEvent *e = AIEvent_GetCurrent();
     int flags = Script_GetArgInt(args, 0);
 
@@ -688,7 +688,7 @@ ScriptValue *AIAction_SetCombat(ScriptValue *out, void *data, void *args)
             d->unk20.source = TaskRef_Add(*e->source);
         if (e->target && *e->target)
             d->unk24.target = TaskRef_Add(*e->target);
-        HumanAI_AddAction(AI_SET_COMBAT, d, flags);
+        HumanAI_PushAction(AI_SET_COMBAT, d, flags);
     }
     return ret_int(out, 1);
 }
@@ -703,7 +703,7 @@ ScriptValue *AIFunction_RemoveAlarmActions(ScriptValue *out, void *data, void *a
 
     for (next = (AIAction *)a->node.next; next; a = next, next = (AIAction *)next->node.next) {
         if (a->unk8 == tag) {
-            HumanAI_RemoveAction(ai, a);
+            HumanAI_EndAction(ai, a);
             ai = gHumanAI;
         }
     }
@@ -923,9 +923,9 @@ ScriptValue *AIFunction_GetGunnerStatus(ScriptValue *out, void *data, void *args
         Warning_Show("StationaryGun ID #%d not defined", gHumanAI->gunnerId);
         return ret_int(out, 0);
     }
-    i = sub_475370(t);
+    i = StationaryGun_IsUsed(t);
     out->i = i;
-    out->d = sub_475370(t);
+    out->d = StationaryGun_IsUsed(t);
     out->s = gEmptyString;
     return out;
 }
@@ -1086,7 +1086,7 @@ ScriptValue *AIFunction_SendResponse(ScriptValue *out, void *data, void *args)
         for (;;)
             ;
     }
-    HumanAI_SendEvent(*e->source, 6, 0x24);
+    HumanAI_SendSimple(*e->source, 6, 0x24);
     return ret_int(out, 0);
 }
 HOOK(0x44EE40, AIFunction_SendResponse);

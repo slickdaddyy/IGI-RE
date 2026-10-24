@@ -5,7 +5,7 @@
 #include "task/task.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
-ORIG(0x4AF810, void, WarningShow, (const char *fmt, ...));
+ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
 ORIG(0x4AF990, void, List_Insert, (Node *after, Node *node));
 ORIG(0x4B0B00, void, Pool_Init, (Pool *pool, int stride, int count, int unk));
 ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));
@@ -130,7 +130,7 @@ void TaskType_WarnLeaks(void)
 
     for (i = 0; i < TASK_MAX_TYPES; i++)
         if (gTaskTypes[i].used)
-            WarningShow("QTasktype '%s' not deallocated", TaskType_GetName(i));
+            Warning_Show("QTasktype '%s' not deallocated", TaskType_GetName(i));
 }
 HOOK(0x401230, TaskType_WarnLeaks);
 
@@ -140,7 +140,7 @@ void TaskEvent_WarnLeaks(void)
 
     for (i = 0; i < TASK_MAX_SLOTS; i++)
         if (gTaskEvents[i].used)
-            WarningShow("QTask event not deallocated");
+            Warning_Show("QTask event not deallocated");
 }
 HOOK(0x401270, TaskEvent_WarnLeaks);
 

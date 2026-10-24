@@ -20,10 +20,10 @@ ORIG(0x4B45A0, void, Quat_SetEuler, (float *q, float ax, float ay, float az));
 ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
 ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
-ORIG(0x4C1780, void, Debug_Nothing, (void *a, void *b));
+ORIG(0x4C1780, void, Debug_Log, (void *a, void *b));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
-ORIG(0x4F1180, const char *, TaskRef_GetName, (void *field));
+ORIG(0x4F1180, const char *, TaskNote_GetText, (void *field));
 ORIG(0x4F19C0, int, ParamType_New, (const char *name, int parent));
 ORIG(0x4F1B60, uint8_t, ParamOp_Parse, (void));
 ORIG(0x4F1B70, uint8_t, ParamOp_ArgCount, (void));
@@ -265,13 +265,13 @@ HOOK(0x4EE970, Level_Open);
 /* QTaskNote: a reference to a task, saved by name */
 void ParamQTaskNote_Copy(void *v, char **dst)
 {
-    strcpy(*dst, TaskRef_GetName(v));
+    strcpy(*dst, TaskNote_GetText(v));
 }
 HOOK(0x4EF7F0, ParamQTaskNote_Copy);
 
 void ParamQTaskNote_Paste(void *v, char **src)
 {
-    Debug_Nothing(v, *src);
+    Debug_Log(v, *src);
 }
 HOOK(0x4EF830, ParamQTaskNote_Paste);
 

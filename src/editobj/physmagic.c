@@ -42,7 +42,7 @@ ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, int c));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, int c));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, float radius));
 ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int unk));
@@ -50,10 +50,10 @@ ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D0950, long double, VirModel_GetRadius2, (void **model, int unk));
 ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
-ORIG(0x4EE140, void *, PhysType_Find, (const char *name));
+ORIG(0x4EE140, void *, PhysicsObjType_Find, (const char *name));
 ORIG(0x4FB5E0, uint16_t, PhysicsObj_GetType, (void));
 ORIG(0x4FB5F0, void, PhysicsObj_Init, (void *obj));
-ORIG(0x4FB700, void, Vehicle_SetPhysType, (void *obj, void *phys));
+ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (void *obj, void *phys));
 
 #define MAGICOBJ_RUN ((void *)0x4D9970)
 
@@ -94,8 +94,8 @@ void PhysicsMagicObj_Create(PhysicsMagicObj *o, MagicCreateArg *arg)
     o->local = arg->local;
     o->unk760 = arg->unk88;
     PhysicsObj_Init(o);
-    Vehicle_SetPhysType(o, PhysType_Find(arg->model));
-    sub_4C4950(o, o, arg->unk88);
+    PhysicsObj_SetPhysType(o, PhysicsObjType_Find(arg->model));
+    RigidDynCubeObj_CreateMagicObjs(o, o, arg->unk88);
 }
 HOOK(0x503DF0, PhysicsMagicObj_Create);
 

@@ -14,7 +14,7 @@ ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
 ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
 ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
-ORIG(0x489610, uint8_t, sub_489610, (void));
+ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
 ORIG(0x4B33A0, void, Matrix_RotateEuler, (Matrix *out, const Matrix *m, float ax, float ay, float az));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
@@ -28,10 +28,10 @@ ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
 ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
 ORIG(0x4ECF80, void, Body_GetPointVelocity, (Vec3f *out, void *body, Vec3f *point));
-ORIG(0x4EE0E0, uint8_t, PhysType_GetArgsEvent, (void));
-ORIG(0x4EE0F0, uint8_t, PhysType_GetSizeEvent, (void));
-ORIG(0x4EE100, uint8_t, PhysType_GetFreeEvent, (void));
-ORIG(0x4EE140, PhysType *, PhysType_Find, (const char *name));
+ORIG(0x4EE0E0, uint8_t, PhysicsObjType_GetParseEvent, (void));
+ORIG(0x4EE0F0, uint8_t, PhysicsObjType_GetSizeEvent, (void));
+ORIG(0x4EE100, uint8_t, PhysicsObjType_GetFreeEvent, (void));
+ORIG(0x4EE140, PhysType *, PhysicsObjType_Find, (const char *name));
 ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
 
 uint16_t Car_GetType(void);
@@ -63,9 +63,9 @@ void Wheel_RegisterDefHandlers(void)
 {
     uint8_t slot;
 
-    slot = PhysType_GetArgsEvent();
+    slot = PhysicsObjType_GetParseEvent();
     TaskType_SetHandler(Wheel_GetType(), slot, Wheel_ParseDef);
-    slot = PhysType_GetSizeEvent();
+    slot = PhysicsObjType_GetSizeEvent();
     TaskType_SetHandler(Wheel_GetType(), slot, Wheel_GetDefSize);
 }
 HOOK(0x42FE40, Wheel_RegisterDefHandlers);
@@ -104,9 +104,9 @@ void Wheel_Init(void)
     TaskType_SetHandler(gWheelType, slot, TASK_NOTHING);
     slot = Game_GetEvent11();
     TaskType_SetHandler(gWheelType, slot, TASK_NOTHING);
-    slot = PhysType_GetFreeEvent();
+    slot = PhysicsObjType_GetFreeEvent();
     TaskType_SetHandler(gWheelType, slot, ROTOR_FREE_DEF);
-    slot = sub_489610();
+    slot = AIDetection_GetEvent0();
     TaskType_SetHandler(gWheelType, slot, VEHICLEPART_COLL_FILTER);
     Script_RegisterConstant("TASKTYPE_WHEEL", gWheelType);
 }
@@ -127,7 +127,7 @@ void Wheel_Create(Wheel *w, PartCreateArg *a)
     RigidDynCubeObj_Init(a->unk4, w, model);
     DynCube_Add(a->unk4, w, &a->pos, radius(w), 2);
     w->matrix = a->matrix;
-    w->phys = PhysType_Find(a->model);
+    w->phys = PhysicsObjType_Find(a->model);
     w->lift = 0;
     w->spin = 0;
     w->steer = 0;

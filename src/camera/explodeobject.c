@@ -86,7 +86,7 @@ ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
-ORIG(0x414E20, void, sub_414E20, (Vec3d *out, void *obj, int i));
+ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int i));
 ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
 ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
 ORIG(0x4168D0, void *, Game_GetTaskList3, (void));
@@ -109,7 +109,7 @@ ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
-ORIG(0x4D0D80, int, sub_4D0D80, (void));
+ORIG(0x4D0D80, int, Mesh3D_GetEvent5, (void));
 ORIG(0x4DCCB0, void, Sector_AddObject, (void *world, void *obj, Vec3d *pos));
 ORIG(0x4DCDD0, void, Sector_RemoveObject, (void *obj));
 ORIG(0x4DCF00, void, Sector_MoveObject, (void *world, void *obj, Vec3d *pos));
@@ -293,9 +293,9 @@ void ExplodeObject_Explode(ExplodeObject *o)
     if (model) {
         RigidDynCubeObj_SetModel(o, model);
         o->unkDC = 0;
-        CALL_CHILDREN(&o->task, sub_4D0D80());
+        CALL_CHILDREN(&o->task, Mesh3D_GetEvent5());
     }
-    sub_414E20(&p, o, 0);
+    Model_GetPoint(&p, o, 0);
     p.x = p.x + o->pos.x;
     p.y = p.y + o->pos.y;
     p.z = p.z + o->pos.z;

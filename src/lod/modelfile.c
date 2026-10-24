@@ -16,7 +16,7 @@ ORIG(0x4B7D50, void, Palette_Load, (void *pal, const char *path));
 ORIG(0x4CEA90, int, Model_GetUnloadMethod_, (void));
 ORIG(0x4CEAA0, void *, Mtp_FindChunk_, (const void *file, unsigned int id, unsigned int *size));
 ORIG(0x4CF050, void, VirModel_InitAllLods_, (void));
-ORIG(0x4D67A0, void, sub_4D67A0, (const char *path));
+ORIG(0x4D67A0, void, BoneObj_Load, (const char *path));
 
 #define MTP_PALF 0x50414C46
 #define MTP_BANM 0x42414E4D
@@ -63,7 +63,7 @@ void ModelFile_LoadAnims(ModelFile *f)
     dir = gModelAnimDir[0] ? gModelAnimDir : gModelDir;
     for (; n > 0; n--) {
         crt_sprintf(path, "%sanims/%s.iff", dir, s);
-        sub_4D67A0(path);
+        BoneObj_Load(path);
         s += strlen(s) + 1;
     }
 }

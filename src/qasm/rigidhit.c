@@ -127,7 +127,7 @@ _Static_assert(offsetof(RigidLineHit, dist) == 0x60, "RigidLineHit.dist");
 _Static_assert(sizeof(RigidLineHit) == 0x70, "RigidLineHit");
 _Static_assert(offsetof(RigidLineQuery, results) == 0x20, "RigidLineQuery");
 
-ORIG(0x4BD070, int, sub_4BD070, (RigidLod *lod, RigidCollTri *tri, float u, float v));
+ORIG(0x4BD070, int, Qvm_GetArgLine, (RigidLod *lod, RigidCollTri *tri, float u, float v));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (RigidLod **model));
 
 typedef void (*RigidTaskHandler)(void *task, void *arg);
@@ -420,7 +420,7 @@ void RigidDynCubeObj_LineHit(RigidObj *obj, RigidLineQuery *q)
                     continue;
                 fv = b;
                 fu = a;
-                if (sub_4BD070(lod, tri, fu, fv))
+                if (Qvm_GetArgLine(lod, tri, fu, fv))
                     continue;
 
                 /* nearest hit wins; within 0.1 of it the side decides */

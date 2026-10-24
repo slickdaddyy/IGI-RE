@@ -4,9 +4,9 @@
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x497800, void *, Frame_Alloc, (int size));
 ORIG(0x4978B0, void, RenderQueue_Add, (int queue, void *node));
-ORIG(0x4978D0, int, RenderTask_Register, (const char *name));
-ORIG(0x4978E0, void, RenderTask_Unregister, (int id));
-ORIG(0x4978F0, void, RenderTask_SetHandler, (int id, void *fn));
+ORIG(0x4978D0, int, Primitive_Register, (const char *name));
+ORIG(0x4978E0, void, Primitive_Unregister, (int id));
+ORIG(0x4978F0, void, Primitive_SetHandler, (int id, void *fn));
 
 typedef struct SortItem {
     void (*fn)(void *data);
@@ -131,13 +131,13 @@ HOOK(0x4B73A0, SortRender_Begin);
 
 void SortRender_Init(void)
 {
-    gSortTask = RenderTask_Register("SortRender");
-    RenderTask_SetHandler(gSortTask, SortRender_Flush);
+    gSortTask = Primitive_Register("SortRender");
+    Primitive_SetHandler(gSortTask, SortRender_Flush);
 }
 HOOK(0x4B73C0, SortRender_Init);
 
 void SortRender_Shutdown(void)
 {
-    RenderTask_Unregister(gSortTask);
+    Primitive_Unregister(gSortTask);
 }
 HOOK(0x4B73E0, SortRender_Shutdown);

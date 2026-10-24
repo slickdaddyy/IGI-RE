@@ -38,7 +38,7 @@ ORIG(0x497680, void, Scene_SetRect, (FadeScene *s, const float *rect));
 ORIG(0x4B4820, void, Draw_Rect, (float x, float y, float w, float h, float r, float g, float b, int unk4, int unk8));
 ORIG(0x4C1780, void, Debug_Log, (void));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
-ORIG(0x512BA0, void, sub_512BA0, (void));
+ORIG(0x512BA0, void, Glow_QueueAll, (void));
 
 void FadeOut_SetRect(FadeOut *f);
 void FadeOutStart_Draw(FadeOut *f);
@@ -182,7 +182,7 @@ HOOK(0x4E9480, GlowTask_Init);
 
 void GlowTask_Draw(void)
 {
-    sub_512BA0();
+    Glow_QueueAll();
 }
 HOOK(0x4E94D0, GlowTask_Draw);
 

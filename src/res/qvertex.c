@@ -2,8 +2,8 @@
 #include "igi.h"
 #include "res/sprite.h"
 
-ORIG(0x4B0E70, int, Render_Register, (const char *name));
-ORIG(0x4B0EB0, void, Render_Unregister, (int id));
+ORIG(0x4B0E70, int, RenderMode_CreateMethod, (const char *name));
+ORIG(0x4B0EB0, void, RenderMode_DeleteMethod, (int id));
 ORIG(0x509930, void, QVertex_InitDriver, (void));
 ORIG(0x509960, void, QVertex_ShutdownDriver, (void));
 
@@ -186,7 +186,7 @@ void QVertex_Init(void)
 {
     gQVertexTexture = NULL;
     gQVertexPalette = NULL;
-    gQVertexStrip = Render_Register("QVertex:RegisterStrip");
+    gQVertexStrip = RenderMode_CreateMethod("QVertex:RegisterStrip");
     QVertex_InitDriver();
 }
 HOOK(0x4B59A0, QVertex_Init);
@@ -194,6 +194,6 @@ HOOK(0x4B59A0, QVertex_Init);
 void QVertex_Shutdown(void)
 {
     QVertex_ShutdownDriver();
-    Render_Unregister(gQVertexStrip);
+    RenderMode_DeleteMethod(gQVertexStrip);
 }
 HOOK(0x4B59D0, QVertex_Shutdown);

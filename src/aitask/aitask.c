@@ -272,7 +272,7 @@ ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
-ORIG(0x4028B0, int, Timer_GetTicks, (void));
+ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x413C80, WeaponType *, Weapon_GetType, (Task *weapon));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x4B4770, long double, Random_Float, (void *r));
@@ -280,7 +280,7 @@ ORIG(0x4B32B0, long double, Vec3d_Distance, (const Vec3d *a, const Vec3d *b));
 ORIG(0x4B3320, char, Vec3d_IsZero, (const Vec3d *v));
 ORIG(0x4F1030, Task *, Task_FindById, (int id));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (void));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 ORIG(0x4F2060, Task *, WeaponSlots_Get, (Task **slots, int i));
 ORIG(0x4F23D0, void, Weapon_GetAmmo, (Task *weapon, int *out));
 ORIG(0x4F2350, void, Weapon_UseAmmo, (Task *weapon, char unlimited));
@@ -288,7 +288,7 @@ ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
 ORIG(0x4F9720, GraphNode *, Graph_GetNode, (Graph *graph, int id));
 ORIG(0x4F9770, void, Graph_GetNodePos, (Vec3d *out, GraphNode *node));
-ORIG(0x5096F0, void, Graph_FindNearest, (GraphNode **out, Graph *graph, const Vec3d *pos));
+ORIG(0x5096F0, void, AIGraph_FindNearest, (GraphNode **out, Graph *graph, const Vec3d *pos));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x463110, int, Human_GetState, (Task *human));
 ORIG(0x463130, int, Human_GetTeam, (Task *human));
@@ -312,9 +312,9 @@ ORIG(0x453540, int, PatrolPathCommand_GetType, (void *cmd));
 ORIG(0x453720, void *, PatrolRoute_Current, (PatrolRoute *r));
 ORIG(0x453760, void, PatrolRoute_Advance, (PatrolRoute *r));
 ORIG(0x4537E0, void, PatrolRoute_Init, (PatrolRoute *r, int path, int start));
-ORIG(0x485320, int, sub_485320, (void *task));
-ORIG(0x48B260, char, sub_48B260, (HumanAI *ai, GraphNode *node, char a, char b));
-ORIG(0x48B9C0, void, sub_48B9C0, (HumanAI *ai, char a));
+ORIG(0x485320, int, GameScreen_GetView, (void *task));
+ORIG(0x48B260, char, AICombat_TryNode, (HumanAI *ai, GraphNode *node, char a, char b));
+ORIG(0x48B9C0, void, AICombat_StartBurst, (HumanAI *ai, char a));
 
 /* fistp with the current rounding mode, like the original */
 static inline int round_int(long double f)
@@ -585,7 +585,7 @@ void AIPlaySound_Update(HumanAI *ai, AIAction *a)
         HumanAI_EndAction(ai, a);
         return;
     }
-    s = Sound_Play(sub_4F0EE0(), p->name);
+    s = Sound_Play(Level_GetDynamic(), p->name);
     if (s)
         Sound_SetPos(s, &ai->task.pos);
     HumanAI_EndAction(ai, a);
@@ -600,7 +600,7 @@ void AIMoveToEvent_Start(HumanAI *ai, AIAction *a)
     GraphNode *n;
 
     a->update = AIMoveToEvent_Update;
-    Graph_FindNearest(&n, ai->graph, &p->pos);
+    AIGraph_FindNearest(&n, ai->graph, &p->pos);
     p->move.node = n->id;
 }
 HOOK(0x48DFE0, AIMoveToEvent_Start);
@@ -622,7 +622,7 @@ HOOK(0x48E020, AIMoveToEvent_Update);
 /* now - time * -30, i.e. time seconds from now */
 static int ticks_after(float time)
 {
-    int now = Timer_GetTicks();
+    int now = Flow_GetFrames();
 
     return now - round_int(time * kMinusFps);
 }
@@ -640,10 +640,10 @@ void AILookAtEvent_Update(HumanAI *ai, AIAction *a)
 {
     PosParam *p = a->param;
 
-    Debug_Log(ai, -1, "Look at event, %d", p->look.until - Timer_GetTicks());
+    Debug_Log(ai, -1, "Look at event, %d", p->look.until - Flow_GetFrames());
     if (p->look.until < 0)
         p->look.until = ticks_after(p->look.time);
-    if (HumanAI_FaceTo(ai, &p->pos, kFaceTol, 0) && Timer_GetTicks() > p->look.until)
+    if (HumanAI_FaceTo(ai, &p->pos, kFaceTol, 0) && Flow_GetFrames() > p->look.until)
         HumanAI_EndAction(ai, a);
 }
 HOOK(0x48E0A0, AILookAtEvent_Update);
@@ -664,7 +664,7 @@ void AIStunned_Update(HumanAI *ai, AIAction *a)
     Debug_Log(ai, -1, "Stunned");
     if (p->until < 0)
         p->until = ticks_after(p->time);
-    if (Timer_GetTicks() > p->until) {
+    if (Flow_GetFrames() > p->until) {
         HumanAI_EndAction(ai, a);
         return;
     }
@@ -683,7 +683,7 @@ void AIKickGrenade_Start(HumanAI *ai, AIAction *a)
 
     a->update = AIKickGrenade_Update;
     a->end = AIKickGrenade_End;
-    Graph_FindNearest(&n, ai->graph, &p->pos);
+    AIGraph_FindNearest(&n, ai->graph, &p->pos);
     p->move.run = 0;
     p->move.node = n->id;
 }
@@ -722,7 +722,7 @@ void AIRunPanicking_Start(HumanAI *ai, AIAction *a)
         Warning_Show("RunPanicking stack not large enough");
         return;
     }
-    Graph_FindNearest(&n, ai->graph, &p->pos);
+    AIGraph_FindNearest(&n, ai->graph, &p->pos);
     if (n)
         AIGraph_Search(ai, n, 10, (AIGraphFn)AIRunPanicking_Check, (PanicData *)&p->pos);
 }
@@ -778,7 +778,7 @@ char AIRunPanicking_Check(HumanAI *ai, GraphNode *node, PanicData *d)
     Vec3d pos;
 
     Graph_GetNodePos(&pos, node);
-    if (!(Vec3d_Distance(&d->pos, &pos) <= d->radius * kUnit) && sub_48B260(ai, node, 0, 0)) {
+    if (!(Vec3d_Distance(&d->pos, &pos) <= d->radius * kUnit) && AICombat_TryNode(ai, node, 0, 0)) {
         d->node = node->id;
         return 1;
     }
@@ -900,7 +900,7 @@ void AIActivate_Start(HumanAI *ai, AIAction *a)
         return;
     if (!TaskType_IsA(t->type, RigidDynCubeObj_GetType()))
         return;
-    Graph_FindNearest(&n, ai->graph, &t->pos);
+    AIGraph_FindNearest(&n, ai->graph, &t->pos);
     if (!n)
         return;
     found = -1;
@@ -920,7 +920,7 @@ HOOK(0x48E620, AIActivate_Start);
 
 char AIActivate_Check(HumanAI *ai, GraphNode *node, int *out)
 {
-    if (sub_48B260(ai, node, 0, 0)) {
+    if (AICombat_TryNode(ai, node, 0, 0)) {
         *out = node->id;
         return 1;
     }
@@ -996,7 +996,7 @@ void AIPatrol_Update(HumanAI *ai, AIAction *a)
     if (!cmd)
         return;
     type = PatrolPathCommand_GetType(cmd);
-    arg = sub_485320(cmd);
+    arg = GameScreen_GetView(cmd);
     switch (type) {
     case 0:
         Debug_Log(ai, -1, "Patrolling, Standaction : %d", arg);
@@ -1010,9 +1010,9 @@ void AIPatrol_Update(HumanAI *ai, AIAction *a)
         break;
     case 1:
         if (r->timer == -1)
-            r->timer = Timer_GetTicks() + arg;
-        Debug_Log(ai, -1, "Patrolling, Delay : %d", r->timer - Timer_GetTicks());
-        if (Timer_GetTicks() <= r->timer)
+            r->timer = Flow_GetFrames() + arg;
+        Debug_Log(ai, -1, "Patrolling, Delay : %d", r->timer - Flow_GetFrames());
+        if (Flow_GetFrames() <= r->timer)
             return;
         break;
     case 2:
@@ -1068,11 +1068,11 @@ void AIFallFlat_Update(HumanAI *ai, AIAction *a)
 {
     TimedParam *p = a->param;
 
-    Debug_Log(ai, -1, "Fall flat - %d", p->until - Timer_GetTicks());
+    Debug_Log(ai, -1, "Fall flat - %d", p->until - Flow_GetFrames());
     HumanAI_SetChannel(ai, 2, 1.0f);
     if (p->until < 0)
         p->until = ticks_after(p->time);
-    if (Timer_GetTicks() > p->until)
+    if (Flow_GetFrames() > p->until)
         HumanAI_EndAction(ai, a);
 }
 HOOK(0x48EB60, AIFallFlat_Update);
@@ -1121,7 +1121,7 @@ HOOK(0x48EC50, AIRunToNode_Update);
 static void fire_at(HumanAI *ai, FireParam *p)
 {
     if (!p->aimed) {
-        sub_48B9C0(ai, 0);
+        AICombat_StartBurst(ai, 0);
         p->aimed = 1;
     }
     if (p->wait >= 0) {

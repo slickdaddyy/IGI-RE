@@ -3,7 +3,7 @@
 
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
-ORIG(0x4F65E0, char *, RainDynCubeObj_FindCell, (void *rain, const Vec3d *pos));
+ORIG(0x4F65E0, char *, RainObj_FindCell, (void *rain, const Vec3d *pos));
 
 #define RAIN_MAX 8
 
@@ -37,7 +37,7 @@ long double RainDynCubeObj_IsRainingAt(const Vec3d *pos)
     for (i = 0; i < RAIN_MAX; i++) {
         char *cell;
 
-        if (gRains[i] && (cell = RainDynCubeObj_FindCell(gRains[i], pos)) && *(int *)(cell + 0x1C))
+        if (gRains[i] && (cell = RainObj_FindCell(gRains[i], pos)) && *(int *)(cell + 0x1C))
             return kOne;
     }
     return kZero;

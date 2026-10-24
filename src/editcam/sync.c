@@ -11,8 +11,8 @@ ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
-ORIG(0x5183D0, void, sub_5183D0, (void));
-ORIG(0x508FA0, void, sub_508FA0, (void));
+ORIG(0x5183D0, void, TaskTypes_Open, (void));
+ORIG(0x508FA0, void, AIGraph_Init, (void));
 
 #define Task_Nothing ((void *)0x4D3710)
 
@@ -145,7 +145,7 @@ HOOK(0x508F70, Sync_GetEvent1);
 
 void sub_508F80(void)
 {
-    sub_5183D0();
-    sub_508FA0();
+    TaskTypes_Open();
+    AIGraph_Init();
 }
 HOOK(0x508F80, sub_508F80);

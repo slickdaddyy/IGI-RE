@@ -4,8 +4,8 @@
 #include "sector/sector.h"
 #include "hook.h"
 
-ORIG(0x4DA180, void, sub_4DA180, (int **layers, int *count));
-ORIG(0x4DA300, void, sub_4DA300, (float *color, float *amount, const Vec3d *from, const Vec3d *to, int *layers,
+ORIG(0x4DA180, void, Haze_GetVisible, (int **layers, int *count));
+ORIG(0x4DA300, void, Haze_GetFog, (float *color, float *amount, const Vec3d *from, const Vec3d *to, int *layers,
                                   int count));
 ORIG(0x499FF0, int, Float_Log2, (float f));
 
@@ -68,8 +68,8 @@ void Fog_Compute(float *out, const Vec3d *pos, float depth, float scale, int *la
     long double f, v;
 
     if (!layers)
-        sub_4DA180(&layers, &count);
-    sub_4DA300(color, out, &gViewPos, pos, layers, count);
+        Haze_GetVisible(&layers, &count);
+    Haze_GetFog(color, out, &gViewPos, pos, layers, count);
     f = gViewFov * kFovScale + kFovBase;
     if (f < kOne)
         depth = f * depth;

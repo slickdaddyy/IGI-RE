@@ -10,7 +10,7 @@ ORIG(0x4B1510, void *, File_Open, (const char *path, const char *mode));
 ORIG(0x4B1690, void, File_Close, (void *f));
 ORIG(0x4B16D0, int, File_Read, (void *f, void *buf, int size));
 ORIG(0x4B1780, int, File_GetSize, (void *f));
-ORIG(0x424300, void, MenuWindow_Layout, (void *task));
+ORIG(0x424300, void, MenuWindow_ForwardEvent914, (void *task));
 
 /* a scrollable text file, word wrapped into lines */
 typedef struct AsciiBox {
@@ -55,7 +55,7 @@ void AsciiBox_Init(void)
     TaskType_SetHandler(gAsciiBoxType, 0, AsciiBox_Create);
     TaskType_SetHandler(gAsciiBoxType, Param_GetTableEvent(), AsciiBox_GetParams);
     TaskType_SetHandler(gAsciiBoxType, Param_GetChangedEvent(), AsciiBox_Changed);
-    TaskType_SetHandler2(gAsciiBoxType, MenuWindow_GetEvent914(), MenuWindow_Layout);
+    TaskType_SetHandler2(gAsciiBoxType, MenuWindow_GetEvent914(), MenuWindow_ForwardEvent914);
     TaskType_SetHandler2(gAsciiBoxType, MenuWindow_GetEvent918(), MenuWindow_ForwardEvent918);
     TaskType_SetHandler2(gAsciiBoxType, Level_GetEventDA8(), AsciiBox_Activate);
     TaskType_SetHandler2(gAsciiBoxType, Level_GetEventDAC(), AsciiBox_Deactivate);

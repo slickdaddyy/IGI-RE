@@ -15,11 +15,11 @@ ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t par
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401E30, void, Task_BroadcastChildren, (void *task, uint8_t slot, void *arg));
 ORIG(0x452910, const char *, AIType_GetName, (int type));
-ORIG(0x45D5A0, uint16_t, sub_45D5A0, (void));
-ORIG(0x4886F0, void, sub_4886F0, (void *task, void *arg));
+ORIG(0x45D5A0, uint16_t, Soldier_GetType, (void));
+ORIG(0x4886F0, void, SubLevel_Create, (void *task, void *arg));
 ORIG(0x4B8770, int, Script_EvalExpr, (const char *text));
-ORIG(0x4C1780, void, Task_SetName, (void *task, const char *name));
-ORIG(0x4D3710, void, sub_4D3710, (void *task, void *arg));
+ORIG(0x4C1780, void, Debug_Log, (void *task, const char *name));
+ORIG(0x4D3710, void, Task_Nothing, (void *task, void *arg));
 
 #define AITYPE_COUNT 29
 #define DIFFICULTY_COUNT 3
@@ -129,15 +129,15 @@ void HumanAIConfig_Init(void)
 
     gHumanAIConfigType = TaskType_New("HumanAIConfig", sizeof(HumanAIConfig), Task_GetRootType(), 0);
     gHumanAIConfigItemType = TaskType_New("HumanAIConfigItem", sizeof(HumanAIConfigItem), Task_GetRootType(), 0);
-    TaskType_SetHandler(gHumanAIConfigType, 0, sub_4886F0);
-    TaskType_SetHandler2(gHumanAIConfigType, 2, sub_4D3710);
+    TaskType_SetHandler(gHumanAIConfigType, 0, SubLevel_Create);
+    TaskType_SetHandler2(gHumanAIConfigType, 2, Task_Nothing);
     TaskType_SetHandler(gHumanAIConfigType, Param_GetTableEvent(), HumanAIConfig_GetParams);
-    TaskType_SetHandler(gHumanAIConfigType, Param_GetChangedEvent(), sub_4D3710);
+    TaskType_SetHandler(gHumanAIConfigType, Param_GetChangedEvent(), Task_Nothing);
     gHumanAIConfigParams = ParamTable_New(1);
     ParamTable_Add(gHumanAIConfigParams, &hc, &hc.unk20, Param_PushButton(), 7, NULL);
     TaskType_SetHandler(gHumanAIConfigItemType, 0, HumanAIConfigItem_Create);
-    TaskType_SetHandler2(gHumanAIConfigItemType, 1, sub_4D3710);
-    TaskType_SetHandler2(gHumanAIConfigItemType, 2, sub_4D3710);
+    TaskType_SetHandler2(gHumanAIConfigItemType, 1, Task_Nothing);
+    TaskType_SetHandler2(gHumanAIConfigItemType, 2, Task_Nothing);
     TaskType_SetHandler(gHumanAIConfigItemType, Param_GetTableEvent(), HumanAIConfigItem_GetParams);
     TaskType_SetHandler(gHumanAIConfigItemType, Param_GetChangedEvent(), HumanAIConfigItem_Update);
     gHumanAIIntRange.i.min = 1;
@@ -254,7 +254,7 @@ void HumanAIConfigItem_UpdateName(HumanAIConfigItem *item)
     const char *ai = AIType_GetName(item->aiType);
 
     crt_sprintf(buf, "%s, %s", ai, Config_GetDifficultyName(item->difficulty));
-    Task_SetName(item, buf);
+    Debug_Log(item, buf);
 }
 HOOK(0x406D40, HumanAIConfigItem_UpdateName);
 
@@ -378,7 +378,7 @@ void HumanAIConfig_Apply(HumanAI *ai)
     ai->unk3DB8 = c->unk26C * gWorldScale;
     ai->unk3DC8 = c->unk274;
     COPY(*(float *)(owner + 0x258), c->unk2A0);
-    if (((TaskHeader *)owner)->type == sub_45D5A0())
+    if (((TaskHeader *)owner)->type == Soldier_GetType())
         COPY(*(float *)(owner + 0xD04), c->unk2A4);
 }
 HOOK(0x406F70, HumanAIConfig_Apply);

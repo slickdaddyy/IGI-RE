@@ -10,13 +10,13 @@ typedef struct GameScreen {
 
 _Static_assert(sizeof(GameScreen) == 0x28, "GameScreen");
 
-ORIG(0x4E7AC0, void, sub_4E7AC0, (void *task, int unk));
-ORIG(0x4E8110, Task *, View_New, (void *parent, float x, float y, float w, float h, void *world, void *cam,
+ORIG(0x4E7AC0, void, DebugText_New, (void *task, int unk));
+ORIG(0x4E8110, Task *, Viewport_New, (void *parent, float x, float y, float w, float h, void *world, void *cam,
                                   int unk8, int unk9, int unk10, int unk11, float unk12));
-ORIG(0x4E8370, void, View_SetWorld, (void *view, void *world));
-ORIG(0x4E9430, void, sub_4E9430, (Task *view));
-ORIG(0x4E9460, void, sub_4E9460, (Task *view));
-ORIG(0x4E9500, void, sub_4E9500, (Task *view));
+ORIG(0x4E8370, void, TerraDrawTask_New, (void *view, void *world));
+ORIG(0x4E9430, void, FadeOutStart_New, (Task *view));
+ORIG(0x4E9460, void, FadeOutEnd_New, (Task *view));
+ORIG(0x4E9500, void, GlowTask_New, (Task *view));
 
 #define Task_RunChildren ((void *)0x488700)
 #define Task_Nothing ((void *)0x4D3710)
@@ -56,14 +56,14 @@ void GameScreen_Create(GameScreen *s)
         x = 0.0f;
     }
     game = Game_Get();
-    v = View_New(s, x, y, w, h, Game_GetWorld(), game + 0x60, 0, 0, 0, 0, 1.0f);
+    v = Viewport_New(s, x, y, w, h, Game_GetWorld(), game + 0x60, 0, 0, 0, 0, 1.0f);
     s->view = v;
-    sub_4E9430(v);
-    View_SetWorld(v, Game_GetWorld());
-    sub_4E9500(v);
-    sub_4E9460(v);
+    FadeOutStart_New(v);
+    TerraDrawTask_New(v, Game_GetWorld());
+    GlowTask_New(v);
+    FadeOutEnd_New(v);
     gGameStatusScreen = StatusScreen_New(s);
-    sub_4E7AC0(s, 1);
+    DebugText_New(s, 1);
 }
 HOOK(0x485220, GameScreen_Create);
 

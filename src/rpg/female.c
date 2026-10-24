@@ -10,31 +10,31 @@
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x413A80, long double, HumanPlayer_GetMoveScale, (void));
 ORIG(0x416C90, long double, Game_BlastFalloff, (SoldierBlast *e, Soldier *h, double *pos, float radius, int unk));
-ORIG(0x450D50, void, SoldierAI_Message, (SoldierAI *ai, SoldierAIMsg *msg));
-ORIG(0x4538F0, void, sub_4538F0, (Soldier *h));
-ORIG(0x45D360, void, sub_45D360, (Soldier *h));
+ORIG(0x450D50, void, HumanAI_Send, (SoldierAI *ai, SoldierAIMsg *msg));
+ORIG(0x4538F0, void, SoldierFemale_Footstep, (Soldier *h));
+ORIG(0x45D360, void, Soldier_EnsureWeapon, (Soldier *h));
 ORIG(0x460C80, void, Human_printf, (Soldier *h, const char *fmt, ...));
 ORIG(0x460CF0, void, sub_460CF0, (Soldier *h));
 ORIG(0x4610C0, void, Human_UpdateBody, (Soldier *h));
 ORIG(0x4613D0, void, sub_4613D0, (Soldier *h));
-ORIG(0x4614B0, void, sub_4614B0, (Soldier *h));
-ORIG(0x462CF0, void, sub_462CF0, (Soldier *h));
-ORIG(0x462E50, void, sub_462E50, (Soldier *h));
-ORIG(0x463080, void, sub_463080, (Soldier *h));
-ORIG(0x463680, int, sub_463680, (Soldier *h));
-ORIG(0x4637C0, void, sub_4637C0, (Soldier *h, const char *sound, int count));
-ORIG(0x463AD0, void, sub_463AD0, (Soldier *h, float *dir, int unk));
+ORIG(0x4614B0, void, Human_UpdateMove, (Soldier *h));
+ORIG(0x462CF0, void, Human_MoveOnPlatform, (Soldier *h));
+ORIG(0x462E50, void, Human_UpdateWeapon, (Soldier *h));
+ORIG(0x463080, void, Human_SendPosition, (Soldier *h));
+ORIG(0x463680, int, Human_GetGround, (Soldier *h));
+ORIG(0x4637C0, void, Human_SayTimed, (Soldier *h, const char *sound, int count));
+ORIG(0x463AD0, void, Human_Bleed, (Soldier *h, float *dir, int unk));
 ORIG(0x464800, void, HumanView_UpdateView, (void *view, Soldier *h));
 ORIG(0x464BD0, void, HumanView_UpdateBody, (void *view, Soldier *h));
-ORIG(0x465800, void, sub_465800, (double *pos, void *view));
-ORIG(0x465970, void, sub_465970, (void *view, float amount, float angle, int frames));
-ORIG(0x489C60, int, sub_489C60, (Soldier *h, SoldierHit *hit));
-ORIG(0x489E10, HitAnims *, sub_489E10, (SoldierDamage *d, int part));
+ORIG(0x465800, void, HumanView_GetEye, (double *pos, void *view));
+ORIG(0x465970, void, HumanView_Shake, (void *view, float amount, float angle, int frames));
+ORIG(0x489C60, int, Human_GetHitZone, (Soldier *h, SoldierHit *hit));
+ORIG(0x489E10, HitAnims *, HumanDamage_GetZone, (SoldierDamage *d, int part));
 ORIG(0x4B3100, void, Vec3d_Normalize, (double *v));
 ORIG(0x4B3130, long double, Vec3d_Length, (const double *v));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4C3440, double *, DynCubeObj_GetPosition, (void *obj));
-ORIG(0x4D2FB0, void, sub_4D2FB0, (void *a, float *delta, void *anim));
+ORIG(0x4D2FB0, void, BoneObj_GetRootMotion, (void *a, float *delta, void *anim));
 ORIG(0x4EC1E0, void, StateMachine_Update, (SoldierSM *sm, Soldier *h));
 
 #define gSoldierFemaleList VAR(void *, 0x5BDA84)
@@ -66,7 +66,7 @@ static void Soldier_TellAI(Soldier *h, void *data, void *attacker)
     msg.data = data;
     msg.attacker = attacker;
     msg.attacker2 = attacker;
-    SoldierAI_Message(h->ai, &msg);
+    HumanAI_Send(h->ai, &msg);
 }
 
 void SoldierFemale_InputHandler(Soldier *h, SoldierInputMsg *msg)
@@ -86,7 +86,7 @@ static void Soldier_PrintDebug(Soldier *h)
     if (h->vel[2] < 0)
         speed = -speed;
     Human_printf(h, "Speed Z (m/s): %.2f\n", (double)(speed * kUnitsToMetersF * kFps));
-    Human_printf(h, "Ground task: %x\n", sub_463680(h));
+    Human_printf(h, "Ground task: %x\n", Human_GetGround(h));
     Human_printf(h, "Attach task: %x\n", h->attach);
     Human_printf(h, "Delta move pos X: %.2f\n", (double)h->movePos[0]);
     Human_printf(h, "Delta move pos Y: %.2f\n", (double)h->movePos[1]);
@@ -107,7 +107,7 @@ void SoldierFemale_Update(Soldier *h)
 {
     float *d = h->delta, x, y, z;
 
-    sub_45D360(h);
+    Soldier_EnsureWeapon(h);
     sub_460CF0(h);
     StateMachine_Update(&h->sm, h);
     if (!is_zero(h->input[20]))
@@ -116,7 +116,7 @@ void SoldierFemale_Update(Soldier *h)
     Human_UpdateBody(h);
     HumanView_UpdateView(h->view, h);
     h->unkD8 = 1;
-    sub_4D2FB0(h->unk514, d, h->anim);
+    BoneObj_GetRootMotion(h->unk514, d, h->anim);
     if (!h->deltaScaled) {
         long double k = 1.0f;
 
@@ -134,13 +134,13 @@ void SoldierFemale_Update(Soldier *h)
     d[2] = z;
     sub_4613D0(h);
     if (!h->attach)
-        sub_4614B0(h);
+        Human_UpdateMove(h);
     else
-        sub_462CF0(h);
+        Human_MoveOnPlatform(h);
     HumanView_UpdateBody(h->view, h);
-    sub_462E50(h);
-    sub_463080(h);
-    sub_4538F0(h);
+    Human_UpdateWeapon(h);
+    Human_SendPosition(h);
+    SoldierFemale_Footstep(h);
     Soldier_PrintDebug(h);
 }
 HOOK(0x4550B0, SoldierFemale_Update);
@@ -165,22 +165,22 @@ void SoldierFemale_HitHandler(Soldier *h, SoldierHit *hit)
     uint32_t bits;
 
     if (!h->ai || (headshot = h->ai->unk3ABD, !h->ai->unk3ABC)) {
-        part = sub_489C60(h, hit);
+        part = Human_GetHitZone(h, hit);
         d->hitZone = part;
-        sub_489E10(d, part);
+        HumanDamage_GetZone(d, part);
         if ((part == 15 || part == 16) && headshot)
             dmg = hit->damage;
         else
             dmg = d->part[part].mult * hit->damage;
         Female_AddDamage(f, part, dmg);
-        sub_463AD0(h, hit->dir, hit->unk00);
+        Human_Bleed(h, hit->dir, hit->unk00);
         sum = dmg + f->hitSum;
         bits = h->sm.bits;
         f->hitSum = sum;
         if (d->total < d->max) {
             if (sum > f->hitLimit)
                 f->hitSum = 0;
-            sub_4637C0(h, "ai_hit_", 3);
+            Human_SayTimed(h, "ai_hit_", 3);
         } else {
             f->deathDir[0] = hit->dir[0];
             f->deathDir[1] = hit->dir[1];
@@ -207,7 +207,7 @@ void SoldierFemale_BlastHandler(Soldier *h, SoldierBlast *e)
         return;
     if (h->ai && h->ai->unk3ABC)
         return;
-    sub_465800(cam, h->view);
+    HumanView_GetEye(cam, h->view);
     v[0] = e->pos[0] - cam[0];
     v[1] = e->pos[1] - cam[1];
     v[2] = e->pos[2] - cam[2];
@@ -217,9 +217,9 @@ void SoldierFemale_BlastHandler(Soldier *h, SoldierBlast *e)
     else
         k = 1.0f - k / (e->radius * 6.0f);
     if (k > 0)
-        sub_465970(h->view, k * kShakeAmount, k * kShakeAngle, e->shakeFrames);
+        HumanView_Shake(h->view, k * kShakeAmount, k * kShakeAngle, e->shakeFrames);
     d->hitZone = 13;
-    sub_489E10(d, 13);
+    HumanDamage_GetZone(d, 13);
     r = Game_BlastFalloff(e, h, h->pos, h->radius * kBlastRadius, 1);
     if (is_zero(r))
         return;
@@ -230,7 +230,7 @@ void SoldierFemale_BlastHandler(Soldier *h, SoldierBlast *e)
     f->hitSum = sum;
     if (d->total < d->max) {
         if (sum > f->hitLimit) {
-            sub_4637C0(h, "ai_xplhit_", 3);
+            Human_SayTimed(h, "ai_xplhit_", 3);
             f->hitSum = 0;
         }
     } else {
@@ -270,7 +270,7 @@ void SoldierFemale_PunchHandler(Soldier *h, SoldierPunch *p)
         Vec3d_Normalize(v);
         part = v[2] * fwd[2] + v[1] * fwd[1] + v[0] * fwd[0] >= 0.0 ? 14 : 13;
         d->hitZone = part;
-        sub_489E10(d, part);
+        HumanDamage_GetZone(d, part);
         dmg = d->part[part].mult * p->damage;
         Female_AddDamage(f, part, dmg);
         bits = h->sm.bits;
@@ -279,7 +279,7 @@ void SoldierFemale_PunchHandler(Soldier *h, SoldierPunch *p)
         if (d->total < d->max) {
             if (sum > f->hitLimit)
                 f->hitSum = 0;
-            sub_4637C0(h, "ai_hit_", 3);
+            Human_SayTimed(h, "ai_hit_", 3);
         } else {
             f->deathKind = 2;
             memcpy(f->deathDir, v, sizeof(v));

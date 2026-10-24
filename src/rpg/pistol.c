@@ -8,22 +8,22 @@
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x416FB0, int, Game_IsRaining, (void));
 ORIG(0x460C40, uint8_t, Human_GetPunchEvent, (void));
-ORIG(0x463180, char, sub_463180, (Soldier *h));
+ORIG(0x463180, char, Human_IsCrouching, (Soldier *h));
 ORIG(0x489E70, void, Human_PlayAnimSlot, (Soldier *h, int slot, float blend));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
 ORIG(0x4B4770, long double, Random_Float, (void *r));
 ORIG(0x4D61D0, void, Anim_Play, (void *anim, int track, int id, int a, int b));
-ORIG(0x4D64C0, int, Anim_GetFrame, (void *anim, int track));
+ORIG(0x4D64C0, int, Anim_GetId, (void *anim, int track));
 ORIG(0x4D64E0, long double, Anim_GetLength, (void *anim, int track));
 ORIG(0x4D6520, long double, Anim_GetPhase, (void *anim, int track));
 ORIG(0x4D65B0, void, Anim_SetTime, (void *anim, int track, float time));
 ORIG(0x4D74F0, int, Anim_Exists, (void *anim, int track, int id));
 ORIG(0x4E6B00, void *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (void *sound, const double *pos));
-ORIG(0x4E6C60, void, sub_4E6C60, (void *sound, float a, float b));
+ORIG(0x4E6C60, void, Sound_SetVolume, (void *sound, float a, float b));
 ORIG(0x4E6CA0, void, Sound_SetPitch, (void *sound, float pitch));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (const char *name));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (const char *name));
 
 #define gFootstepSeq ((const int *)0x53E988)
 #define SoldierPistol_State2Update ((SoldierStateFn)0x45AD10)
@@ -54,24 +54,24 @@ void SoldierPistol_Footstep(Soldier *h)
     void *snd;
     int i;
 
-    if (h->unk538 != 0x3F2 || h->unk53C != Anim_GetFrame(h->anim, 0))
+    if (h->unk538 != 0x3F2 || h->unk53C != Anim_GetId(h->anim, 0))
         return;
     i = gFootstepSeq[h->footstep];
     h->footstep = (unsigned)(h->footstep + 1) % 12;
     if (!h->ground)
         return;
     pitch = Random_Float(Game_GetRandom()) * kPitchRange + 1.0f - kPitchDown;
-    snd = Sound_Play(sub_4F0EE0(h->ground + 0x54 + i * 0x20), h->ground + 0x54 + i * 0x20);
+    snd = Sound_Play(Level_GetDynamic(h->ground + 0x54 + i * 0x20), h->ground + 0x54 + i * 0x20);
     if (snd) {
-        if (sub_463180(h))
-            sub_4E6C60(snd, -1.0f, 0x1.51eb86p-1f);
+        if (Human_IsCrouching(h))
+            Sound_SetVolume(snd, -1.0f, 0x1.51eb86p-1f);
         Sound_SetPos(snd, h->soundPos);
         Sound_SetPitch(snd, pitch);
     }
     if (!Game_IsRaining())
         return;
     crt_sprintf(name, "walk_rain_%1d", i + 1);
-    snd = Sound_Play(sub_4F0EE0(name), name);
+    snd = Sound_Play(Level_GetDynamic(name), name);
     if (snd) {
         Sound_SetPos(snd, h->soundPos);
         Sound_SetPitch(snd, pitch);
@@ -350,7 +350,7 @@ void SoldierPistol_MeleeUpdate(SoldierSM *sm, Soldier *h)
 
     if (ps_common(sm, h, b))
         return;
-    if (h->unk538 == 0xC && h->unk53C == Anim_GetFrame(h->anim, 0) && !f->unkD19) {
+    if (h->unk538 == 0xC && h->unk53C == Anim_GetId(h->anim, 0) && !f->unkD19) {
         f->unkD19 = 1;
         if (!(Random_Float(Game_GetRandom()) > ai->unk3DA8) && ai->unk3AA8) {
             char ***list = (char ***)((char *)ai->unk3AA8 + 0xC);

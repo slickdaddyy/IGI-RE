@@ -28,7 +28,7 @@ _Static_assert(offsetof(Mission, path) == 0x144, "Mission.path");
 _Static_assert(offsetof(Mission, picture) == 0x484, "Mission.picture");
 _Static_assert(sizeof(Mission) == 0x4A8, "Mission");
 
-ORIG(0x48F340, int, Config_GetQvmOnly, (void));
+ORIG(0x48F340, int, AppContext_GetQvmOnly, (void));
 ORIG(0x4B09C0, int, Wildcard_Find, (int *start, int *end, int *groups, const char *wildcard, const char *str,
                                     int nocase));
 ORIG(0x4B1420, void, File_ScanDir, (const char *path, void *fn, void *user));
@@ -60,7 +60,7 @@ void MissionOpen(DirEntry *e)
     }
     strcpy(name, e->name);
     crt_strlwr(name);
-    file = Config_GetQvmOnly() ? "mission.qvm" : "mission.qsc";
+    file = AppContext_GetQvmOnly() ? "mission.qvm" : "mission.qsc";
     if (!Wildcard_Find(NULL, NULL, NULL, file, name, 1))
         return;
     script = Script_Load(e->name);

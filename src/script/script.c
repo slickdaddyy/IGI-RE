@@ -7,37 +7,37 @@
 #include "script/script.h"
 #include "script/symbol.h"
 
-ORIG(0x48F1D0, int, Config_GetCompileScripts, (void));
-ORIG(0x48F340, int, Config_GetQvmOnly, (void));
-ORIG(0x4B1E90, char *, File_GetExtension, (char *buf, int size, char *path));
-ORIG(0x4B5B60, int, File_Exists, (const char *path));
-ORIG(0x4B6440, int, File_GetTime, (void *time, const char *path));
-ORIG(0x4B6490, int, File_CompareTime, (void *a, void *b));
+ORIG(0x48F1D0, int, AppContext_GetCompileScripts, (void));
+ORIG(0x48F340, int, AppContext_GetQvmOnly, (void));
+ORIG(0x4B1E90, char *, Path_GetExtension, (char *buf, int size, char *path));
+ORIG(0x4B5B60, int, Resource_Exists, (const char *path));
+ORIG(0x4B6440, int, Resource_GetTime, (void *time, const char *path));
+ORIG(0x4B6490, int, Resource_CompareTime, (void *a, void *b));
 ORIG(0x4B1AC0, void, File_Delete, (const char *path));
 ORIG(0x4B5F00, void *, Resource_Load, (const char *path, int *size));
 ORIG(0x4B6380, void, Resource_Unload, (const char *path));
 ORIG(0x4B7E10, void, Script_Error, (const char *fmt, ...));
-ORIG(0x4BBCB0, int, Qvm_Parse, (const char *qasPath, Script *s));
-ORIG(0x4BB270, int, Qvm_Assemble, (const char *qvmPath, const char *qasPath));
+ORIG(0x4BBCB0, int, QscGen_Compile, (const char *qasPath, Script *s));
+ORIG(0x4BB270, int, QvmAsm_Assemble, (const char *qvmPath, const char *qasPath));
 ORIG(0x4BD220, void *, Qvm_Load, (const char *path, int unk1, int unk2));
 ORIG(0x4BD380, void, Qvm_Free, (void *qvm));
 ORIG(0x4BD080, int, Qvm_Run, (void *qvm));
-ORIG(0x4BCAB0, int, Qvm_GetArgInt, (ScriptArgs *args, int i));
-ORIG(0x4BD010, long double, Qvm_GetArgReal, (ScriptArgs *args, int i));
-ORIG(0x4BD040, char *, Qvm_GetArgString, (ScriptArgs *args, int i, char *buf, int size));
+ORIG(0x4BCAB0, int, Qvm_GetIntArg, (ScriptArgs *args, int i));
+ORIG(0x4BD010, long double, Qvm_GetRealArg, (ScriptArgs *args, int i));
+ORIG(0x4BD040, char *, Qvm_GetStringArg, (ScriptArgs *args, int i, char *buf, int size));
 ORIG(0x4BD070, int, Qvm_GetArgLine, (ScriptArgs *args, int i));
 ORIG(0x4C0200, void, Lexer_Init, (ScriptLexer *lex, ScriptReader *reader, char *buf, int size));
-ORIG(0x4BF1C0, void, Reader_Open, (ScriptReader *reader, const void *text, int size));
-ORIG(0x4BEFC0, void, Reader_Close, (ScriptReader *reader));
+ORIG(0x4BF1C0, void, Reader_InitMem, (ScriptReader *reader, const void *text, int size));
+ORIG(0x4BEFC0, void, Reader_Free, (ScriptReader *reader));
 ORIG(0x4BFC70, int, Lexer_Next, (ScriptLexer *lex, void *token));
-ORIG(0x4BF1F0, int, Stmt_Parse, (ScriptLexer *lex, void **out));
-ORIG(0x4BFA80, void, Stmt_Exec, (void *stmt));
-ORIG(0x4BF8F0, void, Stmt_Free, (void *stmt));
+ORIG(0x4BF1F0, int, Parse_Block, (ScriptLexer *lex, void **out));
+ORIG(0x4BFA80, void, Block_Exec, (void *stmt));
+ORIG(0x4BF8F0, void, Block_Free, (void *stmt));
 ORIG(0x4BD430, void, Qvm_Init, (void));
-ORIG(0x4BC920, void, sub_4BC920, (void));
-ORIG(0x4BBC80, void, sub_4BBC80, (void));
+ORIG(0x4BC920, void, QscGen_Init, (void));
+ORIG(0x4BBC80, void, QvmAsm_Init, (void));
 ORIG(0x4C0250, void, sub_4C0250, (void));
-ORIG(0x4C1780, void, sub_4C1780, (void));
+ORIG(0x4C1780, void, Debug_Log, (void));
 
 #define gScriptWarningSp VAR(int, 0xA9659C)
 #define gScriptWarningStack ((int *)0xA965C0)
@@ -51,7 +51,7 @@ ORIG(0x4C1780, void, sub_4C1780, (void));
 
 static void Path_SetExtension(char *path, const char *ext)
 {
-    memcpy(File_GetExtension(NULL, 0, path), ext, 5);
+    memcpy(Path_GetExtension(NULL, 0, path), ext, 5);
 }
 
 static Script *Script_New(void)
@@ -71,25 +71,25 @@ Script *Script_Load(const char *path)
     int size;
     Script *s;
 
-    if (Config_GetCompileScripts()) {
+    if (AppContext_GetCompileScripts()) {
         strcpy(qvmPath, path);
         Path_SetExtension(qvmPath, ".qvm");
-        if (Config_GetQvmOnly()) {
-            if (!File_Exists(qvmPath))
+        if (AppContext_GetQvmOnly()) {
+            if (!Resource_Exists(qvmPath))
                 return NULL;
             qvm = Qvm_Load(qvmPath, 0, 0);
             if (!qvm)
                 return NULL;
             goto have;
         }
-        if (File_Exists(qvmPath)) {
-            File_GetTime(qvmTime, qvmPath);
-            File_GetTime(srcTime, path);
-            if (File_CompareTime(qvmTime, srcTime) >= 0 && (qvm = Qvm_Load(qvmPath, 0, 0)) != NULL)
+        if (Resource_Exists(qvmPath)) {
+            Resource_GetTime(qvmTime, qvmPath);
+            Resource_GetTime(srcTime, path);
+            if (Resource_CompareTime(qvmTime, srcTime) >= 0 && (qvm = Qvm_Load(qvmPath, 0, 0)) != NULL)
                 goto have;
         }
     }
-    if (!File_Exists(path))
+    if (!Resource_Exists(path))
         return NULL;
     source = Resource_Load(path, &size);
     if (!source)
@@ -102,18 +102,18 @@ have:
         s->size = size;
         s->unk88 = 0;
         strcpy(s->name, path);
-        if (!Config_GetCompileScripts())
+        if (!AppContext_GetCompileScripts())
             return s;
         strcpy(qasPath, path);
         Path_SetExtension(qasPath, ".qas");
         File_Delete(qvmPath);
         File_Delete(qasPath);
-        if (Qvm_Parse(qasPath, s)) {
+        if (QscGen_Compile(qasPath, s)) {
             Script_Free(s);
             Script_Error("An error occured when compiling file: %s", path);
             return NULL;
         }
-        if (Qvm_Assemble(qvmPath, qasPath)) {
+        if (QvmAsm_Assemble(qvmPath, qasPath)) {
             Script_Error("An error occured when compiling file: %s", path);
             return s;
         }
@@ -154,7 +154,7 @@ void Script_Compile(const char *path)
     void *source;
     Script *s;
 
-    if (!File_Exists(path))
+    if (!Resource_Exists(path))
         return;
     source = Resource_Load(path, &size);
     s = Script_New();
@@ -168,12 +168,12 @@ void Script_Compile(const char *path)
     Path_SetExtension(qasPath, ".qas");
     File_Delete(qvmPath);
     File_Delete(qasPath);
-    if (Qvm_Parse(qasPath, s)) {
+    if (QscGen_Compile(qasPath, s)) {
         Script_Free(s);
         Script_Error("An error occured when compiling file: %s", path);
         return;
     }
-    if (Qvm_Assemble(qvmPath, qasPath)) {
+    if (QvmAsm_Assemble(qvmPath, qasPath)) {
         Script_Error("An error occured when compiling file: %s", path);
         return;
     }
@@ -199,17 +199,17 @@ void Script_Run(Script *s)
         }
     } else {
         Lexer_Init(&lex, &reader, buf, sizeof(buf));
-        Reader_Open(&reader, s->source, s->size);
+        Reader_InitMem(&reader, s->source, s->size);
         for (;;) {
             if (gScriptBreakEnabled && gScriptBreak)
                 goto close;
             stmt = NULL;
             if (!Lexer_Next(&lex, &lex.pending))
                 goto close;
-            if (!Stmt_Parse(&lex, &stmt))
+            if (!Parse_Block(&lex, &stmt))
                 break;
-            Stmt_Exec(stmt);
-            Stmt_Free(stmt);
+            Block_Exec(stmt);
+            Block_Free(stmt);
             if (gScriptError)
                 break;
         }
@@ -217,7 +217,7 @@ void Script_Run(Script *s)
             Script_Error("An error occured in script file: %s", s->name);
         gScriptError = 0;
 close:
-        Reader_Close(&reader);
+        Reader_Free(&reader);
     }
     gScriptBreak = 0;
 }
@@ -231,12 +231,12 @@ Expr *Script_ParseExpr(const char *text)
     Expr *e;
 
     Lexer_Init(&lex, &reader, buf, sizeof(buf));
-    Reader_Open(&reader, text, strlen(text));
+    Reader_InitMem(&reader, text, strlen(text));
     if (Expr_Parse(&lex, &e)) {
-        Reader_Close(&reader);
+        Reader_Free(&reader);
         return e;
     }
-    Reader_Close(&reader);
+    Reader_Free(&reader);
     return NULL;
 }
 HOOK(0x4B86E0, Script_ParseExpr);
@@ -250,14 +250,14 @@ int Script_EvalExpr(const char *text)
     int v;
 
     Lexer_Init(&lex, &reader, buf, sizeof(buf));
-    Reader_Open(&reader, text, strlen(text));
+    Reader_InitMem(&reader, text, strlen(text));
     if (Expr_Parse(&lex, &e)) {
         v = Expr_EvalInt(e);
         Expr_Free(e);
-        Reader_Close(&reader);
+        Reader_Free(&reader);
         return v;
     }
-    Reader_Close(&reader);
+    Reader_Free(&reader);
     return 0;
 }
 HOOK(0x4B8770, Script_EvalExpr);
@@ -314,7 +314,7 @@ HOOK(0x4B8A10, Script_SetBreakEnabled);
 int Script_GetArgInt(ScriptArgs *args, int i)
 {
     if (args->vm)
-        return Qvm_GetArgInt(args, i);
+        return Qvm_GetIntArg(args, i);
     return Expr_EvalInt(args->argv[i]);
 }
 HOOK(0x4B8A20, Script_GetArgInt);
@@ -322,7 +322,7 @@ HOOK(0x4B8A20, Script_GetArgInt);
 long double Script_GetArgReal(ScriptArgs *args, int i)
 {
     if (args->vm)
-        return Qvm_GetArgReal(args, i);
+        return Qvm_GetRealArg(args, i);
     return Expr_EvalReal(args->argv[i]);
 }
 HOOK(0x4B8A50, Script_GetArgReal);
@@ -330,7 +330,7 @@ HOOK(0x4B8A50, Script_GetArgReal);
 char *Script_GetArgString(ScriptArgs *args, int i, char *buf, int size)
 {
     if (args->vm)
-        return Qvm_GetArgString(args, i, buf, size);
+        return Qvm_GetStringArg(args, i, buf, size);
     return Expr_EvalString(args->argv[i], buf, size);
 }
 HOOK(0x4B8A80, Script_GetArgString);
@@ -372,8 +372,8 @@ void Script_Init(void)
     Script_SetMaxArgs(0x2000);
     gScriptWarningSp = 0x100;
     Qvm_Init();
-    sub_4BC920();
-    sub_4BBC80();
+    QscGen_Init();
+    QvmAsm_Init();
     sub_4C0250();
 }
 HOOK(0x4B8B20, Script_Init);
@@ -400,10 +400,10 @@ HOOK(0x4B8C60, Script_SetWarningLevelCmd);
 
 void Script_Shutdown(void)
 {
-    sub_4C1780();
-    sub_4C1780();
-    sub_4C1780();
-    sub_4C1780();
+    Debug_Log();
+    Debug_Log();
+    Debug_Log();
+    Debug_Log();
     Script_FreeSymbols();
 }
 HOOK(0x4B8CC0, Script_Shutdown);

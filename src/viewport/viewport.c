@@ -42,9 +42,9 @@ ORIG(0x4B7330, void *, SortRender_NewList, (int capacity));
 ORIG(0x4B7360, void, SortRender_Submit, (void *list));
 ORIG(0x4B73A0, void, SortRender_Begin, (void *list));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
-ORIG(0x5181F0, void, sub_5181F0, (int *slot));
-ORIG(0x518230, void, sub_518230, (int slot));
-ORIG(0x518250, void, sub_518250, (int slot));
+ORIG(0x5181F0, void, ViewSlot_Alloc, (int *slot));
+ORIG(0x518230, void, ViewSlot_SetCurrent, (int slot));
+ORIG(0x518250, void, ViewSlot_Free, (int slot));
 
 static const float kHalf = 0.5f;
 
@@ -85,7 +85,7 @@ void ViewportQTask_DrawHandler(Viewport *v)
     int i;
 
     gViewportCurrent = v;
-    sub_518230(v->slot);
+    ViewSlot_SetCurrent(v->slot);
     mid = (h + y) * kHalf;
     left = x * dw;
     top = ((y - mid) * v->camera->squeeze + mid) * dh;
@@ -125,7 +125,7 @@ void Viewport_Delete(Viewport *v)
     if (--gViewportCount == 0)
         Debug_Log();
     Scene_Free(&v->scene);
-    sub_518250(v->slot);
+    ViewSlot_Free(v->slot);
 }
 HOOK(0x4E8090, Viewport_Delete);
 
@@ -153,7 +153,7 @@ Viewport *Viewport_New(void *parent, float x, float y, float w, float h, void *w
     v->world3d = 1;
     v->fog = 1;
     memset(v->lists, 1, sizeof(v->lists));
-    sub_5181F0(&v->slot);
+    ViewSlot_Alloc(&v->slot);
     if (gViewportCount == 0)
         Debug_Log();
     gViewportCount++;

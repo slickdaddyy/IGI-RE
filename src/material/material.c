@@ -12,7 +12,7 @@ ORIG(0x4B83D0, void, Script_Free, (void *s));
 ORIG(0x4B8A20, int, Script_GetArgInt, (ScriptArgs *args, int i));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (ScriptArgs *args, int i));
 ORIG(0x4B8A80, char *, Script_GetArgString, (ScriptArgs *args, int i, char *buf, int size));
-ORIG(0x4CE3E0, void, sub_4CE3E0, (void *obj, int i, void *material));
+ORIG(0x4CE3E0, void, Terrain_SetMaterial, (void *obj, int i, void *material));
 
 #define MATERIAL_COUNT 32
 
@@ -216,7 +216,7 @@ void GameMaterial_Attach(void *obj)
     int i;
 
     for (i = 0; i < MATERIAL_COUNT; i++)
-        sub_4CE3E0(obj, i, &gMaterials[i]);
+        Terrain_SetMaterial(obj, i, &gMaterials[i]);
 }
 HOOK(0x408390, GameMaterial_Attach);
 

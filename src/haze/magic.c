@@ -17,7 +17,7 @@ ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType_, (int a, int b));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void *unused));
 ORIG(0x4C5700, uint8_t, RigidDynCubeObj_GetEvent3, (void *unused));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, int c));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, int c));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, float radius));
 ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int unk));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
@@ -101,7 +101,7 @@ void MagicObj_CreateHandler(MagicObj *o, MagicCreateArg *arg)
     o->localMatrix = arg->localMatrix;
     o->unk130 = arg->unk88;
     if (model)
-        sub_4C4950(o, o, o->unk130);
+        RigidDynCubeObj_CreateMagicObjs(o, o, o->unk130);
 }
 HOOK(0x4D9B10, MagicObj_CreateHandler);
 

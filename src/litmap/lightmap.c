@@ -16,7 +16,7 @@ ORIG(0x4B6380, void, Resource_Unload, (const char *path));
 ORIG(0x4B63D0, void, Resource_Flush, (void *data));
 ORIG(0x4C6890, void, DynCube_ListAdd, (void *world, void *obj, int list));
 ORIG(0x4C6840, void, DynCube_ListRemove, (void *world, void *obj, int list));
-ORIG(0x4CFC80, uint8_t, Lightmap_GetFreeEvent, (void));
+ORIG(0x4CFC80, uint8_t, Mesh3D_GetEvent2, (void));
 
 /* fixed size slots with a table of slot indices; the index of a used slot
    in the table is stored right after its data */
@@ -397,7 +397,7 @@ void LightmapInfo_Delete(LightmapInfo *li)
             }
         }
         arg = set;
-        fn = TASK_HANDLER(Lightmap_GetFreeEvent(), owner->type);
+        fn = TASK_HANDLER(Mesh3D_GetEvent2(), owner->type);
         fn(owner, &arg);
     }
     idx = *(int *)(li->slot + p->size);

@@ -22,11 +22,11 @@ static inline long double x87_neg(long double x)
 ORIG(0x4C5810, void, Coll_ResetMods, (void));
 ORIG(0x4C5830, void, Coll_SaveMods, (void));
 ORIG(0x4C5870, void, Coll_RestoreMods, (void));
-ORIG(0x4C7770, void, sub_4C7770, (Terrain *t, int slot, void *query, Vec3d *lo, Vec3d *hi, unsigned int flags,
+ORIG(0x4C7770, void, DynCube_SendEventBox, (Terrain *t, int slot, void *query, Vec3d *lo, Vec3d *hi, unsigned int flags,
                                   int tree));
-ORIG(0x4C8130, void, sub_4C8130, (Terrain *t, int slot, void *query, const Vec3d *starts, const Vec3d *ends,
+ORIG(0x4C8130, void, DynCube_SendEventLines, (Terrain *t, int slot, void *query, const Vec3d *starts, const Vec3d *ends,
                                   int count, unsigned int flags, int tree));
-ORIG(0x4C9020, int, sub_4C9020, (const short *leaf, Vec3d *base, const Vec3d *p, int depth, int *side,
+ORIG(0x4C9020, int, Coll_LeafPointInside, (const short *leaf, Vec3d *base, const Vec3d *p, int depth, int *side,
                                  int orient));
 ORIG(0x4CC810, int, Coll_LineHit, (CollHit *out, CollCursor *c, int depth, const Vec3d *start, const Vec3d *end));
 ORIG(0x4CDB20, void, Coll_LinesEx, (Terrain *t, CollHit *results, const Vec3d *starts, Vec3d *ends, int count,
@@ -309,7 +309,7 @@ void *Coll_GetLeafMaterial(CollCursor *c, const Vec3d *p, int depth)
     base.x = (int)((mask & ux) - t->origin[0] + size);
     base.y = (int)((mask & uy) - t->origin[1] + size);
     base.z = (int)((mask & uz) - t->origin[2] + size);
-    sub_4C9020(node->leaf, &base, p, depth, &side, orient);
+    Coll_LeafPointInside(node->leaf, &base, p, depth, &side, orient);
     return c->terrain->materials[side];
 }
 HOOK(0x4C9D70, Coll_GetLeafMaterial);
@@ -927,9 +927,9 @@ void Coll_Lines(Terrain *t, CollHit *results, const Vec3d *starts, const Vec3d *
             if (i != 0 && i != 1 && i != 4 && i != 5)
                 continue;
             if (vertical)
-                sub_4C7770(t, 10, &q, &lo, &hi, flags, i);
+                DynCube_SendEventBox(t, 10, &q, &lo, &hi, flags, i);
             else
-                sub_4C8130(t, 9, &q, starts, ends, count, flags, i);
+                DynCube_SendEventLines(t, 9, &q, starts, ends, count, flags, i);
         }
     }
     if (!(flags & 0x80000000))

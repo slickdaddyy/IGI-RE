@@ -94,20 +94,20 @@ ORIG(0x4B1AC0, void, File_Delete, (const char *path));
 ORIG(0x4B5B60, int, Resource_Exists, (const char *name));
 ORIG(0x4B5F00, void *, Resource_Load, (const char *name, int *size));
 ORIG(0x4B63D0, void, Resource_Flush, (void *data));
-ORIG(0x4BAE00, QvmLabel *, QvmAsm_GetLabel, (QvmAsm *a, const char *name));
-ORIG(0x4BAF30, void, QvmAsm_Error, (QvmAsm *a, const char *fmt, ...));
-ORIG(0x4BB240, int, QvmLex_Next, (QvmToken *token, void *lexer));
+ORIG(0x4BAE00, QvmLabel *, Asm_DefineLabel, (QvmAsm *a, const char *name));
+ORIG(0x4BAF30, void, Asm_Error, (QvmAsm *a, const char *fmt, ...));
+ORIG(0x4BB240, int, Asm_NextToken, (QvmToken *token, void *lexer));
 ORIG(0x4BEFC0, void, Reader_Free, (void *reader));
 ORIG(0x4BF1C0, void, Reader_InitMem, (void *reader, const char *src, int size));
-ORIG(0x4C0360, void *, SymbolTable_New, (unsigned int count));
-ORIG(0x4C03C0, void, SymbolTable_Delete, (void *table));
+ORIG(0x4C0360, void *, SymbolTable_Create, (unsigned int count));
+ORIG(0x4C03C0, void, SymbolTable_Destroy, (void *table));
 ORIG(0x4C0460, void, SymbolTable_Remove, (void *table, const char *name));
 ORIG(0x4C0660, void, QvmLex_InitRules, (List *rules));
 ORIG(0x4C0680, void, QvmLex_AddRule, (List *rules, const char *pattern, int id, int accept));
 ORIG(0x4C0720, void, QvmLex_Init, (void *lexer, List *rules, void *reader));
 ORIG(0x4C0750, void, QvmLex_Free, (void *lexer));
 ORIG(0x4C0900, void, QvmAsm_RegisterOps, (void));
-ORIG(0x4F1D80, void, List_FreeAll, (List *list));
+ORIG(0x4F1D80, void, ParamEnum_Free, (List *list));
 
 #define gQvmAsmErrorData VAR(void *, 0xA43EC0)
 #define gQvmAsmLogData VAR(void *, 0xA43EC8)
@@ -175,11 +175,11 @@ int QvmAsm_Assemble(const char *path, const char *source)
     gQvmAsmErrors = 0;
     out = File_Open(path, "w");
     if (!out) {
-        QvmAsm_Error(&a, "Failed to open file '%s' for writing.", path);
+        Asm_Error(&a, "Failed to open file '%s' for writing.", path);
         return gQvmAsmErrors;
     }
     if (!Resource_Exists(source)) {
-        QvmAsm_Error(&a, "Failed to load assembler source file: '%s'", source);
+        Asm_Error(&a, "Failed to load assembler source file: '%s'", source);
         File_Close(out);
         return gQvmAsmErrors;
     }
@@ -209,22 +209,22 @@ int QvmAsm_Assemble(const char *path, const char *source)
     QvmAsm_InitList(&a.fixups);
     pc = 0;
     a.file = out;
-    a.labelTable = SymbolTable_New(0x12CCB);
+    a.labelTable = SymbolTable_Create(0x12CCB);
     for (op = 0; op < QVM_OPCODES; op++) {
         Qvm_CallHandler(op, 1, name, NULL);
         strcpy(names[op], name);
     }
     tf = File_Open(tmp, "w");
     if (!tf) {
-        QvmAsm_Error(&a, "Failed to create temporary file '%s'.", tmp);
+        Asm_Error(&a, "Failed to create temporary file '%s'.", tmp);
         goto cleanup;
     }
     QvmAsm_Log("Assembling\n");
     a.pass = 2;
     a.file = tf;
-    while (QvmLex_Next(&token, lexer) && !a.failed) {
+    while (Asm_NextToken(&token, lexer) && !a.failed) {
         if (token.type == TOKEN_LABEL) {
-            l = QvmAsm_GetLabel(&a, token.text);
+            l = Asm_DefineLabel(&a, token.text);
             if (l) {
                 l->defined = 1;
                 l->addr = pc;
@@ -242,7 +242,7 @@ int QvmAsm_Assemble(const char *path, const char *source)
                 a.pc = pc;
             } else {
                 a.failed = 1;
-                QvmAsm_Error(&a, "Unknown opcode: %s\n", token.text);
+                Asm_Error(&a, "Unknown opcode: %s\n", token.text);
             }
         }
     }
@@ -258,7 +258,7 @@ int QvmAsm_Assemble(const char *path, const char *source)
     for (l = (QvmLabel *)a.labels.head; (nl = (QvmLabel *)l->node.next); l = nl) {
         for (r = (QvmLabelRef *)l->refs.head; (nr = (QvmLabelRef *)r->node.next); r = nr) {
             if (!l->defined)
-                QvmAsm_Error(&a, "Unknown label '%s' at PC:%08x\n", l->name, r->offset);
+                Asm_Error(&a, "Unknown label '%s' at PC:%08x\n", l->name, r->offset);
             v = l->addr - r->base;
             memcpy(code + r->offset, &v, 4);
             List_Remove(&r->node);
@@ -314,11 +314,11 @@ cleanup:
         List_Remove(&l->node);
         Mem_Free(l);
     }
-    SymbolTable_Delete(a.labelTable);
+    SymbolTable_Destroy(a.labelTable);
     File_Delete(tmp);
     Reader_Free(reader);
     QvmLex_Free(lexer);
-    List_FreeAll(&rules);
+    ParamEnum_Free(&rules);
     Resource_Flush(data);
     File_Close(out);
     return gQvmAsmErrors;

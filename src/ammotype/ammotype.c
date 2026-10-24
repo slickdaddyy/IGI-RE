@@ -25,9 +25,9 @@ ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
 ORIG(0x4B8A80, char *, Script_GetArgString, (void *args, int i, char *buf, int size));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
-ORIG(0x4D0D80, uint8_t, sub_4D0D80, (void));
-ORIG(0x4D97E0, uint8_t, sub_4D97E0, (void));
-ORIG(0x4E5350, uint16_t, sub_4E5350, (void));
+ORIG(0x4D0D80, uint8_t, Mesh3D_GetEvent5, (void));
+ORIG(0x4D97E0, uint8_t, QObj_GetEvent, (void));
+ORIG(0x4E5350, uint16_t, SplineObjSegment_GetType, (void));
 ORIG(0x4F1CD0, void, ParamEnum_Init, (void *e));
 ORIG(0x4F1D80, void, ParamEnum_Free, (void *e));
 ORIG(0x4F1DB0, void, ParamEnum_AddConstants, (void *e, const char *pattern));
@@ -289,12 +289,12 @@ void BulletHole_Init(void)
 {
     gBulletHoleEvent = TaskEvent_Alloc(0);
     TaskType_SetHandler(RigidDynCubeObj_GetType(), gBulletHoleEvent, BulletHole_Handler47D380);
-    TaskType_SetHandler(sub_4E5350(), gBulletHoleEvent, BulletHole_Handler47E0C0);
+    TaskType_SetHandler(SplineObjSegment_GetType(), gBulletHoleEvent, BulletHole_Handler47E0C0);
     gBulletHoleType = TaskType_New("BulletHole", 0xE148, Task_GetRootType(), 0);
     TaskType_SetHandler(gBulletHoleType, RigidDynCubeObj_GetEvent2(), BulletHole_Handler47D0B0);
     TaskType_SetHandler2(gBulletHoleType, 2, BulletHole_Delete);
-    TaskType_SetHandler2(gBulletHoleType, sub_4D0D80(), BulletHole_Handler5188C0);
-    TaskType_SetHandler(gBulletHoleType, sub_4D97E0(), BulletHole_Forward);
+    TaskType_SetHandler2(gBulletHoleType, Mesh3D_GetEvent5(), BulletHole_Handler5188C0);
+    TaskType_SetHandler(gBulletHoleType, QObj_GetEvent(), BulletHole_Forward);
     Pool_Init(gBulletHolePool, 4, 100, 4);
     Pool_Init(gBulletHolePool2, 0x40, 100, 4);
 }
@@ -308,7 +308,7 @@ void BulletHole_Forward(void *t, void *arg)
 
     if (!c)
         return;
-    fn = HANDLER(sub_4D97E0(), c->type);
+    fn = HANDLER(QObj_GetEvent(), c->type);
     if (fn)
         fn(c, arg);
 }

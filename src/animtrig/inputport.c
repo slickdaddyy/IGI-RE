@@ -5,9 +5,9 @@
 
 ORIG(0x490230, void, Keyboard_Update, (void));
 ORIG(0x48FC20, void, Mouse_Update, (void));
-ORIG(0x509CF0, void, sub_509CF0, (void));
-ORIG(0x507E90, void, sub_507E90, (void *ctrl, void *handler));
-ORIG(0x507EC0, void, sub_507EC0, (void *ctrl, void *task));
+ORIG(0x509CF0, void, Joystick_Poll, (void));
+ORIG(0x507E90, void, Controller_Setup, (void *ctrl, void *handler));
+ORIG(0x507EC0, void, Controller_Update, (void *ctrl, void *task));
 
 enum {
     INPUTPORT_DEVICE_KEYBOARD = 1,
@@ -210,11 +210,11 @@ void InputPort_Run(Task *t)
 
     Keyboard_Update();
     Mouse_Update();
-    sub_509CF0();
+    Joystick_Poll();
     for (i = 0; i < 4; i++) {
         if (gInputPorts[i].active) {
             gInputPortIndex = i;
-            sub_507EC0(&gInputPorts[i].state, t);
+            Controller_Update(&gInputPorts[i].state, t);
         }
     }
 }
@@ -258,6 +258,6 @@ void InputPort_Setup(int port, int count, InputBinding *bindings, int analog, fl
     p->ret[1] = retY;
     p->ret[2] = retZ;
     p->ret[3] = retW;
-    sub_507E90(&p->state, InputPort_InputHandler);
+    Controller_Setup(&p->state, InputPort_InputHandler);
 }
 HOOK(0x4ED5E0, InputPort_Setup);

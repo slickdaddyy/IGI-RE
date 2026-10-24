@@ -8,9 +8,9 @@
 #define VEHICLEPART_DELETE ((void *)0x426860)
 
 ORIG(0x503BF0, uint16_t, SimpointObj_GetType, (void));
-ORIG(0x503C00, void *, SimpointObjGroup_New, (int frames, const char *a, const char *b, float c, float d, float e,
+ORIG(0x503C00, void *, SimpointObjContainer_New, (int frames, const char *a, const char *b, float c, float d, float e,
                                               float f, Vec3f *g, int h));
-ORIG(0x503CC0, Task *, SimpointObjGroup_Add, (void *group, uint16_t type, Vec3d *pos, Matrix *matrix, Vec3f *vel));
+ORIG(0x503CC0, Task *, SimpointObjContainer_Add, (void *group, uint16_t type, Vec3d *pos, Matrix *matrix, Vec3f *vel));
 
 /* throws a new model object every few seconds */
 typedef struct SimpointObjGenerator {
@@ -119,13 +119,13 @@ void SimpointObjGenerator_Run(SimpointObjGenerator *g)
     Vec3f v;
 
     if (!g->group)
-        g->group = SimpointObjGroup_New(g->unk124 * 30, g->unk104, g->unk114, g->unk12C, g->unk130, kSpread, g->unk134,
+        g->group = SimpointObjContainer_New(g->unk124 * 30, g->unk104, g->unk114, g->unk12C, g->unk130, kSpread, g->unk134,
                                         &g->unk148, 0);
     if (g->timer <= 0) {
         v.x = g->vel.x * kUnits;
         v.y = g->vel.y * kUnits;
         v.z = g->vel.z * kUnits;
-        SimpointObjGroup_Add(g->group, SimpointObj_GetType(), &g->obj.pos, &g->obj.matrix, &v);
+        SimpointObjContainer_Add(g->group, SimpointObj_GetType(), &g->obj.pos, &g->obj.matrix, &v);
         g->timer = g->interval * 30;
     }
     g->timer--;

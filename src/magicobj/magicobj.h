@@ -179,9 +179,9 @@ int DynCubeTree_GetChildCount(int kind);
 void sub_4C5900(void);
 void sub_4C5A10(MagicTask *t, void **arg);
 void sub_4C5AA0(void);
-World *sub_4C5B20(int rooms);
-void sub_4C5C90(World *w, WorldRoom *r, int unk04, int unk00, int index);
-void sub_4C5CE0(World *w);
+World *World_New(int rooms);
+void DynCubeNode_Init(World *w, WorldRoom *r, int unk04, int unk00, int index);
+void World_Free(World *w);
 void sub_4C5F00(World *w, const char *name);
 
 #endif

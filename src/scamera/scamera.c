@@ -38,11 +38,11 @@ ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
-ORIG(0x4D14D0, uint8_t, sub_4D14D0, (void));
+ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
-ORIG(0x4DCCB0, void, sub_4DCCB0, (void *world, void *obj, Vec3d *pos));
-ORIG(0x4DCDD0, void, sub_4DCDD0, (void *obj));
-ORIG(0x4DCF00, void, sub_4DCF00, (void *world, void *obj, Vec3d *pos));
+ORIG(0x4DCCB0, void, Sector_AddObject, (void *world, void *obj, Vec3d *pos));
+ORIG(0x4DCDD0, void, Sector_RemoveObject, (void *obj));
+ORIG(0x4DCF00, void, Sector_MoveObject, (void *world, void *obj, Vec3d *pos));
 ORIG(0x4E0830, uint16_t, SectorInteriorObject_GetType, (void));
 ORIG(0x4F0F20, void *, Param_Angle, (void));
 ORIG(0x4F0F50, void *, Param_Real32, (void));
@@ -155,11 +155,11 @@ void SCamera_Open(void)
     TaskType_SetHandler(gViewConeType, 12, NULL);
     TaskType_SetHandler(gViewConeType, 10, NULL);
     TaskType_SetHandler(gViewConeType, 11, NULL);
-    TaskType_SetHandler(gViewConeType, sub_4D14D0(), NULL);
+    TaskType_SetHandler(gViewConeType, QCube_GetNearClipEvent(), NULL);
     TaskType_SetHandler(gViewConeType, 9, NULL);
     TaskType_SetHandler(gViewConeType, 8, NULL);
     TaskType_SetHandler(gViewConeType, 12, NULL);
-    TaskType_SetHandler(gViewConeType, sub_4D14D0(), NULL);
+    TaskType_SetHandler(gViewConeType, QCube_GetNearClipEvent(), NULL);
     Script_RegisterConstant("TASKTYPE_SCAMERALENSVIEWCONE", gViewConeType);
     gSCameraDetectMask = AIDetection_AddMaskType(gSCameraType);
 }
@@ -174,7 +174,7 @@ void SCamera_Create(SCamera *c)
     RigidDynCubeObj_Init(gWorld, c, NULL);
     scale = sobj_scale(&c->o);
     DynCube_Add(gWorld, c, &zero, VirModel_GetRadius(c->o.model) * scale, 1);
-    sub_4DCCB0(c->o.world, c, DynCubeObj_GetPosition(c));
+    Sector_AddObject(c->o.world, c, DynCubeObj_GetPosition(c));
     c->place.x = 0;
     c->place.y = 0;
     c->place.z = 0;
@@ -223,7 +223,7 @@ void SCamera_Delete(SCamera *c)
             fn(c);
     }
     VarString_Free(&c->script);
-    sub_4DCDD0(c);
+    Sector_RemoveObject(c);
     DynCube_Remove(c->o.world, c);
 }
 HOOK(0x4426D0, SCamera_Delete);
@@ -241,7 +241,7 @@ void SCamera_ParamsChanged(SCamera *c, char *arg)
     RigidDynCubeObj_SetModel(c, VirModel_Find(c->model));
     scale = sobj_scale(&c->o);
     DynCube_Move(c->o.world, c, &c->place, VirModel_GetRadius(c->o.model) * scale);
-    sub_4DCF00(c->o.world, c, DynCubeObj_GetPosition(c));
+    Sector_MoveObject(c->o.world, c, DynCubeObj_GetPosition(c));
     Matrix_SetRotZ(&c->o.matrix, c->yaw);
     VarString_Bind(&c->script, c);
     if (!arg || !*arg)
@@ -302,7 +302,7 @@ HOOK(0x442A30, SCamera_GetDetectInfo);
 void SCamera_WorldRemove(SObj *o, void **arg)
 {
     EACH_CHILD(&o->task, World_GetEvent1(), arg);
-    sub_4DCDD0(o);
+    Sector_RemoveObject(o);
     DynCube_Remove(arg[0], o);
 }
 HOOK(0x443450, SCamera_WorldRemove);
@@ -313,7 +313,7 @@ void SCamera_WorldAdd(SCamera *c, void **arg)
     float scale = sobj_scale(&c->o);
 
     DynCube_Add(arg[1], c, &c->place, VirModel_GetRadius(c->o.model) * scale, 1);
-    sub_4DCCB0(c->o.world, c, DynCubeObj_GetPosition(c));
+    Sector_AddObject(c->o.world, c, DynCubeObj_GetPosition(c));
     EACH_CHILD(&c->o.task, World_GetEvent0(), arg);
 }
 HOOK(0x4434F0, SCamera_WorldAdd);

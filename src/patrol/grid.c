@@ -76,15 +76,15 @@ typedef struct Claim {
     void *task;
 } Claim;
 
-ORIG(0x4028B0, int, Timer_GetTicks, (void));
+ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x4148F0, long double, Vec3d_PitchAngle, (Vec3d v));
-ORIG(0x451380, void, sub_451380, (Vec3d *out, SoldierAI *ai));
-ORIG(0x4513E0, void *, sub_4513E0, (SoldierAI *ai));
+ORIG(0x451380, void, HumanAI_GetTargetPos, (Vec3d *out, SoldierAI *ai));
+ORIG(0x4513E0, void *, HumanAI_GetTarget, (SoldierAI *ai));
 ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
 ORIG(0x4F9720, GraphNode *, Graph_GetNode, (Graph *graph, int id));
 ORIG(0x4F9770, void, Graph_GetNodePos, (Vec3d *out, GraphNode *node));
 ORIG(0x4F98A0, void, Graph_GetNodeMatrix, (Matrix *out, GraphNode *node, int unk));
-ORIG(0x5096F0, void, Graph_FindNearest, (GraphNode **out, Graph *graph, const Vec3d *pos));
+ORIG(0x5096F0, void, AIGraph_FindNearest, (GraphNode **out, Graph *graph, const Vec3d *pos));
 
 #define gAITypeNames ((const char **)0x53C9C0)
 #define gGridStamp ((const GridStamp *)0x53CA98)
@@ -104,11 +104,11 @@ static const double kHalf = 0.5;
 static const double kCellInv = 0x1p-13;
 static const double kCell = 8192.0;
 
-int sub_4528F0(SoldierAI *ai)
+int AI_HasTarget(SoldierAI *ai)
 {
     return ai->unk3AA8 != NULL;
 }
-HOOK(0x4528F0, sub_4528F0);
+HOOK(0x4528F0, AI_HasTarget);
 
 const char *AIType_GetName(int type)
 {
@@ -133,7 +133,7 @@ void sub_452930(Matrix *outMatrix, float *outVec, ViewObj *obj, const double *fr
     float s = scale * kFrames;
     float pitch;
 
-    sub_451380(&pos, (SoldierAI *)obj);
+    HumanAI_GetTargetPos(&pos, (SoldierAI *)obj);
     dx = pos.x - from[0];
     dy = pos.y - from[1];
     dz = pos.z - from[2];
@@ -321,9 +321,9 @@ static GraphNode *Monitor_Refresh(MonitorTarget *e, MonitorGraph *mg, SoldierAI 
     GraphNode *found = NULL;
     Vec3d pos;
 
-    e->tick = Timer_GetTicks();
-    sub_451380(&pos, ai);
-    Graph_FindNearest(&found, mg->graph, &pos);
+    e->tick = Flow_GetFrames();
+    HumanAI_GetTargetPos(&pos, ai);
+    AIGraph_FindNearest(&found, mg->graph, &pos);
     if (found) {
         e->nodeId = found->id;
         return found;
@@ -334,7 +334,7 @@ static GraphNode *Monitor_Refresh(MonitorTarget *e, MonitorGraph *mg, SoldierAI 
 
 GraphNode *HumanMonitor_Lookup(SoldierAI *ai, MonitorGraph *mg)
 {
-    void *target = sub_4513E0(ai);
+    void *target = HumanAI_GetTarget(ai);
     MonitorTarget *e, *next;
 
     if (!target) {
@@ -344,7 +344,7 @@ GraphNode *HumanMonitor_Lookup(SoldierAI *ai, MonitorGraph *mg)
     for (e = (MonitorTarget *)mg->targets.head; e->node.next; e = (MonitorTarget *)e->node.next) {
         if (e->target != target)
             continue;
-        if (e->tick != Timer_GetTicks())
+        if (e->tick != Flow_GetFrames())
             return Monitor_Refresh(e, mg, ai);
         if (e->nodeId == -1)
             return NULL;

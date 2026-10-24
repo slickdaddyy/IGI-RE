@@ -14,20 +14,20 @@ ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
-ORIG(0x4C4950, void, sub_4C4950, (Task *parts, void *obj, void *owner));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (Task *parts, void *obj, void *owner));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4E0930, Task *, MagicObjContainer_New, (void *parent, void *owner));
-ORIG(0x4EE0E0, uint8_t, PhysType_GetArgsEvent, (void));
-ORIG(0x4EE0F0, uint8_t, PhysType_GetSizeEvent, (void));
+ORIG(0x4EE0E0, uint8_t, PhysicsObjType_GetParseEvent, (void));
+ORIG(0x4EE0F0, uint8_t, PhysicsObjType_GetSizeEvent, (void));
 ORIG(0x4FB5E0, uint16_t, PhysicsObj_GetType, (void));
 ORIG(0x4FB5F0, void, PhysicsObj_Init, (void *obj));
 ORIG(0x4FB980, void, PhysicsObj_Free, (void *obj));
 ORIG(0x5031F0, void, Vehicle_ParseConfig, (void *cfg, int *next, void *args));
-ORIG(0x5042B0, char, Criteria_Contains, (void *criteria, Vec3d *pos));
-ORIG(0x504A30, void *, Criteria_New, (const char *name, void *fn));
-ORIG(0x504A90, void, Criteria_Free, (void *criteria));
+ORIG(0x5042B0, char, AreaActivate_Contains, (void *criteria, Vec3d *pos));
+ORIG(0x504A30, void *, AreaActivate_AddCriteria, (const char *name, void *fn));
+ORIG(0x504A90, void, AreaActivate_RemoveCriteria, (void *criteria));
 
 #define gVehicleType VAR(uint16_t, 0x54E200)
 #define gVehicleExplodeEvent VAR(uint8_t, 0x54E202)
@@ -100,11 +100,11 @@ void Vehicle_Open(void)
     TaskType_SetHandler(gVehicleType, 7, Vehicle_GetInfo);
     TaskType_SetHandler(gVehicleType, 12, Vehicle_CollFilter);
     TaskType_SetHandler(gVehicleType, Vehicle_GetSaveEvent(), Vehicle_SaveState);
-    TaskType_SetHandler(gVehicleType, PhysType_GetArgsEvent(), Vehicle_ParseArgs);
-    TaskType_SetHandler(gVehicleType, PhysType_GetSizeEvent(), Vehicle_GetConfigSize);
+    TaskType_SetHandler(gVehicleType, PhysicsObjType_GetParseEvent(), Vehicle_ParseArgs);
+    TaskType_SetHandler(gVehicleType, PhysicsObjType_GetSizeEvent(), Vehicle_GetConfigSize);
     TaskType_SetHandler(gVehicleType, World_GetEvent0(), Vehicle_Activate);
     TaskType_SetHandler(gVehicleType, World_GetEvent1(), Vehicle_Deactivate);
-    gVehicleCriteria = Criteria_New("CRITERIA_VEHICLE", Vehicle_CountInCriteria);
+    gVehicleCriteria = AreaActivate_AddCriteria("CRITERIA_VEHICLE", Vehicle_CountInCriteria);
     gVehicleExplodeEvent = TaskEvent_Alloc(0);
     gVehicleEvent203 = TaskEvent_Alloc(0);
 }
@@ -167,7 +167,7 @@ void Vehicle_CountInCriteria(CountMsg *msg)
     if (!gVehicles || (n = gVehicles->count) <= 0)
         return;
     for (i = 0; i < n; i++)
-        if (Criteria_Contains(msg->criteria, &gVehicles->items[i]->obj.pos))
+        if (AreaActivate_Contains(msg->criteria, &gVehicles->items[i]->obj.pos))
             msg->count++;
 }
 HOOK(0x4F4560, Vehicle_CountInCriteria);
@@ -175,7 +175,7 @@ HOOK(0x4F4560, Vehicle_CountInCriteria);
 void Vehicle_Close(void)
 {
     TaskType_Free(gVehicleType);
-    Criteria_Free(gVehicleCriteria);
+    AreaActivate_RemoveCriteria(gVehicleCriteria);
     TaskEvent_Free(gVehicleExplodeEvent);
     TaskEvent_Free(gVehicleEvent203);
 }
@@ -252,7 +252,7 @@ HOOK(0x4F4780, Vehicle_LoadState);
 void Vehicle_NewParts(Vehicle *v)
 {
     v->obj.parts = MagicObjContainer_New(NULL, v);
-    sub_4C4950(v->obj.parts, v, v);
+    RigidDynCubeObj_CreateMagicObjs(v->obj.parts, v, v);
 }
 HOOK(0x4F4800, Vehicle_NewParts);
 

@@ -49,10 +49,10 @@ ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
 ORIG(0x416830, uint8_t, Game_GetEvent7, (void));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, void *c));
-ORIG(0x4E81F0, char *, sub_4E81F0, (void));
-ORIG(0x477C30, uint8_t, Human_GetViewPointEvent, (void));
-ORIG(0x477D10, void, sub_477D10, (void *a, Vec3d *pos, Vec3f *vel, Matrix *m, const char *name));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, void *c));
+ORIG(0x4E81F0, char *, Viewport_GetCurrentCamera, (void));
+ORIG(0x477C30, uint8_t, Gun_GetEvent3, (void));
+ORIG(0x477D10, void, GunCasing_New, (void *a, Vec3d *pos, Vec3f *vel, Matrix *m, const char *name));
 
 void GunCAPart_Create(GunCAPart *o, GunCAArgs *a);
 void GunCABarrel_Follow(GunCAPart *o);
@@ -94,7 +94,7 @@ void GunCAPart_Create(GunCAPart *o, GunCAArgs *a)
     o->obj.unkEC = 0;
     o->obj.matrix = a->matrix;
     o->unk130 = a->unk88;
-    sub_4C4950(o, o, a->unk88);
+    RigidDynCubeObj_CreateMagicObjs(o, o, a->unk88);
 }
 HOOK(0x4727F0, GunCAPart_Create);
 
@@ -106,11 +106,11 @@ void GunCABarrel_Follow(GunCAPart *o)
     TaskFn fn;
     ViewPoint p;
 
-    if (!*(int *)(sub_4E81F0() + 0x5C))
+    if (!*(int *)(Viewport_GetCurrentCamera() + 0x5C))
         return;
     h = owner->parent;
-    if (HANDLER(Human_GetViewPointEvent(), h->type)) {
-        fn = HANDLER(Human_GetViewPointEvent(), h->type);
+    if (HANDLER(Gun_GetEvent3(), h->type)) {
+        fn = HANDLER(Gun_GetEvent3(), h->type);
         fn(h, &p);
         o->obj.pos = p.pos;
         o->obj.matrix = p.matrix;
@@ -136,7 +136,7 @@ void GunCABarrel_Event(GunCAPart *o, GunCAMsg *msg)
             vel.x = -o->obj.matrix.m[1] * gGunCAMagic;
             vel.y = -o->obj.matrix.m[4] * gGunCAMagic;
             vel.z = -o->obj.matrix.m[7] * gGunCAMagic;
-            sub_477D10(sub_4F0EE0(), &pos, &vel, &o->obj.matrix, "113_01_1");
+            GunCasing_New(sub_4F0EE0(), &pos, &vel, &o->obj.matrix, "113_01_1");
         }
         RigidDynCubeObj_SetModel(o, VirModel_Find("101_02_1"));
     }

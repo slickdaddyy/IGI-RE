@@ -17,11 +17,11 @@ ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x4CABF0, void, Coll_DropPoints, (void *world, void *results, Vec3d *points, int count, double *dz,
                                        uint8_t event, void *ignore, int flags));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
-ORIG(0x4D0930, void, sub_4D0930, (void *out, Task *task, int i, ...));
-ORIG(0x4D0970, void, sub_4D0970, (void *out, Task *task, int i));
-ORIG(0x4D0A50, void, sub_4D0A50, (void *out, Task *task, int i));
-ORIG(0x4D0D20, int, sub_4D0D20, (void *model));
-ORIG(0x4D9610, uint16_t, sub_4D9610, (void));
+ORIG(0x4D0930, void, Mesh3D_GetBoneWorldVertex, (void *out, Task *task, int i, ...));
+ORIG(0x4D0970, void, Mesh3D_GetVertex, (void *out, Task *task, int i));
+ORIG(0x4D0A50, void, Mesh3D_GetWorldVertex, (void *out, Task *task, int i));
+ORIG(0x4D0D20, int, ModelLod_GetVertexCount, (void *model));
+ORIG(0x4D9610, uint16_t, BoneDynCubeObj_GetType, (void));
 
 #define gCheatsEnabled VAR(int, 0x57B194)
 
@@ -196,27 +196,27 @@ void Matrix_SetYAxis(float *m, const Vec3f *dir)
 }
 HOOK(0x414A60, Matrix_SetYAxis);
 
-void sub_414E20(int *out, ModelTask *t, int i)
+void Model_GetPoint(int *out, ModelTask *t, int i)
 {
     if (TaskType_IsA(t->task.type, RigidDynCubeObj_GetType())) {
-        if (t->model && i < sub_4D0D20(*t->model)) {
-            sub_4D0A50(out, &t->task, i);
+        if (t->model && i < ModelLod_GetVertexCount(*t->model)) {
+            Mesh3D_GetWorldVertex(out, &t->task, i);
             return;
         }
-    } else if (TaskType_IsA(t->task.type, sub_4D9610())) {
-        if (t->model2 && i < sub_4D0D20(*t->model2)) {
-            sub_4D0930(out, &t->task, i);
+    } else if (TaskType_IsA(t->task.type, BoneDynCubeObj_GetType())) {
+        if (t->model2 && i < ModelLod_GetVertexCount(*t->model2)) {
+            Mesh3D_GetBoneWorldVertex(out, &t->task, i);
             return;
         }
     }
     memset(out, 0, 6 * sizeof(int));
 }
-HOOK(0x414E20, sub_414E20);
+HOOK(0x414E20, Model_GetPoint);
 
 void sub_414ED0(int *out, ModelTask *t, int i)
 {
-    if (TaskType_IsA(t->task.type, RigidDynCubeObj_GetType()) && t->model && i < sub_4D0D20(*t->model)) {
-        sub_4D0970(out, &t->task, i);
+    if (TaskType_IsA(t->task.type, RigidDynCubeObj_GetType()) && t->model && i < ModelLod_GetVertexCount(*t->model)) {
+        Mesh3D_GetVertex(out, &t->task, i);
         return;
     }
     memset(out, 0, 3 * sizeof(int));
@@ -227,10 +227,10 @@ void sub_414F40(int *out, ModelTask *t, int i, const char *name)
 {
     void **model;
 
-    if (!TaskType_IsA(t->task.type, RigidDynCubeObj_GetType()) && TaskType_IsA(t->task.type, sub_4D9610())) {
+    if (!TaskType_IsA(t->task.type, RigidDynCubeObj_GetType()) && TaskType_IsA(t->task.type, BoneDynCubeObj_GetType())) {
         model = VirModel_Find(name);
-        if (model && i < sub_4D0D20(*model)) {
-            sub_4D0930(out, &t->task, i, name);
+        if (model && i < ModelLod_GetVertexCount(*model)) {
+            Mesh3D_GetBoneWorldVertex(out, &t->task, i, name);
             return;
         }
     }

@@ -102,7 +102,7 @@ ORIG(0x4FA9D0, char, GraphStream_ReadBlob, (GraphStream *s, void *out, int size)
 ORIG(0x4B32B0, long double, Vec3d_Distance, (const Vec3d *a, const Vec3d *b));
 ORIG(0x5186C0, int, NodeCriteria_Register, (const char *name));
 ORIG(0x518720, void, NodeCriteria_Unregister, (int mask));
-ORIG(0x518550, void, sub_518550, (void));
+ORIG(0x518550, void, TaskTypes_Close, (void));
 
 #define gAIGraphType VAR(uint16_t, 0x54E83C)
 #define gAIGraphEvent VAR(uint8_t, 0x54E83E)
@@ -143,7 +143,7 @@ int AIGraph_GetViewCriteria(void);
 void sub_508F90(void)
 {
     AIGraph_Shutdown();
-    sub_518550();
+    TaskTypes_Close();
 }
 HOOK(0x508F90, sub_508F90);
 

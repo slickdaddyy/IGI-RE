@@ -113,7 +113,7 @@ def test_room_init():
         r = e.alloc(0x40)
         e.write(r, bytes(range(0x40)))
         return 0x1111, r, 0x22, 0x3F800000, 5
-    compare(emu, 0x4C5C90, "sub_4C5C90", setup=setup, check_eax=False)
+    compare(emu, 0x4C5C90, "DynCubeNode_Init", setup=setup, check_eax=False)
 
 
 @pytest.mark.parametrize("rooms", [6, 10])
@@ -124,7 +124,7 @@ def test_world_new(rooms):
         e.write(0xB81B20, b"\x77" * 0x16000)
         fill_counters(e)
         return (rooms,)
-    compare(wk, 0x4C5B20, "sub_4C5B20", setup=setup, normalized=True)
+    compare(wk, 0x4C5B20, "World_New", setup=setup, normalized=True)
 
 
 def world(e, full):
@@ -155,7 +155,7 @@ def world(e, full):
 
 @pytest.mark.parametrize("full", [False, True])
 def test_world_free(full):
-    compare(wk, 0x4C5CE0, "sub_4C5CE0", setup=lambda e: (world(e, full),), check_eax=False, normalized=True)
+    compare(wk, 0x4C5CE0, "World_Free", setup=lambda e: (world(e, full),), check_eax=False, normalized=True)
 
 
 def lmp_data(e):

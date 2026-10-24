@@ -11,9 +11,9 @@ ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4950E0, int, Direct3D_GetRenderMode, (void));
-ORIG(0x4978D0, int, RenderTask_Register, (const char *name));
-ORIG(0x4978E0, void, RenderTask_Unregister, (int id));
-ORIG(0x4978F0, void, RenderTask_SetHandler, (int id, void *fn));
+ORIG(0x4978D0, int, Primitive_Register, (const char *name));
+ORIG(0x4978E0, void, Primitive_Unregister, (int id));
+ORIG(0x4978F0, void, Primitive_SetHandler, (int id, void *fn));
 ORIG(0x4B0D40, void, Mem_SetDefaultMode, (void));
 ORIG(0x4B0D50, void, Mem_ClearMode, (void));
 ORIG(0x4B0DB0, char, Mem_GetMode, (void));
@@ -191,8 +191,8 @@ void ComputerStartup_Open(void)
     TaskType_SetHandler2(gStartupType, 2, ComputerStartup_Delete);
     gStartupMethod = RenderMode_CreateMethod("ComputerStartup");
     RenderMode_SetMethod(Direct3D_GetRenderMode(), gStartupMethod, ComputerStartup_Render);
-    gStartupDraw = RenderTask_Register("ComputerStartup");
-    RenderTask_SetHandler(gStartupDraw, ComputerStartup_SortDraw);
+    gStartupDraw = Primitive_Register("ComputerStartup");
+    Primitive_SetHandler(gStartupDraw, ComputerStartup_SortDraw);
 }
 HOOK(0x4663D0, ComputerStartup_Open);
 
@@ -365,7 +365,7 @@ HOOK(0x466CF0, ComputerStartup_Draw);
 
 void ComputerStartup_Close(void)
 {
-    RenderTask_Unregister(gStartupDraw);
+    Primitive_Unregister(gStartupDraw);
     RenderMode_DeleteMethod(gStartupMethod);
     TaskType_Free(gStartupType);
 }

@@ -9,10 +9,10 @@ ORIG(0x4977B0, void, Scene_QueueClipWindow, (const void *prim, int queue));
 ORIG(0x497680, void, Scene_SetRect, (void *scene, const float *rect));
 ORIG(0x497800, void *, Frame_Alloc, (int size));
 ORIG(0x4978B0, void, RenderQueue_Add, (int queue, void *node));
-ORIG(0x4978E0, void, RenderTask_Unregister, (int id));
-ORIG(0x4A2600, void, sub_4A2600, (void *filter));
-ORIG(0x4A26C0, void, sub_4A26C0, (void *filter));
-ORIG(0x4A2720, void, sub_4A2720, (void *filter));
+ORIG(0x4978E0, void, Primitive_Unregister, (int id));
+ORIG(0x4A2600, void, BandFilter_FillStripes, (void *filter));
+ORIG(0x4A26C0, void, BandFilter_FillSolid, (void *filter));
+ORIG(0x4A2720, void, BandFilter_AddNoise, (void *filter));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B0D40, void, Mem_SetDefaultMode, (void));
 ORIG(0x4B0D50, void, Mem_ClearMode, (void));
@@ -455,10 +455,10 @@ static void band_texture(BandFilter *t, int second)
     char mode = Mem_GetMode();
 
     if (second)
-        sub_4A26C0(t);
+        BandFilter_FillSolid(t);
     else
-        sub_4A2600(t);
-    sub_4A2720(t);
+        BandFilter_FillStripes(t);
+    BandFilter_AddNoise(t);
     if (!mode)
         Mem_SetDefaultMode();
     Texture_Download(&t->tex, NULL, 0x40, 0x10, 0x10, 3, gBandPixels);
@@ -675,10 +675,10 @@ HOOK(0x4A4D10, HandiCamFilter_Draw);
 
 void CameraFilter_Close(void)
 {
-    RenderTask_Unregister(gHandiCamFilterPrim);
-    RenderTask_Unregister(gBandFilterPrim);
-    RenderTask_Unregister(gWideScreenPrim);
-    RenderTask_Unregister(gLineFilterPrim);
+    Primitive_Unregister(gHandiCamFilterPrim);
+    Primitive_Unregister(gBandFilterPrim);
+    Primitive_Unregister(gWideScreenPrim);
+    Primitive_Unregister(gLineFilterPrim);
     RenderMode_DeleteMethod(gHandiCamFilterMethod);
     RenderMode_DeleteMethod(gBandFilterMethod);
     RenderMode_DeleteMethod(gLineFilterMethod);

@@ -3,9 +3,9 @@
 
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
-ORIG(0x407DE0, void, SetActiveMaterial, (void));
-ORIG(0x407E30, void, DefineQMaterial, (void));
-ORIG(0x407F50, void, DefineGameMaterial, (void));
+ORIG(0x407DE0, void, GameMaterial_SetActive, (void));
+ORIG(0x407E30, void, GameMaterial_DefineQ, (void));
+ORIG(0x407F50, void, GameMaterial_Define, (void));
 
 #define MATERIAL_MAX 32
 
@@ -23,8 +23,8 @@ void Material_Init(void)
     gMaterialEvent0 = TaskEvent_Alloc(0);
     gMaterialEvent1 = TaskEvent_Alloc(0);
     gMaterialEvent2 = TaskEvent_Alloc(0);
-    Script_RegisterFunction("SetActiveMaterial", SetActiveMaterial, NULL, -1);
-    Script_RegisterFunction("DefineQMaterial", DefineQMaterial, NULL, -1);
-    Script_RegisterFunction("DefineGameMaterial", DefineGameMaterial, NULL, -1);
+    Script_RegisterFunction("GameMaterial_SetActive", GameMaterial_SetActive, NULL, -1);
+    Script_RegisterFunction("GameMaterial_DefineQ", GameMaterial_DefineQ, NULL, -1);
+    Script_RegisterFunction("GameMaterial_Define", GameMaterial_Define, NULL, -1);
 }
 HOOK(0x407D60, Material_Init);

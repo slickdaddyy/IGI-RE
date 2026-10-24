@@ -17,7 +17,7 @@ ORIG(0x4B1510, void *, File_Open, (const char *name, const char *mode));
 ORIG(0x4B1690, void, File_Close, (void *f));
 ORIG(0x4B16D0, int, File_Read, (void *f, void *buf, int size));
 ORIG(0x4B1730, int, File_Seek, (void *f, int pos, int whence));
-ORIG(0x4B17C0, void, sub_4B17C0, (void *f));
+ORIG(0x4B17C0, void, File_Flush, (void *f));
 ORIG(0x4B3130, long double, Vec3d_Length, (const double *v));
 ORIG(0x4B6380, void, Resource_Unload, (const char *name));
 ORIG(0x4B64E0, void *, Resource_Find, (const char *name));
@@ -422,7 +422,7 @@ Voice *Voice_Create(int key1, int key2, int flags, SoundParams *p)
             break;
         }
         File_Seek(v->file, 0x14, 0);
-        sub_4B17C0(v->file);
+        File_Flush(v->file);
         v->state = 0;
         v->readPos = 0;
         v->playPos = 0;
@@ -503,7 +503,7 @@ void Voice_Fill(Voice *v, int frames)
         if (v->readPos >= v->sound->samples) {
             if (v->flags & 0x10) {
                 File_Seek(v->file, 0x14, 0);
-                sub_4B17C0(v->file);
+                File_Flush(v->file);
                 v->readPos = 0;
                 Adpcm_Init(&v->adpcm, v->sound->channels);
             } else if (!ending) {
@@ -540,10 +540,10 @@ void Voice_ReadAdpcm(short *dst, Voice *v, int frames, int frameBytes)
     if (bytes <= 0)
         return;
     File_Read(v->file, gAdpcmBuffer, bytes);
-    sub_4B17C0(v->file);
+    File_Flush(v->file);
     if (back) {
         File_Seek(v->file, -1, 1);
-        sub_4B17C0(v->file);
+        File_Flush(v->file);
     }
     Adpcm_Decode(gAdpcmBuffer, dst, frames, &v->adpcm);
 }
@@ -554,7 +554,7 @@ void Voice_ReadPcm(void *dst, Voice *v, int frames, int frameBytes)
     if (frames <= 0)
         return;
     File_Read(v->file, dst, frames * frameBytes);
-    sub_4B17C0(v->file);
+    File_Flush(v->file);
 }
 HOOK(0x496D80, Voice_ReadPcm);
 

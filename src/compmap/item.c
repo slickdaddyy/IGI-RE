@@ -5,10 +5,10 @@
 #include "compmap/compmap.h"
 
 ORIG(0x4D3710, void, Task_Nothing, (void *task));
-ORIG(0x505C80, uint16_t, ComputerItem_GetType, (void));
-ORIG(0x504DF0, uint8_t, ComputerItem_GetListEvent, (void));
-ORIG(0x504DC0, void, ComputerItem_ListAdd, (void *list, void *node));
-ORIG(0x505C10, void, ComputerItem_Setup, (void *item, int id, int a, int b, int c, int d, int e, void *handler));
+ORIG(0x505C80, uint16_t, MenuItem_GetType, (void));
+ORIG(0x504DF0, uint8_t, MenuItemTask_GetListEvent, (void));
+ORIG(0x504DC0, void, MenuItemTask_AddToList, (void *list, void *node));
+ORIG(0x505C10, void, MenuItem_Setup, (void *item, int id, int a, int b, int c, int d, int e, void *handler));
 
 static const float kTextZ = 0x1.053d70p+9f;
 
@@ -20,14 +20,14 @@ void ComputerItem_AddToList(ComputerItem *it, void *list);
 
 void ComputerButtonItem_Init(void)
 {
-    uint16_t type = TaskType_New("ComputerButtonItem", sizeof(ComputerButtonItem), ComputerItem_GetType(), 0);
+    uint16_t type = TaskType_New("ComputerButtonItem", sizeof(ComputerButtonItem), MenuItem_GetType(), 0);
 
     gButtonItemType = type;
     TaskType_SetHandler(type, 0, Task_Nothing);
     TaskType_SetHandler2(gButtonItemType, 1, Task_Nothing);
     TaskType_SetHandler2(gButtonItemType, 2, ComputerButtonItem_Delete);
     TaskType_SetHandler2(gButtonItemType, Screen_GetDrawEvent(), ComputerButtonItem_Draw);
-    TaskType_SetHandler(gButtonItemType, ComputerItem_GetListEvent(), ComputerItem_AddToList);
+    TaskType_SetHandler(gButtonItemType, MenuItemTask_GetListEvent(), ComputerItem_AddToList);
 }
 HOOK(0x46B510, ComputerButtonItem_Init);
 
@@ -71,7 +71,7 @@ ComputerButtonItem *ComputerButtonItem_New(Task *parent, int id, int a, int b, i
     float sw, sh, tw;
     long double th;
 
-    ComputerItem_Setup(it, id, a, b, c, d, e, handler);
+    MenuItem_Setup(it, id, a, b, c, d, e, handler);
     it->pressed = pressed;
     it->sprite[0] = normal;
     it->sprite[1] = hover;
@@ -111,14 +111,14 @@ HOOK(0x46B7D0, ComputerButtonItem_SetPos);
 
 void ComputerTextItem_Init(void)
 {
-    uint16_t type = TaskType_New("ComputerTextItem", sizeof(ComputerTextItem), ComputerItem_GetType(), 0);
+    uint16_t type = TaskType_New("ComputerTextItem", sizeof(ComputerTextItem), MenuItem_GetType(), 0);
 
     gTextItemType = type;
     TaskType_SetHandler(type, 0, Task_Nothing);
     TaskType_SetHandler2(gTextItemType, 1, Task_Nothing);
     TaskType_SetHandler2(gTextItemType, 2, ComputerTextItem_Delete);
     TaskType_SetHandler2(gTextItemType, Screen_GetDrawEvent(), ComputerTextItem_Draw);
-    TaskType_SetHandler(gTextItemType, ComputerItem_GetListEvent(), ComputerItem_AddToList);
+    TaskType_SetHandler(gTextItemType, MenuItemTask_GetListEvent(), ComputerItem_AddToList);
 }
 HOOK(0x46B7F0, ComputerTextItem_Init);
 
@@ -149,7 +149,7 @@ HOOK(0x46B890, ComputerTextItem_Draw);
 
 void ComputerItem_AddToList(ComputerItem *it, void *list)
 {
-    ComputerItem_ListAdd(list, it->node);
+    MenuItemTask_AddToList(list, it->node);
 }
 HOOK(0x46B940, ComputerItem_AddToList);
 
@@ -165,7 +165,7 @@ ComputerTextItem *ComputerTextItem_New(Task *parent, int id, int a, int b, int c
     ComputerTextItem *it = (ComputerTextItem *)Task_New(parent, gTextItemType, 0);
     float th;
 
-    ComputerItem_Setup(it, id, a, b, c, d, e, handler);
+    MenuItem_Setup(it, id, a, b, c, d, e, handler);
     it->text = Text_New(font, x, y, text);
     it->text->flags |= 0x40000;
     it->text->z = kTextZ;

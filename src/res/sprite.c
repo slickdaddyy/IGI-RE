@@ -8,8 +8,8 @@
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
-ORIG(0x4B1FF0, int, Texture_Count, (Chunk *form));
-ORIG(0x4B2070, int, Texture_LoadAll, (Chunk *form, Texture *t, int count, int unk));
+ORIG(0x4B1FF0, int, TexRes_Count, (Chunk *form));
+ORIG(0x4B2070, int, TexRes_Load, (Chunk *form, Texture *t, int count, int unk));
 ORIG(0x4B22F0, void, Texture_Free, (Texture *t));
 ORIG(0x4B23B0, void, Texture_Create, (Texture *t, Palette *p, int a, int w, int h, int format, int b, int c, void *pixels));
 
@@ -190,10 +190,10 @@ Sprite *Sprite_Load(Sprite *s, const char *name)
         if (!fh || !map || !ff)
             goto corrupt;
         Sprite_Init(s, 0, 0, 0, fh->w, fh->h, fh->advance, fh->proportional ? 0 : FRAME_FIXED, NULL, fh->nframes,
-                    Texture_Count((Chunk *)d));
+                    TexRes_Count((Chunk *)d));
         if (s->ntextures <= 0)
             goto corrupt;
-        Texture_LoadAll((Chunk *)d, s->textures, s->ntextures, 0);
+        TexRes_Load((Chunk *)d, s->textures, s->ntextures, 0);
         s->map = Grid_New(256, 1, s);
         for (i = 0; i < 256; i++, map += 2)
             Grid_Set(s->map, i, 0, *map);

@@ -132,15 +132,15 @@ ORIG(0x460C60, int *, Human_GetList, (void));
 ORIG(0x465800, void, HumanView_GetEye, (Vec3d *eye, void *view));
 ORIG(0x46B4D0, char *, ComputerRes_Get, (void));
 ORIG(0x472600, Task *, BinocularOverlay_New, (void *parent));
-ORIG(0x485320, void *, sub_485320, (void *task));
-ORIG(0x487190, uint8_t, sub_487190, (void));
+ORIG(0x485320, void *, GameScreen_GetView, (void *task));
+ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
 ORIG(0x48F2D0, int, AppContext_IsUSA, (void));
 ORIG(0x490370, int, Timer_GetMs, (void));
 ORIG(0x491CF0, Display *, Display_GetMode, (void));
 ORIG(0x497D70, void, TransContext_Create, (void *ctx, Matrix *m, Vec3d *pos, float fov));
-ORIG(0x497E70, void, sub_497E70, (void *ctx));
-ORIG(0x497ED0, void, sub_497ED0, (void));
+ORIG(0x497E70, void, TransContext_Select, (void *ctx));
+ORIG(0x497ED0, void, TransContext_Invalidate, (void));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B2D00, void, Vec3_ToAngles, (const float *v, float *pitch, float *yaw));
 ORIG(0x4B4720, void, Random_Init, (void *r));
@@ -168,7 +168,7 @@ ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *results, Vec3d *starts, 
                                   CollFilter *filter, unsigned int flags));
 ORIG(0x4CE410, char, Coll_LineOfSight, (void *world, const Vec3d *from, const Vec3d *to, int event,
                                         CollFilter *filter, int a, int b, float *visibility));
-ORIG(0x4D03D0, int, sub_4D03D0, (float *v, float radius, void *out));
+ORIG(0x4D03D0, int, Mesh3D_Exclude, (float *v, float radius, void *out));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 ORIG(0x4F0FC0, void *, Param_VarString, (void));
 ORIG(0x4F1320, void, VarString_Init, (VarString *v));
@@ -250,7 +250,7 @@ void BinocularOverlay_Open(void)
     TaskType_SetHandler(gBinocularOverlayType, 0, BinocularOverlay_Create);
     TaskType_SetHandler2(gBinocularOverlayType, 1, TASK_NOTHING);
     TaskType_SetHandler2(gBinocularOverlayType, 2, BinocularOverlay_Delete);
-    TaskType_SetHandler(gBinocularOverlayType, sub_487190(), BinocularOverlay_StatusDisplayHandler);
+    TaskType_SetHandler(gBinocularOverlayType, StatusScreen_GetEvent(), BinocularOverlay_StatusDisplayHandler);
     TaskType_SetHandler2(gBinocularOverlayType, Screen_GetDrawEvent(), BINOCULAROVERLAY_DRAWHANDLER);
     TaskType_SetHandler(gBinocularOverlayType, Human_GetEvent0(), BINOCULAROVERLAY_USEHANDLER);
     gBinocularSprite = Game_AddSprite("binoculars.spr");
@@ -336,7 +336,7 @@ void BinocularHolder_Run(BinocularHolder *h)
         h->isActive = (char)x87_round(VarString_EvalReal(&h->active, h));
     if (h->isActive) {
         if (!h->overlay)
-            h->overlay = TaskRef_Add(BinocularOverlay_New(sub_485320(*(void **)(Game_Get() + 0x44))));
+            h->overlay = TaskRef_Add(BinocularOverlay_New(GameScreen_GetView(*(void **)(Game_Get() + 0x44))));
     } else if (h->overlay && *h->overlay) {
         Task_Delete(*h->overlay);
         TaskRef_Remove(h->overlay);
@@ -372,9 +372,9 @@ void BinocularOverlay_Draw(BinocularOverlay *ov);
 void BinocularOverlay_StatusDisplayHandler(BinocularOverlay *ov)
 {
     TransContext_Create(ov->ctx, &ov->matrix, &ov->pos, ov->fov);
-    sub_497E70(ov->ctx);
+    TransContext_Select(ov->ctx);
     BinocularOverlay_Draw(ov);
-    sub_497ED0();
+    TransContext_Invalidate();
 }
 HOOK(0x471440, BinocularOverlay_StatusDisplayHandler);
 
@@ -556,7 +556,7 @@ void BinocularOverlay_TrackMovement(BinocularOverlay *ov)
         v[0] = gView.m[2] * dz + gView.m[1] * dy + gView.m[0] * dx;
         v[1] = gView.m[5] * dz + gView.m[4] * dy + gView.m[3] * dx;
         v[2] = gView.m[8] * dz + gView.m[7] * dy + gView.m[6] * dx;
-        if (sub_4D03D0(v, radius, NULL))
+        if (Mesh3D_Exclude(v, radius, NULL))
             continue;
         filter.a = player;
         filter.b = player;

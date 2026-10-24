@@ -15,7 +15,7 @@ ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
-ORIG(0x4C1780, void, sub_4C1780, (Task *task, const char *name));
+ORIG(0x4C1780, void, Debug_Log, (Task *task, const char *name));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4F0F50, void *, Param_Real32, (void));
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
@@ -61,7 +61,7 @@ TagItem *TagItem_AddReal32(Task *parent, const char *name, int value)
 
     strcpy(t->name, name);
     t->v.i = value;
-    sub_4C1780(&t->task, name);
+    Debug_Log(&t->task, name);
     return t;
 }
 HOOK(0x4FE650, TagItem_AddReal32);
@@ -72,7 +72,7 @@ TagItem *TagItem_AddString16(Task *parent, const char *name, const char *value)
 
     strcpy(t->name, name);
     strcpy(t->v.s, value);
-    sub_4C1780(&t->task, name);
+    Debug_Log(&t->task, name);
     return t;
 }
 HOOK(0x4FE6B0, TagItem_AddString16);

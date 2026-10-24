@@ -5,7 +5,7 @@
 
 ORIG(0x4AA670, void *, crt_malloc, (size_t size));
 ORIG(0x4A6A50, void, crt_free, (void *p));
-ORIG(0x4C1780, void, sub_4C1780, (void));
+ORIG(0x4C1780, void, Debug_Log, (void));
 
 #define gMemCount VAR(int, 0x942300)
 #define gMemReady VAR(char, 0x9422FC)
@@ -42,7 +42,7 @@ void Mem_Shutdown(void)
     int count = 0;
     Node *n, *next;
 
-    sub_4C1780();
+    Debug_Log();
     n = gMemList.head;
     for (next = n->next; next; next = next->next) {
         Mem_Free(((MemBlock *)n)->user);

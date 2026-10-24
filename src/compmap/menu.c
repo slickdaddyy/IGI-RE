@@ -8,8 +8,8 @@ ORIG(0x4B12F0, void, Alias_Set, (const char *name, const char *path));
 ORIG(0x4B13A0, void, Alias_Remove, (const char *name));
 ORIG(0x416D40, char *, Game_Get, (void));
 ORIG(0x416D50, char, Game_IsPaused, (void));
-ORIG(0x485320, void *, sub_485320, (void *task));
-ORIG(0x5055D0, void, ComputerPanel_Mouse, (Task *panel, int *pos));
+ORIG(0x485320, void *, GameScreen_GetView, (void *task));
+ORIG(0x5055D0, void, MenuItemTask_SendPointer, (Task *panel, int *pos));
 
 static const float kLeft = 0x1.8cccccp-5f;
 static const float kRight = 0x1.733334p-5f;
@@ -104,7 +104,7 @@ void ComputerMenu_Run(ComputerMenu *m)
     pos[0] = round_int(m->x);
     pos[1] = round_int(m->y);
     pos[2] = 0;
-    ComputerPanel_Mouse(m->panel, pos);
+    MenuItemTask_SendPointer(m->panel, pos);
     old = m->buttons;
     m->buttons = buttons;
     m->pressed = ~old & buttons;
@@ -149,7 +149,7 @@ void ComputerMenu_OpenScreen(int screen)
 {
     Mem_PushMode(1);
     if (!gMenu)
-        Task_New(sub_485320(*(void **)(Game_Get() + 0x44)), gMenuType, 0);
+        Task_New(GameScreen_GetView(*(void **)(Game_Get() + 0x44)), gMenuType, 0);
     switch (screen) {
     case 1:
         ComputerMap_New(gMenu);

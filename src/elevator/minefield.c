@@ -3,7 +3,7 @@
 #include "hook.h"
 #include "elevator/elevator.h"
 
-ORIG(0x5034D0, uint16_t, Position_GetType, (void));
+ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
 /* blows up the object with the given id while a script condition is true */
 typedef struct MineField {
@@ -54,7 +54,7 @@ void MineField_Init(void)
 {
     MineField m;
 
-    gMineFieldType = TaskType_New("MineField", sizeof(MineField), Position_GetType(), 0);
+    gMineFieldType = TaskType_New("MineField", sizeof(MineField), EditorRigidObj_GetType(), 0);
     TaskType_SetHandler(gMineFieldType, 0, MineField_Create);
     TaskType_SetHandler2(gMineFieldType, 1, MineField_Run);
     TaskType_SetHandler2(gMineFieldType, 2, MineField_Delete);

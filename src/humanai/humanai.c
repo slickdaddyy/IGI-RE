@@ -20,33 +20,33 @@ ORIG(0x4F1220, int, Level_GetEventDAC, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 ORIG(0x4F2070, void, WeaponSlots_Set, (Task **slots, int i, Task *weapon));
-ORIG(0x4F9290, void *, sub_4F9290, (int id));
-ORIG(0x5096F0, void, Graph_FindNearest, (int **out, void *graph, const Vec3d *pos));
+ORIG(0x4F9290, void *, Graph_Find, (int id));
+ORIG(0x5096F0, void, AIGraph_FindNearest, (int **out, void *graph, const Vec3d *pos));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
-ORIG(0x4EE140, PhysType *, PhysType_Find, (const char *name));
+ORIG(0x4EE140, PhysType *, PhysicsObjType_Find, (const char *name));
 ORIG(0x413C80, WeaponType *, Weapon_GetType, (Task *weapon));
 ORIG(0x415020, int, Game_CheatKeyPressed, (int key));
 ORIG(0x416920, void *, Game_GetWorld, (void));
-ORIG(0x4028C0, int, sub_4028C0, (void));
+ORIG(0x4028C0, int, Flow_GetRenders, (void));
 ORIG(0x406F70, void, HumanAIConfig_Apply, (HumanAI *ai));
 ORIG(0x440C00, char, AlarmControl_IsAlarm, (Task *t));
 ORIG(0x440C10, char, AlarmControl_IsLastAlarm, (Task *t));
-ORIG(0x452D20, void *, sub_452D20, (int *len, void *a, void *b, void *graph, int node, Vec3d *pos));
-ORIG(0x453390, void, sub_453390, (void *p));
+ORIG(0x452D20, void *, NodeGrid_Place, (int *len, void *a, void *b, void *graph, int node, Vec3d *pos));
+ORIG(0x453390, void, AIClaim_Release, (void *p));
 ORIG(0x460BE0, uint16_t, Human_GetType, (void));
-ORIG(0x460C60, TaskArray *, sub_460C60, (void));
-ORIG(0x460C70, void, sub_460C70, (Task *human, HumanAI *ai));
-ORIG(0x464250, int, sub_464250, (void));
-ORIG(0x465800, void, sub_465800, (Vec3d *eye, void *view));
+ORIG(0x460C60, TaskArray *, Human_GetList, (void));
+ORIG(0x460C70, void, Human_SetAI, (Task *human, HumanAI *ai));
+ORIG(0x464250, int, Human_GetMaskType, (void));
+ORIG(0x465800, void, HumanView_GetEye, (Vec3d *eye, void *view));
 ORIG(0x465880, void, HumanView_GetMatrix, (float *m, void *view));
-ORIG(0x465920, void, sub_465920, (void *view, int a, int b));
-ORIG(0x477BF0, uint16_t, sub_477BF0, (void));
-ORIG(0x488610, uint16_t, sub_488610, (void));
-ORIG(0x4896C0, void, sub_4896C0, (AIDetection *d, int team, int a, int b, int c, int e));
-ORIG(0x489750, void, sub_489750, (AIDetection *d, AIDetectView *v, Human *h, int team));
-ORIG(0x489B90, void, sub_489B90, (AIDetection *d));
-ORIG(0x489BE0, void *, sub_489BE0, (AIDetection *d, Task *t));
-ORIG(0x48A340, float *, sub_48A340, (float *out, Human *h, int unk));
+ORIG(0x465920, void, HumanView_SetTarget, (void *view, int a, int b));
+ORIG(0x477BF0, uint16_t, Gun_GetType, (void));
+ORIG(0x488610, uint16_t, GuardGenerator_GetType, (void));
+ORIG(0x4896C0, void, AIDetector_Init, (AIDetection *d, int team, int a, int b, int c, int e));
+ORIG(0x489750, void, AIDetector_Update, (AIDetection *d, AIDetectView *v, Human *h, int team));
+ORIG(0x489B90, void, AIDetection_RemoveRefs, (AIDetection *d));
+ORIG(0x489BE0, void *, AIDetection_FindSeen, (AIDetection *d, Task *t));
+ORIG(0x48A340, float *, Human_GetBonePos, (float *out, Human *h, int unk));
 ORIG(0x4B47C0, int, Random_Int, (void *r, int n));
 ORIG(0x4B32B0, long double, Vec3d_Distance, (const Vec3d *a, const Vec3d *b));
 
@@ -67,7 +67,7 @@ void HumanAI_Create(HumanAI *ai, void *arg)
     int i;
     AIParam *p;
 
-    sub_460C70(ai->task.parent, ai);
+    Human_SetAI(ai->task.parent, ai);
     ai->graphId = -1;
     ai->scriptPath[0] = 0;
     ai->graph = NULL;
@@ -248,14 +248,14 @@ void HumanAI_Update(HumanAI *ai, void *arg)
     cheat = Game_CheatKeyPressed(0x37);
     ai->ctrl[CTRL_CHEAT] = cheat;
     h = (Human *)ai->task.parent;
-    off = sub_48A340(tmp, h, 0);
+    off = Human_GetBonePos(tmp, h, 0);
     ai->view.pos.x = h->pos.x;
     ai->view.pos.y = h->pos.y;
     ai->view.pos.z = h->pos.z - off[2];
     memcpy(ai->view.body, h->matrix, sizeof(ai->view.body));
-    sub_465800(&ai->view.eye, h->view);
+    HumanView_GetEye(&ai->view.eye, h->view);
     HumanView_GetMatrix(ai->view.view, h->view);
-    sub_465920(h->view, 0, 0);
+    HumanView_SetTarget(h->view, 0, 0);
     if (!ai->script) {
         Warning_Show("No AI script in HumanAI #%d", Task_GetId(ai));
         return;
@@ -303,7 +303,7 @@ void HumanAI_Update(HumanAI *ai, void *arg)
             memcpy(&ai->dview.secLength, &ai->view.secLength, 8);
         }
         ai->dview.active = 1;
-        sub_489750(&ai->detection, &ai->dview, h, Human_GetTeam(&h->task));
+        AIDetector_Update(&ai->detection, &ai->dview, h, Human_GetTeam(&h->task));
 
         n = ai->detection.enemies.head;
         for (next = n->next; next; next = next->next) {
@@ -354,7 +354,7 @@ void HumanAI_Update(HumanAI *ai, void *arg)
         Task *t = *tg->ref;
 
         if (t) {
-            ai->targetSeen = sub_489BE0(&ai->detection, t);
+            ai->targetSeen = AIDetection_FindSeen(&ai->detection, t);
             if (ai->targetSeen) {
                 alarmed = 1;
                 goto seen;
@@ -388,11 +388,11 @@ run:
     if (HumanAI_IsDead(ai) && sub_463190(&h->task) && h->unk33C) {
         HumanAI_ClearMove(ai);
         if (ai->unk3AB0) {
-            sub_453390(ai->unk3AB0);
+            AIClaim_Release(ai->unk3AB0);
             ai->unk3AB0 = NULL;
         }
         if (ai->unk3AB4) {
-            sub_453390(ai->unk3AB4);
+            AIClaim_Release(ai->unk3AB4);
             ai->unk3AB4 = NULL;
         }
         if (ai->path) {
@@ -400,7 +400,7 @@ run:
             ai->path = NULL;
         }
         if (ai->unk3E10 < 0) {
-            if (h->task.parent->type == sub_488610() || h->unk7C4 == -1 || sub_4028C0() - h->unk7C4 > 1) {
+            if (h->task.parent->type == GuardGenerator_GetType() || h->unk7C4 == -1 || Flow_GetRenders() - h->unk7C4 > 1) {
                 void *world = Game_GetWorld();
                 TaskFn fn = HANDLER(World_GetEvent1(), h->task.type);
 
@@ -423,7 +423,7 @@ void HumanAI_FindWeapons(HumanAI *ai)
     if (!w->next || !w)
         return;
     do {
-        if (TaskType_IsA(w->type, sub_477BF0())) {
+        if (TaskType_IsA(w->type, Gun_GetType())) {
             WeaponType *wt = Weapon_GetType(w);
 
             if (!wt) {
@@ -434,7 +434,7 @@ void HumanAI_FindWeapons(HumanAI *ai)
                     ai->gunId = wt->id;
                     WeaponSlots_Set(((Human *)h)->weapons, 0, w);
                 } else if (wt->kind == 4) {
-                    PhysType *pt = PhysType_Find(wt->name);
+                    PhysType *pt = PhysicsObjType_Find(wt->name);
 
                     ai->hasGrenade = 1;
                     ai->grenadeTime = round_int(*pt->time * 30.0f);
@@ -596,9 +596,9 @@ void HumanAI_Destroy(HumanAI *ai, void *arg)
     HumanAI_ClearMove(ai);
     HumanAI_FreeEvents(ai);
     if (ai->unk3AB0)
-        sub_453390(ai->unk3AB0);
+        AIClaim_Release(ai->unk3AB0);
     if (ai->unk3AB4)
-        sub_453390(ai->unk3AB4);
+        AIClaim_Release(ai->unk3AB4);
     if (Task_GetId(ai) >= 0) {
         TaskFn fn = gTaskHandlers[Level_GetEventDAC()][ai->task.type];
 
@@ -611,7 +611,7 @@ void HumanAI_Destroy(HumanAI *ai, void *arg)
         n = next;
     }
     if (ai->detectionActive)
-        sub_489B90(&ai->detection);
+        AIDetection_RemoveRefs(&ai->detection);
 }
 HOOK(0x44FFC0, HumanAI_Destroy);
 
@@ -737,7 +737,7 @@ void HumanAI_ParamsChanged(HumanAI *ai)
         ai->eventOrderCount = 0;
     }
     if (ai->graphId != -1) {
-        ai->graph = sub_4F9290(ai->graphId);
+        ai->graph = Graph_Find(ai->graphId);
         if (!ai->graph) {
             Warning_Show("HumanAI #%d has AIGraph ID (#%d) but no matching AIGraph was found", Task_GetId(ai),
                          ai->graphId);
@@ -745,20 +745,20 @@ void HumanAI_ParamsChanged(HumanAI *ai)
             int *near;
             Vec3d *pos = DynCubeObj_GetPosition(ai->task.parent);
 
-            Graph_FindNearest(&near, ai->graph, pos);
+            AIGraph_FindNearest(&near, ai->graph, pos);
             if (!near) {
                 Warning_Show("HumanAI #%d couldn't find closest node in graph #%d", Task_GetId(ai), ai->graphId);
             } else {
                 if (ai->node != *near) {
                     pos = DynCubeObj_GetPosition(ai->task.parent);
-                    ai->path = sub_452D20(&ai->pathLen, ai->pathA, ai->pathB, ai->graph, *near, pos);
+                    ai->path = NodeGrid_Place(&ai->pathLen, ai->pathA, ai->pathB, ai->graph, *near, pos);
                 }
                 ai->node = *near;
             }
         }
     }
-    mask = sub_464250();
-    sub_4896C0(&ai->detection, Human_GetTeam(ai->task.parent), 6, mask, 4, 8);
+    mask = Human_GetMaskType();
+    AIDetector_Init(&ai->detection, Human_GetTeam(ai->task.parent), 6, mask, 4, 8);
     ai->detectionActive = 1;
     HumanAIConfig_Apply(ai);
 }
@@ -955,11 +955,11 @@ void HumanAI_Broadcast(AIMessage *m)
 {
     int i;
 
-    for (i = 0; i < sub_460C60()->count; i++) {
-        uint16_t type = sub_460C60()->items[i]->type;
+    for (i = 0; i < Human_GetList()->count; i++) {
+        uint16_t type = Human_GetList()->items[i]->type;
         TaskFn fn = gTaskHandlers[HumanAI_GetEventSlot()][type];
 
-        fn(sub_460C60()->items[i], m);
+        fn(Human_GetList()->items[i], m);
     }
 }
 HOOK(0x450CE0, HumanAI_Broadcast);

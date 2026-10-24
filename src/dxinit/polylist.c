@@ -84,7 +84,7 @@ ORIG(0x4950F0, void, Direct3D_MakeMatrix, (D3DMATRIX *out, const float *rot, con
 ORIG(0x497860, void, Primitive_Draw, (PrimArg *arg));
 ORIG(0x4978D0, int, Primitive_Register, (const char *name));
 ORIG(0x4978E0, void, Primitive_Unregister, (int id));
-ORIG(0x498070, int, TransContext_GetNearPlaneMethod, (void));
+ORIG(0x498070, int, TransContext_GetNearClipMethod, (void));
 ORIG(0x49B2D0, void, Fog_SetRange, (const Vec3d *pos, float radius));
 ORIG(0x4B0EC0, void, RenderMode_SetMethod, (int mode, int method, void *fn));
 ORIG(0x4B4720, void, Random_Init, (void *r));
@@ -93,7 +93,7 @@ ORIG(0x4B7430, int, PtrList_Add, (PtrList *list, void *fn));
 ORIG(0x4B7450, void, PtrList_Clear, (PtrList *list, int index));
 ORIG(0x4C6840, void, DynCube_ListRemove, (void *world, void *obj, int list));
 ORIG(0x4C6890, void, DynCube_ListAdd, (void *world, void *obj, int list));
-ORIG(0x4D97E0, uint8_t, sub_4D97E0, (void));
+ORIG(0x4D97E0, uint8_t, QObj_GetEvent, (void));
 
 #define Direct3D_Nothing ((void *)0x4D3710)
 
@@ -352,7 +352,7 @@ void PolyList_Draw(void **msg)
     pos.z = p->tris[0].v[0]->z + pos.z;
     if (p->owner && *p->owner) {
         Task *t = *p->owner;
-        void (*fn)(void *, void *) = gTaskHandlers[sub_4D97E0()][t->type];
+        void (*fn)(void *, void *) = gTaskHandlers[QObj_GetEvent()][t->type];
 
         if (fn)
             fn(t, &pos);
@@ -390,7 +390,7 @@ void PolyList_Draw(void **msg)
     Random_Init(gPolyListRandom);
     nearPlane = gNearPlane;
     nearScaled = nearPlane * kNearScale;
-    gRenderFuncs[TransContext_GetNearPlaneMethod()](&nearScaled);
+    gRenderFuncs[TransContext_GetNearClipMethod()](&nearScaled);
     if (PolyList_Lock(&v, &start) || !v)
         return;
     for (i = 0, n = 0; i < p->count; i++) {
@@ -430,7 +430,7 @@ void PolyList_Draw(void **msg)
         n = 0;
     }
     gVBLit.vb->lpVtbl->Unlock(gVBLit.vb);
-    gRenderFuncs[TransContext_GetNearPlaneMethod()](&nearPlane);
+    gRenderFuncs[TransContext_GetNearClipMethod()](&nearPlane);
 }
 HOOK(0x49A9B0, PolyList_Draw);
 

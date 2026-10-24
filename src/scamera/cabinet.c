@@ -24,7 +24,7 @@ ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float rad
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
-ORIG(0x4DCCB0, void, sub_4DCCB0, (void *world, void *obj, Vec3d *pos));
+ORIG(0x4DCCB0, void, Sector_AddObject, (void *world, void *obj, Vec3d *pos));
 ORIG(0x4E0830, uint16_t, SectorInteriorObject_GetType, (void));
 ORIG(0x4F0F20, void *, Param_Angle, (void));
 ORIG(0x4F0F50, void *, Param_Real32, (void));
@@ -168,7 +168,7 @@ void Cabinet_Create(Cabinet *c)
     RigidDynCubeObj_Init(gWorld, c, NULL);
     scale = sobj_scale(&c->o);
     DynCube_Add(gWorld, c, &zero, VirModel_GetRadius(c->o.model) * scale, 1);
-    sub_4DCCB0(c->o.world, c, DynCubeObj_GetPosition(c));
+    Sector_AddObject(c->o.world, c, DynCubeObj_GetPosition(c));
     c->place.x = 0;
     c->place.y = 0;
     c->place.z = 0;

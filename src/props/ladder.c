@@ -18,13 +18,13 @@ ORIG(0x416810, uint8_t, Game_GetEvent3, (void));
 ORIG(0x416820, uint8_t, Game_GetEvent6, (void));
 ORIG(0x4168A0, void *, Game_GetTaskList0, (void));
 ORIG(0x416AD0, char, sub_416AD0, (UseQuery *q, void *obj, const Vec3d *pos));
-ORIG(0x4871C0, void, sub_4871C0, (Task *human, void *sprite));
+ORIG(0x4871C0, void, StatusScreen_DrawActionIcon, (Task *human, void *sprite));
 ORIG(0x491CF0, void *, Display_GetMode, (void));
 ORIG(0x4B2B30, long double, Vec3_Angle, (const Vec3f *a, const Vec3f *b));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4C1790, void, QTaskList_Add, (void *list, void *item));
 ORIG(0x4C17C0, void, QTaskList_Remove, (void *list, void *item));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, void *c));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, void *c));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *room, void *obj, void **model));
 ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int n));
 ORIG(0x4C7560, void, DynCube_Remove, (void *room, void *obj));
@@ -94,7 +94,7 @@ void Ladder_Create(Ladder *l, MagicCreateArg *arg)
     DynCube_Add(arg->room, l, &arg->pos, radius, 1);
     l->obj.matrix = arg->matrix;
     l->unk130 = arg->unk88;
-    sub_4C4950(l, l, arg->unk88);
+    RigidDynCubeObj_CreateMagicObjs(l, l, arg->unk88);
     sub_414ED0(&p2, l, 2);
     sub_414ED0(&p3, l, 3);
     h = p2.z - p3.z;
@@ -198,7 +198,7 @@ void Ladder_DrawIcon(Ladder *l, Task **human)
 
     Display_GetMode();
     Display_GetMode();
-    sub_4871C0(h, (char *)h + 0x494);
+    StatusScreen_DrawActionIcon(h, (char *)h + 0x494);
 }
 HOOK(0x4406D0, Ladder_DrawIcon);
 

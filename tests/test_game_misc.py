@@ -123,7 +123,7 @@ CASES = [(0x11, 0x900, 0, 1), (0x11, 0x900, 0, 3), (0x11, 0x900, 0, -1), (0x11, 
 
 
 @pytest.mark.parametrize("type_,model,model2,i", CASES)
-@pytest.mark.parametrize("addr,name,size", [(0x414E20, "sub_414E20", 24), (0x414ED0, "sub_414ED0", 12)])
+@pytest.mark.parametrize("addr,name,size", [(0x414E20, "Model_GetPoint", 24), (0x414ED0, "sub_414ED0", 12)])
 def test_model_points(addr, name, size, type_, model, model2, i):
     def setup(e):
         out = e.alloc(24)

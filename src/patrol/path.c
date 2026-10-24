@@ -58,7 +58,7 @@ ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
-ORIG(0x4C1780, void, Task_SetName, (void *task, const char *name));
+ORIG(0x4C1780, void, Debug_Log, (void *task, const char *name));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
@@ -129,7 +129,7 @@ void PatrolPathCommand_SetName(PatrolCommand *c)
         crt_sprintf(buf, gPatrolCommandInfo[t].help);
     else
         crt_sprintf(buf, gPatrolCommandInfo[t].name, c->arg);
-    Task_SetName(c, buf);
+    Debug_Log(c, buf);
 }
 HOOK(0x4534B0, PatrolPathCommand_SetName);
 

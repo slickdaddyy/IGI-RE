@@ -7,11 +7,11 @@
 
 ORIG(0x4A5490, int, crt_atoi, (const char *s));
 ORIG(0x516AD3, double, crt_atof, (const char *s));
-ORIG(0x4BADC0, QvmFixup *, QvmAsm_AddFixup, (QvmAsm *a, int offset));
-ORIG(0x4BAFD0, QvmLabelRef *, QvmAsm_RefLabel, (QvmAsm *a, const char *name));
-ORIG(0x4BB030, int, QvmAsm_StringIndex, (QvmAsm *a, const char *s));
-ORIG(0x4BB180, int, QvmAsm_SymbolIndex, (QvmAsm *a, const char *name));
-ORIG(0x4BB240, int, QvmLex_Next, (QvmToken *tok, QvmLexer *lex));
+ORIG(0x4BADC0, QvmFixup *, Asm_AddArgCountFixup, (QvmAsm *a, int offset));
+ORIG(0x4BAFD0, QvmLabelRef *, Asm_AddLabelRef, (QvmAsm *a, const char *name));
+ORIG(0x4BB030, int, Asm_AddString, (QvmAsm *a, const char *s));
+ORIG(0x4BB180, int, Asm_AddName, (QvmAsm *a, const char *name));
+ORIG(0x4BB240, int, Asm_NextToken, (QvmToken *tok, QvmLexer *lex));
 
 unsigned int QvmAsm_ParseHex(const char *s)
 {
@@ -76,7 +76,7 @@ void QvmAsm_OpPush(int *size, QvmAsm *a)
     QvmToken tok;
     int v;
 
-    if (!QvmLex_Next(&tok, a->lexer)) {
+    if (!Asm_NextToken(&tok, a->lexer)) {
         a->failed = 1;
         return;
     }
@@ -111,7 +111,7 @@ void QvmAsm_OpPush(int *size, QvmAsm *a)
     } else if (tok.type == TOKEN_STRING || tok.type == TOKEN_WORD) {
         int str = tok.type == TOKEN_STRING;
 
-        v = str ? QvmAsm_StringIndex(a, tok.text) : QvmAsm_SymbolIndex(a, tok.text);
+        v = str ? Asm_AddString(a, tok.text) : Asm_AddName(a, tok.text);
         if (v < 0x100)
             Emit(a, size, 2, str ? OP_PUSHSIB : OP_PUSHIIB, &v);
         else if (v < 0x10000)
@@ -131,13 +131,13 @@ void QvmAsm_OpBranch(int *size, QvmAsm *a, int op)
     unsigned char code = op;
     unsigned int v;
 
-    if (!QvmLex_Next(&tok, a->lexer) || (tok.type != TOKEN_WORD && tok.type != TOKEN_ADDRESS)) {
+    if (!Asm_NextToken(&tok, a->lexer) || (tok.type != TOKEN_WORD && tok.type != TOKEN_ADDRESS)) {
         a->failed = 1;
         return;
     }
     v = 0;
     if (tok.type == TOKEN_WORD) {
-        QvmLabelRef *r = QvmAsm_RefLabel(a, tok.text);
+        QvmLabelRef *r = Asm_AddLabelRef(a, tok.text);
 
         if (r) {
             r->offset = a->pc + 1;
@@ -172,7 +172,7 @@ void QvmAsm_OpCall(int *size, QvmAsm *a)
     unsigned int v;
     int pc, n;
 
-    if (!QvmLex_Next(&tok, a->lexer))
+    if (!Asm_NextToken(&tok, a->lexer))
         goto fail;
     pc = a->pc;
     n = 0;
@@ -181,12 +181,12 @@ void QvmAsm_OpCall(int *size, QvmAsm *a)
         goto fail;
     File_Write(a->file, &code, 1);
     File_Write(a->file, &v, 4);
-    if (!QvmLex_Next(&tok, a->lexer))
+    if (!Asm_NextToken(&tok, a->lexer))
         goto fail;
     pc += 5;
     for (;;) {
         if (tok.type == TOKEN_WORD) {
-            QvmLabelRef *r = QvmAsm_RefLabel(a, tok.text);
+            QvmLabelRef *r = Asm_AddLabelRef(a, tok.text);
 
             if (!r)
                 goto fail;
@@ -201,16 +201,16 @@ void QvmAsm_OpCall(int *size, QvmAsm *a)
         File_Write(a->file, &v, 4);
         n++;
         pc += 4;
-        if (!QvmLex_Next(&tok, a->lexer))
+        if (!Asm_NextToken(&tok, a->lexer))
             goto fail;
         if (tok.type != TOKEN_COMMA)
             break;
-        if (!QvmLex_Next(&tok, a->lexer))
+        if (!Asm_NextToken(&tok, a->lexer))
             goto fail;
     }
     if (tok.type == TOKEN_CLOSE) {
         *size = n * 4 + 5;
-        QvmAsm_AddFixup(a, a->pc + 1)->value = n;
+        Asm_AddArgCountFixup(a, a->pc + 1)->value = n;
         return;
     }
 fail:

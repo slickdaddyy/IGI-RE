@@ -98,21 +98,21 @@ ORIG(0x4F0FD0, void *, Param_String16, (void));
 ORIG(0x4F0FE0, void *, Param_String32, (void));
 ORIG(0x4F0F30, void *, Param_Degrees, (void));
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
-ORIG(0x4028B0, int, Timer_GetTicks, (void));
+ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x4F2060, Task *, WeaponSlots_Get, (Task **slots, int i));
 ORIG(0x4F2050, void, WeaponSlots_Init, (Task **slots));
-ORIG(0x4F2290, void, sub_4F2290, (void *h));
-ORIG(0x4F2140, void, sub_4F2140, (void *h, Task **slots, int i));
-ORIG(0x4F2310, void, sub_4F2310, (Task *w, Vec3d *pos, Matrix *m));
+ORIG(0x4F2290, void, Weapon_DeleteAll, (void *h));
+ORIG(0x4F2140, void, WeaponSlots_SelectNext, (void *h, Task **slots, int i));
+ORIG(0x4F2310, void, Weapon_Move, (Task *w, Vec3d *pos, Matrix *m));
 ORIG(0x4B38E0, void, Matrix_SetEuler, (Matrix *m, float ax, float ay, float az));
 ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Matrix *m, float a));
 ORIG(0x4658D0, void, HumanView_SetCamera, (HumanView *v, Vec3d *pos, Matrix *m));
 ORIG(0x465910, void, HumanView_ClearCamOverride, (HumanView *v));
 ORIG(0x4B8770, int, Script_EvalExpr, (const char *text));
 ORIG(0x413BD0, void *, WeaponType_Find, (int id));
-ORIG(0x477C50, Task *, sub_477C50, (void *h, int a, int id, int ammo, char b));
+ORIG(0x477C50, Task *, Gun_New, (void *h, int a, int id, int ammo, char b));
 ORIG(0x416AD0, void, sub_416AD0, (UseQuery *q, void *obj, Vec3d *pos));
-ORIG(0x4871C0, void, sub_4871C0, (void *h, void *p));
+ORIG(0x4871C0, void, StatusScreen_DrawActionIcon, (void *h, void *p));
 
 void StationaryGun_RunHandler(StatGun *o);
 void StationaryGun_DeleteHandler(StatGun *o);
@@ -206,9 +206,9 @@ void StationaryGun_RunHandler(StatGun *o)
     long double lim, p;
     char fire;
 
-    if (o->lastTick == Timer_GetTicks())
+    if (o->lastTick == Flow_GetFrames())
         return;
-    o->lastTick = Timer_GetTicks();
+    o->lastTick = Flow_GetFrames();
     u = o->user;
     if (u) {
         o->pitch = u->input[1] * kPi + o->pitch;
@@ -303,7 +303,7 @@ void StationaryGun_Aim(StatGun *o)
         t.m[i] = mat_elem(m, i / 3, e.m, i % 3, 1);
     t.unk24 = o->obj.matrix.unk24 + e.unk24 + 1;
     e = t;
-    sub_4F2310(w, &p, &e);
+    Weapon_Move(w, &p, &e);
     o->muzzlePos = p;
     o->muzzleMatrix = e;
     u = o->user;
@@ -374,13 +374,13 @@ void StationaryGun_Changed(StatGun *o)
     o->lastTick = -1;
     o->used = 0;
     WeaponSlots_Init(o->slots);
-    sub_4F2290(o);
+    Weapon_DeleteAll(o);
     Mem_PushMode(1);
     id = Script_EvalExpr(o->weapon);
     Mem_PopMode();
     if (WeaponType_Find(id)) {
-        sub_477C50(o, 0, id, o->ammo, 0);
-        sub_4F2140(o, o->slots, 0);
+        Gun_New(o, 0, id, o->ammo, 0);
+        WeaponSlots_SelectNext(o, o->slots, 0);
         StationaryGun_Aim(o);
     }
     StationaryGun_UpdateCarrier(o);
@@ -469,7 +469,7 @@ void StationaryGun_Event6(void *task, Human **msg)
 {
     Human *h = *msg;
 
-    sub_4871C0(h, h->unk434);
+    StatusScreen_DrawActionIcon(h, h->unk434);
 }
 HOOK(0x474F10, StationaryGun_Event6);
 

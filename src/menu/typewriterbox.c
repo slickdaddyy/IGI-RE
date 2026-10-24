@@ -14,7 +14,7 @@ ORIG(0x4B6F50, void, Text_DrawAlt, (Text *t));
 ORIG(0x4B7DF0, int, Text_GetWidth, (Text *t));
 ORIG(0x4B7E00, int, Text_GetHeight, (Text *t));
 ORIG(0x424980, void, MenuWindow_DrawEnd, (void *w, float unk, float alpha, int unk2));
-ORIG(0x4C1780, void, sub_4C1780_1, (int unk));
+ORIG(0x4C1780, void, Debug_Log, (int unk));
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
 
 /* one line of the scrolling credits style text */
@@ -200,7 +200,7 @@ void TypeWriterBox_Run(TypeWriterBox *tw)
     ((void (*)(void *))HANDLER(1, MenuWindow_GetType()))(tw);
     MenuManager_MarkBusy(tw->w.menu);
     if ((gKeys[0x1D] & 0x80) && (gKeys[0x2A] & 0x80) && (gKeys[0x18] & 0x80))
-        sub_4C1780_1(1);
+        Debug_Log(1);
 }
 HOOK(0x41A600, TypeWriterBox_Run);
 

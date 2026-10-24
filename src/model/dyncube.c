@@ -14,7 +14,7 @@ ORIG(0x4E54E0, void, CellMask_Free, (void *mask));
 ORIG(0x4E5580, int, CellMask_Test, (void *mask, int x, int y));
 ORIG(0x4E5C90, void, CellMask_Enable, (void));
 ORIG(0x4E5CA0, void, CellMask_Disable, (void));
-ORIG(0x50FAE0, void, sub_50FAE0, (Terrain *t, int unk));
+ORIG(0x50FAE0, void, TerrainMesh_SetupLighting, (Terrain *t, int unk));
 
 #define gTaskTypes ((TaskType *)0xAF5EE0)
 #define gTaskHandlers ((TaskHandler (*)[TASK_MAX_TYPES])0xA96AE0)
@@ -347,7 +347,7 @@ HOOK(0x4CEA20, World_GetEvent1);
 void sub_4CEA30(Terrain *t)
 {
     if (!t->unkDC8) {
-        sub_50FAE0(t, 0);
+        TerrainMesh_SetupLighting(t, 0);
         t->unkDC8 = 1;
     }
 }

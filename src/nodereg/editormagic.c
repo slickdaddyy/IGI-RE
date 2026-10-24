@@ -66,7 +66,7 @@ ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, int c));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, int c));
 ORIG(0x4C56D0, uint8_t, RigidDynCubeObj_GetEvent0, (void));
 ORIG(0x4C56E0, uint8_t, RigidDynCubeObj_GetEvent1, (void));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
@@ -137,7 +137,7 @@ void EditorMagicObj_Create(EditorMagicObj *o, EditorMagicInit *in)
     o->local = in->local;
     o->spin = in->spin;
     o->unk130 = in->unk88;
-    sub_4C4950(o, o, in->unk88);
+    RigidDynCubeObj_CreateMagicObjs(o, o, in->unk88);
 }
 HOOK(0x51B850, EditorMagicObj_Create);
 

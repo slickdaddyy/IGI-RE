@@ -37,10 +37,10 @@ ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, Vec3d *from, Vec3d
                                   CollFilter *filter, unsigned flags));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
-ORIG(0x4F0EE0, void *, Sound_GetOwner, (void));
-ORIG(0x4FDF00, void *, Smoke_New, (void *root, void *world, void *sprite, Vec3f *dir, Vec3f *color, float *size,
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
+ORIG(0x4FDF00, void *, Particle2D_New, (void *root, void *world, void *sprite, Vec3f *dir, Vec3f *color, float *size,
                                    float b, int flags, int frames, float e, int f, int count, void *callback));
-ORIG(0x4FE120, void, Smoke_Puff, (void *smoke, Vec3d *pos, Vec3f *dir, float size, float a, float b, float c, int d,
+ORIG(0x4FE120, void, Particle2D_Add, (void *smoke, Vec3d *pos, Vec3f *dir, float size, float a, float b, float c, int d,
                                   int e));
 
 #define gM203Sprite VAR(char *, 0x5BE3AC)
@@ -95,7 +95,7 @@ void M203_CreateHandler(M203 *g)
     color.x = color.y = color.z = 127.0f;
     size[0] = size[1] = 614.4f;
     world = Game_GetWorld();
-    g->smoke = Smoke_New(Sound_GetOwner(), world, gM203Sprite + 0x18, &dir, &color, size, 819200.0f,
+    g->smoke = Particle2D_New(Level_GetDynamic(), world, gM203Sprite + 0x18, &dir, &color, size, 819200.0f,
                          0x1000008, 0, 0.1f, 0, 0x14, 0);
 }
 HOOK(0x4761B0, M203_CreateHandler);
@@ -145,7 +145,7 @@ void M203_RunHandler(M203 *g)
     size = (r + kOneD) * kPuffSize;
     r = Random_Float(Game_GetRandom()) - kHalf;
     spin = (r + r) * kPuffSpin + kPuffSpinBase;
-    Smoke_Puff(g->smoke, &pos, &dir, size, spin, 0, 1.0f, 7, 7);
+    Particle2D_Add(g->smoke, &pos, &dir, size, spin, 0, 1.0f, 7, 7);
 }
 HOOK(0x476340, M203_RunHandler);
 

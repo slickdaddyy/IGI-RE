@@ -13,10 +13,10 @@ ORIG(0x413C00, int *, WeaponType_FindByKey, (const char *key));
 ORIG(0x414950, long double, Vec3d_YawAngle, (Vec3d v));
 ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int index));
 ORIG(0x460BF0, uint8_t, Human_GetEvent0, (void));
-ORIG(0x477C50, Task *, sub_477C50, (void *owner, int a, int id, int ammo, char b));
+ORIG(0x477C50, Task *, Gun_New, (void *owner, int a, int id, int ammo, char b));
 ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
-ORIG(0x489630, uint8_t, AIDetection_GetEvent1, (void));
-ORIG(0x4B2760, long double, Math_Acos, (float x));
+ORIG(0x489630, uint8_t, AIDetection_GetEvent2, (void));
+ORIG(0x4B2760, long double, Math_ACosF, (float x));
 ORIG(0x4B3100, void, Vec3d_Normalize, (Vec3d *v));
 ORIG(0x4B3160, long double, Vec3d_LengthSq, (const Vec3d *v));
 ORIG(0x4B38E0, void, Matrix_SetEuler, (Matrix *m, float ax, float ay, float az));
@@ -27,7 +27,7 @@ ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
 ORIG(0x4B8A80, char *, Script_GetArgString, (void *args, int i, char *buf, int size));
 ORIG(0x4C3440, Vec3d *, DynCubeObj_GetPosition, (void *obj));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, void *c));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, void *c));
 ORIG(0x4C56D0, uint8_t, RigidDynCubeObj_GetEvent0, (void));
 ORIG(0x4C56E0, uint8_t, RigidDynCubeObj_GetEvent1, (void));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model));
@@ -42,8 +42,8 @@ ORIG(0x4E6C00, void, Sound_Stop, (void *sound));
 ORIG(0x4E6C30, void, Sound_SetPos, (void *sound, Vec3d *pos));
 ORIG(0x4F2050, void, WeaponSlots_Init, (void **slots));
 ORIG(0x4F2060, Task *, WeaponSlots_Get, (void **slots, int i));
-ORIG(0x4F2140, void, sub_4F2140, (void *owner, void **slots, int a));
-ORIG(0x4F2310, void, sub_4F2310, (Task *w, Vec3d *pos, Matrix *m));
+ORIG(0x4F2140, void, WeaponSlots_SelectNext, (void *owner, void **slots, int a));
+ORIG(0x4F2310, void, Weapon_Move, (Task *w, Vec3d *pos, Matrix *m));
 
 #define VEHICLEPART_DELETE ((void *)0x426860)
 
@@ -148,10 +148,10 @@ void AIStationaryGun_Create(AIStationaryGun *g, PartCreateArg *arg)
     g->pitch = 0;
     g->yaw = 0;
     WeaponSlots_Init(g->weapons);
-    sub_477C50(g, 0, *WeaponType_FindByKey(g->def->weapon), g->def->ammo, 0);
-    sub_4F2140(g, g->weapons, 0);
+    Gun_New(g, 0, *WeaponType_FindByKey(g->def->weapon), g->def->ammo, 0);
+    WeaponSlots_SelectNext(g, g->weapons, 0);
     AIStationaryGun_PlaceInitial(g, &g->owner->matrix);
-    sub_4C4950(g, g, g->owner);
+    RigidDynCubeObj_CreateMagicObjs(g, g, g->owner);
     g->sound = NULL;
     g->hold = 0;
     g->spin = 0;
@@ -181,7 +181,7 @@ void AIStationaryGun_PlaceInitial(AIStationaryGun *g, Matrix *parent)
     mat_mul(&a, &g->local, &r, 1, 1, 1);
     mat_mul_col0_ext(col0, &g->local, &r, 1, 1, 1);
     mat_mul_col0(&r, parent, &a, col0, 1, 0, 1);
-    sub_4F2310(w, &pos, &r);
+    Weapon_Move(w, &pos, &r);
     g->muzzlePos = pos;
     g->muzzleMatrix = r;
 }
@@ -223,7 +223,7 @@ void AIStationaryGun_Run(AIStationaryGun *g)
 
     WeaponSlots_Get(g->weapons, 0);
     det = NULL;
-    fn = HANDLER(AIDetection_GetEvent1(), g->owner->task.type);
+    fn = HANDLER(AIDetection_GetEvent2(), g->owner->task.type);
     if (fn)
         fn(g->owner, &det);
     if (!det)
@@ -253,7 +253,7 @@ void AIStationaryGun_Run(AIStationaryGun *g)
             v.z = 0;
             Vec3d_Normalize(&v);
             Vec3d_Normalize(&d);
-            pitch = (float)Math_Acos((float)((long double)v.z * d.z + (long double)v.y * d.y
+            pitch = (float)Math_ACosF((float)((long double)v.z * d.z + (long double)v.y * d.y
                                              + (long double)v.x * d.x));
             if (d.z < 0.0)
                 pitch = -pitch;
@@ -485,7 +485,7 @@ void AIStationaryGun_PlaceWeapon(AIStationaryGun *g)
         mat_mul(&t, &m, &r, 0, 0, 0);
         m = t;
     }
-    sub_4F2310(w, &pos, &m);
+    Weapon_Move(w, &pos, &m);
     g->muzzlePos = pos;
     g->muzzleMatrix = m;
 }

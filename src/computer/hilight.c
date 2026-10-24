@@ -7,7 +7,7 @@ ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
-ORIG(0x46B4D0, char *, sub_46B4D0, (void));
+ORIG(0x46B4D0, char *, ComputerRes_Get, (void));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4A5490, int, crt_atoi, (const char *s));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -18,7 +18,7 @@ ORIG(0x4C1790, void, QTaskList_Add, (void *list, void *item));
 ORIG(0x4C17C0, void, QTaskList_Remove, (void *list, void *item));
 ORIG(0x4C1800, void *, QTaskList_New, (int max));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
-ORIG(0x4F0F00, void *, Param_Enum, (void));
+ORIG(0x4F0F00, void *, Param_DropDownCombo, (void));
 ORIG(0x4F0FC0, void *, Param_VarString, (void));
 ORIG(0x4F0FE0, void *, Param_String32, (void));
 ORIG(0x4F0FF0, void *, Param_String256, (void));
@@ -32,7 +32,7 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *extra));
 ORIG(0x4F1320, void, VarString_Init, (VarString *v));
 ORIG(0x4F1340, void, VarString_Free, (VarString *v));
-ORIG(0x5034D0, uint16_t, Position_GetType, (void));
+ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
 #define MAX_IDS 64
 #define NUM_ICONS 19
@@ -84,8 +84,8 @@ void ComputerHilight_Open(void)
     uint8_t ev;
 
     gHilightIcons.count = NUM_ICONS;
-    gHilightIcons.names = (char **)(sub_46B4D0() + 0x4B0);
-    gHilightType = TaskType_New("ComputerHilight", sizeof(ComputerHilight), Position_GetType(), 0);
+    gHilightIcons.names = (char **)(ComputerRes_Get() + 0x4B0);
+    gHilightType = TaskType_New("ComputerHilight", sizeof(ComputerHilight), EditorRigidObj_GetType(), 0);
     TaskType_SetHandler(gHilightType, 0, ComputerHilight_Create);
     TaskType_SetHandler2(gHilightType, 2, ComputerHilight_Delete);
     TaskType_SetHandler(gHilightType, Param_GetTableEvent(), ComputerHilight_GetParams);
@@ -96,7 +96,7 @@ void ComputerHilight_Open(void)
     ParamTable_Add(gHilightParams, &h, &h.pos, Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gHilightParams, &h, &h.cond, Param_VarString(), 7, NULL);
     ParamTable_Add(gHilightParams, &h, h.idText, Param_String256(), 7, NULL);
-    ParamTable_Add(gHilightParams, &h, &h.icon, Param_Enum(), 7, &gHilightIcons);
+    ParamTable_Add(gHilightParams, &h, &h.icon, Param_DropDownCombo(), 7, &gHilightIcons);
     ParamTable_Add(gHilightParams, &h, h.marker, Param_String32(), 7, NULL);
     ParamTable_Add(gHilightParams, &h, h.color, Param_String32(), 7, NULL);
     ParamTable_Add(gHilightParams, &h, h.text, Param_String256(), 7, NULL);
@@ -149,8 +149,8 @@ void ComputerHilight_Changed(ComputerHilight *h)
     h->iconSprite = NULL;
     if (h->icon) {
         for (i = 0; i < NUM_ICONS; i++) {
-            if (!strcmp(h->icon, ((char **)(sub_46B4D0() + 0x4B0))[i])) {
-                h->iconSprite = sub_46B4D0() + 0x2E8 + i * 0x18;
+            if (!strcmp(h->icon, ((char **)(ComputerRes_Get() + 0x4B0))[i])) {
+                h->iconSprite = ComputerRes_Get() + 0x2E8 + i * 0x18;
                 break;
             }
         }

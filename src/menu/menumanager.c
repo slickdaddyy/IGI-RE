@@ -21,34 +21,34 @@ ORIG(0x401BE0, Task *, Task_FindChild, (void *task, uint16_t type));
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
 ORIG(0x401D80, void, Task_Broadcast, (void *task, uint8_t slot, void *arg));
 ORIG(0x402820, void, FramesSet, (int frames));
-ORIG(0x402870, int, sub_402870, (void));
-ORIG(0x4028A0, void, sub_4028A0, (int request));
+ORIG(0x402870, int, Flow_GetFps, (void));
+ORIG(0x4028A0, void, Flow_SetRequest, (int request));
 ORIG(0x406220, void *, Profile_GetActive, (void));
 ORIG(0x4062E0, int, Profile_GetLanguage, (void));
 ORIG(0x406310, int, Config_GetLanguageCount, (void));
 ORIG(0x406320, const char *, Config_GetLanguageName, (int i));
-ORIG(0x416A70, int, sub_416A70, (int i));
-ORIG(0x416D50, char, sub_416D50, (void));
-ORIG(0x416D60, void, sub_416D60, (char on));
-ORIG(0x417590, void, sub_417590, (MenuManager *mm, int all));
-ORIG(0x417660, void, sub_417660, (MenuManager *mm, void *window));
-ORIG(0x424E40, void, sub_424E40, (Task *pointer, Sprite *sprite));
-ORIG(0x424E50, void, sub_424E50, (Task *pointer, int *x, int *y, int *buttons, int *prev));
-ORIG(0x463170, char, sub_463170, (int unk));
-ORIG(0x489460, char, sub_489460, (void));
-ORIG(0x48A8A0, void, sub_48A8A0, (void));
-ORIG(0x48A8C0, void, sub_48A8C0, (void));
-ORIG(0x48A8D0, int, MenuKeys_Pop, (void));
-ORIG(0x48A910, int, MenuKeys_Count, (void));
-ORIG(0x491A30, void, sub_491A30, (void));
+ORIG(0x416A70, int, Game_GetPlayer, (int i));
+ORIG(0x416D50, char, Game_IsPaused, (void));
+ORIG(0x416D60, void, Game_SetPaused, (char on));
+ORIG(0x417590, void, MenuManager_Refresh, (MenuManager *mm, int all));
+ORIG(0x417660, void, MenuManager_SendEvent910, (MenuManager *mm, void *window));
+ORIG(0x424E40, void, Cursor_SetSprite, (Task *pointer, Sprite *sprite));
+ORIG(0x424E50, void, Cursor_GetState, (Task *pointer, int *x, int *y, int *buttons, int *prev));
+ORIG(0x463170, char, Human_IsDead, (int unk));
+ORIG(0x489460, char, LevelFlow_IsFailed, (void));
+ORIG(0x48A8A0, void, Keys_Uninstall, (void));
+ORIG(0x48A8C0, void, Keys_Clear, (void));
+ORIG(0x48A8D0, int, Keys_Pop, (void));
+ORIG(0x48A910, int, Keys_GetCount, (void));
+ORIG(0x491A30, void, Display_Clear, (void));
 ORIG(0x491A90, void, Display_SetMode, (void *mode));
-ORIG(0x491E70, void, sub_491E70, (int a, int b, int c));
-ORIG(0x4950E0, int, sub_4950E0, (void));
-ORIG(0x497410, int, sub_497410, (const char *name));
-ORIG(0x497450, int, sub_497450, (const char *name));
-ORIG(0x4974A0, void, sub_4974A0, (void *p));
-ORIG(0x4975F0, void, sub_4975F0, (void *p));
-ORIG(0x497620, void, sub_497620, (void *p, int on));
+ORIG(0x491E70, void, Display_SetClearColor, (int a, int b, int c));
+ORIG(0x4950E0, int, Direct3D_GetRenderMode, (void));
+ORIG(0x497410, int, Sound_HashName, (const char *name));
+ORIG(0x497450, int, Sound_HashBucket, (const char *name));
+ORIG(0x4974A0, void, SoundParams_Init, (void *p));
+ORIG(0x4975F0, void, Scene_Free, (void *p));
+ORIG(0x497620, void, Scene_Select, (void *p, int on));
 ORIG(0x4B5D80, void, Resource_ForEach, (const char *path, void *fn, void *arg));
 ORIG(0x4B5F00, void *, Resource_Load, (const char *path, int *size));
 ORIG(0x4B63D0, void, Resource_Flush, (void *data));
@@ -63,15 +63,15 @@ ORIG(0x4B85B0, void, Script_Run, (void *script));
 ORIG(0x4B8920, void, Script_UnregisterSymbol, (const char *name));
 ORIG(0x4B8930, void, Script_SetSymbolContext, (const char *name, void *value));
 ORIG(0x4B9120, int, Expr_EvalInt, (void *e));
-ORIG(0x4E6750, void, sub_4E6750, (const char *res));
-ORIG(0x4E67D0, void, sub_4E67D0, (const char *res));
-ORIG(0x4E6D60, void, sub_4E6D60, (int *music));
-ORIG(0x4E7130, void, sub_4E7130, (void));
-ORIG(0x4E7180, void, Sound_Play, (const char *name, int unk1, int unk2));
-ORIG(0x4E7540, void, sub_4E7540, (void *mode, int unk));
+ORIG(0x4E6750, void, Sound_LoadResource, (const char *res));
+ORIG(0x4E67D0, void, Sound_FreeResource, (const char *res));
+ORIG(0x4E6D60, void, SoundHandle_Play, (int *music));
+ORIG(0x4E7130, void, Sound_StopAll, (void));
+ORIG(0x4E7180, void, Sound_PlayName, (const char *name, int unk1, int unk2));
+ORIG(0x4E7540, void, Screen_RequestMode, (void *mode, int unk));
 ORIG(0x4F0E50, void, ScriptInit, (const char *name, int unk1, int unk2, int unk3));
-ORIG(0x4F1030, MenuWindow *, Window_Find, (int id));
-ORIG(0x4F1050, int, Window_IndexOf, (void *task));
+ORIG(0x4F1030, MenuWindow *, Task_FindById, (int id));
+ORIG(0x4F1050, int, Task_GetId, (void *task));
 
 typedef struct ResourceInfo {
     const char *name;
@@ -170,23 +170,23 @@ void MenuManager_Delete(MenuManager *mm)
     TaskFn fn;
 
     if (mm->ownsDisplay)
-        sub_4E7130();
+        Sound_StopAll();
     if (mm->unk26BE) {
-        sub_48A8A0();
+        Keys_Uninstall();
         mm->unk26BE = 0;
     }
     MenuManager_Free(mm->pointer);
     MenuManager_FreeResources(mm);
-    sub_4975F0(mm->unk266C);
+    Scene_Free(mm->unk266C);
     if (mm->savedFrames > -1) {
         int a = gSavedDisplay[0], b = gSavedDisplay[1], c = gSavedDisplay[2];
 
-        sub_491E70(0, 0, 0);
-        sub_491A30();
-        sub_491E70(a, b, c);
+        Display_SetClearColor(0, 0, 0);
+        Display_Clear();
+        Display_SetClearColor(a, b, c);
         FramesSet(mm->savedFrames);
     }
-    if (Window_IndexOf(mm) >= 0) {
+    if (Task_GetId(mm) >= 0) {
         fn = HANDLER(Level_GetEventDAC(), mm->task.type);
         if (fn)
             ((void (*)(void *))fn)(mm);
@@ -231,7 +231,7 @@ void MenuManager_FreeResources(MenuManager *mm)
     mm->strings = NULL;
     if (mm->soundsLoaded) {
         Mem_PushMode(1);
-        sub_4E67D0(SOUNDS_RES);
+        Sound_FreeResource(SOUNDS_RES);
         mm->soundsLoaded = 0;
         Mem_PopMode();
     }
@@ -254,12 +254,12 @@ HOOK(0x417B80, MenuManager_FreeResources);
 /* params changed; *reload is set when the resources must be loaded again */
 void MenuManager_Update(MenuManager *mm, const char *reload)
 {
-    mm->screenTask = Window_Find(mm->screen);
+    mm->screenTask = Task_FindById(mm->screen);
     if (reload && *reload)
         MenuManager_LoadResources(mm);
     else
-        sub_417660(mm, mm->screenTask);
-    sub_424E40(mm->pointer, MenuManager_FindSprite(mm, "pointer.spr"));
+        MenuManager_SendEvent910(mm, mm->screenTask);
+    Cursor_SetSprite(mm->pointer, MenuManager_FindSprite(mm, "pointer.spr"));
     mm->language = Profile_GetLanguage();
 }
 HOOK(0x417CF0, MenuManager_Update);
@@ -274,7 +274,7 @@ void MenuManager_LoadResources(MenuManager *mm)
     if (slash)
         *slash = 0;
     MenuManager_FreeResources(mm);
-    sub_4E6750(SOUNDS_RES);
+    Sound_LoadResource(SOUNDS_RES);
     mm->soundsLoaded = 1;
     mm->menuRes = Resource_Load(mm->resPath, NULL);
     Resource_ForEach(dir, MenuManager_AddResource, mm);
@@ -358,7 +358,7 @@ static void idle(MenuManager *mm)
 {
     int hit = KEY_HIT(1);
 
-    if (sub_489460() && !sub_463170(sub_416A70(0))) {
+    if (LevelFlow_IsFailed() && !Human_IsDead(Game_GetPlayer(0))) {
         if (gMenuDemoTimer > 150) {
             hit = 1;
             gMenuDemoTimer = 0;
@@ -366,17 +366,17 @@ static void idle(MenuManager *mm)
             gMenuDemoTimer++;
         }
     }
-    if (sub_463170(sub_416A70(0))) {
+    if (Human_IsDead(Game_GetPlayer(0))) {
         hit |= KEY_HIT(0x39);
         hit |= KEY_HIT(0x1C);
     }
     if (hit) {
         mm->screenTask = NULL;
         MenuManager_Reset(mm);
-        if (!sub_416D50())
-            sub_416D60(1);
-    } else if (sub_416D50()) {
-        sub_416D60(0);
+        if (!Game_IsPaused())
+            Game_SetPaused(1);
+    } else if (Game_IsPaused()) {
+        Game_SetPaused(0);
     }
 }
 
@@ -392,10 +392,10 @@ void MenuManager_Run(MenuManager *mm)
     run(mm->pointer);
     if (mm->idleTimeout) {
         if (input_same(in, &gMenuLastInput) && mm->focus == gMenuLastFocus && mm->screenTask == gMenuLastScreen &&
-            !MenuKeys_Count() && !mm->busy && !mm->depth) {
+            !Keys_GetCount() && !mm->busy && !mm->depth) {
             if (gMenuIdleTimer > 3600) {
                 MenuManager_Free(mm);
-                sub_4028A0(8);
+                Flow_SetRequest(8);
                 gMenuIdleTimer = 0;
                 return;
             }
@@ -417,7 +417,7 @@ void MenuManager_Run(MenuManager *mm)
         goto faded_out;
     case MENU_RUN:
         MenuManager_ReadInput(mm);
-        sub_424E50(mm->pointer, &in->x, &in->y, &buttons, &prev);
+        Cursor_GetState(mm->pointer, &in->x, &in->y, &buttons, &prev);
         in->button = buttons;
         in->pressed = (buttons != prev) & (unsigned char)buttons;
         in->released = buttons == 0 && buttons != prev;
@@ -430,7 +430,7 @@ void MenuManager_Run(MenuManager *mm)
         in->button = 0;
         break;
     case MENU_RELOAD:
-        sub_417590(mm, 0);
+        MenuManager_Refresh(mm, 0);
     faded_out:
         mm->fade = 0;
         mm->fadeShown = 0;
@@ -443,7 +443,7 @@ void MenuManager_Run(MenuManager *mm)
             mm->fade += 2 - (mm->fastFade != 0);
         if (mm->fadeShownPrev == 16) {
             mm->state = MENU_RUN;
-            sub_48A8C0();
+            Keys_Clear();
         }
         return;
     case MENU_FADE_OUT:
@@ -460,19 +460,19 @@ void MenuManager_Run(MenuManager *mm)
         return;
     case MENU_QUIT:
         MenuManager_Free(mm);
-        sub_4028A0(1);
+        Flow_SetRequest(1);
         return;
     case MENU_QUIT_TO_MAIN:
-        sub_4028A0(6);
+        Flow_SetRequest(6);
         mm->state = MENU_IDLE;
         return;
     case MENU_RESTART_LEVEL:
-        sub_4028A0(5);
+        Flow_SetRequest(5);
         mm->state = MENU_IDLE;
         return;
     case MENU_START_GAME:
         MenuManager_Free(mm);
-        sub_4028A0(4);
+        Flow_SetRequest(4);
         return;
     case MENU_OPEN_POPUP:
         MenuManager_OpenPopup(mm);
@@ -505,12 +505,12 @@ HOOK(0x418080, MenuManager_Run);
 void MenuManager_PlayMusic(MenuManager *mm)
 {
     if (!mm->music[2]) {
-        mm->music[0] = sub_497450("menu_music");
-        mm->music[1] = sub_497410("menu_music");
+        mm->music[0] = Sound_HashBucket("menu_music");
+        mm->music[1] = Sound_HashName("menu_music");
         mm->music[3] = 0x30;
-        sub_4974A0(mm->unk2840);
+        SoundParams_Init(mm->unk2840);
     }
-    sub_4E6D60(mm->music);
+    SoundHandle_Play(mm->music);
 }
 HOOK(0x418520, MenuManager_PlayMusic);
 
@@ -529,8 +529,8 @@ void MenuManager_ReadInput(MenuManager *mm)
         in->wheel = 0;
     if (!mm->inputEnabled)
         return;
-    while (MenuKeys_Count()) {
-        int key = MenuKeys_Pop();
+    while (Keys_GetCount()) {
+        int key = Keys_Pop();
 
         /* horizontal popups turn left/right into up/down */
         if (mm->popupTask && DialogWindow_IsHorizontal(mm->popupTask)) {
@@ -566,13 +566,13 @@ void MenuManager_ReadInput(MenuManager *mm)
             if (++i >= mm->itemCount)
                 i = 0;
             MenuManager_SetFocus(mm, i);
-            Sound_Play("menu_high", 0, 0);
+            Sound_PlayName("menu_high", 0, 0);
             break;
         case -3:
             if (--i < 0)
                 i = mm->itemCount - 1;
             MenuManager_SetFocus(mm, i);
-            Sound_Play("menu_high", 0, 0);
+            Sound_PlayName("menu_high", 0, 0);
             break;
         }
     }
@@ -593,10 +593,10 @@ HOOK(0x4186E0, MenuManager_SetFocus);
 void MenuManager_OpenScreen(MenuManager *mm, int screen, int checkLanguage)
 {
     mm->screen = screen;
-    mm->screenTask = Window_Find(screen);
+    mm->screenTask = Task_FindById(screen);
     if (!mm->screenTask)
         return;
-    sub_417660(mm, mm->screenTask);
+    MenuManager_SendEvent910(mm, mm->screenTask);
     if (checkLanguage)
         MenuManager_CheckLanguage(mm);
     MenuManager_CollectItems(mm, mm->screenTask);
@@ -619,7 +619,7 @@ void MenuManager_CheckLanguage(MenuManager *mm)
         ((void (*)(void *))fn)(w);
     mm->language = Profile_GetLanguage();
     if (mm->language != language)
-        sub_417590(mm, 1);
+        MenuManager_Refresh(mm, 1);
 }
 HOOK(0x418790, MenuManager_CheckLanguage);
 
@@ -653,13 +653,13 @@ void MenuManager_OpenPopup(MenuManager *mm)
     MenuWindow *w;
     TaskFn fn;
 
-    w = mm->popupTask = Window_Find(mm->popup);
+    w = mm->popupTask = Task_FindById(mm->popup);
     if (!w)
         return;
     fn = HANDLER(MenuWindow_GetEvent914(), w->task.type);
     if (fn)
         ((void (*)(void *))fn)(w);
-    sub_417660(mm, mm->popupTask);
+    MenuManager_SendEvent910(mm, mm->popupTask);
     MenuManager_CollectItems(mm, mm->popupTask);
     mm->input.pressed = 0;
     mm->input.released = 0;
@@ -676,7 +676,7 @@ void MenuManager_ClosePopup(MenuManager *mm)
         return;
     mm->popupTask = NULL;
     if (mm->screenTask) {
-        sub_417660(mm, mm->screenTask);
+        MenuManager_SendEvent910(mm, mm->screenTask);
         MenuManager_CollectItems(mm, mm->screenTask);
     }
 }
@@ -690,7 +690,7 @@ static void draw(void *task)
 void MenuManager_Draw(MenuManager *mm)
 {
     if (mm->screenTask && mm->state != MENU_IDLE) {
-        sub_497620(mm->unk266C, 1);
+        Scene_Select(mm->unk266C, 1);
         if (mm->state == MENU_RUN)
             draw(mm->pointer);
         if (mm->popupTask) {
@@ -753,12 +753,12 @@ MenuManager *MenuManager_New(Task *parent, const char *script, char ownsDisplay,
         const char *str;
 
         memset(&mode, 0, sizeof(mode));
-        mode.renderMode = sub_4950E0();
+        mode.renderMode = Direct3D_GetRenderMode();
         mode.width = 640;
         mode.height = 480;
         mode.depth = 16;
         mode.unkC = 1;
-        mode.renderMode = sub_4950E0();
+        mode.renderMode = Direct3D_GetRenderMode();
         mode.unk16 = 1;
         mode.unk14 = 1;
         str = p->gfxDriver;
@@ -769,7 +769,7 @@ MenuManager *MenuManager_New(Task *parent, const char *script, char ownsDisplay,
         if (!str)
             str = gEmptyString;
         strcpy(mode.device, str);
-        sub_4E7540(&mode, 0);
+        Screen_RequestMode(&mode, 0);
         Display_SetMode(&mode);
     }
     s = Script_Load(script);
@@ -792,7 +792,7 @@ MenuManager *MenuManager_New(Task *parent, const char *script, char ownsDisplay,
     gMenuKeepScreen = 0;
     if (ownsDisplay) {
         mm->backgroundFX = BackgroundFX_New(&mm->task);
-        mm->savedFrames = sub_402870();
+        mm->savedFrames = Flow_GetFps();
         FramesSet(60);
         mm->ownsDisplay = 1;
     } else {
@@ -906,7 +906,7 @@ void MenuManager_FocusItem(MenuManager *mm, MenuWindow *item)
         if (mm->items[i] == item) {
             if (mm->itemIndex != i) {
                 MenuManager_SetFocus(mm, i);
-                Sound_Play("menu_high", 0, 0);
+                Sound_PlayName("menu_high", 0, 0);
             }
             return;
         }
@@ -951,7 +951,7 @@ HOOK(0x419070, MenuExpr_Eval);
 void MenuManager_RefreshScreen(MenuManager *mm)
 {
     if (mm->screenTask)
-        sub_417660(mm, mm->screenTask);
+        MenuManager_SendEvent910(mm, mm->screenTask);
 }
 HOOK(0x419090, MenuManager_RefreshScreen);
 

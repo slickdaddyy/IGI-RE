@@ -74,9 +74,9 @@ ORIG(0x4974A0, void, SoundParams_Init, (SoundParams *p));
 ORIG(0x4E6290, void, SoundInst_Push, (SoundInst *s, SoundInst **list));
 ORIG(0x4E63B0, void, SoundInst_Unlink, (SoundInst *s, SoundInst **list));
 ORIG(0x4E6630, uint8_t, Sound_GetFindEvent, (void));
-ORIG(0x4E9EB0, uint16_t, SoundTriggerOnce_GetType, (void));
-ORIG(0x4EAD10, uint16_t, SoundGraph_GetType, (void));
-ORIG(0x4EBA80, uint16_t, SoundGroup_GetType, (void));
+ORIG(0x4E9EB0, uint16_t, SoundDefTriggerOnce_GetType, (void));
+ORIG(0x4EAD10, uint16_t, SoundDefGraph_GetType, (void));
+ORIG(0x4EBA80, uint16_t, SoundDefGroup_GetType, (void));
 
 void SoundInst_Request(int id, int bucket, int hash, uint32_t flags, const SoundParams *params);
 
@@ -294,8 +294,8 @@ void Sound_PlayDefined(const char *name, uint32_t flags, const SoundParams *para
         Task *d = gSoundDefs->items[i];
         ((TaskFn2)gTaskHandlers[Sound_GetFindEvent()][d->type])(d, &arg);
     }
-    if (!arg.found || arg.found->type == SoundGroup_GetType() || arg.found->type == SoundGraph_GetType() ||
-        arg.found->type == SoundTriggerOnce_GetType())
+    if (!arg.found || arg.found->type == SoundDefGroup_GetType() || arg.found->type == SoundDefGraph_GetType() ||
+        arg.found->type == SoundDefTriggerOnce_GetType())
         return;
     sample = (const char *)arg.found + 0xFF;
     bucket = Sound_HashBucket(sample);

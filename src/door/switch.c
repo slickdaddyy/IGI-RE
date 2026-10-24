@@ -17,8 +17,8 @@ ORIG(0x416820, uint8_t, Game_GetEvent6, (void));
 ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
 ORIG(0x4168A0, void *, Game_GetTaskList0, (void));
 ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
-ORIG(0x47E6F0, uint8_t, sub_47E6F0, (void));
-ORIG(0x4871C0, void, sub_4871C0, (char *p, char *q));
+ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
+ORIG(0x4871C0, void, StatusScreen_DrawActionIcon, (char *p, char *q));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B7EE0, void, Script_RegisterBool8, (const char *name, char *value));
 ORIG(0x4B80A0, void, Script_RemoveSymbol, (const char *name));
@@ -36,8 +36,8 @@ ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *obj));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4DCCB0, void, Sector_AddObject, (void *sector, void *obj, Vec3d *pos));
-ORIG(0x4DCDD0, void, sub_4DCDD0, (void *obj));
-ORIG(0x4DCF00, void, sub_4DCF00, (void *world, void *obj, Vec3d *pos));
+ORIG(0x4DCDD0, void, Sector_RemoveObject, (void *obj));
+ORIG(0x4DCF00, void, Sector_MoveObject, (void *world, void *obj, Vec3d *pos));
 ORIG(0x4E0830, uint16_t, SectorInteriorObject_GetType, (void));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
@@ -112,7 +112,7 @@ void Switch_Open(void)
     TaskType_SetHandler2(gSwitchType, Level_GetEventDAC(), Switch_RemoveSymbols);
     TaskType_SetHandler(gSwitchType, RigidDynCubeObj_GetEvent4(), Switch_MoveHandler);
     TaskType_SetHandler(gSwitchType, ComputerObject_GetEvent0(), Terminal_MapHandler);
-    TaskType_SetHandler(gSwitchType, sub_47E6F0(), NULL);
+    TaskType_SetHandler(gSwitchType, BulletHole_GetEvent(), NULL);
     gSwitchParams = ParamTable_New(10);
     ParamTable_Add(gSwitchParams, NULL, FIELD(place), Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gSwitchParams, NULL, FIELD(matrix), Param_Real32x9(), 7, NULL);
@@ -199,7 +199,7 @@ void Switch_DeleteHandler(Switch *s)
             fn(s);
     }
     VarString_Free(&s->on);
-    sub_4DCDD0(s);
+    Sector_RemoveObject(s);
     DynCube_Remove(s->o.sector, s);
 }
 HOOK(0x445270, Switch_DeleteHandler);
@@ -230,7 +230,7 @@ void Switch_ParamsChanged(Switch *s)
     scale = max_scale(&s->o);
     radius = VirModel_GetRadius(s->o.model) * scale;
     DynCube_Move(s->o.sector, s, &s->place, radius);
-    sub_4DCF00(s->o.sector, s, DynCubeObj_GetPosition(s));
+    Sector_MoveObject(s->o.sector, s, DynCubeObj_GetPosition(s));
     s->isLastOn = s->isOn;
     s->o.matrix = s->matrix;
     VarString_Bind(&s->on, s);
@@ -247,7 +247,7 @@ HOOK(0x445730, Switch_CheckUse);
 
 void sub_445820(void *task, char **arg)
 {
-    sub_4871C0(*arg, *arg + 0x44C);
+    StatusScreen_DrawActionIcon(*arg, *arg + 0x44C);
 }
 HOOK(0x445820, sub_445820);
 

@@ -18,17 +18,17 @@ ORIG(0x4168E0, TaskArray *, Game_GetTaskList4, (void));
 ORIG(0x418E40, void *, MenuManager_FindFont, (void *mm, const char *name));
 ORIG(0x443660, TaskArray *, SCameraLens_GetList, (void));
 ORIG(0x447D20, uint16_t, Door_GetType, (void));
-ORIG(0x460C60, TaskArray *, sub_460C60, (void));
+ORIG(0x460C60, TaskArray *, Human_GetList, (void));
 ORIG(0x469450, int, Computer_DrawWrapped, (int x, int y, float z, int width, int unused, const char *text, void *font,
                                            int color));
-ORIG(0x46AB10, char *, sub_46AB10, (void));
-ORIG(0x46AB30, int16_t, sub_46AB30, (void));
-ORIG(0x46B4D0, char *, sub_46B4D0, (void));
+ORIG(0x46AB10, char *, ComputerMap_Get, (void));
+ORIG(0x46AB30, int16_t, ComputerMap_GetZoom, (void));
+ORIG(0x46B4D0, char *, ComputerRes_Get, (void));
 ORIG(0x46C070, void *, Computer_GetView, (void));
-ORIG(0x46EAD0, TaskArray *, sub_46EAD0, (void));
+ORIG(0x46EAD0, TaskArray *, GunHolder_GetList, (void));
 ORIG(0x491CF0, int *, Display_GetMode, (void));
 ORIG(0x491D40, long double, Display_GetAspect, (void));
-ORIG(0x498040, void, sub_498040, (float *out, float *in, float depth));
+ORIG(0x498040, void, TransContext_ScaleSize, (float *out, float *in, float depth));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B3C50, void, Matrix_GetEuler, (const Matrix *m, float *ax, float *ay, float *az));
 ORIG(0x4B50B0, void, QVertex_DrawFrame, (void *s, float x, float y, float r, float g, float b, float a, float z,
@@ -43,13 +43,13 @@ ORIG(0x4B6D00, int, Sprite_Height, (void *s));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
-ORIG(0x4D0A50, void, sub_4D0A50, (Vec3d *out, void *task, int i));
-ORIG(0x4D0D20, int, sub_4D0D20, (void *model));
-ORIG(0x4D2B80, void, sub_4D2B80, (void *fn));
-ORIG(0x4D2BD0, void, sub_4D2BD0, (void *fn));
-ORIG(0x4E1130, void, sub_4E1130, (Vec3d *a, Vec3d *b, float *colorA, float alphaA, float *colorB, float alphaB));
+ORIG(0x4D0A50, void, Mesh3D_GetWorldVertex, (Vec3d *out, void *task, int i));
+ORIG(0x4D0D20, int, ModelLod_GetVertexCount, (void *model));
+ORIG(0x4D2B80, void, QCube_AddCallback, (void *fn));
+ORIG(0x4D2BD0, void, QCube_RemoveCallback, (void *fn));
+ORIG(0x4E1130, void, Line3D_Draw2, (Vec3d *a, Vec3d *b, float *colorA, float alphaA, float *colorB, float alphaB));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
-ORIG(0x4E8210, char *, sub_4E8210, (void *view));
+ORIG(0x4E8210, char *, Viewport_GetCamera, (void *view));
 ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
 
 /* draws the map computer: which object lists to ask */
@@ -166,7 +166,7 @@ void ComputerObject_DrawLine(Obj *o)
     Vec3d a, b;
     int i;
 
-    if (!o->model || sub_4D0D20(*o->model) <= 10)
+    if (!o->model || ModelLod_GetVertexCount(*o->model) <= 10)
         return;
     if (o->task.type == Door_GetType()) {
         for (i = 0; i < 3; i++)
@@ -175,15 +175,15 @@ void ComputerObject_DrawLine(Obj *o)
         for (i = 0; i < 3; i++)
             color[i] = 0.5f;
     }
-    sub_4D0A50(&a, o, 10);
-    sub_4D0A50(&b, o, 11);
+    Mesh3D_GetWorldVertex(&a, o, 10);
+    Mesh3D_GetWorldVertex(&b, o, 11);
     a.x = a.x + o->pos.x;
     a.y = a.y + o->pos.y;
     a.z = a.z + o->pos.z;
     b.x = b.x + o->pos.x;
     b.y = b.y + o->pos.y;
     b.z = b.z + o->pos.z;
-    sub_4E1130(&a, &b, color, 1.0f, color, 1.0f);
+    Line3D_Draw2(&a, &b, color, 1.0f, color, 1.0f);
 }
 HOOK(0x467800, ComputerObject_DrawLine);
 
@@ -191,7 +191,7 @@ void ComputerObject_Notify(ObjList *l);
 
 void ComputerObject_Create(ComputerObject *o)
 {
-    sub_4D2B80(ComputerObject_Notify);
+    QCube_AddCallback(ComputerObject_Notify);
 }
 HOOK(0x4678F0, ComputerObject_Create);
 
@@ -214,7 +214,7 @@ HOOK(0x467900, ComputerObject_Notify);
 
 void ComputerObject_Delete(ComputerObject *o)
 {
-    sub_4D2BD0(ComputerObject_Notify);
+    QCube_RemoveCallback(ComputerObject_Notify);
 }
 HOOK(0x467960, ComputerObject_Delete);
 
@@ -231,7 +231,7 @@ HOOK(0x467960, ComputerObject_Delete);
 
 void ComputerObject_Draw(ComputerObject *o)
 {
-    char *view = sub_4E8210(Computer_GetView());
+    char *view = Viewport_GetCamera(Computer_GetView());
     MapQuery q;
     Task *t;
     TaskFn fn;
@@ -248,14 +248,14 @@ void ComputerObject_Draw(ComputerObject *o)
     q.text = NULL;
     q.text2 = NULL;
     if (o->flags & MAP_HUMANS)
-        SEND_LIST(sub_460C60, &q);
+        SEND_LIST(Human_GetList, &q);
     if (o->flags & MAP_TASKLIST4)
         SEND_LIST(Game_GetTaskList4, &q);
     if (o->flags & MAP_HILIGHTS)
         SEND_LIST(ComputerHilight_GetList, &q);
-    if ((o->flags & MAP_CAMERAS) && sub_46AB30() >= 1) {
+    if ((o->flags & MAP_CAMERAS) && ComputerMap_GetZoom() >= 1) {
         SEND_LIST(SCameraLens_GetList, &q);
-        t = *(Task **)(sub_46AB10() + 0xA4);
+        t = *(Task **)(ComputerMap_Get() + 0xA4);
         if (t)
             HANDLER(ComputerObject_GetEvent1(), t->type)(t, &q);
     }
@@ -267,7 +267,7 @@ void ComputerObject_Draw(ComputerObject *o)
             if (fn)
                 fn(Game_GetTaskList1()->items[i], &q);
         }
-        SEND_LIST(sub_46EAD0, &q);
+        SEND_LIST(GunHolder_GetList, &q);
     }
 }
 HOOK(0x467970, ComputerObject_Draw);
@@ -277,7 +277,7 @@ void ComputerObject_DrawVehicle(Obj *v, MapQuery *q)
 {
     float scale;
 
-    if (!sub_46AB30() || sub_46AB30() == 3 || !((char *)v)[0x745])
+    if (!ComputerMap_GetZoom() || ComputerMap_GetZoom() == 3 || !((char *)v)[0x745])
         return;
     q->pos = &v->pos;
     q->matrix = &v->matrix;
@@ -384,7 +384,7 @@ void ComputerObject_DrawMarker(MapQuery *q)
     ComputerObject_Project(out, in, q);
     sz[0] = size;
     sz[1] = size;
-    sub_498040(scr, sz, in[2]);
+    TransContext_ScaleSize(scr, sz, in[2]);
     Matrix_GetEuler(q->matrix, &ax, &ay, &az);
     QVertex_DrawPolyline(gMarkerShapes[marker].points, gMarkerShapes[marker].count, out[0], out[1], 0x1.0a3d7p+9f,
                          c[0], c[1], c[2], 0.75f, -az, scr[0], scr[1], 0x400C0000, -1);
@@ -417,11 +417,11 @@ void ComputerObject_DrawText(MapQuery *q)
     float in[3], out[2];
 
     to_view(in, q);
-    sub_46B4D0();
+    ComputerRes_Get();
     ComputerObject_Project(out, in, q);
-    if (sub_46AB30() == 1)
+    if (ComputerMap_GetZoom() == 1)
         draw_label(out, q->text);
-    else if (sub_46AB30() > 1)
+    else if (ComputerMap_GetZoom() > 1)
         draw_label(out, q->text2);
 }
 HOOK(0x4680B0, ComputerObject_DrawText);

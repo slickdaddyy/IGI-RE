@@ -71,12 +71,12 @@ ORIG(0x4CEA60, int, Model_GetInitMethod, (void));
 ORIG(0x4CEA70, int, Model_GetDeinitMethod, (void));
 ORIG(0x4CEA80, int, Model_GetLoadMethod, (void));
 ORIG(0x4CEA90, int, Model_GetUnloadMethod, (void));
-ORIG(0x4CFC30, int, Mesh_GetDrawRigidMethod, (void));
-ORIG(0x4CFC40, int, Mesh_GetDrawBoneMethod, (void));
-ORIG(0x4CFC50, int, Mesh_GetDrawSplineMethod, (void));
-ORIG(0x4CFC60, int, Mesh_GetDrawLightmapMethod, (void));
-ORIG(0x4D14D0, uint8_t, sub_4D14D0, (void));
-ORIG(0x4E5350, uint16_t, sub_4E5350, (void));
+ORIG(0x4CFC30, int, Mesh3D_GetDrawRigidMethod, (void));
+ORIG(0x4CFC40, int, Mesh3D_GetDrawBoneMethod, (void));
+ORIG(0x4CFC50, int, Mesh3D_GetDrawSplineMethod, (void));
+ORIG(0x4CFC60, int, Mesh3D_GetExcludeMethod, (void));
+ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
+ORIG(0x4E5350, uint16_t, SplineObjSegment_GetType, (void));
 
 #define gFogDensity VAR(float, 0xB46D04)
 #define gVBNormal VAR(DynVB, 0xBCAD90)
@@ -335,15 +335,15 @@ void Direct3DRender_Init(void)
     uint8_t slot;
     int m, i;
 
-    m = Mesh_GetDrawRigidMethod();
+    m = Mesh3D_GetDrawRigidMethod();
     RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_DrawRigidMesh);
-    m = Mesh_GetDrawBoneMethod();
+    m = Mesh3D_GetDrawBoneMethod();
     RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_DrawBoneMesh);
-    m = Mesh_GetDrawSplineMethod();
+    m = Mesh3D_GetDrawSplineMethod();
     RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_DrawSplineMesh);
     RenderMode_SetMethod(Direct3D_GetRenderMode(), gGenericUVFromRenderModeUV, Direct3D_ConvertUV);
     RenderMode_SetMethod(Direct3D_GetRenderMode(), gRenderModeUVFromGenericUV, Direct3D_ConvertUV);
-    m = Mesh_GetDrawLightmapMethod();
+    m = Mesh3D_GetExcludeMethod();
     RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_DrawLightmapMesh);
     m = Model_GetLoadMethod();
     RenderMode_SetMethod(Direct3D_GetRenderMode(), m, Direct3D_ModelLoad);
@@ -367,7 +367,7 @@ void Direct3DRender_Init(void)
     VAR(int, 0x7205BC) = PtrList_Add(gD3DListC, (void *)0x49DB20);
     VAR(int, 0x723508) = PtrList_Add(gD3DListC, (void *)0x49DDF0);
     Direct3D_AddRestoreCallback((void *)0x49BD30);
-    slot = sub_4D14D0();
-    TaskType_SetHandler(sub_4E5350(), slot, (void *)0x49BE10);
+    slot = QCube_GetNearClipEvent();
+    TaskType_SetHandler(SplineObjSegment_GetType(), slot, (void *)0x49BE10);
 }
 HOOK(0x49BB40, Direct3DRender_Init);

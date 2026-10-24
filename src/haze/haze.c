@@ -13,8 +13,8 @@ ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4B2A10, long double, Vec3_FastLength, (const float *v));
-ORIG(0x4C6E70, void, sub_4C6E70, (void *world, void *obj, Vec3d *center, const Vec3d *min, const Vec3d *max));
-ORIG(0x4C7350, void, sub_4C7350, (void *world, void *obj, Vec3d *center, const Vec3d *min, const Vec3d *max,
+ORIG(0x4C6E70, void, DynCube_MoveBox, (void *world, void *obj, Vec3d *center, const Vec3d *min, const Vec3d *max));
+ORIG(0x4C7350, void, DynCube_AddBox, (void *world, void *obj, Vec3d *center, const Vec3d *min, const Vec3d *max,
                                   int unk));
 ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *obj));
 
@@ -67,7 +67,7 @@ HazeLayer *HazeLayer_New(const Vec3d *min, const Vec3d *max, const float *color,
     t->world = gWorld;
     t->visible = 0;
     center(&c, min, max);
-    sub_4C7350(t->world, t, &c, min, max, 4);
+    DynCube_AddBox(t->world, t, &c, min, max, 4);
     return t;
 }
 HOOK(0x4D9FC0, HazeLayer_New);
@@ -79,7 +79,7 @@ void HazeLayer_Set(HazeLayer *t, const Vec3d *min, const Vec3d *max, const float
 
     set_fields(t, color, density, bottom, top);
     center(&c, min, max);
-    sub_4C6E70(t->world, t, &c, min, max);
+    DynCube_MoveBox(t->world, t, &c, min, max);
 }
 HOOK(0x4DA0A0, HazeLayer_Set);
 

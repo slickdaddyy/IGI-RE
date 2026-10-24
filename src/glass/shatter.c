@@ -5,14 +5,14 @@
 
 ORIG(0x4012A0, void *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
-ORIG(0x49A450, void *, sub_49A450, (int world, int a, Vec3d *pos, Matrix *m, void *polys, int count, int b, int c,
+ORIG(0x49A450, void *, PolyList_New, (int world, int a, Vec3d *pos, Matrix *m, void *polys, int count, int b, int c,
                                     int d, int e, int f));
 ORIG(0x4B38E0, void, Matrix_SetEuler, (Matrix *m, float ax, float ay, float az));
 ORIG(0x4B4720, void, Random_Init, (void *r));
 ORIG(0x4B4770, long double, Random_Float, (void *r));
 ORIG(0x4B47C0, int, Random_Int, (void *r, int n));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (void));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 
 /* one flying piece of glass */
 typedef struct Shard {
@@ -37,7 +37,7 @@ typedef struct ShardPoly {
     int unk4C;
 } ShardPoly;
 
-/* what sub_49A450 makes from the polygons */
+/* what PolyList_New makes from the polygons */
 typedef struct ShardMesh {
     char unk0[0x6C];
     ShardPoly *polys;   /* 0x6C */
@@ -243,7 +243,7 @@ void GlassShatter_Spawn(void **model, Vec3f *dir, Vec3d *pos, Matrix *matrix, vo
 {
     HitInfo *hit = arg;
     char *info = *(char **)(*(char **)((char *)model[0] + 0xC) + 0xC);
-    GlassShatter *g = Task_New(sub_4F0EE0(), gShatterType, NULL);
+    GlassShatter *g = Task_New(Level_GetDynamic(), gShatterType, NULL);
     const float *m = matrix->m;
     TriMesh *mesh;
     long double s, zs;
@@ -301,7 +301,7 @@ void GlassShatter_Spawn(void **model, Vec3f *dir, Vec3d *pos, Matrix *matrix, vo
         if (!((nx * dir->x + nz * dir->z) + ny * dir->y >= kZero))
             GlassShatter_AddTri(p0, p1, p2);
     }
-    g->mesh = sub_49A450(Game_GetWorld(), 0, pos, matrix, g->polys, g->count, 0, 1, 0, 0, 0);
+    g->mesh = PolyList_New(Game_GetWorld(), 0, pos, matrix, g->polys, g->count, 0, 1, 0, 0, 0);
     GlassShatter_PlaySound(pos);
 }
 HOOK(0x44A1D0, GlassShatter_Spawn);
@@ -309,7 +309,7 @@ HOOK(0x44A1D0, GlassShatter_Spawn);
 void GlassShatter_PlaySound(Vec3d *pos)
 {
     int i = Random_Int(Game_GetRandom(), 3);
-    Task *s = Sound_Play(sub_4F0EE0(), gCrushSounds[i]);
+    Task *s = Sound_Play(Level_GetDynamic(), gCrushSounds[i]);
 
     if (s)
         Sound_SetPos(s, pos);

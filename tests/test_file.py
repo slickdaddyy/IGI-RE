@@ -310,7 +310,7 @@ def test_close_null_file():
     (0x4B1760, "File_Eof", ()),
     (0x4B1780, "File_GetSize", ()),
     (0x4B17A0, "File_GetError", ()),
-    (0x4B17C0, "sub_4B17C0", ()),
+    (0x4B17C0, "File_Flush", ()),
     (0x4B17F0, "sub_4B17F0", (5,)),
 ])
 def test_dispatch_fake(orig, ours, extra):

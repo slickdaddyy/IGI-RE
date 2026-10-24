@@ -11,7 +11,7 @@ ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t par
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x416830, uint8_t, Game_GetEvent7, (void));
 ORIG(0x416D30, void *, Game_GetRandom2, (void));
-ORIG(0x47E6F0, uint8_t, sub_47E6F0, (void));
+ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4B3640, void, Matrix_RotateY, (Matrix *out, const Matrix *m, float angle));
 ORIG(0x4B47C0, int, Random_Int, (void *rng, int n));
@@ -19,7 +19,7 @@ ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4C1790, void, QTaskList_Add, (void *list, void *item));
 ORIG(0x4C17C0, void, QTaskList_Remove, (void *list, void *item));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, int c));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, int c));
 ORIG(0x4C56D0, uint8_t, RigidDynCubeObj_GetEvent0, (void));
 ORIG(0x4C56E0, uint8_t, RigidDynCubeObj_GetEvent1, (void));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
@@ -27,12 +27,12 @@ ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
-ORIG(0x4D9850, uint8_t, MagicObj_GetHideEvent, (void));
-ORIG(0x4D9860, void *, MagicObj_GetList, (void));
+ORIG(0x4D9850, uint8_t, Camera_GetChangedEvent, (void));
+ORIG(0x4D9860, void *, Camera_GetListeners, (void));
 ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
 ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
-ORIG(0x4E75A0, int, Render_GetFrame, (void));
-ORIG(0x4E81F0, char *, Render_GetView, (void));
+ORIG(0x4E75A0, int, Screen_GetFrame, (void));
+ORIG(0x4E81F0, char *, Viewport_GetCurrentCamera, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 
 #define gGunFlameType VAR(uint16_t, 0x54074C)
@@ -63,10 +63,10 @@ void GunParts_Open(void)
     TaskType_SetHandler(gGunFlameType, RigidDynCubeObj_GetEvent1(), Task_TrueHandler);
     TaskType_SetHandler(gGunFlameType, RigidDynCubeObj_GetEvent2(), GunFlame_RenderHandler);
     TaskType_SetHandler(gGunFlameType, MagicObj_GetMoveEvent(), GunPart_MoveHandler);
-    TaskType_SetHandler(gGunFlameType, MagicObj_GetHideEvent(), GunPart_HideHandler);
+    TaskType_SetHandler(gGunFlameType, Camera_GetChangedEvent(), GunPart_HideHandler);
     TaskType_SetHandler(gGunFlameType, World_GetEvent1(), NULL);
     TaskType_SetHandler(gGunFlameType, World_GetEvent0(), NULL);
-    TaskType_SetHandler(gGunFlameType, sub_47E6F0(), NULL);
+    TaskType_SetHandler(gGunFlameType, BulletHole_GetEvent(), NULL);
     TaskType_SetHandler(gGunFlameType, Game_GetEvent7(), Human_ClearResult);
 
     gGunClipType = TaskType_New("GunClip", 0x140, MagicObj_GetType(), 0, 0);
@@ -79,7 +79,7 @@ void GunParts_Open(void)
     TaskType_SetHandler(gGunClipType, RigidDynCubeObj_GetEvent2(), GunClip_RenderHandler);
     TaskType_SetHandler(gGunClipType, World_GetEvent1(), NULL);
     TaskType_SetHandler(gGunClipType, World_GetEvent0(), NULL);
-    TaskType_SetHandler(gGunClipType, sub_47E6F0(), NULL);
+    TaskType_SetHandler(gGunClipType, BulletHole_GetEvent(), NULL);
     TaskType_SetHandler(gGunClipType, Game_GetEvent7(), Human_ClearResult);
 
     gGunMovingPartType = TaskType_New("GunMovingPart", 0x140, MagicObj_GetType(), 0, 0);
@@ -92,7 +92,7 @@ void GunParts_Open(void)
     TaskType_SetHandler(gGunMovingPartType, RigidDynCubeObj_GetEvent2(), GunMovingPart_RenderHandler);
     TaskType_SetHandler(gGunMovingPartType, World_GetEvent1(), NULL);
     TaskType_SetHandler(gGunMovingPartType, World_GetEvent0(), NULL);
-    TaskType_SetHandler(gGunMovingPartType, sub_47E6F0(), NULL);
+    TaskType_SetHandler(gGunMovingPartType, BulletHole_GetEvent(), NULL);
     TaskType_SetHandler(gGunMovingPartType, Game_GetEvent7(), Human_ClearResult);
 
     Script_RegisterConstant("TASKTYPE_GUNFLAME", gGunFlameType);
@@ -117,7 +117,7 @@ void GunFlame_CreateHandler(GunPart *p, GunPartArgs *a)
 {
     void **model;
 
-    QTaskList_Add(MagicObj_GetList(), p);
+    QTaskList_Add(Camera_GetListeners(), p);
     model = gunpart_model(a);
     p->offset = a->offset;
     p->local = a->local;
@@ -131,7 +131,7 @@ HOOK(0x477600, GunFlame_CreateHandler);
 
 void GunFlame_DeleteHandler(GunPart *p)
 {
-    QTaskList_Remove(MagicObj_GetList(), p);
+    QTaskList_Remove(Camera_GetListeners(), p);
 }
 HOOK(0x4776A0, GunFlame_DeleteHandler);
 
@@ -162,7 +162,7 @@ HOOK(0x4776C0, GunPart_MoveHandler);
 void GunFlame_RenderHandler(GunPart *p, char *frame)
 {
     Gun *gun = ((GunColl *)p->o.task.parent)->gun;
-    int now = Render_GetFrame();
+    int now = Screen_GetFrame();
     int angles[3];
     MoveMsg msg;
     TaskFn fn;
@@ -217,7 +217,7 @@ void GunPart_CreateHandler(GunPart *p, GunPartArgs *a)
     p->o.matrix = a->matrix;
     p->unk138 = a->unk8C;
     p->unk130 = a->unk88;
-    sub_4C4950(p, p, p->unk130);
+    RigidDynCubeObj_CreateMagicObjs(p, p, p->unk130);
 }
 HOOK(0x477A70, GunPart_CreateHandler);
 
@@ -226,7 +226,7 @@ void GunMovingPart_RenderHandler(GunPart *p)
 {
     Gun *gun = ((GunColl *)p->o.task.parent)->gun;
 
-    if (!*(int *)(Render_GetView() + 0x5C))
+    if (!*(int *)(Viewport_GetCurrentCamera() + 0x5C))
         return;
     {
         Task *owner = gun->o.task.parent;

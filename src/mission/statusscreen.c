@@ -7,18 +7,18 @@
 
 ORIG(0x46B4D0, char *, ComputerRes_Get, (void));
 ORIG(0x46C060, Task *, Computer_Get, (void));
-ORIG(0x4894B0, int, sub_4894B0, (void));
-ORIG(0x497570, void, sub_497570, (void *scene, int on));
-ORIG(0x4975F0, void, sub_4975F0, (void *scene));
-ORIG(0x497620, void, sub_497620, (void *scene, int on));
-ORIG(0x497680, void, sub_497680, (void *scene, float *rect));
+ORIG(0x4894B0, int, LevelFlow_GetTicksLeft, (void));
+ORIG(0x497570, void, Scene_Init, (void *scene, int on));
+ORIG(0x4975F0, void, Scene_Free, (void *scene));
+ORIG(0x497620, void, Scene_Select, (void *scene, int on));
+ORIG(0x497680, void, Scene_SetRect, (void *scene, float *rect));
 ORIG(0x4B12F0, void, Alias_Set, (const char *name, const char *path));
 ORIG(0x4B13A0, void, Alias_Remove, (const char *name));
 ORIG(0x4B50B0, void, QVertex_DrawFrame, (void *s, float x, float y, float r, float g, float b, float alpha, float z,
                                          int frame, unsigned int flags, int unk20));
 ORIG(0x4B66A0, void, Sprite_Free, (void *s));
 ORIG(0x4B6720, int, Sprite_Load, (void *s, const char *name));
-ORIG(0x4C1780, void, sub_4C1780, (void));
+ORIG(0x4C1780, void, Debug_Log, (void));
 
 #define gStatusScreenType VAR(uint16_t, 0x5C8A74)
 #define gStatusScreenEvent VAR(uint8_t, 0x540B5C)
@@ -110,8 +110,8 @@ void StatusScreen_Create(StatusScreen *s)
     gStatusScreen = s;
     rect[0] = 0.0f;
     rect[1] = 0.0f;
-    sub_497570(s->scene, 1);
-    sub_497680(s->scene, rect);
+    Scene_Init(s->scene, 1);
+    Scene_SetRect(s->scene, rect);
     s->res = Resource_Load("STATUSSCREEN:status.res", NULL);
     for (i = 0; i < NSPRITES; i++)
         Sprite_Load((char *)s + kSprites[i].offset, kSprites[i].name);
@@ -155,7 +155,7 @@ void StatusScreen_Delete(StatusScreen *s)
     for (i = 0; i < 10; i++)
         Sprite_Free(&s->actions[i]);
     Resource_Flush(s->res);
-    sub_4975F0(s->scene);
+    Scene_Free(s->scene);
 }
 HOOK(0x486D70, StatusScreen_Delete);
 
@@ -172,7 +172,7 @@ void StatusScreen_Draw(StatusScreen *s)
     game = Game_Get() + 0x60;
     width = Display_Get()->width;
     height = Display_Get()->height;
-    sub_497620(s->scene, 1);
+    Scene_Select(s->scene, 1);
     CALL_CHILDREN(s, Screen_GetDrawEvent());
     if (*(Task **)(game + 0x54) == cam && !Computer_Get()) {
         TaskFn fn;
@@ -183,8 +183,8 @@ void StatusScreen_Draw(StatusScreen *s)
         if (fn)
             fn(h, &arg);
         if (gTickInfo[0x70]) {
-            min = sub_4894B0() / 30 / 60;
-            sec = sub_4894B0() / 30;
+            min = LevelFlow_GetTicksLeft() / 30 / 60;
+            sec = LevelFlow_GetTicksLeft() / 30;
             x = width * kTimeX;
             y = height * kTimeY;
             sec %= 60;
@@ -196,7 +196,7 @@ void StatusScreen_Draw(StatusScreen *s)
             Text_DrawAlt(s->timeText);
         }
     }
-    sub_4C1780();
+    Debug_Log();
 }
 HOOK(0x486F30, StatusScreen_Draw);
 

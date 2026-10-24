@@ -16,25 +16,25 @@ ORIG(0x4B5F00, void *, Resource_Load, (const char *name, int *size));
 ORIG(0x4B63D0, void, Resource_Flush, (void *data));
 ORIG(0x4B64E0, int, Resource_Find, (const char *path));
 ORIG(0x492BE0, const char *, DDraw_GetErrorString, (HRESULT hr));
-ORIG(0x4950E0, int, sub_4950E0, (void));
-ORIG(0x495CB0, char, sub_495CB0, (void));
-ORIG(0x495CC0, void, sub_495CC0, (int rate));
-ORIG(0x496650, void, sub_496650, (void *sound));
-ORIG(0x4966E0, char, sub_4966E0, (void *sound));
-ORIG(0x496770, void *, sub_496770, (int a, int b, int c, int d));
-ORIG(0x496E40, void, sub_496E40, (void *sound));
-ORIG(0x496E60, void, sub_496E60, (void *sound, void *buf));
-ORIG(0x497390, void, sub_497390, (char *out, const char *name));
-ORIG(0x497410, int, sub_497410, (const char *name));
-ORIG(0x497450, int, sub_497450, (const char *name));
-ORIG(0x4974A0, void, sub_4974A0, (void *buf));
-ORIG(0x497570, void, sub_497570, (void *scene, int on));
-ORIG(0x4975F0, void, sub_4975F0, (void *scene));
-ORIG(0x497620, void, sub_497620, (void *scene, int on));
-ORIG(0x497680, void, sub_497680, (void *scene, float *rect));
-ORIG(0x497700, void, sub_497700, (void));
-ORIG(0x4977F0, void, sub_4977F0, (void));
-ORIG(0x4C1780, void, sub_4C1780, (void));
+ORIG(0x4950E0, int, Direct3D_GetRenderMode, (void));
+ORIG(0x495CB0, char, Sound_IsReady, (void));
+ORIG(0x495CC0, void, Sound_SetUpdateRate, (int rate));
+ORIG(0x496650, void, Voice_Free, (void *sound));
+ORIG(0x4966E0, char, Voice_IsPlaying, (void *sound));
+ORIG(0x496770, void *, Voice_Play, (int a, int b, int c, int d));
+ORIG(0x496E40, void, Voice_Stop, (void *sound));
+ORIG(0x496E60, void, Voice_SetParams, (void *sound, void *buf));
+ORIG(0x497390, void, Sound_GetName, (char *out, const char *name));
+ORIG(0x497410, int, Sound_HashName, (const char *name));
+ORIG(0x497450, int, Sound_HashBucket, (const char *name));
+ORIG(0x4974A0, void, SoundParams_Init, (void *buf));
+ORIG(0x497570, void, Scene_Init, (void *scene, int on));
+ORIG(0x4975F0, void, Scene_Free, (void *scene));
+ORIG(0x497620, void, Scene_Select, (void *scene, int on));
+ORIG(0x497680, void, Scene_SetRect, (void *scene, float *rect));
+ORIG(0x497700, void, Scene_DrawAll, (void));
+ORIG(0x4977F0, void, Frame_Reset, (void));
+ORIG(0x4C1780, void, Debug_Log, (void));
 
 typedef struct Sprite Sprite;
 typedef struct Text {
@@ -201,11 +201,11 @@ void Movie_Close(Movie *m)
             if (m->fonts[i])
                 Sprite_Delete(m->fonts[i]);
         }
-        sub_4975F0(m->scene);
+        Scene_Free(m->scene);
     }
     if (m->sound && m->soundPlaying) {
-        sub_496E40(m->sound);
-        sub_496650(m->sound);
+        Voice_Stop(m->sound);
+        Voice_Free(m->sound);
     }
     if (m->inBuf) {
         Mem_Free(m->inBuf);
@@ -320,7 +320,7 @@ char Movie_OpenFile(Movie *m, const char *path)
     m->frame = -1;
     m->drawnFrame = -1;
     m->duration = m->streamInfo.dwLength * 1000 / (m->streamInfo.dwRate / m->streamInfo.dwScale);
-    sub_495CC0(60);
+    Sound_SetUpdateRate(60);
     AVIStreamReadFormat_(m->stream, 0, NULL, &size);
     if (size != sizeof(BITMAPINFOHEADER)) {
         Movie_Close(&gMovie);
@@ -365,8 +365,8 @@ char Movie_InitVideo(Movie *m)
     mode.depth = depth;
     mode.unk14 = 0;
     mode.unk15 = 0;
-    mode.renderMode = sub_4950E0();
-    mode.renderMode = sub_4950E0();
+    mode.renderMode = Direct3D_GetRenderMode();
+    mode.renderMode = Direct3D_GetRenderMode();
     mode.unk16 = 1;
     if (gDisplayPrefDesc && gDisplayPrefDevice) {
         strcpy(mode.desc, gDisplayPrefDesc);
@@ -425,13 +425,13 @@ char Movie_OpenSound(Movie *m, const char *path)
     char name[0x400], res[0x400];
     int a, b;
 
-    if (sub_495CB0()) {
+    if (Sound_IsReady()) {
         Path_StripExtension(name, sizeof(name), path);
         strcat(name, ".wav");
-        sub_497390(res, name);
-        a = sub_497450(res);
-        b = sub_497410(res);
-        m->sound = sub_496770(a, b, 1, 0);
+        Sound_GetName(res, name);
+        a = Sound_HashBucket(res);
+        b = Sound_HashName(res);
+        m->sound = Voice_Play(a, b, 1, 0);
         if (m->sound)
             m->soundPlaying = 1;
     }
@@ -447,12 +447,12 @@ char Movie_LoadSubtitles(Movie *m, const char *path, char (*load)(Movie *m, cons
     Path_StripExtension(name, sizeof(name), path);
     strcat(name, ".qsc");
     m->hasSubtitles = 1;
-    sub_497570(gMovie.scene, 1);
+    Scene_Init(gMovie.scene, 1);
     rect[0] = 0;
     rect[1] = 0;
     rect[2] = m->outFormat->h.biWidth;
     rect[3] = abs(m->outFormat->h.biHeight);
-    sub_497680(gMovie.scene, rect);
+    Scene_SetRect(gMovie.scene, rect);
     return load(m, name) != 0;
 }
 HOOK(0x490C40, Movie_LoadSubtitles);
@@ -471,16 +471,16 @@ char Movie_Update(Movie *m)
     else
         m->time = Timer_GetMs() - m->pausedTime - m->startTime;
     if (m->sound) {
-        m->soundPlaying = sub_4966E0(m->sound);
+        m->soundPlaying = Voice_IsPlaying(m->sound);
         if (m->soundPlaying) {
             for (n = m->time * 60 / 1000 - m->soundFrames; n; n--) {
-                sub_4974A0(buf);
-                sub_496E60(m->sound, buf);
+                SoundParams_Init(buf);
+                Voice_SetParams(m->sound, buf);
                 m->soundFrames++;
             }
         } else {
-            sub_496E40(m->sound);
-            sub_496650(m->sound);
+            Voice_Stop(m->sound);
+            Voice_Free(m->sound);
             m->sound = NULL;
         }
     }
@@ -533,8 +533,8 @@ char Movie_Draw(Movie *m)
     Movie_BlitFrame(m);
     if (m->hasSubtitles) {
         time = m->time;
-        sub_4977F0();
-        sub_497620(m->scene, 1);
+        Frame_Reset();
+        Scene_Select(m->scene, 1);
         if (m->curSub < m->subCount) {
             s = &m->subs[m->curSub];
             if (time > s->start + s->duration + s->fadeOut) {
@@ -556,8 +556,8 @@ char Movie_Draw(Movie *m)
                 }
             }
         }
-        sub_497700();
-        sub_4C1780();
+        Scene_DrawAll();
+        Debug_Log();
     }
     Display_SwapBuffers();
     m->drawnFrame = m->frame;

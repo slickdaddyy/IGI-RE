@@ -21,12 +21,12 @@ ORIG(0x4B3100, void, Vec3d_Normalize, (Vec3d *v));
 ORIG(0x4B3190, void, Vec3d_Cross, (Vec3d *out, const Vec3d *a, const Vec3d *b));
 ORIG(0x4B32B0, long double, Vec3d_Distance, (const Vec3d *a, const Vec3d *b));
 ORIG(0x4B32F0, long double, Vec3d_DistanceSq, (const Vec3d *a, const Vec3d *b));
-ORIG(0x4C5810, void, Coll_ResetMods_, (void));
-ORIG(0x4C5830, void, Coll_SaveMods_, (void));
-ORIG(0x4C5870, void, Coll_RestoreMods_, (void));
-ORIG(0x4C7770, void, sub_4C7770, (Terrain *t, int slot, void *query, Vec3d *lo, Vec3d *hi, unsigned int flags,
+ORIG(0x4C5810, void, Coll_ResetMods, (void));
+ORIG(0x4C5830, void, Coll_SaveMods, (void));
+ORIG(0x4C5870, void, Coll_RestoreMods, (void));
+ORIG(0x4C7770, void, DynCube_SendEventBox, (Terrain *t, int slot, void *query, Vec3d *lo, Vec3d *hi, unsigned int flags,
                                   int tree));
-ORIG(0x4C8130, void, sub_4C8130, (Terrain *t, int slot, void *query, const Vec3d *starts, const Vec3d *ends,
+ORIG(0x4C8130, void, DynCube_SendEventLines, (Terrain *t, int slot, void *query, const Vec3d *starts, const Vec3d *ends,
                                   int count, unsigned int flags, int tree));
 ORIG(0x4C9A30, int, Coll_Descend_, (Terrain *t, CollCursor *c, CollCursor *unused, const Vec3d *p, int depth));
 
@@ -101,7 +101,7 @@ int Coll_LineHit(CollHit *out, const CollCursor *c, int depth, const Vec3d *s, c
     Vec3d hp;
     Vec3f n;
 
-    Coll_SaveMods_();
+    Coll_SaveMods();
     ox = t->origin[0];
     oy = t->origin[1];
     oz = t->origin[2];
@@ -251,7 +251,7 @@ int Coll_LineHit(CollHit *out, const CollCursor *c, int depth, const Vec3d *s, c
             }
         }
     } while (sp >= 0);
-    Coll_RestoreMods_();
+    Coll_RestoreMods();
     return 0;
 found:
     out->normal = n;
@@ -259,7 +259,7 @@ found:
     out->material = m1 ? t->materials[m1] : NULL;
     out->material2 = m2 ? t->materials[m2] : NULL;
     out->dist = (double)Vec3d_Distance(&out->pos, s);
-    Coll_RestoreMods_();
+    Coll_RestoreMods();
     return 1;
 }
 HOOK(0x4CC810, Coll_LineHit);
@@ -514,14 +514,14 @@ void Coll_LinesEx(Terrain *t, CollHit *results, const Vec3d *starts, const Vec3d
             if (i != 1 && i != 0 && i != 4 && i != 5)
                 continue;
             if (vertical)
-                sub_4C7770(t, 10, &q, &lo, &hi, flags, i);
+                DynCube_SendEventBox(t, 10, &q, &lo, &hi, flags, i);
             else
-                sub_4C8130(t, 9, &q, starts, ends, count, flags, i);
+                DynCube_SendEventLines(t, 9, &q, starts, ends, count, flags, i);
         }
     }
     if (!(flags & 0x80000000))
         return;
-    Coll_ResetMods_();
+    Coll_ResetMods();
     c.size = 0x40000000;
     c.level = 30;
     c.orient = 0;

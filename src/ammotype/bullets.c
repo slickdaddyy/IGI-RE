@@ -104,7 +104,7 @@ _Static_assert(offsetof(GameMaterial, backParams) == 0x260, "GameMaterial");
 _Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 _Static_assert(sizeof(BulletImpact) == 0x88, "BulletImpact");
 
-ORIG(0x4028B0, int, Timer_GetTicks, (void));
+ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x4083C0, void, GameMaterial_Impact, (uint16_t type, void *params, CollHit *hit, int front, Vec3f *dir));
 ORIG(0x416830, uint8_t, Game_GetEvent7, (void));
 ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
@@ -230,10 +230,10 @@ void GunShot_MoveBullets(GunShot *s)
             if (gImpactSoundTime != -1) {
                 int d;
 
-                if ((int)((unsigned)Timer_GetTicks() - gImpactSoundTime) < 0)
-                    d = (int)((unsigned)gImpactSoundTime - Timer_GetTicks());
+                if ((int)((unsigned)Flow_GetFrames() - gImpactSoundTime) < 0)
+                    d = (int)((unsigned)gImpactSoundTime - Flow_GetFrames());
                 else
-                    d = (int)((unsigned)Timer_GetTicks() - gImpactSoundTime);
+                    d = (int)((unsigned)Flow_GetFrames() - gImpactSoundTime);
                 if (d <= gImpactSoundDelay)
                     goto sounded;
             }
@@ -244,7 +244,7 @@ void GunShot_MoveBullets(GunShot *s)
                 if (snd)
                     Sound_SetPos(snd, &hit.pos);
                 GunShot_PlayRicochet(&hit.pos);
-                gImpactSoundTime = Timer_GetTicks();
+                gImpactSoundTime = Flow_GetFrames();
                 gImpactSoundDelay = Random_Int(Game_GetRandom(), 6) + 6;
             }
 sounded:

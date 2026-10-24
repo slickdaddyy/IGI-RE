@@ -19,8 +19,8 @@ ORIG(0x4B7470, void *, Chunk_Next, (void *c));
 ORIG(0x4B7490, void *, Chunk_FirstChild, (void *c));
 ORIG(0x4B74D0, void *, Chunk_Data, (void *c, void *parent));
 ORIG(0x4B7590, void *, Chunk_Find, (void *c, unsigned int id));
-ORIG(0x4CF870, void, sub_4CF870, (ModelFile *f));
-ORIG(0x4CF910, void, sub_4CF910, (ModelFile *f));
+ORIG(0x4CF870, void, ModelFile_LoadPalettes, (ModelFile *f));
+ORIG(0x4CF910, void, ModelFile_LoadAnims, (ModelFile *f));
 ORIG(0x4CF9D0, void, ModelFile_Free, (ModelFile *f));
 
 #define gModelInitMethod VAR(int, 0x548200)
@@ -258,12 +258,12 @@ void ModelFile_Setup(ModelFile *f, const char *name, int textures)
     const char *names;
     int count;
 
-    sub_4CF910(f);
+    ModelFile_LoadAnims(f);
     if (textures) {
         crt_sprintf(path, "%stextures/%s.res", gModelDir, name);
         Resource_Load(path, 0);
         ModelFile_LoadTextures(f);
-        sub_4CF870(f);
+        ModelFile_LoadPalettes(f);
         Resource_Unload(path);
     }
     crt_sprintf(path, "%smodels/%s.res", gModelDir, name);

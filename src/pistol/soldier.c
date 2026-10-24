@@ -13,7 +13,7 @@ ORIG(0x416FB0, int, Game_IsRaining, (void));
 ORIG(0x452930, void, sub_452930, (void *out, float *dir, SoldierAI *ai, double *pos, float speed));
 ORIG(0x4528F0, int, AI_HasTarget, (SoldierAI *ai));
 ORIG(0x460C40, uint8_t, Human_GetPunchEvent, (void));
-ORIG(0x463180, char, sub_463180, (Soldier *h));
+ORIG(0x463180, char, Human_IsCrouching, (Soldier *h));
 ORIG(0x477040, void, Grenade_Throw, (void *owner, Soldier *h, double *pos, void *path, float *dir, void *type,
                                      int count));
 ORIG(0x489E70, void, Human_PlayAnimSlot, (Soldier *h, int slot, float blend));
@@ -21,16 +21,16 @@ ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
 ORIG(0x4B4770, long double, Random_Float, (void *r));
 ORIG(0x4D61D0, void, Anim_Play, (void *anim, int track, int id, int a, int b));
-ORIG(0x4D64C0, int, Anim_GetFrame, (void *anim, int track));
+ORIG(0x4D64C0, int, Anim_GetId, (void *anim, int track));
 ORIG(0x4D64E0, long double, Anim_GetLength, (void *anim, int track));
 ORIG(0x4D6520, long double, Anim_GetPhase, (void *anim, int track));
 ORIG(0x4D65B0, void, Anim_SetTime, (void *anim, int track, float time));
 ORIG(0x4D74F0, int, Anim_Exists, (void *anim, int track, int id));
 ORIG(0x4E6B00, void *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (void *sound, const double *pos));
-ORIG(0x4E6C60, void, sub_4E6C60, (void *sound, float a, float b));
+ORIG(0x4E6C60, void, Sound_SetVolume, (void *sound, float a, float b));
 ORIG(0x4E6CA0, void, Sound_SetPitch, (void *sound, float pitch));
-ORIG(0x4F0EE0, void *, Sound_GetOwner, (void));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 ORIG(0x4F2060, void *, WeaponSlots_Get, (void **slots, int i));
 ORIG(0x4F2350, void, Weapon_UseAmmo, (void *weapon, int n));
 ORIG(0x4F23D0, void, Weapon_GetAmmo, (void *weapon, int *out));
@@ -56,24 +56,24 @@ void Soldier_Footstep(Soldier *h)
     void *snd;
     int i;
 
-    if (h->unk538 != 0x3F2 || h->unk53C != Anim_GetFrame(h->anim, 0))
+    if (h->unk538 != 0x3F2 || h->unk53C != Anim_GetId(h->anim, 0))
         return;
     i = gSoldierFootsteps[h->footstep];
     h->footstep = (unsigned)(h->footstep + 1) % 12;
     if (!h->ground)
         return;
     pitch = Random_Float(Game_GetRandom()) * kPitchRange + 1.0f - kPitchDown;
-    snd = Sound_Play(Sound_GetOwner(), h->ground + 0x54 + i * 0x20);
+    snd = Sound_Play(Level_GetDynamic(), h->ground + 0x54 + i * 0x20);
     if (snd) {
-        if (sub_463180(h))
-            sub_4E6C60(snd, -1.0f, 0x1.51eb86p-1f);
+        if (Human_IsCrouching(h))
+            Sound_SetVolume(snd, -1.0f, 0x1.51eb86p-1f);
         Sound_SetPos(snd, h->soundPos);
         Sound_SetPitch(snd, pitch);
     }
     if (!Game_IsRaining())
         return;
     crt_sprintf(name, "walk_rain_%1d", i + 1);
-    snd = Sound_Play(Sound_GetOwner(), name);
+    snd = Sound_Play(Level_GetDynamic(), name);
     if (snd) {
         Sound_SetPos(snd, h->soundPos);
         Sound_SetPitch(snd, pitch);
@@ -293,7 +293,7 @@ void Soldier_ThrowUpdate(SoldierSM *sm, Soldier *h)
 
     if (sm_common(sm, h, b, 30, 32))
         return;
-    if (AI_HasTarget(ai) == 1 && h->unk538 == 0xB && h->unk53C == Anim_GetFrame(h->anim, 0) && !s->thrown) {
+    if (AI_HasTarget(ai) == 1 && h->unk538 == 0xB && h->unk53C == Anim_GetId(h->anim, 0) && !s->thrown) {
         float *at = h->motion->throwPos, speed, dir[3];
         char path[40];
         double pos[3];
@@ -307,7 +307,7 @@ void Soldier_ThrowUpdate(SoldierSM *sm, Soldier *h)
         pos[2] = at[2] + h->pos[2];
         sub_452930(path, dir, ai, pos, speed);
         type = WeaponType_Find(ai->grenade);
-        owner = Sound_GetOwner();
+        owner = Level_GetDynamic();
         Grenade_Throw(owner, h, pos, path, dir, type, count);
         s->thrown = 1;
     }
@@ -336,7 +336,7 @@ void Soldier_MeleeUpdate(SoldierSM *sm, Soldier *h)
 
     if (sm_common(sm, h, b, 30, 32))
         return;
-    if (h->unk53C == Anim_GetFrame(h->anim, 0) && h->unk538 == 0xC && !s->meleeDone) {
+    if (h->unk53C == Anim_GetId(h->anim, 0) && h->unk538 == 0xC && !s->meleeDone) {
         s->meleeDone = 1;
         if (!(Random_Float(Game_GetRandom()) > ai->meleeChance) && ai->target && ai->target->task &&
             *ai->target->task) {

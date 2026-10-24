@@ -30,7 +30,7 @@ ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4ECDB0, void, Body_Update, (void *body));
 ORIG(0x4ECF50, void, Body_AddForce, (void *body, void *force));
-ORIG(0x4EE140, PhysType *, PhysType_Find, (const char *name));
+ORIG(0x4EE140, PhysType *, PhysicsObjType_Find, (const char *name));
 ORIG(0x4F0F60, void *, Param_Real32x3, (void));
 ORIG(0x4F0F70, void *, Param_Real32x9, (void));
 ORIG(0x4F0FD0, void *, Param_String16, (void));
@@ -252,7 +252,7 @@ void GenericPhysicsObj_ParamsChanged(PhysObj *o)
     model = VirModel_Find(o->name);
     if (model) {
         RigidDynCubeObj_SetModel(o, model);
-        PhysicsObj_SetPhysType(o, PhysType_Find(o->name));
+        PhysicsObj_SetPhysType(o, PhysicsObjType_Find(o->name));
     } else if (o->name[0] && o->name[1] != '*') {
         char msg[128], name[128];
 

@@ -150,10 +150,10 @@ ORIG(0x4CE410, char, Coll_LineOfSight, (void *world, const Vec3d *from, const Ve
 ORIG(0x414F40, void, sub_414F40, (Vec3d *out, Human *h, int i, const char *name));
 ORIG(0x4B3130, long double, Vec3d_Length, (const Vec3d *v));
 ORIG(0x4D61D0, void, Anim_Play, (void *anim, int track, int id, int loop, float blend));
-ORIG(0x4D6130, void, sub_4D6130, (void *anim, int track, int a, void *b, int id, int loop, float blend));
+ORIG(0x4D6130, void, Anim_PlayOriented, (void *anim, int track, int a, void *b, int id, int loop, float blend));
 ORIG(0x4D62B0, void, Anim_FadeOut, (void *anim, int track, float time));
 ORIG(0x4B4660, void, Quat_SetAxisAngle, (float *q, const Vec3f *axis, float angle));
-ORIG(0x4D7070, void, sub_4D7070, (void *bone, const float *q, int a, int b, int c));
+ORIG(0x4D7070, void, Bone_Rotate, (void *bone, const float *q, int a, int b, int c));
 
 /* 1 when target can be seen from `from` (clear line or visibility of at least 0.79) */
 char AIDetection_IsVisible(Task *self, const Vec3d *from, Task *target, const Vec3d *to)
@@ -297,7 +297,7 @@ HOOK(0x489EA0, Human_PlayAnim);
 
 void Human_PlayWeaponAnim(Human *h, int anim, int loop, float blend)
 {
-    sub_4D6130(h->anim, 1, 5, h->unk650, anim, loop, blend);
+    Anim_PlayOriented(h->anim, 1, 5, h->unk650, anim, loop, blend);
 }
 HOOK(0x489ED0, Human_PlayWeaponAnim);
 
@@ -353,7 +353,7 @@ void Human_ApplyLook(Human *h)
         axis.y = h->matrix[3];
         axis.z = h->matrix[6];
         Quat_SetAxisAngle(q, &axis, a);
-        sub_4D7070(h->model + 0x84, q, 0, 50, 50);
+        Bone_Rotate(h->model + 0x84, q, 0, 50, 50);
         if (yaw < -kLookMax)
             a = yaw + kLookMax;
         else if (yaw > kLookMax)
@@ -365,7 +365,7 @@ void Human_ApplyLook(Human *h)
             axis.y = h->matrix[3];
             axis.z = h->matrix[6];
             Quat_SetAxisAngle(q, &axis, a);
-            sub_4D7070(h->model + 0x210, q, 0, 50, 50);
+            Bone_Rotate(h->model + 0x210, q, 0, 50, 50);
         }
     }
 pitch:
@@ -381,7 +381,7 @@ pitch:
     axis.z = h->matrix[8];
     normalize(&axis);
     Quat_SetAxisAngle(q, &axis, a);
-    sub_4D7070(h->model + 0x84, q, 0, 50, 50);
+    Bone_Rotate(h->model + 0x84, q, 0, 50, 50);
     if (pitch < -kLookMax)
         a = pitch + kLookMax;
     else if (pitch > kLookMax)
@@ -396,7 +396,7 @@ pitch:
     axis.z = *(float *)((char *)m + 0x2B4) - *(float *)((char *)m + 0x230);
     normalize(&axis);
     Quat_SetAxisAngle(q, &axis, a);
-    sub_4D7070(h->model + 0x210, q, 0, 50, 50);
+    Bone_Rotate(h->model + 0x210, q, 0, 50, 50);
 }
 HOOK(0x489F70, Human_ApplyLook);
 

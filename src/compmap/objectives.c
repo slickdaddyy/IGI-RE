@@ -13,10 +13,10 @@ typedef struct Objective {
     int failed;          /* 0xC8 */
 } Objective;
 
-ORIG(0x488700, void, Task_RunChildren, (void *task));
+ORIG(0x488700, void, SubLevel_Run, (void *task));
 ORIG(0x4D3710, void, Task_Nothing, (void *task));
 ORIG(0x467590, Objective *, ComputerObjective_Get, (int i));
-ORIG(0x4F1030, Task *, sub_4F1030, (int id));
+ORIG(0x4F1030, Task *, Task_FindById, (int id));
 ORIG(0x4B64E0, int, Resource_Find, (const char *path));
 
 static const float kTabX = 0x1.99999ap-4f;
@@ -41,7 +41,7 @@ void ComputerObjectives_Init(void)
 
     gObjectivesType = type;
     TaskType_SetHandler(type, 0, ComputerObjectives_Create);
-    TaskType_SetHandler2(gObjectivesType, 1, Task_RunChildren);
+    TaskType_SetHandler2(gObjectivesType, 1, SubLevel_Run);
     TaskType_SetHandler2(gObjectivesType, 2, Task_Nothing);
     TaskType_SetHandler2(gObjectivesType, Screen_GetDrawEvent(), ComputerObjectives_Draw);
 }
@@ -110,7 +110,7 @@ void ComputerObjectives_OnSelect(ComputerButtonItem *b, int *id)
         return;
     obj = ComputerObjective_Get(b->base.id - 3);
     if (obj->taskId != -1) {
-        ComputerMap_SetStartTask(sub_4F1030(obj->taskId));
+        ComputerMap_SetStartTask(Task_FindById(obj->taskId));
         ComputerMenu_SetScreen(1);
     }
 }

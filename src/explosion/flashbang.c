@@ -21,10 +21,10 @@ ORIG(0x460C60, TaskArray *, Human_GetList, (void));
 ORIG(0x4B4770, long double, Random_Float, (void *rng));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (void));
-ORIG(0x4FDF00, void *, sub_4FDF00, (void *root, void *world, void *sprite, Vec3f *dir, Vec3f *color, float *size,
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
+ORIG(0x4FDF00, void *, Particle2D_New, (void *root, void *world, void *sprite, Vec3f *dir, Vec3f *color, float *size,
                                     float life, int blend, int d, float e, int f, int count, void *h));
-ORIG(0x4FE120, void, sub_4FE120, (void *ps, Vec3d *pos, Vec3f *dir, float size, float a, float b, float c, int d,
+ORIG(0x4FE120, void, Particle2D_Add, (void *ps, Vec3d *pos, Vec3f *dir, float size, float a, float b, float c, int d,
                                   int e));
 
 uint8_t BulletHole_GetEvent(void);
@@ -64,9 +64,9 @@ void FlashBang_Create(FlashBang *t)
     Vec3f color = {127.0f, 127.0f, 127.0f};
     float size[2] = {kSmokeSize, kSmokeSize};
     void *world = Game_GetWorld();
-    void *root = sub_4F0EE0();
+    void *root = Level_GetDynamic();
 
-    t->ps = sub_4FDF00(root, world, gFlashSprite + 0x18, &dir, &color, size, kLife, 0x1000008, 0, kRate, 0, 20, NULL);
+    t->ps = Particle2D_New(root, world, gFlashSprite + 0x18, &dir, &color, size, kLife, 0x1000008, 0, kRate, 0, 20, NULL);
 }
 HOOK(0x47E790, FlashBang_Create);
 
@@ -89,9 +89,9 @@ void FlashBang_Run(FlashBang *t)
         s = (float)((Random_Float(Game_GetRandom()) + kOne) * kQuarter);
         r = Random_Float(Game_GetRandom()) - kHalf;
         a = (float)((r + r) * kSpread + kSpreadBase);
-        sub_4FE120(t->ps, &p, &v, s, a, 0.0f, 1.0f, 90, 30);
+        Particle2D_Add(t->ps, &p, &v, s, a, 0.0f, 1.0f, 90, 30);
     }
-    sound = Sound_Play(sub_4F0EE0(), "explo_flash");
+    sound = Sound_Play(Level_GetDynamic(), "explo_flash");
     if (sound)
         Sound_SetPos(sound, &t->pos);
     noise.type = 0x13;
@@ -122,7 +122,7 @@ HOOK(0x47E990, FlashBang_GetEvent);
 /* tells every human about the flash and burns a mark where it hit */
 FlashBang *FlashBang_Explode(Vec3d *pos, HoleHit *hit, float radius, float falloff)
 {
-    FlashBang *t = (FlashBang *)Task_New(sub_4F0EE0(), gFlashType, NULL);
+    FlashBang *t = (FlashBang *)Task_New(Level_GetDynamic(), gFlashType, NULL);
     struct {
         Vec3d *pos;
         float radius;

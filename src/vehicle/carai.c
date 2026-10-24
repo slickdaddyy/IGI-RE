@@ -9,18 +9,18 @@ ORIG(0x4B31F0, long double, Vec3d_Angle, (const Vec3d *a, const Vec3d *b));
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
 ORIG(0x4F9720, int *, Graph_GetNode, (void *graph, int id));
 ORIG(0x4F9770, void, Graph_GetNodePos, (Vec3d *out, int *node));
-ORIG(0x5096C0, int *, Graph_NextStep, (void *graph, int from, int to));
-ORIG(0x5096F0, void, Graph_FindNearest, (int **out, void *graph, const Vec3d *pos));
-ORIG(0x5098A0, uint16_t, Graph_GetType, (void));
-ORIG(0x453540, int, AICmd_GetType, (void *cmd));
-ORIG(0x453720, void *, AICmdList_Current, (void *list));
-ORIG(0x453730, void *, AICmdList_Next, (void *list));
-ORIG(0x453760, void, AICmdList_Advance, (void *list));
-ORIG(0x4537E0, void, AICmdList_Init, (void *list, int id, int unk));
-ORIG(0x485320, int, AICmd_GetArg, (void *cmd));
-ORIG(0x463170, char, sub_463170, (Task *t));
+ORIG(0x5096C0, int *, AIGraph_GetStep, (void *graph, int from, int to));
+ORIG(0x5096F0, void, AIGraph_FindNearest, (int **out, void *graph, const Vec3d *pos));
+ORIG(0x5098A0, uint16_t, AIGraph_GetType, (void));
+ORIG(0x453540, int, PatrolPathCommand_GetType, (void *cmd));
+ORIG(0x453720, void *, PatrolRoute_Current, (void *list));
+ORIG(0x453730, void *, PatrolRoute_Next, (void *list));
+ORIG(0x453760, void, PatrolRoute_Advance, (void *list));
+ORIG(0x4537E0, void, PatrolRoute_Init, (void *list, int id, int unk));
+ORIG(0x485320, int, GameScreen_GetView, (void *cmd));
+ORIG(0x463170, char, Human_IsDead, (Task *t));
 ORIG(0x42FDC0, uint16_t, Car_GetType, (void));
-ORIG(0x4F40D0, uint8_t, Car_GetControlEvent, (void));
+ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 
 /* the parts of the "Car" task used here */
 typedef struct Car {
@@ -135,13 +135,13 @@ int CarAI_IsStopCmd(int type);
 long double CarAI_GetSpeed(CarAI *ai)
 {
     Vec3d *c = CarAI_GetCarPos(ai);
-    void *cmd = AICmdList_Current(ai->cmds);
+    void *cmd = PatrolRoute_Current(ai->cmds);
     Vec3d t, d, e, p, q;
     long double lsq, a;
     double dist;
     int *node;
 
-    AICmd_GetType(cmd);
+    PatrolPathCommand_GetType(cmd);
     Graph_GetNodePos(&t, ai->target);
     d.x = c->x - t.x;
     d.y = c->y - t.y;
@@ -154,28 +154,28 @@ long double CarAI_GetSpeed(CarAI *ai)
             a = -a;
         return speed_for_angle(ai->maxSpeed, a);
     }
-    node = Graph_GetNode(ai->graph, AICmd_GetArg(cmd));
+    node = Graph_GetNode(ai->graph, GameScreen_GetView(cmd));
     Graph_GetNodePos(&p, node);
     if (node != ai->target) {
         int *near, *next;
 
-        Graph_FindNearest(&near, ai->graph, &p);
+        AIGraph_FindNearest(&near, ai->graph, &p);
         next = CarAI_NextNode(CarAI_GetCarPos(ai), ai->graph, *near, ai);
         Graph_GetNodePos(&q, next);
         CarAI_GetPathPos(&q, ai->graph, &q, *next, ai);
     } else {
-        void *after = AICmdList_Next(ai->cmds);
+        void *after = PatrolRoute_Next(ai->cmds);
         int type;
 
         if (!after)
             return ai->maxSpeed;
-        type = AICmd_GetType(after);
+        type = PatrolPathCommand_GetType(after);
         if (!CarAI_IsMoveCmd(type)) {
             if (CarAI_IsStopCmd(type))
                 return ai->maxSpeed * dist * kSlowDown;
             return ai->maxSpeed;
         }
-        node = Graph_GetNode(ai->graph, AICmd_GetArg(after));
+        node = Graph_GetNode(ai->graph, GameScreen_GetView(after));
         Graph_GetNodePos(&q, node);
         CarAI_GetPathPos(&q, ai->graph, &q, *node, ai);
     }
@@ -222,11 +222,11 @@ long double CarAI_GetChaseSpeed(CarAI *ai)
             a = -a;
         return speed_for_angle(ai->maxSpeed, a);
     }
-    Graph_FindNearest(&near, ai->graph, DynCubeObj_GetPosition(ai->enemy));
+    AIGraph_FindNearest(&near, ai->graph, DynCubeObj_GetPosition(ai->enemy));
     Graph_GetNodePos(&p, near);
     if (near == ai->target)
         return ai->maxSpeed * dist * kSlowDown;
-    next = Graph_NextStep(ai->graph, *ai->target, *near);
+    next = AIGraph_GetStep(ai->graph, *ai->target, *near);
     if (next)
         Graph_GetNodePos(&q, Graph_GetNode(ai->graph, *next));
     else
@@ -254,14 +254,14 @@ void CarAI_GetPathPos(Vec3d *out, void *graph, Vec3d *pos, int target, CarAI *ai
 {
     int *node, *next;
 
-    Graph_FindNearest(&node, graph, pos);
+    AIGraph_FindNearest(&node, graph, pos);
     if (!node)
         return;
     if (*node == target) {
         Graph_GetNodePos(out, node);
         return;
     }
-    next = Graph_NextStep(graph, *node, target);
+    next = AIGraph_GetStep(graph, *node, target);
     if (next) {
         Graph_GetNodePos(out, Graph_GetNode(graph, *next));
         return;
@@ -275,9 +275,9 @@ int *CarAI_NextNode(Vec3d *pos, void *graph, int target, CarAI *ai)
 {
     int *node, *next;
 
-    Graph_FindNearest(&node, graph, pos);
+    AIGraph_FindNearest(&node, graph, pos);
     if (node && *node != target) {
-        next = Graph_NextStep(graph, *node, target);
+        next = AIGraph_GetStep(graph, *node, target);
         if (next)
             return Graph_GetNode(graph, *next);
         Warning_Show("CarAI: Error in graph %d. No link between nodes %d and %d.", ai->graphId, *node, target);
@@ -340,7 +340,7 @@ void CarAI_SendControl(CarAI *ai, int tick, float throttle, float steer, float b
 void CarAI_Run(CarAI *ai)
 {
     if (!ai->started && ai->pathId != -1) {
-        AICmdList_Init(ai->cmds, ai->pathId, 0);
+        PatrolRoute_Init(ai->cmds, ai->pathId, 0);
         ai->started = 1;
     }
     if (!ai->car || !ai->graph || !ai->cmds[0])
@@ -348,7 +348,7 @@ void CarAI_Run(CarAI *ai)
     if (CarAI_UpdateChase(ai)) {
         int *near;
 
-        Graph_FindNearest(&near, ai->graph, DynCubeObj_GetPosition(ai->enemy));
+        AIGraph_FindNearest(&near, ai->graph, DynCubeObj_GetPosition(ai->enemy));
         if (!CarAI_IsNear(ai, *near)) {
             ai->target = CarAI_NextNode(CarAI_GetCarPos(ai), ai->graph, *near, ai);
             ai->maxSpeed = 20.0f;
@@ -359,15 +359,15 @@ void CarAI_Run(CarAI *ai)
         }
         CarAI_Chase(ai);
     } else {
-        void *cmd = AICmdList_Current(ai->cmds);
-        int type = AICmd_GetType(cmd);
+        void *cmd = PatrolRoute_Current(ai->cmds);
+        int type = PatrolPathCommand_GetType(cmd);
         int n;
 
         if (type == 2 || type == 3) {
-            if (CarAI_IsNear(ai, AICmd_GetArg(cmd))) {
-                AICmdList_Advance(ai->cmds);
+            if (CarAI_IsNear(ai, GameScreen_GetView(cmd))) {
+                PatrolRoute_Advance(ai->cmds);
             } else {
-                int id = AICmd_GetArg(cmd);
+                int id = GameScreen_GetView(cmd);
 
                 ai->target = CarAI_NextNode(CarAI_GetCarPos(ai), ai->graph, id, ai);
                 ai->maxSpeed = ai->cmdSpeed;
@@ -379,8 +379,8 @@ void CarAI_Run(CarAI *ai)
             n = ai->waitTicks;
             ai->stop = 1.0f;
             ai->waitTicks = n + 1;
-            if (n > AICmd_GetArg(cmd)) {
-                AICmdList_Advance(ai->cmds);
+            if (n > GameScreen_GetView(cmd)) {
+                PatrolRoute_Advance(ai->cmds);
                 ai->waitTicks = 0;
             }
         } else if (type == 6 || type == 7) {
@@ -390,13 +390,13 @@ void CarAI_Run(CarAI *ai)
             ai->speed = 0;
             ai->steer = 0;
         } else if (type == 8) {
-            n = AICmd_GetArg(cmd);
+            n = GameScreen_GetView(cmd);
             ai->stop = 0;
             ai->cmdSpeed = n;
-            AICmdList_Advance(ai->cmds);
+            PatrolRoute_Advance(ai->cmds);
         } else {
             Warning_Show("Command not supported by CARAI: %d.", type);
-            AICmdList_Advance(ai->cmds);
+            PatrolRoute_Advance(ai->cmds);
         }
     }
     CarAI_SendControl(ai, ai->tick, ai->throttle, ai->steer, ai->brake);
@@ -416,7 +416,7 @@ int CarAI_UpdateChase(CarAI *ai)
         ai->chaseTicks = 0;
         return 0;
     }
-    if (ai->enemy && sub_463170(ai->enemy)) {
+    if (ai->enemy && Human_IsDead(ai->enemy)) {
         ai->enemy = NULL;
         ai->chaseTicks = 0;
         return 0;
@@ -556,7 +556,7 @@ void CarAI_SendControl(CarAI *ai, int tick, float throttle, float steer, float b
     ctl.throttle = throttle;
     ctl.brake = ZERO_OR_NAN(brake) ? kNoBrake : brake;
     car = ai->car;
-    ((void (*)(void *, void *))HANDLER(Car_GetControlEvent(), car->task.type))(car, &ctl);
+    ((void (*)(void *, void *))HANDLER(Vehicle_GetControlEvent(), car->task.type))(car, &ctl);
 }
 HOOK(0x426510, CarAI_SendControl);
 
@@ -572,7 +572,7 @@ void CarAI_Changed(CarAI *ai)
     if (ai->car && ai->car->task.type != Car_GetType())
         ai->car = NULL;
     ai->graph = Task_FindById(ai->graphId);
-    if (ai->graph && ai->graph->type != Graph_GetType())
+    if (ai->graph && ai->graph->type != AIGraph_GetType())
         ai->graph = NULL;
     if (ai->car)
         CarAI_SendControl(ai, 0, 0, 0, 0);

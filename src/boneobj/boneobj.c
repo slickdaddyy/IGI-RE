@@ -16,7 +16,7 @@ ORIG(0x4B5F00, void *, Resource_Load, (const char *name, int flags));
 ORIG(0x4B6380, void, Resource_Unload, (const char *name));
 ORIG(0x4D3020, int, BoneBlend_GetMotion, (float *pos, float *delta, BlendNode *node));
 void Task_Nothing(void *task);
-ORIG(0x4D6D40, void, sub_4D6D40, (int skel));
+ORIG(0x4D6D40, void, Anim_PrepareSlerps, (int skel));
 
 typedef struct IffNode {
     struct IffNode *next;
@@ -1637,7 +1637,7 @@ void BoneObj_Load(const char *name)
             }
         }
     }
-    sub_4D6D40(skel);
+    Anim_PrepareSlerps(skel);
     Iff_Free(root);
     Resource_Unload(name);
 }

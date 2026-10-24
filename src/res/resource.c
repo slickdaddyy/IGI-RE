@@ -11,12 +11,12 @@ ORIG(0x4B0B00, void, Pool_Init, (Pool *pool, int size, int count, int align));
 ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));
 ORIG(0x4AD73D, int, crt_toupper, (int c));
 ORIG(0x4AAD10, int, crt_strncmp, (const char *a, const char *b, size_t n));
-ORIG(0x4B1020, int, Path_Resolve, (char *out, const char *name, int index));
-ORIG(0x4B1420, void, File_ForEach, (const char *name, void (*fn)(), void *user));
+ORIG(0x4B1020, int, File_ResolvePath, (char *out, const char *name, int index));
+ORIG(0x4B1420, void, File_ScanDir, (const char *name, void (*fn)(), void *user));
 ORIG(0x4B1820, int, File_GetTime, (int *time, const char *name));
 ORIG(0x4B18B0, void *, File_Load, (const char *name, int *size));
 ORIG(0x4B1A30, void, File_Unload, (void *data));
-ORIG(0x4B1FB0, char *, Path_Last, (void));
+ORIG(0x4B1FB0, char *, File_GetExpandedPath, (void));
 ORIG(0x4B1FC0, int, File_Exists, (const char *name));
 ORIG(0x5098F0, int, File_CompareTime, (const int *a, const int *b));
 
@@ -130,7 +130,7 @@ int Resource_IsLoaded(const char *name, Resource **out)
         Resource *r;
         unsigned int h;
 
-        next = Path_Resolve(path, name, next);
+        next = File_ResolvePath(path, name, next);
         String_ToUpper(upper, path);
         Path_FixSlashes(upper);
         h = Resource_Hash(upper);
@@ -190,7 +190,7 @@ void Resource_ForEach(const char *name, void (*fn)(ResourceFindInfo *info, void 
     const char *s;
 
     if (!Resource_IsLoaded(name, &r) || r->type != RES_PATH) {
-        File_ForEach(name, (void (*)())fn, user);
+        File_ScanDir(name, (void (*)())fn, user);
         return;
     }
     s = r->data;
@@ -264,7 +264,7 @@ void *Resource_Load(const char *name, int *size)
     }
     if (size)
         *size = n;
-    return Resource_Add(Path_Last(), data, n);
+    return Resource_Add(File_GetExpandedPath(), data, n);
 }
 HOOK(0x4B5F00, Resource_Load);
 

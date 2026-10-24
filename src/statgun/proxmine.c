@@ -49,7 +49,7 @@ _Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 
 #define HANDLER_429910 ((void *)0x429910)
 
-ORIG(0x4F1FE0, uint8_t, Gun_GetMoveEvent, (void));
+ORIG(0x4F1FE0, uint8_t, Weapon_GetMoveEvent, (void));
 ORIG(0x416830, uint8_t, Game_GetEvent7, (void));
 ORIG(0x460BE0, uint16_t, Human_GetType, (void));
 ORIG(0x449D20, uint16_t, Glass_GetType, (void));
@@ -58,7 +58,7 @@ ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *results, Vec3d *starts, Vec3d *ends, int count, char event,
                                   CollQuery *query, unsigned int flags));
 ORIG(0x414A60, void, Matrix_SetYAxis, (Matrix *m, const Vec3f *dir));
-ORIG(0x476040, void, Mine_Place, (void *a, Vec3d *pos, Matrix *m, char *key, int armTicks, float countdown,
+ORIG(0x476040, void, Mine_New, (void *a, Vec3d *pos, Matrix *m, char *key, int armTicks, float countdown,
                                   float activate, float explode, char alt));
 
 void ProxMine_Create(Gun *g, void *arg);
@@ -72,7 +72,7 @@ void ProxMine_Open(void)
     gProxMineType = TaskType_New("ProximityMine", sizeof(Gun), Gun_GetType(), 0);
     TaskType_SetHandler(gProxMineType, 0, ProxMine_Create);
     TaskType_SetHandler2(gProxMineType, 2, Gun_Delete);
-    TaskType_SetHandler(gProxMineType, Gun_GetMoveEvent(), ProxMine_Move);
+    TaskType_SetHandler(gProxMineType, Weapon_GetMoveEvent(), ProxMine_Move);
     TaskType_SetHandler(gProxMineType, Human_GetEvent0(), ProxMine_Use);
     TaskType_SetHandler(gProxMineType, WeaponType_GetInitEvent2(), ProxMine_ReadArgs);
     TaskType_SetHandler(gProxMineType, WeaponType_GetSizeEvent2(), HANDLER_429910);
@@ -162,7 +162,7 @@ void ProxMine_Use(Gun *g, WeaponUseMsg *msg)
                     hit.normal.z = hit.normal.z * inv;
                 }
                 Matrix_SetYAxis(&m, &hit.normal);
-                Mine_Place(sub_4F0EE0(), &hit.pos, &m, info->key, (int)round_ll(d->armTime * kTicksPerSecond),
+                Mine_New(sub_4F0EE0(), &hit.pos, &m, info->key, (int)round_ll(d->armTime * kTicksPerSecond),
                            d->countdown, d->activate, d->explode, msg->alt);
                 if (g->rounds > 0)
                     g->rounds--;

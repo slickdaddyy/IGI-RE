@@ -99,7 +99,7 @@ ORIG(0x4BEFC0, void, Reader_Free, (void *reader));
 ORIG(0x4BF1C0, void, Reader_InitMem, (void *reader, const char *src, int size));
 ORIG(0x4C0200, void, Lexer_Init, (void *lexer, void *reader, char *buf, unsigned int size));
 ORIG(0x4BFC70, int, Lexer_Next, (void *lexer, void *token));
-ORIG(0x4BF1F0, int, Parse_Statement, (void *lexer, Block **out));
+ORIG(0x4BF1F0, int, Parse_Block, (void *lexer, Block **out));
 ORIG(0x4BF8F0, void, Block_Free, (Block *b));
 
 #define gQscGenErrorData VAR(void *, 0xA442B4)
@@ -168,7 +168,7 @@ int QscGen_Compile(const char *path, QscScript *script)
             b = NULL;
             if (!Lexer_Next(lexer, (char *)lexer + 8))
                 break;
-            if (!Parse_Statement(lexer, &b)) {
+            if (!Parse_Block(lexer, &b)) {
                 gQscGenErrors++;
                 break;
             }

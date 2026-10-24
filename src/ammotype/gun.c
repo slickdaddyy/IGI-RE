@@ -187,8 +187,8 @@ ORIG(0x463150, char, Human_IsPlayer, (Task *h));
 ORIG(0x46C980, Task *, GunPickup_New, (Task *parent, Vec3d *pos, float *matrix, int id, int rounds));
 ORIG(0x4785F0, void, Gun_Reset, (Gun *g));
 ORIG(0x4788D0, void, Gun_RemoveFromWorld, (Gun *g));
-ORIG(0x489F50, char, sub_489F50, (Task *h));
-ORIG(0x491CF0, Display *, Display_Get, (void));
+ORIG(0x489F50, char, HumanPlayer_AnimDone, (Task *h));
+ORIG(0x491CF0, Display *, Display_GetMode, (void));
 ORIG(0x4B4770, long double, Random_Float, (void *rng));
 ORIG(0x4B4E00, void, Draw_Sprite, (void *s, float x, float y, float r, float g, float b, int frame, int unk4,
                                    int unk8));
@@ -212,7 +212,7 @@ ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model, int unk));
 ORIG(0x4D9FA0, uint16_t, MagicObj_GetType, (void));
-ORIG(0x4F0EE0, Task *, sub_4F0EE0, (void));
+ORIG(0x4F0EE0, Task *, Level_GetDynamic, (void));
 ORIG(0x4F1FF0, uint8_t, Weapon_GetTriggerEvent, (void));
 ORIG(0x4F2060, Task *, WeaponSlots_Get, (void *slots, int i));
 ORIG(0x4F2350, void, Weapon_UseAmmo, (Gun *g, char unlimited));
@@ -345,7 +345,7 @@ void Gun_ReloadHandler(Gun *g, ReloadMsg *m)
         if (Human_IsPlayer(h))
             HumanPlayer_SetWeaponAnim(h, 7);
         g->reload = 1;
-    } else if (g->reload == 1 && sub_489F50(h)) {
+    } else if (g->reload == 1 && HumanPlayer_AnimDone(h)) {
         Weapon_UseAmmo(g, m->unlimited);
         m->done = 1;
         g->reload = 0;
@@ -416,7 +416,7 @@ void Gun_DropHandler(Gun *g, Task **out)
         *out = NULL;
         return;
     }
-    *out = GunPickup_New(sub_4F0EE0(), &g->pos, g->matrix, g->weaponId, g->rounds);
+    *out = GunPickup_New(Level_GetDynamic(), &g->pos, g->matrix, g->weaponId, g->rounds);
     g->unkFC = 1;
 }
 HOOK(0x479C20, Gun_DropHandler);
@@ -485,8 +485,8 @@ void Gun_HudHandler(Gun *g, Hud **msg)
 {
     Hud *hud = *msg;
     WeaponType *w = g->type;
-    int width = Display_Get()->width;
-    int height = Display_Get()->height;
+    int width = Display_GetMode()->width;
+    int height = Display_GetMode()->height;
     float textW = 0, iconW = 0;
     void *icon;
 
@@ -571,8 +571,8 @@ void Gun_HudHandler(Gun *g, Hud **msg)
     }
     if (w->sightDisplay == 1) {
         void *cross = HUD_SPRITE(hud, 0x74);
-        float cx = rf(Display_Get()->width * kHalf);
-        float cy = rf(Display_Get()->height * kHalf);
+        float cx = rf(Display_GetMode()->width * kHalf);
+        float cy = rf(Display_GetMode()->height * kHalf);
         float hw = rf(Sprite_Width(cross) * kHalf);
         int sh = Sprite_Height(cross);
 
@@ -584,8 +584,8 @@ HOOK(0x479D20, Gun_HudHandler);
 /* "%-4d" rounds carried, right aligned at the bottom */
 void Gun_DrawAmmoCount(Gun *g, Hud *hud)
 {
-    int width = Display_Get()->width;
-    int height = Display_Get()->height;
+    int width = Display_GetMode()->width;
+    int height = Display_GetMode()->height;
     int count = carried(g);
     char buf[16];
     float x;
@@ -604,8 +604,8 @@ HOOK(0x47A260, Gun_DrawAmmoCount);
 void Gun_DrawAmmoClip(Gun *g, Hud *hud)
 {
     WeaponType *w = g->type;
-    int width = Display_Get()->width;
-    int height = Display_Get()->height;
+    int width = Display_GetMode()->width;
+    int height = Display_GetMode()->height;
     int rounds = g->rounds;
     int count = carried(g);
     int frame;
@@ -642,8 +642,8 @@ HOOK(0x47A360, Gun_DrawAmmoClip);
 
 void Gun_DrawAmmoBar(Gun *g, Hud *hud)
 {
-    int width = Display_Get()->width;
-    int height = Display_Get()->height;
+    int width = Display_GetMode()->width;
+    int height = Display_GetMode()->height;
     int rounds = g->rounds;
     int count = carried(g);
     void *spr = HUD_SPRITE(hud, 0x104);
@@ -674,8 +674,8 @@ HOOK(0x47A540, Gun_DrawAmmoBar);
 
 void Gun_DrawAmmoItems(Gun *g, Hud *hud)
 {
-    int width = Display_Get()->width;
-    int height = Display_Get()->height;
+    int width = Display_GetMode()->width;
+    int height = Display_GetMode()->height;
     int rounds = g->rounds;
     int count = carried(g);
     void *spr = HUD_SPRITE(hud, 0x11C);
@@ -771,8 +771,8 @@ HOOK(0x47AA40, Gun_Close);
 void Gun_GetAmmoTextPos(float *x, float *y, Gun *g, Hud *hud)
 {
     WeaponType *w = g->type;
-    int width = Display_Get()->width;
-    int height = Display_Get()->height;
+    int width = Display_GetMode()->width;
+    int height = Display_GetMode()->height;
     int count = carried(g);
     void *spr;
     char buf[16];

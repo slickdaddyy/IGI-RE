@@ -14,12 +14,12 @@ ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4B0D40, void, Mem_SetDefaultMode, (void));
 ORIG(0x4B0D50, void, Mem_ClearMode, (void));
 ORIG(0x4B0DB0, char, Mem_GetMode, (void));
-ORIG(0x4D3160, void, sub_4D3160, (float *out, const float *a, const float *b, float t));
-ORIG(0x4D31C0, int, sub_4D31C0, (float *pos, float *rot, void *track));
-ORIG(0x4D34A0, void, sub_4D34A0, (void *blend));
-ORIG(0x4D3720, void *, sub_4D3720, (void *blend, int i));
-ORIG(0x4D38A0, void, sub_4D38A0, (int a, int b));
-ORIG(0x4D65D0, void, sub_4D65D0, (void));
+ORIG(0x4D3160, void, BoneObj_LerpVec, (float *out, const float *a, const float *b, float t));
+ORIG(0x4D31C0, int, BoneObj_GetBranchPosition, (float *pos, float *rot, void *track));
+ORIG(0x4D34A0, void, BoneObj_DeleteBlendNode, (void *blend));
+ORIG(0x4D3720, void *, BoneObj_GetBlendBranch, (void *blend, int i));
+ORIG(0x4D38A0, void, BoneObj_SetRoot, (int a, int b));
+ORIG(0x4D65D0, void, BoneObj_FreeAll, (void));
 
 /* A loaded skeleton: per bone its parent index and offset from the parent */
 typedef struct BoneHierarchy {
@@ -76,7 +76,7 @@ void BoneObj_Init(void)
 {
     int i;
 
-    sub_4D38A0(0, 0);
+    BoneObj_SetRoot(0, 0);
     gBoneObjReady = 1;
     for (i = 0; i < 64; i++) {
         gBoneHierarchies[i].count = 0;
@@ -99,7 +99,7 @@ HOOK(0x4D2C30, BoneObj_Init);
 
 void BoneObj_Shutdown(void)
 {
-    sub_4D65D0();
+    BoneObj_FreeAll();
     Pool_Free_(&VAR(Pool, 0xA54640));
     Pool_Free_(&VAR(Pool, 0xA54620));
     Pool_Free_(&VAR(Pool, 0xA54608));
@@ -159,7 +159,7 @@ void BoneObj_Free(BoneObj *o)
 
     for (i = 0; i < gBoneHierarchies[o->type].count; i++) {
         if (o->bones[i].blend)
-            sub_4D34A0(o->bones[i].blend);
+            BoneObj_DeleteBlendNode(o->bones[i].blend);
         o->bones[i].blend = NULL;
     }
     if (o->bones) {
@@ -245,8 +245,8 @@ static void copy3(float *d, const float *s)
 int BoneBlend_GetMotion(float *pos, float *rot, BoneBlend *bl)
 {
     float ap[3], ar[3], bp[3], br[3];
-    int a = sub_4D31C0(ap, ar, sub_4D3720(bl, 0));
-    int b = sub_4D31C0(bp, br, sub_4D3720(bl, 1));
+    int a = BoneObj_GetBranchPosition(ap, ar, BoneObj_GetBlendBranch(bl, 0));
+    int b = BoneObj_GetBranchPosition(bp, br, BoneObj_GetBlendBranch(bl, 1));
 
     if (!a && !b)
         return 0;
@@ -254,9 +254,9 @@ int BoneBlend_GetMotion(float *pos, float *rot, BoneBlend *bl)
         float t = bl->weight(bl->arg);
 
         if (pos)
-            sub_4D3160(pos, ap, bp, t);
+            BoneObj_LerpVec(pos, ap, bp, t);
         if (rot)
-            sub_4D3160(rot, ar, br, t);
+            BoneObj_LerpVec(rot, ar, br, t);
     } else if (a) {
         if (pos)
             copy3(pos, ap);

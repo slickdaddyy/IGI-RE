@@ -15,7 +15,7 @@ ORIG(0x401AE0, Task **, TaskRef_Add, (void *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x401BE0, Task *, Task_FindChild, (Task *task, uint16_t type));
 ORIG(0x401C40, Task *, Task_FindNext, (Task *task, uint16_t type));
-ORIG(0x414E20, void, sub_414E20, (Vec3d *out, void *obj, int point));
+ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int point));
 ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
 ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
 ORIG(0x4168D0, void *, Game_GetTaskList3, (void));
@@ -25,15 +25,15 @@ ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x426D80, void, CarDoor_SetOpen, (Task *door, int open));
 ORIG(0x427290, uint16_t, HeliWheel_GetType, (void));
 ORIG(0x427820, uint16_t, HeliDoor_GetType, (void));
-ORIG(0x464250, int, sub_464250, (int a, int b));
-ORIG(0x46AB20, uint8_t, sub_46AB20, (void));
+ORIG(0x464250, int, Human_GetMaskType, (int a, int b));
+ORIG(0x46AB20, uint8_t, ComputerMap_GetSelectEvent, (void));
 ORIG(0x480FE0, void, Explosion_Spawn, (Vec3d *pos, int a, int b, float c, float d, float e, float f, int g, int h,
                                        int i, const char *sprite, const char *sound, int j, int k, float l, int m));
-ORIG(0x489610, uint8_t, sub_489610, (void));
-ORIG(0x489630, uint8_t, sub_489630, (void));
-ORIG(0x4896C0, void, sub_4896C0, (void *light, int a, int b, int c));
-ORIG(0x489750, void, sub_489750, (void *light, Vec3d *pos, void *owner, int a));
-ORIG(0x489B90, void, sub_489B90, (void *light));
+ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
+ORIG(0x489630, uint8_t, AIDetection_GetEvent2, (void));
+ORIG(0x4896C0, void, AIDetector_Init, (void *light, int a, int b, int c));
+ORIG(0x489750, void, AIDetector_Update, (void *light, Vec3d *pos, void *owner, int a));
+ORIG(0x489B90, void, AIDetection_RemoveRefs, (void *light));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B34F0, void, Matrix_RotateX, (Matrix *out, const Matrix *m, float a));
 ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
@@ -54,16 +54,16 @@ ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
-ORIG(0x4E6610, uint8_t, Sound_GetParamsEvent, (void));
+ORIG(0x4E6610, uint8_t, Sound_GetInfoEvent, (void));
 ORIG(0x4E6AB0, float *, SoundParams_New, (int count));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (Task *sound));
-ORIG(0x4EC2C0, void, sub_4EC2C0, (void *parts, int count, float k, void *body, Matrix *m, Vec3f *v));
-ORIG(0x4ECDB0, void, sub_4ECDB0, (void *body));
+ORIG(0x4EC2C0, void, Body_AddAeroForces, (void *parts, int count, float k, void *body, Matrix *m, Vec3f *v));
+ORIG(0x4ECDB0, void, Body_Update, (void *body));
 ORIG(0x4ECF50, void, Body_AddForce, (void *body, float *force));
-ORIG(0x4EE0E0, uint8_t, PhysType_GetArgsEvent, (void));
-ORIG(0x4EE0F0, uint8_t, PhysType_GetSizeEvent, (void));
-ORIG(0x4EE140, PhysType *, PhysType_Find, (const char *name));
+ORIG(0x4EE0E0, uint8_t, PhysicsObjType_GetParseEvent, (void));
+ORIG(0x4EE0F0, uint8_t, PhysicsObjType_GetSizeEvent, (void));
+ORIG(0x4EE140, PhysType *, PhysicsObjType_Find, (const char *name));
 ORIG(0x4F0F30, void *, Param_Degrees, (void));
 ORIG(0x4F0F50, void *, Param_Real32, (void));
 ORIG(0x4F0F60, void *, Param_Real32x3, (void));
@@ -83,21 +83,21 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 ORIG(0x4F1C90, void *, Param_Range02, (void));
 ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
-ORIG(0x4F40E0, uint8_t, Vehicle_GetControlInfoEvent, (void));
+ORIG(0x4F40E0, uint8_t, Vehicle_GetInputInfoEvent, (void));
 ORIG(0x4F4110, uint8_t, Vehicle_GetStateSizeEvent, (void));
 ORIG(0x4F4120, uint8_t, Vehicle_GetSaveEvent, (void));
 ORIG(0x4F4130, uint8_t, Vehicle_GetLoadEvent, (void));
 ORIG(0x4F4140, uint8_t, Vehicle_GetKeysEvent, (void));
 ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
 ORIG(0x4F4600, void, Vehicle_ResetControls, (void *v));
-ORIG(0x4F4640, void, sub_4F4640, (void *v));
-ORIG(0x4F4660, void, sub_4F4660, (void *v));
-ORIG(0x4F4680, void, Vehicle_Reset, (void *v));
-ORIG(0x4F4800, void, sub_4F4800, (void *v));
-ORIG(0x4F4820, void, sub_4F4820, (void *v));
-ORIG(0x4FB700, void, Vehicle_SetPhysType, (void *v, PhysType *phys));
-ORIG(0x4FC0E0, void, sub_4FC0E0, (void *obj, float a, float b, float c, void *world, int event, void *msg));
-ORIG(0x4FC7B0, int, sub_4FC7B0, (void *obj));
+ORIG(0x4F4640, void, Vehicle_Free, (void *v));
+ORIG(0x4F4660, void, Vehicle_RunParts, (void *v));
+ORIG(0x4F4680, void, Vehicle_Init, (void *v));
+ORIG(0x4F4800, void, Vehicle_NewParts, (void *v));
+ORIG(0x4F4820, void, Vehicle_DeleteParts, (void *v));
+ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (void *v, PhysType *phys));
+ORIG(0x4FC0E0, void, PhysicsObj_Collide, (void *obj, float a, float b, float c, void *world, int event, void *msg));
+ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (void *obj));
 
 void Car_CollFilter(Task *t, char *msg);
 
@@ -155,21 +155,21 @@ void Heli_Init(void)
     TaskType_SetHandler2(gHeliType, 2, Heli_Delete);
     TaskType_SetHandler(gHeliType, Param_GetTableEvent(), Heli_GetParamTable);
     TaskType_SetHandler(gHeliType, Param_GetChangedEvent(), Heli_ParamsChanged);
-    TaskType_SetHandler(gHeliType, Sound_GetParamsEvent(), Heli_GetSoundParams);
+    TaskType_SetHandler(gHeliType, Sound_GetInfoEvent(), Heli_GetSoundParams);
     TaskType_SetHandler(gHeliType, Game_GetEvent9(), TASK_NOTHING);
     TaskType_SetHandler(gHeliType, Game_GetEvent11(), TASK_NOTHING);
     TaskType_SetHandler(gHeliType, Vehicle_GetControlEvent(), Heli_Control);
-    TaskType_SetHandler(gHeliType, Vehicle_GetControlInfoEvent(), Heli_GetControlInfo);
+    TaskType_SetHandler(gHeliType, Vehicle_GetInputInfoEvent(), Heli_GetControlInfo);
     TaskType_SetHandler(gHeliType, Vehicle_GetStateSizeEvent(), Heli_GetStateSize);
     TaskType_SetHandler(gHeliType, Vehicle_GetKeysEvent(), Heli_ReadKeys);
     TaskType_SetHandler(gHeliType, Vehicle_GetLoadEvent(), HELI_LOAD_STATE);
     TaskType_SetHandler(gHeliType, Vehicle_GetSaveEvent(), HELI_SAVE_STATE);
-    TaskType_SetHandler(gHeliType, PhysType_GetArgsEvent(), HELI_PARSE_DEF);
-    TaskType_SetHandler(gHeliType, PhysType_GetSizeEvent(), HELI_GET_DEF_SIZE);
+    TaskType_SetHandler(gHeliType, PhysicsObjType_GetParseEvent(), HELI_PARSE_DEF);
+    TaskType_SetHandler(gHeliType, PhysicsObjType_GetSizeEvent(), HELI_GET_DEF_SIZE);
     TaskType_SetHandler(gHeliType, World_GetEvent1(), HELI_ON_WORLD_EVENT1);
-    TaskType_SetHandler(gHeliType, sub_489610(), Car_CollFilter);
-    TaskType_SetHandler(gHeliType, sub_46AB20(), TASK_HANDLER_4E4280);
-    TaskType_SetHandler(gHeliType, sub_489630(), HELI_HANDLER_433000);
+    TaskType_SetHandler(gHeliType, AIDetection_GetEvent0(), Car_CollFilter);
+    TaskType_SetHandler(gHeliType, ComputerMap_GetSelectEvent(), TASK_HANDLER_4E4280);
+    TaskType_SetHandler(gHeliType, AIDetection_GetEvent2(), HELI_HANDLER_433000);
     gHeliParams = ParamTable_New(13);
     gHeliRange[0] = 0;
     gHeliRange[1] = 1000;
@@ -212,7 +212,7 @@ void Heli_Reset(Heli *h)
     h->sound_params = SoundParams_New(2);
     h->rotor_sound = NULL;
     h->v.name[0] = 0;
-    Vehicle_Reset(h);
+    Vehicle_Init(h);
     h->v.start_speed = 1.0f;
     h->exploding = 0;
     h->explode_timer = -1;
@@ -259,7 +259,7 @@ void Heli_Run(Heli *h)
                     int delay = Random_Int(Game_GetRandom(), 30);
                     Vec3d p;
 
-                    sub_414E20(&p, h, *point);
+                    Model_GetPoint(&p, h, *point);
                     p.x = p.x + h->v.pos.x;
                     p.y = p.y + h->v.pos.y;
                     p.z = p.z + h->v.pos.z;
@@ -291,11 +291,11 @@ void Heli_Run(Heli *h)
             h->light_pos = h->v.pos;
             h->light_matrix = m;
             h->unk8B8 = 0;
-            sub_489750(h->light, &h->light_pos, h, 1);
+            AIDetector_Update(h->light, &h->light_pos, h, 1);
         }
         if (!h->lights && was) {
-            sub_489B90(h->light);
-            sub_4896C0(h->light, 1, 4, sub_464250(4, 8));
+            AIDetection_RemoveRefs(h->light);
+            AIDetector_Init(h->light, 1, 4, Human_GetMaskType(4, 8));
         }
     }
     BROADCAST(h->v.task.head, 1);
@@ -323,7 +323,7 @@ HOOK(0x431AC0, Heli_FindDoor);
 
 void Heli_Delete(Heli *h)
 {
-    sub_4F4640(h);
+    Vehicle_Free(h);
     DynCube_Remove(Game_GetWorld(), h);
     QTaskList_Remove(Game_GetTaskList3(), h);
     QTaskList_Free(h->sound_params);
@@ -332,7 +332,7 @@ void Heli_Delete(Heli *h)
     VarString_Free(&h->light_expr);
     VarString_Free(&h->engine_expr);
     QTaskList_Remove(Game_GetTaskList4(), h);
-    sub_489B90(h->light);
+    AIDetection_RemoveRefs(h->light);
 }
 HOOK(0x431AE0, Heli_Delete);
 
@@ -364,7 +364,7 @@ void Heli_Control(Heli *h, ControlArg *arg)
         arg->axes[1] = 0;
         arg->axes[2] = 0;
         h->v.matrix = h->v.matrix2;
-        Vehicle_SetPhysType(h, h->v.phys);
+        PhysicsObj_SetPhysType(h, h->v.phys);
         Vehicle_ResetControls(h);
         h->v.speed = h->v.start_speed;
         h->v.target_speed = h->v.start_speed;
@@ -374,14 +374,14 @@ void Heli_Control(Heli *h, ControlArg *arg)
         h->v.steer[0] = 0;
         h->v.steer[1] = 0;
         h->v.steer[2] = 0;
-        sub_4F4820(h);
-        sub_4F4800(h);
+        Vehicle_DeleteParts(h);
+        Vehicle_NewParts(h);
         m = h->v.matrix.m;
         v.x = m[2] * h->v.unk180.z + m[1] * h->v.unk180.y + h->v.unk180.x * m[0];
         v.y = m[5] * h->v.unk180.z + m[4] * h->v.unk180.y + h->v.unk180.x * m[3];
         v.z = m[8] * h->v.unk180.z + m[7] * h->v.unk180.y + h->v.unk180.x * m[6];
         h->v.body.velocity = v;
-        sub_4ECDB0(&h->v.body);
+        Body_Update(&h->v.body);
         if (h->v.coll) {
             PartMoveArg msg = {&h->v.pos, &h->v.matrix, h};
 
@@ -389,7 +389,7 @@ void Heli_Control(Heli *h, ControlArg *arg)
         }
     }
     if (arg->tick > 0) {
-        sub_4F4660(h);
+        Vehicle_RunParts(h);
         Heli_Move(h);
     }
 }
@@ -473,7 +473,7 @@ void Heli_Move(Heli *h)
         nm.unk24 = h->v.matrix.unk24 + r.unk24 + 1;
         h->v.matrix = nm;
     }
-    if (!sub_4FC7B0(h)) {
+    if (!PhysicsObj_IsResting(h)) {
         VehicleConfig *c;
 
         msg[1] = h;
@@ -485,9 +485,9 @@ void Heli_Move(Heli *h)
             v.x = -h->v.body.velocity.x;
             v.y = -h->v.body.velocity.y;
             v.z = -h->v.body.velocity.z;
-            sub_4EC2C0(c->parts, c->part_count, 0x1.56e264p-12f, &h->v.body, &h->v.matrix, &v);
+            Body_AddAeroForces(c->parts, c->part_count, 0x1.56e264p-12f, &h->v.body, &h->v.matrix, &v);
         }
-        sub_4FC0E0(h, 0x1.64ce9ep+5f, 1.0f, 0x1.d70a3ep-1f, Game_GetWorld(), 12, msg);
+        PhysicsObj_Collide(h, 0x1.64ce9ep+5f, 1.0f, 0x1.d70a3ep-1f, Game_GetWorld(), 12, msg);
     }
     if (h->v.coll) {
         msg[0] = &h->v.pos;
@@ -616,12 +616,12 @@ void Heli_ParamsChanged(Heli *h)
 
     if (model) {
         RigidDynCubeObj_SetModel(h, model);
-        Vehicle_SetPhysType(h, PhysType_Find(h->v.name));
+        PhysicsObj_SetPhysType(h, PhysicsObjType_Find(h->v.name));
         Vehicle_ResetControls(h);
         h->light_cfg[0] = h->light_params[0] * kDegToRad;
         h->light_cfg[1] = h->light_params[1] * kDegToRad;
         h->light_cfg[2] = h->light_params[2] * kFixed;
-        sub_4896C0(h->light, 1, 4, sub_464250(4, 8));
+        AIDetector_Init(h->light, 1, 4, Human_GetMaskType(4, 8));
     } else if (h->v.name[0] && h->v.name[1] != '*') {
         crt_sprintf(buf, "Model \"%s\" not available", h->v.name);
         strcpy(name, h->v.name);
@@ -632,8 +632,8 @@ void Heli_ParamsChanged(Heli *h)
     r = radius(h);
     DynCube_Move(Game_GetWorld(), h, &h->v.pos2, r);
     h->v.matrix = h->v.matrix2;
-    sub_4F4820(h);
-    sub_4F4800(h);
+    Vehicle_DeleteParts(h);
+    Vehicle_NewParts(h);
     BROADCAST(h->v.coll->head, Param_GetChangedEvent(), NULL);
     VarString_Bind(&h->rotor_expr, h);
     VarString_Bind(&h->light_expr, h);

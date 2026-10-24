@@ -10,20 +10,20 @@ ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x416920, void *, Game_GetWorld, (void));
-ORIG(0x464250, int, sub_464250, (void));
+ORIG(0x464250, int, Human_GetMaskType, (void));
 ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
 ORIG(0x467DF0, void, ComputerObject_DrawSprite, (void *arg));
 ORIG(0x46B4D0, char *, ComputerRes_Get, (void));
 ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
-ORIG(0x489630, uint8_t, AIDetection_GetEvent1, (void));
-ORIG(0x4896C0, void, AIDetection_Setup, (void *d, int team, int a, int mask, int b, int c));
-ORIG(0x489750, void, AIDetection_Update, (void *d, void *view, void *owner, int team));
-ORIG(0x489B90, void, AIDetection_Reset, (void *d));
+ORIG(0x489630, uint8_t, AIDetection_GetEvent2, (void));
+ORIG(0x4896C0, void, AIDetector_Init, (void *d, int team, int a, int mask, int b, int c));
+ORIG(0x489750, void, AIDetector_Update, (void *d, void *view, void *owner, int team));
+ORIG(0x489B90, void, AIDetection_RemoveRefs, (void *d));
 ORIG(0x4C1800, void *, QTaskList_New, (int max));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x4C48D0, void, RigidDynCubeObj_SetModel, (void *obj, void **model));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, void *c));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, void *c));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, float radius));
 ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int category));
@@ -31,7 +31,7 @@ ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *obj));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
-ORIG(0x4E0930, Task *, sub_4E0930, (void *parent, void *obj));
+ORIG(0x4E0930, Task *, MagicObjContainer_New, (void *parent, void *obj));
 ORIG(0x4F0F30, void *, Param_Degrees, (void));
 ORIG(0x4F0F50, void *, Param_Real32, (void));
 ORIG(0x4F0F70, void *, Param_Real32x9, (void));
@@ -158,7 +158,7 @@ void GunHolder_Init(void)
     TaskType_SetHandler2(gGunHolderType, 2, GunHolder_Destroy);
     TaskType_SetHandler(gGunHolderType, Param_GetChangedEvent(), GunHolder_Changed);
     TaskType_SetHandler(gGunHolderType, Param_GetTableEvent(), GunHolder_GetParams);
-    TaskType_SetHandler(gGunHolderType, AIDetection_GetEvent1(), GunHolder_GetDetection);
+    TaskType_SetHandler(gGunHolderType, AIDetection_GetEvent2(), GunHolder_GetDetection);
     TaskType_SetHandler(gGunHolderType, AIDetection_GetEvent0(), GunHolder_Handler42FC50);
     TaskType_SetHandler(gGunHolderType, ComputerObject_GetEvent0(), GunHolder_Draw);
     gGunHolderRange[0] = 0.0f;
@@ -188,10 +188,10 @@ void GunHolder_Run(GunHolder *t)
         t->view.pos = t->obj.pos;
         t->view.matrix = t->obj.matrix;
         t->view.unk70 = 0;
-        AIDetection_Update(t->detect, &t->view, t, t->team);
+        AIDetector_Update(t->detect, &t->view, t, t->team);
     } else if (was) {
-        AIDetection_Reset(t->detect);
-        AIDetection_Setup(t->detect, 1, 4, sub_464250(), 4, 8);
+        AIDetection_RemoveRefs(t->detect);
+        AIDetector_Init(t->detect, 1, 4, Human_GetMaskType(), 4, 8);
     }
     CALL_CHILDREN_RUN(t);
     if (t->obj.child) {
@@ -213,7 +213,7 @@ void GunHolder_Destroy(GunHolder *t)
     if (t->obj.child)
         Task_Delete(t->obj.child);
     DynCube_Remove(t->obj.world, t);
-    AIDetection_Reset(t->detect);
+    AIDetection_RemoveRefs(t->detect);
 }
 HOOK(0x46E7A0, GunHolder_Destroy);
 
@@ -229,15 +229,15 @@ void GunHolder_Changed(GunHolder *t)
     t->obj.matrix = t->matrix;
     if (old)
         Task_Delete(old);
-    t->obj.child = sub_4E0930(NULL, t);
-    sub_4C4950(t->obj.child, t, t);
+    t->obj.child = MagicObjContainer_New(NULL, t);
+    RigidDynCubeObj_CreateMagicObjs(t->obj.child, t, t);
     CALL_CHILDREN_EV(t->obj.child, Param_GetChangedEvent(), NULL);
     VarString_Bind(&t->activeExpr, t);
     VarString_Bind(&t->teamExpr, t);
     t->view.angleX = t->angleX * kDegToRad;
     t->view.angleY = t->angleY * kDegToRad;
     t->view.range = t->range * kRangeScale;
-    AIDetection_Setup(t->detect, 1, 4, sub_464250(), 4, 8);
+    AIDetector_Init(t->detect, 1, 4, Human_GetMaskType(), 4, 8);
 }
 HOOK(0x46E7F0, GunHolder_Changed);
 

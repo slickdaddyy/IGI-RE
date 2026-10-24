@@ -15,7 +15,7 @@ ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t slot));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401F80, void, Task_ClearGlobalFlags, (uint32_t flags));
-ORIG(0x4028B0, int, Timer_GetTicks, (void));
+ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x4028C0, int, Flow_GetRenders, (void));
 ORIG(0x415020, int, Game_CheatKeyPressed, (int key));
 ORIG(0x4167F0, uint8_t, Game_GetEvent2, (void));
@@ -27,46 +27,46 @@ ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416C90, long double, Game_BlastFalloff, (void *blast, Human *h, double *pos, float radius, int unk));
 ORIG(0x416D40, char *, Game_Get, (void));
 ORIG(0x416D80, char, PlayerXPHit, (void));
-ORIG(0x450C80, uint8_t, HumanAI_GetEvent, (void));
+ORIG(0x450C80, uint8_t, HumanAI_GetEventSlot, (void));
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
 ORIG(0x416880, uint8_t, Game_GetEvent13, (void));
-ORIG(0x450CE0, void, sub_450CE0, (void *noise));
+ORIG(0x450CE0, void, HumanAI_Broadcast, (void *noise));
 ORIG(0x452920, double *, sub_452920, (Task *node));
 ORIG(0x463130, int, Human_GetTeam, (Task *h));
-ORIG(0x463150, char, sub_463150, (Human *h));
-ORIG(0x463310, void, sub_463310, (Human *h, void *obj));
-ORIG(0x463550, void, sub_463550, (Human *h));
-ORIG(0x463640, void, sub_463640, (Human *h, Task *ground));
-ORIG(0x463680, Task *, sub_463680, (Human *h));
-ORIG(0x463700, void, sub_463700, (Human *h, int a));
+ORIG(0x463150, char, Human_IsPlayer, (Human *h));
+ORIG(0x463310, void, Human_SetPlatform, (Human *h, void *obj));
+ORIG(0x463550, void, Human_ClearPlatform, (Human *h));
+ORIG(0x463640, void, Human_SetGround, (Human *h, Task *ground));
+ORIG(0x463680, Task *, Human_GetGround, (Human *h));
+ORIG(0x463700, void, Human_SetAttached, (Human *h, int a));
 ORIG(0x463740, Task *, Human_GetAttached, (Human *h));
-ORIG(0x463AD0, void, sub_463AD0, (Human *h, void *dir, int unk));
-ORIG(0x464250, int, sub_464250, (void));
-ORIG(0x465800, void, sub_465800, (double *pos, HumanView *v));
-ORIG(0x465820, void, sub_465820, (void *out, Human *h));
+ORIG(0x463AD0, void, Human_Bleed, (Human *h, void *dir, int unk));
+ORIG(0x464250, int, Human_GetMaskType, (void));
+ORIG(0x465800, void, HumanView_GetEye, (double *pos, HumanView *v));
+ORIG(0x465820, void, Human_GetEyePos, (void *out, Human *h));
 ORIG(0x465880, void, HumanView_GetMatrix, (float *m, HumanView *v));
-ORIG(0x46AB30, uint16_t, sub_46AB30, (void));
-ORIG(0x477BF0, uint16_t, sub_477BF0, (void));
-ORIG(0x477C20, uint8_t, sub_477C20, (void));
-ORIG(0x477C50, Task *, sub_477C50, (Human *h, int a, int id, int ammo, char b));
-ORIG(0x47B290, int, sub_47B290, (double (*out)[3], int max, void *shot, double *pos));
-ORIG(0x47CE00, void, sub_47CE00, (void *ammo, int id, int count));
-ORIG(0x487190, uint8_t, sub_487190, (void));
-ORIG(0x4872B0, void, sub_4872B0, (void *a));
+ORIG(0x46AB30, uint16_t, ComputerMap_GetZoom, (void));
+ORIG(0x477BF0, uint16_t, Gun_GetType, (void));
+ORIG(0x477C20, uint8_t, Gun_GetEvent2, (void));
+ORIG(0x477C50, Task *, Gun_New, (Human *h, int a, int id, int ammo, char b));
+ORIG(0x47B290, int, GunShot_FindNear, (double (*out)[3], int max, void *shot, double *pos));
+ORIG(0x47CE00, void, AmmoList_Add, (void *ammo, int id, int count));
+ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
+ORIG(0x4872B0, void, StatusScreen_ResetBlink, (void *a));
 ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
-ORIG(0x489C60, int, sub_489C60, (Human *h, void *hit));
-ORIG(0x489E10, void, sub_489E10, (HumanDamage *d, int part));
-ORIG(0x489F70, void, sub_489F70, (Human *h, int frame));
-ORIG(0x48A340, float *, sub_48A340, (float *out, Human *h, int unk));
-ORIG(0x467F30, void, sub_467F30, (void *query));
-ORIG(0x491CF0, int *, Display_Get, (void));
-ORIG(0x497F20, void, sub_497F20, (float *screen, float *depth, double *pos));
+ORIG(0x489C60, int, Human_GetHitZone, (Human *h, void *hit));
+ORIG(0x489E10, void, HumanDamage_GetZone, (HumanDamage *d, int part));
+ORIG(0x489F70, void, Human_ApplyLook, (Human *h, int frame));
+ORIG(0x48A340, float *, Human_GetBonePos, (float *out, Human *h, int unk));
+ORIG(0x467F30, void, ComputerObject_DrawMarker, (void *query));
+ORIG(0x491CF0, int *, Display_GetMode, (void));
+ORIG(0x497F20, void, TransContext_Project, (float *screen, float *depth, double *pos));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B0D40, void, Mem_SetDefaultMode, (void));
 ORIG(0x4B0D50, void, Mem_ClearMode, (void));
 ORIG(0x4B0DB0, char, Mem_GetMode, (void));
 ORIG(0x4AF9B0, int, List_Count, (void *list));
-ORIG(0x4B27D0, long double, Math_Asin, (float x));
+ORIG(0x4B27D0, long double, Math_ASinF, (float x));
 ORIG(0x4B2840, long double, Math_ASin, (double x));
 ORIG(0x4B2C70, int, Vec3_RayPlane, (float *out, const float *p, const float *d, const float *n));
 ORIG(0x4B3100, void, Vec3d_Normalize, (double *v));
@@ -106,30 +106,30 @@ ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4CEC10, void *, VirModel_Find, (const char *name));
 ORIG(0x4CFF70, int, Mesh3D_GetBoneMeshLOD, (Human *h));
-ORIG(0x4D03D0, int, sub_4D03D0, (float *v, float radius, void *out));
-ORIG(0x4D06C0, int, sub_4D06C0, (Human *h, float *out));
+ORIG(0x4D03D0, int, Mesh3D_Exclude, (float *v, float radius, void *out));
+ORIG(0x4D06C0, int, Mesh3D_ExcludeBone, (Human *h, float *out));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void *model));
-ORIG(0x4D14D0, uint8_t, sub_4D14D0, (void));
-ORIG(0x4D3210, void, sub_4D3210, (int *out, void *anim));
-ORIG(0x4D38C0, void, sub_4D38C0, (float *matrix, void *anim));
-ORIG(0x4D64C0, int, Anim_GetFrame, (void *anim, int track));
-ORIG(0x4D9610, uint16_t, sub_4D9610, (void));
-ORIG(0x4D9700, void, sub_4D9700, (Human *h, void *model));
+ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
+ORIG(0x4D3210, void, BoneObj_GetEvents, (int *out, void *anim));
+ORIG(0x4D38C0, void, BoneObj_Update, (float *matrix, void *anim));
+ORIG(0x4D64C0, int, Anim_GetId, (void *anim, int track));
+ORIG(0x4D9610, uint16_t, BoneDynCubeObj_GetType, (void));
+ORIG(0x4D9700, void, BoneDynCubeObj_SetModel, (Human *h, void *model));
 ORIG(0x4E6B00, void *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (void *sound, double *pos));
-ORIG(0x4E7200, void, sub_4E7200, (const char *name, int a, void *b));
-ORIG(0x4E7C00, void, sub_4E7C00, (const char *fmt, va_list ap));
-ORIG(0x4E7C40, void *, sub_4E7C40, (void));
-ORIG(0x4E81F0, char *, sub_4E81F0, (void));
-ORIG(0x4EC0E0, void, sub_4EC0E0, (int a, Human *h, double *pos));
+ORIG(0x4E7200, void, Sound_PlayDefined, (const char *name, int a, void *b));
+ORIG(0x4E7C00, void, DebugText_VPrintf, (const char *fmt, va_list ap));
+ORIG(0x4E7C40, void *, DebugText_GetFont, (void));
+ORIG(0x4E81F0, char *, Viewport_GetCurrentCamera, (void));
+ORIG(0x4EC0E0, void, AnimTrigger_Fire, (int a, Human *h, double *pos));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F2060, Task *, WeaponSlots_Get, (void **slots, int i));
-ORIG(0x4F2310, void, sub_4F2310, (Task *w, double *pos, float *m));
+ORIG(0x4F2310, void, Weapon_Move, (Task *w, double *pos, float *m));
 ORIG(0x4F9720, void *, Graph_GetNode, (void *graph, int id));
 ORIG(0x4F9770, void, Graph_GetNodePos, (double *out, void *node));
-ORIG(0x5042B0, char, sub_5042B0, (void *criteria, double *pos));
-ORIG(0x504A90, void, sub_504A90, (void *criteria));
-ORIG(0x504AC0, unsigned int, sub_504AC0, (void *criteria));
+ORIG(0x5042B0, char, AreaActivate_Contains, (void *criteria, double *pos));
+ORIG(0x504A90, void, AreaActivate_RemoveCriteria, (void *criteria));
+ORIG(0x504AC0, unsigned int, AreaActivate_GetMask, (void *criteria));
 ORIG(0x462BA0, void, sub_462BA0, (Human *h, double *pos, double *to, float *vel));
 
 #define gTaskStack ((Task **)0xAFA6E0)
@@ -245,7 +245,7 @@ static int Human_IsViewer(Human *h, char *view, char *cam)
 void sub_45F050(Human *h, void *arg)
 {
     char *view = *(char **)(Game_Get() + 0x5C);
-    char *cam = sub_4E81F0();
+    char *cam = Viewport_GetCurrentCamera();
     HumanBoneMsg msg;
     Task *w;
     uint8_t ev;
@@ -253,15 +253,15 @@ void sub_45F050(Human *h, void *arg)
     if (Human_IsViewer(h, view, cam))
         return;
     Human_WakeIfVisible(h);
-    ev = sub_4D14D0();
-    Handler(ev, sub_4D9610())(h, arg);
+    ev = QCube_GetNearClipEvent();
+    Handler(ev, BoneDynCubeObj_GetType())(h, arg);
     w = WeaponSlots_Get(h->weapons, 0);
     if (!w)
         return;
     msg.firstPerson = 0;
-    Handler(sub_477C20(), h->task.type)(h, &msg);
-    sub_4F2310(w, msg.pos, msg.matrix);
-    ev = sub_4D14D0();
+    Handler(Gun_GetEvent2(), h->task.type)(h, &msg);
+    Weapon_Move(w, msg.pos, msg.matrix);
+    ev = QCube_GetNearClipEvent();
     Handler(ev, RigidDynCubeObj_GetType())(w, arg);
 }
 HOOK(0x45F050, sub_45F050);
@@ -275,7 +275,7 @@ void Human_WakeIfVisible(Human *h)
 
     if (!h->frozen)
         return;
-    sub_4E81F0();
+    Viewport_GetCurrentCamera();
     dx = h->pos[0] - gViewPos[0];
     dy = h->pos[1] - gViewPos[1];
     dz = h->pos[2] - gViewPos[2];
@@ -285,7 +285,7 @@ void Human_WakeIfVisible(Human *h)
     c[0] = v[0];
     c[1] = v[1];
     c[2] = v[2];
-    if (sub_4D03D0(c, h->radius, out))
+    if (Mesh3D_Exclude(c, h->radius, out))
         return;
     lod = Mesh3D_GetBoneMeshLOD(h);
     if (lod != -1 && lod < 4)
@@ -298,8 +298,8 @@ void Human_Wake(Human *h)
     if (!h->frozen)
         return;
     h->frozen = 0;
-    sub_4D38C0(h->matrix, h->anim);
-    sub_489F70(h, Anim_GetFrame(h->anim, 0));
+    BoneObj_Update(h->matrix, h->anim);
+    Human_ApplyLook(h, Anim_GetId(h->anim, 0));
 }
 HOOK(0x45F240, Human_Wake);
 
@@ -307,7 +307,7 @@ HOOK(0x45F240, Human_Wake);
 void Human_DrawHandler(Human *h, void *arg)
 {
     char *view = *(char **)(Game_Get() + 0x5C);
-    char *cam = sub_4E81F0();
+    char *cam = Viewport_GetCurrentCamera();
     HumanBoneMsg msg;
     HumanText **t;
     char *line;
@@ -317,22 +317,22 @@ void Human_DrawHandler(Human *h, void *arg)
     char mode;
     Task *w;
 
-    if (h->unk74 && !sub_4D06C0(h, &unk))
+    if (h->unk74 && !Mesh3D_ExcludeBone(h, &unk))
         h->unk7C4 = Flow_GetRenders();
     if (Human_IsViewer(h, view, cam))
         return;
     Human_WakeIfVisible(h);
-    gTaskHandlers[4][sub_4D9610()](h, arg);
+    gTaskHandlers[4][BoneDynCubeObj_GetType()](h, arg);
     w = WeaponSlots_Get(h->weapons, 0);
     if (w) {
         msg.firstPerson = 0;
-        Handler(sub_477C20(), h->task.type)(h, &msg);
-        sub_4F2310(w, msg.pos, msg.matrix);
+        Handler(Gun_GetEvent2(), h->task.type)(h, &msg);
+        Weapon_Move(w, msg.pos, msg.matrix);
         gTaskHandlers[4][RigidDynCubeObj_GetType()](w, 0);
     }
     memcpy(p, h->pos, sizeof(p));
     p[2] = p[2] + kLabelHeight;
-    sub_497F20(scr, &depth, p);
+    TransContext_Project(scr, &depth, p);
     if (!(depth > kZero) || !(depth < kLabelRange))
         return;
     t = h->texts;
@@ -355,11 +355,11 @@ void Human_DrawHandler(Human *h, void *arg)
             (*t)->z = kTextZ;
             Text_DrawAlt(*t);
             scr[1] = (long double)Text_GetHeight(*t) + scr[1];
-        } else if (sub_4E7C40()) {
+        } else if (DebugText_GetFont()) {
             mode = Mem_GetMode();
             if (!mode)
                 Mem_SetDefaultMode();
-            *t = Text_New(sub_4E7C40(), 0, 0, (const char *)0x567C74);
+            *t = Text_New(DebugText_GetFont(), 0, 0, (const char *)0x567C74);
             if (!mode)
                 Mem_ClearMode();
         }
@@ -379,7 +379,7 @@ void Human_CollLinesHandler(Human *h, CollLinesMsg *msg)
     }
     if (Human_LinesHitBounds(h, starts, ends, msg->count)) {
         Human_Wake(h);
-        gTaskHandlers[9][sub_4D9610()](h, msg);
+        gTaskHandlers[9][BoneDynCubeObj_GetType()](h, msg);
     }
 }
 HOOK(0x45F500, Human_CollLinesHandler);
@@ -442,7 +442,7 @@ void Human_CollLineHandler(Human *h, CollLineMsg *msg)
     }
     if (Human_LinesHitBounds(h, start, end, 1)) {
         Human_Wake(h);
-        gTaskHandlers[8][sub_4D9610()](h, msg);
+        gTaskHandlers[8][BoneDynCubeObj_GetType()](h, msg);
     }
 }
 HOOK(0x45F800, Human_CollLineHandler);
@@ -458,8 +458,8 @@ void Human_ParamChangedHandler(Human *h, void *arg)
     void *model = VirModel_Find(h->modelName);
 
     if (model) {
-        sub_4D9700(h, model);
-        sub_4D38C0(h->matrix, h->anim);
+        BoneDynCubeObj_SetModel(h, model);
+        BoneObj_Update(h->matrix, h->anim);
     }
     DynCube_Move(Game_GetWorld(), h, h->placePos, h->radius);
     h->baseZ = h->yaw;
@@ -508,14 +508,14 @@ void Human_HitHandler(Human *h, int *msg)
     long double x;
     int zone;
 
-    sub_463AD0(h, msg + 2, msg[0]);
-    if (sub_463150(h) && PlayerXPHit())
+    Human_Bleed(h, msg + 2, msg[0]);
+    if (Human_IsPlayer(h) && PlayerXPHit())
         return;
     if (!h->active)
         return;
-    zone = sub_489C60(h, msg);
+    zone = Human_GetHitZone(h, msg);
     d->hitZone = zone;
-    sub_489E10(d, zone);
+    HumanDamage_GetZone(d, zone);
     x = (long double)d->part[zone].mult * ((float *)msg)[1];
     d->part[zone].dmg = x + d->part[zone].dmg;
     Human_AddDamage(h, x);
@@ -527,12 +527,12 @@ void Human_BlastHandler(Human *h, void *msg)
     HumanDamage *d = &h->damage;
     long double x;
 
-    if (sub_463150(h) && PlayerXPHit())
+    if (Human_IsPlayer(h) && PlayerXPHit())
         return;
     if (!h->active)
         return;
     d->hitZone = 13;
-    sub_489E10(d, 13);
+    HumanDamage_GetZone(d, 13);
     x = Game_BlastFalloff(msg, h, h->pos, h->radius * kThird, 1);
     if (is_zero(x))
         return;
@@ -588,7 +588,7 @@ void Human_CrushHandler(Human *h, void **msg)
     if (__builtin_sqrtl((long double)v[1] * v[1] + (long double)v[2] * v[2] + (long double)v[0] * v[0]) >= kCrushSpeed)
         dmg = kCrushDamage;
     h->damage.hitZone = 13;
-    if (sub_463150(h) && PlayerXPHit())
+    if (Human_IsPlayer(h) && PlayerXPHit())
         return;
     if (h->ai && h->ai->immortal)
         return;
@@ -601,7 +601,7 @@ void Human_GetHumanCameraInfoHandler(Human *h, HumanCameraInfo *info)
 {
     HumanView *v = h->view;
 
-    sub_465800(info->pos, v);
+    HumanView_GetEye(info->pos, v);
     HumanView_GetMatrix(info->matrix, h->view);
     info->fov = v->fov;
     memcpy(info->bodyMatrix, h->matrix, sizeof(info->bodyMatrix));
@@ -633,7 +633,7 @@ void sub_45FDA0(Human *h, Human **msg)
     while (t) {
         n = t->next;
         gTaskStack[gTaskStackTop++] = n && n->next ? n : 0;
-        f = Handler(HumanAI_GetEvent(), t->type);
+        f = Handler(HumanAI_GetEventSlot(), t->type);
         if (f)
             f(t, msg);
         t = gTaskStack[--gTaskStackTop];
@@ -643,11 +643,11 @@ HOOK(0x45FDA0, sub_45FDA0);
 
 void sub_45FE30(Human *h, int *msg)
 {
-    msg[0] = sub_464250();
+    msg[0] = Human_GetMaskType();
     msg[8] = h->team;
     ((char *)msg)[0x24] = !h->dead;
     ((char *)msg)[0x25] = h->active;
-    sub_465820(msg + 2, h);
+    Human_GetEyePos(msg + 2, h);
 }
 HOOK(0x45FE30, sub_45FE30);
 
@@ -695,8 +695,8 @@ void WeaponAmmoPickup(Human *h, int *msg)
 {
     if (h->dead)
         return;
-    sub_47CE00(h->ammo, msg[0], msg[1]);
-    sub_4E7200("weaponpickup_1", 0, 0);
+    AmmoList_Add(h->ammo, msg[0], msg[1]);
+    Sound_PlayDefined("weaponpickup_1", 0, 0);
 }
 HOOK(0x45FF80, WeaponAmmoPickup);
 
@@ -713,13 +713,13 @@ void WeaponGunPickup(Human *h, int *msg)
     t = h->task.children;
     if (t->next) {
         for (;;) {
-            type = sub_477BF0();
+            type = Gun_GetType();
             if (TaskType_IsA(t->type, type)) {
                 id = *(int **)((char *)t + 0x128);
                 if (id && *id == msg[0]) {
                     ammo = *(int **)((char *)t + 0x12C);
                     if (ammo)
-                        sub_47CE00(h->ammo, *ammo, msg[1]);
+                        AmmoList_Add(h->ammo, *ammo, msg[1]);
                     goto sound;
                 }
             }
@@ -728,9 +728,9 @@ void WeaponGunPickup(Human *h, int *msg)
                 break;
         }
     }
-    sub_477C50(h, 0, msg[0], msg[1], 1);
+    Gun_New(h, 0, msg[0], msg[1], 1);
 sound:
-    sub_4E7200("weaponpickup_1", 0, 0);
+    Sound_PlayDefined("weaponpickup_1", 0, 0);
 }
 HOOK(0x45FFC0, WeaponGunPickup);
 
@@ -837,7 +837,7 @@ void sub_460280(Human *h, HumanSeeQuery *q)
     void *world;
     uint8_t ev;
 
-    if (!sub_46AB30() || sub_46AB30() == 3)
+    if (!ComputerMap_GetZoom() || ComputerMap_GetZoom() == 3)
         return;
     q->targetPos = h->pos;
     q->targetMatrix = h->matrix;
@@ -853,7 +853,7 @@ void sub_460280(Human *h, HumanSeeQuery *q)
     l[0] = d[2] * m[6] + d[1] * m[3] + d[0] * m[0];
     l[1] = d[2] * m[7] + d[1] * m[4] + d[0] * m[1];
     l[2] = d[2] * m[8] + d[1] * m[5] + d[0] * m[2];
-    if (sub_4D03D0(l, q->radius, 0))
+    if (Mesh3D_Exclude(l, q->radius, 0))
         return;
     filter.unk0 = l[0];
     filter.unk4 = 0;
@@ -864,7 +864,7 @@ void sub_460280(Human *h, HumanSeeQuery *q)
     world = Game_GetWorld();
     Coll_LineOfSight(world, q->pos, q->targetPos, ev, &filter, -1, -1, &vis);
     if (!is_zero(vis))
-        sub_467F30(q);
+        ComputerObject_DrawMarker(q);
 }
 HOOK(0x460280, sub_460280);
 
@@ -873,8 +873,8 @@ void Human_RenderHandler(Human *h, void **msg)
 {
     char *hud = msg[0];
     char *view = *(char **)(Game_Get() + 0x5C);
-    int width = Display_Get()[1];
-    int height = Display_Get()[2];
+    int width = Display_GetMode()[1];
+    int height = Display_GetMode()[2];
     void *s = hud + 0x8C, *bar = hud + 0xA4, *local;
     float hp, x0, y0, x1, y1, xa, ya, xb, yb, t;
     long double f;
@@ -885,7 +885,7 @@ void Human_RenderHandler(Human *h, void **msg)
     if (*(int *)(view + 0xE8) != 1)
         return;
     w = WeaponSlots_Get(h->weapons, 0);
-    if (w && (fn = Handler(sub_487190(), w->type)))
+    if (w && (fn = Handler(StatusScreen_GetEvent(), w->type)))
         fn(w, msg);
     if (!h->unk7B8 && Human_GetAttached(h)) {
         local = msg[0];
@@ -894,7 +894,7 @@ void Human_RenderHandler(Human *h, void **msg)
         if (fn)
             fn(Human_GetAttached(h), &local);
     } else {
-        sub_4872B0(msg[0]);
+        StatusScreen_ResetBlink(msg[0]);
     }
     f = kOne - h->damage.total / h->damage.max;
     hp = f;
@@ -954,14 +954,14 @@ void Human_GunshotHandler(Human *h, GunshotMsg *msg)
             return;
     }
     memcpy(pos, h->pos, sizeof(pos));
-    n = sub_47B290(pts, 32, msg->shot, pos);
+    n = GunShot_FindNear(pts, 32, msg->shot, pos);
     for (i = 0; i < n; i++) {
-        if (sub_463150(h)) {
-            if (Timer_GetTicks() > h->missSoundTime) {
+        if (Human_IsPlayer(h)) {
+            if (Flow_GetFrames() > h->missSoundTime) {
                 snd = Sound_Play(h, "gunshotmiss");
                 if (snd)
                     Sound_SetPos(snd, pts[i]);
-                h->missSoundTime = Timer_GetTicks() + 5;
+                h->missSoundTime = Flow_GetFrames() + 5;
             }
             continue;
         }
@@ -978,7 +978,7 @@ void Human_GunshotHandler(Human *h, GunshotMsg *msg)
             if (noise.source)
                 noise.team = Human_GetTeam(noise.source);
         }
-        sub_450CE0(&noise);
+        HumanAI_Broadcast(&noise);
     }
 }
 HOOK(0x4606F0, Human_GunshotHandler);
@@ -1021,7 +1021,7 @@ void Human_ActivateHandler(Human *h, void *arg)
         return;
     h->active = 1;
     ev = World_GetEvent0();
-    Handler(ev, sub_4D9610())(h, arg);
+    Handler(ev, BoneDynCubeObj_GetType())(h, arg);
 }
 HOOK(0x460950, Human_ActivateHandler);
 
@@ -1033,7 +1033,7 @@ void Human_DeactivateHandler(Human *h, void *arg)
         return;
     h->active = 0;
     ev = World_GetEvent1();
-    Handler(ev, sub_4D9610())(h, arg);
+    Handler(ev, BoneDynCubeObj_GetType())(h, arg);
 }
 HOOK(0x4609A0, Human_DeactivateHandler);
 
@@ -1052,13 +1052,13 @@ static Human *Human_ListItem(int i)
 void Human_CountTeamCriteria(void **msg)
 {
     int n = *(int *)Human_GetList();
-    unsigned int mask = sub_504AC0(msg[0]);
+    unsigned int mask = AreaActivate_GetMask(msg[0]);
     Human *t;
     int i;
 
     for (i = 0; i < n; i++) {
         t = Human_ListItem(i);
-        if (((unsigned int *)gHumanTeamCriteria)[t->team] & mask && sub_5042B0(msg[0], t->pos))
+        if (((unsigned int *)gHumanTeamCriteria)[t->team] & mask && AreaActivate_Contains(msg[0], t->pos))
             ((int *)msg)[1]++;
     }
 }
@@ -1071,7 +1071,7 @@ void Human_CountCriteria(void **msg)
     int i;
 
     for (i = 0; i < n; i++)
-        if (sub_5042B0(msg[0], Human_ListItem(i)->pos))
+        if (AreaActivate_Contains(msg[0], Human_ListItem(i)->pos))
             ((int *)msg)[1]++;
 }
 HOOK(0x460A70, Human_CountCriteria);
@@ -1106,9 +1106,9 @@ void Human_Close(void)
     TaskEvent_Free(gHumanGunshotEvent);
     TaskEvent_Free(gHumanPunchEvent);
     TaskType_Free(gHumanType);
-    sub_504A90(gHumanCriteria);
+    AreaActivate_RemoveCriteria(gHumanCriteria);
     for (i = 0; i < 8; i++)
-        sub_504A90(gHumanTeamCriteria[i]);
+        AreaActivate_RemoveCriteria(gHumanTeamCriteria[i]);
     for (i = 0; i < 2; i++)
         Script_UnregisterSymbol(gHumanTeamNames[i]);
     Task_ClearGlobalFlags(1);
@@ -1172,7 +1172,7 @@ void Human_printf(Human *h, const char *fmt, ...)
 {
     va_list ap;
 
-    if (!sub_463150(h))
+    if (!Human_IsPlayer(h))
         return;
     if (Game_CheatKeyPressed(0x44) && gHumanDebugTime != Flow_GetRenders()) {
         gHumanDebug ^= 1;
@@ -1181,7 +1181,7 @@ void Human_printf(Human *h, const char *fmt, ...)
     if (!gHumanDebug)
         return;
     va_start(ap, fmt);
-    sub_4E7C00(fmt, ap);
+    DebugText_VPrintf(fmt, ap);
     va_end(ap);
 }
 HOOK(0x460C80, Human_printf);
@@ -1216,7 +1216,7 @@ void sub_460CF0(Human *h)
     for (i = 0; i < 10; i++)
         h->moveMatrix[i] = 0;
     h->moveAngle[2] = 0;
-    if (!obj && !(obj = sub_463680(h)))
+    if (!obj && !(obj = Human_GetGround(h)))
         return;
     if (!Handler(Game_GetEvent14(), obj->type))
         return;
@@ -1282,15 +1282,15 @@ void sub_460EE0(Human *h)
     Task *t;
     int i;
 
-    sub_463700(h, 0);
+    Human_SetAttached(h, 0);
     if (!(h->sm.bits & HUMAN_ON_GROUND))
         return;
     if (!h->unk7B8) {
         q.h = h;
-        sub_465800(q.pos, h->view);
+        HumanView_GetEye(q.pos, h->view);
         HumanView_GetMatrix(q.matrix, h->view);
         memcpy(q.bodyMatrix, h->matrix, sizeof(q.bodyMatrix));
-        q.unk70 = q.unk74 = sub_463150(h) ? kQuarterPi : kPi;
+        q.unk70 = q.unk74 = Human_IsPlayer(h) ? kQuarterPi : kPi;
         q.unk78 = 0;
         q.range = kUseRange;
         q.found = 0;
@@ -1303,7 +1303,7 @@ void sub_460EE0(Human *h)
                 i++;
             } while (i < *Game_GetTaskList0());
         }
-        sub_463700(h, q.found);
+        Human_SetAttached(h, q.found);
     }
     if (!h->unk7B4 || !(t = *h->unk7B4))
         return;
@@ -1380,7 +1380,7 @@ void sub_4613D0(Human *h)
     double p[3];
 
     e->sound = -1;
-    sub_4D3210(&e->unk0, h->anim);
+    BoneObj_GetEvents(&e->unk0, h->anim);
     if (e->sound == -1)
         return;
     x = h->matrix[2] * e->offset[2] + h->matrix[1] * e->offset[1] + h->matrix[0] * e->offset[0];
@@ -1389,7 +1389,7 @@ void sub_4613D0(Human *h)
     p[0] = x + h->pos[0];
     p[1] = y + h->pos[1];
     p[2] = z + h->pos[2];
-    sub_4EC0E0(e->sound, h, p);
+    AnimTrigger_Fire(e->sound, h, p);
 }
 HOOK(0x4613D0, sub_4613D0);
 
@@ -1421,7 +1421,7 @@ void Human_UpdateMove(Human *h)
         n[1] = n[1] * inv;
         n[2] = n[2] * inv;
     }
-    slope = kSlope90 - Math_Asin(n[2]) * kRadToDeg;
+    slope = kSlope90 - Math_ASinF(n[2]) * kRadToDeg;
     s0 = n[0];
     s1 = n[1];
     if (slope > kSlope80) {
@@ -1575,7 +1575,7 @@ void Human_CollideWalls(Human *h, double *from, double *to, float *vel, uint32_t
     uint8_t ev;
     void *world;
 
-    memcpy(foot, sub_48A340(buf, h, 0), sizeof(foot));
+    memcpy(foot, Human_GetBonePos(buf, h, 0), sizeof(foot));
     *bits &= ~8u;
     do {
         again = 0;
@@ -1697,7 +1697,7 @@ void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t 
     uint8_t ev;
 
     h->groundDistance = kNoGround;
-    memcpy(foot, sub_48A340(buf, h, 0), sizeof(foot));
+    memcpy(foot, Human_GetBonePos(buf, h, 0), sizeof(foot));
     k = h->crouch ? kWallMidCrouch : kWallMid;
     memcpy(pts[0], to, 2 * sizeof(double));
     pts[0][2] = (k - foot[2]) + to[2];
@@ -1752,9 +1752,9 @@ void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t 
         }
         path = ai->path;
         if (!path->unk64)
-            sub_463550(h);
+            Human_ClearPlatform(h);
         else if (!h->attach)
-            sub_463310(h, path->unk14);
+            Human_SetPlatform(h, path->unk14);
         grounded = 1;
     } else {
         memcpy(pts[1], to, sizeof(pts[1]));
@@ -1765,7 +1765,7 @@ void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t 
         world = Game_GetWorld();
         Coll_DropPointsEx(world, hits, pts, 2, dz, ev, &filter, -1, 1);
         if (hits[1].found && !(hits[1].normal[2] >= kZero)) {
-            memcpy(top, sub_48A340(buf, h, 0), sizeof(top));
+            memcpy(top, Human_GetBonePos(buf, h, 0), sizeof(top));
             gd = top[2] + hits[1].dist;
             h->roofDistance = gd;
             if (!(gd >= kWallHigh))
@@ -1812,7 +1812,7 @@ check:
     }
     if (!grounded) {
         *bits &= ~(uint32_t)HUMAN_ON_GROUND;
-        sub_463640(h, 0);
+        Human_SetGround(h, 0);
         h->movePos[0] = 0;
         h->movePos[1] = 0;
         h->movePos[2] = 0;
@@ -1822,9 +1822,9 @@ ground:
     *bits |= HUMAN_ON_GROUND;
     to[2] = foot[2] + hits[0].pos[2];
     if (task) {
-        sub_463640(h, task);
+        Human_SetGround(h, task);
     } else {
-        sub_463640(h, 0);
+        Human_SetGround(h, 0);
         h->movePos[0] = 0;
         h->movePos[1] = 0;
         h->movePos[2] = 0;

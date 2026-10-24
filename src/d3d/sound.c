@@ -16,14 +16,14 @@ ORIG(0x4B16D0, int, File_Read, (void *f, void *buf, int size));
 ORIG(0x4B1730, int, File_Seek, (void *f, int pos, int whence));
 ORIG(0x4B5F00, void *, Resource_Load, (const char *name, int *size));
 ORIG(0x4B6380, void, Resource_Unload, (const char *name));
-ORIG(0x496250, void, sub_496250, (void *lists, int key1, int key2, void *sound));
-ORIG(0x496280, void, sub_496280, (void *src, void *dst, int samples, void *state));
-ORIG(0x496420, void, sub_496420, (void *state, int channels));
-ORIG(0x496450, int, sub_496450, (int key1, int key2));
-ORIG(0x4964A0, char, sub_4964A0, (int unk, void *sound, int unk2));
-ORIG(0x497390, void, sub_497390, (void *key, const char *name));
-ORIG(0x497410, int, sub_497410, (void *key));
-ORIG(0x497450, int, sub_497450, (void *key));
+ORIG(0x496250, void, SoundList_Add, (void *lists, int key1, int key2, void *sound));
+ORIG(0x496280, void, Adpcm_Decode, (void *src, void *dst, int samples, void *state));
+ORIG(0x496420, void, Adpcm_Init, (void *state, int channels));
+ORIG(0x496450, int, Sound_Find, (int key1, int key2));
+ORIG(0x4964A0, char, Sound_Upload, (int unk, void *sound, int unk2));
+ORIG(0x497390, void, Sound_GetName, (void *key, const char *name));
+ORIG(0x497410, int, Sound_HashName, (void *key));
+ORIG(0x497450, int, Sound_HashBucket, (void *key));
 /* the exe's import thunk and table entries; DSOUND and WINMM are not linked into our DLL */
 ORIG_STD(0x4AF746, HRESULT, DirectSoundCreate_, (GUID *guid, IDirectSound **out, IUnknown *outer));
 #define mixerGetLineControlsA_ (*(MMRESULT(WINAPI **)(HMIXEROBJ, MIXERLINECONTROLSA *, DWORD))0x5331F0)
@@ -465,11 +465,11 @@ char Sound_IsReady(void)
 }
 HOOK(0x495CB0, Sound_IsReady);
 
-void sub_495CC0(int v)
+void Sound_SetUpdateRate(int v)
 {
     gUnk54391C = v;
 }
-HOOK(0x495CC0, sub_495CC0);
+HOOK(0x495CC0, Sound_SetUpdateRate);
 
 /* Fills part of the stream buffer from the file, wrapping to the data start (offset 0x2C) at the end.
    Returns 1 when it wrapped. */
@@ -587,10 +587,10 @@ void Sound_Load(const char *name)
         Resource_Unload(name);
         return;
     }
-    sub_497390(key, name);
-    key1 = sub_497450(key);
-    key2 = sub_497410(key);
-    if (sub_496450(key1, key2)) {
+    Sound_GetName(key, name);
+    key1 = Sound_HashBucket(key);
+    key2 = Sound_HashName(key);
+    if (Sound_Find(key1, key2)) {
         Warning_Show("SOUND - File %s already loaded!", name);
         Resource_Unload(name);
         return;
@@ -619,8 +619,8 @@ void Sound_Load(const char *name)
             s = NULL;
             Resource_Unload(name);
         }
-        sub_496420(state, s->channels);
-        sub_496280(res + 5, s->data, s->samples, state);
+        Adpcm_Init(state, s->channels);
+        Adpcm_Decode(res + 5, s->data, s->samples, state);
         break;
     }
     if (s->data) {
@@ -642,7 +642,7 @@ void Sound_Load(const char *name)
             Resource_Unload(name);
             return;
         }
-        if (!sub_4964A0(0, s, 0)) {
+        if (!Sound_Upload(0, s, 0)) {
             IDirectSoundBuffer_Release(s->buffer);
             Mem_Free(s);
             Resource_Unload(name);
@@ -652,7 +652,7 @@ void Sound_Load(const char *name)
             Mem_Free(s->data);
         s->data = NULL;
     }
-    sub_496250(gSoundLists, key1, key2, s);
+    SoundList_Add(gSoundLists, key1, key2, s);
     Resource_Unload(name);
 }
 HOOK(0x495F70, Sound_Load);

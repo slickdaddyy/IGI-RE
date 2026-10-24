@@ -295,7 +295,7 @@ def test_sub_408720(pair, flag):
         fake_ret(0x413C80, obj)
         return (0x20F00400,)
     try:
-        compare(emu, 0x408720, "sub_408720", setup=setup, normalized=True)
+        compare(emu, 0x408720, "Weapon_HasAmmo", setup=setup, normalized=True)
     finally:
         fake_ret(0x413C80, 0)
 

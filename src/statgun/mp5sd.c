@@ -13,7 +13,7 @@
 #define kHalf VAR(float, 0x533504)
 #define kDegToRad VAR(float, 0x53367C)
 
-ORIG(0x4F2030, int, sub_4F2030, (void));
+ORIG(0x4F2030, int, Weapon_GetDeselectEvent, (void));
 
 void Mp5sd_Create(ZoomGun *g, void *arg);
 void Mp5sd_Use(ZoomGun *g, WeaponUseMsg *msg);
@@ -22,7 +22,7 @@ void Mp5sd_Config(void *task, WeaponConfigMsg *m);
 void Mp5sd_Unzoom(ZoomGun *g)
 {
     g->zoomed = 0;
-    HANDLER(sub_4F2030(), Gun_GetType())(g);
+    HANDLER(Weapon_GetDeselectEvent(), Gun_GetType())(g);
 }
 HOOK(0x473990, Mp5sd_Unzoom);
 
@@ -35,7 +35,7 @@ void Mp5sd_Open(void)
     TaskType_SetHandler(gMp5sdType, WeaponType_GetInitEvent2(), Gun_ReadZoomArg);
     TaskType_SetHandler(gMp5sdType, WeaponType_GetSizeEvent2(), sub_427D70);
     TaskType_SetHandler(gMp5sdType, WeaponConfig_GetEvent(), Mp5sd_Config);
-    TaskType_SetHandler2(gMp5sdType, sub_4F2030(), Mp5sd_Unzoom);
+    TaskType_SetHandler2(gMp5sdType, Weapon_GetDeselectEvent(), Mp5sd_Unzoom);
     Script_RegisterConstant("TASKTYPE_GUNMP5SD", gMp5sdType);
 }
 HOOK(0x4739D0, Mp5sd_Open);

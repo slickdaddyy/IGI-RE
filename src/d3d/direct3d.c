@@ -27,7 +27,7 @@ ORIG(0x491E30, int, Display_GetVSyncMethod, (void));
 ORIG(0x491E40, int, Display_GetSwapBuffersMethod, (void));
 ORIG(0x491E50, int, Display_GetClearMethod, (void));
 ORIG(0x491E60, int, Display_GetEnumMethod, (void));
-ORIG(0x498460, void, FPU_SaveControlWord, (void));
+ORIG(0x498460, void, FPU_SetTruncate, (void));
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4B0D60, void, Mem_PushMode, (char mode));
@@ -40,7 +40,7 @@ ORIG(0x4B73F0, void *, PtrList_New, (int size));
 ORIG(0x4B7430, int, PtrList_Add, (void *list, void *p));
 ORIG(0x4B7450, void, PtrList_Clear, (void *list, int index));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
-ORIG(0x4D3710, void, Direct3D_DisplayClose, (void));
+ORIG(0x4D3710, void, Task_Nothing, (void));
 /* the exe's import thunk; DDRAW.dll is not linked into our DLL */
 ORIG_STD(0x4AF752, HRESULT, DirectDrawCreateEx_, (GUID *guid, void **out, REFIID iid, IUnknown *outer));
 
@@ -249,7 +249,7 @@ void Direct3D_Enum(EnumArgs *args)
             DXError("Couldn't enumerate display modes.", hr);
         IDirectDraw7_Release(dd);
     }
-    FPU_SaveControlWord();
+    FPU_SetTruncate();
 }
 HOOK(0x4924D0, Direct3D_Enum);
 
@@ -555,7 +555,7 @@ void Direct3D_Init(void)
 {
     gD3DRenderMode = RenderMode_Create("Direct3D");
     RenderMode_SetMethod(gD3DRenderMode, Display_GetOpenMethod(), Direct3D_DisplayOpen);
-    RenderMode_SetMethod(gD3DRenderMode, Display_GetCloseMethod(), Direct3D_DisplayClose);
+    RenderMode_SetMethod(gD3DRenderMode, Display_GetCloseMethod(), Task_Nothing);
     RenderMode_SetMethod(gD3DRenderMode, Display_GetSetModeMethod(), Direct3D_SetMode);
     RenderMode_SetMethod(gD3DRenderMode, Display_GetUnsetModeMethod(), Direct3D_UnsetMode);
     RenderMode_SetMethod(gD3DRenderMode, Display_GetVSyncMethod(), Direct3D_VSync);
@@ -858,7 +858,7 @@ void Direct3D_SetMode(DisplayMode *mode)
             DispatchMessageA(&msg);
         }
     }
-    FPU_SaveControlWord();
+    FPU_SetTruncate();
     Direct3D_ResetLists();
 }
 HOOK(0x493D50, Direct3D_SetMode);

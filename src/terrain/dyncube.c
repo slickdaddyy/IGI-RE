@@ -12,8 +12,8 @@ ORIG(0x4B3360, char, Vec3d_Equal, (const Vec3d *a, const Vec3d *b));
 ORIG(0x4C5C90, void, DynCubeNode_Init, (Terrain *t, DynCubeNode *node, int child, unsigned int size, int tree));
 ORIG(0x4CE5C0, void, DynCube_UpdateSlotCounts, (Terrain *t, int tree));
 ORIG(0x4CE620, void, DynCube_UpdateStart, (Terrain *t, int tree));
-ORIG(0x4D97F0, void, sub_4D97F0, (DynCubeObj *obj, int v));
-ORIG(0x4E54E0, void, sub_4E54E0, (void *p));
+ORIG(0x4D97F0, void, QObj_SetRenderData, (DynCubeObj *obj, int v));
+ORIG(0x4E54E0, void, CellMask_Free, (void *p));
 ORIG(0x4E5580, int, CellMask_Test, (const void *mask, int x, int y));
 ORIG(0x4E5BA0, int, CellMask_TestRect, (const void *mask, float x, float y, float w, float h));
 
@@ -73,7 +73,7 @@ static void node_delete(Pool *p, DynCubeNode *n)
 static void free_child(Terrain *t, DynCubeNode *parent, int i)
 {
     if (parent->children[i]->unk3C)
-        sub_4E54E0(parent->children[i]->unk3C);
+        CellMask_Free(parent->children[i]->unk3C);
     node_delete(&t->nodes, parent->children[i]);
     parent->children[i] = NULL;
     parent->child_mask &= ~(1 << i);
@@ -439,7 +439,7 @@ HOOK(0x4C7750, DynCube_GetRoot);
 
 void sub_4C7760(DynCubeObj *obj)
 {
-    sub_4D97F0(obj, 0);
+    QObj_SetRenderData(obj, 0);
 }
 HOOK(0x4C7760, sub_4C7760);
 

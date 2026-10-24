@@ -3,7 +3,7 @@
 #include "hook.h"
 #include "boneobj/boneobj.h"
 
-ORIG(0x4D3710, void, BoneObj_Nop_, (void *p));
+ORIG(0x4D3710, void, Task_Nothing, (void *p));
 
 static const float kTicksPerSecond = 4800.0f;
 
@@ -86,7 +86,7 @@ void Anim_FadeOut(BoneObj *o, int track, float time)
     }
     if (!old)
         return;
-    BoneObj_Nop_(old);
+    Task_Nothing(old);
     f = BoneObj_AllocFade();
     BoneObj_InitFade(f, t, 2);
     b->flags |= BONE_FADING;

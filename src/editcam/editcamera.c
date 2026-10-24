@@ -30,8 +30,8 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 ORIG(0x4F1CD0, void, ParamEnum_Init, (void *e));
 ORIG(0x4F1D80, void, ParamEnum_Free, (void *e));
 ORIG(0x4F1DB0, void, ParamEnum_AddConstants, (void *e, const char *pattern));
-ORIG(0x4F1E20, void *, Param_Enum, (void));
-ORIG(0x5034D0, uint16_t, Position_GetType, (void));
+ORIG(0x4F1E20, void *, Param_EnumString32, (void));
+ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
 #define SubLevel_Run ((void *)0x488700)
 
@@ -108,7 +108,7 @@ void EditCamera_Init(void)
     ParamEnum_Init(gEditCameraFilterEnum);
     ParamEnum_AddConstants(gEditCameraFilterEnum, "CAMERAFILTER_TYPE_.*");
     gEditCameraModel = VirModel_Add("1717_01_1");
-    type = TaskType_New("EditCamera", sizeof(EditCamera), Position_GetType(), 0, 0);
+    type = TaskType_New("EditCamera", sizeof(EditCamera), EditorRigidObj_GetType(), 0, 0);
     gEditCameraType = type;
     TaskType_SetHandler(type, 0, EditCamera_Create);
     TaskType_SetHandler2(gEditCameraType, 2, EditCamera_Delete);
@@ -136,7 +136,7 @@ void EditCamera_Init(void)
     {
         void *e = EditCamera_GetFilterEnum();
 
-        ParamTable_Add(gEditCameraParams, &t, t.filterName, Param_Enum(), 7, e);
+        ParamTable_Add(gEditCameraParams, &t, t.filterName, Param_EnumString32(), 7, e);
     }
     ParamTable_Add(gEditCameraParams, &t, &t.filterLevel, Param_Real32(), 7, gEditCameraLevelRange);
     ParamTable_Add(gEditCameraParams, &t, t.color, Param_RGB(), 7, NULL);

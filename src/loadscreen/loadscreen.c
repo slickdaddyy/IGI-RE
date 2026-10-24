@@ -51,15 +51,15 @@ typedef struct LoadingScreen {
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
-ORIG(0x491CF0, DisplayMode *, Display_Get, (void));
+ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 ORIG(0x491D70, void, Display_DrawPrimitive, (BlitPrim *prim));
 ORIG(0x491DC0, int, Display_GetBlitPrim, (void));
 ORIG(0x491E70, void, Display_SetClearColor, (int r, int g, int b));
 ORIG(0x491A30, void, Display_Clear, (void));
-ORIG(0x498370, int, Bitmap_GetRenderMode, (void));
-ORIG(0x498380, void, Bitmap_Init, (Bitmap *b, int w, int h));
-ORIG(0x4983D0, void, Bitmap_Free, (Bitmap *b));
-ORIG(0x498410, void, Bitmap_SetTarget, (Bitmap *b));
+ORIG(0x498370, int, Offscreen_GetMode, (void));
+ORIG(0x498380, void, OffscreenBuffer_New, (Bitmap *b, int w, int h));
+ORIG(0x4983D0, void, OffscreenBuffer_Free, (Bitmap *b));
+ORIG(0x498410, void, OffscreenBuffer_SetTarget, (Bitmap *b));
 ORIG(0x4B0FD0, void, RenderMode_Push, (int mode));
 ORIG(0x4B0F90, void, RenderMode_Pop, (void));
 ORIG(0x4B5F00, void *, Resource_Load, (const char *name, int flags));
@@ -90,7 +90,7 @@ static void blit(Bitmap *b, int x, int y)
 LoadingScreen *LoadingScreen_New(int steps)
 {
     LoadingScreen *ls = Mem_Alloc(sizeof(LoadingScreen), 4);
-    DisplayMode *mode = Display_Get();
+    DisplayMode *mode = Display_GetMode();
     Bitmap screen;
     void *res;
     Text *pic;
@@ -100,12 +100,12 @@ LoadingScreen *LoadingScreen_New(int steps)
     ls->total = steps;
     ls->x = (mode->w - 640) / 2 + 40;
     ls->y = (mode->h - 480) / 2 + 440;
-    Bitmap_Init(&ls->bar, 560, 10);
+    OffscreenBuffer_New(&ls->bar, 560, 10);
     for (i = 0; i < 560 * 10; i++)
         ls->bar.pixels[i] = 0x7F00;
-    Bitmap_Init(&screen, mode->w, mode->h);
-    RenderMode_Push(Bitmap_GetRenderMode());
-    Bitmap_SetTarget(&screen);
+    OffscreenBuffer_New(&screen, mode->w, mode->h);
+    RenderMode_Push(Offscreen_GetMode());
+    OffscreenBuffer_SetTarget(&screen);
     res = Resource_Load("LOCAL:menusystem/loadingscreen.res", 0);
     pic = Text_Load(AppContext_IsUSA() ? "LOCAL:menusystem/loading_us.pic" : "LOCAL:menusystem/loading.pic");
     pic->unk20 = -1;
@@ -114,7 +114,7 @@ LoadingScreen *LoadingScreen_New(int steps)
     Text_Draw(pic);
     RenderMode_Pop();
     blit(&screen, 0, 0);
-    Bitmap_Free(&screen);
+    OffscreenBuffer_Free(&screen);
     Text_Delete(pic);
     Resource_Flush(res);
     LoadingScreen_Step(ls, 0);
@@ -129,7 +129,7 @@ void LoadingScreen_Delete(LoadingScreen *ls)
     Display_SetClearColor(0, 0, 0);
     Display_Clear();
     Display_SetClearColor(r, g, b);
-    Bitmap_Free(&ls->bar);
+    OffscreenBuffer_Free(&ls->bar);
     Mem_Free(ls);
 }
 HOOK(0x48A5D0, LoadingScreen_Delete);

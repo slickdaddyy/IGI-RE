@@ -59,7 +59,7 @@ def test_stream_init(ready):
 
 def test_getters_setters():
     compare(emu, 0x495CB0, "Sound_IsReady", setup=lambda e: u8(e, SOUND_READY, 1), eax_mask=0xFF)
-    compare(emu, 0x495CC0, "sub_495CC0", args=(0x12345678,), check_eax=False)
+    compare(emu, 0x495CC0, "Sound_SetUpdateRate", args=(0x12345678,), check_eax=False)
     compare(emu, 0x495F30, "Music_SetSfxVolume", args=(0x3F400000,), check_eax=False)
 
 

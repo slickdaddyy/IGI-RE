@@ -44,9 +44,9 @@ ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x444B30, void, Obj_GetUsePoint, (void *obj, double *pos, float *matrix));
-ORIG(0x450D50, void, SoldierAI_Message, (HumanAI *ai, SoldierAIMsg *msg));
+ORIG(0x450D50, void, HumanAI_Send, (HumanAI *ai, SoldierAIMsg *msg));
 ORIG(0x459D50, void, SoldierPistol_UseTarget, (Human *h));
-ORIG(0x45A7F0, void, sub_45A7F0, (Human *h));
+ORIG(0x45A7F0, void, Soldier_Footstep, (Human *h));
 ORIG(0x460BE0, uint16_t, Human_GetType, (void));
 ORIG(0x460C40, uint8_t, Human_GetPunchEvent, (void));
 ORIG(0x460C50, void *, Human_GetParamTable, (void));
@@ -54,40 +54,40 @@ ORIG(0x460C80, void, Human_printf, (Human *h, const char *fmt, ...));
 ORIG(0x460CF0, void, sub_460CF0, (Human *h));
 ORIG(0x4610C0, void, Human_UpdateBody, (Human *h));
 ORIG(0x4613D0, void, sub_4613D0, (Human *h));
-ORIG(0x4614B0, void, sub_4614B0, (Human *h));
-ORIG(0x462CF0, void, sub_462CF0, (Human *h));
-ORIG(0x462E50, void, sub_462E50, (Human *h));
-ORIG(0x463080, void, sub_463080, (Human *h));
-ORIG(0x463110, int, sub_463110, (Human *h));
+ORIG(0x4614B0, void, Human_UpdateMove, (Human *h));
+ORIG(0x462CF0, void, Human_MoveOnPlatform, (Human *h));
+ORIG(0x462E50, void, Human_UpdateWeapon, (Human *h));
+ORIG(0x463080, void, Human_SendPosition, (Human *h));
+ORIG(0x463110, int, Human_GetState, (Human *h));
 ORIG(0x4631A0, void, Human_SetPosition, (Human *h, double *pos));
 ORIG(0x463220, void, Human_SetYaw, (Human *h, float yaw));
-ORIG(0x463310, void, sub_463310, (Human *h, void *obj));
-ORIG(0x463550, void, sub_463550, (Human *h));
+ORIG(0x463310, void, Human_SetPlatform, (Human *h, void *obj));
+ORIG(0x463550, void, Human_ClearPlatform, (Human *h));
 ORIG(0x4635F0, void, sub_4635F0, (Human *h));
 ORIG(0x463600, void, sub_463600, (Human *h));
 ORIG(0x463620, void, sub_463620, (Human *h));
-ORIG(0x463680, int, sub_463680, (Human *h));
-ORIG(0x4636A0, void, sub_4636A0, (Human *h, void *obj));
-ORIG(0x4636E0, void *, sub_4636E0, (Human *h));
+ORIG(0x463680, int, Human_GetGround, (Human *h));
+ORIG(0x4636A0, void, Human_SetClimbObject, (Human *h, void *obj));
+ORIG(0x4636E0, void *, Human_GetClimbObject, (Human *h));
 ORIG(0x463760, void, HumanViewCam, (Human *h, int mode));
 ORIG(0x463770, void, sub_463770, (Human *h));
-ORIG(0x4637C0, void, sub_4637C0, (Human *h, const char *sound, int count));
-ORIG(0x4638A0, void, sub_4638A0, (Human *h, const char *sound, int count));
-ORIG(0x463AD0, void, sub_463AD0, (Human *h, float *dir, int unk));
-ORIG(0x464700, void, sub_464700, (void *view));
-ORIG(0x464710, void, sub_464710, (void *view));
-ORIG(0x464720, void, sub_464720, (void *view));
+ORIG(0x4637C0, void, Human_SayTimed, (Human *h, const char *sound, int count));
+ORIG(0x4638A0, void, Human_Say, (Human *h, const char *sound, int count));
+ORIG(0x463AD0, void, Human_Bleed, (Human *h, float *dir, int unk));
+ORIG(0x464700, void, HumanView_LockPitch, (void *view));
+ORIG(0x464710, void, HumanView_UnlockPitch, (void *view));
+ORIG(0x464720, void, HumanView_ClearAngles, (void *view));
 ORIG(0x464800, void, HumanView_UpdateView, (void *view, Human *h));
 ORIG(0x464BD0, void, HumanView_UpdateBody, (void *view, Human *h));
-ORIG(0x475340, void, sub_475340, (void *obj));
-ORIG(0x47E990, uint8_t, sub_47E990, (void));
-ORIG(0x489C30, void, sub_489C30, (Human *h, void *speeds));
-ORIG(0x489C60, int, sub_489C60, (Human *h, SoldierHit *hit));
-ORIG(0x489E10, HitAnims *, sub_489E10, (HumanDamage *d, int zone));
+ORIG(0x475340, void, StationaryGun_Release, (void *obj));
+ORIG(0x47E990, uint8_t, FlashBang_GetEvent, (void));
+ORIG(0x489C30, void, Human_InitDamage, (Human *h, void *speeds));
+ORIG(0x489C60, int, Human_GetHitZone, (Human *h, SoldierHit *hit));
+ORIG(0x489E10, HitAnims *, HumanDamage_GetZone, (HumanDamage *d, int zone));
 ORIG(0x489E70, void, Human_PlayAnimSlot, (Human *h, int slot, float blend));
 ORIG(0x489EA0, void, Human_PlayAnim, (Human *h, int anim, int loop, float blend));
-ORIG(0x48A320, void, sub_48A320, (Human *h));
-ORIG(0x48A330, void, sub_48A330, (Human *h));
+ORIG(0x48A320, void, Human_EnableLook, (Human *h));
+ORIG(0x48A330, void, Human_DisableLook, (Human *h));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
 ORIG(0x4B3100, void, Vec3d_Normalize, (Vec3d *v));
 ORIG(0x4B3320, char, Vec3d_IsZero, (const Vec3d *v));
@@ -96,20 +96,20 @@ ORIG(0x4B3BE0, void, Matrix_SetRotZ, (float *m, float a));
 ORIG(0x4B3C50, void, Matrix_GetEuler, (const float *m, float *ax, float *ay, float *az));
 ORIG(0x4B47C0, int, Random_Int, (void *r, int n));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
-ORIG(0x4D2FB0, void, sub_4D2FB0, (void *a, float *delta, void *anim));
+ORIG(0x4D2FB0, void, BoneObj_GetRootMotion, (void *a, float *delta, void *anim));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *results, Vec3d *starts, Vec3d *ends, int count, char event,
                                   void *query, unsigned int flags));
 ORIG(0x4D61D0, void, Anim_Play, (void *anim, int track, int id, int flag, float blend));
-ORIG(0x4D6FC0, void, sub_4D6FC0, (float *out, int track, void *anim, int id, int frame));
-ORIG(0x4D7020, int, sub_4D7020, (int model, int id));
-ORIG(0x4D74D0, long double, sub_4D74D0, (int model, int id));
-ORIG(0x4D74F0, int, Anim_Has, (void *anim, int track, int id));
+ORIG(0x4D6FC0, void, Anim_GetPosKey, (float *out, int track, void *anim, int id, int frame));
+ORIG(0x4D7020, int, Anim_GetPosKeyCount, (int model, int id));
+ORIG(0x4D74D0, long double, Anim_GetLengthSeconds, (int model, int id));
+ORIG(0x4D74F0, int, Anim_Exists, (void *anim, int track, int id));
 ORIG(0x4E6B00, void *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C30, void, Sound_SetPos, (void *sound, double *pos));
 ORIG(0x4EC190, void, StateMachine_Init, (HumanSM *sm, HumanStateFn input, HumanStateFn *states, int state,
                                          int combo_count, void *combos));
 ORIG(0x4EC1E0, void, StateMachine_Update, (HumanSM *sm, Human *h));
-ORIG(0x4F0EE0, void *, Sound_GetOwner, (void));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
 ORIG(0x4F1980, void *, ParamTable_Extend, (void *table, int extra));
@@ -118,9 +118,9 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *extra));
 ORIG(0x4F2060, void *, WeaponSlots_Get, (void **slots, int i));
 ORIG(0x4F2070, void, WeaponSlots_Set, (void **slots, int i, void *weapon));
-ORIG(0x4F2290, void, sub_4F2290, (Human *h));
+ORIG(0x4F2290, void, Weapon_DeleteAll, (Human *h));
 ORIG(0x4F2350, void, Weapon_UseAmmo, (void *weapon, char unlimited));
-ORIG(0x4F2390, void, sub_4F2390, (void *weapon));
+ORIG(0x4F2390, void, Weapon_Drop, (void *weapon));
 ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 
 /* handlers of the other soldier types this one shares */
@@ -481,7 +481,7 @@ void Soldier_FallRun(HumanSM *sm, Human *h)
     if (!(bits & SB_ON_GROUND))
         return;
     if (h->ground) {
-        void *s = Sound_Play(Sound_GetOwner(), h->ground + 0x114);
+        void *s = Sound_Play(Level_GetDynamic(), h->ground + 0x114);
 
         if (s)
             Sound_SetPos(s, h->soundPos);
@@ -497,9 +497,9 @@ void Soldier_HitEnter(HumanSM *sm, Human *h)
 
     h->crouch = 0;
     h->unk696 = 1;
-    a = sub_489E10(&h->damage, h->damage.hitZone);
+    a = HumanDamage_GetZone(&h->damage, h->damage.hitZone);
     Anim_Play(h->anim, 0, a->hit, 0, 0.0f);
-    sub_48A330(h);
+    Human_DisableLook(h);
     sm->run = Soldier_HitRun;
 }
 HOOK(0x45C2E0, Soldier_HitEnter);
@@ -510,7 +510,7 @@ void Soldier_AimHitEnter(HumanSM *sm, Human *h)
     h->crouch = 0;
     ((Soldier *)h)->hitFrames = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    sub_48A330(h);
+    Human_DisableLook(h);
     sm->run = Soldier_AimHitRun;
 }
 HOOK(0x45C330, Soldier_AimHitEnter);
@@ -530,7 +530,7 @@ void Soldier_AimHitRun(HumanSM *sm, Human *h)
         return;
     }
     if (bits & SB_ANIM_DONE) {
-        sub_48A320(h);
+        Human_EnableLook(h);
         sm_go(sm, h, S_AIM);
     }
 }
@@ -541,10 +541,10 @@ static void die_start(Human *h)
     void *w = WeaponSlots_Get(h->weapons, 0);
 
     if (w) {
-        sub_4F2390(w);
+        Weapon_Drop(w);
         WeaponSlots_Set(h->weapons, 0, NULL);
     }
-    sub_4F2290(h);
+    Weapon_DeleteAll(h);
     h->crouch = 0;
     h->unk696 = 1;
 }
@@ -554,10 +554,10 @@ static void die_end(HumanSM *sm, Human *h, int anim)
     Anim_Play(h->anim, 0, anim, 0, 0.0f);
     Soldier_GetDeathVelocity(((Soldier *)h)->deathVel, h, ((Soldier *)h)->model, anim);
     HumanViewCam(h, 3);
-    sub_464700(h->view);
+    HumanView_LockPitch(h->view);
     sub_4635F0(h);
-    sub_4638A0(h, "ai_death_", 4);
-    sub_48A330(h);
+    Human_Say(h, "ai_death_", 4);
+    Human_DisableLook(h);
     sm->run = Soldier_DieRun;
 }
 
@@ -572,7 +572,7 @@ void Soldier_DieEnter(HumanSM *sm, Human *h)
 
     die_start(h);
     zone = h->damage.hitZone;
-    a = sub_489E10(&h->damage, zone);
+    a = HumanDamage_GetZone(&h->damage, zone);
     if (ai && ai->deathAnim != -1) {
         anim = ai->deathAnim;
     } else {
@@ -629,14 +629,14 @@ void Soldier_AnimEnter(HumanSM *sm, Human *h)
     h->unk696 = 0;
     if (s->scriptAnim == -1) {
         Human_PlayAnimSlot(h, 2, 0.0f);
-    } else if (Anim_Has(h->anim, 0, s->scriptAnim)) {
+    } else if (Anim_Exists(h->anim, 0, s->scriptAnim)) {
         Human_PlayAnim(h, s->scriptAnim, 0, 0.0f);
     } else {
         Warning_Show("Animation #%d not found", s->scriptAnim);
         Human_PlayAnimSlot(h, 2, 0.0f);
     }
     s->scriptAnim = 0;
-    sub_48A330(h);
+    Human_DisableLook(h);
     sm->run = Soldier_AnimRun;
 }
 HOOK(0x45C750, Soldier_AnimEnter);
@@ -648,7 +648,7 @@ void Soldier_AnimRun(HumanSM *sm, Human *h)
     if (sm_common(sm, h, bits, S_HIT, S_DIE))
         return;
     if ((bits & 0xFD81FE1) || ((Soldier *)h)->scriptAnim == -1) {
-        sub_48A320(h);
+        Human_EnableLook(h);
         sm_go(sm, h, S_STAND);
     }
 }
@@ -657,7 +657,7 @@ HOOK(0x45C7E0, Soldier_AnimRun);
 /* takes position behind a stationary gun */
 void Soldier_MountEnter(HumanSM *sm, Human *h)
 {
-    void *obj = sub_4636E0(h);
+    void *obj = Human_GetClimbObject(h);
     double pos[3], dy;
     float m[10], ax, ay, az;
 
@@ -672,10 +672,10 @@ void Soldier_MountEnter(HumanSM *sm, Human *h)
     az = az + kPi;
     Human_SetYaw(h, az);
     Human_PlayAnim(h, 0x1F, 0, 0.0f);
-    sub_464720(h->view);
-    sub_464700(h->view);
+    HumanView_ClearAngles(h->view);
+    HumanView_LockPitch(h->view);
     sub_4635F0(h);
-    sub_463310(h, obj);
+    Human_SetPlatform(h, obj);
     sm->run = Soldier_MountRun;
 }
 HOOK(0x45C8B0, Soldier_MountEnter);
@@ -683,15 +683,15 @@ HOOK(0x45C8B0, Soldier_MountEnter);
 /* leaves the gun when the use key is pressed again, or on death */
 void Soldier_MountRun(HumanSM *sm, Human *h)
 {
-    void *obj = sub_4636E0(h);
+    void *obj = Human_GetClimbObject(h);
 
     if ((!is_zero(h->input[24]) && is_zero(h->prevInput[24])) || (sm->bits & SB_DEAD)) {
-        sub_464710(h->view);
+        HumanView_UnlockPitch(h->view);
         sub_463600(h);
-        sub_475340(obj);
+        StationaryGun_Release(obj);
         sub_463620(h);
-        sub_4636A0(h, NULL);
-        sub_463550(h);
+        Human_SetClimbObject(h, NULL);
+        Human_ClearPlatform(h);
         sm_go(sm, h, S_STAND);
     }
 }
@@ -736,7 +736,7 @@ void Soldier_Open(void)
     TaskType_SetHandler(gSoldierType, Game_GetEvent9(), Soldier_HitHandler);
     TaskType_SetHandler(gSoldierType, Game_GetEvent11(), SoldierPistol_BlastHandler);
     TaskType_SetHandler(gSoldierType, Human_GetPunchEvent(), SoldierPistol_PunchHandler);
-    TaskType_SetHandler(gSoldierType, sub_47E990(), Human_Handler4D3710);
+    TaskType_SetHandler(gSoldierType, FlashBang_GetEvent(), Human_Handler4D3710);
     gSoldierParams = ParamTable_Extend(Human_GetParamTable(), 2);
     ParamTable_Add(gSoldierParams, &tmp, &tmp.model, Param_Int32(), 7, NULL);
     ParamTable_Add(gSoldierParams, &tmp, &tmp.idleAnim, Param_Int32(), 7, NULL);
@@ -752,7 +752,7 @@ void Soldier_CreateHandler(Human *h, void *arg)
     ((TaskHandler)TASK_HANDLER(0, Human_GetType()))(h, arg);
     StateMachine_Init(&h->sm, Soldier_UpdateInput, gSoldierStates, S_STAND, 1, gSoldierCombos);
     h->animSlots = gSoldierAnimSlots;
-    sub_489C30(h, gSoldierSpeeds);
+    Human_InitDamage(h, gSoldierSpeeds);
     s->idleAnim = -1;
     s->run = 1;
     s->spawned = 0;
@@ -791,7 +791,7 @@ void Soldier_UpdateInput(HumanSM *sm, Human *h)
     }
     if (!is_zero(h->input[24])) {
         bits |= 0x400000;
-        if (sub_463110(h) != 0x24) {
+        if (Human_GetState(h) != 0x24) {
             s->useTarget = x87_fistp(h->input[24]);
             SoldierPistol_UseTarget(h);
             h->input[24] = 0.0f;
@@ -877,7 +877,7 @@ void Soldier_Update(Human *h)
     Human_UpdateBody(h);
     HumanView_UpdateView(h->view, h);
     h->unkD8 = 1;
-    sub_4D2FB0(h->unk514, d, h->anim);
+    BoneObj_GetRootMotion(h->unk514, d, h->anim);
     x = h->matrix[2] * d[2] + h->matrix[1] * d[1] + h->matrix[0] * d[0];
     y = h->matrix[5] * d[2] + h->matrix[4] * d[1] + h->matrix[3] * d[0];
     z = h->matrix[8] * d[2] + h->matrix[7] * d[1] + h->matrix[6] * d[0];
@@ -886,18 +886,18 @@ void Soldier_Update(Human *h)
     d[2] = z;
     sub_4613D0(h);
     if (!h->attach)
-        sub_4614B0(h);
+        Human_UpdateMove(h);
     else
-        sub_462CF0(h);
+        Human_MoveOnPlatform(h);
     HumanView_UpdateBody(h->view, h);
-    sub_462E50(h);
-    sub_463080(h);
-    sub_45A7F0(h);
+    Human_UpdateWeapon(h);
+    Human_SendPosition(h);
+    Soldier_Footstep(h);
     speed = h->vel[2];
     if (!(h->vel[2] >= 0))
         speed = -speed;
     Human_printf(h, "Speed Z (m/s): %.2f\n", (double)(speed * kUnitsToMetersF * kFps));
-    Human_printf(h, "Ground task: %x\n", sub_463680(h));
+    Human_printf(h, "Ground task: %x\n", Human_GetGround(h));
     Human_printf(h, "Attach task: %x\n", h->attach);
     Human_printf(h, "Delta move pos X: %.2f\n", (double)h->movePos[0]);
     Human_printf(h, "Delta move pos Y: %.2f\n", (double)h->movePos[1]);
@@ -950,16 +950,16 @@ void Soldier_HitHandler(Human *h, SoldierHit *hit)
     int part;
 
     if (!h->ai || (headshot = h->ai->fullHeadDamage, !h->ai->invulnerable)) {
-        part = sub_489C60(h, hit);
+        part = Human_GetHitZone(h, hit);
         d->hitZone = part;
-        sub_489E10(d, part);
+        HumanDamage_GetZone(d, part);
         if ((part == 15 || part == 16) && headshot)
             dmg = hit->damage;
         else
             dmg = d->part[part].mult * hit->damage;
         d->part[part].dmg = dmg + d->part[part].dmg;
         d->total = dmg + d->total;
-        sub_463AD0(h, hit->dir, hit->unk00);
+        Human_Bleed(h, hit->dir, hit->unk00);
         sum = dmg + (long double)s->hitSum;
         bits = h->sm.bits;
         s->hitSum = sum;
@@ -968,7 +968,7 @@ void Soldier_HitHandler(Human *h, SoldierHit *hit)
                 s->hitSum = 0;
                 bits |= SB_HIT;
             }
-            sub_4637C0(h, "ai_hit_", 3);
+            Human_SayTimed(h, "ai_hit_", 3);
             if (hit->weapon[0x610 / 4] == 3)
                 Sound_Play(h, "stab_01");
         } else {
@@ -987,7 +987,7 @@ void Soldier_HitHandler(Human *h, SoldierHit *hit)
     msg.data = scratch;
     msg.attacker = hit->attacker;
     msg.attacker2 = hit->attacker;
-    SoldierAI_Message(h->ai, &msg);
+    HumanAI_Send(h->ai, &msg);
 }
 HOOK(0x45D3C0, Soldier_HitHandler);
 
@@ -1037,9 +1037,9 @@ void Soldier_GetDeathVelocity(double *out, Human *h, int model, int anim)
     int best = -1, i, j, row;
     char event;
 
-    sub_4D6FC0(p0, 0, h->anim, anim, 0);
+    Anim_GetPosKey(p0, 0, h->anim, anim, 0);
     p0[2] = 0;
-    sub_4D6FC0(p1, 0, h->anim, anim, sub_4D7020(model, anim) - 1);
+    Anim_GetPosKey(p1, 0, h->anim, anim, Anim_GetPosKeyCount(model, anim) - 1);
     dx = (long double)p1[0] - p0[0];
     dy = p1[1] - p0[1];
     dz = -(long double)p0[2];
@@ -1087,7 +1087,7 @@ void Soldier_GetDeathVelocity(double *out, Human *h, int model, int anim)
     v.x = from[best].x - hits[best].pos.x;
     v.y = from[best].y - hits[best].pos.y;
     v.z = 0;
-    frames = sub_4D74D0(model, anim) * kFps;
+    frames = Anim_GetLengthSeconds(model, anim) * kFps;
     if (!Vec3d_IsZero(&v)) {
         dist = Vec3d_Length(&v);
         if (dist > reach)

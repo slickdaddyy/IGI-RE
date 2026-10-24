@@ -39,10 +39,10 @@ ORIG(0x4E6610, uint8_t, Sound_GetInfoEvent, (void));
 ORIG(0x4E6AB0, float *, SoundParams_New, (int count));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (Task *sound));
-ORIG(0x4EC2C0, void, sub_4EC2C0, (void *parts, int count, float k, void *body, Matrix *m, float *v));
+ORIG(0x4EC2C0, void, Body_AddAeroForces, (void *parts, int count, float k, void *body, Matrix *m, float *v));
 ORIG(0x4ECDB0, void, Body_Update, (void *body));
 ORIG(0x4ECF50, void, Body_AddForce, (void *body, float *force));
-ORIG(0x4EE140, PhysType *, PhysType_Find, (const char *name));
+ORIG(0x4EE140, PhysType *, PhysicsObjType_Find, (const char *name));
 ORIG(0x4F0F50, void *, Param_Real32, (void));
 ORIG(0x4F0F60, void *, Param_Real32x3, (void));
 ORIG(0x4F0F70, void *, Param_Real32x9, (void));
@@ -61,21 +61,21 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 ORIG(0x4F40E0, uint8_t, Vehicle_GetInputInfoEvent, (void));
-ORIG(0x4F4110, uint8_t, Vehicle_GetEvent4110, (void));
+ORIG(0x4F4110, uint8_t, Vehicle_GetStateSizeEvent, (void));
 ORIG(0x4F4120, uint8_t, Vehicle_GetSaveEvent, (void));
 ORIG(0x4F4130, uint8_t, Vehicle_GetLoadEvent, (void));
 ORIG(0x4F4140, uint8_t, Vehicle_GetKeysEvent, (void));
 ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
-ORIG(0x4F4640, void, sub_4F4640, (void *obj));
-ORIG(0x4F4660, void, sub_4F4660, (void *obj));
-ORIG(0x4F4680, void, sub_4F4680, (void *obj));
+ORIG(0x4F4640, void, Vehicle_Free, (void *obj));
+ORIG(0x4F4660, void, Vehicle_RunParts, (void *obj));
+ORIG(0x4F4680, void, Vehicle_Init, (void *obj));
 ORIG(0x4F46E0, void, Vehicle_SaveState, (void *obj, void **msg));
 ORIG(0x4F4780, void, Vehicle_LoadState, (void *obj, void **msg));
-ORIG(0x4F4800, void, sub_4F4800, (void *obj));
-ORIG(0x4F4820, void, sub_4F4820, (void *obj));
-ORIG(0x4FB700, void, Vehicle_SetPhysType, (void *obj, PhysType *phys));
-ORIG(0x4FC0E0, void, sub_4FC0E0, (void *obj, float a, float b, float c, void *world, int event, void *msg));
-ORIG(0x4FC7B0, int, sub_4FC7B0, (void *obj));
+ORIG(0x4F4800, void, Vehicle_NewParts, (void *obj));
+ORIG(0x4F4820, void, Vehicle_DeleteParts, (void *obj));
+ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (void *obj, PhysType *phys));
+ORIG(0x4FC0E0, void, PhysicsObj_Collide, (void *obj, float a, float b, float c, void *world, int event, void *msg));
+ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (void *obj));
 ORIG(0x435C40, uint16_t, Gear_GetType, (void));
 
 #define HANDLER_432BD0 ((void *)0x432BD0)
@@ -147,7 +147,7 @@ void Plane_Init(void)
     TaskType_SetHandler(gPlaneType, Sound_GetInfoEvent(), Plane_GetSoundInfo);
     TaskType_SetHandler(gPlaneType, Vehicle_GetControlEvent(), Plane_Control);
     TaskType_SetHandler(gPlaneType, Vehicle_GetInputInfoEvent(), Plane_GetInputInfo);
-    TaskType_SetHandler(gPlaneType, Vehicle_GetEvent4110(), HANDLER_432BD0);
+    TaskType_SetHandler(gPlaneType, Vehicle_GetStateSizeEvent(), HANDLER_432BD0);
     TaskType_SetHandler(gPlaneType, Vehicle_GetKeysEvent(), Plane_ReadKeys);
     TaskType_SetHandler(gPlaneType, Vehicle_GetLoadEvent(), Plane_LoadState);
     TaskType_SetHandler(gPlaneType, Vehicle_GetSaveEvent(), Plane_SaveState);
@@ -191,7 +191,7 @@ void Plane_Reset(Plane *p)
     p->sound_params = SoundParams_New(2);
     p->sound = NULL;
     p->v.name[0] = 0;
-    sub_4F4680(p);
+    Vehicle_Init(p);
     p->v.start_speed = 1.0f;
     p->cockpit_init = 0;
     p->gear_init = 1;
@@ -278,7 +278,7 @@ HOOK(0x433760, Plane_StopSound);
 
 void Plane_Delete(Plane *p)
 {
-    sub_4F4640(p);
+    Vehicle_Free(p);
     DynCube_Remove(Game_GetWorld(), p);
     QTaskList_Free(p->sound_params);
     VarString_Free(&p->script);
@@ -338,7 +338,7 @@ void Plane_Control(Plane *p, PlaneControlArg *arg)
         DynCube_Move(Game_GetWorld(), p, &p->v.pos2, radius);
         phys = p->v.phys;
         p->v.matrix = p->v.matrix2;
-        Vehicle_SetPhysType(p, phys);
+        PhysicsObj_SetPhysType(p, phys);
         p->v.speed = p->v.start_speed;
         p->v.steer[0] = 0;
         p->v.steer[1] = 0;
@@ -347,8 +347,8 @@ void Plane_Control(Plane *p, PlaneControlArg *arg)
         p->v.turn[1] = 0;
         p->v.turn[2] = 0;
         p->v.steer[2] = 0;
-        sub_4F4820(p);
-        sub_4F4800(p);
+        Vehicle_DeleteParts(p);
+        Vehicle_NewParts(p);
         Plane_ResetControls(p);
         plane_start_velocity(p);
         Body_Update(&p->v.body);
@@ -360,7 +360,7 @@ void Plane_Control(Plane *p, PlaneControlArg *arg)
     }
     if (arg->mode > 0) {
         Plane_Fly(p);
-        sub_4F4660(p);
+        Vehicle_RunParts(p);
     }
 }
 HOOK(0x4337E0, Plane_Control);
@@ -481,7 +481,7 @@ void Plane_Fly(Plane *p)
     }
 
     Plane_CheckWheels(p);
-    if (!sub_4FC7B0(p)) {
+    if (!PhysicsObj_IsResting(p)) {
         struct {
             int collide;
             Plane *p;
@@ -494,9 +494,9 @@ void Plane_Fly(Plane *p)
             v[0] = -p->v.body.velocity[0];
             v[1] = -p->v.body.velocity[1];
             v[2] = -p->v.body.velocity[2];
-            sub_4EC2C0(p->parts, cfg->part_count, 0x1.56e264p-12f, &p->v.body, &p->v.matrix, v);
+            Body_AddAeroForces(p->parts, cfg->part_count, 0x1.56e264p-12f, &p->v.body, &p->v.matrix, v);
         }
-        sub_4FC0E0(p, 0x1.64ce9ep+5f, 1.0f, 0x1.d70a3ep-1f, Game_GetWorld(), 12, &msg);
+        PhysicsObj_Collide(p, 0x1.64ce9ep+5f, 1.0f, 0x1.d70a3ep-1f, Game_GetWorld(), 12, &msg);
     }
     if (p->v.coll) {
         PartMoveArg m = {&p->v.pos, &p->v.matrix, p};
@@ -628,10 +628,10 @@ void Plane_ParamsChanged(Plane *p)
     void **model = VirModel_Find(p->v.name);
     float radius;
 
-    sub_4F4820(p);
+    Vehicle_DeleteParts(p);
     if (model) {
         RigidDynCubeObj_SetModel(p, model);
-        Vehicle_SetPhysType(p, PhysType_Find(p->v.name));
+        PhysicsObj_SetPhysType(p, PhysicsObjType_Find(p->v.name));
         Plane_ResetControls(p);
     } else if (p->v.name[0] && p->v.name[1] != '*') {
         crt_sprintf(buf, "Model \"%s\" not available", p->v.name);
@@ -647,7 +647,7 @@ void Plane_ParamsChanged(Plane *p)
     radius = plane_radius(p);
     DynCube_Move(Game_GetWorld(), p, &p->v.pos2, radius);
     p->v.matrix = p->v.matrix2;
-    sub_4F4800(p);
+    Vehicle_NewParts(p);
     BROADCAST(p->v.coll->head, Param_GetChangedEvent(), NULL);
     VarString_Bind(&p->script, p);
 }

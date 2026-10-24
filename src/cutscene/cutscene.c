@@ -152,7 +152,7 @@ ORIG(0x4F4110, uint8_t, Vehicle_GetStateSizeEvent, (void));
 ORIG(0x4F4120, uint8_t, Vehicle_GetSaveEvent, (void));
 ORIG(0x4F4130, uint8_t, Vehicle_GetLoadEvent, (void));
 ORIG(0x4F4140, uint8_t, Vehicle_GetKeysEvent, (void));
-ORIG(0x5034D0, uint16_t, Position_GetType, (void));
+ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 ORIG(0x508610, uint16_t, EditCamera_GetType, (void));
 ORIG(0x508620, void, EditCamera_AttachRotation, (Vec3d *pos, Matrix *rot, int target));
 ORIG(0x508940, void, EditCamera_AttachPosition, (Vec3d *pos, Matrix *rot, void *unk48, void *unk60, int target));
@@ -267,7 +267,7 @@ void CutScene_Open(void)
     gCutSceneTimeRange[0] = 0.0f;
     gCutSceneTimeRange[1] = 20.0f;
     gCutSceneModel = VirModel_Add("1721_01_1");
-    gCutSceneType = TaskType_New("CutScene", sizeof(CutScene), Position_GetType(), 0, 0);
+    gCutSceneType = TaskType_New("CutScene", sizeof(CutScene), EditorRigidObj_GetType(), 0, 0);
     TaskType_SetHandler(gCutSceneType, 0, CutScene_CreateHandler);
     TaskType_SetHandler2(gCutSceneType, 1, CutScene_RunHandler);
     TaskType_SetHandler2(gCutSceneType, 2, CutScene_DeleteHandler);

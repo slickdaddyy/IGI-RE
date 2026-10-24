@@ -11,7 +11,7 @@ ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4B8920, void, Script_UnregisterSymbol, (const char *name));
 ORIG(0x418AF0, uint16_t, MenuManager_GetType, (void));
 ORIG(0x419090, void, MenuManager_RefreshScreen, (void *mm));
-ORIG(0x488700, void, Task_RunChildren, (void *task));
+ORIG(0x488700, void, SubLevel_Run, (void *task));
 
 /* the state MenuWindow_Arrange hands to each child's place handler */
 typedef struct LineUp {
@@ -74,7 +74,7 @@ void MenuWindow_Init(void)
     TaskType_SetHandler2(gMenuWindowType, 2, Task_Nothing);
     TaskType_SetHandler2(gMenuWindowType, gEvent910, MenuWindow_Arrange);
     TaskType_SetHandler2(gMenuWindowType, Screen_GetDrawEvent(), MenuWindow_Draw);
-    TaskType_SetHandler2(gMenuWindowType, 1, Task_RunChildren);
+    TaskType_SetHandler2(gMenuWindowType, 1, SubLevel_Run);
     TaskType_SetHandler2(gMenuWindowType, gEvent914, MenuWindow_ForwardEvent914);
     TaskType_SetHandler2(gMenuWindowType, gEvent918, MenuWindow_ForwardEvent918);
     TaskType_SetHandler2(gMenuWindowType, gEvent91C, MenuWindow_ForwardEvent91C);

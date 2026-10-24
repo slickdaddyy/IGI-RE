@@ -11,8 +11,8 @@ ORIG(0x4A5500, char *, crt_strncpy, (char *dst, const char *src, size_t n));
 ORIG(0x5169B0, char *, crt_strncat, (char *dst, const char *src, size_t n));
 ORIG(0x4B7E10, void, Script_Error, (const char *fmt, ...));
 ORIG(0x4BFC70, int, Lexer_Next, (ScriptLexer *lex, void *token));
-ORIG(0x4C0230, int, Lexer_GetLineNo, (ScriptLexer *lex));
-ORIG(0x4C0240, char *, Lexer_GetLine, (ScriptLexer *lex));
+ORIG(0x4C0230, int, Lexer_TextLine, (ScriptLexer *lex));
+ORIG(0x4C0240, char *, Lexer_LineText, (ScriptLexer *lex));
 
 #define gExprInTernary VAR(int, 0xA43E80)
 
@@ -34,9 +34,9 @@ static int Fpu_IsZero(long double v)
 
 static void Lexer_Error(ScriptLexer *lex, const char *fmt)
 {
-    char *line = Lexer_GetLine(lex);
+    char *line = Lexer_LineText(lex);
 
-    Script_Error(fmt, Lexer_GetLineNo(lex), line);
+    Script_Error(fmt, Lexer_TextLine(lex), line);
 }
 
 static ScriptSymbol *Expr_Symbol(Expr *e)

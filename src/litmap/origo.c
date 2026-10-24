@@ -10,10 +10,10 @@ ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *obj, void **model
 ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int category));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, float radius));
 ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *obj));
-ORIG(0x4C1780, void, sub_4C1780, (void));
+ORIG(0x4C1780, void, Debug_Log, (void));
 ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 ORIG(0x4E5360, uint8_t, DynCubeObj_GetMaskVisibleEvent, (void));
-ORIG(0x52BFE0, void, sub_52BFE0, (void));
+ORIG(0x52BFE0, void, DiscardTerrain_MaskVisible, (void));
 
 typedef struct Terrain {
     char unk0[0xDE0];
@@ -85,7 +85,7 @@ void Origo_Init(void)
     type = TaskType_New("Origo", sizeof(Origo), RigidDynCubeObj_GetType(), 0, 0);
     gOrigoType = type;
     TaskType_SetHandler(type, 0, Origo_Create);
-    TaskType_SetHandler(gOrigoType, 4, sub_4C1780);
+    TaskType_SetHandler(gOrigoType, 4, Debug_Log);
     TaskType_SetHandler(gOrigoType, 7, Origo_GetBounds);
     TaskType_SetHandler2(gOrigoType, 2, Origo_Delete);
     TaskType_SetHandler(gOrigoType, Param_GetTableEvent(), Origo_GetParams);
@@ -96,7 +96,7 @@ void Origo_Init(void)
     TaskType_SetHandler(gOrigoType, 9, NULL);
     TaskType_SetHandler(gOrigoType, 8, NULL);
     TaskType_SetHandler(gOrigoType, 12, NULL);
-    TaskType_SetHandler(gOrigoType, DynCubeObj_GetMaskVisibleEvent(), sub_52BFE0);
+    TaskType_SetHandler(gOrigoType, DynCubeObj_GetMaskVisibleEvent(), DiscardTerrain_MaskVisible);
     gOrigoParams = ParamTable_New(1);
     ParamTable_Add(gOrigoParams, &t, &t.place, Param_ObjectPos(), 7, NULL);
 }

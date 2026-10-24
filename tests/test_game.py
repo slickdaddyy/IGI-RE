@@ -503,7 +503,7 @@ def test_falloff(pos, radius):
         q = e.alloc(24)
         e.write(q, struct.pack("<3d", *pos))
         return s, 0x77, q, f32(radius)
-    compare(emu, 0x416C90, "sub_416C90", setup=setup, check_eax=False, check_st0=True)
+    compare(emu, 0x416C90, "Game_BlastFalloff", setup=setup, check_eax=False, check_st0=True)
 
 
 def tree(e, type_):

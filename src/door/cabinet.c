@@ -8,7 +8,7 @@
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4168A0, void *, Game_GetTaskList0, (void));
-ORIG(0x4871C0, void, sub_4871C0, (char *p, char *q));
+ORIG(0x4871C0, void, StatusScreen_DrawActionIcon, (char *p, char *q));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Matrix *m, float a));
 ORIG(0x4B7EE0, void, Script_RegisterBool8, (const char *name, char *value));
@@ -17,14 +17,14 @@ ORIG(0x4C17C0, void, QTaskList_Remove, (void *list, void *item));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4C3440, Vec3d *, DynCubeObj_GetPosition, (void *obj));
 ORIG(0x4C48D0, void, RigidDynCubeObj_SetModel, (void *obj, void **model));
-ORIG(0x4C4950, void, sub_4C4950, (void *a, void *b, void *c));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (void *a, void *b, void *c));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, float radius));
 ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *obj));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
-ORIG(0x4DCDD0, void, sub_4DCDD0, (void *obj));
-ORIG(0x4DCF00, void, sub_4DCF00, (void *world, void *obj, Vec3d *pos));
-ORIG(0x4E0930, Task *, sub_4E0930, (void *parent, void *obj));
+ORIG(0x4DCDD0, void, Sector_RemoveObject, (void *obj));
+ORIG(0x4DCF00, void, Sector_MoveObject, (void *world, void *obj, Vec3d *pos));
+ORIG(0x4E0930, Task *, MagicObjContainer_New, (void *parent, void *obj));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
 ORIG(0x4F1220, int, Level_GetEventDAC, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
@@ -62,7 +62,7 @@ void Cabinet_Delete(Cabinet *c)
     }
     if (c->o.unkE8)
         Task_Delete(c->o.unkE8);
-    sub_4DCDD0(c);
+    Sector_RemoveObject(c);
     DynCube_Remove(c->o.sector, c);
 }
 HOOK(0x444660, Cabinet_Delete);
@@ -83,13 +83,13 @@ void Cabinet_ParamsChanged(Cabinet *c, char *arg)
     scale = max_scale(&c->o);
     radius = VirModel_GetRadius(c->o.model) * scale;
     DynCube_Move(c->o.sector, c, &c->place, radius);
-    sub_4DCF00(c->o.sector, c, DynCubeObj_GetPosition(c));
+    Sector_MoveObject(c->o.sector, c, DynCubeObj_GetPosition(c));
     Matrix_SetRotZ(&c->o.matrix, c->yaw);
     if (c->o.unkE8)
         Task_Delete(c->o.unkE8);
-    t = sub_4E0930(NULL, c);
+    t = MagicObjContainer_New(NULL, c);
     c->o.unkE8 = t;
-    sub_4C4950(t, c, c);
+    RigidDynCubeObj_CreateMagicObjs(t, c, c);
     if (!arg || !*arg)
         BROADCAST(c->o.unkE8, Param_GetChangedEvent(), NULL);
 }
@@ -120,7 +120,7 @@ HOOK(0x444940, Cabinet_Use);
 
 void sub_4449A0(void *task, char **arg)
 {
-    sub_4871C0(*arg, *arg + 0x3EC);
+    StatusScreen_DrawActionIcon(*arg, *arg + 0x3EC);
 }
 HOOK(0x4449A0, sub_4449A0);
 

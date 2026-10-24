@@ -11,7 +11,7 @@ ORIG(0x4B80A0, void, Script_RemoveSymbol, (const char *name));
 ORIG(0x4F0FC0, void *, Param_VarString, (void));
 ORIG(0x4F0FE0, void *, Param_String32, (void));
 ORIG(0x4F1000, void *, Param_Bool8, (void));
-ORIG(0x4F1010, void *, Param_SoundParams, (void));
+ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
 ORIG(0x4F1210, int, Level_GetEventDA8, (void));
 ORIG(0x4F1220, int, Level_GetEventDAC, (void));
@@ -21,14 +21,14 @@ ORIG(0x4F1340, void, VarString_Free, (VarString *v));
 ORIG(0x4F1400, void, VarString_Bind, (VarString *v, void *task));
 ORIG(0x4F16C0, char, VarString_HasExpr, (VarString *v));
 ORIG(0x4F16E0, long double, VarString_EvalReal, (VarString *v, void *task));
-ORIG(0x497410, int, sub_497410, (const char *name));
-ORIG(0x497450, int, sub_497450, (const char *name));
-ORIG(0x4974A0, void, sub_4974A0, (void *p));
-ORIG(0x4E6B00, Task *, Sound_New, (void *owner, const char *name));
-ORIG(0x4E6C30, void, sub_4E6C30, (Task *sound, int *params));
-ORIG(0x4E6CE0, void, sub_4E6CE0, (Task *sound, int on));
-ORIG(0x4E6D60, void, sub_4E6D60, (void *stream));
-ORIG(0x4E6FA0, char, sub_4E6FA0, (void *stream));
+ORIG(0x497410, int, Sound_HashName, (const char *name));
+ORIG(0x497450, int, Sound_HashBucket, (const char *name));
+ORIG(0x4974A0, void, SoundParams_Init, (void *p));
+ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
+ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, int *params));
+ORIG(0x4E6CE0, void, Sound_SetGlobal, (Task *sound, int on));
+ORIG(0x4E6D60, void, SoundHandle_Play, (void *stream));
+ORIG(0x4E6FA0, char, SoundHandle_IsPlaying, (void *stream));
 
 /* plays a sound while a script condition is true */
 typedef struct ConditionalSound {
@@ -86,7 +86,7 @@ void ConditionalSound_Init(void)
     gConditionalSoundParams = ParamTable_New(6);
     ParamTable_Add(gConditionalSoundParams, &cs, &cs.cond, Param_VarString(), 7, NULL);
     ParamTable_Add(gConditionalSoundParams, &cs, cs.name, Param_String32(), 7, NULL);
-    ParamTable_Add(gConditionalSoundParams, &cs, cs.params, Param_SoundParams(), 7, NULL);
+    ParamTable_Add(gConditionalSoundParams, &cs, cs.params, Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gConditionalSoundParams, &cs, &cs.stream, Param_Bool8(), 7, NULL);
     ParamTable_Add(gConditionalSoundParams, &cs, &cs.once, Param_Bool8(), 7, NULL);
     ParamTable_Add(gConditionalSoundParams, &cs, &cs.loop, Param_Bool8(), 7, NULL);
@@ -153,24 +153,24 @@ void ConditionalSound_Play(ConditionalSound *cs)
 
     ConditionalSound_Stop(cs);
     if (cs->stream) {
-        cs->streamA = sub_497450(cs->name);
-        cs->streamB = sub_497410(cs->name);
+        cs->streamA = Sound_HashBucket(cs->name);
+        cs->streamB = Sound_HashName(cs->name);
         cs->streamC = 0;
         cs->streamD = 0;
-        sub_4974A0(cs->streamData);
-        sub_4E6D60(&cs->streamA);
+        SoundParams_Init(cs->streamData);
+        SoundHandle_Play(&cs->streamA);
         cs->played = 1;
         cs->isPlaying = 1;
         return;
     }
-    sound = Sound_New(cs, cs->name);
+    sound = Sound_Play(cs, cs->name);
     if (!sound)
         return;
     cs->sound = TaskRef_Add(sound);
     if (cs->loop)
-        sub_4E6CE0(sound, 1);
+        Sound_SetGlobal(sound, 1);
     else
-        sub_4E6C30(sound, cs->params);
+        Sound_SetPos(sound, cs->params);
     cs->played = 1;
     cs->isPlaying = 1;
 }
@@ -179,9 +179,9 @@ HOOK(0x425200, ConditionalSound_Play);
 void ConditionalSound_UpdatePlaying(ConditionalSound *cs)
 {
     if (cs->stream) {
-        cs->isPlaying = sub_4E6FA0(&cs->streamA);
+        cs->isPlaying = SoundHandle_IsPlaying(&cs->streamA);
         if (cs->isPlaying)
-            sub_4E6D60(&cs->streamA);
+            SoundHandle_Play(&cs->streamA);
     } else if (cs->sound) {
         cs->isPlaying = *cs->sound != NULL;
     }

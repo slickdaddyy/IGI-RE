@@ -7,24 +7,24 @@ ORIG(0x401AE0, Task **, TaskRef_Add, (Task *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
 ORIG(0x414950, long double, Vec3d_YawAngle, (Vec3d v));
-ORIG(0x414E20, void, sub_414E20, (Vec3d *out, void *obj, int point));
+ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int point));
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
 ORIG(0x4168D0, void *, Game_GetTaskList3, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
-ORIG(0x416C90, long double, sub_416C90, (void *blast, void *obj, Vec3d *pos, float radius, int unk));
+ORIG(0x416C90, long double, Game_BlastFalloff, (void *blast, void *obj, Vec3d *pos, float radius, int unk));
 ORIG(0x460BE0, uint16_t, Human_GetType, (void));
-ORIG(0x464250, int, sub_464250, (void));
-ORIG(0x465820, void, sub_465820, (Vec3d *out, Task *human));
-ORIG(0x46B4D0, char *, sub_46B4D0, (void));
-ORIG(0x4675B0, void, sub_4675B0, (float *out, Vec3f *in, void *view));
-ORIG(0x467620, void, sub_467620, (float *out, float *depth, Vec3d *pos, void *view));
+ORIG(0x464250, int, Human_GetMaskType, (void));
+ORIG(0x465820, void, Human_GetEyePos, (Vec3d *out, Task *human));
+ORIG(0x46B4D0, char *, ComputerRes_Get, (void));
+ORIG(0x4675B0, void, ComputerObject_Project, (float *out, Vec3f *in, void *view));
+ORIG(0x467620, void, ComputerObject_ProjectPos, (float *out, float *depth, Vec3d *pos, void *view));
 ORIG(0x480FE0, void, Explosion_Spawn, (Vec3d *pos, int a, int b, float c, float d, float e, float f, int g, int h,
                                        int i, const char *sprite, const char *sound, int j, int k, float l, int m));
-ORIG(0x4896C0, void, sub_4896C0, (void *detect, int a, int b, int mask, int c, int d));
-ORIG(0x489750, void, sub_489750, (void *detect, SCameraEye *eye, SCamera *camera, int unk));
-ORIG(0x489B90, void, sub_489B90, (void *detect));
-ORIG(0x497F20, void, sub_497F20, (float *out, float *depth, Vec3d *pos));
-ORIG(0x498040, void, sub_498040, (float *out, float *in, float depth));
+ORIG(0x4896C0, void, AIDetector_Init, (void *detect, int a, int b, int mask, int c, int d));
+ORIG(0x489750, void, AIDetector_Update, (void *detect, SCameraEye *eye, SCamera *camera, int unk));
+ORIG(0x489B90, void, AIDetection_RemoveRefs, (void *detect));
+ORIG(0x497F20, void, TransContext_Project, (float *out, float *depth, Vec3d *pos));
+ORIG(0x498040, void, TransContext_ScaleSize, (float *out, float *in, float depth));
 ORIG(0x4B3100, void, Vec3d_Normalize, (Vec3d *v));
 ORIG(0x4B38E0, void, Matrix_SetEuler, (Matrix *m, float ax, float ay, float az));
 ORIG(0x4B3C50, void, Matrix_GetEuler, (const float *m, float *ax, float *ay, float *az));
@@ -49,13 +49,13 @@ ORIG(0x4CC2A0, void, Coll_Lines, (void *world, void *results, Vec3d *starts, Vec
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
-ORIG(0x4DCCB0, void, sub_4DCCB0, (void *world, void *obj, Vec3d *pos));
-ORIG(0x4DCDD0, void, sub_4DCDD0, (void *obj));
-ORIG(0x4DCF00, void, sub_4DCF00, (void *world, void *obj, Vec3d *pos));
+ORIG(0x4DCCB0, void, Sector_AddObject, (void *world, void *obj, Vec3d *pos));
+ORIG(0x4DCDD0, void, Sector_RemoveObject, (void *obj));
+ORIG(0x4DCF00, void, Sector_MoveObject, (void *world, void *obj, Vec3d *pos));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (Task *sound));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (void));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 
 #define gAlarmLightSprite VAR(char *, 0x57C17C)
 #define gSCameraType VAR(uint16_t, 0x57C180)
@@ -120,16 +120,16 @@ void SCameraLens_Create(SCameraLens *l)
     RigidDynCubeObj_Init(Game_GetWorld(), l, NULL);
     scale = sobj_scale(&l->o);
     DynCube_Add(Game_GetWorld(), l, &zero, VirModel_GetRadius(l->o.model) * scale, 1);
-    sub_4DCCB0(l->o.world, l, DynCubeObj_GetPosition(l));
+    Sector_AddObject(l->o.world, l, DynCubeObj_GetPosition(l));
     l->camera = (SCamera *)l->o.task.parent;
     l->pitch = 0;
     l->yaw = 0;
     l->yaw_target = 0;
     l->wait = 0;
     l->dir = 0;
-    mask = sub_464250();
+    mask = Human_GetMaskType();
     mask |= SCamera_GetDetectMask();
-    sub_4896C0(l->detect, 1, 6, mask, 4, 8);
+    AIDetector_Init(l->detect, 1, 6, mask, 4, 8);
     l->target = NULL;
     l->lost = 0;
     l->move_sound = NULL;
@@ -150,7 +150,7 @@ static void lens_eye(SCameraLens *l)
 {
     Vec3d p;
 
-    sub_414E20(&p, l, 1);
+    Model_GetPoint(&p, l, 1);
     p.x = p.x + l->o.pos.x;
     p.y = p.y + l->o.pos.y;
     p.z = p.z + l->o.pos.z;
@@ -172,7 +172,7 @@ void SCameraLens_Run(SCameraLens *l)
     if (l->frame_wait) {
         l->frame_wait--;
     } else {
-        char *anim = sub_46B4D0() + 0x498;
+        char *anim = ComputerRes_Get() + 0x498;
 
         l->frame_wait = 7;
         l->frame++;
@@ -194,7 +194,7 @@ void SCameraLens_Run(SCameraLens *l)
         }
         lens_eye(l);
         l->eye.unk180 = 0;
-        sub_489750(l->detect, &l->eye, l->camera, 1);
+        AIDetector_Update(l->detect, &l->eye, l->camera, 1);
         SCameraLens_Track(l);
         SCameraLens_UpdateSounds(l);
     } else {
@@ -253,7 +253,7 @@ void SCameraLens_UpdateSounds(SCameraLens *l)
     }
     if (c->detect_time) {
         if (!beep) {
-            beep = Sound_Play(sub_4F0EE0(), "camera_beep_s");
+            beep = Sound_Play(Level_GetDynamic(), "camera_beep_s");
             if (beep) {
                 Sound_SetPos(beep, &l->o.pos);
                 l->beep = TaskRef_Add(beep);
@@ -266,7 +266,7 @@ void SCameraLens_UpdateSounds(SCameraLens *l)
     }
     if (c->detect) {
         if (!l->beep_loop) {
-            l->beep_loop = Sound_Play(sub_4F0EE0(), c->alarm ? "camera_beep_al" : "camera_beep_l");
+            l->beep_loop = Sound_Play(Level_GetDynamic(), c->alarm ? "camera_beep_al" : "camera_beep_l");
             if (l->beep_loop)
                 Sound_SetPos(l->beep_loop, &l->o.pos);
         }
@@ -402,7 +402,7 @@ HOOK(0x441BF0, SCameraLens_Track);
 void SCameraLens_GetTargetPos(Vec3d *out, Task *t)
 {
     if (TaskType_IsA(t->type, Human_GetType()))
-        sub_465820(out, t);
+        Human_GetEyePos(out, t);
     else if (t->type == gSCameraType)
         *out = ((SCamera *)t)->place;
 }
@@ -416,9 +416,9 @@ void SCameraLens_Delete(SCameraLens *l)
     }
     QTaskList_Remove(Game_GetTaskList3(), l);
     QTaskList_Remove(gLensList, l);
-    sub_4DCDD0(l);
+    Sector_RemoveObject(l);
     DynCube_Remove(l->o.world, l);
-    sub_489B90(l->detect);
+    AIDetection_RemoveRefs(l->detect);
 }
 HOOK(0x442070, SCameraLens_Delete);
 
@@ -431,13 +431,13 @@ void SCameraLens_ParamsChanged(SCameraLens *l)
 
     if (model)
         RigidDynCubeObj_SetModel(l, model);
-    sub_414E20(&p, l->camera, 0);
+    Model_GetPoint(&p, l->camera, 0);
     p.x = p.x + c->o.pos.x;
     p.y = p.y + c->o.pos.y;
     p.z = p.z + c->o.pos.z;
     scale = sobj_scale(&l->o);
     DynCube_Move(l->o.world, l, &p, VirModel_GetRadius(l->o.model) * scale);
-    sub_4DCF00(l->o.world, l, DynCubeObj_GetPosition(l));
+    Sector_MoveObject(l->o.world, l, DynCubeObj_GetPosition(l));
     pitch = c->pitch;
     l->pitch = pitch;
     Matrix_SetEuler(&l->o.matrix, pitch, 0, c->yaw + c->yaw_offset);
@@ -470,7 +470,7 @@ void SCameraLens_Blast(SCameraLens *l, void *blast)
     if (l->camera->exploded)
         return;
     scale = sobj_scale(&l->o);
-    t = sub_416C90(blast, l, &l->o.pos, VirModel_GetRadius(l->o.model) * scale, 1);
+    t = Game_BlastFalloff(blast, l, &l->o.pos, VirModel_GetRadius(l->o.model) * scale, 1);
     t = t + l->damage;
     l->damage = t;
     if (!(t < l->max_damage))
@@ -498,11 +498,11 @@ void SCameraLens_Draw(SCameraLens *l)
         float scr[8], size[2], depth, r, g, x0, y0, x1, y1;
         Vec3d p;
 
-        sub_414E20(&p, l, 0);
+        Model_GetPoint(&p, l, 0);
         p.x = p.x + l->o.pos.x;
         p.y = p.y + l->o.pos.y;
         p.z = p.z + l->o.pos.z;
-        sub_497F20(scr, &depth, &p);
+        TransContext_Project(scr, &depth, &p);
         if (depth > kZero) {
             if (!c->detect && !c->detect_time) {
                 r = 0;
@@ -522,7 +522,7 @@ void SCameraLens_Draw(SCameraLens *l)
                 else
                     size[0] = size[1] = 512.0f;
             }
-            sub_498040(size, size, depth);
+            TransContext_ScaleSize(size, size, depth);
             x0 = scr[0] - size[0];
             y0 = scr[1] - size[1];
             x1 = scr[0] + size[0];
@@ -558,13 +558,13 @@ void SCameraLens_DrawOnMap(SCameraLens *l, void **arg)
     pos[0] = v.x;
     pos[1] = v.y;
     if (c->on) {
-        spr = sub_46B4D0() + 0x498;
+        spr = ComputerRes_Get() + 0x498;
         frame = l->frame;
     } else {
-        spr = sub_46B4D0() + 0x480;
+        spr = ComputerRes_Get() + 0x480;
         frame = 0;
     }
-    sub_4675B0(pos, &v, arg);
+    ComputerObject_Project(pos, &v, arg);
     pos[0] = pos[0] - Sprite_Width(spr) * kHalf;
     pos[1] = pos[1] - Sprite_Height(spr) * kHalf;
     QVertex_DrawFrame(spr, pos[0], pos[1], 128.0f, 128.0f, 128.0f, 1.0f, 0x1.0a3d7p+9f, frame, 0x400C0000, -1);
@@ -604,7 +604,7 @@ void SCameraLens_DrawViewCone(SCameraLens *l, void *arg)
 
     if (c->exploded)
         return;
-    sub_414E20(&p, l, 1);
+    Model_GetPoint(&p, l, 1);
     m = l->o.matrix;
     p.x = p.x + l->o.pos.x;
     p.y = p.y + l->o.pos.y;
@@ -664,12 +664,12 @@ void SCameraLens_DrawViewCone(SCameraLens *l, void *arg)
     strip.flags = 0x400C0000;
     strip.unk8 = -1;
     strip.count = 3;
-    sub_467620(scr, &depth, &p, arg);
+    ComputerObject_ProjectPos(scr, &depth, &p, arg);
     cone_vertex(&v[0], scr);
     for (i = 1; i < 12; i++) {
-        sub_467620(scr, &depth, &ends[i - 1], arg);
+        ComputerObject_ProjectPos(scr, &depth, &ends[i - 1], arg);
         cone_vertex(&v[1], scr);
-        sub_467620(scr, &depth, &ends[i], arg);
+        ComputerObject_ProjectPos(scr, &depth, &ends[i], arg);
         cone_vertex(&v[2], scr);
         gRenderFuncs[gQVertexStrip](&strip);
     }
@@ -683,13 +683,13 @@ void SCameraLens_WorldAdd(SCameraLens *l, void **arg)
     float scale;
     Vec3d p;
 
-    sub_414E20(&p, c, 0);
+    Model_GetPoint(&p, c, 0);
     p.x = p.x + c->o.pos.x;
     p.y = p.y + c->o.pos.y;
     p.z = p.z + c->o.pos.z;
     scale = sobj_scale(&l->o);
     DynCube_Add(arg[1], l, &p, VirModel_GetRadius(l->o.model) * scale, 1);
-    sub_4DCCB0(l->o.world, l, DynCubeObj_GetPosition(l));
+    Sector_AddObject(l->o.world, l, DynCubeObj_GetPosition(l));
     EACH_CHILD(&l->o.task, World_GetEvent0(), arg);
 }
 HOOK(0x4432F0, SCameraLens_WorldAdd);

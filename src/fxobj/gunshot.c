@@ -11,13 +11,13 @@ ORIG(0x408330, uint8_t, GameMaterial_GetParseEvent, (void));
 ORIG(0x408340, uint8_t, GameMaterial_GetImpactEvent, (void));
 ORIG(0x4148F0, long double, Vec3d_PitchAngle, (Vec3d v));
 ORIG(0x414950, long double, Vec3d_YawAngle, (Vec3d v));
-ORIG(0x414E20, void, sub_414E20, (Vec3d *out, void *obj, int i));
+ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int i));
 ORIG(0x4167F0, uint8_t, Game_GetEvent2, (void));
 ORIG(0x416810, uint8_t, Game_GetEvent3, (void));
-ORIG(0x448550, uint16_t, sub_448550, (void));
-ORIG(0x448560, void *, sub_448560, (void));
-ORIG(0x47E6F0, uint8_t, sub_47E6F0, (void));
-ORIG(0x4810A0, void, sub_4810A0, (Vec3d *pos, int a, int b, int c, float d, int e, int f, int count, int g, int h,
+ORIG(0x448550, uint16_t, GenericTBA_GetType, (void));
+ORIG(0x448560, void *, GenericTBA_GetParams, (void));
+ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
+ORIG(0x4810A0, void, Explosion_New, (Vec3d *pos, int a, int b, int c, float d, int e, int f, int count, int g, int h,
                                   const char *name, const char *name2, int i, int j, float k, void *dir, float l,
                                   float m, float n, int o));
 ORIG(0x4B3100, void, Vec3d_Normalize, (Vec3d *v));
@@ -25,12 +25,12 @@ ORIG(0x4B3130, long double, Vec3d_Length, (const Vec3d *v));
 ORIG(0x4B4740, unsigned int, Random_Next, (void *r));
 ORIG(0x4B4770, long double, Random_Float, (void *r));
 ORIG(0x4B47C0, int, Random_Int, (void *r, int n));
-ORIG(0x4D9610, uint16_t, sub_4D9610, (void));
-ORIG(0x4F0EE0, void *, sub_4F0EE0, (void));
-ORIG(0x4F1980, void *, sub_4F1980, (void *base, int count));
-ORIG(0x4FDF00, void *, sub_4FDF00, (void *root, void *world, void *sprite, Vec3f *dir, Vec3f *scale, float *size,
+ORIG(0x4D9610, uint16_t, BoneDynCubeObj_GetType, (void));
+ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
+ORIG(0x4F1980, void *, ParamTable_Extend, (void *base, int count));
+ORIG(0x4FDF00, void *, Particle2D_New, (void *root, void *world, void *sprite, Vec3f *dir, Vec3f *scale, float *size,
                                     float b, int blend, int d, float e, int f, int count, int h));
-ORIG(0x4FE120, void, sub_4FE120, (void *ps, Vec3d *pos, Vec3f *dir, float size, float a, float b, float c, int d,
+ORIG(0x4FE120, void, Particle2D_Add, (void *ps, Vec3d *pos, Vec3f *dir, float size, float a, float b, float c, int d,
                                   int e));
 
 /* what a material shows when a bullet hits it (0x60 bytes) */
@@ -147,7 +147,7 @@ void GunShotEffect_Impact(void *t, ImpactArg *a)
 
     (void)t;
     if (hit->task) {
-        uint16_t base = sub_4D9610();
+        uint16_t base = BoneDynCubeObj_GetType();
 
         isExcluded = TaskType_IsA(hit->task->type, base);
     } else {
@@ -156,11 +156,11 @@ void GunShotEffect_Impact(void *t, ImpactArg *a)
     if (def->debris && !isExcluded) {
         int n = Random_Int(Game_GetRandom(), 3);
 
-        sub_4810A0(&a->hit->pos, 1, 0, 0, 2048.0f, 0, 0, n + 2, 0, 0, def->sound, gScriptEmptyString, -1, 2,
+        Explosion_New(&a->hit->pos, 1, 0, 0, 2048.0f, 0, 0, n + 2, 0, 0, def->sound, gScriptEmptyString, -1, 2,
                    20480.0f, a->unk8, 0x1.0c1524p-1f, 340.0f, 680.0f, 0);
     }
     if (hit->task && ((a->exit && (tex = def->decalTex)) || (tex = def->decal2Tex))) {
-        if (HANDLER(sub_47E6F0(), hit->task->type)) {
+        if (HANDLER(BulletHole_GetEvent(), hit->task->type)) {
             DecalArg d;
             Task *task;
 
@@ -169,7 +169,7 @@ void GunShotEffect_Impact(void *t, ImpactArg *a)
             d.hit = hit;
             d.unk4 = 0;
             d.size = def->decalSize;
-            HANDLER(sub_47E6F0(), task->type)(task, &d);
+            HANDLER(BulletHole_GetEvent(), task->type)(task, &d);
         }
     }
     if (def->dust && !isExcluded && (Random_Next(Game_GetRandom()) & 1)) {
@@ -189,8 +189,8 @@ void GunShotEffect_Impact(void *t, ImpactArg *a)
         size[0] = 163.84f;
         size[1] = 163.84f;
         world = Game_GetWorld();
-        root = sub_4F0EE0();
-        ps = sub_4FDF00(root, world, gGunShotDust + 0x18, &zero, &color, size, 409600.0f, 0x1080000, 0,
+        root = Level_GetDynamic();
+        ps = Particle2D_New(root, world, gGunShotDust + 0x18, &zero, &color, size, 409600.0f, 0x1080000, 0,
                         0x1.6c16c2p-4f, 0, 2, 0);
         p.x = hit->normal.x;
         p.y = hit->normal.y;
@@ -213,11 +213,11 @@ void GunShotEffect_Impact(void *t, ImpactArg *a)
         sz = Random_Float(Game_GetRandom()) * kQuarter + kThreeQuarters;
         f = Random_Float(Game_GetRandom()) - kHalfF;
         spread = (f + f) * kSpreadScale + kSpreadBase;
-        sub_4FE120(ps, &p, &dir, sz, spread, 0, 1.0f, 15, 30);
+        Particle2D_Add(ps, &p, &dir, sz, spread, 0, 1.0f, 15, 30);
         dir.z = dir.z * kDust2Scale;
         f = Random_Float(Game_GetRandom()) - kHalfF;
         spread = (f + f) * kSpreadScale + kSpreadBase;
-        sub_4FE120(ps, &p2, &dir, sz, spread, 0, 1.0f, 15, 30);
+        Particle2D_Add(ps, &p2, &dir, sz, spread, 0, 1.0f, 15, 30);
     }
 }
 HOOK(0x438440, GunShotEffect_Impact);
@@ -262,12 +262,12 @@ void PlaceExplosiveTBA_Init(void)
 {
     PlaceExplosive p;
 
-    gPlaceExplosiveType = TaskType_New("PlaceExplosiveTBA", sizeof(PlaceExplosive), sub_448550(), 0);
+    gPlaceExplosiveType = TaskType_New("PlaceExplosiveTBA", sizeof(PlaceExplosive), GenericTBA_GetType(), 0);
     TaskType_SetHandler(gPlaceExplosiveType, 0, PlaceExplosiveTBA_Create);
     TaskType_SetHandler(gPlaceExplosiveType, Param_GetTableEvent(), PlaceExplosiveTBA_GetParams);
     TaskType_SetHandler(gPlaceExplosiveType, Game_GetEvent2(), PlaceExplosiveTBA_CheckAim);
     TaskType_SetHandler(gPlaceExplosiveType, Game_GetEvent3(), PlaceExplosiveTBA_GetKind);
-    gPlaceExplosiveParams = sub_4F1980(sub_448560(), 2);
+    gPlaceExplosiveParams = ParamTable_Extend(GenericTBA_GetParams(), 2);
     ParamTable_Add(gPlaceExplosiveParams, &p, &p.range, Param_Real32(), 7, NULL);
     ParamTable_Add(gPlaceExplosiveParams, &p, &p.targetId, Param_Int32(), 7, NULL);
 }
@@ -275,7 +275,7 @@ HOOK(0x4388B0, PlaceExplosiveTBA_Init);
 
 void PlaceExplosiveTBA_Create(PlaceExplosive *t, void *arg)
 {
-    gTaskHandlers[0][sub_448550()](t, arg);
+    gTaskHandlers[0][GenericTBA_GetType()](t, arg);
     t->range = 0.75f;
     t->targetId = -1;
 }
@@ -291,7 +291,7 @@ void PlaceExplosiveTBA_CheckAim(PlaceExplosive *t, AimArg *a)
 
     if (!t->active)
         return;
-    sub_414E20(&p, t, 1);
+    Model_GetPoint(&p, t, 1);
     p.x = p.x + t->pos.x;
     p.y = p.y + t->pos.y;
     p.z = p.z + t->pos.z;

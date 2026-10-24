@@ -14,7 +14,7 @@ ORIG(0x4B0B00, void, Pool_Init, (Pool *pool, int stride, int count, int unk));
 ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));
 ORIG(0x4C3440, Vec3d *, DynCubeObj_GetPosition, (Obj *o));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
-ORIG(0x4C4950, void, sub_4C4950, (Task *parts, Obj *o, Obj *owner));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (Task *parts, Obj *o, Obj *owner));
 ORIG(0x4C5700, uint8_t, RigidDynCubeObj_GetEvent3, (void));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, Obj *o, void **model));
 ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int category));
@@ -27,7 +27,7 @@ ORIG(0x4D0CF0, char *, ModelLod_GetAttach, (void *lod, int i));
 ORIG(0x4D0D10, int, ModelLod_GetAttachCount, (void *lod));
 ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
-ORIG(0x4DCBA0, void, Sector_AddBounds, (Pool *spheres, Task *sectors));
+ORIG(0x4DCBA0, void, SectorObject_AddChildSpheres, (Pool *spheres, Task *sectors));
 ORIG(0x4DCCB0, int, Sector_AddObject, (void *world, void *obj, Vec3d *pos));
 ORIG(0x4DCDD0, void, Sector_RemoveObject, (void *obj));
 
@@ -182,7 +182,7 @@ void Sector_Create(Sector *s, MagicArg *arg)
     s->o.matrix = arg->matrix;
     s->o.model = VirModel_Find(arg->model);
     s->o.parts = MagicObjContainer_New(NULL, s);
-    sub_4C4950(s->o.parts, &s->o, &s->o);
+    RigidDynCubeObj_CreateMagicObjs(s->o.parts, &s->o, &s->o);
     s->offset = arg->offset;
     s->local = arg->local;
     Pool_Init(&s->links, 4, 100, 0);
@@ -434,7 +434,7 @@ void SectorObject_CalcBounds(SectorObject *so, float *center, float *radius)
         item[2] = info[2];
         item[3] = info[3];
         if (s->o.parts)
-            Sector_AddBounds(&sp, s->o.parts);
+            SectorObject_AddChildSpheres(&sp, s->o.parts);
     } while ((t = next_task(t)) != NULL);
     a = b = center;
     for (n = sp.used; n > 1; n = sp.used) {

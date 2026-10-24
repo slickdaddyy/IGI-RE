@@ -3,8 +3,8 @@
 #include "hook.h"
 #include "levelflow/levelflow.h"
 
-ORIG(0x402870, int, Timer_GetFrequency, (void));
-ORIG(0x406220, int *, IsPlayerProfileActive, (void));
+ORIG(0x402870, int, Flow_GetFps, (void));
+ORIG(0x406220, int *, Profile_GetActive, (void));
 ORIG(0x416D40, char *, Game_Get, (void));
 ORIG(0x416D90, void, Game_ResetState, (void));
 ORIG(0x416F40, void, Game_ClearPlayers, (void));
@@ -14,7 +14,7 @@ ORIG(0x48F2D0, int, AppContext_IsUSA, (void));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
 ORIG(0x4CEBA0, void *, VirModel_Add, (const char *name));
-ORIG(0x4F1160, char, sub_4F1160, (void));
+ORIG(0x4F1160, char, Level_IsRunning, (void));
 ORIG(0x4F1CB0, void *, Param_Range0100, (void));
 
 /* the level script's root: completion and failure conditions, tick
@@ -152,7 +152,7 @@ void LevelFlow_Create(LevelFlow *lf)
     lf->isFailed = 0;
     lf->nTick = 0;
     lf->wasFailed = 0;
-    profile = IsPlayerProfileActive();
+    profile = Profile_GetActive();
     if (!profile) {
         Warning_Show("LevelFlow: No player profile found");
         lf->eDifficulty = 1;
@@ -243,7 +243,7 @@ void LevelFlow_Run(LevelFlow *lf)
 {
     int i;
 
-    if (!sub_4F1160())
+    if (!Level_IsRunning())
         return;
     lf->wasFailed = lf->isFailed;
     EACH_CHILD(&lf->task, 1);
@@ -293,7 +293,7 @@ HOOK(0x489460, LevelFlow_IsFailed);
 long double LevelFlow_GetHour(void)
 {
     float tick = gLevelFlow->nTick;
-    int freq = Timer_GetFrequency();
+    int freq = Flow_GetFps();
 
     return tick / ((long double)freq * kSecondsPerHour) + gLevelFlow->startHour;
 }

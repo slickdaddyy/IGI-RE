@@ -12,8 +12,8 @@ ORIG(0x4E6C00, void, Sound_Stop, (Task *sound));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
 ORIG(0x4E6C60, void, Sound_SetVolume, (Task *sound, float unk, float level));
 ORIG(0x4F0F70, void *, Param_Real32x9, (void));
-ORIG(0x4F0F80, void *, sub_4F0F80, (void));
-ORIG(0x4F0F90, void *, sub_4F0F90, (void));
+ORIG(0x4F0F80, void *, Param_Real64, (void));
+ORIG(0x4F0F90, void *, Param_Real64x3, (void));
 ORIG(0x4F0FF0, void *, Param_String256, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1320, void, VarString_Init, (VarString *v));
@@ -21,7 +21,7 @@ ORIG(0x4F1340, void, VarString_Free, (VarString *v));
 ORIG(0x4F1400, void, VarString_Bind, (VarString *v, void *task));
 ORIG(0x4F16C0, char, VarString_HasExpr, (VarString *v));
 ORIG(0x4F16E0, long double, VarString_EvalReal, (VarString *v, void *task));
-ORIG(0x5034D0, uint16_t, Position_GetType, (void));
+ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
 /* "AmbientArea" (0x210 bytes), a box that plays one of its sounds, picked
    at random, while the listener is inside, fading in and out */
@@ -64,7 +64,7 @@ void AmbientArea_Init(void)
     AmbientArea a;
 
     gAmbientAreaModel = VirModel_Add("johan");
-    gAmbientAreaType = TaskType_New("AmbientArea", sizeof(AmbientArea), Position_GetType(), 0);
+    gAmbientAreaType = TaskType_New("AmbientArea", sizeof(AmbientArea), EditorRigidObj_GetType(), 0);
     TaskType_SetHandler(gAmbientAreaType, 0, AmbientArea_Create);
     TaskType_SetHandler2(gAmbientAreaType, 1, AmbientArea_Run);
     TaskType_SetHandler2(gAmbientAreaType, 2, AmbientArea_Delete);
@@ -73,9 +73,9 @@ void AmbientArea_Init(void)
     gAmbientAreaParams = ParamTable_New(6);
     ParamTable_Add(gAmbientAreaParams, &a, &a.pos, Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gAmbientAreaParams, &a, &a.matrix, Param_Real32x9(), 7, NULL);
-    ParamTable_Add(gAmbientAreaParams, &a, &a.size, sub_4F0F90(), 7, NULL);
-    ParamTable_Add(gAmbientAreaParams, &a, &a.minDelay, sub_4F0F80(), 7, NULL);
-    ParamTable_Add(gAmbientAreaParams, &a, &a.randDelay, sub_4F0F80(), 7, NULL);
+    ParamTable_Add(gAmbientAreaParams, &a, &a.size, Param_Real64x3(), 7, NULL);
+    ParamTable_Add(gAmbientAreaParams, &a, &a.minDelay, Param_Real64(), 7, NULL);
+    ParamTable_Add(gAmbientAreaParams, &a, &a.randDelay, Param_Real64(), 7, NULL);
     ParamTable_Add(gAmbientAreaParams, &a, a.sounds, Param_String256(), 7, NULL);
 }
 HOOK(0x44C130, AmbientArea_Init);

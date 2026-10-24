@@ -8,13 +8,13 @@
 #include "model/model.h"
 #include "transctx/transctx.h"
 
-ORIG(0x4017C0, uint8_t, TaskEvent_Alloc_, (uint16_t type));
-ORIG(0x401810, int, TaskEvent_Alloc2_, (uint16_t type));
-ORIG(0x4018C0, void, TaskEvent_Free_, (uint8_t index));
-ORIG(0x4018E0, void, TaskEvent_Free2_, (uint8_t index));
+ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
+ORIG(0x401810, int, TaskEvent_Alloc2, (uint16_t type));
+ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
+ORIG(0x4018E0, void, TaskEvent_Free2, (uint8_t index));
 ORIG(0x497670, int, Scene_GetVersion, (void));
 ORIG(0x497EC0, int, TransContext_GetSelectCount, (void));
-ORIG(0x49A340, void, sub_49A340, (void));
+ORIG(0x49A340, void, SplineCache_Reset, (void));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4B0D40, void, Mem_SetDefaultMode, (void));
@@ -492,12 +492,12 @@ void Mesh3D_Init(void)
         gMesh3DFade[i][0] = a;
         gMesh3DFade[i][2] = f * f * f * kFadeB + kOne;
     }
-    gMesh3DEvent0 = TaskEvent_Alloc_(0);
-    gMesh3DEvent1 = TaskEvent_Alloc_(0);
-    gMesh3DEvent2 = TaskEvent_Alloc_(0);
-    gMesh3DEvent3 = TaskEvent_Alloc_(0);
-    gMesh3DEvent4 = TaskEvent_Alloc_(0);
-    gMesh3DEvent5 = TaskEvent_Alloc2_(0);
+    gMesh3DEvent0 = TaskEvent_Alloc(0);
+    gMesh3DEvent1 = TaskEvent_Alloc(0);
+    gMesh3DEvent2 = TaskEvent_Alloc(0);
+    gMesh3DEvent3 = TaskEvent_Alloc(0);
+    gMesh3DEvent4 = TaskEvent_Alloc(0);
+    gMesh3DEvent5 = TaskEvent_Alloc2(0);
     gGenericUVFromRenderModeUVMethod = RenderMode_CreateMethod("GenericUVFromRenderModeUV");
     gRenderModeUVFromGenericUVMethod = RenderMode_CreateMethod("RenderModeUVFromGenericUV");
     gDrawRigidMeshMethod = RenderMode_CreateMethod("DrawRigidMesh");
@@ -505,7 +505,7 @@ void Mesh3D_Init(void)
     gDrawSplineMeshMethod = RenderMode_CreateMethod("DrawSplineMesh");
     gDrawLightmapMeshMethod = RenderMode_CreateMethod("DrawLightmapMesh");
     gExcludeObjectMethod = RenderMode_CreateMethod("ExcludeObject");
-    sub_49A340();
+    SplineCache_Reset();
     gLayerFov[0] = kOne;
     gLayerFov[1] = kOne;
     gLayerFov[2] = kOne;
@@ -521,12 +521,12 @@ void Mesh3D_Shutdown(void)
     RenderMode_DeleteMethod(gDrawSplineMeshMethod);
     RenderMode_DeleteMethod(gDrawLightmapMeshMethod);
     RenderMode_DeleteMethod(gExcludeObjectMethod);
-    TaskEvent_Free2_(gMesh3DEvent5);
-    TaskEvent_Free_(gMesh3DEvent1);
-    TaskEvent_Free_(gMesh3DEvent2);
-    TaskEvent_Free_(gMesh3DEvent3);
-    TaskEvent_Free_(gMesh3DEvent0);
-    TaskEvent_Free_(gMesh3DEvent4);
+    TaskEvent_Free2(gMesh3DEvent5);
+    TaskEvent_Free(gMesh3DEvent1);
+    TaskEvent_Free(gMesh3DEvent2);
+    TaskEvent_Free(gMesh3DEvent3);
+    TaskEvent_Free(gMesh3DEvent0);
+    TaskEvent_Free(gMesh3DEvent4);
 }
 HOOK(0x4D0C50, Mesh3D_Shutdown);
 

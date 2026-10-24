@@ -12,7 +12,7 @@
 ORIG(0x401D80, void, Task_Broadcast, (void *task, uint8_t slot, void *arg));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t slot));
-ORIG(0x48F340, int, Config_GetQvmOnly, (void));
+ORIG(0x48F340, int, AppContext_GetQvmOnly, (void));
 ORIG(0x4A5980, int, crt_stricmp, (const char *a, const char *b));
 ORIG(0x4A5BB0, char *, crt_strstr, (const char *s, const char *find));
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
@@ -25,7 +25,7 @@ ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
 ORIG(0x4B8A80, char *, Script_GetArgString, (void *args, int i, char *buf, int size));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
-ORIG(0x4D0970, void, VirModel_GetPoint, (float *out, void *obj, int point));
+ORIG(0x4D0970, void, Mesh3D_GetVertex, (float *out, void *obj, int point));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 
 /* the task that ran LOCAL:lod.qsc */
@@ -42,7 +42,7 @@ typedef struct DirEntry {
     char isDir;
 } DirEntry;
 
-/* the parts of an object VirModel_GetPoint reads */
+/* the parts of an object Mesh3D_GetVertex reads */
 typedef struct PointQuery {
     char unk0[0x6C];
     void **model;
@@ -171,7 +171,7 @@ void PhysicsObjLoad_Visit(DirEntry *e)
         PhysicsObjLoad(e->path);
         return;
     }
-    ext = Config_GetQvmOnly() ? "qvm" : "qsc";
+    ext = AppContext_GetQvmOnly() ? "qvm" : "qsc";
     n = strlen(e->path);
     m = strlen(ext);
     if (n > m && !crt_stricmp(e->path + n - m, ext))
@@ -250,7 +250,7 @@ void PhysicsObjType_CalcSize(PhysicsObjType *t)
 
     q.model = VirModel_Find(t->model);
     for (i = 0; i < t->jointCount; i++) {
-        VirModel_GetPoint(p, &q, t->joints[i].point);
+        Mesh3D_GetVertex(p, &q, t->joints[i].point);
         for (k = 0; k < 3; k++)
             if (!(p[k] >= lo[k]))
                 lo[k] = p[k];

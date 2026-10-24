@@ -14,8 +14,8 @@ ORIG(0x4C7140, void, DynCube_Add, (void *world, void *o, Vec3d *pos, float radiu
 ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *o));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
-ORIG(0x4E6610, uint8_t, sub_4E6610, (void));
-ORIG(0x4E6AB0, float *, sub_4E6AB0, (int n));
+ORIG(0x4E6610, uint8_t, Sound_GetInfoEvent, (void));
+ORIG(0x4E6AB0, float *, SoundParams_New, (int n));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4F0F30, void *, Param_Degrees, (void));
 ORIG(0x4F0F70, void *, Param_Real32x9, (void));
@@ -81,7 +81,7 @@ void RotatingObject_Init(void)
     TaskType_SetHandler2(gRotatingType, 2, RotatingObject_Delete);
     TaskType_SetHandler(gRotatingType, Param_GetChangedEvent(), RotatingObject_Changed);
     TaskType_SetHandler(gRotatingType, Game_GetEvent9(), RotatingObject_Stop);
-    TaskType_SetHandler(gRotatingType, sub_4E6610(), RotatingObject_GetSoundInfo);
+    TaskType_SetHandler(gRotatingType, Sound_GetInfoEvent(), RotatingObject_GetSoundInfo);
     TaskType_SetHandler(gRotatingType, Param_GetTableEvent(), RotatingObject_GetParams);
     gRotatingParams = ParamTable_New(12);
     ParamTable_Add(gRotatingParams, &r, &r.start, Param_ObjectPos(), 7, NULL);
@@ -117,7 +117,7 @@ void RotatingObject_Create(RotatingObject *t)
     t->base = id;
     t->obj.matrix = t->base;
     t->soundRef = NULL;
-    t->soundParams = sub_4E6AB0(1);
+    t->soundParams = SoundParams_New(1);
     t->maxSpeed.x = 10.0f;
     t->maxSpeed.y = 10.0f;
     t->maxSpeed.z = 10.0f;

@@ -11,7 +11,7 @@
    or a fixed number) at a limited speed, snapped to a step and clamped.
    Scripts see it as "<name>.vRealValue". */
 
-ORIG(0x5034D0, uint16_t, Position_GetType, (void));
+ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
 typedef struct SmoothQTask {
     Task task;
@@ -50,7 +50,7 @@ void SmoothQTask_Open(void)
 {
     SmoothQTask t;
 
-    gSmoothType = TaskType_New("SmoothQTask", sizeof(SmoothQTask), Position_GetType(), 0);
+    gSmoothType = TaskType_New("SmoothQTask", sizeof(SmoothQTask), EditorRigidObj_GetType(), 0);
     TaskType_SetHandler(gSmoothType, 0, SmoothQTask_Create);
     TaskType_SetHandler2(gSmoothType, 1, SmoothQTask_Run);
     TaskType_SetHandler2(gSmoothType, 2, SmoothQTask_Delete);
