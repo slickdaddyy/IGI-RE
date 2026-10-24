@@ -2,28 +2,7 @@
 
 #include "hook.h"
 #include "statgun/statgun.h"
-
-/* the binocular view drawn over the screen ("BinocularOverlay", 0x2E00 bytes) */
-typedef struct BinocularOverlay {
-    Task task;
-    char unk20[0x18];
-    Matrix matrix;      /* 0x38 */
-    Vec3d pos;          /* 0x60 */
-    float fov;          /* 0x78 */
-    Vec3f unk7C;
-} BinocularOverlay;
-
-/* "BinocularOverlayHolder" (0x78 bytes): shows an overlay while "active" is true */
-typedef struct BinocularHolder {
-    Task task;
-    Task **overlay;     /* 0x20 */
-    VarString active;   /* 0x24 */
-    char isActive;      /* 0x74 */
-    char pad75[3];
-} BinocularHolder;
-
-_Static_assert(offsetof(BinocularOverlay, unk7C) == 0x7C, "BinocularOverlay");
-_Static_assert(sizeof(BinocularHolder) == 0x78, "BinocularHolder");
+#include "binocular/binoculartypes.h"
 
 extern uint16_t gBinocularOverlayType;
 extern uint16_t gBinocularHolderType;
@@ -50,7 +29,7 @@ HOOK(0x4723E0, BinocularHolder_Changed);
 void BinocularOverlay_DrawHandler(BinocularOverlay *o)
 {
     o->pos = gViewPos;
-    o->unk7C = gViewUnkBCAAF8;
+    o->dir = gViewUnkBCAAF8;
     BinocularOverlay_Draw(o);
 }
 HOOK(0x472400, BinocularOverlay_DrawHandler);
@@ -64,15 +43,15 @@ void BinocularOverlay_UseHandler(BinocularOverlay *o, WeaponUseMsg *msg)
     Matrix r, m;
     int i, j;
 
-    o->matrix = v->unkF8;
+    o->matrix = v->cam;
     Matrix_SetEuler(&r, kTurn, 0.0f, 0.0f);
     for (i = 0; i < 3; i++)
         for (j = 0; j < 3; j++)
             m.m[i * 3 + j] = a[i * 3] * r.m[j] + a[i * 3 + 2] * r.m[6 + j] + a[i * 3 + 1] * r.m[3 + j];
-    m.unk24 = o->matrix.unk24 + r.unk24 + 1;
+    m.count = o->matrix.count + r.count + 1;
     o->matrix = m;
-    o->pos = v->unkE0;
-    MOV32(o->fov, v->fov);
+    o->pos = *(Vec3d *)v->eye;
+    MOV32(o->fov, v->fovX);
 }
 HOOK(0x472440, BinocularOverlay_UseHandler);
 
@@ -103,7 +82,7 @@ HOOK(0x472630, BinocularOverlay_SetPos);
 
 void BinocularOverlay_SetUnk7C(BinocularOverlay *o, const Vec3f *v)
 {
-    o->unk7C = *v;
+    o->dir = *v;
 }
 HOOK(0x472650, BinocularOverlay_SetUnk7C);
 

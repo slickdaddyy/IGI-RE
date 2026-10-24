@@ -3,121 +3,15 @@
 #include "hook.h"
 #include "igi.h"
 #include "binocular/binocular.h"
+#include "qvertex/qvertextypes.h"
+#include "coll/colltypes.h"
+#include "win/wintypes.h"
+#include "binocular/binoculartypes.h"
 
 FN_EXTERN(BinocularHolder_Changed);
 FN_EXTERN(BinocularHolder_GetParams);
 FN_EXTERN(BinocularOverlay_DrawHandler);
 FN_EXTERN(BinocularOverlay_UseHandler);
-
-/* a text line drawn on screen; only the position is used here */
-typedef struct Text {
-    void *grid;
-    float x;
-    float y;
-} Text;
-
-typedef struct QVertex {
-    float x, y, z;
-    float u, v;
-    float a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
-
-typedef struct Display {
-    int unk0;
-    int width;
-    int height;
-} Display;
-
-/* what the collision line tests skip */
-typedef struct CollFilter {
-    int unk0;
-    void *a;
-    void *b;
-    void *c;
-    float unk10;
-} CollFilter;
-
-typedef struct CollHit {
-    char unk0[0x58];
-    int found;
-    int unk5C;
-    double dist;
-    char unk68[8];
-} CollHit;
-
-/* a bar that jumps to random levels and falls back */
-typedef struct VUMeter {
-    float level;
-    float unk4;
-    float decay;
-    int timer;
-    int period;
-} VUMeter;
-
-/* a human marked in the binocular view (0x2C bytes) */
-typedef struct Target {
-    char *human;
-    int unk4;           /* the human's 0xCF5 flag */
-    int unk8;           /* the human's 0xFC field is not 1 */
-    int occluded;
-    int seen;           /* seen this frame */
-    float radius;
-    float depth;
-    int time;           /* last seen */
-    int firstTime;
-    float sx;
-    float sy;
-} Target;
-
-/* "BinocularOverlay" (0x2E00 bytes), the view through the binoculars */
-typedef struct BinocularOverlay {
-    Task task;
-    Text *text;             /* 0x20, the range */
-    Text *letters[4];       /* 0x24, W N E S */
-    Text *unk34;
-    Matrix matrix;          /* 0x38 */
-    Vec3d pos;              /* 0x60 */
-    float fov;              /* 0x78 */
-    float dir[3];           /* 0x7C */
-    char ctx[0xA8];         /* 0x88, the view used for drawing */
-    int visible;            /* 0x130, humans inside the view */
-    int shown;              /* 0x134, humans marked */
-    char rng[0xC];          /* 0x138 */
-    int unk144;
-    int unk148;
-    char grid[0x2A04];      /* 0x14C */
-    int unk2B50;
-    VUMeter meters[12];     /* 0x2B54 */
-    Target targets[10];     /* 0x2C44 */
-    int unk2DFC;
-} BinocularOverlay;
-
-/* "BinocularOverlayHolder" (0x78 bytes): shows an overlay while "active" is true */
-typedef struct BinocularHolder {
-    Task task;
-    Task **overlay;         /* 0x20 */
-    VarString active;       /* 0x24 */
-    char isActive;          /* 0x74 */
-    char pad75[3];
-} BinocularHolder;
-
-_Static_assert(sizeof(VUMeter) == 0x14, "VUMeter");
-_Static_assert(sizeof(Target) == 0x2C, "Target");
-_Static_assert(offsetof(BinocularOverlay, ctx) == 0x88, "BinocularOverlay");
-_Static_assert(offsetof(BinocularOverlay, grid) == 0x14C, "BinocularOverlay");
-_Static_assert(offsetof(BinocularOverlay, meters) == 0x2B54, "BinocularOverlay");
-_Static_assert(offsetof(BinocularOverlay, targets) == 0x2C44, "BinocularOverlay");
-_Static_assert(sizeof(BinocularOverlay) == 0x2E00, "BinocularOverlay");
-_Static_assert(sizeof(BinocularHolder) == 0x78, "BinocularHolder");
-_Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -142,7 +36,7 @@ ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
 ORIG(0x48F2D0, int, AppContext_IsUSA, (void));
 ORIG(0x490370, int, Timer_GetMs, (void));
-ORIG(0x491CF0, Display *, Display_GetMode, (void));
+ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 ORIG(0x497D70, void, TransContext_Create, (void *ctx, Matrix *m, Vec3d *pos, float fov));
 ORIG(0x497E70, void, TransContext_Select, (void *ctx));
 ORIG(0x497ED0, void, TransContext_Invalidate, (void));
@@ -185,8 +79,8 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 
-void View_Project(View *v, float *out, float *depth, const Vec3d *p);
-void View_ScaleSize(View *v, float *out, const float *size, float depth);
+void View_Project(TransCtx *v, float *out, float *depth, const Vec3d *p);
+void View_ScaleSize(TransCtx *v, float *out, const float *size, float depth);
 
 #define BINOCULAROVERLAY_DRAWHANDLER (FN(0x472400, BinocularOverlay_DrawHandler))
 #define BINOCULAROVERLAY_USEHANDLER (FN(0x472440, BinocularOverlay_UseHandler))
@@ -290,9 +184,9 @@ void BinocularOverlay_Create(BinocularOverlay *ov)
     ov->pos.x = 0;
     ov->pos.y = 0;
     ov->pos.z = 0;
-    ov->dir[0] = 1.0f;
-    ov->dir[1] = 0;
-    ov->dir[2] = 0;
+    ov->dir.x = 1.0f;
+    ov->dir.y = 0;
+    ov->dir.z = 0;
     Random_Init(ov->rng);
     BinocularOverlay_InitGrid(ov->grid, 0x18);
     ov->unk148 = 0;
@@ -403,17 +297,17 @@ void BinocularOverlay_Draw(BinocularOverlay *ov)
     uint8_t event;
     int i;
 
-    filter.a = ov;
-    filter.b = ov->task.parent;
+    filter.task = (Task *)ov;
+    filter.owner = ov->task.parent;
     from = ov->pos;
-    to.x = ov->dir[0];
-    to.y = ov->dir[1];
-    filter.c = ov->task.parent->parent;
+    to.x = ov->dir.x;
+    to.y = ov->dir.y;
+    filter.other = ov->task.parent->parent;
     filter.unk10 = 1.0f;
     to.x = (AppContext_IsUSA() ? kImperial : kMetric) * to.x * kWorldUnit;
     to.y = (AppContext_IsUSA() ? kImperial : kMetric) * to.y * kWorldUnit;
     {
-        long double dz = (AppContext_IsUSA() ? kImperial : kMetric) * (double)ov->dir[2] * kWorldUnit;
+        long double dz = (AppContext_IsUSA() ? kImperial : kMetric) * (double)ov->dir.z * kWorldUnit;
 
         to.x = from.x + to.x;
         to.y = from.y + to.y;
@@ -444,7 +338,7 @@ void BinocularOverlay_Draw(BinocularOverlay *ov)
     ty = h * kTextY.f;
     ov->text->y = ty - (long double)Text_GetHeight(ov->text);
     Text_DrawAlt(ov->text);
-    Vec3_ToAngles(ov->dir, &pitch, &yaw);
+    Vec3_ToAngles(&ov->dir.x, &pitch, &yaw);
     BinocularOverlay_DrawCompass(ov);
 
     x = w * kEighth.f;
@@ -558,14 +452,14 @@ void BinocularOverlay_TrackMovement(BinocularOverlay *ov)
         dy = pos.y - gView.pos.y;
         dz = pos.z - gView.pos.z;
         radius = *(float *)(hm + 0xA0);
-        v[0] = gView.m[2] * dz + gView.m[1] * dy + gView.m[0] * dx;
-        v[1] = gView.m[5] * dz + gView.m[4] * dy + gView.m[3] * dx;
-        v[2] = gView.m[8] * dz + gView.m[7] * dy + gView.m[6] * dx;
+        v[0] = gView.matrix.m[2] * dz + gView.matrix.m[1] * dy + gView.matrix.m[0] * dx;
+        v[1] = gView.matrix.m[5] * dz + gView.matrix.m[4] * dy + gView.matrix.m[3] * dx;
+        v[2] = gView.matrix.m[8] * dz + gView.matrix.m[7] * dy + gView.matrix.m[6] * dx;
         if (Mesh3D_Exclude(v, radius, NULL))
             continue;
-        filter.a = player;
-        filter.b = player;
-        filter.c = hm;
+        filter.task = player;
+        filter.owner = player;
+        filter.other = (Task *)hm;
         ov->visible++;
         visibility = 0;
         event = AIDetection_GetEvent0();
@@ -676,7 +570,7 @@ void BinocularOverlay_DrawCompass(BinocularOverlay *ov)
     long double bottom;
     int i;
 
-    Vec3_ToAngles(ov->dir, &pitch, &yaw);
+    Vec3_ToAngles(&ov->dir.x, &pitch, &yaw);
     x0 = sw * kCompassX.f;
     y0 = sh * kCompassY.f;
     width = sw * kCompassW.f;
@@ -743,9 +637,9 @@ void BinocularOverlay_DrawCompass(BinocularOverlay *ov)
     v[0].x = cx;
     v[1].y = y0;
     v[2].y = y0;
-    strip.untextured = 0;
+    strip.lines = 0;
     strip.flags = 0x800000;
-    strip.unk8 = 0;
+    strip.queue = 0;
     strip.count = 3;
     strip.verts = v;
     gQVertexTexture = NULL;

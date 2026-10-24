@@ -3,63 +3,14 @@
 
 #include "hook.h"
 #include "editobj/editobj.h"
+#include "editobj/editobjtypes.h"
+#include "sound/soundtypes.h"
 
 FN_EXTERN(ConditionalContainer_ForwardEvent4);
 FN_EXTERN(SplineObjWaypoint_Changed);
 FN_EXTERN(SplineObjWaypoint_Create);
 FN_EXTERN(SplineObjWaypoint_Delete);
 FN_EXTERN(Task_Nothing);
-
-/* "SplineObj" (0x68) */
-typedef struct SplineObj {
-    Task task;
-    int unk20;
-    int maxSegments;
-    float length;
-    Vec3f pos;          /* moves all waypoints when changed */
-    Vec3f oldPos;
-    float angle;        /* turns all waypoints around the first one */
-    float oldAngle;
-    char unk4C;
-    char collide;
-    char unk4E;
-    char unk4F;
-    Vec3f color1;
-    Vec3f color2;
-} SplineObj;
-
-typedef struct SplineObjSegment {
-    char unk0[0xF8];
-    float length;
-    float start;
-    float end;
-} SplineObjSegment;
-
-/* "SplineObjWaypoint" (0x1A8), a RigidDynCubeObj */
-typedef struct SplineObjWaypoint {
-    Obj obj;
-    SplineObjSegment *seg;
-    int unkF4;
-    Vec3d point;
-    Matrix rot;
-    Vec3d attachPos;    /* point in the frame of the attached object */
-    Matrix attachRot;
-    char modelName[16];
-    char segModel[16];
-    int segments;
-    int unk19C;
-    char unk1A0;
-    char straight;
-    char unk1A2;
-    char unk1A3;
-    char reversed;
-    char autoOrient;
-    char unk1A6[2];
-} SplineObjWaypoint;
-
-_Static_assert(sizeof(SplineObj) == 0x68, "SplineObj");
-_Static_assert(offsetof(SplineObjWaypoint, attachRot) == 0x150, "attachRot");
-_Static_assert(sizeof(SplineObjWaypoint) == 0x1A8, "SplineObjWaypoint");
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -112,7 +63,7 @@ static const float kPi = 0x1.921fb6p+1f;
 /* Stores the waypoint's place relative to the RigidDynCubeObj it hangs under */
 void SplineObjWaypoint_UpdateAttach(SplineObjWaypoint *w)
 {
-    Obj *a = (Obj *)Task_FindAncestor(w->obj.task.parent, RigidDynCubeObj_GetType());
+    RigidDynCubeObj *a = (RigidDynCubeObj *)Task_FindAncestor(w->obj.task.parent, RigidDynCubeObj_GetType());
     const float *m, *t, *r;
     long double dz;
     Vec3d p;
@@ -134,12 +85,12 @@ void SplineObjWaypoint_UpdateAttach(SplineObjWaypoint *w)
     p.y = m[1] * w->attachPos.x + m[4] * w->attachPos.y + m[7] * dz;
     p.z = m[2] * w->attachPos.x + m[5] * w->attachPos.y + m[8] * dz;
     w->attachPos = p;
-    w->attachRot = (Matrix){{m[0], m[3], m[6], m[1], m[4], m[7], m[2], m[5], m[8]}, a->matrix.unk24};
+    w->attachRot = (Matrix){{m[0], m[3], m[6], m[1], m[4], m[7], m[2], m[5], m[8]}, a->matrix.count};
     t = w->attachRot.m;
     r = w->rot.m;
     n.m[0] = t[6] * r[2] + r[1] * t[3] + r[0] * t[0];
     n.m[1] = r[1] * t[4] + t[1] * r[0] + t[7] * r[2];
-    n.unk24 = w->attachRot.unk24 + w->rot.unk24 + 1;
+    n.count = w->attachRot.count + w->rot.count + 1;
     n.m[2] = t[2] * r[0] + t[8] * r[2] + r[1] * t[5];
     n.m[3] = t[6] * r[5] + t[0] * r[3] + t[3] * r[4];
     n.m[4] = t[7] * r[5] + t[4] * r[4] + t[1] * r[3];
@@ -250,10 +201,10 @@ void SplineObj_Open(void)
     gSplineObjSegmentRange.min = 2;
     gSplineObjSegmentRange.max = 20;
     gSplineObjParams = ParamTable_New(10);
-    ParamTable_Add(gSplineObjParams, &o, &o.unk4E, Param_Bool8(), 7, NULL);
+    ParamTable_Add(gSplineObjParams, &o, &o.rigid, Param_Bool8(), 7, NULL);
     ParamTable_Add(gSplineObjParams, &o, &o.collide, Param_Bool8(), 7, NULL);
-    ParamTable_Add(gSplineObjParams, &o, &o.unk4C, Param_Bool8(), 7, NULL);
-    ParamTable_Add(gSplineObjParams, &o, &o.unk4F, Param_Bool8(), 7, NULL);
+    ParamTable_Add(gSplineObjParams, &o, &o.snap, Param_Bool8(), 7, NULL);
+    ParamTable_Add(gSplineObjParams, &o, &o.autoOrient, Param_Bool8(), 7, NULL);
     ParamTable_Add(gSplineObjParams, &o, &o.maxSegments, Param_Int32(), 7, &gSplineObjSegmentRange);
     ParamTable_Add(gSplineObjParams, &o, &o.unk20, Param_Int32(), 7, NULL);
     ParamTable_Add(gSplineObjParams, &o, &o.pos, Param_Real32x3(), 7, NULL);
@@ -277,9 +228,9 @@ void SplineObj_Create(SplineObj *o)
     o->angle = kPi;
     o->oldAngle = kPi;
     o->unk20 = 0;
-    o->unk4E = 0;
+    o->rigid = 0;
     o->collide = 0;
-    o->unk4C = 0;
+    o->snap = 0;
     o->maxSegments = 20;
     o->length = 0.0f;
     o->pos = (Vec3f){0.0f, 0.0f, 0.0f};
@@ -332,7 +283,7 @@ void SplineObj_Changed(SplineObj *o, char *arg)
                 n.m[6] = m.m[6] * r[8] + m.m[3] * r[7] + m.m[0] * r[6];
                 n.m[7] = m.m[7] * r[8] + m.m[4] * r[7] + m.m[1] * r[6];
                 n.m[8] = m.m[8] * r[8] + m.m[5] * r[7] + m.m[2] * r[6];
-                n.unk24 = w->rot.unk24 + m.unk24 + 1;
+                n.count = w->rot.count + m.count + 1;
                 /* the original renormalises a local copy past 1000 and throws it away */
                 w->rot = n;
                 w = (SplineObjWaypoint *)Task_FindNext(w, gSplineObjWaypointType);
@@ -388,9 +339,7 @@ void SplineObj_GetInfo(SplineObj *o, ObjInfo *out)
         s = max_scale(&w->obj);
         out->radius = VirModel_GetRadius(w->obj.model) * s;
     }
-    out->unk18[0] = 0;
-    out->unk18[1] = 0;
-    out->unk18[2] = 0;
+    out->velocity = (Vec3f){0};
     out->matrix = (Matrix){{1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f}, 0};
     out->name = NULL;
 }
@@ -407,9 +356,7 @@ void SplineObjWaypoint_GetInfo(SplineObjWaypoint *w, ObjInfo *out)
     float s;
 
     out->pos = w->point;
-    out->unk18[0] = 0;
-    out->unk18[1] = 0;
-    out->unk18[2] = 0;
+    out->velocity = (Vec3f){0};
     out->matrix = (Matrix){{1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f}, 0};
     s = max_scale(&w->obj);
     out->name = NULL;

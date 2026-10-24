@@ -10,7 +10,7 @@ FN_EXTERN(EditorMagicObj_Delete);
 
 /* "EditRigidObjAttachedToBone" (0x138), a RigidDynCubeObj */
 typedef struct EditRigidObjAttachedToBone {
-    Obj obj;
+    RigidDynCubeObj obj;
     Vec3f offset;
     Matrix local;
     int unk124;

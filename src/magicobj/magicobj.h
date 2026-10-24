@@ -4,69 +4,18 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-typedef struct MagicNode {
-    struct MagicNode *next;
-    struct MagicNode *prev;
-} MagicNode;
-
-/* Task header shared by every task instance */
-typedef struct MagicTask {
-    MagicNode node;
-    MagicNode *head;    /* child list */
-    MagicNode *tail;
-    MagicNode *tailpred;
-    struct MagicTask *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} MagicTask;
+#include "magicobj/magicobjtypes.h"
+#include "litmap/litmaptypes.h"
 
 typedef void (*MagicHandler)(void *task, void *arg);
-
-typedef struct MagicMatrix {
-    float m[9];
-    int unk24;
-} MagicMatrix;
-
-/* "RigidDynCubeObj", a DynCubeObj with a model, orientation and scale */
-typedef struct RigidDynCubeObj {
-    MagicTask task;
-    double pos[3];
-    char unk38[0x68 - 0x38];
-    int unk68;
-    void **model;       /* VirModel, one entry per LOD */
-    MagicMatrix matrix;
-    float scale[3];
-    int lod;
-    float unkA8[3];
-    int unkB4[3];
-    int unkC0[5];
-    int unkD4;
-    int unkD8;
-    int unkDC;
-    int unkE0;
-    int unkE4;
-    int unkE8;
-    int unkEC;
-} RigidDynCubeObj;
 
 typedef struct RigidCreateArg {
     const char *model;
     int unk4;
     double pos[3];
     char unk20[0x18];
-    MagicMatrix matrix;
+    Matrix matrix;
 } RigidCreateArg;
-
-typedef struct RigidInfo {
-    double pos[3];
-    int unk18[3];
-    MagicMatrix matrix;
-    float radius;
-    char *name;
-} RigidInfo;
 
 typedef struct RigidDrawView {
     int target;
@@ -74,15 +23,6 @@ typedef struct RigidDrawView {
     double *center;
     float range;
 } RigidDrawView;
-
-/* one DefineMagicObj() entry */
-typedef struct MagicObjDef {
-    char name[16];
-    char model[16];
-    uint16_t type;
-    uint16_t unk22;
-    void *data;
-} MagicObjDef;
 
 typedef struct MagicScriptValue {
     int i;
@@ -145,14 +85,8 @@ typedef struct World {
     char lightmapPath[0x100];
 } World;
 
-typedef struct Lightmap {
-    int size;
-    int *data;
-    char texture[0x24];
-} Lightmap;
-
 void RigidDynCubeObj_CreateHandler(RigidDynCubeObj *o, RigidCreateArg *arg);
-void RigidDynCubeObj_GetInfo(RigidDynCubeObj *o, RigidInfo *info);
+void RigidDynCubeObj_GetInfo(RigidDynCubeObj *o, ObjInfo *info);
 void RigidDynCubeObj_DrawCellMask(RigidDynCubeObj *o, RigidDrawView *view);
 double *DynCubeObj_GetPosition(RigidDynCubeObj *o);
 void RigidDynCubeObj_Open(void);
@@ -177,7 +111,7 @@ void Coll_SaveMods(void);
 void Coll_RestoreMods(void);
 int DynCubeTree_GetChildCount(int kind);
 void World_Init(void);
-void DynCubeObj_DeactivateHandler(MagicTask *t, void **arg);
+void DynCubeObj_DeactivateHandler(Task *t, void **arg);
 void World_Shutdown(void);
 World *World_New(int rooms);
 void DynCubeNode_Init(World *w, WorldRoom *r, int unk04, int unk00, int index);

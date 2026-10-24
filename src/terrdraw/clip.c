@@ -28,14 +28,14 @@ typedef struct ClipVtx {
     float c[6];
 } ClipVtx;
 
-typedef struct TLVertex {
+typedef struct TLVertexSpec {
     float sx, sy, sz, rhw;
     uint32_t color, specular;
     float tu, tv;
-} TLVertex;
+} TLVertexSpec;
 
 typedef struct ClipOut {
-    TLVertex *verts;
+    TLVertexSpec *verts;
     int *vertCount;
     int16_t *indices;
     int *triCount;
@@ -156,7 +156,7 @@ static void emit(ClipVtx **v, ClipOut *out)
         ClipVtx *p = v[k];
         long double q = p->q;
         float inv = kOne.f / q;
-        TLVertex *d;
+        TLVertexSpec *d;
 
         p->rhw = q * gClipRhwScale;
         p->q = q * gClipZScale + gClipZBias;

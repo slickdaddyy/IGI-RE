@@ -2,14 +2,10 @@
 #define NODEREG_SPLINEPATH_H
 
 #include "nodereg/nodereg.h"
+#include "magicobj/magicobjtypes.h"
 
 #define SPLINE_NODES 100
 #define SPLINE_SUBSEGS 10
-
-typedef struct Quat {
-    float x, y, z, w;
-    int unk;
-} Quat;
 
 /* "SplinePathNodeQTask" (0xC8) */
 typedef struct SplinePathNode {
@@ -36,20 +32,10 @@ typedef struct SplinePath {
     int unk1FC;
 } SplinePath;
 
-/* filled by the slot 7 (GetInfo) handlers */
-typedef struct ObjInfo {
-    Vec3d pos;
-    int unk18[3];
-    Matrix matrix;
-    float radius;
-    char *name;
-} ObjInfo;
-
 _Static_assert(sizeof(SplinePathNode) == 0xC8, "SplinePathNode");
 _Static_assert(offsetof(SplinePathNode, tangent) == 0x78, "SplinePathNode.tangent");
 _Static_assert(offsetof(SplinePathNode, autoTangent) == 0xC4, "SplinePathNode.autoTangent");
 _Static_assert(sizeof(SplinePath) == 0x200, "SplinePath");
-_Static_assert(offsetof(ObjInfo, radius) == 0x4C, "ObjInfo");
 
 void SplinePath_CollectNodes(SplinePath *p);
 void SplinePath_RemoveNode(SplinePath *p, SplinePathNode *n);

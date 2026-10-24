@@ -51,7 +51,7 @@ static float max_scale(const MagicObj *o)
 /* Runs every child */
 void MagicObj_RunHandler(MagicObj *o)
 {
-    HzNode *n = o->task.head;
+    Task *n = o->task.head;
 
     if (!n->next)
         return;
@@ -59,7 +59,7 @@ void MagicObj_RunHandler(MagicObj *o)
         void (*h)(void *);
 
         gTaskStack[gTaskStackTop++] = n->next && n->next->next ? n->next : NULL;
-        h = (void (*)(void *))gTaskHandlers[1][((HzTask *)n)->type];
+        h = (void (*)(void *))gTaskHandlers[1][((Task *)n)->type];
         if (h)
             h(n);
         n = gTaskStack[--gTaskStackTop];
@@ -102,8 +102,8 @@ void MagicObj_CreateHandler(MagicObj *o, MagicCreateArg *arg)
     DynCube_Add(arg->world, o, &arg->pos, VirModel_GetRadius_(o->model, o->unkD4) * s, o->unkD4);
     o->matrix = arg->matrix;
     o->offset = arg->offset;
-    o->localMatrix = arg->localMatrix;
-    o->unk130 = arg->unk88;
+    o->localMatrix = arg->local;
+    o->unk130 = (int)arg->owner;
     if (model)
         RigidDynCubeObj_CreateMagicObjs(o, o, o->unk130);
 }
@@ -118,7 +118,7 @@ void MagicObj_MoveHandler(MagicObj *o, MagicMoveArg *arg)
     Vec3d pos;
     Matrix r;
     MagicMoveArg next;
-    HzNode *n;
+    Task *n;
     float s;
 
     d0 = m[2] * o->offset.z + m[1] * o->offset.y + m[0] * o->offset.x;
@@ -139,7 +139,7 @@ void MagicObj_MoveHandler(MagicObj *o, MagicMoveArg *arg)
     r.m[6] = l[3] * m[7] + m[8] * l[6] + m[6] * l[0];
     r.m[7] = l[4] * m[7] + m[8] * l[7] + m[6] * l[1];
     r.m[8] = l[5] * m[7] + m[8] * l[8] + m[6] * l[2];
-    r.unk24 = arg->matrix->unk24 + o->localMatrix.unk24 + 1;
+    r.count = arg->matrix->count + o->localMatrix.count + 1;
     o->matrix = r;
     n = o->task.head;
     if (!n->next)
@@ -150,7 +150,7 @@ void MagicObj_MoveHandler(MagicObj *o, MagicMoveArg *arg)
         HzHandler h;
 
         gTaskStack[gTaskStackTop++] = n->next && n->next->next ? n->next : NULL;
-        h = gTaskHandlers[MagicObj_GetMoveEvent()][((HzTask *)n)->type];
+        h = gTaskHandlers[MagicObj_GetMoveEvent()][((Task *)n)->type];
         if (h)
             h(n, &next);
         n = gTaskStack[--gTaskStackTop];

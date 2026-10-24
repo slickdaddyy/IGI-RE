@@ -64,14 +64,14 @@ void PointLightObj_Delete(void *world, PointLightObj *l)
     char *item;
 
     DynCube_Remove(world, l);
-    slot = *(int *)((char *)l->poolItem + p->index_offset);
+    slot = *(int *)((char *)l->poolItem + p->size);
     if (slot != --p->used) {
-        item = p->data + p->slots[p->used] * p->stride;
-        keep = p->slots[slot];
-        last = *(int *)(item + p->index_offset);
-        p->slots[slot] = p->slots[last];
-        p->slots[last] = keep;
-        *(int *)(item + p->index_offset) = slot;
+        item = p->data + p->free[p->used] * p->stride;
+        keep = p->free[slot];
+        last = *(int *)(item + p->size);
+        p->free[slot] = p->free[last];
+        p->free[last] = keep;
+        *(int *)(item + p->size) = slot;
     }
     Task_Delete(l);
 }

@@ -24,7 +24,7 @@ typedef struct RadarDishDef {
 
 /* "RadarDish" (0x180), a turning magic object */
 typedef struct RadarDish {
-    Obj o;
+    RigidDynCubeObj o;
     MagicPart m;        /* 0xF0 */
     float target_speed; /* 0x13C */
     float speed;        /* 0x140 */
@@ -52,7 +52,7 @@ extern float k360;
 
 #define sub_4EFCD0 (FN(0x4EFCD0, ParamReal32x9_Size))
 
-void RadarDish_Create(RadarDish *r, MagicArg *arg);
+void RadarDish_Create(RadarDish *r, MagicCreateArg *arg);
 void RadarDish_Run(RadarDish *r);
 void RadarDish_Delete(RadarDish *r);
 void RadarDish_ParamsChanged(RadarDish *r, char *arg);
@@ -60,7 +60,7 @@ void RadarDish_ParseDef(Task *t, DefArg *arg);
 void RadarDish_Stop(RadarDish *r);
 void RadarDish_GetSoundSource(RadarDish *r, void **out);
 
-void RadarDish_Create(RadarDish *r, MagicArg *arg)
+void RadarDish_Create(RadarDish *r, MagicCreateArg *arg)
 {
     void **model = VirModel_Find(arg->model);
     RadarDishDef *def;
@@ -74,10 +74,10 @@ void RadarDish_Create(RadarDish *r, MagicArg *arg)
     }
     memcpy(r->m.offset, &arg->offset, sizeof(r->m.offset));
     r->m.local = arg->local;
-    RigidDynCubeObj_Init(arg->world, r, model);
+    RigidDynCubeObj_Init((int)arg->world, r, model);
     scale = obj_scale(&r->o);
     radius = VirModel_GetRadius(r->o.model) * scale;
-    DynCube_Add(arg->world, r, &arg->pos, radius, 2);
+    DynCube_Add((int)arg->world, r, &arg->pos, radius, 2);
     r->o.matrix = arg->matrix;
     r->base = arg->matrix;
     def = arg->data;
@@ -97,7 +97,7 @@ HOOK(0x448B70, RadarDish_Create);
 
 void RadarDish_Delete(RadarDish *r)
 {
-    DynCube_Remove(r->o.world, r);
+    DynCube_Remove((int)r->o.world, r);
     if (r->sound)
         TaskRef_Remove(r->sound);
     if (r->sound_params)
@@ -134,7 +134,7 @@ static void turn(Matrix *out, const Matrix *b, const Matrix *rot)
             out->m[i * 3 + j] = i == 1 ? (p2 + p0) + p1 : (p1 + p2) + p0;
         }
     }
-    out->unk24 = b->unk24 + rot->unk24 + 1;
+    out->count = b->count + rot->count + 1;
 }
 
 /* turns the dish towards its target speed and spins it */

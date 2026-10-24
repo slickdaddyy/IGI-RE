@@ -5,81 +5,14 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "param/paramtypes.h"
+#include "script/scripttypes.h"
+#include "qasm/qasmtypes.h"
 
 FN_EXTERN(MagicObjContainer_Event);
 FN_EXTERN(Task_Nothing);
 
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
-
 typedef void (*TaskFn)();
-
-typedef struct List {
-    void *head;
-    void *tail;
-    void *tailpred;
-} List;
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-typedef struct ParamEntry {
-    int offset;
-    int type;
-    void *extra;
-    char flags;
-    char unk0D[3];
-} ParamEntry;
-
-typedef struct ParamTable {
-    int count;
-    int max;
-    ParamEntry *entries;
-} ParamTable;
-
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    void *type;
-    int unk14;
-} ScriptValue;
-
-typedef struct QTaskList {
-    int count;
-    int max;
-    Task *items[];
-} QTaskList;
-
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
-_Static_assert(sizeof(ScriptValue) == 0x18, "ScriptValue");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

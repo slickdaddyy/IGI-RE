@@ -4,6 +4,8 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "task/tasktypes.h"
+#include "config/configtypes.h"
 
 #define PROFILE_MAX 16
 #define PROFILE_KEYS_MAX 64
@@ -12,84 +14,23 @@
 #define CONFIG_KEY_COUNT 127
 #define CONFIG_LANGUAGE_COUNT 6
 
-typedef struct KeyBinding {
-    int action;
-    int device;
-    int key;
-} KeyBinding;
-
-typedef struct DisplayMode {
-    int width;
-    int height;
-    int depth;
-} DisplayMode;
-
-/* one player of config.qsc, written back by Config_Write */
-typedef struct PlayerProfile {
-    int difficulty;
-    int language;
-    char blood;
-    char unk09[3];
-    DisplayMode display;
-    int performance;
-    char unk1C[3];
-    char gfxDevice[0x100];
-    char gfxDriver[0x100];
-    char unk21F;
-    float gamma;
-    float sfxVolume;
-    float musicVolume;
-    float speechVolume;
-    char sfxOn;
-    char musicOn;
-    char speechOn;
-    char unk233;
-    KeyBinding keys[PROFILE_KEYS_MAX];
-    int keyCount;
-    int mouseInvert;
-    float mouseSensitivity;
-    char name[0x20];
-    int activeMission;
-} PlayerProfile;
-
 /* a script name and its value: actions, input devices, keys */
 typedef struct ConfigName {
     char name[0x20];
     int value;
 } ConfigName;
 
-typedef struct D3DDriver {
-    char name[0x80];
-    char desc[0x80];
-    DisplayMode modes[0x40];
-    int modeCount;
-} D3DDriver;
-
-/* the first 0x20 bytes of every task */
-typedef struct TaskHeader {
-    struct TaskHeader *next;
-    struct TaskHeader *prev;
-    struct TaskHeader *head;
-    void *tail;
-    void *tailpred;
-    struct TaskHeader *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} TaskHeader;
-
 typedef void (*TaskHandler)(void *task, void *arg);
 
 extern TaskHandler gTaskHandlers[][0x180];
-extern TaskHeader *gTaskStack[];
+extern Task *gTaskStack[];
 extern int gTaskStackTop;
 
 extern int gProfileCount;
 extern int gActiveProfile;
 extern PlayerProfile gProfiles[];
 extern char gContentControlPassword[];
-extern KeyBinding gDefaultKeys[];
+extern InputRemap gDefaultKeys[];
 extern ConfigName gInputActions[];
 extern ConfigName gInputDevices[];
 extern ConfigName gInputKeys[];

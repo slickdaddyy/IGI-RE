@@ -3,6 +3,9 @@
 #include "hook.h"
 #include "igi.h"
 #include "sound/sound.h"
+#include "qasm/qasmtypes.h"
+#include "sound/soundtypes.h"
+#include "define/definetypes.h"
 
 FN_EXTERN(DefineGraph);
 FN_EXTERN(DefineGroup);
@@ -48,54 +51,17 @@ ORIG(0x4E7350, void, Sound_SetUnusedOff, (int unk));
 #define DefineGraph (FN(0x4EAD20, DefineGraph))
 #define DefineTriggerOnce (FN(0x4E9EC0, DefineTriggerOnce))
 
-/* one playing (or wanted) sound, there is one per DirectSound voice */
-typedef struct SoundInst {
-    struct SoundInst *prev;
-    struct SoundInst *next;
-    uint32_t flags;
-    int bucket;
-    int hash;
-    int id;
-    uint32_t age;
-    void *voice;
-    float volume;           /* first field of the 0x58 byte SoundParams */
-    char params[0x54];
-} SoundInst;
-
 /* a "sounds.qsc" script, its tasks are the sound definitions */
 typedef struct SoundSysDef {
     Task task;
     char path[0x80];
 } SoundSysDef;
 
-typedef struct QTaskList {
-    int count;
-    int capacity;
-    Task *items[1];
-} QTaskList;
-
-typedef struct SoundFindArg {
-    const char *name;
-    Task *found;
-} SoundFindArg;
-
-typedef struct SoundCreateArg {
-    Task *def;
-    char unk4;
-} SoundCreateArg;
-
-typedef struct FileInfo {
-    const char *path;
-    void *data;
-    char isDir;
-} FileInfo;
-
 typedef struct ResourceEntry {
     const char *name;
     void *data;
 } ResourceEntry;
 
-_Static_assert(sizeof(SoundInst) == 0x78, "SoundInst");
 _Static_assert(sizeof(SoundSysDef) == 0xA0, "SoundSysDef");
 
 extern SoundInst *gSoundFree;
@@ -266,8 +232,8 @@ void SoundSys_Update(void)
                 continue;
             }
             if (s->voice)
-                Voice_SetParams(s->voice, &s->volume);
-            if (s->volume != kZero)
+                Voice_SetParams(s->voice, &s->params.volume);
+            if (s->params.volume != kZero)
                 continue;
         } else if (s->age == 0) {
             s->age++;
@@ -600,7 +566,7 @@ Task *Sound_Play(Task *owner, const char *name)
     if (!find.found)
         return NULL;
     arg.def = find.found;
-    arg.unk4 = 0;
+    arg.isDef = 0;
     t = Task_New(owner, find.found->type, &arg);
     c = find.found->head;
     if (c->next && c) {

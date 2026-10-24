@@ -20,7 +20,7 @@ ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
 ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
 ORIG(0x416920, int, Game_GetWorld, (void));
 ORIG(0x42BC20, uint16_t, Train_GetType, (void));
-ORIG(0x460C60, TaskArray *, Human_GetList, (void));
+ORIG(0x460C60, QTaskList *, Human_GetList, (void));
 ORIG(0x489610, uint8_t, AIDetection_GetEvent0, (void));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4C5710, void, RigidDynCubeObj_Init, (int world, void *obj, void **model));
@@ -39,8 +39,8 @@ ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (void *obj));
 
 /* a MagicObj that rides on a vehicle and hurts the humans it touches */
 typedef struct DeathZone {
-    Obj o;
-    char unkA8[0xF0 - sizeof(Obj)];
+    RigidDynCubeObj o;
+    char unkA8[0xF0 - sizeof(RigidDynCubeObj)];
     Vec3d offset;
     Matrix rel;
     Task *vehicle;
@@ -67,11 +67,6 @@ typedef struct DeathZoneMsg {
     struct DeathZone *zone;
     float *speed;
 } DeathZoneMsg;
-
-typedef struct MoveArg {
-    Vec3d *pos;
-    float *matrix;
-} MoveArg;
 
 extern uint16_t gDeathZoneType;
 extern uint8_t gDeathZoneEvent;
@@ -168,7 +163,7 @@ void DeathZone_Move(DeathZone *z, MoveArg *a)
 
     if (!TaskType_IsA(z->vehicle->type, Vehicle_GetType()))
         return;
-    m = a->matrix;
+    m = a->matrix->m;
     d[0] = z->offset.x;
     d[1] = z->offset.y;
     d[2] = z->offset.z;
@@ -181,7 +176,7 @@ void DeathZone_Move(DeathZone *z, MoveArg *a)
     scale = max_scale(&z->o);
     radius = VirModel_GetRadius(z->o.model) * scale;
     DynCube_Move(Game_GetWorld(), z, &p, radius);
-    m = a->matrix;
+    m = a->matrix->m;
     out.m[0] = m[0] * b[0] + b[3] * m[1] + m[2] * b[6];
     out.m[1] = m[0] * b[1] + b[4] * m[1] + m[2] * b[7];
     out.m[2] = m[0] * b[2] + b[5] * m[1] + m[2] * b[8];
@@ -191,7 +186,7 @@ void DeathZone_Move(DeathZone *z, MoveArg *a)
     out.m[6] = m[8] * b[6] + m[6] * b[0] + m[7] * b[3];
     out.m[7] = m[8] * b[7] + m[6] * b[1] + m[7] * b[4];
     out.m[8] = m[8] * b[8] + m[6] * b[2] + m[7] * b[5];
-    out.unk24 = ((int *)m)[9] + z->rel.unk24 + 1;
+    out.count = ((int *)m)[9] + z->rel.count + 1;
     z->o.matrix = out;
 }
 HOOK(0x465F50, DeathZone_Move);

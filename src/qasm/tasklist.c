@@ -1,14 +1,6 @@
 #include "hook.h"
 #include "qasm/qasm.h"
 
-/* Fixed size array of task pointers. Removing moves the last entry into
-   the gap, so the order is not kept. */
-typedef struct QTaskList {
-    int count;
-    int max;
-    void *items[];
-} QTaskList;
-
 void QTaskList_Add(QTaskList *l, void *task)
 {
     if (l->count >= l->max) {

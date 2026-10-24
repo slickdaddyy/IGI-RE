@@ -166,7 +166,7 @@ void LightmapInfo_Changed(LightmapInfo *info)
     info->unkC0 = gLightmapCountA83B4C;
     info->unkC4 = gLightmapCountA839F4;
     for (i = 0; i < info->set->count; i++) {
-        Task *obj = info->set->refs[i].obj;
+        Task *obj = (Task *)info->set->refs[i].obj;
 
         TASK_HANDLER(Mesh3D_GetEvent4(), obj->type)(obj, NULL);
     }

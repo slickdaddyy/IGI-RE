@@ -5,43 +5,10 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "magicobj/magicobjtypes.h"
+#include "terrain/terraintypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-/* what the GetInfo handlers (slot 7) fill in */
-typedef struct ObjInfo {
-    Vec3d pos;
-    int unk18[3];
-    float matrix[9];
-    int unk48;
-    float radius;
-    const char *name;
-} ObjInfo;
-
-typedef struct Terrain {
-    char unk0[0xDE0];
-    int offset[3];
-} Terrain;
-
-_Static_assert(offsetof(ObjInfo, name) == 0x50, "ObjInfo");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
@@ -127,19 +94,17 @@ static inline long double x87_atan2(long double y, long double x)
 /* the unrotated part of an ObjInfo */
 static inline void obj_info_identity(ObjInfo *info)
 {
-    info->unk18[0] = 0;
-    info->unk18[1] = 0;
-    info->unk18[2] = 0;
-    info->matrix[0] = 1.0f;
-    info->matrix[1] = 0;
-    info->matrix[2] = 0;
-    info->matrix[3] = 0;
-    info->matrix[4] = 1.0f;
-    info->matrix[5] = 0;
-    info->matrix[6] = 0;
-    info->matrix[7] = 0;
-    info->matrix[8] = 1.0f;
-    info->unk48 = 0;
+    info->velocity = (Vec3f){0};
+    info->matrix.m[0] = 1.0f;
+    info->matrix.m[1] = 0;
+    info->matrix.m[2] = 0;
+    info->matrix.m[3] = 0;
+    info->matrix.m[4] = 1.0f;
+    info->matrix.m[5] = 0;
+    info->matrix.m[6] = 0;
+    info->matrix.m[7] = 0;
+    info->matrix.m[8] = 1.0f;
+    info->matrix.count = 0;
 }
 
 #endif

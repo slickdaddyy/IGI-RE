@@ -6,35 +6,7 @@
 
 #include "hook.h"
 #include "animcam/animcam.h"
-
-typedef struct Pool {
-    char *data;
-    int *used;          /* slot index of each live item */
-    int count;
-    int max;
-    int stride;
-    int size;
-} Pool;
-
-/* "Dirlight" (0x64 bytes) */
-typedef struct Dirlight {
-    Task task;
-    char unk20[0x34];
-    float minTime;      /* 0x54 */
-    float maxTime;      /* 0x58 */
-    float time;         /* 0x5C */
-    char unk60[4];
-} Dirlight;
-
-/* "DirlightKeyframe" (0x54 bytes) */
-typedef struct DirlightKeyframe {
-    Task task;
-    char unk20[0x30];
-    float time;         /* 0x50 */
-} DirlightKeyframe;
-
-_Static_assert(sizeof(Dirlight) == 0x64, "Dirlight");
-_Static_assert(sizeof(DirlightKeyframe) == 0x54, "DirlightKeyframe");
+#include "dirlight/dirlighttypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));
@@ -79,8 +51,8 @@ void Dirlight_SetTime(float time)
 {
     int i;
 
-    for (i = 0; i < gDirlightPool.count; i++) {
-        Dirlight *d = *(Dirlight **)(gDirlightPool.data + gDirlightPool.used[i] * gDirlightPool.stride);
+    for (i = 0; i < gDirlightPool.used; i++) {
+        Dirlight *d = *(Dirlight **)(gDirlightPool.data + gDirlightPool.free[i] * gDirlightPool.stride);
 
         if (time < d->time || time > d->time) {
             d->time = time;

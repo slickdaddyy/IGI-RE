@@ -6,33 +6,6 @@
 #include "math/x87.h"
 #include "graphtask/graphtask.h"
 
-typedef struct SpriteAnim {
-    char unk0[4];
-    int16_t count;
-    char unk6[10];
-    uint8_t frames[1];  /* 0x10, frame number + 1 per animation step */
-} SpriteAnim;
-
-typedef struct Sprite {
-    char unk0[0xC];
-    SpriteAnim *anim;
-} Sprite;
-
-typedef struct Particle2D {
-    Vec3d pos;
-    Vec3f vel;          /* 0x18 */
-    int16_t collideTimer; /* 0x24, frames to the next collision check */
-    int16_t delay;      /* 0x26, frames before it starts to fade */
-    int16_t frame;      /* 0x28 */
-    int16_t frameTimer; /* 0x2A */
-    float spin;         /* 0x2C */
-    float level;        /* 0x30, fades to 0 */
-    float fade;         /* 0x34 */
-    float angle;        /* 0x38 */
-    float scale;        /* 0x3C */
-    Vec3d lastPos;      /* 0x40, at the last collision check */
-} Particle2D;
-
 /* passed to the hit callback */
 typedef struct Particle2DHit {
     CollHit *hit;
@@ -41,46 +14,13 @@ typedef struct Particle2DHit {
     Vec3d to;
 } Particle2DHit;
 
-typedef struct Particle2DTask {
-    Task task;
-    char unk20[0x48];
-    Particle2D *buf;    /* 0x68 */
-    Particle2D **list;  /* 0x6C */
-    CollHit *hits;      /* 0x70 */
-    Vec3d *starts;      /* 0x74 */
-    Vec3d *ends;        /* 0x78 */
-    int *idx;           /* 0x7C */
-    Sprite *sprite;     /* 0x80 */
-    int unk84;
-    Vec3d min;          /* 0x88 */
-    Vec3d max;          /* 0xA0 */
-    void *world;        /* 0xB8 */
-    float size[2];      /* 0xBC */
-    Vec3f gravity;      /* 0xC4 */
-    Vec3f color;        /* 0xD0 */
-    float light;        /* 0xDC */
-    float maxDepth;     /* 0xE0 */
-    float grow;         /* 0xE4 */
-    uint32_t flags;     /* 0xE8 */
-    void (*callback)(Particle2DHit *hit); /* 0xEC */
-    int count;          /* 0xF0 */
-    int frameDelay;     /* 0xF4 */
-    int capacity;       /* 0xF8 */
-    char animated;      /* 0xFC */
-    char autoDelete;    /* 0xFD */
-    char unkFE[2];
-} Particle2DTask;
-
 /* a traced collision segment, for debugging */
 typedef struct Particle2DTrail {
     Vec3d from;
     Vec3d to;
 } Particle2DTrail;
 
-_Static_assert(sizeof(Particle2D) == 0x58, "Particle2D");
 _Static_assert(sizeof(Particle2DHit) == 0x38, "Particle2DHit");
-_Static_assert(offsetof(Particle2DTask, min) == 0x88, "Particle2DTask.min");
-_Static_assert(sizeof(Particle2DTask) == 0x100, "Particle2DTask");
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -263,7 +203,7 @@ void Particle2D_Draw(Particle2DTask *t)
                 b = t->color.z * p->level;
             }
         }
-        frame = t->animated ? t->sprite->anim->frames[p->frame] - 1 : 0;
+        frame = t->animated ? t->sprite->map->cells[p->frame] - 1 : 0;
         QVertex_DrawQuadEx(t->sprite, q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], r, g, b, depth, alpha, frame,
                            t->flags | 0x1000000, 0);
     } while (++i < t->count);
@@ -335,7 +275,7 @@ void Particle2D_Run(Particle2DTask *t)
         return;
     }
     if (t->animated)
-        last = t->sprite->anim->count - 1;
+        last = t->sprite->map->cols - 1;
     do {
         Particle2D *p = t->list[i];
 
@@ -578,7 +518,7 @@ Particle2DTask *Particle2D_New(void *parent, void *world, Sprite *sprite, const 
     t->grow = grow;
     t->animated = 0;
     t->sprite = sprite;
-    if (sprite->anim)
+    if (sprite->map)
         t->animated = 1;
     t->light = light;
     t->callback = callback;

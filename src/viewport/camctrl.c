@@ -32,7 +32,7 @@ void CameraControl_Run(CameraControl *cc)
     CALL_CHILDREN(&cc->task, 1, 1);
     gCameraControlCurrent = NULL;
     if (cc->listener)
-        SoundSysMicrophone_Set(cc->listener, cc->camera, cc->camera->pos);
+        SoundSysMicrophone_Set(cc->listener, cc->camera, &cc->camera->pos.x);
 }
 HOOK(0x4E7C90, CameraControl_Run);
 

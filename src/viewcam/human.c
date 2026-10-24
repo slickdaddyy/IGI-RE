@@ -8,6 +8,10 @@
 #include "hook.h"
 #include "igi.h"
 #include "viewcam/viewcam.h"
+#include "material/materialtypes.h"
+#include "humanai/humanaitypes.h"
+#include "statgun/statguntypes.h"
+#include "config/configtypes.h"
 
 FN_EXTERN(crt_CIpow);
 
@@ -16,26 +20,8 @@ typedef struct Platform {
     Task task;
     double pos[3];
     char unk38[0x38];
-    Rot rot;
+    Matrix rot;
 } Platform;
-
-/* what the weapon task gets when the human uses it */
-typedef struct WeaponUseMsg {
-    char fire;
-    char shot;
-    char unk2[2];
-    double *eye;
-    Rot *view;
-    float *vel;
-    int unk10;
-    int unk4D0;
-    int unk4D2;
-    int zoomed;
-    float recoilPitch;
-    float recoilYaw;
-    int unk4D4;
-    Human *h;
-} WeaponUseMsg;
 
 /* sent to every task in the game's first task list */
 typedef struct HumanPosMsg {
@@ -44,34 +30,6 @@ typedef struct HumanPosMsg {
     double pos[3];
     float radius;
 } HumanPosMsg;
-
-/* the 0x1C byte message passed to HumanAI_Broadcast, a noise AI can hear */
-typedef struct HumanNoise {
-    int type;
-    int team;
-    int unk8;
-    float radius;
-    double *pos;
-    Human *from;
-    Human *from2;
-} HumanNoise;
-
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    double pos[3];
-    char unk20[0x18];
-    float normal[3];
-    int unk44;
-    int unk48;
-    char *material;
-    void *material2;
-    int unk54;
-    int found;
-    int unk5C;
-    double dist;
-    char unk68[8];
-} CollHit;
 
 /* asks the hit task to put a decal on itself */
 typedef struct DecalMsg {
@@ -89,37 +47,32 @@ typedef struct ParticleHit {
     double prev[3];
 } ParticleHit;
 
-typedef struct Profile {
-    char unk0[8];
-    char blood;
-} Profile;
-
 ORIG(0x401AE0, Task **, TaskRef_Add, (Task *t));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x4028B0, int, Flow_GetFrames, (void));
-ORIG(0x406220, Profile *, Profile_GetActive, (void));
-ORIG(0x413C80, WeaponInfo *, Weapon_GetType, (Task *w));
+ORIG(0x406220, PlayerProfile *, Profile_GetActive, (void));
+ORIG(0x413C80, WeaponType *, Weapon_GetType, (Task *w));
 ORIG(0x4167D0, uint8_t, Game_GetEvent0, (void));
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
-ORIG(0x4168B0, TaskArray *, Game_GetTaskList1, (void));
+ORIG(0x4168B0, QTaskList *, Game_GetTaskList1, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416A70, Task *, Game_GetPlayer, (int i));
 ORIG(0x416D20, void *, Game_GetRandom, (void));
 ORIG(0x416FB0, int, Game_IsRaining, (void));
-ORIG(0x450CE0, void, HumanAI_Broadcast, (HumanNoise *noise));
+ORIG(0x450CE0, void, HumanAI_Broadcast, (AIMessage *noise));
 ORIG(0x460BF0, uint8_t, Human_GetEvent0, (void));
-ORIG(0x460C60, TaskArray *, Human_GetList, (void));
+ORIG(0x460C60, QTaskList *, Human_GetList, (void));
 ORIG(0x462390, void, Human_ProbeGround, (Human *h, double *pos, double *to, float *vel, unsigned *bits, float dist));
 ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B3130, long double, Vec3d_Length, (const double *v));
-ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Rot *m, float a));
+ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Matrix *m, float a));
 ORIG(0x4B4770, long double, Random_Float, (void *rng));
 ORIG(0x4B47C0, unsigned, Random_Int, (void *rng, unsigned n));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, double *pos, float radius));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, double *from, double *to, int count, uint8_t event,
                                   void *filter, unsigned flags));
-ORIG(0x4D38C0, void, BoneObj_Update, (Rot *m, void *anim));
+ORIG(0x4D38C0, void, BoneObj_Update, (Matrix *m, void *anim));
 ORIG(0x4D64C0, int, Anim_GetId, (void *anim, int track));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (Task *sound));
@@ -169,7 +122,7 @@ static __attribute__((noinline)) long double crt_pow(long double x, long double 
 /* keeps `to` away from other humans standing near it; out = to - from */
 void Human_AvoidHumans(Human *h, double *from, double *to, float *out)
 {
-    TaskArray *list = Human_GetList();
+    QTaskList *list = Human_GetList();
     int i;
 
     for (i = 0; i < list->count; i++) {
@@ -177,7 +130,7 @@ void Human_AvoidHumans(Human *h, double *from, double *to, float *out)
         double d[3], len;
         long double dz, l;
 
-        if (!o->unkCF6 || o->dead)
+        if (!o->vulnerable || o->dead)
             continue;
         d[0] = to[0] - o->pos[0];
         d[1] = to[1] - o->pos[1];
@@ -208,9 +161,9 @@ HOOK(0x462BA0, Human_AvoidHumans);
 /* moves the human by its animation's root motion, in platform space */
 void Human_MoveOnPlatform(Human *h)
 {
-    Platform *p = (Platform *)h->platform;
+    Platform *p = (Platform *)h->attach;
     const float *r = p->rot.m;
-    const float *m = h->move;
+    const float *m = h->delta;
     long double a0, l0, l1, l2;
     float a1, a2;
     double w[3], pos[3];
@@ -218,12 +171,12 @@ void Human_MoveOnPlatform(Human *h)
     a0 = (r[0] * m[0] + m[1] * r[3]) + m[2] * r[6];
     a1 = (m[1] * r[4] + r[1] * m[0]) + r[7] * m[2];
     a2 = (m[1] * r[5] + r[2] * m[0]) + m[2] * r[8];
-    l0 = a0 + h->platformPos[0];
-    h->platformPos[0] = l0;
-    l1 = a1 + h->platformPos[1];
-    h->platformPos[1] = l1;
-    l2 = a2 + h->platformPos[2];
-    h->platformPos[2] = l2;
+    l0 = a0 + h->attachPos[0];
+    h->attachPos[0] = l0;
+    l1 = a1 + h->attachPos[1];
+    h->attachPos[1] = l1;
+    l2 = a2 + h->attachPos[2];
+    h->attachPos[2] = l2;
     w[0] = (r[1] * l1 + r[0] * l0) + r[2] * l2;
     w[1] = (r[5] * l2 + r[3] * l0) + r[4] * l1;
     w[2] = (r[8] * l2 + r[6] * l0) + r[7] * l1;
@@ -241,14 +194,14 @@ void Human_UpdateWeapon(Human *h)
     static const float kCookLinear = 0x1.99999ap-4f;    /* 0.1 */
     static const float kRecoilFade = 0x1.ccccccp-1f;    /* 0.9 */
     HumanView *v = h->view;
-    WeaponInfo *info;
+    WeaponType *info;
     WeaponUseMsg msg;
     Task *w;
     double eye[3];
     float vel[3];
-    Rot cam;
+    Matrix cam;
 
-    h->shot = 0;
+    h->fired = 0;
     w = WeaponSlots_Get(h->weapons, 0);
     if (!w)
         return;
@@ -256,12 +209,12 @@ void Human_UpdateWeapon(Human *h)
     HumanView_GetEye(eye, h->view);
     HumanView_GetMatrix(&cam, h->view);
     eye[0] = 0.0f + eye[0];
-    vel[0] = h->throwDir[0];
-    vel[1] = h->throwDir[1];
-    vel[2] = h->throwDir[2];
+    vel[0] = h->outVel[0];
+    vel[1] = h->outVel[1];
+    vel[2] = h->outVel[2];
     eye[1] = 0.0f + eye[1];
     eye[2] = 0.0f + eye[2];
-    if (info->kind == WEAPON_KIND_GRENADE) {
+    if (info->category == WEAPON_KIND_GRENADE) {
         long double t = h->cookTime, k;
         float tf;
 
@@ -278,8 +231,8 @@ void Human_UpdateWeapon(Human *h)
     msg.fire = h->fire;
     msg.eye = eye;
     msg.view = &cam;
-    msg.unk4D0 = h->unk4D0;
-    msg.unk4D2 = h->unk4D2;
+    msg.active = h->weaponReady;
+    msg.alt = h->altFire;
     msg.vel = vel;
     msg.zoomed = v->zoomed;
     msg.shot = 0;
@@ -287,11 +240,11 @@ void Human_UpdateWeapon(Human *h)
     msg.recoilPitch = 0.0f;
     msg.recoilYaw = 0.0f;
     msg.h = h;
-    msg.unk4D4 = h->unk4D4;
+    msg.aimError = h->aimError;
     gTaskHandlers[Human_GetEvent0()][w->type](w, &msg);
     h->fire = 0;
-    h->unk4D2 = 0;
-    h->shot = msg.shot;
+    h->altFire = 0;
+    h->fired = msg.shot;
     v->recoilPitch = (msg.recoilPitch + v->recoilPitch) * kRecoilFade;
     v->recoilYaw = (msg.recoilYaw + v->recoilYaw) * kRecoilFade;
 }
@@ -316,13 +269,13 @@ HOOK(0x463080, Human_SendPosition);
 
 int Human_GetState(Human *h)
 {
-    return h->state;
+    return h->sm.state;
 }
 HOOK(0x463110, Human_GetState);
 
 int Human_GetIndex(Human *h)
 {
-    return h->unk7C0;
+    return h->index;
 }
 HOOK(0x463120, Human_GetIndex);
 
@@ -334,7 +287,7 @@ HOOK(0x463130, Human_GetTeam);
 
 float *Human_GetMatrix(Human *h)
 {
-    return h->rot.m;
+    return h->matrix.m;
 }
 HOOK(0x463140, Human_GetMatrix);
 
@@ -358,7 +311,7 @@ HOOK(0x463180, Human_IsCrouching);
 
 char Human_IsActive(Human *h)
 {
-    return h->unkCF6;
+    return h->vulnerable;
 }
 HOOK(0x463190, Human_IsActive);
 
@@ -366,22 +319,22 @@ void Human_SetPosition(Human *h, double *pos)
 {
     DynCube_Move(Game_GetWorld(), h, pos, h->radius);
     HumanView_UpdatePosition(h->view);
-    memcpy(h->lastPos, pos, sizeof(h->lastPos));
-    h->unk67C[0] = 0.0f;
-    h->unk67C[1] = 0.0f;
-    h->unk67C[2] = 0.0f;
-    h->unk670[0] = 0.0f;
-    h->unk670[1] = 0.0f;
-    h->unk670[2] = 0.0f;
+    memcpy(h->groundPos, pos, 2 * sizeof(double));
+    h->slide[0] = 0.0f;
+    h->slide[1] = 0.0f;
+    h->slide[2] = 0.0f;
+    h->push[0] = 0.0f;
+    h->push[1] = 0.0f;
+    h->push[2] = 0.0f;
 }
 HOOK(0x4631A0, Human_SetPosition);
 
 void Human_SetYaw(Human *h, float yaw)
 {
-    h->yaw2 = yaw;
-    h->yaw = yaw;
-    Matrix_SetRotZ(&h->rot, yaw);
-    BoneObj_Update(&h->rot, h->anim);
+    h->baseZ = yaw;
+    h->rotZ = yaw;
+    Matrix_SetRotZ(&h->matrix, yaw);
+    BoneObj_Update(&h->matrix, h->anim);
 }
 HOOK(0x463220, Human_SetYaw);
 
@@ -394,19 +347,19 @@ void Human_SnapToGround(Human *h)
     zero[0] = 0.0f;
     zero[1] = 0.0f;
     zero[2] = 0.0f;
-    Human_ProbeGround(h, pos, pos, zero, &h->stateInput, 0x1.f4p+21f);
+    Human_ProbeGround(h, pos, pos, zero, &h->sm.bits, 0x1.f4p+21f);
     Human_SetPosition(h, pos);
 }
 HOOK(0x463260, Human_SnapToGround);
 
 void Human_LeaveGround(Human *h)
 {
-    h->stateInput &= ~4u;
+    h->sm.bits &= ~4u;
     Human_SetGround(h, NULL);
-    h->unk6F8 = 0;
-    h->unk728[0] = 0.0f;
-    h->unk728[1] = 0.0f;
-    h->unk728[2] = 0.0f;
+    h->ground.found = 0;
+    h->movePos[0] = 0.0f;
+    h->movePos[1] = 0.0f;
+    h->movePos[2] = 0.0f;
 }
 HOOK(0x4632D0, Human_LeaveGround);
 
@@ -415,19 +368,19 @@ void Human_SetPlatform(Human *h, Task *t)
 {
     Platform *p = (Platform *)t;
     const float *r = p->rot.m;
-    const float *m = h->rot.m;
+    const float *m = h->matrix.m;
     long double dx, dy, dz;
     double l[3];
-    Rot rel;
+    Matrix rel;
 
-    h->platform = t;
+    h->attach = t;
     dx = (long double)h->pos[0] - p->pos[0];
     dy = (long double)h->pos[1] - p->pos[1];
     dz = (long double)h->pos[2] - p->pos[2];
     l[0] = (r[3] * dy + r[6] * dz) + r[0] * dx;
     l[1] = (r[4] * dy + r[7] * dz) + r[1] * dx;
     l[2] = (r[5] * dy + r[8] * dz) + r[2] * dx;
-    memcpy(h->platformPos, l, sizeof(l));
+    memcpy(h->attachPos, l, sizeof(l));
     rel.m[0] = (r[1] * m[1] + r[2] * m[2]) + r[0] * m[0];
     rel.m[1] = (r[4] * m[1] + r[5] * m[2]) + r[3] * m[0];
     rel.m[2] = (r[7] * m[1] + r[8] * m[2]) + r[6] * m[0];
@@ -437,15 +390,15 @@ void Human_SetPlatform(Human *h, Task *t)
     rel.m[6] = (r[1] * m[7] + r[2] * m[8]) + r[0] * m[6];
     rel.m[7] = (r[4] * m[7] + r[5] * m[8]) + r[3] * m[6];
     rel.m[8] = (r[7] * m[7] + r[8] * m[8]) + r[6] * m[6];
-    rel.serial = h->rot.serial + 1 + p->rot.serial;
-    h->platformRot = rel;
+    rel.count = h->matrix.count + 1 + p->rot.count;
+    h->attachMatrix = rel;
     Human_HideShadow(h);
 }
 HOOK(0x463310, Human_SetPlatform);
 
 void Human_ClearPlatform(Human *h)
 {
-    h->platform = NULL;
+    h->attach = NULL;
     Human_ShowShadow(h);
 }
 HOOK(0x463550, Human_ClearPlatform);
@@ -464,13 +417,13 @@ HOOK(0x463580, Human_EnableCollision);
 
 void Human_SetExactMotion(Human *h)
 {
-    h->unk52C = 1;
+    h->deltaScaled = 1;
 }
 HOOK(0x463590, Human_SetExactMotion);
 
 void Human_ClearExactMotion(Human *h)
 {
-    h->unk52C = 0;
+    h->deltaScaled = 0;
 }
 HOOK(0x4635A0, Human_ClearExactMotion);
 
@@ -490,13 +443,13 @@ HOOK(0x4635E0, Human_UnlockInput);
 
 void Human_FreezeView(Human *h)
 {
-    h->unk510 = 1;
+    h->frozenView = 1;
 }
 HOOK(0x4635F0, Human_FreezeView);
 
 void Human_UnfreezeView(Human *h)
 {
-    h->unk510 = 0;
+    h->frozenView = 0;
 }
 HOOK(0x463600, Human_UnfreezeView);
 
@@ -568,7 +521,7 @@ HOOK(0x463740, Human_GetAttached);
 
 void HumanViewCam(Human *h, int mode)
 {
-    h->viewCam = mode;
+    h->camMode = mode;
 }
 HOOK(0x463760, HumanViewCam);
 
@@ -635,9 +588,9 @@ void Human_Footstep(Human *h)
     float pitch;
     Task *s;
 
-    if (h->animId != ANIM_WALK || h->animFrame != Anim_GetId(h->anim, 0) || !h->unk6F8)
+    if (h->animEvent.sound != ANIM_WALK || h->animEvent.anim != Anim_GetId(h->anim, 0) || !h->ground.found)
         return;
-    ground = h->ground;
+    ground = (char *)h->ground.material;
     id = gFootstepSounds[h->footstep];
     h->footstep = (h->footstep + 1) % 12;
     if (!ground)
@@ -647,27 +600,27 @@ void Human_Footstep(Human *h)
     if (s) {
         if (Human_IsCrouching(h))
             Sound_SetVolume(s, -1.0f, kQuietLevel);
-        Sound_SetPos(s, h->soundPos);
+        Sound_SetPos(s, &h->ground.pos.x);
         Sound_SetPitch(s, pitch);
     }
     if (Game_IsRaining()) {
         crt_sprintf(buf, "walk_rain_%1d", id + 1);
         s = Sound_Play(Level_GetDynamic(), buf);
         if (s) {
-            Sound_SetPos(s, h->soundPos);
+            Sound_SetPos(s, &h->ground.pos.x);
             Sound_SetPitch(s, pitch);
         }
     }
     if (!Human_IsCrouching(h)) {
-        HumanNoise noise;
+        AIMessage noise;
 
         noise.radius = *(float *)(ground + 0x50) * 4096.0f;
         noise.team = h->team;
-        noise.pos = h->soundPos;
+        noise.pos = &h->ground.pos;
         noise.type = 10;
-        noise.unk8 = 0x46;
-        noise.from = h;
-        noise.from2 = h;
+        noise.flags = 0x46;
+        noise.from = (Task *)h;
+        noise.about = (Task *)h;
         HumanAI_Broadcast(&noise);
     }
 }
@@ -692,7 +645,7 @@ void Human_Bleed(Human *h, const float *dir, CollHit *src)
     static const float kSplatSize = 0x1.333334p+9f;  /* 614.4 */
     static const float kSpread = 0x1.aceeap-5f;      /* 0.0524 */
     static const float kSpreadBase = 0x1.a3667ap-7f; /* 0.0128 */
-    double *pos = src->pos;
+    double *pos = &src->pos.x;
     double from[3], to[3], ys, zs;
     float d[3], a[3], color[3], size[2], zero[3];
     struct {
@@ -724,7 +677,7 @@ void Human_Bleed(Human *h, const float *dir, CollHit *src)
     }
     ev = Game_GetEvent8();
     Coll_Lines(Game_GetWorld(), &hit, from, to, 1, ev, &filter, 0x20000000);
-    if (hit.found && hit.material && !hit.material2 && *(int *)(*(char **)(hit.material + 0x258) + 0x58)) {
+    if (hit.found && hit.material && !hit.back && *(int *)((char *)hit.material->params + 0x58)) {
         DecalMsg msg;
         TaskHandler fn;
         float sz = (Random_Float(Game_GetRandom()) + 1.0f) * kSplatSize;
@@ -817,8 +770,8 @@ void Human_BloodDrop(void *arg)
     dx = (long double)p->pos[0] - p->prev[0];
     dy = (long double)p->pos[1] - p->prev[1];
     dz = (long double)p->pos[2] - p->prev[2];
-    normalize3(hit->normal);
-    if ((dz * hit->normal[2] + dy * hit->normal[1]) + dx * hit->normal[0] >= 0.0f)
+    normalize3(&hit->normal.x);
+    if ((dz * hit->normal.z + dy * hit->normal.y) + dx * hit->normal.x >= 0.0f)
         return;
     sz = Random_Float(Game_GetRandom()) * kDropSize + kDropBase;
     k = Random_Int(Game_GetRandom(), 2);

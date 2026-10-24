@@ -51,7 +51,7 @@ extern uint16_t gGunMovingPartType;
 
 void GunFlame_CreateHandler(GunPart *p, GunPartArgs *a);
 void GunFlame_DeleteHandler(GunPart *p);
-void GunPart_MoveHandler(GunPart *p, MoveMsg *msg);
+void GunPart_MoveHandler(GunPart *p, PartMoveArg *msg);
 void GunFlame_RenderHandler(GunPart *p, char *frame);
 void GunPart_HideHandler(GunPart *p, int *hide);
 void GunPart_CreateHandler(GunPart *p, GunPartArgs *a);
@@ -141,7 +141,7 @@ void GunFlame_DeleteHandler(GunPart *p)
 HOOK(0x4776A0, GunFlame_DeleteHandler);
 
 /* puts the part at its offset and rotation relative to the gun */
-void GunPart_MoveHandler(GunPart *p, MoveMsg *msg)
+void GunPart_MoveHandler(GunPart *p, PartMoveArg *msg)
 {
     const float *m = msg->matrix->m;
     const float *l = p->local.m;
@@ -158,7 +158,7 @@ void GunPart_MoveHandler(GunPart *p, MoveMsg *msg)
     for (i = 0; i < 3; i++)
         for (j = 0; j < 3; j++)
             r.m[i * 3 + j] = (m[i * 3 + 1] * l[3 + j] + m[i * 3 + 2] * l[6 + j]) + m[i * 3] * l[j];
-    r.unk24 = msg->matrix->unk24 + p->local.unk24 + 1;
+    r.count = msg->matrix->count + p->local.count + 1;
     p->o.matrix = r;
 }
 HOOK(0x4776C0, GunPart_MoveHandler);
@@ -169,7 +169,7 @@ void GunFlame_RenderHandler(GunPart *p, char *frame)
     Gun *gun = ((GunColl *)p->o.task.parent)->gun;
     int now = Screen_GetFrame();
     int angles[3];
-    MoveMsg msg;
+    PartMoveArg msg;
     TaskFn fn;
     int i;
 
@@ -188,7 +188,7 @@ void GunFlame_RenderHandler(GunPart *p, char *frame)
     Matrix_RotateY(&p->o.matrix, &p->o.matrix, angles[i] * kDegToRad);
     msg.pos = (Vec3d *)frame;
     msg.matrix = (Matrix *)(frame + 0x18);
-    msg.obj = &p->o.task;
+    msg.owner = &p->o.task;
     fn = TASK_HANDLER(MagicObj_GetMoveEvent(), p->o.task.type);
     if (fn)
         fn(p, &msg);

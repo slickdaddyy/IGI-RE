@@ -2,10 +2,11 @@
 
 #include "hook.h"
 #include "humanai/humanai.h"
+#include "soldier/soldiertypes.h"
 
 ORIG(0x4148F0, long double, Vec3d_PitchAngle, (Vec3d v));
 ORIG(0x414950, long double, Vec3d_YawAngle, (Vec3d v));
-ORIG(0x4168A0, TaskArray *, Game_GetTaskList0, (void));
+ORIG(0x4168A0, QTaskList *, Game_GetTaskList0, (void));
 ORIG(0x4B28A0, long double, Math_ACos, (double x));
 ORIG(0x4B3100, void, Vec3d_Normalize, (Vec3d *v));
 ORIG(0x4B3130, long double, Vec3d_Length, (const Vec3d *v));
@@ -30,13 +31,6 @@ static const float kHalfPi = 0x1.921fb6p+0f;
 static const float kSlowTurn = 0x1.a8c536p-6f;
 static const double kReached = 0x1.3333333333333p+10;
 static const double kNodeTol = 0x1.3333333333333p-2;
-
-/* what the door search handler fills in */
-typedef struct NearQuery {
-    Vec3d pos;
-    double best;
-    Task *found;
-} NearQuery;
 
 /* is pos inside the view cone (or the wider secondary one) */
 char AIView_CanSee(AIView *v, const Vec3d *pos, char alarm)
@@ -77,7 +71,7 @@ HOOK(0x4502F0, AIView_CanSee);
 
 void HumanAI_PopRoute(HumanAI *ai)
 {
-    ai->unk1514--;
+    ai->routeCount--;
 }
 HOOK(0x451320, HumanAI_PopRoute);
 
@@ -282,17 +276,17 @@ again:
         }
     }
     if (replan) {
-        if (ai->path) {
-            NodeGrid_Release(ai->path, ai->pathLen, ai->pathLen);
-            ai->path = NULL;
+        if (ai->grid) {
+            NodeGrid_Release(ai->grid, ai->gridX, ai->gridX);
+            ai->grid = NULL;
         }
         if (pos) {
-            ai->path = NodeGrid_Place(&ai->pathLen, ai->pathA, ai->pathB, graph, dest, pos);
+            ai->grid = NodeGrid_Place(&ai->gridX, &ai->gridY, &ai->cover, graph, dest, pos);
         } else {
             Vec3d p;
 
             Graph_GetNodePos(&p, Graph_GetNode(ai->graph, dest));
-            ai->path = NodeGrid_Place(&ai->pathLen, ai->pathA, ai->pathB, graph, dest, &p);
+            ai->grid = NodeGrid_Place(&ai->gridX, &ai->gridY, &ai->cover, graph, dest, &p);
         }
     }
 
@@ -628,13 +622,13 @@ static char HumanAI_GetD00(HumanAI *ai)
     Human *h = (Human *)ai->task.parent;
 
     if (h->task.type == Soldier_GetType())
-        return h->unkD00;
+        return ((Soldier *)h)->run;
     if (h->task.type == SoldierPistol_GetType())
-        return h->unkD00;
+        return ((Soldier *)h)->run;
     if (h->task.type == SoldierFemale_GetType())
-        return h->unkD00;
+        return ((Soldier *)h)->run;
     if (h->task.type == SoldierRPG_GetType())
-        return h->unkD00;
+        return ((Soldier *)h)->run;
     return (char)(uintptr_t)ai;
 }
 

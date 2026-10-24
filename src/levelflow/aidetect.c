@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "levelflow/levelflow.h"
+#include "levelflow/levelflowtypes.h"
 
 ORIG(0x4017C0, int, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
@@ -34,20 +35,6 @@ typedef struct AIDetectInfo {
     char unk26[2];
 } AIDetectInfo;
 
-/* the eye of a detector: two view cones, the second optional */
-typedef struct AIView {
-    Vec3d pos;
-    float m[9];
-    int unk3C;
-    double maxPitch;
-    double maxYaw;
-    double range;
-    double maxPitch2;
-    double maxYaw2;
-    double range2;
-    char hasSecond;
-} AIView;
-
 /* one per task on the detection list, on the friends or enemies list
    while active */
 typedef struct AIDetectSlot {
@@ -79,7 +66,6 @@ typedef struct AIDetector {
 } AIDetector;
 
 _Static_assert(sizeof(AIDetectInfo) == 0x28, "AIDetectInfo");
-_Static_assert(offsetof(AIView, hasSecond) == 0x70, "AIView");
 _Static_assert(sizeof(AIDetectSlot) == 0x30, "AIDetectSlot");
 _Static_assert(offsetof(AIDetector, slots) == 0x30, "AIDetector");
 
@@ -206,21 +192,21 @@ void AIDetector_Init(AIDetector *d, void *unk0, uint32_t flags, uint32_t mask, i
     gAIDetectPhase = (gAIDetectPhase + 1) % 4;
     d->viewInterval = viewInterval / 4;
     d->sightInterval = sightInterval / 4;
-    d->enemies.head = &d->enemies.tail;
+    d->enemies.head = (Node *)&d->enemies.tail;
     d->enemies.tail = NULL;
-    d->enemies.tailpred = &d->enemies.head;
-    d->friends.head = &d->friends.tail;
+    d->enemies.tailpred = (Node *)&d->enemies.head;
+    d->friends.head = (Node *)&d->friends.tail;
     d->friends.tail = NULL;
-    d->friends.tailpred = &d->friends.head;
+    d->friends.tailpred = (Node *)&d->friends.head;
     for (i = 0; i < AIDETECT_MAX; i++)
         d->slots[i].active = 0;
 }
 HOOK(0x4896C0, AIDetector_Init);
 
-void AIDetector_UpdateSlot(AIDetector *d, AIDetectSlot *s, Vec3d *pos, AIView *view, Task *self);
+void AIDetector_UpdateSlot(AIDetector *d, AIDetectSlot *s, Vec3d *pos, DetectView *view, Task *self);
 
 /* flags: bits 0/1 see alive/dead team mates, bits 2/3 alive/dead enemies */
-void AIDetector_Update(AIDetector *d, AIView *view, Task *self, int team)
+void AIDetector_Update(AIDetector *d, DetectView *view, Task *self, int team)
 {
     int n = gAIDetectList->count;
     int i;
@@ -266,9 +252,9 @@ void AIDetector_Update(AIDetector *d, AIView *view, Task *self, int team)
 }
 HOOK(0x489750, AIDetector_Update);
 
-char AIView_Contains(AIView *v, Vec3d *p);
+char AIView_Contains(DetectView *v, Vec3d *p);
 
-void AIDetector_UpdateSlot(AIDetector *d, AIDetectSlot *s, Vec3d *pos, AIView *view, Task *self)
+void AIDetector_UpdateSlot(AIDetector *d, AIDetectSlot *s, Vec3d *pos, DetectView *view, Task *self)
 {
     if (!s->viewTimer) {
         if (AIView_Contains(view, pos)) {
@@ -291,7 +277,7 @@ void AIDetector_UpdateSlot(AIDetector *d, AIDetectSlot *s, Vec3d *pos, AIView *v
 }
 HOOK(0x4898D0, AIDetector_UpdateSlot);
 
-char AIView_Contains(AIView *v, Vec3d *p)
+char AIView_Contains(DetectView *v, Vec3d *p)
 {
     long double dx = p->x - v->pos.x;
     long double dy = p->y - v->pos.y;
@@ -301,9 +287,9 @@ char AIView_Contains(AIView *v, Vec3d *p)
     float pitch;
     long double yaw;
 
-    l.x = v->m[6] * dz + v->m[3] * dy + v->m[0] * dx;
-    l.y = v->m[7] * dz + v->m[4] * dy + v->m[1] * dx;
-    l.z = v->m[8] * dz + v->m[5] * dy + v->m[2] * dx;
+    l.x = v->matrix.m[6] * dz + v->matrix.m[3] * dy + v->matrix.m[0] * dx;
+    l.y = v->matrix.m[7] * dz + v->matrix.m[4] * dy + v->matrix.m[1] * dx;
+    l.z = v->matrix.m[8] * dz + v->matrix.m[5] * dy + v->matrix.m[2] * dx;
     len = Vec3d_Length(&l);
     if (!(Vec3d_PitchAngle(l) >= kZero))
         pitch = -Vec3d_PitchAngle(l);

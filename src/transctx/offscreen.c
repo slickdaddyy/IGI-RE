@@ -33,13 +33,6 @@ typedef struct ClipWindowPrim {
     float x, y, w, h;
 } ClipWindowPrim;
 
-typedef struct BlitPrim {
-    RenderNode node;
-    int pitch; /* bytes */
-    int x, y, w, h;
-    uint32_t *pixels;
-} BlitPrim;
-
 int Offscreen_Open(void);
 void Offscreen_Clear(void);
 void Offscreen_Blit(BlitPrim *p);

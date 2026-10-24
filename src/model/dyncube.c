@@ -2,6 +2,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "terrain/terrain.h"
+#include "sound/soundtypes.h"
 
 ORIG(0x4C58B0, int, DynCubeTree_GetChildCount, (int tree));
 ORIG(0x4C7750, DynCubeNode *, DynCube_GetRoot_, (Terrain *t, int tree));
@@ -28,12 +29,6 @@ extern const uint8_t gWorldEvents[];
 void DynCube_UpdateSlotCounts(Terrain *t, int tree);
 void DynCube_UpdateStart(Terrain *t, int tree);
 void DynCubeNode_BuildMasks(Terrain *t, DynCubeNode *node, int unk, const Vec3d *pos);
-
-typedef struct CellMask {
-    void *unk0;
-    int shift;
-    int size;
-} CellMask;
 
 /* Argument of event 8, sent along a line of sight. A handler can lower
    visibility or set blocked. */
@@ -156,13 +151,13 @@ HOOK(0x4CE3D0, Terrain_InvalidateLighting);
 
 void Terrain_SetMaterial(Terrain *t, int i, void *m)
 {
-    ((void **)t->unkD3C)[i] = m;
+    ((void **)t->materials)[i] = m;
 }
 HOOK(0x4CE3E0, Terrain_SetMaterial);
 
 void *Terrain_GetMaterial(Terrain *t, int i)
 {
-    return ((void **)t->unkD3C)[i];
+    return ((void **)t->materials)[i];
 }
 HOOK(0x4CE400, Terrain_GetMaterial);
 

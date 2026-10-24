@@ -16,7 +16,7 @@ ORIG(0x503CC0, Task *, SimpointObjContainer_Add, (void *group, uint16_t type, Ve
 
 /* throws a new model object every few seconds */
 typedef struct SimpointObjGenerator {
-    Obj obj;
+    RigidDynCubeObj obj;
     int timer;
     char model[16];
     char unk104[16];
@@ -96,7 +96,7 @@ void SimpointObjGenerator_Create(SimpointObjGenerator *g)
     DynCube_Add(Game_GetWorld(), g, &zero, radius, 2);
     for (i = 0; i < 9; i++)
         g->obj.matrix.m[i] = i % 4 == 0 ? 1.0f : 0.0f;
-    g->obj.matrix.unk24 = 0;
+    g->obj.matrix.count = 0;
     g->timer = 0;
     g->model[0] = 0;
     g->unk104[0] = 0;

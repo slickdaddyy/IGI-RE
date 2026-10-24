@@ -19,28 +19,14 @@ typedef struct GunMoveMsg {
     Matrix *matrix;
 } GunMoveMsg;
 
-/* a hit of Coll_Lines (0x70 bytes) */
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x18];
-    Vec3f normal;       /* 0x38 */
-    char unk44[0x14];
-    int found;          /* 0x58 */
-    char unk5C[0x14];
-} CollHit;
-
 /* the filter Coll_Lines passes to the objects it meets */
-typedef struct CollQuery {
+typedef struct ProxQuery {
     float unk0;
     void *self;
     Task *owner;
     int unkC;
     float unk10;
-} CollQuery;
-
-_Static_assert(sizeof(CollHit) == 0x70, "CollHit");
+} ProxQuery;
 
 extern uint16_t gProxMineType;
 
@@ -58,7 +44,7 @@ ORIG(0x449D20, uint16_t, Glass_GetType, (void));
 ORIG(0x447D20, uint16_t, Door_GetType, (void));
 ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *results, Vec3d *starts, Vec3d *ends, int count, char event,
-                                  CollQuery *query, unsigned int flags));
+                                  ProxQuery *query, unsigned int flags));
 ORIG(0x414A60, void, Matrix_SetYAxis, (Matrix *m, const Vec3f *dir));
 ORIG(0x476040, void, Mine_New, (void *a, Vec3d *pos, Matrix *m, char *key, int armTicks, float countdown,
                                   float activate, float explode, char alt));
@@ -86,7 +72,7 @@ HOOK(0x475380, ProxMine_Open);
 void ProxMine_Create(Gun *g, void *arg)
 {
     HANDLER(0, Gun_GetType())(g, arg);
-    crt_sprintf(g->id, "WEAPON_ID_PROXIMITYMINE");
+    crt_sprintf(g->name, "WEAPON_ID_PROXIMITYMINE");
 }
 HOOK(0x475460, ProxMine_Create);
 
@@ -100,14 +86,14 @@ void ProxMine_Move(Gun *g, GunMoveMsg *m)
 {
     float radius;
 
-    if (g->unkF0) {
-        radius = VirModel_GetRadius(g->obj.model) * max_scale(&g->obj);
+    if (g->inWorld) {
+        radius = VirModel_GetRadius(g->o.model) * max_scale(&g->o);
         DynCube_Move(Game_GetWorld(), g, m->pos, radius);
-        g->obj.matrix = *m->matrix;
+        g->o.matrix = *m->matrix;
         return;
     }
-    g->obj.pos = *m->pos;
-    g->obj.matrix = *m->matrix;
+    g->o.pos = *m->pos;
+    g->o.matrix = *m->matrix;
 }
 HOOK(0x4754C0, ProxMine_Move);
 
@@ -115,10 +101,10 @@ HOOK(0x4754C0, ProxMine_Move);
    and not on a human, glass, a door or a vehicle */
 void ProxMine_Use(Gun *g, WeaponUseMsg *msg)
 {
-    WeaponInfo *info = g->info;
-    ProxData *d = info->data;
+    WeaponType *info = g->wt;
+    ProxData *d = info->data2;
     long double s, inv;
-    CollQuery q;
+    ProxQuery q;
     CollHit hit;
     Vec3d start, end;
     Vec3f dir;
@@ -132,11 +118,11 @@ void ProxMine_Use(Gun *g, WeaponUseMsg *msg)
         MOV32(g->dir.y, msg->view->m[4]);
         MOV32(g->dir.z, msg->view->m[7]);
     } else {
-        MOV32(g->dir.x, g->obj.matrix.m[1]);
-        MOV32(g->dir.y, g->obj.matrix.m[4]);
-        MOV32(g->dir.z, g->obj.matrix.m[7]);
+        MOV32(g->dir.x, g->o.matrix.m[1]);
+        MOV32(g->dir.y, g->o.matrix.m[4]);
+        MOV32(g->dir.z, g->o.matrix.m[7]);
     }
-    if (msg->fire && !g->unk134) {
+    if (msg->fire && !g->firing) {
         s = info->range * kRangeScale;
         dir = g->dir;
         q.unk0 = s * dir.x;
@@ -145,7 +131,7 @@ void ProxMine_Use(Gun *g, WeaponUseMsg *msg)
         end.x = q.unk0 + start.x;
         end.y = dir.y + start.y;
         q.self = g;
-        q.owner = g->obj.task.parent;
+        q.owner = g->o.task.parent;
         q.unkC = 0;
         q.unk10 = 1.0f;
         end.z = s * dir.z + start.z;
@@ -172,7 +158,7 @@ void ProxMine_Use(Gun *g, WeaponUseMsg *msg)
             }
         }
     }
-    g->unk134 = msg->fire;
+    g->firing = msg->fire;
 }
 HOOK(0x4755A0, ProxMine_Use);
 
@@ -194,9 +180,9 @@ void ProxMine_Config(void *task, WeaponConfigMsg *m)
     ConfigVar *arm, *count, *activate, *explode;
     ProxData *d;
 
-    if (m->info->data) {
-        Mem_Free(m->info->data);
-        m->info->data = NULL;
+    if (m->info->data2) {
+        Mem_Free(m->info->data2);
+        m->info->data2 = NULL;
     }
     arm = TagItem_Find(m->config, "Proximitymine - Time before arming (seconds)");
     if (!arm)
@@ -210,7 +196,7 @@ void ProxMine_Config(void *task, WeaponConfigMsg *m)
     explode = TagItem_Find(m->config, "Proximitymine - Explosion radius (meters)");
     if (!explode)
         explode = TagItem_AddReal32(m->config, "Proximitymine - Explosion radius (meters)", 3.0f);
-    m->info->data = d = Mem_Alloc(sizeof(ProxData), 4);
+    m->info->data2 = d = Mem_Alloc(sizeof(ProxData), 4);
     MOV32(d->armTime, arm->v.f);
     MOV32(d->countdown, count->v.f);
     MOV32(d->activate, activate->v.f);

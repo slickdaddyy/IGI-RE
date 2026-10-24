@@ -4,55 +4,15 @@
 
 #include "hook.h"
 #include "mission/mission.h"
-
-/* the end of the "HumanCamera" task (the rest is in src/camera) */
-typedef struct HumanCamera {
-    Task task;
-    Vec3d pos;
-    Matrix matrix;
-    float fov;
-    void *camera;
-    Task **ref;
-    char unk6C[0x118 - 0x6C];
-    int index;
-    int savedIndex;
-    Task **savedRef;
-    unsigned flags;
-} HumanCamera;
-
-/* an entry of the list of humans the camera can follow */
-typedef struct HumanCameraEntry {
-    Task **ref;
-    char unk4;
-    char used;
-    char pad6[2];
-} HumanCameraEntry;
-
-/* a hit of the collision queries, 0x70 bytes */
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x38];
-    int found;
-    char unk5C[0x14];
-} CollHit;
-
-typedef struct CollFilter {
-    int unk0;
-    Task *ignore;
-} CollFilter;
-
-_Static_assert(offsetof(HumanCamera, index) == 0x118, "HumanCamera.index");
-_Static_assert(sizeof(HumanCamera) == 0x128, "HumanCamera");
-_Static_assert(sizeof(CollHit) == 0x70, "CollHit");
+#include "coll/colltypes.h"
+#include "camera/cameratypes.h"
 
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
 ORIG(0x483100, void, HumanCamera_LookAt, (Matrix *out, const Vec3d *from, const Vec3d *to));
 ORIG(0x4B3130, long double, Vec3d_Length, (const Vec3d *v));
 ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, Vec3d *starts, Vec3d *ends, int count, uint8_t event,
-                                  CollFilter *filter, int flags));
+                                  CollIgnore *filter, int flags));
 
 extern uint16_t gHumanCameraType;
 extern uint8_t gHumanCameraEvent;
@@ -72,7 +32,7 @@ void HumanCamera_WatchKiller(HumanCamera *c)
     Task *killer = **(Task ***)((char *)h + 0xDE8);
     Vec3d from, to, head, d;
     CollHit hit;
-    CollFilter filter;
+    CollIgnore filter;
     Matrix m, r, out;
     long double len, k, kz;
     uint8_t event;
@@ -88,7 +48,7 @@ void HumanCamera_WatchKiller(HumanCamera *c)
     len = Vec3d_Length(&d);
     if (len > kZero) {
         k = kBackOff / len;
-        filter.ignore = h;
+        filter.task = h;
         d.x = k * d.x;
         d.y = k * d.y;
         kz = k * d.z;
@@ -110,7 +70,7 @@ void HumanCamera_WatchKiller(HumanCamera *c)
     out.m[4] = m.m[5] * r.m[7] + m.m[4] * r.m[4] + m.m[3] * r.m[1];
     out.m[5] = m.m[5] * r.m[8] + m.m[4] * r.m[5] + m.m[3] * r.m[2];
     out.m[6] = m.m[8] * r.m[6] + m.m[7] * r.m[3] + m.m[6] * r.m[0];
-    out.serial = r.serial + m.serial + 1;
+    out.count = r.count + m.count + 1;
     out.m[7] = m.m[8] * r.m[7] + m.m[7] * r.m[4] + m.m[6] * r.m[1];
     out.m[8] = m.m[8] * r.m[8] + m.m[7] * r.m[5] + m.m[6] * r.m[2];
     c->matrix = out;

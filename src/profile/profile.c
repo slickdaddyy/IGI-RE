@@ -30,12 +30,9 @@ ORIG(0x4D0EE0, void, Mesh3D_SetLodScale, (float v));
 ORIG(0x4D2C20, void, QCube_SetDetail, (int v));
 
 extern int gDriverCount;
-extern D3DDriver gDrivers[];
+extern ConfigDevice gDrivers[];
 extern char gLanguageAliasSet;
 extern void (*gRenderFuncs[])(int *);
-
-_Static_assert(sizeof(PlayerProfile) == 0x564, "PlayerProfile");
-_Static_assert(sizeof(D3DDriver) == 0x404, "D3DDriver");
 
 void Config_AddMissingKeys(void);
 void Config_FixDisplayModes(void);
@@ -47,7 +44,7 @@ void Config_WriteSound(void *f, int i);
 void Config_WriteGfx(void *f, int i);
 void Config_WriteInput(void *f, int i);
 void Config_WriteContentControl(void *f);
-KeyBinding *Profile_GetKeys(void);
+InputRemap *Profile_GetKeys(void);
 int Profile_GetKeyCount(void);
 void Profile_SetKeyCount(int count);
 void Config_GetAction(int i, int *value, const char **name);
@@ -74,8 +71,8 @@ void Config_AddMissingKeys(void)
 {
     int actions = Config_GetActionCount();
     int count = Profile_GetKeyCount();
-    KeyBinding *keys = Profile_GetKeys();
-    KeyBinding *d;
+    InputRemap *keys = Profile_GetKeys();
+    InputRemap *d;
     int i, j, action;
 
     for (i = 0; i < actions; i++) {
@@ -107,7 +104,7 @@ static int Abs(int v)
 void Config_FixDisplayModes(void)
 {
     int i, j, n, best, d;
-    DisplayMode *m, *pick;
+    ConfigDisplayMode *m, *pick;
     PlayerProfile *p;
 
     for (i = 0; i < gProfileCount; i++) {
@@ -118,25 +115,25 @@ void Config_FixDisplayModes(void)
                 ;
         }
         for (j = 0; j < gDriverCount; j++)
-            if (strcmp(p->gfxDevice, gDrivers[j].name) == 0)
+            if (strcmp(p->gfx.device, gDrivers[j].name) == 0)
                 break;
         if (j == gDriverCount) {
-            strcpy(p->gfxDriver, gDrivers[0].desc);
-            strcpy(p->gfxDevice, gDrivers[0].name);
+            strcpy(p->gfx.device_desc, gDrivers[0].desc);
+            strcpy(p->gfx.device, gDrivers[0].name);
             j = 0;
         }
         pick = NULL;
         best = 0x7FFFFFFF;
         m = gDrivers[j].modes;
-        for (n = gDrivers[j].modeCount; n > 0; n--, m++) {
-            d = (int)(((unsigned)Abs(m->depth - p->display.depth) << 24) + Abs(m->height - p->display.height) +
-                      Abs(m->width - p->display.width));
+        for (n = gDrivers[j].mode_count; n > 0; n--, m++) {
+            d = (int)(((unsigned)Abs(m->depth - p->gfx.display.depth) << 24) + Abs(m->height - p->gfx.display.height) +
+                      Abs(m->width - p->gfx.display.width));
             if (d < best) {
                 pick = m;
                 best = d;
             }
         }
-        p->display = *pick;
+        p->gfx.display = *pick;
     }
 }
 HOOK(0x405980, Config_FixDisplayModes);
@@ -192,7 +189,7 @@ void Config_WritePlayer(void *f, int i)
     char buf[256];
 
     File_Write(f, buf, crt_sprintf(buf, "%s(\"%s\");\n", "GOPlayer", gProfiles[i].name));
-    File_Write(f, buf, crt_sprintf(buf, "%s(%d);\n", "GOActiveMission", gProfiles[i].activeMission));
+    File_Write(f, buf, crt_sprintf(buf, "%s(%d);\n", "GOActiveMission", gProfiles[i].active_mission));
     Config_WriteInput(f, i);
     Config_WriteGfx(f, i);
     Config_WriteGame(f, i);
@@ -219,9 +216,9 @@ void Config_WriteSound(void *f, int i)
     char buf[1024];
     int n;
 
-    n = crt_sprintf(buf, "%s(%d, %f);\n", "GOSoundSpeech", p->speechOn, (double)p->speechVolume);
-    n += crt_sprintf(buf + n, "%s(%d, %f);\n", "GOSoundMusic", p->musicOn, (double)p->musicVolume);
-    n += crt_sprintf(buf + n, "%s(%d, %f);\n", "GOSoundFX", p->sfxOn, (double)p->sfxVolume);
+    n = crt_sprintf(buf, "%s(%d, %f);\n", "GOSoundSpeech", p->sound.speech, (double)p->sound.speech_volume);
+    n += crt_sprintf(buf + n, "%s(%d, %f);\n", "GOSoundMusic", p->sound.music, (double)p->sound.music_volume);
+    n += crt_sprintf(buf + n, "%s(%d, %f);\n", "GOSoundFX", p->sound.fx, (double)p->sound.fx_volume);
     File_Write(f, buf, n);
 }
 HOOK(0x405E00, Config_WriteSound);
@@ -232,10 +229,11 @@ void Config_WriteGfx(void *f, int i)
     char buf[512];
     int n;
 
-    n = crt_sprintf(buf, "%s(%d, %d, %d);\n", "GOGfxDisp", p->display.width, p->display.height, p->display.depth);
-    n += crt_sprintf(buf + n, "%s(\"%s\");\n", "GOGfxDevice", p->gfxDevice);
-    n += crt_sprintf(buf + n, "%s(%f);\n", "GOGfxGamma", (double)p->gamma);
-    n += crt_sprintf(buf + n, "%s(%d);\n", "GOGfxPerformance", p->performance);
+    n = crt_sprintf(buf, "%s(%d, %d, %d);\n", "GOGfxDisp", p->gfx.display.width, p->gfx.display.height,
+                    p->gfx.display.depth);
+    n += crt_sprintf(buf + n, "%s(\"%s\");\n", "GOGfxDevice", p->gfx.device);
+    n += crt_sprintf(buf + n, "%s(%f);\n", "GOGfxGamma", (double)p->gfx.gamma);
+    n += crt_sprintf(buf + n, "%s(%d);\n", "GOGfxPerformance", p->gfx.perf_flags);
     File_Write(f, buf, n);
 }
 HOOK(0x405EC0, Config_WriteGfx);
@@ -244,13 +242,13 @@ HOOK(0x405EC0, Config_WriteGfx);
 void Config_WriteInput(void *f, int i)
 {
     PlayerProfile *p = &gProfiles[i];
-    KeyBinding *k = p->keys;
+    InputRemap *k = p->remaps;
     char buf[256];
     int n, j, b;
 
-    File_Write(f, buf, crt_sprintf(buf, "%s(%d);\n", "GOInMouInv", p->mouseInvert));
-    File_Write(f, buf, crt_sprintf(buf, "%s(%f);\n", "GOInMouSens", (double)p->mouseSensitivity));
-    for (b = 0; b < p->keyCount; b++, k++) {
+    File_Write(f, buf, crt_sprintf(buf, "%s(%d);\n", "GOInMouInv", p->invert_mouse));
+    File_Write(f, buf, crt_sprintf(buf, "%s(%f);\n", "GOInMouSens", (double)p->mouse_sensitivity));
+    for (b = 0; b < p->remap_count; b++, k++) {
         n = crt_sprintf(buf, "%s(", "GOInRemap");
         for (j = 0; j < CONFIG_ACTION_COUNT; j++)
             if (gInputActions[j].value == k->action)
@@ -286,27 +284,27 @@ void Config_WriteContentControl(void *f)
 }
 HOOK(0x406170, Config_WriteContentControl);
 
-KeyBinding *Config_GetDefaultKeys(void)
+InputRemap *Config_GetDefaultKeys(void)
 {
     return gDefaultKeys;
 }
 HOOK(0x4061B0, Config_GetDefaultKeys);
 
-KeyBinding *Profile_GetKeys(void)
+InputRemap *Profile_GetKeys(void)
 {
-    return gProfiles[gActiveProfile].keys;
+    return gProfiles[gActiveProfile].remaps;
 }
 HOOK(0x4061C0, Profile_GetKeys);
 
 int Profile_GetKeyCount(void)
 {
-    return gProfiles[gActiveProfile].keyCount;
+    return gProfiles[gActiveProfile].remap_count;
 }
 HOOK(0x4061E0, Profile_GetKeyCount);
 
 void Profile_SetKeyCount(int count)
 {
-    gProfiles[gActiveProfile].keyCount = count;
+    gProfiles[gActiveProfile].remap_count = count;
 }
 HOOK(0x406200, Profile_SetKeyCount);
 
@@ -348,13 +346,13 @@ HOOK(0x4062B0, Config_GetActionCount);
 
 float Profile_GetSfxVolume(void)
 {
-    return Profile_GetActive()->sfxVolume;
+    return Profile_GetActive()->sound.fx_volume;
 }
 HOOK(0x4062C0, Profile_GetSfxVolume);
 
 float Profile_GetMusicVolume(void)
 {
-    return Profile_GetActive()->musicVolume;
+    return Profile_GetActive()->sound.music_volume;
 }
 HOOK(0x4062D0, Profile_GetMusicVolume);
 
@@ -397,8 +395,8 @@ void Profile_AdvanceMission(int mission)
 
     while (id != -1 && id != mission) {
         m = Mission_Find(id);
-        if (id == Profile_GetActive()->activeMission)
-            Profile_GetActive()->activeMission = mission;
+        if (id == Profile_GetActive()->active_mission)
+            Profile_GetActive()->active_mission = mission;
         id = *(int *)(m + 0x4A4);
     }
 }
@@ -406,7 +404,7 @@ HOOK(0x406340, Profile_AdvanceMission);
 
 void Profile_ApplyPerformance(void)
 {
-    unsigned flags = Profile_GetActive()->performance;
+    unsigned flags = Profile_GetActive()->gfx.perf_flags;
     int v = flags & 1 ? 1 : flags & 2;
 
     gRenderFuncs[Texture_GetSetLODId()](&v);

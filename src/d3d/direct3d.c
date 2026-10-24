@@ -51,12 +51,6 @@ extern const GUID IID_IDirect3DRGBDevice_[];
 extern const GUID IID_IDirect3D7_[];
 extern const GUID IID_IDirectDraw7_[];
 
-typedef struct DynVB {
-    IDirect3DVertexBuffer7 *vb;
-    int size;
-    int used;
-} DynVB;
-
 typedef struct ClipRect {
     int unk0;
     int unk4;

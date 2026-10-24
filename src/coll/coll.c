@@ -38,28 +38,6 @@ ORIG(0x4B32F0, long double, Vec3d_DistanceSq, (const Vec3d *a, const Vec3d *b));
 
 typedef void (*TaskHandler)(CollTask *task, int arg);
 
-/* Records added by task handlers while a query walks the object octree */
-typedef struct CollBump {
-    char unk0[0xC];
-    int shift;
-    float scale;
-    int unk14;
-    double x, y;
-    const signed char *heights;
-    int unk2C;
-} CollBump;
-
-typedef struct CollHole {
-    uint8_t material;
-    char unk1[0xB];
-    int shift;
-    float scale;
-    int unk14;
-    double x, y;
-    const uint8_t *bits;
-    int unk2C;
-} CollHole;
-
 extern const int gCollChildTable[];
 extern TaskHandler gTaskEnterHandlers[];
 extern TaskHandler gTaskLeaveHandlers[];
@@ -141,7 +119,7 @@ static void Coll_InitCursor(CollCursor *c, Terrain *t)
     c->terrain = t;
     c->size = 0x40000000;
     c->level = 30;
-    c->node = t->nodes + 1;
+    c->node = t->ctr + 1;
     c->orient = 0;
     c->x = 0;
     c->y = 0;
@@ -186,9 +164,9 @@ void Coll_GetPointMaterials(Terrain *t, void **results, const Vec3d *points, int
     hz = hi.z + 2.0;
     ly = lo.y - 2.0;
     lz = lo.z - 2.0;
-    a = (Coll_Fistp((long double)hi.x + 2.0) + t->origin[0]) ^ (Coll_Fistp((long double)lo.x - 2.0) + t->origin[0]);
-    b = (Coll_Fistp(hy) + t->origin[1]) ^ (Coll_Fistp(ly) + t->origin[1]);
-    d = (Coll_Fistp(hz) + t->origin[2]) ^ (Coll_Fistp(lz) + t->origin[2]);
+    a = (Coll_Fistp((long double)hi.x + 2.0) + t->offset[0]) ^ (Coll_Fistp((long double)lo.x - 2.0) + t->offset[0]);
+    b = (Coll_Fistp(hy) + t->offset[1]) ^ (Coll_Fistp(ly) + t->offset[1]);
+    d = (Coll_Fistp(hz) + t->offset[2]) ^ (Coll_Fistp(lz) + t->offset[2]);
     depth = 30 - Coll_TopBit(d | b | a);
     if (flags & 0x7FFFFFFF) {
         q.results = results;
@@ -199,7 +177,7 @@ void Coll_GetPointMaterials(Terrain *t, void **results, const Vec3d *points, int
         q.unk94 = 0;
         Coll_SendEventAll(t, 11, &q, points, flags);
     }
-    if (!(flags & 0x80000000) || !t->nodes)
+    if (!(flags & 0x80000000) || !t->ctr)
         return;
     if (depth > 16)
         depth = 16;
@@ -222,16 +200,16 @@ HOOK(0x4C9750, Coll_GetPointMaterials);
 int Coll_Descend(Terrain *t, CollCursor *c, CollCursor *unused, const Vec3d *p, int depth)
 {
     CollNode *node = c->node;
-    CollNode *nodes = c->terrain->nodes;
-    ObjNode *obj = t->objects;
+    CollNode *nodes = c->terrain->ctr;
+    ObjNode *obj = (ObjNode *)t->roots[4];
     int size = c->size, level = c->level, orient = c->orient;
     int x = c->x, y = c->y, z = c->z;
     int ux, uy, uz, i;
 
     (void)unused;
-    ux = Coll_Floor(p->x) + t->origin[0];
-    uy = Coll_Floor(p->y) + t->origin[1];
-    uz = Coll_Floor(p->z) + t->origin[2];
+    ux = Coll_Floor(p->x) + t->offset[0];
+    uy = Coll_Floor(p->y) + t->offset[1];
+    uz = Coll_Floor(p->z) + t->offset[2];
     Coll_ResetMods();
     for (i = 0; i < depth; i++) {
         int bx = SAR(ux ^ 0x40000000, level) & 1;
@@ -279,7 +257,7 @@ void *Coll_GetLeafMaterial(CollCursor *c, const Vec3d *p, int depth)
     unsigned int orient = c->orient;
     CollNode *node = c->node;
     Terrain *t = c->terrain;
-    CollNode *nodes = t->nodes;
+    CollNode *nodes = t->ctr;
     int ux, uy, uz, side;
     unsigned int child, mask;
     Vec3d base;
@@ -287,9 +265,9 @@ void *Coll_GetLeafMaterial(CollCursor *c, const Vec3d *p, int depth)
     ux = Coll_Floor(p->x);
     uy = Coll_Floor(p->y);
     uz = Coll_Floor(p->z);
-    uy += t->origin[1];
-    uz += t->origin[2];
-    ux += t->origin[0];
+    uy += t->offset[1];
+    uz += t->offset[2];
+    ux += t->offset[0];
     child = Coll_Child(orient, ux ^ 0x40000000, uy ^ 0x40000000, uz ^ 0x40000000, level);
     while (Coll_Has(node, child) && depth < 16) {
         unsigned int code = node->code[child];
@@ -306,9 +284,9 @@ void *Coll_GetLeafMaterial(CollCursor *c, const Vec3d *p, int depth)
     }
     t = c->terrain;
     mask = ~((0x40000000 >> ((depth - 1) & 31)) - 1);
-    base.x = (int)((mask & ux) - t->origin[0] + size);
-    base.y = (int)((mask & uy) - t->origin[1] + size);
-    base.z = (int)((mask & uz) - t->origin[2] + size);
+    base.x = (int)((mask & ux) - t->offset[0] + size);
+    base.y = (int)((mask & uy) - t->offset[1] + size);
+    base.z = (int)((mask & uz) - t->offset[2] + size);
     Coll_LeafPointInside(node->leaf, &base, p, depth, &side, orient);
     return c->terrain->materials[side];
 }
@@ -334,7 +312,7 @@ int Coll_LeafHit(const short *leaf, const Vec3d *base, const Vec3d *p, Vec3d *hi
 
         bump_x = (float)((long double)bump->x - base->x);
         bump_y = (float)((long double)bump->y - base->y);
-        bump_shift = bump->shift + 3;
+        bump_shift = bump->sizeShift + 3;
         bump_scale = bump->scale;
         heights = bump->heights;
     }
@@ -594,9 +572,9 @@ static void Coll_Drop(Terrain *t, CollHit *results, const Vec3d *points, int cou
     lo.x = lo.x - 2.0;
     lo.y = lo.y - 2.0;
     /* y and z are paired up crosswise here, unlike in Coll_Lines */
-    a = (Coll_Fistp(hi.x) + t->origin[0]) ^ (Coll_Fistp(lo.x) + t->origin[0]);
-    b = (Coll_Fistp(hi.y) + t->origin[1]) ^ (Coll_Fistp((long double)zlo - 16387.0) + t->origin[1]);
-    d = (Coll_Fistp(hi.z) + t->origin[2]) ^ (Coll_Fistp(lo.y) + t->origin[2]);
+    a = (Coll_Fistp(hi.x) + t->offset[0]) ^ (Coll_Fistp(lo.x) + t->offset[0]);
+    b = (Coll_Fistp(hi.y) + t->offset[1]) ^ (Coll_Fistp((long double)zlo - 16387.0) + t->offset[1]);
+    d = (Coll_Fistp(hi.z) + t->offset[2]) ^ (Coll_Fistp(lo.y) + t->offset[2]);
     depth = 30 - Coll_TopBit(d | b | a);
     if (depth > 16)
         depth = 16;
@@ -634,13 +612,13 @@ static void Coll_Drop(Terrain *t, CollHit *results, const Vec3d *points, int cou
         if (!q.active[0])
             continue;
         r->dist = (double)Coll_Abs((long double)h.pos.z - points[i].z);
-        r->unk0 = 0;
+        r->task = 0;
         r->pos = h.pos;
         r->found = 1;
         r->normal = h.normal;
         if (variant != 0) {
             r->material = h.material;
-            r->material2 = h.material2;
+            r->back = h.back;
         }
     }
 }
@@ -660,7 +638,7 @@ int Coll_VerticalHit(CollHit *out, CollCursor *c, const Vec3d *p, int up, int ra
     int zs[32], orients[32];
     CollNode *ns[32];
     ObjNode *objs[32];
-    CollNode *nodes = c->terrain->nodes, *node = c->node;
+    CollNode *nodes = c->terrain->ctr, *node = c->node;
     ObjNode *obj = c->objects;
     Terrain *t;
     int size = c->size, level = c->level, lv1;
@@ -677,9 +655,9 @@ int Coll_VerticalHit(CollHit *out, CollCursor *c, const Vec3d *p, int up, int ra
     iz += up ? -0x4001 : 0x4001;
     t = c->terrain;
     ns[depth] = node;
-    ox = t->origin[0];
-    oy = t->origin[1];
-    oz = t->origin[2];
+    ox = t->offset[0];
+    oy = t->offset[1];
+    oz = t->offset[2];
     ux = ox + ix;
     uy = iy + oy;
     uz = iz + oz;
@@ -746,7 +724,7 @@ int Coll_VerticalHit(CollHit *out, CollCursor *c, const Vec3d *p, int up, int ra
                     int below = (side ^ 1) ? m : 0;
 
                     out->material = c->terrain->materials[above];
-                    out->material2 = c->terrain->materials[below];
+                    out->back = c->terrain->materials[below];
                 }
                 Coll_RestoreMods();
                 return 1;
@@ -821,8 +799,8 @@ unsigned int Coll_GetHitMaterial(Terrain *t, const Vec3d *p)
         int iy = Coll_Fistp(fy);
         long double tx = fx - ix;
         long double ty = fy - (long double)iy;
-        const uint8_t *r0 = h->bits + (iy << (h->shift & 31));
-        const uint8_t *r1 = h->bits + ((iy + 1) << (h->shift & 31));
+        const uint8_t *r0 = h->bits + (iy << (h->sizeShift & 31));
+        const uint8_t *r1 = h->bits + ((iy + 1) << (h->sizeShift & 31));
         int b00 = (r0[ix >> 3] >> (ix & 7)) & 1;
         int b01 = (r0[(ix + 1) >> 3] >> ((ix + 1) & 7)) & 1;
         int b11 = (r1[(ix + 1) >> 3] >> ((ix + 1) & 7)) & 1;
@@ -831,7 +809,7 @@ unsigned int Coll_GetHitMaterial(Terrain *t, const Vec3d *p)
         long double bottom = (b11 - b10) * tx + b10;
 
         if ((bottom - top) * ty + top >= kStepUp) {
-            idx = h->material;
+            idx = (uint8_t)h->material;
             break;
         }
     }
@@ -904,7 +882,7 @@ void Coll_Lines(Terrain *t, CollHit *results, const Vec3d *starts, const Vec3d *
         else if (e->z < lo.z)
             lo.z = e->z;
         results[i].found = 0;
-        results[i].unk0 = 0;
+        results[i].task = 0;
         results[i].pos = *e;
     }
     hi.x = hi.x + 2.0;
@@ -916,10 +894,10 @@ void Coll_Lines(Terrain *t, CollHit *results, const Vec3d *starts, const Vec3d *
     q.starts = starts;
     q.ends = ends;
     q.count = count;
-    q.unkC = unk;
-    q.unk10 = unk2;
-    q.unk14 = 0;
-    q.unk18 = 0;
+    q.slot = unk;
+    q.slotArg = (char *)unk2;
+    q.mesh = 0;
+    q.allFaces = 0;
     q.magic = 0x41424344;
     q.results = results;
     if (flags & 0x7FFFFFFF) {
@@ -936,9 +914,9 @@ void Coll_Lines(Terrain *t, CollHit *results, const Vec3d *starts, const Vec3d *
         return;
     Coll_ResetMods();
     Coll_InitCursor(&c, t);
-    a = (Coll_Fistp(hi.x) + t->origin[0]) ^ (Coll_Fistp(lo.x) + t->origin[0]);
-    b = (Coll_Fistp(hi.y) + t->origin[1]) ^ (Coll_Fistp(lo.y) + t->origin[1]);
-    d = (Coll_Fistp(hi.z) + t->origin[2]) ^ (Coll_Fistp(lo.z) + t->origin[2]);
+    a = (Coll_Fistp(hi.x) + t->offset[0]) ^ (Coll_Fistp(lo.x) + t->offset[0]);
+    b = (Coll_Fistp(hi.y) + t->offset[1]) ^ (Coll_Fistp(lo.y) + t->offset[1]);
+    d = (Coll_Fistp(hi.z) + t->offset[2]) ^ (Coll_Fistp(lo.z) + t->offset[2]);
     depth = 30 - Coll_TopBit(d | b | a);
     if (depth > 16)
         depth = 16;
@@ -969,10 +947,10 @@ void Coll_Lines(Terrain *t, CollHit *results, const Vec3d *starts, const Vec3d *
         r->dist = h.dist;
         r->pos = h.pos;
         r->material = h.material;
-        r->material2 = h.material2;
+        r->back = h.back;
         r->normal = h.normal;
         r->found = 1;
-        r->unk0 = 0;
+        r->task = 0;
     }
 }
 HOOK(0x4CC2A0, Coll_Lines);

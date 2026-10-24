@@ -1,36 +1,9 @@
 #include "hook.h"
 #include "igi.h"
+#include "res/restypes.h"
+#include "qvertex/qvertextypes.h"
 
-typedef struct DrawVertex {
-    float x, y, z;
-    float u, v;
-    float unk14;
-    float r, g, b;
-} DrawVertex;
-
-typedef struct DrawCmd {
-    int unk0;
-    int unk4;
-    int unk8;
-    int count;
-    DrawVertex *verts;
-} DrawCmd;
-
-typedef struct SpriteFrame {
-    int unk0;
-    int unk4;
-    short x, y, w, h;
-    int unk10;
-    float u0, v0, u1, v1;
-} SpriteFrame;
-
-typedef struct SpriteSheet {
-    int unk0;
-    int unk4;
-    SpriteFrame *frames;
-} SpriteSheet;
-
-typedef void (*DrawFunc)(DrawCmd *cmd);
+typedef void (*DrawFunc)(QVertexStrip *cmd);
 
 extern int gDrawUnkA84A50;
 extern int gQVertexStrip;
@@ -39,7 +12,7 @@ extern DrawFunc gRenderFuncs[];
 
 #define COLOR_SCALE (1.0f / 128)
 
-static void SetColor(DrawVertex *v, float r, float g, float b)
+static void SetColor(QVertex *v, float r, float g, float b)
 {
     v->r = r;
     v->g = g;
@@ -50,8 +23,8 @@ static void SetColor(DrawVertex *v, float r, float g, float b)
 static void DrawRect(float x, float y, float w, float h, float r, float g, float b, float unk14, float z,
                      int unk4, int unk8)
 {
-    DrawVertex v[2];
-    DrawCmd cmd;
+    QVertex v[2];
+    QVertexStrip cmd;
 
     r *= COLOR_SCALE;
     g *= COLOR_SCALE;
@@ -61,18 +34,18 @@ static void DrawRect(float x, float y, float w, float h, float r, float g, float
     v[0].z = z;
     v[0].u = 0.0f;
     v[0].v = 0.0f;
-    v[0].unk14 = unk14;
+    v[0].a = unk14;
     SetColor(&v[0], r, g, b);
     v[1].x = x + w;
     v[1].y = y + h;
     v[1].z = z;
     v[1].u = 1.0f;
     v[1].v = 1.0f;
-    v[1].unk14 = unk14;
+    v[1].a = unk14;
     SetColor(&v[1], r, g, b);
-    cmd.unk0 = 0;
-    cmd.unk4 = unk4;
-    cmd.unk8 = unk8;
+    cmd.lines = 0;
+    cmd.flags = unk4;
+    cmd.queue = unk8;
     cmd.count = 2;
     cmd.verts = v;
     gDrawUnkA84A50 = 0;
@@ -111,8 +84,8 @@ void Draw_RectGradient(float x, float y, float w, float h,
                        float r2, float g2, float b2, float r3, float g3, float b3,
                        float a0, float a1, float a2, float a3, float z, int unk4, int unk8)
 {
-    DrawVertex v[4];
-    DrawCmd cmd;
+    QVertex v[4];
+    QVertexStrip cmd;
     float x2 = x + w, y2 = y + h;
     int i;
 
@@ -123,17 +96,17 @@ void Draw_RectGradient(float x, float y, float w, float h,
         v[i].u = i & 1 ? 1.0f : 0.0f;
         v[i].v = i & 2 ? 1.0f : 0.0f;
     }
-    v[0].unk14 = a0;
-    v[1].unk14 = a1;
-    v[2].unk14 = a2;
-    v[3].unk14 = a3;
+    v[0].a = a0;
+    v[1].a = a1;
+    v[2].a = a2;
+    v[3].a = a3;
     SetColor(&v[0], r0 * COLOR_SCALE, g0 * COLOR_SCALE, b0 * COLOR_SCALE);
     SetColor(&v[1], r1 * COLOR_SCALE, g1 * COLOR_SCALE, b1 * COLOR_SCALE);
     SetColor(&v[2], r2 * COLOR_SCALE, g2 * COLOR_SCALE, b2 * COLOR_SCALE);
     SetColor(&v[3], r3 * COLOR_SCALE, g3 * COLOR_SCALE, b3 * COLOR_SCALE);
-    cmd.unk0 = 0;
-    cmd.unk4 = unk4;
-    cmd.unk8 = unk8;
+    cmd.lines = 0;
+    cmd.flags = unk4;
+    cmd.queue = unk8;
     cmd.count = 4;
     cmd.verts = v;
     gDrawUnkA84A50 = 0;
@@ -142,12 +115,12 @@ void Draw_RectGradient(float x, float y, float w, float h,
 }
 HOOK(0x4B4BE0, Draw_RectGradient);
 
-static void DrawSprite(const SpriteSheet *sheet, float x, float y, float r, float g, float b, int frame,
+static void DrawSprite(const Sprite *sheet, float x, float y, float r, float g, float b, int frame,
                        int unk4, int unk8, float z)
 {
     const SpriteFrame *f = &sheet->frames[frame];
-    DrawVertex v[2];
-    DrawCmd cmd;
+    QVertex v[2];
+    QVertexStrip cmd;
 
     r *= COLOR_SCALE;
     g *= COLOR_SCALE;
@@ -155,35 +128,35 @@ static void DrawSprite(const SpriteSheet *sheet, float x, float y, float r, floa
     v[0].x = f->x + x;
     v[0].y = f->y + y;
     v[0].z = z;
-    v[0].u = f->u0;
-    v[0].v = f->v0;
-    v[0].unk14 = 1.0f;
+    v[0].u = f->uv[0];
+    v[0].v = f->uv[1];
+    v[0].a = 1.0f;
     SetColor(&v[0], r, g, b);
     v[1].x = (f->x + f->w) + x;
     v[1].y = (f->y + f->h) + y;
     v[1].z = z;
-    v[1].u = f->u1;
-    v[1].v = f->v1;
-    v[1].unk14 = 1.0f;
+    v[1].u = f->uv[2];
+    v[1].v = f->uv[3];
+    v[1].a = 1.0f;
     SetColor(&v[1], r, g, b);
-    cmd.unk0 = 0;
-    cmd.unk4 = unk4;
-    cmd.unk8 = unk8;
+    cmd.lines = 0;
+    cmd.flags = unk4;
+    cmd.queue = unk8;
     cmd.count = 2;
     cmd.verts = v;
-    gDrawUnkA84A50 = f->unk0;
-    gDrawUnkA84A58 = sheet->unk0;
+    gDrawUnkA84A50 = (int)f->texture;
+    gDrawUnkA84A58 = (int)sheet->palette;
     gRenderFuncs[gQVertexStrip](&cmd);
 }
 
-void Draw_Sprite(const SpriteSheet *sheet, float x, float y, float r, float g, float b, int frame, int unk4,
+void Draw_Sprite(const Sprite *sheet, float x, float y, float r, float g, float b, int frame, int unk4,
                  int unk8)
 {
     DrawSprite(sheet, x, y, r, g, b, frame, unk4, unk8, 1.0f);
 }
 HOOK(0x4B4E00, Draw_Sprite);
 
-void Draw_SpriteZ(const SpriteSheet *sheet, float x, float y, float r, float g, float b, int frame, int unk4,
+void Draw_SpriteZ(const Sprite *sheet, float x, float y, float r, float g, float b, int frame, int unk4,
                   int unk8, float z)
 {
     DrawSprite(sheet, x, y, r, g, b, frame, unk4, unk8, z);

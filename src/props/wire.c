@@ -54,7 +54,7 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 /* "Wire" (0x138 bytes): a model stretched between two points that humans can
    hang on (use kind 9) */
 typedef struct Wire {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d start;        /* 0xF0 */
     Vec3d end;          /* 0x108 */
     char model[0x10];   /* 0x120 */
@@ -148,7 +148,7 @@ void Wire_Delete(Wire *w)
         if (fn)
             fn(w);
     }
-    DynCube_Remove(w->obj.room, w);
+    DynCube_Remove(w->obj.world, w);
 }
 HOOK(0x43F360, Wire_Delete);
 
@@ -188,7 +188,7 @@ void Wire_ParamsChanged(Wire *w)
     mid.z = sz * kHalfD;
     scale = max_scale(&w->obj);
     radius = VirModel_GetRadius(w->obj.model) * scale;
-    DynCube_Move(w->obj.room, w, &mid, radius);
+    DynCube_Move(w->obj.world, w, &mid, radius);
 }
 HOOK(0x43F3D0, Wire_ParamsChanged);
 

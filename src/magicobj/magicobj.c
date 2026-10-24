@@ -47,7 +47,7 @@ ORIG(0x4E5610, void, CellMask_FillTriangle, (int target, float ax, float ay, flo
 #define DIR_CALLBACK_4C2F90 (FN(0x4C2F90, MagicObj_LoadDirEntry))
 
 extern MagicHandler gTaskHandlers[][0x180];
-extern MagicNode *gTaskStack[];
+extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern char gRigidEvents[];
 extern uint16_t gRigidType;
@@ -91,27 +91,16 @@ void RigidDynCubeObj_CreateHandler(RigidDynCubeObj *o, RigidCreateArg *arg)
 }
 HOOK(0x4C3010, RigidDynCubeObj_CreateHandler);
 
-void RigidDynCubeObj_GetInfo(RigidDynCubeObj *o, RigidInfo *info)
+void RigidDynCubeObj_GetInfo(RigidDynCubeObj *o, ObjInfo *info)
 {
-    memcpy(info->pos, o->pos, sizeof(info->pos));
-    info->unk18[0] = 0;
-    info->unk18[1] = 0;
-    info->unk18[2] = 0;
+    memcpy(&info->pos, &o->pos, sizeof(info->pos));
+    info->velocity = (Vec3f){0};
     info->matrix = o->matrix;
     info->radius = radius(o);
     if (info->name)
         memcpy(info->name, "Rigid Object", 13);
 }
 HOOK(0x4C3110, RigidDynCubeObj_GetInfo);
-
-typedef struct MeshPart {
-    int triCount;
-    int vertCount;
-    int unk08[2];
-    uint16_t (*tris)[4];
-    float (*verts)[4];
-    int unk18[2];
-} MeshPart;
 
 /* draws both collision meshes from above as 2D triangles */
 void RigidDynCubeObj_DrawCellMask(RigidDynCubeObj *o, RigidDrawView *view)
@@ -130,8 +119,8 @@ void RigidDynCubeObj_DrawCellMask(RigidDynCubeObj *o, RigidDrawView *view)
         h(o, &visible);
     if (!visible)
         return;
-    px = o->pos[0];
-    py = o->pos[1];
+    px = o->pos.x;
+    py = o->pos.y;
     part = *(MeshPart **)(*(char **)(*(char **)((char *)o->model[o->lod] + 0xC) + 0xC) + 0x2C);
     for (j = 0; j < 2; j++, part++) {
         for (i = 0; i < part->vertCount; i++) {
@@ -164,7 +153,7 @@ HOOK(0x4C31F0, RigidDynCubeObj_DrawCellMask);
 
 double *DynCubeObj_GetPosition(RigidDynCubeObj *o)
 {
-    return o->pos;
+    return &o->pos.x;
 }
 HOOK(0x4C3440, DynCubeObj_GetPosition);
 
@@ -235,18 +224,18 @@ HOOK(0x4C4520, DefineMagicObj);
 
 void RigidDynCubeObj_ActivateHandler(RigidDynCubeObj *o, int *arg)
 {
-    MagicNode *n;
+    Task *n;
     MagicHandler h;
 
     if (arg[0] == 0)
-        DynCube_Add(arg[1], o, o->pos, radius(o), arg[2]);
+        DynCube_Add(arg[1], o, &o->pos.x, radius(o), arg[2]);
     n = o->task.head;
     if (!n->next)
         return;
     /* same walk as Task_BroadcastChildren */
     while (n) {
         gTaskStack[gTaskStackTop++] = n->next && n->next->next ? n->next : NULL;
-        h = gTaskHandlers[World_GetEvent0()][((MagicTask *)n)->type];
+        h = gTaskHandlers[World_GetEvent0()][((Task *)n)->type];
         if (h)
             h(n, arg);
         n = gTaskStack[--gTaskStackTop];
@@ -257,7 +246,7 @@ HOOK(0x4C4660, RigidDynCubeObj_ActivateHandler);
 void RigidDynCubeObj_MoveHandler(RigidDynCubeObj *o, char *arg)
 {
     DynCube_Move(gWorld, o, arg, radius(o));
-    o->matrix = *(MagicMatrix *)(arg + 0x18);
+    o->matrix = *(Matrix *)(arg + 0x18);
 }
 HOOK(0x4C4780, RigidDynCubeObj_MoveHandler);
 
@@ -345,7 +334,7 @@ HOOK(0x4C5700, RigidDynCubeObj_GetEvent3);
 void RigidDynCubeObj_Init(int unk68, RigidDynCubeObj *o, void **model)
 {
     DynCubeObj_ClearRenderData(o);
-    o->unk68 = unk68;
+    o->world = (void *)unk68;
     o->model = model;
     memset(&o->matrix, 0, sizeof(o->matrix));
     o->matrix.m[0] = 1.0f;
@@ -357,18 +346,16 @@ void RigidDynCubeObj_Init(int unk68, RigidDynCubeObj *o, void **model)
     o->unkE4 = 0;
     o->lod = 0;
     o->unkD4 = 2;
-    o->unkA8[0] = 1.0f;
-    o->unkA8[1] = 1.0f;
-    o->unkA8[2] = 1.0f;
-    o->unkB4[0] = 0;
-    o->unkB4[1] = 0;
-    o->unkB4[2] = 0;
+    o->rgb[0].x = 1.0f;
+    o->rgb[0].y = 1.0f;
+    o->rgb[0].z = 1.0f;
+    o->rgb[1] = (Vec3f){0};
     memset(o->unkC0, 0, sizeof(o->unkC0));
     o->unkD8 = 1;
-    o->unkDC = 0;
+    o->lightmapRefs = 0;
     o->unkE0 = 1;
-    o->unkE8 = 0;
-    o->unkEC = 1;
+    o->attached = 0;
+    o->hidden = 1;
 }
 HOOK(0x4C5710, RigidDynCubeObj_Init);
 

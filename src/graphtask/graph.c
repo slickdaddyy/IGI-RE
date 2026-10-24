@@ -2,59 +2,8 @@
 #include "hook.h"
 #include "igi.h"
 #include "graphtask/graphtask.h"
-
-typedef struct GraphLink GraphLink;
-
-typedef struct Graph {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x18];
-    int id;             /* 0x50 */
-    int unk54;
-    int capacity;       /* 0x58, nMaxNodes */
-    int nodeCount;      /* 0x5C */
-    int linkCount;      /* 0x60 */
-    char attached;
-    char unk65;         /* PushButton parameter */
-    char unk66[2];
-    char unk68;         /* two Bool8 parameters */
-    char unk69;
-    char unk6A[2];
-    char *nodes;        /* 0x6C */
-} Graph;
-
-typedef struct GraphNode {
-    int id;
-    int unk4;
-    Vec3d pos;          /* 0x08 */
-    float angle;        /* 0x20 */
-    float radius;       /* 0x24 */
-    char unk28[0xC];
-    char criteria[0x100]; /* 0x34 */
-    Graph *graph;       /* 0x134 */
-    void *material;     /* 0x138 */
-    GraphLink *links[64]; /* 0x13C */
-} GraphNode;
-
-typedef struct GraphStream {
-    int unk0;
-    void *file;
-} GraphStream;
-
-/* passed to the field handlers while a graph file is read */
-typedef struct GraphStreamValue {
-    GraphStream *stream;
-    Graph *graph;
-    GraphNode *node;
-    GraphLink *link;
-    int type;
-} GraphStreamValue;
-
-/* a graph task reference, kept in gGraphRefs */
-typedef struct GraphRef {
-    Node node;
-    Graph **ref;
-} GraphRef;
+#include "graphnode/graphnodetypes.h"
+#include "param/paramtypes.h"
 
 /* node record size per task type */
 typedef struct GraphNodeSize {
@@ -62,30 +11,13 @@ typedef struct GraphNodeSize {
     int size;
 } GraphNodeSize;
 
-/* a free field handler slot */
-typedef struct GraphStreamHandler {
-    Node node;
-    int hash;
-    int type;
-    void (*fn)(GraphStreamValue *v);
-} GraphStreamHandler;
-
-typedef struct ParamCursor {
-    int index;
-    void *args;
-} ParamCursor;
-
-_Static_assert(offsetof(GraphNode, links) == 0x13C, "GraphNode");
-_Static_assert(sizeof(GraphNode) == 0x240, "GraphNode size");
-_Static_assert(offsetof(Graph, nodes) == 0x6C, "Graph");
-
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
-ORIG(0x401B20, void, TaskRef_Remove, (Graph **ref));
+ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4AF8F0, void, List_AddTail, (List *list, Node *node));
 ORIG(0x4AF960, void, List_Remove, (Node *node));
@@ -237,7 +169,7 @@ void Graph_PreDelete(Graph *g)
     int i, j;
 
     for (next = r->node.next; next; next = next->next) {
-        if (r->ref && *r->ref == g) {
+        if (r->ref && *r->ref == (Task *)g) {
             TaskRef_Remove(r->ref);
             List_Remove(&r->node);
             Mem_Free(r);
@@ -318,7 +250,7 @@ HOOK(0x4FAF80, Graph_ReadNodePosition);
 
 void Graph_ReadNodeGamma(GraphStreamValue *v)
 {
-    GraphStream_ReadValue(v, &gGraphNodeTemp.angle, 0);
+    GraphStream_ReadValue(v, &gGraphNodeTemp.gamma, 0);
 }
 HOOK(0x4FAFA0, Graph_ReadNodeGamma);
 
@@ -343,7 +275,7 @@ void Graph_ReadNodeCriteria(GraphStreamValue *v)
     GraphNode *t = &gGraphNodeTemp;
 
     GraphStream_ReadValue(v, t->criteria, sizeof(t->criteria));
-    v->node = Graph_AddNode(v->graph, t->id, &t->pos, t->angle, t->radius, t->material, t->criteria, 0);
+    v->node = Graph_AddNode(v->graph, t->id, &t->pos, t->gamma, t->radius, t->material, t->criteria, 0);
 }
 HOOK(0x4FB030, Graph_ReadNodeCriteria);
 

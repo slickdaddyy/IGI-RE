@@ -5,68 +5,10 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "param/paramtypes.h"
+#include "magicobj/magicobjtypes.h"
 
 typedef void (*TaskFn)();
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
-
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-/* "RigidDynCubeObj" (0xF0 bytes), the fields used here */
-typedef struct Obj {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x30];
-    int world;          /* 0x68 */
-    void **model;       /* 0x6C, VirModel */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0x4C];
-} Obj;
-
-/* create argument of the RigidDynCubeObj kinds made by DefineMagicObj */
-typedef struct MagicArg {
-    const char *model;
-    int world;
-    Vec3d pos;          /* 0x08 */
-    Vec3d offset;       /* 0x20, from the owner */
-    Matrix matrix;      /* 0x38 */
-    Matrix local;       /* 0x60 */
-    void *owner;        /* 0x88 */
-    void *data;         /* 0x8C, the DefineMagicObj data block */
-} MagicArg;
 
 /* what a magic object keeps from its create argument, at 0xF0 */
 typedef struct MagicPart {
@@ -79,21 +21,12 @@ typedef struct MagicPart {
 
 /* "ExplodeObject" (0x238 bytes), the fields used here */
 typedef struct ExplodeObj {
-    Obj o;
+    RigidDynCubeObj o;
     char unkF0[0xA0];
     char exploded;      /* 0x190 */
     char unk191[0xA7];
 } ExplodeObj;
 
-/* {count, names} extra data of an enum parameter */
-typedef struct ParamEnum {
-    int count;
-    char **names;
-} ParamEnum;
-
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
-_Static_assert(sizeof(Obj) == 0xF0, "Obj");
-_Static_assert(offsetof(MagicArg, data) == 0x8C, "MagicArg");
 _Static_assert(sizeof(MagicPart) == 0x4C, "MagicPart");
 _Static_assert(sizeof(ExplodeObj) == 0x238, "ExplodeObj");
 
@@ -153,7 +86,7 @@ static inline int fne(long double a, long double b)
 }
 
 /* the largest scale factor, compared like the original */
-static inline float obj_scale(const Obj *o)
+static inline float obj_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] < o->scale[1] ? o->scale[1] : o->scale[2];
 

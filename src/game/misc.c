@@ -7,6 +7,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "game/game.h"
+#include "coll/colltypes.h"
 
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
 ORIG(0x406220, char *, Profile_GetActive, (void));
@@ -27,15 +28,6 @@ extern int gCheatsEnabled;
 
 #define KEY_LCONTROL 0x1D
 #define KEY_LSHIFT 0x2A
-
-/* only the fields read here */
-typedef struct CollHit {
-    char unk0[0x18];
-    double z;
-    char unk20[0x38];
-    int found;
-    char unk5C[0x14];
-} CollHit;
 
 /* a task with model instances */
 typedef struct ModelTask {
@@ -99,7 +91,7 @@ void Game_DropToGround(void *task, Vec3d *pos)
         if (!hit.found)
             return;
     }
-    memcpy(&pos->z, &hit.z, sizeof(double));
+    memcpy(&pos->z, &hit.pos.z, sizeof(double));
 }
 HOOK(0x4149B0, Game_DropToGround);
 

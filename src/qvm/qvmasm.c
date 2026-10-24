@@ -5,40 +5,14 @@
 #include "igi.h"
 #include "orig.h"
 #include "qvm/qvm.h"
+#include "qasm/qasmtypes.h"
 
 /* Assembles QVM assembler text into a "LOOP" file. */
-
-typedef struct QvmToken {
-    int unk00[2];
-    char text[0x2BC];
-    int type;
-} QvmToken;
 
 enum {
     TOKEN_LABEL = 10,
     TOKEN_WORD = 9,
 };
-
-typedef struct QvmAsm {
-    int pc;
-    int failed;
-    int unk08;
-    int pass;
-    void *file;
-    QvmToken *token;
-    void *lexer;
-    void *labelTable;
-    List labels;
-    List symbols;   /* names used by the code */
-    List strings;   /* string constants */
-    List fixups;
-} QvmAsm;
-
-typedef struct QvmLabelRef {
-    Node node;
-    int offset;     /* where the 4 byte displacement goes */
-    int base;       /* pc it is relative to */
-} QvmLabelRef;
 
 typedef struct QvmLabel {
     Node node;
@@ -48,34 +22,10 @@ typedef struct QvmLabel {
     char name[0x80];
 } QvmLabel;
 
-typedef struct QvmFixup {
-    Node node;
-    int offset;
-    int value;
-} QvmFixup;
-
 typedef struct QvmText {
     Node node;
     char text[];
 } QvmText;
-
-typedef struct QvmHeader {
-    char magic[4];
-    int version;
-    int unk08;
-    int symOffsets;
-    int symText;
-    int symTableSize;
-    int symTextSize;
-    int strOffsets;
-    int strText;
-    int strTableSize;
-    int strTextSize;
-    int code;
-    int codeSize;
-    int stackSize;
-    int typeStackSize;
-} QvmHeader;
 
 typedef void (*QvmAsmCallback)(const char *msg, void *data);
 
@@ -204,7 +154,7 @@ int QvmAsm_Assemble(const char *path, const char *source)
     QvmLex_Init(lexer, &rules, reader);
     memset(&a, 0, sizeof(a));
     a.token = &token;
-    a.lexer = lexer;
+    a.lexer = (struct QvmLexer *)lexer;
     QvmAsm_InitList(&a.labels);
     QvmAsm_InitList(&a.symbols);
     QvmAsm_InitList(&a.strings);

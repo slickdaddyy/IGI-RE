@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "comprun/comprun.h"
+#include "ammotype/ammotypetypes.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
@@ -19,20 +20,6 @@ ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, void *results, Vec3d *starts, Vec3d *ends, int count, char unk,
                                   void *query, unsigned int flags));
 ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
-
-/* what Weapon_Fire hands to the weapon's task type */
-typedef struct FireArgs {
-    void *unk0;
-    void *unk4;
-    Vec3d *pos;
-    int unkC;
-    int unk10;
-    Matrix *matrix;
-    int unk18;
-    int unk1C;
-    char *weapon;
-    int unk24;
-} FireArgs;
 
 /* the hit message a stab sends to the task it hits */
 typedef struct StabHit {
@@ -100,8 +87,8 @@ int KnifeStab_Try(FireArgs *f, float angle)
     end.y = start.y + dy;
     end.z = start.z + dz;
     query.unk4 = 0;
-    query.unk8 = f->unk4;
-    query.unkC = f->unk0;
+    query.unk8 = (void *)f->unk04;
+    query.unkC = f->weapon;
     query.unk10 = 1.0f;
     {
         uint8_t ev = Game_GetEvent7();
@@ -115,9 +102,9 @@ int KnifeStab_Try(FireArgs *f, float angle)
     msg.dir[1] = m.m[4];
     msg.dir[2] = m.m[7];
     msg.unk14 = 0;
-    msg.weapon = f->weapon;
+    msg.weapon = f->type;
     msg.unk1C = f->unk24;
-    msg.damage = *(float *)(f->weapon + 0x654);
+    msg.damage = *(float *)(f->type + 0x654);
     victim = *(Task **)hit;
     if (!victim)
         return 0;

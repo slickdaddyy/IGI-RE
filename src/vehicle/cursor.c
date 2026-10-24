@@ -3,22 +3,10 @@
 #include "hook.h"
 #include "igi.h"
 #include "vehicle/vehicle.h"
+#include "widget/widgettypes.h"
 
 ORIG(0x48F130, int, AppContext_IsFullscreen, (void));
-ORIG(0x491CF0, Display *, Display_GetMode, (void));
-
-/* the mouse pointer of the menus */
-typedef struct Cursor {
-    Task task;
-    void *owner;
-    int x, y;
-    int hotX, hotY;
-    void *sprite;
-    int prevButtons;
-    int buttons;
-} Cursor;
-
-_Static_assert(sizeof(Cursor) == 0x40, "Cursor");
+ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 
 extern uint16_t gCursorType;
 extern int gCursorWindowX;

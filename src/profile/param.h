@@ -4,28 +4,10 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "param/paramtypes.h"
 
 /* Task parameters: a type's table lists the fields a script may set,
    with their offset, value type and a range or enum list. */
-
-typedef struct ParamEntry {
-    int offset;
-    void *type;
-    void *extra;
-    char flags;
-    char unk0D[3];
-} ParamEntry;
-
-typedef struct ParamTable {
-    int count;
-    int max;
-    ParamEntry *entries;
-} ParamTable;
-
-typedef union ParamRange {
-    struct { int min, max; } i;
-    struct { float min, max; } f;
-} ParamRange;
 
 ORIG(0x4F0CF0, void *, Task_RunScript, (void *parent, const char *path, int unk));
 ORIG(0x4F0EF0, void *, Param_PushButton, (void));

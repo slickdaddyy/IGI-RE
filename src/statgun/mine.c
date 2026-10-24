@@ -8,22 +8,6 @@ FN_EXTERN(Mine_ParamChangedHandler);
 FN_EXTERN(Mine_ProximityHandler);
 FN_EXTERN(Mine_RunHandler);
 
-/* "Mine" (0x250 bytes), a placed mine, an ExplodeObject */
-typedef struct Mine {
-    Task task;
-    char unk20[0x150];
-    char model[0xC8];   /* 0x170 */
-    int unk238;
-    int unk23C;
-    float unk240;
-    float unk244;
-    char unk248;
-    char pad249[7];
-} Mine;
-
-_Static_assert(offsetof(Mine, unk238) == 0x238, "Mine");
-_Static_assert(sizeof(Mine) == 0x250, "Mine");
-
 extern uint16_t gMineType;
 extern void *gMineParams;
 extern void *gMineList;
@@ -67,8 +51,8 @@ void Mine_Open(void)
     TaskType_SetHandler(gMineType, ComputerObject_GetEvent0(), HANDLER_475F30);
     gMineList = QTaskList_New(0x40);
     gMineParams = ParamTable_Extend(ExplodeObject_GetParams(), 2);
-    ParamTable_Add(gMineParams, &m, &m.unk244, Param_Real32(), 7, NULL);
-    ParamTable_Add(gMineParams, &m, &m.unk240, Param_Real32(), 7, NULL);
+    ParamTable_Add(gMineParams, &m, &m.radius, Param_Real32(), 7, NULL);
+    ParamTable_Add(gMineParams, &m, &m.delay, Param_Real32(), 7, NULL);
     Script_RegisterConstant("TASKTYPE_MINE", gMineType);
 }
 HOOK(0x475AC0, Mine_Open);
@@ -81,11 +65,11 @@ void Mine_Create(Mine *m, void *arg)
     HANDLER(0, ExplodeObject_GetType())(m, arg);
     ExplodeObject_Setup(m, 1.0f, 2.0f, 0.0f, 1.0f, 0, 5, 1, "explo_proxy");
     crt_sprintf(m->model, "136_01_1");
-    m->unk238 = 0;
-    m->unk23C = 0;
-    m->unk240 = 0.75f;
-    m->unk244 = 3.0f;
-    m->unk248 = 0;
+    m->armDelay = 0;
+    m->countdown = 0;
+    m->delay = 0.75f;
+    m->radius = 3.0f;
+    m->triggered = 0;
 }
 HOOK(0x475C10, Mine_Create);
 

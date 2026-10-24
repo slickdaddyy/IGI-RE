@@ -1,25 +1,12 @@
 #include "hook.h"
 #include "igi.h"
 #include "res/sprite.h"
+#include "qvertex/qvertextypes.h"
 
 ORIG(0x4B0E70, int, RenderMode_CreateMethod, (const char *name));
 ORIG(0x4B0EB0, void, RenderMode_DeleteMethod, (int id));
 ORIG(0x509930, void, QVertex_InitDriver, (void));
 ORIG(0x509960, void, QVertex_ShutdownDriver, (void));
-
-typedef struct QVertex {
-    float x, y, z;
-    float u, v;
-    float a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
 
 extern void (*gRenderFuncs[])(QVertexStrip *);
 extern Texture *gQVertexTexture;
@@ -45,9 +32,9 @@ static void QVertex_Draw(Sprite *s, Texture *t, int untextured, unsigned int fla
 {
     QVertexStrip strip;
 
-    strip.untextured = untextured;
+    strip.lines = untextured;
     strip.flags = flags;
-    strip.unk8 = unk8;
+    strip.queue = unk8;
     strip.count = count;
     strip.verts = verts;
     gQVertexTexture = t;

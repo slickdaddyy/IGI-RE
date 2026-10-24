@@ -5,20 +5,8 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "editobj/editobjtypes.h"
+#include "sound/soundtypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -34,87 +22,6 @@ typedef struct TagItem {
     } v;
 } TagItem;
 
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major, and a counter */
-typedef struct Matrix {
-    float m[9];
-    int stamp;
-} Matrix;
-
-/* "SplineObjSegment" (0x5B8), the bent model between two waypoints; see notes/sound.md */
-typedef struct SplineObjSegment {
-    Task task;
-    Vec3d pos;
-    char unk38[0xA8 - 0x38];
-    Vec3f unkA8;
-    Vec3f unkB4;
-    char unkC0[0xF8 - 0xC0];
-    float length;
-    float start;
-    float end;
-    float segPos[21][3];
-    Matrix segRot[21];          /* [20] overlaps the spare word before segLength */
-    float segLength[20];
-    int unk598;
-    int segments;
-} SplineObjSegment;
-
-/* "SplineObj" (0x68), the owner of a chain of waypoints */
-typedef struct SplineObj {
-    Task task;
-    int unk20;
-    int maxSegments;
-    float length;
-    char unk2C[0x4C - 0x2C];
-    char snap;
-    char collide;
-    char rigid;
-    char autoOrient;
-    Vec3f unk50;
-    Vec3f unk5C;
-} SplineObj;
-
-/* "SplineObjWaypoint" (0x1A8), a RigidDynCubeObj; seg runs from the previous waypoint to this one */
-typedef struct SplineObjWaypoint {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    void *world;
-    void **model;
-    Matrix matrix;
-    float scale[3];
-    char unkA4[0xF0 - 0xA4];
-    SplineObjSegment *seg;
-    int unkF4;
-    Vec3d point;
-    Matrix rot;
-    char unk138[0x40];
-    char modelName[16];
-    char segModel[16];
-    int segments;
-    void *tree;
-    char inTree;
-    char straight;
-    char rigid;
-    char unk1A3;
-    char reversed;
-    char autoOrient;
-    char unk1A6[2];
-} SplineObjWaypoint;
-
 _Static_assert(sizeof(TagItem) == 0x224, "TagItem");
-_Static_assert(offsetof(SplineObjSegment, segRot) == 0x200, "segRot");
-_Static_assert(offsetof(SplineObjSegment, segments) == 0x59C, "segments");
-_Static_assert(sizeof(SplineObj) == 0x68, "SplineObj");
-_Static_assert(offsetof(SplineObjWaypoint, seg) == 0xF0, "seg");
-_Static_assert(offsetof(SplineObjWaypoint, modelName) == 0x178, "modelName");
-_Static_assert(sizeof(SplineObjWaypoint) == 0x1A8, "SplineObjWaypoint");
 
 #endif

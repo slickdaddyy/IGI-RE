@@ -11,7 +11,7 @@ ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
-ORIG(0x401CC0, RigidObj *, Task_FindAncestor, (void *task, uint16_t type));
+ORIG(0x401CC0, RigidDynCubeObj *, Task_FindAncestor, (void *task, uint16_t type));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4C3440, Vec3d *, DynCubeObj_GetPosition, (void *obj));
@@ -60,7 +60,7 @@ static inline void mat_mul(Matrix *out, const Matrix *a, const Matrix *b, const 
             n.m[i * 3 + j] = (a->m[i * 3 + k0] * b->m[k0 * 3 + j] + a->m[i * 3 + k1] * b->m[k1 * 3 + j]) +
                              a->m[i * 3 + k2] * b->m[k2 * 3 + j];
     }
-    n.unk24 = a->unk24 + b->unk24 + 1;
+    n.count = a->count + b->count + 1;
     *out = n;
 }
 
@@ -72,11 +72,11 @@ static float radius(EditRigidObj *o)
 }
 
 /* RigidDynCubeObj move event: follow the object this one sits on */
-void EditRigidObj_Move(EditRigidObj *o, MoveMsg *msg)
+void EditRigidObj_Move(EditRigidObj *o, MoveArg *msg)
 {
     static const char last[3] = {1, 1, 1};
     const float *m = msg->matrix->m;
-    MoveMsg out;
+    MoveArg out;
     Vec3d p;
 
     p.x = (m[2] * o->offset.z + m[1] * o->offset.y) + m[0] * o->offset.x;
@@ -87,7 +87,7 @@ void EditRigidObj_Move(EditRigidObj *o, MoveMsg *msg)
     o->pos.y = msg->pos->y + o->pos.y;
     o->pos.z = msg->pos->z + o->pos.z;
     mat_mul(&o->matrix, msg->matrix, &o->local, last);
-    DynCube_Move(o->obj.room, o, &o->pos, radius(o));
+    DynCube_Move(o->obj.world, o, &o->pos, radius(o));
     o->obj.matrix = o->matrix;
     out.pos = &o->pos;
     out.matrix = &o->matrix;
@@ -149,7 +149,7 @@ HOOK(0x4F2930, EditRigidObj_Create);
 
 void EditRigidObj_Run(EditRigidObj *o)
 {
-    Task *parts = o->obj.parts;
+    Task *parts = o->obj.attached;
 
     if (parts)
         HANDLER(1, parts->type)(parts);
@@ -159,10 +159,10 @@ HOOK(0x4F2AC0, EditRigidObj_Run);
 
 void EditRigidObj_Delete(EditRigidObj *o)
 {
-    if (o->obj.parts)
-        Task_Delete(o->obj.parts);
+    if (o->obj.attached)
+        Task_Delete(o->obj.attached);
     Sector_RemoveObject(o);
-    DynCube_Remove(o->obj.room, o);
+    DynCube_Remove(o->obj.world, o);
 }
 HOOK(0x4F2B50, EditRigidObj_Delete);
 
@@ -184,13 +184,13 @@ void EditRigidObj_ParamsChanged(EditRigidObj *o, void *arg)
     model = VirModel_Find(o->model);
     if (model)
         RigidDynCubeObj_SetModel(o, model);
-    DynCube_Move(o->obj.room, o, &o->pos, radius(o));
-    Sector_MoveObject(o->obj.room, o, &o->pos);
-    if (o->obj.parts)
-        Task_Delete(o->obj.parts);
-    o->obj.parts = MagicObjContainer_New(NULL, o);
-    RigidDynCubeObj_CreateMagicObjs(o->obj.parts, o, o);
-    BROADCAST(o->obj.parts, Param_GetChangedEvent(), NULL);
+    DynCube_Move(o->obj.world, o, &o->pos, radius(o));
+    Sector_MoveObject(o->obj.world, o, &o->pos);
+    if (o->obj.attached)
+        Task_Delete(o->obj.attached);
+    o->obj.attached = MagicObjContainer_New(NULL, o);
+    RigidDynCubeObj_CreateMagicObjs(o->obj.attached, o, o);
+    BROADCAST(o->obj.attached, Param_GetChangedEvent(), NULL);
     EditRigidObj_Attach(o);
 }
 HOOK(0x4F2B90, EditRigidObj_ParamsChanged);
@@ -199,7 +199,7 @@ HOOK(0x4F2B90, EditRigidObj_ParamsChanged);
 void EditRigidObj_Attach(EditRigidObj *o)
 {
     static const char last[3] = {2, 1, 0};
-    RigidObj *a = Task_FindAncestor(o, RigidDynCubeObj_GetType());
+    RigidDynCubeObj *a = Task_FindAncestor(o, RigidDynCubeObj_GetType());
     const uint32_t *s;
     uint32_t *d;
     long double dz;
@@ -237,8 +237,8 @@ void EditRigidObj_Activate(EditRigidObj *o, WorldMsg *msg)
     DynCube_Add(msg->world, o, &o->pos, radius(o), 2);
     Sector_AddObject(msg->world, o, DynCubeObj_GetPosition(o));
     BROADCAST(&o->obj.task, World_GetEvent0(), msg);
-    if (o->obj.parts)
-        BROADCAST(o->obj.parts, World_GetEvent0(), msg);
+    if (o->obj.attached)
+        BROADCAST(o->obj.attached, World_GetEvent0(), msg);
     o->active = 1;
 }
 HOOK(0x4F30A0, EditRigidObj_Activate);
@@ -246,8 +246,8 @@ HOOK(0x4F30A0, EditRigidObj_Activate);
 void EditRigidObj_Deactivate(EditRigidObj *o, WorldMsg *msg)
 {
     BROADCAST(&o->obj.task, World_GetEvent1(), msg);
-    if (o->obj.parts)
-        BROADCAST(o->obj.parts, World_GetEvent1(), msg);
+    if (o->obj.attached)
+        BROADCAST(o->obj.attached, World_GetEvent1(), msg);
     Sector_RemoveObject(o);
     DynCube_Remove(msg->unk0, o);
     o->active = 0;

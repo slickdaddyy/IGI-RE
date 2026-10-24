@@ -3,6 +3,8 @@
 #include "hook.h"
 #include "igi.h"
 #include "vehicle/vehicle.h"
+#include "heli/helitypes.h"
+#include "loadscreen/loadscreentypes.h"
 
 FN_EXTERN(EditorMagicObj_GetArgSize);
 FN_EXTERN(Rotor_ForwardEvent9);
@@ -21,7 +23,7 @@ ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 
 /* a moving part of a vehicle: door, wheel, rocket pod */
 typedef struct VehiclePart {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d offset;
     Matrix local;
     Task *owner;
@@ -40,25 +42,8 @@ typedef struct DoorParams {
     float open;
 } DoorParams;
 
-/* the vehicle a rocket pod is on */
-typedef struct Vehicle {
-    char unk0[0xF8];
-    float speed;
-    char unkFC[0x8D8 - 0xFC];
-    RefNode *targets;
-} Vehicle;
-
-/* passed to the line of sight filter */
-typedef struct SightFilter {
-    char visible;
-    Task *unk4;
-    Task *self;
-    Task *target;
-} SightFilter;
-
 _Static_assert(offsetof(VehiclePart, owner) == 0x130, "VehiclePart");
 _Static_assert(offsetof(VehiclePart, open) == 0x140, "VehiclePart");
-_Static_assert(offsetof(Vehicle, targets) == 0x8D8, "Vehicle");
 
 extern uint16_t gCarDoorType;
 extern uint16_t gHeliWheelType;
@@ -112,11 +97,11 @@ static void part_turn(VehiclePart *p, const Matrix *m)
     for (i = 0; i < 3; i++)
         for (j = 0; j < 3; j++)
             c.m[i * 3 + j] = m->m[i * 3 + 1] * b[3 + j] + m->m[i * 3 + 2] * b[6 + j] + m->m[i * 3] * b[j];
-    c.unk24 = m->unk24 + p->local.unk24 + 1;
+    c.count = m->count + p->local.count + 1;
     p->obj.matrix = c;
 }
 
-void CarDoor_Create(VehiclePart *p, PartCreateArg *arg);
+void CarDoor_Create(VehiclePart *p, MagicCreateArg *arg);
 void HeliDoor_Run(VehiclePart *p);
 void VehiclePart_Delete(VehiclePart *p);
 void CarDoor_Move(VehiclePart *p, PartMoveArg *arg);
@@ -139,7 +124,7 @@ void CarDoor_Init(void)
 }
 HOOK(0x426630, CarDoor_Init);
 
-void CarDoor_Create(VehiclePart *p, PartCreateArg *arg)
+void CarDoor_Create(VehiclePart *p, MagicCreateArg *arg)
 {
     void **model = VirModel_Find(arg->model);
 
@@ -150,10 +135,10 @@ void CarDoor_Create(VehiclePart *p, PartCreateArg *arg)
     }
     p->offset = arg->offset;
     p->local = arg->local;
-    RigidDynCubeObj_Init(arg->unk4, p, model);
-    DynCube_Add(arg->unk4, p, &arg->pos, part_radius(p), 2);
+    RigidDynCubeObj_Init(arg->world, p, model);
+    DynCube_Add(arg->world, p, &arg->pos, part_radius(p), 2);
     p->obj.matrix = arg->matrix;
-    p->params = arg->params;
+    p->params = arg->data;
     p->owner = arg->owner;
     p->open = 0;
     p->angle = 0;
@@ -162,7 +147,7 @@ HOOK(0x426740, CarDoor_Create);
 
 void VehiclePart_Delete(VehiclePart *p)
 {
-    DynCube_Remove(p->obj.unk68, p);
+    DynCube_Remove(p->obj.world, p);
 }
 HOOK(0x426860, VehiclePart_Delete);
 
@@ -191,14 +176,14 @@ void CarDoor_Move(VehiclePart *p, PartMoveArg *arg)
         for (j = 0; j < 3; j++)
             a.m[i * 3 + j] = r.m[6 + j] * p->local.m[i * 3 + 2] + r.m[j] * p->local.m[i * 3] +
                              r.m[3 + j] * p->local.m[i * 3 + 1];
-    a.unk24 = p->local.unk24 + r.unk24 + 1;
+    a.count = p->local.count + r.count + 1;
     m = arg->matrix->m;
     for (j = 0; j < 3; j++) {
         c.m[j] = a.m[j] * m[0] + a.m[3 + j] * m[1] + a.m[6 + j] * m[2];
         c.m[3 + j] = a.m[6 + j] * m[5] + a.m[j] * m[3] + a.m[3 + j] * m[4];
         c.m[6 + j] = a.m[6 + j] * m[8] + a.m[j] * m[6] + a.m[3 + j] * m[7];
     }
-    c.unk24 = arg->matrix->unk24 + a.unk24 + 1;
+    c.count = arg->matrix->count + a.count + 1;
     p->obj.matrix = c;
 }
 HOOK(0x426880, CarDoor_Move);
@@ -218,7 +203,7 @@ HOOK(0x426CD0, CarDoor_ParseArgs);
 /* line of sight filter: skips the shooter, the target and the shooter's parts */
 void VehiclePart_CollFilter(Task *t, SightFilter *f)
 {
-    if (f->self != t && f->target != t && ((VehiclePart *)t)->owner != f->self)
+    if (f->self2 != t && f->target != t && ((VehiclePart *)t)->owner != f->self2)
         f->visible = 1;
     else
         f->visible = 0;
@@ -243,7 +228,7 @@ void CarDoor_SetOpen(VehiclePart *p, char open)
 }
 HOOK(0x426D80, CarDoor_SetOpen);
 
-void HeliWheel_Create(VehiclePart *p, PartCreateArg *arg);
+void HeliWheel_Create(VehiclePart *p, MagicCreateArg *arg);
 void HeliWheel_Move(VehiclePart *p, PartMoveArg *arg);
 void HeliWheel_ParseArgs(void *task, PartScriptArg *a);
 void HitZone_GetArgSize(void *task, int *out);
@@ -263,7 +248,7 @@ void HeliWheel_Init(void)
 }
 HOOK(0x426D90, HeliWheel_Init);
 
-void HeliWheel_Create(VehiclePart *p, PartCreateArg *arg)
+void HeliWheel_Create(VehiclePart *p, MagicCreateArg *arg)
 {
     void **model = VirModel_Find(arg->model);
 
@@ -274,11 +259,11 @@ void HeliWheel_Create(VehiclePart *p, PartCreateArg *arg)
     }
     p->offset = arg->offset;
     p->local = arg->local;
-    RigidDynCubeObj_Init(arg->unk4, p, model);
-    DynCube_Add(arg->unk4, p, &arg->pos, part_radius(p), 2);
+    RigidDynCubeObj_Init(arg->world, p, model);
+    DynCube_Add(arg->world, p, &arg->pos, part_radius(p), 2);
     p->obj.matrix = arg->matrix;
     p->owner = arg->owner;
-    p->params = arg->params;
+    p->params = arg->data;
 }
 HOOK(0x426E90, HeliWheel_Create);
 
@@ -421,7 +406,7 @@ uint16_t HeliDoor_GetType(void)
 }
 HOOK(0x427820, HeliDoor_GetType);
 
-void RocketPod_Create(VehiclePart *p, PartCreateArg *arg);
+void RocketPod_Create(VehiclePart *p, MagicCreateArg *arg);
 void RocketPod_Run(VehiclePart *p);
 void RocketPod_ParseArgs(void *task, PartScriptArg *a);
 void RocketPod_GetArgSize(void *task, int *out);
@@ -442,7 +427,7 @@ void RocketPod_Init(void)
 }
 HOOK(0x427830, RocketPod_Init);
 
-void RocketPod_Create(VehiclePart *p, PartCreateArg *arg)
+void RocketPod_Create(VehiclePart *p, MagicCreateArg *arg)
 {
     void **model = VirModel_Find(arg->model);
 
@@ -453,10 +438,10 @@ void RocketPod_Create(VehiclePart *p, PartCreateArg *arg)
     }
     p->offset = arg->offset;
     p->local = arg->local;
-    RigidDynCubeObj_Init(arg->unk4, p, model);
-    DynCube_Add(arg->unk4, p, &arg->pos, part_radius(p), 2);
+    RigidDynCubeObj_Init(arg->world, p, model);
+    DynCube_Add(arg->world, p, &arg->pos, part_radius(p), 2);
     p->obj.matrix = arg->matrix;
-    p->params = arg->params;
+    p->params = arg->data;
     p->owner = arg->owner;
     p->cooldown = Random_Int(Game_GetRandom(), *(int *)p->params);
 }
@@ -466,11 +451,11 @@ HOOK(0x427940, RocketPod_Create);
    between delay and twice delay frames */
 void RocketPod_Run(VehiclePart *p)
 {
-    Vehicle *owner = (Vehicle *)p->owner;
+    Heli *owner = (Heli *)p->owner;
     RefNode *n, *next;
 
     if (p->cooldown < 0) {
-        for (n = owner->targets; (next = n->next) != NULL; n = next) {
+        for (n = (RefNode *)owner->light.enemies.head; (next = n->next) != NULL; n = next) {
             const float *m = p->obj.matrix.m;
             Vec3d l, pos, target;
             SightFilter filter;
@@ -498,8 +483,8 @@ void RocketPod_Run(VehiclePart *p)
                 a = Vec3d_YawAngle(l);
             if (a >= kRocketCone)
                 continue;
-            filter.unk4 = &p->obj.task;
             filter.self = &p->obj.task;
+            filter.self2 = &p->obj.task;
             filter.target = *n->ref;
             event = AIDetection_GetEvent0();
             to = DynCubeObj_GetPosition(*n->ref);
@@ -510,8 +495,8 @@ void RocketPod_Run(VehiclePart *p)
             pos.x = m[1] * kRocketReach + pos.x;
             pos.y = (float)(m[4] * kRocketReach) + pos.y;
             pos.z = (float)(m[7] * kRocketReach) + pos.z;
-            target = ((RigidObj *)*n->ref)->pos;
-            speed = owner->speed * kRocketSpeed + kRocketSpeedMin;
+            target = ((RigidDynCubeObj *)*n->ref)->pos;
+            speed = owner->v.body.speed * kRocketSpeed + kRocketSpeedMin;
             Missile_New(Level_GetDynamic(), p, p, &pos, &p->obj.matrix, speed, &target, 0, "700_10_1", 0);
             delay = *(int *)p->params;
             p->cooldown = Random_Int(Game_GetRandom(), delay) + *(int *)p->params;

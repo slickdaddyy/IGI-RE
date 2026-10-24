@@ -5,22 +5,9 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "task/tasktypes.h"
 
 FN_EXTERN(Task_Nothing);
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -47,10 +34,6 @@ extern int gTaskStackTop;
             c_ = gTaskStack[--gTaskStackTop];                           \
         } while (c_);                                                   \
     } while (0)
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4B0C60, void *, Mem_Alloc, (int size, int align));

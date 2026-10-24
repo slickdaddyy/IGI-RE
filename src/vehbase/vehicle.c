@@ -114,12 +114,12 @@ void Vehicle_GetInfo(Vehicle *v, ObjInfo *out)
 {
     float s;
 
-    out->pos = v->obj.pos;
-    out->velocity = v->velocity;
-    out->matrix = v->obj.matrix;
-    s = max_scale(&v->obj);
-    out->unk50 = 0;
-    out->radius = VirModel_GetRadius(v->obj.model) * s;
+    out->pos = v->pos;
+    out->velocity = v->body.vel;
+    out->matrix = v->matrix;
+    s = max_scale((RigidDynCubeObj *)v);
+    out->name = 0;
+    out->radius = VirModel_GetRadius(v->model) * s;
 }
 HOOK(0x4F42D0, Vehicle_GetInfo);
 
@@ -146,16 +146,16 @@ void Vehicle_Activate(Vehicle *v, void *msg)
 {
     v->active = 1;
     HANDLER(World_GetEvent0(), RigidDynCubeObj_GetType())(v, msg);
-    if (v->obj.parts)
-        BROADCAST(v->obj.parts, World_GetEvent0(), msg);
+    if (v->attached)
+        BROADCAST(v->attached, World_GetEvent0(), msg);
 }
 HOOK(0x4F43E0, Vehicle_Activate);
 
 void Vehicle_Deactivate(Vehicle *v, void *msg)
 {
     v->active = 0;
-    if (v->obj.parts)
-        BROADCAST(v->obj.parts, World_GetEvent1(), msg);
+    if (v->attached)
+        BROADCAST(v->attached, World_GetEvent1(), msg);
     HANDLER(World_GetEvent1(), RigidDynCubeObj_GetType())(v, msg);
 }
 HOOK(0x4F44A0, Vehicle_Deactivate);
@@ -167,7 +167,7 @@ void Vehicle_CountInCriteria(CountMsg *msg)
     if (!gVehicles || (n = gVehicles->count) <= 0)
         return;
     for (i = 0; i < n; i++)
-        if (AreaActivate_Contains(msg->criteria, &gVehicles->items[i]->obj.pos))
+        if (AreaActivate_Contains(msg->criteria, &gVehicles->items[i]->pos))
             msg->count++;
 }
 HOOK(0x4F4560, Vehicle_CountInCriteria);
@@ -208,7 +208,7 @@ HOOK(0x4F4640, Vehicle_Free);
 
 void Vehicle_RunParts(Vehicle *v)
 {
-    Task *parts = v->obj.parts;
+    Task *parts = v->attached;
 
     if (parts)
         HANDLER(1, parts->type)(parts);
@@ -231,10 +231,10 @@ void Vehicle_SaveState(Vehicle *v, void **msg)
 {
     VehicleState *s = msg[0];
 
-    s->velocity = v->velocity;
-    s->pos = v->obj.pos;
-    *(Vec3d *)msg[2] = v->obj.pos;
-    s->matrix = v->obj.matrix;
+    s->velocity = v->body.vel;
+    s->pos = v->pos;
+    *(Vec3d *)msg[2] = v->pos;
+    s->matrix = v->matrix;
     memcpy(&s->speed, &v->speed, 8 * sizeof(float));
 }
 HOOK(0x4F46E0, Vehicle_SaveState);
@@ -243,24 +243,24 @@ void Vehicle_LoadState(Vehicle *v, void **msg)
 {
     VehicleState *s = msg[0];
 
-    v->velocity = s->velocity;
-    v->obj.matrix = s->matrix;
+    v->body.vel = s->velocity;
+    v->matrix = s->matrix;
     memcpy(&v->speed, &s->speed, 8 * sizeof(float));
 }
 HOOK(0x4F4780, Vehicle_LoadState);
 
 void Vehicle_NewParts(Vehicle *v)
 {
-    v->obj.parts = MagicObjContainer_New(NULL, v);
-    RigidDynCubeObj_CreateMagicObjs(v->obj.parts, v, v);
+    v->attached = MagicObjContainer_New(NULL, v);
+    RigidDynCubeObj_CreateMagicObjs(v->attached, v, v);
 }
 HOOK(0x4F4800, Vehicle_NewParts);
 
 void Vehicle_DeleteParts(Vehicle *v)
 {
-    if (v->obj.parts) {
-        Task_Delete(v->obj.parts);
-        v->obj.parts = NULL;
+    if (v->attached) {
+        Task_Delete(v->attached);
+        v->attached = NULL;
     }
 }
 HOOK(0x4F4820, Vehicle_DeleteParts);

@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "rotor/rotor.h"
+#include "missile/missiletypes.h"
 
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
@@ -10,19 +11,6 @@ ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
-
-/* "Train" (0x8E0 bytes) */
-typedef struct Train {
-    RigidObj obj;
-    char unkF0[0x694 - 0xF0];
-    Matrix unk694;
-    char unk6BC[4];
-    Vec3d unk6C0;
-    char unk6D8[0x88C - 0x6D8];
-    Task *unk88C;
-} Train;
-
-_Static_assert(offsetof(Train, unk88C) == 0x88C, "Train");
 
 extern Vec3d gTrainRelPos;
 extern uint16_t gTrainType;
@@ -34,16 +22,16 @@ void Train_GetFrame(Train *t, void **out)
     Matrix tr;
     int i, j;
 
-    ((void (*)(void *))HANDLER(1, t->obj.task.type))(t);
-    gTrainRelPos.x = t->obj.pos.x - t->unk6C0.x;
-    gTrainRelPos.y = t->obj.pos.y - t->unk6C0.y;
-    gTrainRelPos.z = t->obj.pos.z - t->unk6C0.z;
+    ((void (*)(void *))HANDLER(1, t->v.task.type))(t);
+    gTrainRelPos.x = t->v.pos.x - t->v.lastPos.x;
+    gTrainRelPos.y = t->v.pos.y - t->v.lastPos.y;
+    gTrainRelPos.z = t->v.pos.z - t->v.lastPos.z;
     for (i = 0; i < 3; i++)
         for (j = 0; j < 3; j++)
-            tr.m[i * 3 + j] = t->unk694.m[j * 3 + i];
-    tr.unk24 = t->unk694.unk24;
-    mat_mul(&gTrainMatrix, &t->obj.matrix, &tr, 0, 1, 0);
-    out[0] = &t->obj.pos;
+            tr.m[i * 3 + j] = t->v.lastMatrix.m[j * 3 + i];
+    tr.count = t->v.lastMatrix.count;
+    mat_mul(&gTrainMatrix, &t->v.matrix, &tr, 0, 1, 0);
+    out[0] = &t->v.pos;
     out[2] = &gTrainRelPos;
     out[1] = &gTrainMatrix;
 }
@@ -64,9 +52,9 @@ void Train_OnWorldEvent1(Train *t, void *arg)
     uint16_t type = Vehicle_GetType();
 
     gTaskHandlers[slot][type](t, arg);
-    if (t->unk88C) {
-        Task_Delete(t->unk88C);
-        t->unk88C = NULL;
+    if (t->loop_sound) {
+        Task_Delete(t->loop_sound);
+        t->loop_sound = NULL;
     }
 }
 HOOK(0x42BBA0, Train_OnWorldEvent1);

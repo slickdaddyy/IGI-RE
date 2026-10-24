@@ -5,93 +5,13 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "param/paramtypes.h"
+#include "qvertex/qvertextypes.h"
+#include "win/wintypes.h"
+#include "menu/menutypes.h"
+#include "widget/widgettypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Sprite Sprite;
-
-typedef struct Grid {
-    int proportional;
-    short cols, rows;
-    Sprite *sprite;
-} Grid;
-
-typedef struct Text {
-    Grid *grid;
-    float x, y, z;
-    float alpha;
-    float color[3];
-    int unk20;
-    unsigned int flags;
-} Text;
-
-/* the "MenuWindow" task (0x54 bytes), base of every menu element */
-typedef struct MenuWindow {
-    Task task;
-    int x, y, w, h;
-    char unk30[0xC];
-    int unk3C;
-    int unk40;
-    void *menu;
-    char wasOver;
-    char over;
-    char held;
-    char clicked;
-    char selectable;
-    char focused;
-    char unk4E[2];
-    int key;
-} MenuWindow;
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-typedef struct Display {
-    int unk0;
-    int width;
-    int height;
-} Display;
-
-typedef struct Color {
-    float r, g, b;
-} Color;
-
-typedef struct QVertex {
-    float x, y, z;
-    float u, v;
-    float a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
-
-_Static_assert(sizeof(MenuWindow) == 0x54, "MenuWindow");
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
@@ -136,7 +56,7 @@ ORIG(0x4248A0, void, MenuWindow_HitTest, (void *w, int x, int y, int width, int 
 ORIG(0x424980, void, MenuWindow_DrawEnd, (void *w, float unk, float alpha, int focused));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 ORIG(0x4E7180, void, Sound_PlayName, (const char *name, int unk1, int unk2));
-ORIG(0x491CF0, Display *, Display_GetMode, (void));
+ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 ORIG(0x418D70, void, MenuManager_Free, (void *task));
 ORIG(0x418DE0, Sprite *, MenuManager_FindSprite, (void *mm, const char *name));
 ORIG(0x418E40, Sprite *, MenuManager_FindFont, (void *mm, const char *name));

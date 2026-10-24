@@ -128,7 +128,7 @@ void MenuWindow_FindMenu(MenuWindow *w, Task *t)
             return;
         }
     }
-    w->menu = t;
+    w->menu = (struct MenuManager *)t;
 }
 HOOK(0x424220, MenuWindow_FindMenu);
 
@@ -393,8 +393,8 @@ void MenuWindow_DrawEnd(MenuWindow *w, float fill, float alpha, int focused)
     strip.flags = 0;
     if (!(alpha > opaque))
         strip.flags = 0x80000;
-    strip.untextured = 1;
-    strip.unk8 = 0;
+    strip.lines = 1;
+    strip.queue = 0;
     strip.count = 5;
     strip.verts = v;
     gQVertexTexture = NULL;

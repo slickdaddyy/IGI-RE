@@ -4,6 +4,7 @@
 
 #include "aiaction/aiaction.h"
 #include "hook.h"
+#include "humanai/humanaitypes.h"
 
 FN_EXTERN(AIActivate_Start);
 FN_EXTERN(AICombatAnya_Start);
@@ -96,99 +97,6 @@ ORIG(0x509890, char, GraphNode_HasCriteria, (void *node, unsigned mask));
 #define AI_FIRE_AT_NODE (FN(0x48ECA0, AIFireAtNode_Start))
 #define AI_FIRE_AT_TASK (FN(0x48EDE0, AIFireAtTask_Start))
 
-/* an entry of the event stack */
-typedef struct AIEvent {
-    Node node;
-    int type;           /* AIEVENT_* */
-    int unkC;
-    Vec3d pos;          /* 0x10 */
-    Task **source;      /* 0x28 */
-    Task **target;      /* 0x2C */
-} AIEvent;
-
-/* a queued action */
-typedef struct AIAction {
-    Node node;
-    int unk8;
-    char unkC[0x1C];
-    void *data;         /* 0x28 */
-    char active;        /* 0x2C */
-} AIAction;
-
-typedef struct AnimEntry {
-    int anim;
-    int unk4;
-    double weight;
-} AnimEntry;
-
-/* "HumanAI" (0x3ED0), the fields used here */
-typedef struct HumanAI {
-    Task task;
-    Vec3d pos;
-    Vec3d eye;          /* 0x38 */
-    char unk50[0x2C];
-    float dirX;         /* 0x7C */
-    char unk80[8];
-    float dirY;         /* 0x88 */
-    char unk8C[8];
-    float dirZ;         /* 0x94 */
-    char unk98[8];
-    double viewAlpha;   /* 0xA0, radians */
-    double viewGamma;
-    double viewLength;
-    double alarmViewLength;
-    double secondaryViewAlpha; /* 0xC0 */
-    double secondaryViewGamma;
-    double secondaryViewLength;
-    double secondaryAlarmViewLength;
-    char unkE0[0x81C - 0xE0];
-    union {
-        int eventOrder[48]; /* 0x81C, by SetEventPriority */
-        struct {
-            int unk81C[8];
-            int unk83C;
-        };
-    };
-    int eventCount;     /* 0x8DC */
-    int unk8E0;
-    char eventUsed[0x18]; /* 0x8E4 */
-    List actions;       /* 0x8FC */
-    char unk908[0x1508 - 0x908];
-    List freeData;      /* 0x1508 */
-    char unk1514[0x3ABC - 0x1514];
-    char invulnerable;  /* 0x3ABC */
-    char noInstantDeath;
-    char unk3ABE[2];
-    int alarmTriggerId; /* 0x3AC0 */
-    int alarmControlId;
-    int gunnerId;
-    int alarmAccess;
-    int deathAnimation; /* 0x3AD0 */
-    int scriptInts[5];  /* 0x3AD4 */
-    double scriptReals[2]; /* 0x3AE8 */
-    AnimEntry anims[6]; /* 0x3AF8, entries start at anims[1] */
-    int animMin;        /* 0x3B58, frames */
-    int animRange;
-    int animTimer;
-    int animCount;      /* 0x3B64 */
-    int graphId;        /* 0x3B68 */
-    void *graph;
-    char unk3B70[0x3D15 - 0x3B70];
-    char name[0x23];    /* 0x3D15 */
-    int aiType;         /* 0x3D38 */
-    char unk3D3C[0x3DB8 - 0x3D3C];
-    double fallFlatRange; /* 0x3DB8 */
-    char unk3DC0[0x3E2C - 0x3DC0];
-    int nodeId;         /* 0x3E2C */
-    char unk3E30[0x3ED0 - 0x3E30];
-} HumanAI;
-
-_Static_assert(offsetof(HumanAI, eventCount) == 0x8DC, "HumanAI");
-_Static_assert(offsetof(HumanAI, unk83C) == 0x83C, "HumanAI");
-_Static_assert(offsetof(HumanAI, anims) == 0x3AF8, "HumanAI");
-_Static_assert(offsetof(HumanAI, aiType) == 0x3D38, "HumanAI");
-_Static_assert(sizeof(HumanAI) == 0x3ED0, "HumanAI");
-
 /* the data blocks of the actions, all taken from HumanAI.freeData */
 typedef struct NodeData {
     Node node;
@@ -225,73 +133,7 @@ typedef struct EventData {
     Task **ref;         /* 0x28 */
 } EventData;
 
-typedef struct CombatData {
-    Node node;
-    List *events;
-    char unkC[0x18];
-    int unk24;
-    char unk28;
-    char unk29;
-} CombatData;
-
 _Static_assert(offsetof(EventData, ref) == 0x28, "EventData");
-_Static_assert(offsetof(CombatData, unk28) == 0x28, "CombatData");
-
-/* the static pools HumanAI_Init sets up; other areas take items from their free lists */
-typedef struct MonitorGraph {
-    Node node;
-    void *graph;
-    List targets;
-} MonitorGraph;
-
-typedef struct MonitorTarget {
-    Node node;
-    int nodeId;
-    int tick;
-    void *target;
-} MonitorTarget;
-
-typedef struct Claim {
-    Node node;
-    void *task;
-} Claim;
-
-typedef struct AITarget {
-    Node node;
-    char used;
-    char unk09[3];
-    Task **ref;
-    Task *humans[32];
-    int states[32];
-    Vec3d pos;
-    int count;
-    int removed;
-} AITarget;
-
-typedef struct MoveItem {
-    Node node;
-    Vec3d pos;
-    int door;
-    int id;
-} MoveItem;
-
-typedef struct NodeGrid {
-    Node node;
-    int graph;
-    int nodeId;
-    int refs;
-    int w;
-    int h;
-    int unk1C;
-    int cells[20][20];
-} NodeGrid;
-
-_Static_assert(sizeof(MonitorGraph) == 0x18, "MonitorGraph");
-_Static_assert(sizeof(MonitorTarget) == 0x14, "MonitorTarget");
-_Static_assert(sizeof(Claim) == 0xC, "Claim");
-_Static_assert(sizeof(AITarget) == 0x130, "AITarget");
-_Static_assert(sizeof(MoveItem) == 0x28, "MoveItem");
-_Static_assert(sizeof(NodeGrid) == 0x660, "NodeGrid");
 
 #define AI_MONITOR_GRAPHS 64
 #define AI_MONITOR_TARGETS 128
@@ -373,9 +215,9 @@ void HumanAI_Init(void)
     TaskType_SetHandler2(gHumanAIType, Level_GetEventDAC(), HumanAI_OnLevelDAC);
     TaskType_SetHandler(gHumanAIType, 4, NULL);
     gHumanAIParams = ParamTable_New(3);
-    ParamTable_Add(gHumanAIParams, &t, t.name, Param_String32(), 7, NULL);
+    ParamTable_Add(gHumanAIParams, &t, t.aiTypeExpr, Param_String32(), 7, NULL);
     ParamTable_Add(gHumanAIParams, &t, &t.graphId, Param_Int32(), 7, NULL);
-    ParamTable_Add(gHumanAIParams, &t, &t.unk3B70, Param_ScriptFile(), 2, NULL);
+    ParamTable_Add(gHumanAIParams, &t, &t.scriptPath, Param_ScriptFile(), 2, NULL);
     HumanAI_RegisterFunctions();
     HumanAI_RegisterConstants();
 
@@ -398,7 +240,7 @@ void HumanAI_Init(void)
         g->node.next = NULL;
         List_AddTail(&gGridsFree, g);
         memset(g->cells, 0, sizeof(g->cells));
-        g->graph = -1;
+        g->graphId = -1;
         g->nodeId = -1;
         g->w = 0;
         g->h = 0;
@@ -563,14 +405,14 @@ HOOK(0x44D0E0, AIAction_Patrol);
 /* each AI type fights its own way, civilians not at all */
 ScriptValue *AIAction_Combat(ScriptValue *out, void *data, void *args)
 {
-    CombatData *d = HumanAI_AllocParam(gAICurrent);
+    AIParam *d = HumanAI_AllocParam(gAICurrent);
     int flags = Script_GetArgInt(args, 0);
     void *fn;
 
-    d->unk28 = 1;
-    d->events = gAIEventList;
-    d->unk29 = 0;
-    d->unk24 = 0;
+    d->d.first = 1;
+    d->d.events = gAIEventList;
+    d->d.spoke = 0;
+    d->d.frame = 0;
     switch (gAICurrent->aiType) {
     case 0:
         fn = AI_COMBAT_RPG;
@@ -606,15 +448,15 @@ HOOK(0x44D260, AIAction_Dead);
    the target of the current event is nearer than fallFlatRange */
 ScriptValue *AIAction_FallFlat(ScriptValue *out, void *data, void *args)
 {
-    void *node = Graph_GetNode(gAICurrent->graph, gAICurrent->nodeId);
+    void *node = Graph_GetNode(gAICurrent->graph, gAICurrent->node);
     AIEvent *e;
     NodeData *d;
 
     if (GraphNode_HasCriteria(node, AIGraph_GetStairCriteria()))
         return ret_int(out, 2);
     e = AIEvent_GetCurrent();
-    if (e->target && *e->target) {
-        Task *t = *e->target;
+    if (e->about && *e->about) {
+        Task *t = *e->about;
         Vec3d *a = DynCubeObj_GetPosition(gAICurrent->task.parent);
 
         if (!(Vec3d_Distance(DynCubeObj_GetPosition(t), a) >= gAICurrent->fallFlatRange))
@@ -752,11 +594,11 @@ ScriptValue *AIAction_KickGrenade(ScriptValue *out, void *data, void *args)
     AIEvent *e = AIEvent_GetCurrent();
     int flags = Script_GetArgInt(args, 0);
 
-    if (*e->source) {
+    if (*e->from) {
         EventData *d = HumanAI_AllocParam(gAICurrent);
 
         d->pos = e->pos;
-        d->ref = TaskRef_Add(*e->source);
+        d->ref = TaskRef_Add(*e->from);
         HumanAI_PushAction(AI_KICK_GRENADE, d, flags);
     }
     return ret_int(out, 1);
@@ -789,14 +631,14 @@ ScriptValue *AIAction_SetCombat(ScriptValue *out, void *data, void *args)
     AIEvent *e = AIEvent_GetCurrent();
     int flags = Script_GetArgInt(args, 0);
 
-    if (e && e->target && *e->target) {
+    if (e && e->about && *e->about) {
         d->pos = e->pos;
         d->unk24.target = NULL;
         d->unk20.source = NULL;
-        if (e->source && *e->source)
-            d->unk20.source = TaskRef_Add(*e->source);
-        if (e->target && *e->target)
-            d->unk24.target = TaskRef_Add(*e->target);
+        if (e->from && *e->from)
+            d->unk20.source = TaskRef_Add(*e->from);
+        if (e->about && *e->about)
+            d->unk24.target = TaskRef_Add(*e->about);
         HumanAI_PushAction(AI_SET_COMBAT, d, flags);
     }
     return ret_int(out, 1);
@@ -806,12 +648,12 @@ HOOK(0x44DAE0, AIAction_SetCombat);
 ScriptValue *AIFunction_RemoveAlarmActions(ScriptValue *out, void *data, void *args)
 {
     HumanAI *ai = gAICurrent;
-    int tag = ai->unk83C;
+    int tag = ai->eventOrder[8];
     AIAction *a = (AIAction *)ai->actions.head;
     AIAction *next;
 
     for (next = (AIAction *)a->node.next; next; a = next, next = (AIAction *)next->node.next) {
-        if (a->unk8 == tag) {
+        if (a->event == tag) {
             HumanAI_EndAction(ai, a);
             ai = gAICurrent;
         }
@@ -822,60 +664,60 @@ HOOK(0x44DBC0, AIFunction_RemoveAlarmActions);
 
 ScriptValue *AIFunction_SetViewLength(ScriptValue *out, void *data, void *args)
 {
-    gAICurrent->viewLength = Script_GetArgReal(args, 0) * kViewScale;
-    if (gAICurrent->viewLength > gAICurrent->alarmViewLength)
-        gAICurrent->alarmViewLength = gAICurrent->viewLength;
+    gAICurrent->view.length = Script_GetArgReal(args, 0) * kViewScale;
+    if (gAICurrent->view.length > gAICurrent->view.alarmLength)
+        gAICurrent->view.alarmLength = gAICurrent->view.length;
     return ret_int(out, 1);
 }
 HOOK(0x44DC40, AIFunction_SetViewLength);
 
 ScriptValue *AIFunction_SetAlarmViewLength(ScriptValue *out, void *data, void *args)
 {
-    gAICurrent->alarmViewLength = Script_GetArgReal(args, 0) * kViewScale;
+    gAICurrent->view.alarmLength = Script_GetArgReal(args, 0) * kViewScale;
     return ret_int(out, 1);
 }
 HOOK(0x44DCD0, AIFunction_SetAlarmViewLength);
 
 ScriptValue *AIFunction_SetViewAlpha(ScriptValue *out, void *data, void *args)
 {
-    gAICurrent->viewAlpha = Script_GetArgReal(args, 0) * kDegToRad;
+    gAICurrent->view.alpha = Script_GetArgReal(args, 0) * kDegToRad;
     return ret_int(out, 1);
 }
 HOOK(0x44DD30, AIFunction_SetViewAlpha);
 
 ScriptValue *AIFunction_SetViewGamma(ScriptValue *out, void *data, void *args)
 {
-    gAICurrent->viewGamma = Script_GetArgReal(args, 0) * kDegToRad;
+    gAICurrent->view.gamma = Script_GetArgReal(args, 0) * kDegToRad;
     return ret_int(out, 1);
 }
 HOOK(0x44DD90, AIFunction_SetViewGamma);
 
 ScriptValue *AIFunction_SetSecondaryViewLength(ScriptValue *out, void *data, void *args)
 {
-    gAICurrent->secondaryViewLength = Script_GetArgReal(args, 0) * kViewScale;
-    if (gAICurrent->secondaryViewLength > gAICurrent->secondaryAlarmViewLength)
-        gAICurrent->secondaryAlarmViewLength = gAICurrent->secondaryViewLength;
+    gAICurrent->view.secLength = Script_GetArgReal(args, 0) * kViewScale;
+    if (gAICurrent->view.secLength > gAICurrent->view.secAlarmLength)
+        gAICurrent->view.secAlarmLength = gAICurrent->view.secLength;
     return ret_int(out, 1);
 }
 HOOK(0x44DDF0, AIFunction_SetSecondaryViewLength);
 
 ScriptValue *AIFunction_SetSecondaryAlarmViewLength(ScriptValue *out, void *data, void *args)
 {
-    gAICurrent->secondaryAlarmViewLength = Script_GetArgReal(args, 0) * kViewScale;
+    gAICurrent->view.secAlarmLength = Script_GetArgReal(args, 0) * kViewScale;
     return ret_int(out, 1);
 }
 HOOK(0x44DE80, AIFunction_SetSecondaryAlarmViewLength);
 
 ScriptValue *AIFunction_SetSecondaryViewAlpha(ScriptValue *out, void *data, void *args)
 {
-    gAICurrent->secondaryViewAlpha = Script_GetArgReal(args, 0) * kDegToRad;
+    gAICurrent->view.secAlpha = Script_GetArgReal(args, 0) * kDegToRad;
     return ret_int(out, 1);
 }
 HOOK(0x44DEE0, AIFunction_SetSecondaryViewAlpha);
 
 ScriptValue *AIFunction_SetSecondaryViewGamma(ScriptValue *out, void *data, void *args)
 {
-    gAICurrent->secondaryViewGamma = Script_GetArgReal(args, 0) * kDegToRad;
+    gAICurrent->view.secGamma = Script_GetArgReal(args, 0) * kDegToRad;
     return ret_int(out, 1);
 }
 HOOK(0x44DF40, AIFunction_SetSecondaryViewGamma);
@@ -918,10 +760,10 @@ ScriptValue *AIFunction_SetEventPriority(ScriptValue *out, void *data, void *arg
 {
     int e = Script_GetArgInt(args, 0);
 
-    if (!gAICurrent->eventUsed[e]) {
-        gAICurrent->eventUsed[e] = 1;
-        gAICurrent->eventOrder[gAICurrent->eventCount] = e;
-        gAICurrent->eventCount++;
+    if (!gAICurrent->eventEnabled[e]) {
+        gAICurrent->eventEnabled[e] = 1;
+        gAICurrent->eventOrder[gAICurrent->eventOrderCount] = e;
+        gAICurrent->eventOrderCount++;
     }
     return ret_int(out, 1);
 }
@@ -943,7 +785,7 @@ HOOK(0x44E1B0, AIFunction_SetInstantDeath);
 
 ScriptValue *AIFunction_SetDeathAnimation(ScriptValue *out, void *data, void *args)
 {
-    gAICurrent->deathAnimation = Script_GetArgInt(args, 0);
+    gAICurrent->deathAnim = Script_GetArgInt(args, 0);
     return ret_int(out, 1);
 }
 HOOK(0x44E210, AIFunction_SetDeathAnimation);
@@ -971,7 +813,7 @@ HOOK(0x44E330, AIFunction_SetAlarmAccess);
 
 ScriptValue *AIFunction_SetGunnerID(ScriptValue *out, void *data, void *args)
 {
-    gAICurrent->gunnerId = Script_GetArgInt(args, 0);
+    gAICurrent->statGunId = Script_GetArgInt(args, 0);
     return ret_int(out, 1);
 }
 HOOK(0x44E390, AIFunction_SetGunnerID);
@@ -996,7 +838,7 @@ HOOK(0x44E470, AIFunction_GetAlarmAccess);
 
 ScriptValue *AIFunction_GetGunnerID(ScriptValue *out, void *data, void *args)
 {
-    return ret_int(out, gAICurrent->gunnerId);
+    return ret_int(out, gAICurrent->statGunId);
 }
 HOOK(0x44E4B0, AIFunction_GetGunnerID);
 
@@ -1025,11 +867,11 @@ ScriptValue *AIFunction_GetGunnerStatus(ScriptValue *out, void *data, void *args
     Task *t;
     int i;
 
-    if (gAICurrent->gunnerId == -1)
+    if (gAICurrent->statGunId == -1)
         return ret_int(out, 0);
-    t = Task_FindById(gAICurrent->gunnerId);
+    t = Task_FindById(gAICurrent->statGunId);
     if (!t) {
-        Warning_Show("StationaryGun ID #%d not defined", gAICurrent->gunnerId);
+        Warning_Show("StationaryGun ID #%d not defined", gAICurrent->statGunId);
         return ret_int(out, 0);
     }
     i = StationaryGun_IsUsed(t);
@@ -1083,11 +925,11 @@ ScriptValue *AIFunction_IsEventBehind(ScriptValue *out, void *data, void *args)
 
     for (next = (AIEvent *)e->node.next; next; e = next, next = (AIEvent *)next->node.next) {
         HumanAI *ai = gAICurrent;
-        long double dx = e->pos.x - ai->eye.x;
-        long double dy = e->pos.y - ai->eye.y;
-        long double dz = e->pos.z - ai->eye.z;
+        long double dx = e->pos.x - ai->view.eye.x;
+        long double dy = e->pos.y - ai->view.eye.y;
+        long double dz = e->pos.z - ai->view.eye.z;
 
-        if (!((ai->dirZ * dz + ai->dirX * dx) + ai->dirY * dy >= 0.0))
+        if (!((ai->view.view[7] * dz + ai->view.view[1] * dx) + ai->view.view[4] * dy >= 0.0))
             return ret_int(out, 1);
     }
     return ret_int(out, 0);
@@ -1103,8 +945,8 @@ ScriptValue *AIFunction_GetEventDistance(ScriptValue *out, void *data, void *arg
         for (;;)
             ;
     }
-    out->i = round_int(Vec3d_Distance(&e->pos, &gAICurrent->eye));
-    out->d = Vec3d_Distance(&e->pos, &gAICurrent->eye);
+    out->i = round_int(Vec3d_Distance(&e->pos, &gAICurrent->view.eye));
+    out->d = Vec3d_Distance(&e->pos, &gAICurrent->view.eye);
     out->s = gEmptyString;
     return out;
 }
@@ -1124,8 +966,8 @@ ScriptValue *AIFunction_GetAlarmTriggerDistance(ScriptValue *out, void *data, vo
     }
     if (!TaskType_IsA(t->type, RigidDynCubeObj_GetType()))
         return ret_int(out, -1);
-    out->i = round_int(Vec3d_Distance(&gAICurrent->pos, (Vec3d *)(t + 1)));
-    out->d = Vec3d_Distance(&gAICurrent->pos, (Vec3d *)(t + 1));
+    out->i = round_int(Vec3d_Distance(&gAICurrent->view.pos, (Vec3d *)(t + 1)));
+    out->d = Vec3d_Distance(&gAICurrent->view.pos, (Vec3d *)(t + 1));
     out->s = gEmptyString;
     return out;
 }
@@ -1134,24 +976,24 @@ HOOK(0x44E9B0, AIFunction_GetAlarmTriggerDistance);
 /* seconds; animTimer gets min + random(range) frames */
 ScriptValue *AIFunction_SetAnimationInterval(ScriptValue *out, void *data, void *args)
 {
-    gAICurrent->animMin = round_int(Script_GetArgReal(args, 0) * kFps);
-    gAICurrent->animRange = round_int(Script_GetArgReal(args, 1) * kFps);
-    gAICurrent->animTimer = Random_Int(Game_GetRandom(), gAICurrent->animRange) + gAICurrent->animMin;
+    gAICurrent->animBase = round_int(Script_GetArgReal(args, 0) * kFps);
+    gAICurrent->animRandom = round_int(Script_GetArgReal(args, 1) * kFps);
+    gAICurrent->animTimer = Random_Int(Game_GetRandom(), gAICurrent->animRandom) + gAICurrent->animBase;
     return ret_int(out, 2);
 }
 HOOK(0x44EAF0, AIFunction_SetAnimationInterval);
 
 ScriptValue *AIFunction_AddAnimationEntry(ScriptValue *out, void *data, void *args)
 {
-    if (gAICurrent->animCount >= 5) {
+    if (gAICurrent->animEnabled >= 5) {
         Warning_Show("Maximum number of animation entries (#%d) reached", 5);
         Script_GetArgInt(args, 0);
         Script_GetArgReal(args, 1);
         return ret_int(out, 2);
     }
-    gAICurrent->anims[gAICurrent->animCount + 1].anim = Script_GetArgInt(args, 0);
-    gAICurrent->anims[gAICurrent->animCount + 1].weight = Script_GetArgReal(args, 1);
-    gAICurrent->animCount++;
+    gAICurrent->anims[gAICurrent->animEnabled + 1].anim = Script_GetArgInt(args, 0);
+    gAICurrent->anims[gAICurrent->animEnabled + 1].weight = Script_GetArgReal(args, 1);
+    gAICurrent->animEnabled++;
     return ret_int(out, 2);
 }
 HOOK(0x44EBB0, AIFunction_AddAnimationEntry);
@@ -1160,7 +1002,7 @@ HOOK(0x44EBB0, AIFunction_AddAnimationEntry);
    almost nothing */
 ScriptValue *AIFunction_GetAnimationToPlay(ScriptValue *out, void *data, void *args)
 {
-    int n = gAICurrent->animCount;
+    int n = gAICurrent->animEnabled;
     long double sum, r;
     double total;
     int i;
@@ -1176,7 +1018,7 @@ ScriptValue *AIFunction_GetAnimationToPlay(ScriptValue *out, void *data, void *a
     if (!(sum >= kMinWeight))
         return ret_int(out, gAICurrent->anims[Random_Int(Game_GetRandom(), n) + 1].anim);
     r = Random_Float(Game_GetRandom()) * total;
-    for (i = 0; i < gAICurrent->animCount; i++) {
+    for (i = 0; i < gAICurrent->animEnabled; i++) {
         r -= gAICurrent->anims[i + 1].weight;
         if (!(r > 0.0))
             return ret_int(out, gAICurrent->anims[i + 1].anim);
@@ -1195,7 +1037,7 @@ ScriptValue *AIFunction_SendResponse(ScriptValue *out, void *data, void *args)
         for (;;)
             ;
     }
-    HumanAI_SendSimple(*e->source, 6, 0x24);
+    HumanAI_SendSimple(*e->from, 6, 0x24);
     return ret_int(out, 0);
 }
 HOOK(0x44EE40, AIFunction_SendResponse);

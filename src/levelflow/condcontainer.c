@@ -2,21 +2,7 @@
 
 #include "hook.h"
 #include "levelflow/levelflow.h"
-
-/* the script handlers of "ConditionalContainer"; the type itself is made
-   at 0x4872C0 */
-typedef struct ConditionalContainer {
-    Task task;
-    VarString unk20;
-    VarString unk70;
-    VarString unkC0;
-    char isRun;
-    char registered;
-    char inWorld;
-    char unk113;
-} ConditionalContainer;
-
-_Static_assert(sizeof(ConditionalContainer) == 0x114, "ConditionalContainer");
+#include "mission/missiontypes.h"
 
 extern uint16_t gConditionalContainerType;
 extern void *gConditionalContainerParams;
@@ -31,7 +17,7 @@ void ConditionalContainer_Activate(ConditionalContainer *c)
     c->registered = 1;
     Task_GetName(name, c);
     crt_sprintf(buf, "%s.isRun", name);
-    Script_RegisterBool8(buf, &c->isRun);
+    Script_RegisterBool8(buf, &c->active);
 }
 HOOK(0x487920, ConditionalContainer_Activate);
 
@@ -59,19 +45,19 @@ HOOK(0x4879E0, ConditionalContainer_ForwardEvent4);
 /* puts the children into the world while isRun is set */
 void ConditionalContainer_WorldAdd(ConditionalContainer *c, void *arg)
 {
-    if (!c->isRun || c->inWorld)
+    if (!c->active || c->shown)
         return;
     EACH_CHILD(&c->task, World_GetEvent0(), arg);
-    c->inWorld = 1;
+    c->shown = 1;
 }
 HOOK(0x487A70, ConditionalContainer_WorldAdd);
 
 void ConditionalContainer_WorldRemove(ConditionalContainer *c, void *arg)
 {
-    if (!c->inWorld)
+    if (!c->shown)
         return;
     EACH_CHILD(&c->task, World_GetEvent1(), arg);
-    c->inWorld = 0;
+    c->shown = 0;
 }
 HOOK(0x487B20, ConditionalContainer_WorldRemove);
 

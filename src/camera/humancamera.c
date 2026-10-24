@@ -4,18 +4,11 @@
 
 #include "hook.h"
 #include "camera/camera.h"
+#include "material/materialtypes.h"
+#include "camera/cameratypes.h"
+#include "config/configtypes.h"
 
 FN_EXTERN(HumanCamera_DeleteHandler);
-
-/* filled by the human's camera info handler */
-typedef struct HumanCameraInfo {
-    Vec3d pos;
-    Matrix matrix;
-    float fov;
-    Matrix body;
-    float unk6C;
-    int mode;
-} HumanCameraInfo;
 
 enum {
     CAM_FIRST_PERSON = 1,
@@ -25,54 +18,13 @@ enum {
     CAM_DEATH,
 };
 
-/* "HumanCamera" task (0x128 bytes): the camera that follows a human */
-typedef struct HumanCamera {
-    Task task;
-    Vec3d pos;
-    Matrix matrix;
-    float fov;
-    void *camera;
-    Task **ref;
-    int unk6C;
-    HumanCameraInfo info;
-    int prevMode;
-    int unkEC;
-    Vec3d look;
-    float pitch;
-    float yaw;
-    float dist;
-    float target;
-    int index;
-    int savedIndex;
-    Task **savedRef;
-    unsigned flags;
-} HumanCamera;
-
-/* an entry of the list of humans the camera can follow */
-typedef struct HumanCameraEntry {
-    Task **ref;
-    char unk4;
-    char used;
-    char pad6[2];
-} HumanCameraEntry;
-
-typedef struct Profile {
-    char unk0[0x538];
-    int invertMouse;
-} Profile;
-
-_Static_assert(offsetof(HumanCameraInfo, mode) == 0x70, "HumanCameraInfo.mode");
-_Static_assert(offsetof(HumanCamera, info) == 0x70, "HumanCamera.info");
-_Static_assert(offsetof(HumanCamera, look) == 0xF0, "HumanCamera.look");
-_Static_assert(sizeof(HumanCamera) == 0x128, "HumanCamera");
-
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (int unk));
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
-ORIG(0x406220, Profile *, Profile_GetActive, (void));
+ORIG(0x406220, PlayerProfile *, Profile_GetActive, (void));
 ORIG(0x413A70, uint16_t, HumanPlayer_GetType, (void));
 ORIG(0x414FD0, int, Game_CheatKeyDown, (int key));
 ORIG(0x415020, int, Game_CheatKeyPressed, (int key));
@@ -86,7 +38,7 @@ ORIG(0x4B3130, long double, Vec3d_Length, (const Vec3d *v));
 ORIG(0x4B38E0, void, Matrix_SetEuler, (Matrix *m, float ax, float ay, float az));
 ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, Vec3d *starts, Vec3d *ends, int count, uint8_t event,
-                                  CollFilter *filter, int flags));
+                                  CollIgnore *filter, int flags));
 ORIG(0x4D3710, void, Task_Nothing, (void *task));
 ORIG(0x4D9870, void, Camera_Set, (void *cam, const Vec3d *pos, const Matrix *axes, float fov, float aspect,
                                   float range, int frame, void *owner, float unk9, int unk10));
@@ -151,7 +103,7 @@ static void set_view(HumanCamera *c, const Vec3d *pos, const Matrix *a, float fo
     for (i = 0; i < 3; i++)
         for (j = 0; j < 3; j++)
             out.m[i * 3 + j] = m[i * 3 + 2] * r.m[6 + j] + m[i * 3 + 1] * r.m[3 + j] + m[i * 3] * r.m[j];
-    out.serial = a->serial + r.serial + 1;
+    out.count = a->count + r.count + 1;
     c->pos = *pos;
     c->fov = fov;
     c->matrix = out;
@@ -555,13 +507,13 @@ static void ease_dist(HumanCamera *c)
 
 void HumanCamera_MovementControlInput(HumanCamera *c)
 {
-    Profile *p = Profile_GetActive();
+    PlayerProfile *p = Profile_GetActive();
     long double s;
     float dy;
 
     ease_dist(c);
     dy = gMouseDY;
-    if (p->invertMouse)
+    if (p->invert_mouse)
         dy = -dy;
     s = dy * kMouseTurn + c->pitch;
     c->pitch = s;
@@ -586,7 +538,7 @@ static void follow(HumanCamera *c)
     double d0, d1, wx, wy;
     float fov;
     CollHit hit;
-    CollFilter filter;
+    CollIgnore filter;
 
     Matrix_SetEuler(&e, c->pitch, 0, c->yaw);
     nd = -c->target;
@@ -604,7 +556,7 @@ static void follow(HumanCamera *c)
     HumanCamera_LookAt(&m, &w, &p);
     fov = x87_tan(kQuarterPi);
     start = p;
-    filter.ignore = h;
+    filter.task = h;
     end = w;
     for (;;) {
         uint8_t ev = Game_GetEvent8();
@@ -612,7 +564,7 @@ static void follow(HumanCamera *c)
         Coll_Lines(Game_GetWorld(), &hit, &start, &end, 1, ev, &filter, -1);
         if (!hit.found)
             break;
-        if (hit.unk54 && hit.material && *hit.material > 0) {
+        if (hit.close && hit.material && hit.material->unk00 > 0) {
             d.x = hit.pos.x - start.x;
             d.y = hit.pos.y - start.y;
             d.z = hit.pos.z - start.z;
@@ -662,10 +614,10 @@ char HumanCamera_IsBlocked(HumanCamera *c, Task *h, Vec3d *to, Vec3d *from)
     Vec3d *hp = task_pos(h);
     Vec3d pts[8], d;
     CollHit hit;
-    CollFilter filter;
+    CollIgnore filter;
     int i;
 
-    filter.ignore = h;
+    filter.task = h;
     for (i = 0; i < 8; i++) {
         pts[i].x = kBodyPoints[i][0] + hp->x;
         pts[i].y = kBodyPoints[i][1] + hp->y;
@@ -678,7 +630,7 @@ char HumanCamera_IsBlocked(HumanCamera *c, Task *h, Vec3d *to, Vec3d *from)
         Coll_Lines(Game_GetWorld(), &hit, pt, to, 1, ev, &filter, -1);
         if (!hit.found)
             return 0;
-        if (hit.unk54 && hit.material && *hit.material > 0) {
+        if (hit.close && hit.material && hit.material->unk00 > 0) {
             d.x = hit.pos.x - pt->x;
             d.y = hit.pos.y - pt->y;
             d.z = hit.pos.z - pt->z;
@@ -737,7 +689,7 @@ void HumanCamera_DeathCameraCollide(HumanCamera *c, float dpitch, float dyaw)
     Vec3d p = c->info.pos;
     Vec3d l1[5], l2[5], starts[4], ends[4];
     CollHit hits[4];
-    CollFilter filter;
+    CollIgnore filter;
     Matrix e;
     uint8_t ev;
     int i;
@@ -757,7 +709,7 @@ void HumanCamera_DeathCameraCollide(HumanCamera *c, float dpitch, float dyaw)
     off[4][0] = 0;
     off[4][1] = -c->dist;
     off[4][2] = na;
-    filter.ignore = *c->ref;
+    filter.task = *c->ref;
     Matrix_SetEuler(&e, c->pitch, 0, c->yaw);
     for (i = 0; i < 5; i++) {
         const double *o = off[i];
@@ -799,8 +751,8 @@ void HumanCamera_DeathCameraCollide(HumanCamera *c, float dpitch, float dyaw)
 
         if (!h->found)
             continue;
-        dot = (ends[i].y - starts[i].y) * h->normal[1] + (ends[i].x - starts[i].x) * h->normal[0] +
-              (ends[i].z - starts[i].z) * h->normal[2];
+        dot = (ends[i].y - starts[i].y) * h->normal.y + (ends[i].x - starts[i].x) * h->normal.x +
+              (ends[i].z - starts[i].z) * h->normal.z;
         if (dot >= 0)
             continue;
         dx = h->pos.x - p.x;

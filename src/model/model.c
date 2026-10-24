@@ -35,9 +35,7 @@ extern int gVirModelCount;
 extern int gVirModelSaved;
 extern void (*gRenderFuncs[])(void *);
 
-_Static_assert(sizeof(VirModel) == 0x48, "VirModel");
 _Static_assert(sizeof(ModelFile) == 0x4C, "ModelFile");
-_Static_assert(sizeof(ModelLod) == 0x1C, "ModelLod");
 
 static void list_init(List *l)
 {
@@ -369,7 +367,7 @@ Mesh *Mesh_Load(const char *name)
     if (*(uint32_t *)m->header != 0x3DCCCCCD) {
         Error_Show("Mesh \"%s\" and source code are incompatible. (Mesh \"%s\" is version %0.2f, source code is "
                    "version %0.2f.)",
-                   name, name, (double)*m->header, (double)0.1f);
+                   name, name, (double)m->header->version, (double)0.1f);
         for (;;)
             ;
     }
@@ -398,7 +396,7 @@ Mesh *Mesh_Load(const char *name)
                 c = Chunk_Find(c, MEF_NAXT);
         }
     }
-    arg.header = m->header;
+    arg.header = (float *)m->header;
     arg.res = m->res;
     if (gRenderFuncs[Model_GetLoadMethod()])
         gRenderFuncs[Model_GetLoadMethod()](&arg);
@@ -422,9 +420,9 @@ void ModelFile_LoadCollMeshes(ModelFile *f)
 }
 HOOK(0x4CF630, ModelFile_LoadCollMeshes);
 
-CollMesh *CollMesh_Load(const char *name)
+CollMeshRes *CollMesh_Load(const char *name)
 {
-    CollMesh *m = Mem_Alloc(sizeof(CollMesh), 4);
+    CollMeshRes *m = Mem_Alloc(sizeof(CollMeshRes), 4);
     unsigned int size;
     char *faces, *verts, *edges;
     int i;

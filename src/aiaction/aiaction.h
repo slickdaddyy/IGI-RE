@@ -5,68 +5,10 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-typedef struct Node {
-    struct Node *next;
-    struct Node *prev;
-} Node;
-
-typedef struct List {
-    Node *head;
-    Node *tail;
-    Node *tailpred;
-} List;
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "param/paramtypes.h"
+#include "script/scripttypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major, and a counter the engine bumps on changes */
-typedef struct Matrix {
-    float m[9];
-    int stamp;
-} Matrix;
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-/* what a script function returns */
-typedef struct ScriptValue {
-    int i;
-    int unk04;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
-
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
-_Static_assert(sizeof(ScriptValue) == 0x18, "ScriptValue");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

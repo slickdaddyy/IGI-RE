@@ -1,5 +1,6 @@
 #include "hook.h"
 #include "computer/computer.h"
+#include "binocular/binoculartypes.h"
 
 FN_EXTERN(Task_FalseHandler);
 
@@ -34,14 +35,6 @@ typedef struct HumanAttach {
 
 _Static_assert(offsetof(HumanAttach, detached) == 0x138, "HumanAttach");
 _Static_assert(sizeof(HumanAttach) == 0x140, "HumanAttach");
-
-/* AI detection query: result byte, then the two tasks involved at +8 */
-typedef struct DetectQuery {
-    char result;
-    char unk1[7];
-    Task *a;
-    Task *b;
-} DetectQuery;
 
 extern uint16_t gHumanAttachType;
 

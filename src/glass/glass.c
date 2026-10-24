@@ -4,6 +4,7 @@
 
 #include "glass/glass.h"
 #include "hook.h"
+#include "glass/glasstypes.h"
 
 FN_EXTERN(RocketPod_GetArgSize);
 FN_EXTERN(Task_FalseHandler);
@@ -20,7 +21,7 @@ ORIG(0x44BD70, void, GlassShatter_SpawnFrom, (void **model, Matrix *m, Vec3d *po
 
 /* "Glass" (0x148), a pane that shatters once it took enough damage */
 typedef struct Glass {
-    Obj o;
+    RigidDynCubeObj o;
     MagicPart m;        /* 0xF0 */
     float damage;       /* 0x13C */
     float strength;     /* 0x140 */
@@ -29,13 +30,6 @@ typedef struct Glass {
 } Glass;
 
 _Static_assert(sizeof(Glass) == 0x148, "Glass");
-
-/* a bullet hit (Game event 9) */
-typedef struct HitArg {
-    void *hit;
-    float damage;
-    Vec3f dir;
-} HitArg;
 
 /* an explosion (Game event 11) */
 typedef struct BlastArg {
@@ -48,7 +42,7 @@ typedef struct BlastArg {
 
 /* something ran into the glass (event from 0x4FC860) */
 typedef struct TouchArg {
-    Obj *by;
+    RigidDynCubeObj *by;
     int unk4;
     int handled;
 } TouchArg;
@@ -64,7 +58,7 @@ extern float kHitForce;  /* 0.007 */
 
 void GlassShatter_Spawn(void **model, Vec3f *dir, Vec3d *pos, Matrix *m, void *hit);
 
-void Glass_Create(Glass *g, MagicArg *arg)
+void Glass_Create(Glass *g, MagicCreateArg *arg)
 {
     void **model;
     float scale, radius;
@@ -78,10 +72,10 @@ void Glass_Create(Glass *g, MagicArg *arg)
     }
     memcpy(g->m.offset, &arg->offset, sizeof(g->m.offset));
     g->m.local = arg->local;
-    RigidDynCubeObj_Init(arg->world, g, model);
+    RigidDynCubeObj_Init((int)arg->world, g, model);
     scale = obj_scale(&g->o);
     radius = VirModel_GetRadius(g->o.model) * scale;
-    DynCube_Add(arg->world, g, &arg->pos, radius, 2);
+    DynCube_Add((int)arg->world, g, &arg->pos, radius, 2);
     g->o.matrix = arg->matrix;
     g->damage = 0;
     g->strength = 0.75f;
@@ -96,7 +90,7 @@ HOOK(0x4497F0, Glass_Create);
 void Glass_Delete(Glass *g)
 {
     QTaskList_Remove(Game_GetTaskList3(), g);
-    DynCube_Remove(g->o.world, g);
+    DynCube_Remove((int)g->o.world, g);
 }
 HOOK(0x449950, Glass_Delete);
 

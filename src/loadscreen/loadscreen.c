@@ -3,39 +3,15 @@
 
 #include "hook.h"
 #include "igi.h"
+#include "win/wintypes.h"
+#include "res/restypes.h"
+#include "transctx/transctxtypes.h"
 
 typedef struct Bitmap {
     int w;
     int h;
     uint32_t *pixels;
 } Bitmap;
-
-typedef struct DisplayMode {
-    int unk0;
-    int w;
-    int h;
-} DisplayMode;
-
-typedef struct Text {
-    void *grid;
-    float x, y;
-    float z;
-    float alpha;
-    float color[3];
-    int unk20;
-} Text;
-
-/* a pixel block handed to Display_DrawPrimitive */
-typedef struct BlitPrim {
-    int unk0;
-    int prim;
-    int unk8;
-    int pitch;
-    int x, y;
-    int w, h;
-    uint32_t *pixels;
-    int unk24;
-} BlitPrim;
 
 /* the green progress bar under the loading picture */
 typedef struct LoadingScreen {
@@ -75,7 +51,7 @@ static void blit(Bitmap *b, int x, int y)
 {
     BlitPrim p = {0};
 
-    p.prim = Display_GetBlitPrim();
+    p.node.type = Display_GetBlitPrim();
     p.pixels = b->pixels;
     p.w = b->w;
     p.x = x;
@@ -98,19 +74,19 @@ LoadingScreen *LoadingScreen_New(int steps)
 
     ls->done = 0;
     ls->total = steps;
-    ls->x = (mode->w - 640) / 2 + 40;
-    ls->y = (mode->h - 480) / 2 + 440;
+    ls->x = (mode->width - 640) / 2 + 40;
+    ls->y = (mode->height - 480) / 2 + 440;
     OffscreenBuffer_New(&ls->bar, 560, 10);
     for (i = 0; i < 560 * 10; i++)
         ls->bar.pixels[i] = 0x7F00;
-    OffscreenBuffer_New(&screen, mode->w, mode->h);
+    OffscreenBuffer_New(&screen, mode->width, mode->height);
     RenderMode_Push(Offscreen_GetMode());
     OffscreenBuffer_SetTarget(&screen);
     res = Resource_Load("LOCAL:menusystem/loadingscreen.res", 0);
     pic = Text_Load(AppContext_IsUSA() ? "LOCAL:menusystem/loading_us.pic" : "LOCAL:menusystem/loading.pic");
     pic->unk20 = -1;
-    pic->x = (mode->w - 640) / 2;
-    pic->y = (mode->h - 480) / 2;
+    pic->x = (mode->width - 640) / 2;
+    pic->y = (mode->height - 480) / 2;
     Text_Draw(pic);
     RenderMode_Pop();
     blit(&screen, 0, 0);

@@ -6,151 +6,12 @@
 
 #include "igi.h"
 #include "hook.h"
+#include "terrain/terraintypes.h"
+#include "humanai/humanaitypes.h"
+#include "weapon/weapontypes.h"
+#include "humanbase/humanbasetypes.h"
 
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Task {
-    void *next;
-    void *prev;
-    void *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-    Vec3d pos;
-} Task;
-
-typedef struct Human {
-    Task task;
-    char unk38[0x4C4 - 0x38];
-    Task *weapons[10];
-    char unk4EC[0x7B4 - 0x4EC];
-    Task **statGun;
-} Human;
-
-typedef struct WeaponType {
-    char unk0[0x610];
-    int kind;
-    char unk614[0x64C - 0x614];
-    int unk64C;
-} WeaponType;
-
-typedef struct GraphLink {
-    char unk0[8];
-    int a;
-    int b;
-} GraphLink;
-
-typedef struct GraphNode {
-    int id;
-    char unk4[0x13C - 4];
-    GraphLink *links[64];
-} GraphNode;
-
-typedef struct Graph {
-    char unk0[0x5C];
-    int unk5C;
-} Graph;
-
-/* {path, cur, end, move, prevMove, ...}, see the patrol notes */
-typedef struct PatrolRoute {
-    void *path;
-    void *cur;
-    void *end;
-    void *move;
-    void *prevMove;
-    char crouch;
-    char walk;
-    char unk16[2];
-    int timer;
-} PatrolRoute;
-
-typedef struct AIMessage {
-    int type;
-    int team;
-    unsigned flags;
-    float radius;
-    Vec3d *pos;
-    Task *from;
-    Task *about;
-} AIMessage;
-
-typedef struct HumanAI {
-    Task task;
-    Vec3d eye;
-    float body[10];
-    float view[10];
-    char unkA0[0x1514 - 0xA0];
-    int routeCount;
-    PatrolRoute routes[8];
-    char unk15F8[0x3AA8 - 0x15F8];
-    void *target;
-    void *unk3AAC;
-    void *claim;
-    void *alarmClaim;
-    char unk3AB8[2];
-    char deadDone;
-    char unk3ABB[5];
-    int alarmTriggerId;
-    int alarmControlId;
-    char unk3AC8[0x3B6C - 0x3AC8];
-    Graph *graph;
-    char unk3B70[0x3C74 - 0x3B70];
-    float ctrl[0x28];
-    char unk3D14;
-    char typeName[0x23];
-    int aiType;
-    char unk3D3C[0x3D80 - 0x3D3C];
-    float shotDelayMin;
-    float shotDelayRandom;
-    char unk3D88[0x3DC8 - 0x3D88];
-    double aimSpeed;
-    char unk3DD0[0x3DE8 - 0x3DD0];
-    int unk3DE8;
-    char unk3DEC[5];
-    char reloadToggle;
-    char unk3DF2[2];
-    int rollDir;
-    char unk3DF8[0x3E2C - 0x3DF8];
-    int node;
-    int destNode;
-    char unk3E34[0x3E50 - 0x3E34];
-    int unk3E50;
-    int shotsLeft;
-    int lastAmmo;
-    int unk3E5C;
-    int shotDelay;
-    char unk3E64[0x3E70 - 0x3E64];
-    Vec3d aim;
-    Vec3d aimTarget;
-    char unk3EA0[0x10];
-    Vec3d unk3EB0;
-    char unk3EC8[8];
-} HumanAI;
-
-typedef struct AIAction AIAction;
 typedef void (*AIActionFn)(HumanAI *ai, AIAction *a);
-
-struct AIAction {
-    void *next;
-    void *prev;
-    int event;
-    int delay;
-    unsigned flags;
-    AIActionFn start;
-    AIActionFn update;
-    int unk1C;
-    AIActionFn end;
-    int unk24;
-    void *param;
-    char used;
-    char unk2D[3];
-};
 
 /* the parameter blocks, each after an 8 byte list node */
 typedef struct AnimParam {
@@ -223,25 +84,6 @@ typedef struct FireParam {
 
 typedef char (*AIGraphFn)(HumanAI *ai, GraphNode *node, void *ctx);
 
-_Static_assert(offsetof(Human, weapons) == 0x4C4, "Human");
-_Static_assert(offsetof(Human, statGun) == 0x7B4, "Human");
-_Static_assert(offsetof(WeaponType, unk64C) == 0x64C, "WeaponType");
-_Static_assert(offsetof(GraphNode, links) == 0x13C, "GraphNode");
-_Static_assert(sizeof(PatrolRoute) == 0x1C, "PatrolRoute");
-_Static_assert(offsetof(HumanAI, routes) == 0x1518, "routes");
-_Static_assert(offsetof(HumanAI, target) == 0x3AA8, "target");
-_Static_assert(offsetof(HumanAI, alarmTriggerId) == 0x3AC0, "alarmTriggerId");
-_Static_assert(offsetof(HumanAI, graph) == 0x3B6C, "graph");
-_Static_assert(offsetof(HumanAI, typeName) == 0x3D15, "typeName");
-_Static_assert(offsetof(HumanAI, aiType) == 0x3D38, "aiType");
-_Static_assert(offsetof(HumanAI, aimSpeed) == 0x3DC8, "aimSpeed");
-_Static_assert(offsetof(HumanAI, reloadToggle) == 0x3DF1, "reloadToggle");
-_Static_assert(offsetof(HumanAI, node) == 0x3E2C, "node");
-_Static_assert(offsetof(HumanAI, shotDelay) == 0x3E60, "shotDelay");
-_Static_assert(offsetof(HumanAI, aim) == 0x3E70, "aim");
-_Static_assert(offsetof(HumanAI, unk3EB0) == 0x3EB0, "unk3EB0");
-_Static_assert(sizeof(HumanAI) == 0x3ED0, "HumanAI");
-_Static_assert(sizeof(AIAction) == 0x30, "AIAction");
 _Static_assert(offsetof(PosParam, move.ref) == 0x28, "PosParam");
 _Static_assert(offsetof(PosParam, panic.node) == 0x28, "PosParam");
 _Static_assert(offsetof(PanicData, node) == 0x20, "PanicData");
@@ -388,9 +230,9 @@ char AICombat_Fire(HumanAI *ai)
     Vec3d d;
 
     if (HumanAI_InPose(ai, POSE_GUN)) {
-        Task *sg = *h->statGun;
+        Task *sg = *h->climbRef;
 
-        StationaryGun_GetMuzzle(sg, &ai->eye, ai->view);
+        StationaryGun_GetMuzzle(sg, &ai->view.eye, ai->view.view);
         gun = WeaponSlots_Get((Task **)((char *)sg + 0x20C), 0);
     } else {
         gun = WeaponSlots_Get(h->weapons, 0);
@@ -408,14 +250,14 @@ char AICombat_Fire(HumanAI *ai)
     }
     wt = Weapon_GetType(gun);
     Weapon_GetAmmo(gun, ammo);
-    if (wt->kind < 0 || wt->kind > 2)
+    if (wt->category < 0 || wt->category > 2)
         return 0;
     if (ai->shotsLeft == 0 || ammo[0] == 0) {
         ai->unk3E50++;
         return 1;
     }
     HumanAI_SetChannel(ai, 6, 1.0f);
-    single = wt->unk64C == 1;
+    single = wt->burst == 1;
     if (ammo[0] != ai->lastAmmo) {
         ai->lastAmmo = ammo[0];
         ai->shotsLeft--;
@@ -587,7 +429,7 @@ void AIPlaySound_Update(HumanAI *ai, AIAction *a)
     }
     s = Sound_Play(Level_GetDynamic(), p->name);
     if (s)
-        Sound_SetPos(s, &ai->task.pos);
+        Sound_SetPos(s, &ai->view.pos);
     HumanAI_EndAction(ai, a);
 }
 HOOK(0x48DF80, AIPlaySound_Update);
@@ -716,9 +558,9 @@ void AIRunPanicking_Start(HumanAI *ai, AIAction *a)
 
     a->update = AIRunPanicking_Update;
     p->panic.node = -1;
-    if (!(Vec3d_Distance(&p->pos, &ai->task.pos) <= p->panic.radius * kUnit))
+    if (!(Vec3d_Distance(&p->pos, &ai->view.pos) <= p->panic.radius * kUnit))
         return;
-    if (ai->graph->unk5C >= 0x400) {
+    if (ai->graph->nodeCount >= 0x400) {
         Warning_Show("RunPanicking stack not large enough");
         return;
     }
@@ -793,9 +635,9 @@ void AIRunPanicking_Update(HumanAI *ai, AIAction *a)
     Debug_Log(ai, -1, "Run panicking");
     if (p->panic.node != -1) {
         HumanAI_SetChannel(ai, 5, 1.0f);
-        if (!HumanAI_RunTo(ai, p->panic.node, &ai->unk3EB0, 0))
+        if (!HumanAI_RunTo(ai, p->panic.node, &ai->cover, 0))
             return;
-        ai->unk3DE8 = -1;
+        ai->followNode = -1;
     }
     HumanAI_EndAction(ai, a);
 }
@@ -900,7 +742,7 @@ void AIActivate_Start(HumanAI *ai, AIAction *a)
         return;
     if (!TaskType_IsA(t->type, RigidDynCubeObj_GetType()))
         return;
-    AIGraph_FindNearest(&n, ai->graph, &t->pos);
+    AIGraph_FindNearest(&n, ai->graph, &((DynCubeObj *)t)->pos);
     if (!n)
         return;
     found = -1;
@@ -1214,7 +1056,7 @@ void AIFireAtTask_Update(HumanAI *ai, AIAction *a)
         HumanAI_EndAction(ai, a);
         return;
     }
-    memcpy(&ai->aimTarget, &t->pos, sizeof(Vec3d));
+    memcpy(&ai->aimTarget, &((DynCubeObj *)t)->pos, sizeof(Vec3d));
     fire_at(ai, p);
 }
 HOOK(0x48EE00, AIFireAtTask_Update);
@@ -1227,7 +1069,7 @@ void HumanAI_SetChannel(HumanAI *ai, int channel, float value)
     int i = gAIChannelMap[ai->aiType][channel];
 
     if (i == -1) {
-        crt_sprintf(buf, "AI(%d) type(%s) channel(%d)", Task_GetId(ai), ai->typeName, channel);
+        crt_sprintf(buf, "AI(%d) type(%s) channel(%d)", Task_GetId(ai), ai->aiTypeExpr, channel);
         return;
     }
     ai->ctrl[i] = value;

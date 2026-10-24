@@ -2,25 +2,7 @@
 
 #include "hook.h"
 #include "shadow/shadow.h"
-
-/* "SplineObj", the fields used here */
-typedef struct SplineObj {
-    Obj o;
-    char unkF0[0xC];
-    float minX;         /* 0xFC */
-    float maxX;         /* 0x100 */
-    float joint[21][3]; /* 0x104, joint positions */
-    Matrix seg[23];     /* 0x200, joint orientations */
-    int unk598;
-    int segCount;       /* 0x59C */
-    char unk5A0[0x14];
-    char straight;      /* 0x5B4 */
-    char reversed;      /* 0x5B5 */
-} SplineObj;
-
-_Static_assert(offsetof(SplineObj, seg) == 0x200, "SplineObj");
-_Static_assert(offsetof(SplineObj, segCount) == 0x59C, "SplineObj");
-_Static_assert(offsetof(SplineObj, straight) == 0x5B4, "SplineObj");
+#include "sound/soundtypes.h"
 
 typedef struct VertList {
     float *verts;       /* 6 floats each, position first */
@@ -38,15 +20,15 @@ static inline long long x87_fistp(long double f)
 
 /* Bends model vertices along the spline: x picks the segment and the
    position inside it, y and z are placed with the two joints' frames. */
-void SplineObj_BendVerts(SplineObj *s, VertList *list)
+void SplineObj_BendVerts(SplineObjSegment *s, VertList *list)
 {
     float *v = list->verts;
-    float inv = kOne / (s->maxX - s->minX);
+    float inv = kOne / (s->end - s->start);
     int i;
 
-    if (s->straight) {
-        float mid = (s->minX + s->maxX) * kHalf;
-        const float *m = s->o.matrix.m;
+    if (s->rigid) {
+        float mid = (s->start + s->end) * kHalf;
+        const float *m = s->rot;
 
         for (i = 0; i < list->count; i++, v += 6) {
             long double dx = v[0] - (long double)mid;
@@ -62,8 +44,8 @@ void SplineObj_BendVerts(SplineObj *s, VertList *list)
         return;
     }
     {
-        long double base = -(long double)(s->reversed ? s->maxX : s->minX);
-        long double scale = s->segCount * (long double)inv;
+        long double base = -(long double)(s->reversed ? s->end : s->start);
+        long double scale = s->segments * (long double)inv;
 
         if (s->reversed)
             scale = -scale;
@@ -74,17 +56,17 @@ void SplineObj_BendVerts(SplineObj *s, VertList *list)
             float y, z, b1, b2, c1, c2;
             const float *p, *q, *t, *u;
 
-            if (k == s->segCount)
+            if (k == s->segments)
                 k--;
             frac = f - k;
             if (frac < kZero)
                 frac = kZero;
             else if (!(kOne >= frac))
                 frac = kOne;
-            p = s->seg[k].m;
-            q = s->seg[k + 1].m;
-            t = s->joint[k];
-            u = s->joint[k + 1];
+            p = s->segRot[k];
+            q = s->segRot[k + 1];
+            t = s->segPos[k];
+            u = s->segPos[k + 1];
             y = v[1];
             z = v[2];
             a0 = p[2] * (long double)z + p[1] * (long double)y;

@@ -5,57 +5,12 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "param/paramtypes.h"
+#include "magicobj/magicobjtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
-
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major, and a counter the engine bumps on changes */
-typedef struct Matrix {
-    float m[9];
-    int stamp;
-} Matrix;
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-/* "RigidDynCubeObj" (0xF0 bytes), a moving object with a model */
-typedef struct RigidObj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    void *world;
-    void **model;
-    Matrix matrix;
-    float scale[3];
-    char unkA4[0x44];
-    Task *child; /* 0xE8 */
-    int unkEC;
-} RigidObj;
 
 /* what a picker passes to the touch handlers */
 typedef struct Toucher {
@@ -63,9 +18,6 @@ typedef struct Toucher {
     int unk4;
     Vec3d pos;
 } Toucher;
-
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
-_Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
@@ -120,7 +72,7 @@ static inline int round_int(long double f)
 }
 
 /* the largest of the three scale factors */
-static inline float max_scale(const RigidObj *o)
+static inline float max_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] >= o->scale[1] ? o->scale[2] : o->scale[1];
 

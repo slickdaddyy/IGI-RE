@@ -43,7 +43,7 @@ HOOK(0x4739D0, Mp5sd_Open);
 void Mp5sd_Create(ZoomGun *g, void *arg)
 {
     HANDLER(0, Gun_GetType())(g, arg);
-    crt_sprintf(g->gun.id, "WEAPON_ID_MP5SD");
+    crt_sprintf(g->gun.name, "WEAPON_ID_MP5SD");
     g->zoomed = 0;
 }
 HOOK(0x473AB0, Mp5sd_Create);
@@ -53,20 +53,20 @@ void Mp5sd_Use(ZoomGun *g, WeaponUseMsg *msg)
 {
     Human *h = msg->h;
     HumanView *v = h->view;
-    float *minFov = g->gun.info->data;
+    float *minFov = g->gun.wt->data2;
     long double fov;
     float e, t;
     int pressed;
 
     HANDLER(Human_GetEvent0(), Gun_GetType())(g, msg);
     if (!msg->active) {
-        v->fov = x87_tan(kAngle45);
-        v->unk1E8 = x87_tan(kAngle30);
+        v->fovX = x87_tan(kAngle45);
+        v->fovY = x87_tan(kAngle30);
         g->zoomed = 0;
         return;
     }
-    fov = v->fov;
-    MOV32(e, v->unk1E8);
+    fov = v->fovX;
+    MOV32(e, v->fovY);
     pressed = h->input[7] != kZero && h->prevInput[7] == kZero;
     if (g->zoomed) {
         if (pressed)
@@ -88,8 +88,8 @@ void Mp5sd_Use(ZoomGun *g, WeaponUseMsg *msg)
             e = x87_tan(kAngle30);
         }
     }
-    v->fov = fov;
-    MOV32(v->unk1E8, e);
+    v->fovX = fov;
+    MOV32(v->fovY, e);
 }
 HOOK(0x473AF0, Mp5sd_Use);
 
@@ -98,16 +98,16 @@ void Mp5sd_Config(void *task, WeaponConfigMsg *m)
     ConfigVar *var;
     float t;
 
-    if (m->info->data) {
-        Mem_Free(m->info->data);
-        m->info->data = NULL;
+    if (m->info->data2) {
+        Mem_Free(m->info->data2);
+        m->info->data2 = NULL;
     }
     var = TagItem_Find(m->config, "Zoom - Min FOV (degrees)");
     if (!var)
         var = TagItem_AddReal32(m->config, "Zoom - Min FOV (degrees)", 50.0f);
     t = x87_tan(var->v.f * kHalf * kDegToRad);
-    m->info->data = Mem_Alloc(4, 4);
-    *(float *)m->info->data = t;
+    m->info->data2 = Mem_Alloc(4, 4);
+    *(float *)m->info->data2 = t;
 }
 HOOK(0x473C80, Mp5sd_Config);
 

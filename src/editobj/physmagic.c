@@ -8,24 +8,13 @@ FN_EXTERN(MagicObj_RunHandler);
 
 /* "PhysicsMagicObj" (0x768), a PhysicsObj (0x720) */
 typedef struct PhysicsMagicObj {
-    Obj obj;
+    RigidDynCubeObj obj;
     char unkF0[0x720 - 0xF0];
     Vec3d offset;
     Matrix local;
     int unk760;
     int unk764;
 } PhysicsMagicObj;
-
-/* the create argument, shared with MagicObj */
-typedef struct MagicCreateArg {
-    const char *model;
-    void *world;
-    Vec3d pos;
-    Vec3d offset;
-    Matrix matrix;
-    Matrix local;
-    int unk88;
-} MagicCreateArg;
 
 /* slot 12: may this object hit `other` */
 typedef struct HitCheckArg {
@@ -36,7 +25,6 @@ typedef struct HitCheckArg {
 
 _Static_assert(offsetof(PhysicsMagicObj, local) == 0x738, "local");
 _Static_assert(sizeof(PhysicsMagicObj) == 0x768, "PhysicsMagicObj");
-_Static_assert(offsetof(MagicCreateArg, unk88) == 0x88, "MagicCreateArg");
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -63,7 +51,7 @@ extern uint16_t gPhysicsMagicObjType;
 
 void PhysicsMagicObj_Create(PhysicsMagicObj *o, MagicCreateArg *arg);
 void PhysicsMagicObj_Move(PhysicsMagicObj *o, MoveArg *arg);
-void PhysicsMagicObj_Slot12(Obj *o, HitCheckArg *arg);
+void PhysicsMagicObj_Slot12(RigidDynCubeObj *o, HitCheckArg *arg);
 
 void PhysicsMagicObj_Open(void)
 {
@@ -94,10 +82,10 @@ void PhysicsMagicObj_Create(PhysicsMagicObj *o, MagicCreateArg *arg)
     o->obj.matrix = arg->matrix;
     o->offset = arg->offset;
     o->local = arg->local;
-    o->unk760 = arg->unk88;
+    o->unk760 = (int)arg->owner;
     PhysicsObj_Init(o);
     PhysicsObj_SetPhysType(o, PhysicsObjType_Find(arg->model));
-    RigidDynCubeObj_CreateMagicObjs(o, o, arg->unk88);
+    RigidDynCubeObj_CreateMagicObjs(o, o, (int)arg->owner);
 }
 HOOK(0x503DF0, PhysicsMagicObj_Create);
 
@@ -130,7 +118,7 @@ void PhysicsMagicObj_Move(PhysicsMagicObj *o, MoveArg *arg)
     r.m[6] = l[3] * m[7] + m[8] * l[6] + m[6] * l[0];
     r.m[7] = l[4] * m[7] + m[8] * l[7] + m[6] * l[1];
     r.m[8] = l[5] * m[7] + m[8] * l[8] + m[6] * l[2];
-    r.unk24 = arg->matrix->unk24 + o->local.unk24 + 1;
+    r.count = arg->matrix->count + o->local.count + 1;
     o->obj.matrix = r;
     if (!o->obj.task.head->next || !o->obj.task.head)
         return;
@@ -140,7 +128,7 @@ void PhysicsMagicObj_Move(PhysicsMagicObj *o, MoveArg *arg)
 }
 HOOK(0x503F20, PhysicsMagicObj_Move);
 
-void PhysicsMagicObj_Slot12(Obj *o, HitCheckArg *arg)
+void PhysicsMagicObj_Slot12(RigidDynCubeObj *o, HitCheckArg *arg)
 {
     if (o != arg->other && *(void **)((char *)o + 0x130) != arg->other) {
         arg->result = 1;

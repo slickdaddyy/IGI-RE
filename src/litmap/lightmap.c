@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "litmap/litmap.h"
+#include "litmap/litmaptypes.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (int size, int align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -45,99 +46,7 @@ typedef struct Hemicube {
 
 _Static_assert(sizeof(Hemicube) == 0xEC, "Hemicube");
 
-/* buffers of one lightmapped mesh */
-typedef struct LightmapRec {
-    void *buf[10];
-} LightmapRec;
-
-/* one lightmap texture of a LOD */
-typedef struct LightmapTex {
-    char texture[0x24];
-    void *pixels;
-    short width;
-    short height;
-} LightmapTex;
-
-/* the lightmaps of one LOD; loaded from lightmaps.res or allocated */
-typedef struct Lightmaps {
-    char unk0[0x24];
-    int fromResource;
-    int unk28;
-    int count;
-    int unk30;
-    int unk34;
-    LightmapRec *recs;
-    LightmapTex tex[];
-} Lightmaps;
-
-_Static_assert(offsetof(Lightmaps, tex) == 0x3C, "tex");
-_Static_assert(sizeof(LightmapTex) == 0x2C, "LightmapTex");
-
 ORIG(0x523900, void, LightmapTex_Free, (LightmapTex *t));
-
-typedef struct LightmapRef {
-    Lightmaps *lightmaps;
-    char unk4[0x20];
-} LightmapRef;
-
-/* the LODs of an object */
-typedef struct LightmapSet {
-    int count;
-    void *model;
-    float radius;
-    float center[3];
-    LightmapRef refs[];
-} LightmapSet;
-
-_Static_assert(offsetof(LightmapSet, refs) == 0x18, "refs");
-
-/* per vertex weights of one light source */
-typedef struct VertexLight {
-    float *weights;
-    int *verts;
-    int count;
-} VertexLight;
-
-typedef struct VertexLights {
-    int count;
-    VertexLight lights[];
-} VertexLights;
-
-/* the lightmap settings of an object; the name picks its .olm files */
-typedef struct LightmapInfo {
-    Task task;
-    char unk20[0x48];
-    char flags[12];
-    char *slot;
-    char name[0x10];
-    struct LightmapSet *set;
-    float unk8C;
-    float unk90;
-    float unk94;
-    float unk98;
-    float unk9C;
-    int unkA0;
-    int unkA4;
-    int unkA8;
-    int unkAC;
-    int unkB0;
-    int unkB4;
-    Task *owner;
-    int unkBC;
-    int unkC0;
-    int unkC4;
-    struct VertexLights *vertexLights;
-    int unkCC;
-    int unkD0;
-    int unkD4;
-    int unkD8;
-    int unkDC;
-} LightmapInfo;
-
-_Static_assert(offsetof(LightmapInfo, slot) == 0x74, "slot");
-_Static_assert(offsetof(LightmapInfo, set) == 0x88, "set");
-_Static_assert(offsetof(LightmapInfo, vertexLights) == 0xC8, "vertexLights");
-_Static_assert(sizeof(LightmapInfo) == 0xE0, "LightmapInfo");
 
 /* what File_ScanDir passes to its callback */
 typedef struct ScanEntry {
@@ -303,14 +212,14 @@ void LightmapInfo_Create(LightmapInfo *li)
     p->used++;
     li->slot = item;
     *(LightmapInfo **)item = li;
-    li->flags[0] = li->flags[7] = li->flags[8] = li->flags[9] = 0;
-    li->flags[1] = li->flags[2] = li->flags[3] = li->flags[4] = 0;
-    li->flags[5] = li->flags[6] = li->flags[10] = li->flags[11] = 0;
+    li->unk68 = li->unk6F = li->unk70 = li->unk71 = 0;
+    li->unk69 = li->unk6A = li->unk6B = li->unk6C = 0;
+    li->unk6D = li->unk6E = li->unk72[0] = li->unk72[1] = 0;
     crt_sprintf(li->name, "");
-    li->unk8C = li->unk98 = li->unk90 = li->unk9C = 1.0f;
+    li->scale = li->lastScale = li->unk90 = li->unk9C = 1.0f;
     li->unkA4 = 150;
     li->unkA0 = 1000;
-    li->unkA8 = li->unkAC = li->unkB0 = 0;
+    li->texelsA8 = li->texelsAC = li->vertexLightSize = 0;
     li->unk94 = kInfoUnk94;
     li->unkB4 = 1;
     li->unkD0 = li->unkD4 = li->unkD8 = 0;
@@ -420,29 +329,29 @@ void Lightmaps_Free(Lightmaps *o)
 {
     int i;
 
-    if (o->recs) {
+    if (o->info) {
         for (i = 0; i < o->count; i++) {
-            LightmapRec *r = &o->recs[i];
+            LightmapTexInfo *r = &o->info[i];
 
-            Mem_Free(r->buf[6]);
-            r->buf[6] = NULL;
-            Mem_Free(r->buf[5]);
-            r->buf[5] = NULL;
-            Mem_Free(r->buf[1]);
-            r->buf[1] = NULL;
-            Mem_Free(r->buf[0]);
-            r->buf[0] = NULL;
-            Mem_Free(r->buf[9]);
-            r->buf[9] = NULL;
-            Mem_Free(r->buf[4]);
-            r->buf[4] = NULL;
-            Mem_Free(r->buf[3]);
-            r->buf[3] = NULL;
-            Mem_Free(r->buf[2]);
-            r->buf[2] = NULL;
+            Mem_Free(r->unk18);
+            r->unk18 = NULL;
+            Mem_Free(r->unk14);
+            r->unk14 = NULL;
+            Mem_Free(r->positions);
+            r->positions = NULL;
+            Mem_Free(r->normals);
+            r->normals = NULL;
+            Mem_Free(r->texelIds);
+            r->texelIds = NULL;
+            Mem_Free(r->weights);
+            r->weights = NULL;
+            Mem_Free(r->unkC);
+            r->unkC = NULL;
+            Mem_Free(r->unk8);
+            r->unk8 = NULL;
         }
-        Mem_Free(o->recs);
-        o->recs = NULL;
+        Mem_Free(o->info);
+        o->info = NULL;
     }
     for (i = 0; i < o->count; i++)
         LightmapTex_Free(&o->tex[i]);

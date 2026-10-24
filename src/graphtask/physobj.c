@@ -5,6 +5,7 @@
 #include "igi.h"
 #include "math/x87.h"
 #include "graphtask/graphtask.h"
+#include "material/materialtypes.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -196,14 +197,14 @@ void PhysicsObj_SetPhysType(PhysObj *o, PhysType *phys)
             float p[3];
 
             c->unk4 = j->unk8;
-            c->unk0 = j->unk4;
+            c->side = j->unk4;
             c->bounce = j->bounce;
             c->active = 1;
             c->enabled = 1;
             c->touching = 0;
             c->unk1C = j->unk10;
             c->friction = j->friction;
-            c->unk34 = 0;
+            c->height = 0;
             Mesh3D_GetModelVertex(p, o, o->phys->joints[i].point, phys->model);
             c->point.x = p[0];
             c->point.y = p[1];
@@ -290,8 +291,8 @@ int PhysicsObj_CollideContacts(PhysObj *o, float push, float damp, void *world, 
 
         if (!h->found)
             continue;
-        if (h->material2)
-            hit = NONZERO(h->material2[3]);
+        if (h->back)
+            hit = NONZERO(h->back->bounce);
         if (h->task) {
             PhysHitMsg m = {o, h, 0};
             TaskFn fn = HANDLER(PhysicsObj_GetHitEvent(), h->task->type);
@@ -499,7 +500,7 @@ int PhysicsObj_CheckContacts(PhysObj *o, void *world, int event, void *msg)
     if (n) {
         Coll_DropPointsMat(world, hits, pts, n, dz, event, msg, -1);
         for (i = 0; i < n; i++) {
-            if (hits[i].found && hits[i].material2) {
+            if (hits[i].found && hits[i].back) {
                 o->contacts[idx[i]].touching = 1;
                 o->touching++;
                 return 0;

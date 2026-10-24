@@ -5,87 +5,11 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "script/scripttypes.h"
+#include "sound/soundtypes.h"
+#include "define/definetypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct SoundParams {
-    float volume;
-    float pitch;
-    float pan;
-    int unkC;
-    double minDist;
-    double maxDist;
-    Vec3d pos;
-    Vec3d vel;
-    float start;
-    int unk54;
-} SoundParams;
-
-/* what a task keeps to restart or query a sound of its own */
-typedef struct SoundHandle {
-    int bucket;
-    int hash;
-    int id;
-    uint32_t flags; /* 2 positional, 0x10 loop */
-    SoundParams params;
-} SoundHandle;
-
-/* what an object answers to the sound info event */
-typedef struct SoundInfo {
-    Vec3d *pos;
-    float *matrix;
-    int *values; /* count, then one value per index */
-} SoundInfo;
-
-/* argument of the play event: the listener object */
-typedef struct SoundPlayArg {
-    void *listener;
-    char defs;
-} SoundPlayArg;
-
-/* argument of the list event: appends the definition as script text */
-typedef struct SoundWriteArg {
-    char *buf;
-    int indent;
-} SoundWriteArg;
-
-typedef struct SoundFindArg {
-    const char *name;
-    Task *found;
-} SoundFindArg;
-
-/* argument of Create: the definition to copy, or NULL for a definition */
-typedef struct SoundCreateArg {
-    void *def;
-    char isDef;
-} SoundCreateArg;
-
-/* Same layout as the script engine's value. Bytes 4 and 20 are never set. */
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
 
 /* "SoundDefSound": DefineSound() */
 typedef struct SoundDefSound {
@@ -144,43 +68,12 @@ typedef struct SoundDefTriggerOnce {
     int hash;
 } SoundDefTriggerOnce;
 
-/* "SoundDefGraph": DefineGraph() */
-typedef struct SoundDefGraph {
-    Task task;
-    SoundHandle h;
-    Vec3d pos;
-    Vec3d offset;
-    float volume;
-    float volume2;
-    float pitch;
-    float unkC4;
-    float minDist;
-    float maxDist;
-    float range;
-    char isDef;
-    char stop;
-    char padD6[2];
-    int volumeIndex;
-    int pitchIndex;
-    int pitchAddIndex;
-    int sampleIndex;
-    float volumeGraph[11];
-    float pitchGraph[11];
-    char name[0x20];
-    char sample[0x20];
-    int bucket;
-    int hash;
-} SoundDefGraph;
-
-_Static_assert(sizeof(SoundParams) == 0x58, "SoundParams");
 _Static_assert(offsetof(SoundDefSound, pos) == 0x88, "SoundDefSound");
 _Static_assert(offsetof(SoundDefSound, name) == 0xDF, "SoundDefSound");
 _Static_assert(sizeof(SoundDefSound) == 0x130, "SoundDefSound");
 _Static_assert(offsetof(SoundDefTriggerOnce, name) == 0xE3, "SoundDefTriggerOnce");
 _Static_assert(offsetof(SoundDefTriggerOnce, time) == 0x128, "SoundDefTriggerOnce");
 _Static_assert(sizeof(SoundDefTriggerOnce) == 0x138, "SoundDefTriggerOnce");
-_Static_assert(offsetof(SoundDefGraph, volumeGraph) == 0xE8, "SoundDefGraph");
-_Static_assert(sizeof(SoundDefGraph) == 0x188, "SoundDefGraph");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

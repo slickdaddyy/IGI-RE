@@ -1,5 +1,6 @@
 #include "hook.h"
 #include "flatwater/flatwater.h"
+#include "d3d/d3dtypes.h"
 
 /* "MipMapControl": texture filtering settings of a level. Only the LOD bias
    is passed on to Direct3D. */
@@ -19,12 +20,6 @@ typedef struct MipMapControl {
 } MipMapControl;
 
 _Static_assert(sizeof(MipMapControl) == 0x30, "MipMapControl");
-
-typedef struct D3DDevice {
-    void **vtbl;
-} D3DDevice;
-
-typedef long(__stdcall *SetTextureStageStateFn)(D3DDevice *dev, int stage, int state, uint32_t value);
 
 extern uint16_t gMipMapType;
 extern int gMipMapModeRange[];
@@ -72,8 +67,7 @@ void MipMapControl_ParamsChanged(MipMapControl *m)
 
     if (RenderMode_GetCurrent() != mode)
         return;
-    hr = ((SetTextureStageStateFn)gD3DDevice->vtbl[0x94 / 4])(gD3DDevice, 0, D3DTSS_MIPMAPLODBIAS,
-                                                             *(uint32_t *)&m->lodBias);
+    hr = gD3DDevice->vtbl->SetTextureStageState(gD3DDevice, 0, D3DTSS_MIPMAPLODBIAS, *(uint32_t *)&m->lodBias);
     if (hr) {
         char text[1024];
 

@@ -123,7 +123,7 @@ ORIG(0x4E7C40, void *, DebugText_GetFont, (void));
 ORIG(0x4E81F0, char *, Viewport_GetCurrentCamera, (void));
 ORIG(0x4EC0E0, void, AnimTrigger_Fire, (int a, Human *h, double *pos));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
-ORIG(0x4F2060, Task *, WeaponSlots_Get, (void **slots, int i));
+ORIG(0x4F2060, Task *, WeaponSlots_Get, (Task **slots, int i));
 ORIG(0x4F2310, void, Weapon_Move, (Task *w, double *pos, float *m));
 ORIG(0x4F9720, void *, Graph_GetNode, (void *graph, int id));
 ORIG(0x4F9770, void, Graph_GetNodePos, (double *out, void *node));
@@ -298,7 +298,7 @@ void Human_Wake(Human *h)
     if (!h->frozen)
         return;
     h->frozen = 0;
-    BoneObj_Update(h->matrix, h->anim);
+    BoneObj_Update(h->matrix.m, h->anim);
     Human_ApplyLook(h, Anim_GetId(h->anim, 0));
 }
 HOOK(0x45F240, Human_Wake);
@@ -459,18 +459,18 @@ void Human_ParamChangedHandler(Human *h, void *arg)
 
     if (model) {
         BoneDynCubeObj_SetModel(h, model);
-        BoneObj_Update(h->matrix, h->anim);
+        BoneObj_Update(h->matrix.m, h->anim);
     }
     DynCube_Move(Game_GetWorld(), h, h->placePos, h->radius);
     h->baseZ = h->yaw;
     h->rotZ = h->yaw;
-    Matrix_SetRotZ(h->matrix, h->yaw);
+    Matrix_SetRotZ(h->matrix.m, h->yaw);
 }
 HOOK(0x45F890, Human_ParamChangedHandler);
 
 void Human_GetWeaponsHandler(Human *h, void ***out)
 {
-    *out = h->weapons;
+    *out = (void **)h->weapons;
 }
 HOOK(0x45F900, Human_GetWeaponsHandler);
 
@@ -511,7 +511,7 @@ void Human_HitHandler(Human *h, int *msg)
     Human_Bleed(h, msg + 2, msg[0]);
     if (Human_IsPlayer(h) && PlayerXPHit())
         return;
-    if (!h->active)
+    if (!h->vulnerable)
         return;
     zone = Human_GetHitZone(h, msg);
     d->hitZone = zone;
@@ -529,7 +529,7 @@ void Human_BlastHandler(Human *h, void *msg)
 
     if (Human_IsPlayer(h) && PlayerXPHit())
         return;
-    if (!h->active)
+    if (!h->vulnerable)
         return;
     d->hitZone = 13;
     HumanDamage_GetZone(d, 13);
@@ -549,7 +549,7 @@ void Human_CrushHandler(Human *h, void **msg)
     double *p = DynCubeObj_GetPosition(h);
     char *obj = msg[0];
     double a[3], b[3], d[3], lim;
-    char active = h->active;
+    char active = h->vulnerable;
     CollHit hit;
     CollLinesMsg q;
     float *s, *v, m, dmg;
@@ -579,9 +579,9 @@ void Human_CrushHandler(Human *h, void **msg)
     q.hits = &hit;
     hit.found = 0;
     hit.material = 0;
-    hit.material2 = 0;
+    hit.back = 0;
     gTaskHandlers[9][RigidDynCubeObj_GetType()](msg[0], &q);
-    if (hit.found && !hit.material2)
+    if (hit.found && !hit.back)
         return;
     v = msg[1];
     dmg = 0;
@@ -590,7 +590,7 @@ void Human_CrushHandler(Human *h, void **msg)
     h->damage.hitZone = 13;
     if (Human_IsPlayer(h) && PlayerXPHit())
         return;
-    if (h->ai && h->ai->immortal)
+    if (h->ai && h->ai->invulnerable)
         return;
     h->damage.part[13].dmg = dmg + h->damage.part[13].dmg;
     Human_AddDamage(h, dmg);
@@ -601,15 +601,15 @@ void Human_GetHumanCameraInfoHandler(Human *h, HumanCameraInfo *info)
 {
     HumanView *v = h->view;
 
-    HumanView_GetEye(info->pos, v);
-    HumanView_GetMatrix(info->matrix, h->view);
-    info->fov = v->fov;
-    memcpy(info->bodyMatrix, h->matrix, sizeof(info->bodyMatrix));
-    info->unk6C = v->unk1E8;
+    HumanView_GetEye(&info->pos.x, v);
+    HumanView_GetMatrix(info->matrix.m, h->view);
+    info->fov = v->fovX;
+    memcpy(&info->body, h->matrix.m, sizeof(info->body));
+    info->unk6C = v->fovY;
     info->mode = h->camMode;
     if (v->camOverride) {
-        memcpy(info->pos, v->camPos, sizeof(info->pos));
-        memcpy(info->matrix, v->camMatrix, sizeof(info->matrix));
+        memcpy(&info->pos, v->camPos, sizeof(info->pos));
+        memcpy(&info->matrix, &v->camRot, sizeof(info->matrix));
         info->mode = 4;
     }
     if (!is_zero(h->input[19]) && is_zero(h->prevInput[19]))
@@ -627,7 +627,7 @@ void Human_AIEventHandler(Human *h, Human **msg)
 
     if (h == msg[5] && h == msg[6])
         return;
-    t = h->task.children;
+    t = h->task.head;
     if (!t->next)
         return;
     while (t) {
@@ -646,7 +646,7 @@ void Human_DetectInfoHandler(Human *h, int *msg)
     msg[0] = Human_GetMaskType();
     msg[8] = h->team;
     ((char *)msg)[0x24] = !h->dead;
-    ((char *)msg)[0x25] = h->active;
+    ((char *)msg)[0x25] = h->vulnerable;
     Human_GetEyePos(msg + 2, h);
 }
 HOOK(0x45FE30, Human_DetectInfoHandler);
@@ -710,7 +710,7 @@ void WeaponGunPickup(Human *h, int *msg)
 
     if (h->dead)
         return;
-    t = h->task.children;
+    t = h->task.head;
     if (t->next) {
         for (;;) {
             type = Gun_GetType();
@@ -742,7 +742,7 @@ HOOK(0x460070, Human_GetWeaponHandler);
 
 void Human_FirstPersonHandler(Human *h, int *msg)
 {
-    if (*msg && h->view->firstPerson) {
+    if (*msg && h->view->inWorld) {
         *msg = 1;
         return;
     }
@@ -758,25 +758,25 @@ void Human_GetWeaponBoneHandler(Human *h, HumanBoneMsg *msg)
     float *b;
     float x, y, z;
 
-    if (msg->firstPerson && v->firstPerson) {
-        b = (float *)(v->model + 0x1A4);
+    if (msg->firstPerson && v->inWorld) {
+        b = (float *)((char *)v->motion + 0x1A4);
         x = b[0];
         y = b[1];
         z = b[2];
         msg->pos[0] = x + v->pos[0];
         msg->pos[1] = y + v->pos[1];
         msg->pos[2] = z + v->pos[2];
-        memcpy(msg->matrix, v->model + 0x1B0, sizeof(msg->matrix));
+        memcpy(msg->matrix, (char *)v->motion + 0x1B0, sizeof(msg->matrix));
         return;
     }
-    b = (float *)(h->motion + 0xB70);
+    b = (float *)((char *)h->motion + 0xB70);
     x = b[0];
     y = b[1];
     z = b[2];
     msg->pos[0] = x + h->pos[0];
     msg->pos[1] = y + h->pos[1];
     msg->pos[2] = z + h->pos[2];
-    memcpy(msg->matrix, h->motion + 0xB7C, sizeof(msg->matrix));
+    memcpy(msg->matrix, (char *)h->motion + 0xB7C, sizeof(msg->matrix));
     msg->firstPerson = 0;
 }
 HOOK(0x4600C0, Human_GetWeaponBoneHandler);
@@ -787,16 +787,16 @@ static void Human_GetViewBone(Human *h, double *out, int bone)
     float *b;
     float x, y, z;
 
-    if (!v->firstPerson)
+    if (!v->inWorld)
         return;
-    b = (float *)(v->model + bone);
+    b = (float *)((char *)v->motion + bone);
     x = b[0];
     y = b[1];
     z = b[2];
     out[0] = x + v->pos[0];
     out[1] = y + v->pos[1];
     out[2] = z + v->pos[2];
-    memcpy(out + 3, v->model + bone + 0xC, 40);
+    memcpy(out + 3, (char *)v->motion + bone + 0xC, 40);
 }
 
 void Human_GetViewBarrelHandler(Human *h, double *out)
@@ -840,11 +840,11 @@ void Human_MapMarkerHandler(Human *h, HumanSeeQuery *q)
     if (!ComputerMap_GetZoom() || ComputerMap_GetZoom() == 3)
         return;
     q->targetPos = h->pos;
-    q->targetMatrix = h->matrix;
+    q->targetMatrix = h->matrix.m;
     q->unk1C = 1;
     q->radius = h->radius;
     q->kind = h->team == 0 || h->team == 2 ? 3 : 0;
-    if (!h->active)
+    if (!h->vulnerable)
         return;
     d[0] = h->pos[0] - q->pos[0];
     d[1] = h->pos[1] - q->pos[1];
@@ -923,7 +923,7 @@ HOOK(0x460400, Human_RenderHandler);
 void Human_GetSoundInfoHandler(Human *h, void **out)
 {
     out[0] = h->pos;
-    out[1] = h->matrix;
+    out[1] = h->matrix.m;
     out[2] = 0;
 }
 HOOK(0x4606D0, Human_GetSoundInfoHandler);
@@ -938,7 +938,7 @@ typedef struct GunshotMsg {
 void Human_GunshotHandler(Human *h, GunshotMsg *msg)
 {
     double pos[3], pts[32][3];
-    HumanNoise noise;
+    AIMessage noise;
     Task *a;
     void *snd;
     int team, n, i;
@@ -967,16 +967,16 @@ void Human_GunshotHandler(Human *h, GunshotMsg *msg)
         }
         noise.type = 0x14;
         noise.team = 1;
-        noise.unk8 = 0x46;
+        noise.flags = 0x46;
         noise.radius = kNoiseRadius;
-        noise.pos = pts[i];
-        noise.unk14 = msg->shot;
+        noise.pos = (Vec3d *)pts[i];
+        noise.from = msg->shot;
         if (!msg->shooter) {
-            noise.source = 0;
+            noise.about = 0;
         } else {
-            noise.source = *msg->shooter;
-            if (noise.source)
-                noise.team = Human_GetTeam(noise.source);
+            noise.about = *msg->shooter;
+            if (noise.about)
+                noise.team = Human_GetTeam(noise.about);
         }
         HumanAI_Broadcast(&noise);
     }
@@ -1017,9 +1017,9 @@ void Human_ActivateHandler(Human *h, void *arg)
 {
     uint8_t ev;
 
-    if (h->active)
+    if (h->vulnerable)
         return;
-    h->active = 1;
+    h->vulnerable = 1;
     ev = World_GetEvent0();
     Handler(ev, BoneDynCubeObj_GetType())(h, arg);
 }
@@ -1029,9 +1029,9 @@ void Human_DeactivateHandler(Human *h, void *arg)
 {
     uint8_t ev;
 
-    if (!h->active)
+    if (!h->vulnerable)
         return;
-    h->active = 0;
+    h->vulnerable = 0;
     ev = World_GetEvent1();
     Handler(ev, BoneDynCubeObj_GetType())(h, arg);
 }
@@ -1084,7 +1084,7 @@ void Human_PreDeleteHandler(Human *h, void *arg)
         int unk8;
     } m;
 
-    if (h->active)
+    if (h->vulnerable)
         return;
     m.unk0 = 0;
     m.world = Game_GetWorld();
@@ -1188,7 +1188,7 @@ HOOK(0x460C80, Human_printf);
 
 void Human_MarkDelete(Human *h)
 {
-    h->unk7C8 = 1;
+    h->deleteMe = 1;
 }
 HOOK(0x460CE0, Human_MarkDelete);
 
@@ -1214,7 +1214,7 @@ void Human_UpdatePlatformMove(Human *h)
     for (i = 0; i < 3; i++)
         h->movePos[i] = 0;
     for (i = 0; i < 10; i++)
-        h->moveMatrix[i] = 0;
+        ((float *)&h->moveMatrix)[i] = 0;
     h->moveAngle[2] = 0;
     if (!obj && !(obj = Human_GetGround(h)))
         return;
@@ -1239,7 +1239,7 @@ void Human_UpdatePlatformMove(Human *h)
     h->movePos[0] = x;
     h->movePos[1] = y;
     h->movePos[2] = z;
-    memcpy(h->moveMatrix, m, sizeof(h->moveMatrix));
+    memcpy(&h->moveMatrix, m, sizeof(h->moveMatrix));
     Matrix_GetEuler(m, &h->moveAngle[0], &h->moveAngle[1], &h->moveAngle[2]);
 }
 HOOK(0x460CF0, Human_UpdatePlatformMove);
@@ -1289,7 +1289,7 @@ void Human_UpdateUse(Human *h)
         q.h = h;
         HumanView_GetEye(q.pos, h->view);
         HumanView_GetMatrix(q.matrix, h->view);
-        memcpy(q.bodyMatrix, h->matrix, sizeof(q.bodyMatrix));
+        memcpy(q.bodyMatrix, h->matrix.m, sizeof(q.bodyMatrix));
         q.unk70 = q.unk74 = Human_IsPlayer(h) ? kQuarterPi : kPi;
         q.unk78 = 0;
         q.range = kUseRange;
@@ -1305,7 +1305,7 @@ void Human_UpdateUse(Human *h)
         }
         Human_SetAttached(h, q.found);
     }
-    if (!h->unk7B4 || !(t = *h->unk7B4))
+    if (!h->climbRef || !(t = *h->climbRef))
         return;
     c.h = h;
     memcpy(c.pos, h->pos, sizeof(c.pos));
@@ -1329,7 +1329,7 @@ void Human_UpdateBody(Human *h)
     float *b, *m;
 
     if (obj) {
-        m = h->attachMatrix;
+        m = h->attachMatrix.m;
         b = (float *)((char *)obj + 0x70);
         r[0] = m[6] * b[2] + b[1] * m[3] + m[0] * b[0];
         r[1] = m[7] * b[2] + b[1] * m[4] + m[1] * b[0];
@@ -1340,18 +1340,18 @@ void Human_UpdateBody(Human *h)
         r[6] = m[6] * b[8] + m[3] * b[7] + m[0] * b[6];
         r[7] = m[7] * b[8] + m[4] * b[7] + m[1] * b[6];
         r[8] = m[8] * b[8] + m[5] * b[7] + m[2] * b[6];
-        ((int *)r)[9] = h->unk7AC + *(int *)((char *)obj + 0x94) + 1;
+        ((int *)r)[9] = h->attachMatrix.count + *(int *)((char *)obj + 0x94) + 1;
         Matrix_GetEuler(r, &ex, &ey, &ez);
         h->baseX = ex;
         h->rotX = ex;
         h->baseY = ey;
         h->rotY = ey;
         h->baseZ = ez;
-        h->rotZ = ez + v->unk134;
+        h->rotZ = ez + v->recoilYaw;
     } else {
         s = x87_tan(kQuarterPiD);
         x = h->input[0];
-        if (!(s < v->fov || s > v->fov))
+        if (!(s < v->fovX || s > v->fovX))
             x = (x + h->prevInput[0]) * kHalfD;
         if (h->frozenView)
             x = kZero;
@@ -1359,15 +1359,15 @@ void Human_UpdateBody(Human *h)
         h->rotX = 0;
         h->baseY = 0;
         h->rotY = 0;
-        a = -(x * kPi) * v->fov;
+        a = -(x * kPi) * v->fovX;
         ax = !(x >= kZero) ? -x : x;
         if (!(ax >= kTurnDead))
             a = a / (kTwoD - ax * kTurnDiv);
         s = (a + h->moveAngle[2]) + h->baseZ;
         h->baseZ = s;
-        h->rotZ = s + v->unk134;
+        h->rotZ = s + v->recoilYaw;
     }
-    Matrix_SetEuler(h->matrix, h->rotX, h->rotY, h->rotZ);
+    Matrix_SetEuler(h->matrix.m, h->rotX, h->rotY, h->rotZ);
 }
 HOOK(0x4610C0, Human_UpdateBody);
 
@@ -1383,9 +1383,9 @@ void Human_FireAnimTrigger(Human *h)
     BoneObj_GetEvents(&e->unk0, h->anim);
     if (e->sound == -1)
         return;
-    x = h->matrix[2] * e->offset[2] + h->matrix[1] * e->offset[1] + h->matrix[0] * e->offset[0];
-    y = h->matrix[5] * e->offset[2] + h->matrix[4] * e->offset[1] + h->matrix[3] * e->offset[0];
-    z = h->matrix[8] * e->offset[2] + h->matrix[7] * e->offset[1] + h->matrix[6] * e->offset[0];
+    x = h->matrix.m[2] * e->offset[2] + h->matrix.m[1] * e->offset[1] + h->matrix.m[0] * e->offset[0];
+    y = h->matrix.m[5] * e->offset[2] + h->matrix.m[4] * e->offset[1] + h->matrix.m[3] * e->offset[0];
+    z = h->matrix.m[8] * e->offset[2] + h->matrix.m[7] * e->offset[1] + h->matrix.m[6] * e->offset[0];
     p[0] = x + h->pos[0];
     p[1] = y + h->pos[1];
     p[2] = z + h->pos[2];
@@ -1411,9 +1411,9 @@ void Human_UpdateMove(Human *h)
     v[2] = h->vel[2] + h->delta[2];
     if (!h->ground.found || !(bits & HUMAN_ON_GROUND))
         goto still;
-    n[0] = h->ground.normal[0];
-    n[1] = h->ground.normal[1];
-    n[2] = h->ground.normal[2];
+    n[0] = h->ground.normal.x;
+    n[1] = h->ground.normal.y;
+    n[2] = h->ground.normal.z;
     if (!is_zero(n[0]) || !is_zero(n[1]) || !is_zero(n[2])) {
         len = __builtin_sqrtl((long double)n[0] * n[0] + (long double)n[1] * n[1] + (long double)n[2] * n[2]);
         inv = kOneD / len;
@@ -1526,7 +1526,7 @@ typedef struct HumanFilter {
 /* z of the unit normal of a hit (the raw z when the normal is zero) */
 static long double Hit_UpZ(const CollHit *hit)
 {
-    float x = hit->normal[0], y = hit->normal[1], z = hit->normal[2];
+    float x = hit->normal.x, y = hit->normal.y, z = hit->normal.z;
 
     if (is_zero(x) && is_zero(y) && is_zero(z))
         return z;
@@ -1546,13 +1546,13 @@ static CollHit *Hit_PickWall(CollHit *hit, int n, CollHit *best)
             z = -z;
         if (z >= kWallSteep)
             continue;
-        hit->normal[2] = 0;
-        if (!is_zero(hit->normal[0]) || !is_zero(hit->normal[1])) {
-            inv = kOneD / __builtin_sqrtl((long double)hit->normal[1] * hit->normal[1] +
-                                          (long double)hit->normal[0] * hit->normal[0]);
-            hit->normal[0] = hit->normal[0] * inv;
-            hit->normal[1] = hit->normal[1] * inv;
-            hit->normal[2] = hit->normal[2] * inv;
+        hit->normal.z = 0;
+        if (!is_zero(hit->normal.x) || !is_zero(hit->normal.y)) {
+            inv = kOneD / __builtin_sqrtl((long double)hit->normal.y * hit->normal.y +
+                                          (long double)hit->normal.x * hit->normal.x);
+            hit->normal.x = hit->normal.x * inv;
+            hit->normal.y = hit->normal.y * inv;
+            hit->normal.z = hit->normal.z * inv;
         }
         if (!best || !(hit->dist >= best->dist))
             best = hit;
@@ -1620,17 +1620,17 @@ void Human_CollideWalls(Human *h, double *from, double *to, float *vel, uint32_t
         if (!(*bits & HUMAN_ON_GROUND)) {
             best = Hit_PickWall(hits, 3, 0);
             if (hits[0].found && !best && Hit_UpZ(&hits[0]) > kFloorUp) {
-                memcpy(to, hits[0].pos, sizeof(hits[0].pos));
+                memcpy(to, &hits[0].pos, sizeof(hits[0].pos));
                 to[2] = (foot[2] - kWallLow) + to[2];
             }
             if (hits[2].found && !best) {
                 if (Hit_UpZ(&hits[2]) >= kCeilingDown) {
-                    memcpy(to, hits[2].pos, 2 * sizeof(double));
+                    memcpy(to, &hits[2].pos, 2 * sizeof(double));
                     h->vel[0] = 0;
                     h->vel[1] = 0;
                 }
                 h->vel[2] = 0;
-                to[2] = (hits[2].pos[2] - (kWallHigh - foot[2])) - kWallPad;
+                to[2] = (hits[2].pos.z - (kWallHigh - foot[2])) - kWallPad;
                 goto next;
             }
         } else {
@@ -1638,9 +1638,9 @@ void Human_CollideWalls(Human *h, double *from, double *to, float *vel, uint32_t
         }
         if (!best)
             goto next;
-        nd[0] = best->normal[0];
-        nd[1] = best->normal[1];
-        nd[2] = best->normal[2];
+        nd[0] = best->normal.x;
+        nd[1] = best->normal.y;
+        nd[2] = best->normal.z;
         Vec3d_Normalize(nd);
         xd = dist * dir[0];
         memcpy(c, dir, sizeof(c));
@@ -1648,13 +1648,13 @@ void Human_CollideWalls(Human *h, double *from, double *to, float *vel, uint32_t
         zd = c[2] * dist;
         c[2] = zd;
         if (!(zd * nd[2] + c[1] * nd[1] + xd * nd[0] >= kZeroD)) {
-            rel[0] = to[0] - best->pos[0];
-            rel[1] = to[1] - best->pos[1];
-            rel[2] = to[2] - best->pos[2];
-            Vec3_RayPlane(buf, rel, best->normal, best->normal);
-            to[0] = buf[0] + best->pos[0];
-            to[1] = buf[1] + best->pos[1];
-            to[2] = buf[2] + best->pos[2];
+            rel[0] = to[0] - best->pos.x;
+            rel[1] = to[1] - best->pos.y;
+            rel[2] = to[2] - best->pos.z;
+            Vec3_RayPlane(buf, rel, &best->normal.x, &best->normal.x);
+            to[0] = buf[0] + best->pos.x;
+            to[1] = buf[1] + best->pos.y;
+            to[2] = buf[2] + best->pos.z;
             again = 1;
             px = nd[0] * kWallPad;
             nd[1] = nd[1] * kWallPad;
@@ -1689,7 +1689,7 @@ void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t 
     CollLinesMsg q;
     HumanFilter filter;
     HumanAI *ai;
-    HumanPath *path;
+    Graph *path;
     TaskHandler fn;
     Task *task, *n0;
     void *node, *world;
@@ -1705,38 +1705,38 @@ void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t 
     if (ai) {
         memset(hits, 0, sizeof(hits));
         h->groundDistance = 0;
-        if (!ai->path)
+        if (!ai->graph)
             goto check;
-        node = Graph_GetNode(ai->path, ai->node);
-        memcpy(hits[0].pos, to, sizeof(hits[0].pos));
-        hits[0].pos[2] = hits[0].pos[2] - foot[2];
+        node = Graph_GetNode(ai->graph, ai->node);
+        memcpy(&hits[0].pos, to, sizeof(hits[0].pos));
+        hits[0].pos.z = hits[0].pos.z - foot[2];
         if (node) {
             hits[0].material = *(void **)((char *)node + 0x138);
             hits[0].found = 1;
-            hits[0].normal[0] = 0;
-            hits[0].normal[1] = 0;
-            hits[0].normal[2] = kOne;
+            hits[0].normal.x = 0;
+            hits[0].normal.y = 0;
+            hits[0].normal.z = kOne;
         }
-        if (List_Count(ai->route) <= 0) {
-            node = Graph_GetNode(ai->path, ai->node);
+        if (List_Count(&ai->moves) <= 0) {
+            node = Graph_GetNode(ai->graph, ai->node);
             if (node) {
                 Graph_GetNodePos(d, node);
-                hits[0].pos[2] = d[2];
+                hits[0].pos.z = d[2];
             }
-        } else if ((n0 = ai->route[0])->next) {
+        } else if ((n0 = (Task *)ai->moves.head)->next) {
             if (Vec3d_IsZero(h->pathCur)) {
-                memcpy(h->pathPrev, hits[0].pos, sizeof(h->pathPrev));
-                memcpy(h->pathCur, hits[0].pos, sizeof(h->pathCur));
+                memcpy(h->pathPrev, &hits[0].pos, sizeof(h->pathPrev));
+                memcpy(h->pathCur, &hits[0].pos, sizeof(h->pathCur));
             }
             if (Vec3d_Distance(MoveItem_GetPos(n0), h->pathCur) > kPathJump) {
                 memcpy(h->pathPrev, h->pathCur, sizeof(h->pathPrev));
                 memcpy(h->pathCur, MoveItem_GetPos(n0), sizeof(h->pathCur));
             }
-            d[0] = h->pathCur[0] - hits[0].pos[0];
-            d[1] = h->pathCur[1] - hits[0].pos[1];
-            d[2] = h->pathCur[2] - hits[0].pos[2];
+            d[0] = h->pathCur[0] - hits[0].pos.x;
+            d[1] = h->pathCur[1] - hits[0].pos.y;
+            d[2] = h->pathCur[2] - hits[0].pos.z;
             if (Vec3d_IsZero(d)) {
-                hits[0].pos[2] = h->pathCur[2];
+                hits[0].pos.z = h->pathCur[2];
             } else {
                 len = Vec3d_Length(d);
                 zdiff = h->pathCur[2] - h->pathPrev[2];
@@ -1747,14 +1747,14 @@ void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t 
                     t = kOneD;
                 else
                     t = len / Vec3d_Distance(h->pathCur, h->pathPrev);
-                hits[0].pos[2] = (kOneD - t) * zdiff + h->pathPrev[2];
+                hits[0].pos.z = (kOneD - t) * zdiff + h->pathPrev[2];
             }
         }
-        path = ai->path;
-        if (!path->unk64)
+        path = ai->graph;
+        if (!path->attached)
             Human_ClearPlatform(h);
         else if (!h->attach)
-            Human_SetPlatform(h, path->unk14);
+            Human_SetPlatform(h, path->task.parent);
         grounded = 1;
     } else {
         memcpy(pts[1], to, sizeof(pts[1]));
@@ -1764,7 +1764,7 @@ void Human_ProbeGround(Human *h, double *from, double *to, float *vel, uint32_t 
         ev = Game_GetEvent13();
         world = Game_GetWorld();
         Coll_DropPointsEx(world, hits, pts, 2, dz, ev, &filter, -1, 1);
-        if (hits[1].found && !(hits[1].normal[2] >= kZero)) {
+        if (hits[1].found && !(hits[1].normal.z >= kZero)) {
             memcpy(top, Human_GetBonePos(buf, h, 0), sizeof(top));
             gd = top[2] + hits[1].dist;
             h->roofDistance = gd;
@@ -1782,8 +1782,8 @@ check:
     task = hits[0].task;
     if (hits[0].found && !h->ai) {
         if (task) {
-            memcpy(d, hits[0].pos, sizeof(d));
-            d[2] = hits[0].pos[2] + kStepUp;
+            memcpy(d, &hits[0].pos, sizeof(d));
+            d[2] = hits[0].pos.z + kStepUp;
             memcpy(end, d, sizeof(end));
             end[2] = d[2] - kStepProbe;
             q.starts = d;
@@ -1805,7 +1805,7 @@ check:
                 task = hits[0].task;
             }
         }
-        gd = (to[2] - hits[0].pos[2]) - foot[2];
+        gd = (to[2] - hits[0].pos.z) - foot[2];
         h->groundDistance = gd;
         if (!(gd > reach))
             goto ground;
@@ -1820,7 +1820,7 @@ check:
     }
 ground:
     *bits |= HUMAN_ON_GROUND;
-    to[2] = foot[2] + hits[0].pos[2];
+    to[2] = foot[2] + hits[0].pos.z;
     if (task) {
         Human_SetGround(h, task);
     } else {
@@ -1848,9 +1848,9 @@ done:
         h->groundValid = 0;
         return;
     }
-    memcpy(h->groundPos, hits[0].pos, sizeof(h->groundPos));
+    memcpy(h->groundPos, &hits[0].pos, sizeof(h->groundPos));
     h->groundDist = h->groundDistance;
-    memcpy(h->groundUp, hits[0].normal, sizeof(h->groundUp));
+    memcpy(h->groundUp, &hits[0].normal, sizeof(h->groundUp));
     if (!is_zero(h->groundUp[0]) || !is_zero(h->groundUp[1]) || !is_zero(h->groundUp[2])) {
         t = kOneD / __builtin_sqrtl((long double)h->groundUp[0] * h->groundUp[0] +
                                     (long double)h->groundUp[1] * h->groundUp[1] +

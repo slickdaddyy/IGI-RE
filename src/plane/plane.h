@@ -5,118 +5,15 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24; /* sum of the inputs' values plus one on each multiply */
-} Matrix;
-
-/* script string that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-/* per type data of a vehicle physics type, parsed by 0x5031F0 */
-typedef struct VehicleConfig {
-    float unk0;         /* start speed scale */
-    struct {
-        float rate;
-        float smooth;
-    } axis[3];          /* 0x04 */
-    float thrust;       /* 0x1C */
-    float accel;        /* 0x20 */
-    float accel_slow;   /* 0x24 */
-    int part_count;     /* 0x28 */
-    float parts[8][7];  /* 0x2C */
-    float unk10C[3];
-} VehicleConfig;
-
-/* the extra config of "Heli" */
-typedef struct HeliConfig {
-    VehicleConfig v;
-    int count1;         /* 0x118 */
-    int list[13];       /* 0x11C, the second list starts at list[3] */
-    int count2;         /* 0x150 */
-} HeliConfig;
-
-/* the physics object type a vehicle was made from (DefinePhysicsObjType) */
-typedef struct PhysType {
-    char unk0[8];
-    float power;
-    char unkC[0x148 - 0xC];
-    int joint_count;    /* 0x148 */
-    char unk14C[0x2D4 - 0x14C];
-    VehicleConfig *data;
-} PhysType;
+#include "vehicle/vehicletypes.h"
+#include "plane/planetypes.h"
+#include "heli/helitypes.h"
 
 typedef struct Joint {
     char unk0[0x18];
     char active;
     char unk19[0x38 - 0x19];
 } Joint;
-
-/* "Vehicle" (0x748 bytes), a subtype of RigidDynCubeObj */
-typedef struct Vehicle {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x34];
-    void **model;       /* 0x6C */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0x44];
-    Task *coll;         /* 0xE8, its children get the move event */
-    char unkEC[4];
-    struct {
-        char unk0[8];
-        float unk8;     /* 0xF8 */
-        char unkC[0xC];
-        float velocity[3]; /* 0x108 */
-        float unk24[3]; /* 0x114 */
-        float spin[3];  /* 0x120 */
-    } body;             /* 0xF0, see 0x4ECDB0 */
-    char unk12C[0x28];
-    char name[0x14];    /* 0x154 */
-    Vec3d pos2;         /* 0x168 */
-    float velocity2[3]; /* 0x180 */
-    Matrix matrix2;     /* 0x18C */
-    PhysType *phys;     /* 0x1B4 */
-    int unk1B8;
-    Joint joints[23];   /* 0x1BC */
-    char unk6C4[0x14];
-    char unk6D8;
-    char unk6D9;
-    char unk6DA[0x46];
-    float speed;        /* 0x720 */
-    float turn[3];      /* 0x724 */
-    float target_speed; /* 0x730 */
-    float steer[3];     /* 0x734 */
-    float start_speed;  /* 0x740 */
-    char brake;         /* 0x744 */
-    char unk745[3];
-} Vehicle;
 
 /* "Plane" (0x888 bytes) */
 typedef struct Plane {
@@ -135,15 +32,6 @@ typedef struct Plane {
     VarString script;   /* 0x838 */
 } Plane;
 
-/* the "Heli" fields used here */
-typedef struct Heli {
-    Vehicle v;
-    char unk748[4];
-    Task **sound;       /* 0x74C */
-    char unk750[0x8C0 - 0x750];
-    char unk8C0[1];
-} Heli;
-
 /* the plane's input, see Plane_GetControl */
 typedef struct PlaneInput {
     float alpha, beta, gamma;
@@ -161,45 +49,14 @@ typedef struct PlaneControlArg {
     PlaneInput *input;
 } PlaneControlArg;
 
-/* create argument of the vehicle parts */
-typedef struct PartCreateArg {
-    const char *model;
-    void *world;
-    Vec3d pos;
-    Vec3d offset;
-    Matrix matrix;
-    Matrix local;
-    Plane *owner;
-    void *def;
-} PartCreateArg;
-
-/* sent by a vehicle to move its parts along */
-typedef struct PartMoveArg {
-    Vec3d *pos;
-    Matrix *matrix;
-    Plane *owner;
-} PartMoveArg;
-
-/* argument of the MagicObj definition parsers */
-typedef struct DefParseArg {
-    void *out;
-    void *args;
-    int index;
-} DefParseArg;
-
 typedef struct GearDef {
     float angle;
     char roll;
     float unk8, unkC, unk10;
 } GearDef;
 
-typedef struct RudderDef {
-    int kind;
-    float angle;
-} RudderDef;
-
 /* CockpitShield, Gear, Hatch and Rudder (0x140 bytes) */
-typedef struct Part {
+typedef struct PlanePart {
     Task task;
     Vec3d pos;
     char unk38[0x34];
@@ -213,25 +70,13 @@ typedef struct Part {
     int unk134;
     void *def;          /* 0x138 */
     float angle;        /* 0x13C */
-} Part;
+} PlanePart;
 
-_Static_assert(offsetof(Vehicle, coll) == 0xE8, "coll");
-_Static_assert(offsetof(Vehicle, body.spin) == 0x120, "spin");
-_Static_assert(offsetof(Vehicle, name) == 0x154, "name");
-_Static_assert(offsetof(Vehicle, phys) == 0x1B4, "phys");
-_Static_assert(offsetof(Vehicle, joints[0].active) == 0x1D4, "joints");
-_Static_assert(offsetof(Vehicle, speed) == 0x720, "speed");
-_Static_assert(sizeof(Vehicle) == 0x748, "Vehicle");
-_Static_assert(sizeof(VehicleConfig) == 0x118, "VehicleConfig");
-_Static_assert(offsetof(HeliConfig, count2) == 0x150, "HeliConfig");
-_Static_assert(offsetof(PhysType, data) == 0x2D4, "PhysType");
 _Static_assert(offsetof(Plane, sound_params) == 0x828, "sound_params");
 _Static_assert(sizeof(Plane) == 0x888, "Plane");
-_Static_assert(offsetof(Heli, unk8C0) == 0x8C0, "Heli");
-_Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
 _Static_assert(sizeof(GearDef) == 0x14, "GearDef");
-_Static_assert(offsetof(Part, offset) == 0xF0, "offset");
-_Static_assert(sizeof(Part) == 0x140, "Part");
+_Static_assert(offsetof(PlanePart, offset) == 0xF0, "offset");
+_Static_assert(sizeof(PlanePart) == 0x140, "PlanePart");
 
 typedef void (*TaskFn1)(void *task);
 typedef void (*TaskFn2)(void *task, void *arg);
@@ -313,11 +158,11 @@ static inline signed char part_state(long double full, float angle)
 }
 
 /* the common part of the part create handlers, in part.c */
-void PlanePart_Init(Part *o, PartCreateArg *arg);
-float PlanePart_Radius(Part *o);
+void PlanePart_Init(PlanePart *o, MagicCreateArg *arg);
+float PlanePart_Radius(PlanePart *o);
 /* the position of a part: offset turned by the owner matrix plus the owner position;
    the x sum is kept unrounded when keep_x */
-void PlanePart_Place(Part *o, PartMoveArg *a, int keep_x);
-void CockpitShield_SetMatrix(Part *o, Matrix *parent);
+void PlanePart_Place(PlanePart *o, PartMoveArg *a, int keep_x);
+void CockpitShield_SetMatrix(PlanePart *o, Matrix *parent);
 
 #endif

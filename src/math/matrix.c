@@ -20,7 +20,7 @@ static void Mul(Matrix *out, const Matrix *a, const Matrix *b)
                                      (long double)r[1] * b->m[3 + j]);
         }
     }
-    t.unk24 = a->unk24 + b->unk24 + 1;
+    t.count = a->count + b->count + 1;
     *out = t;
 }
 
@@ -105,7 +105,7 @@ void Matrix_SetEuler(Matrix *m, float ax, float ay, float az)
     Mul(m, m, &r);
     Matrix_SetRotX(&r, ax);
     Mul(m, m, &r);
-    m->unk24 = 0;
+    m->count = 0;
 }
 HOOK(0x4B38E0, Matrix_SetEuler);
 
@@ -119,7 +119,7 @@ void Matrix_SetRotX(Matrix *m, float a)
     m->m[2] = 0.0f;
     m->m[3] = 0.0f;
     m->m[6] = 0.0f;
-    m->unk24 = 0;
+    m->count = 0;
     m->m[4] = c;
     m->m[5] = (float)x87_neg(s);
     m->m[8] = c;
@@ -137,7 +137,7 @@ void Matrix_SetRotY(Matrix *m, float a)
     m->m[4] = 1.0f;
     m->m[5] = 0.0f;
     m->m[7] = 0.0f;
-    m->unk24 = 0;
+    m->count = 0;
     m->m[0] = (float)c;
     m->m[2] = (float)s;
     m->m[6] = (float)x87_neg(s);
@@ -155,7 +155,7 @@ void Matrix_SetRotZ(Matrix *m, float a)
     m->m[6] = 0.0f;
     m->m[7] = 0.0f;
     m->m[8] = 1.0f;
-    m->unk24 = 0;
+    m->count = 0;
     m->m[0] = c;
     m->m[1] = (float)x87_neg(s);
     m->m[4] = c;
@@ -174,7 +174,7 @@ void Matrix_SetScale(Matrix *m, float sx, float sy, float sz)
     m->m[5] = 0.0f;
     m->m[6] = 0.0f;
     m->m[7] = 0.0f;
-    m->unk24 = 0;
+    m->count = 0;
 }
 HOOK(0x4B3C20, Matrix_SetScale);
 
@@ -235,7 +235,7 @@ void Matrix_SetAxisAngle(Matrix *m, const Vec3f *axis, float angle)
     m->m[4] = (float)(t - zz);
     m->m[5] = (float)((long double)zy - wx);
     m->m[6] = (float)((long double)zx - wy);
-    m->unk24 = 0;
+    m->count = 0;
     m->m[7] = (float)((long double)zy + wx);
     m->m[8] = (float)(t - yy);
 }
@@ -271,7 +271,7 @@ void Matrix_SetDirection(Matrix *m, const Vec3f *dir)
     r.m[8] = t.z;
     Vec3f_Normalize((Vec3f *)&r.m[3]);
     Vec3f_Normalize((Vec3f *)&r.m[6]);
-    r.unk24 = 0;
+    r.count = 0;
     *m = r;
 }
 HOOK(0x4B4010, Matrix_SetDirection);
@@ -298,7 +298,7 @@ void Matrix_Invert(Matrix *out, const Matrix *m)
     t.m[6] = (float)(((long double)e[5] * e[1] - (long double)e[2] * e[4]) * inv);
     t.m[7] = (float)x87_neg(((long double)e[5] * e[0] - (long double)e[3] * e[2]) * inv);
     t.m[8] = (float)(((long double)e[4] * e[0] - (long double)e[3] * e[1]) * inv);
-    t.unk24 = m->unk24 + 1;
+    t.count = m->count + 1;
     *out = t;
 }
 HOOK(0x4B4390, Matrix_Invert);

@@ -2,6 +2,7 @@
    walks through them for an AI. */
 #include "hook.h"
 #include "patrol/patrol.h"
+#include "patrol/patroltypes.h"
 
 typedef struct PatrolCommand {
     Task task;
@@ -17,19 +18,6 @@ typedef struct PatrolPath {
     char listed;
     char unk31[3];
 } PatrolPath;
-
-/* where an AI is in a patrol path; 7 words */
-typedef struct PatrolRoute {
-    PatrolPath *path;
-    PatrolCommand *cur;
-    PatrolCommand *end;
-    PatrolCommand *move;
-    PatrolCommand *prevMove;
-    char unk14;
-    char unk15;
-    char unk16[2];
-    int unk18;
-} PatrolRoute;
 
 typedef struct PatrolCommandInfo {
     const char *help;
@@ -285,9 +273,9 @@ void PatrolRoute_Init(PatrolRoute *r, int id, int start)
     r->path = PatrolPath_Find(id);
     r->end = NULL;
     r->prevMove = NULL;
-    r->unk15 = 1;
-    r->unk14 = 0;
-    r->unk18 = -1;
+    r->walk = 1;
+    r->crouch = 0;
+    r->timer = -1;
     r->cur = PatrolRoute_Seek(r, start);
     if (PatrolPathCommand_GetType(r->cur) == PATROL_END)
         r->cur = PatrolRoute_Next(r);

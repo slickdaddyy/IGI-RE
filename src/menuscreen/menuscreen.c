@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "menuscreen/menuscreen.h"
+#include "menuscreen/menuscreentypes.h"
 
 FN_EXTERN(MenuScreen_Activate);
 FN_EXTERN(MenuScreen_Apply);
@@ -26,23 +27,6 @@ ORIG(0x4B6E80, int, Text_Height, (Text *t));
 #define MenuScreen_Deactivate (FN(0x422200, MenuScreen_Deactivate))
 #define MenuScreen_Layout (FN(0x422260, MenuScreen_Open))
 #define MenuScreen_Forward918 (FN(0x422300, MenuScreen_Apply))
-
-/* one page of the front end: a background picture, the game logo and a
-   framed box, all other elements are its children */
-typedef struct MenuScreen {
-    MenuWindow w;
-    char pic[0x40];
-    Text *picText;
-    Text *logo;
-    int frameX0, frameX1, frameY0, frameY1;
-    VarString onBack;
-    VarString onLayout;
-    VarString onForward;
-    int userData; /* "<name>.nUserData" */
-    int registered;
-} MenuScreen;
-
-_Static_assert(sizeof(MenuScreen) == 0x1A4, "MenuScreen");
 
 extern uint16_t gMenuScreenType;
 extern void *gMenuScreenParams;
@@ -212,9 +196,9 @@ void MenuScreen_DrawFrame(MenuScreen *ms)
     v[3].x = x0;
     v[3].y = y1;
     v[4] = v[0];
-    s.untextured = 1;
+    s.lines = 1;
     s.flags = 0x80000;
-    s.unk8 = 0;
+    s.queue = 0;
     s.count = 5;
     s.verts = v;
     gRenderFuncs[gQVertexStrip](&s);
@@ -230,8 +214,8 @@ void MenuScreen_DrawFrame(MenuScreen *ms)
     set_vertex(&v[1], x1, y0, a1, 1.0f);
     set_vertex(&v[2], x0, y1, a2, 0);
     set_vertex(&v[3], x1, y1, a2, 0);
-    s.untextured = 0;
-    s.unk8 = 0;
+    s.lines = 0;
+    s.queue = 0;
     s.count = 4;
     s.verts = v;
     gRenderFuncs[gQVertexStrip](&s);

@@ -5,60 +5,15 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "param/paramtypes.h"
+#include "door/doortypes.h"
 
 typedef void (*TaskFn)();
 
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
-
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
 /* "SectorInteriorObject" (0xF0 bytes), a RigidDynCubeObj placed in a sector */
-typedef struct SObj {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x30];
-    void *world;        /* 0x68 */
-    void **model;       /* 0x6C */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0x38];
-    int unkDC;
-    char unkE0[0x10];
-} SObj;
-
 /* "SCamera" (0x1C8): the camera body; its lens is a child task */
 typedef struct SCamera {
-    SObj o;
+    RigidDynCubeObj o;
     Vec3d place;        /* 0xF0 */
     float yaw;          /* 0x108 */
     char model[0x10];   /* 0x10C */
@@ -112,7 +67,7 @@ typedef struct DetectItem {
 
 /* "SCameraLens" (0x25E8) */
 typedef struct SCameraLens {
-    SObj o;
+    RigidDynCubeObj o;
     float pitch;        /* 0xF0 */
     float yaw;          /* 0xF4 */
     float yaw_target;   /* 0xF8 */
@@ -144,7 +99,7 @@ typedef struct SCameraLens {
 
 /* "Terminal" (0x2A0), an ExplodeObject (0x238 bytes) that can be used and hacked */
 typedef struct Terminal {
-    SObj o;
+    RigidDynCubeObj o;
     char unkF0[0xA0];
     char exploded;      /* 0x190 */
     char unk191[0x238 - 0x191];
@@ -172,27 +127,6 @@ typedef struct SCameraControl {
     VarString script;   /* 0x2A4 */
 } SCameraControl;
 
-/* "Cabinet" (0x138) */
-typedef struct Cabinet {
-    SObj o;
-    Vec3d place;        /* 0xF0 */
-    float yaw;          /* 0x108 */
-    char model[0x10];   /* 0x10C */
-    char opening;       /* 0x11C */
-    char closing;       /* 0x11D */
-    char reset;         /* 0x11E */
-    char in_use;        /* 0x11F */
-    char last_in_use;   /* 0x120 */
-    char unk121[3];
-    int use_tick;       /* 0x124 */
-    char searched;      /* 0x128 */
-    char registered;    /* 0x129 */
-    char unk12A[2];
-    float search_time;  /* 0x12C */
-    char moving;        /* 0x130 */
-    char unk131[7];
-} Cabinet;
-
 typedef struct DrawerArg {
     const char *model;
     void *world;
@@ -205,7 +139,7 @@ typedef struct DrawerArg {
 
 /* "Drawer" (0x160), a RigidDynCubeObj that slides out of its cabinet */
 typedef struct Drawer {
-    SObj o;
+    RigidDynCubeObj o;
     char unkF0[0x40];
     Cabinet *cabinet;   /* 0x130 */
     char unk134[4];
@@ -214,7 +148,6 @@ typedef struct Drawer {
     char unk15C[4];
 } Drawer;
 
-_Static_assert(sizeof(SObj) == 0xF0, "SObj");
 _Static_assert(offsetof(SCamera, lens) == 0x15C, "SCamera");
 _Static_assert(sizeof(SCamera) == 0x1C8, "SCamera");
 _Static_assert(offsetof(SCameraLens, eye) == 0x110, "SCameraLens");
@@ -225,7 +158,6 @@ _Static_assert(sizeof(SCameraLens) == 0x25E8, "SCameraLens");
 _Static_assert(offsetof(Terminal, script) == 0x250, "Terminal");
 _Static_assert(sizeof(Terminal) == 0x2A0, "Terminal");
 _Static_assert(sizeof(SCameraControl) == 0x2F8, "SCameraControl");
-_Static_assert(sizeof(Cabinet) == 0x138, "Cabinet");
 _Static_assert(offsetof(DrawerArg, cabinet) == 0x88, "DrawerArg");
 _Static_assert(sizeof(Drawer) == 0x160, "Drawer");
 
@@ -267,7 +199,7 @@ static inline int round_int(long double f)
 }
 
 /* the largest scale factor, compared like the original */
-static inline float sobj_scale(const SObj *o)
+static inline float sobj_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] >= o->scale[1] ? o->scale[2] : o->scale[1];
 
@@ -278,6 +210,6 @@ uint16_t Terminal_GetType(void);
 void *Terminal_GetParams(void);
 void *SCameraLens_GetList(void);
 int SCamera_GetDetectMask(void);
-void Terminal_MapHandler(SObj *o, char *arg);
+void Terminal_MapHandler(RigidDynCubeObj *o, char *arg);
 
 #endif

@@ -1,12 +1,7 @@
 #ifndef FILE_FILE_H
 #define FILE_FILE_H
 
-/* An open file. Each device allocates its own, larger, record. */
-typedef struct File {
-    int device;
-    int unk04[5];
-    char name[128];
-} File;
+#include "file/filetypes.h"
 
 /* A whole file loaded into memory by File_Load. */
 typedef struct LoadedFile {

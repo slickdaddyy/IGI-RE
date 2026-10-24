@@ -166,7 +166,7 @@ void Train_ParamsChanged(Train *t, char *arg)
     Vehicle_DeleteParts(t);
     Vehicle_NewParts(t);
     Train_Place(head_of(t), changed);
-    BROADCAST(t->v.coll->head, Param_GetChangedEvent(), arg);
+    BROADCAST(t->v.attached->head, Param_GetChangedEvent(), arg);
     VarString_Bind(&t->script, t);
 }
 HOOK(0x42A150, Train_ParamsChanged);
@@ -204,7 +204,7 @@ static void identity(Matrix *m)
     m->m[5] = 0;
     m->m[6] = 0;
     m->m[7] = 0;
-    m->unk24 = 0;
+    m->count = 0;
 }
 
 void Train_PlaceWagons(Train *t, Vec3d *p, int quiet);
@@ -229,8 +229,8 @@ void Train_Place(Train *t, int quiet)
     SplineObj_GetPoints(t->path, 0, pts, &found, t->dist, t->wagons + 1, offsets, 0);
     if (!found)
         return;
-    t->v.prev_pos = t->v.pos;
-    t->v.prev_matrix = t->v.matrix;
+    t->v.lastPos = t->v.pos;
+    t->v.lastMatrix = t->v.matrix;
     if (!Vec3d_Equal(&pts[0], &pts[1])) {
         Vec3f dir;
 
@@ -264,14 +264,14 @@ void Train_Place(Train *t, int quiet)
 
         BROADCAST(t->v.task.head, RigidDynCubeObj_GetEvent4(), &msg);
     }
-    if (t->v.coll) {
+    if (t->v.attached) {
         struct {
             Vec3d *pos;
             Matrix *matrix;
             Train *t;
         } msg = {&t->v.pos, &t->v.matrix, t};
 
-        BROADCAST(t->v.coll->head, MagicObj_GetMoveEvent(), &msg);
+        BROADCAST(t->v.attached->head, MagicObj_GetMoveEvent(), &msg);
     }
     Train_PlaceWagons(t, &pts[1], quiet);
 }
@@ -289,8 +289,8 @@ void Train_PlaceWagons(Train *t, Vec3d *p, int quiet)
         long double ox;
         Vec3d pos;
 
-        w->v.prev_pos = w->v.pos;
-        w->v.prev_matrix = w->v.matrix;
+        w->v.lastPos = w->v.pos;
+        w->v.lastMatrix = w->v.matrix;
         if (!Vec3d_Equal(p, q)) {
             Vec3f dir;
 
@@ -323,14 +323,14 @@ void Train_PlaceWagons(Train *t, Vec3d *p, int quiet)
 
             BROADCAST(w->v.task.head, RigidDynCubeObj_GetEvent4(), &msg);
         }
-        if (w->v.coll) {
+        if (w->v.attached) {
             struct {
                 Vec3d *pos;
                 Matrix *matrix;
                 Train *t;
             } msg = {&w->v.pos, &w->v.matrix, w};
 
-            BROADCAST(w->v.coll->head, MagicObj_GetMoveEvent(), &msg);
+            BROADCAST(w->v.attached->head, MagicObj_GetMoveEvent(), &msg);
         }
         w = (Train *)Task_FindNext(&w->v.task, gTrainType);
     }
@@ -424,9 +424,9 @@ void Train_InputHandler(Train *t, void **msg)
         Train_Place(t, 1);
         v = t->max_speed * t->start_speed * kKmhToFrame;
         t->velocity = v;
-        t->v.body.velocity.x = v;
-        t->v.body.velocity.y = 0;
-        t->v.body.velocity.z = 0;
+        t->v.body.vel.x = v;
+        t->v.body.vel.y = 0;
+        t->v.body.vel.z = 0;
         Body_Update(&t->v.body);
         t->v.target_speed = t->start_speed;
         t->v.speed = t->start_speed;
@@ -445,9 +445,9 @@ void Train_InputHandler(Train *t, void **msg)
     }
     v = t->max_speed * t->v.speed * kKmh * kPerFrameHour;
     t->velocity = v;
-    t->v.body.velocity.x = v;
-    t->v.body.velocity.y = 0;
-    t->v.body.velocity.z = 0;
+    t->v.body.vel.x = v;
+    t->v.body.vel.y = 0;
+    t->v.body.vel.z = 0;
     Body_Update(&t->v.body);
     t->dist = (t->reverse ? -t->velocity : t->velocity) + t->dist;
     Vehicle_RunParts(t);
@@ -577,8 +577,8 @@ void Train_Run(Train *t)
         t->sound_params[2] = speed > kMilli ? 1 : 0;
     }
     BROADCAST(t->v.task.head, 1);
-    if (t->v.coll && !t->wagons)
-        BROADCAST(t->v.coll->head, 1);
+    if (t->v.attached && !t->wagons)
+        BROADCAST(t->v.attached->head, 1);
 }
 HOOK(0x42B700, Train_Run);
 

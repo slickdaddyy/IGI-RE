@@ -5,36 +5,12 @@
 #include "hook.h"
 #include "igi.h"
 #include "sound/sound.h"
+#include "sound/soundtypes.h"
 
 ORIG(0x4B0B00, void, Pool_Init, (void *pool, int stride, int capacity, int index_offset));
 ORIG(0x4B0B70, void, Pool_Free, (void *pool));
 ORIG(0x4C7770, void, DynCube_SendEventBox, (void *tree, uint8_t slot, void *arg, Vec3d *min, Vec3d *max,
                                             uint32_t flags, int unk));
-
-typedef struct Pool {
-    char *data;
-    int *slots;
-    int used;
-    int capacity;
-    int stride;
-    int index_offset;
-} Pool;
-
-/* one bit per cell of a size x size grid (size a power of two) */
-typedef struct CellMask {
-    struct CellMask **item;
-    int shift;
-    int size;
-    uint8_t bits[];
-} CellMask;
-
-/* the argument of the draw event: objects draw themselves into the mask */
-typedef struct CellMaskDrawArg {
-    CellMask *mask;
-    int size;
-    double *center;
-    float range;
-} CellMaskDrawArg;
 
 extern uint16_t gDynCubeObjType;
 extern uint8_t gDynCubeObjMaskVisibleEvent;
@@ -89,8 +65,8 @@ CellMask *CellMask_Create(int size, void *tree, int unk, Vec3d *pos, float range
     int shift;
 
     m->size = size;
-    item = (CellMask **)(p->data + p->slots[p->used] * p->stride);
-    *(int *)((char *)item + p->index_offset) = p->used;
+    item = (CellMask **)(p->data + p->free[p->used] * p->stride);
+    *(int *)((char *)item + p->size) = p->used;
     p->used++;
     m->item = item;
     *item = m;
@@ -116,17 +92,17 @@ HOOK(0x4E53C0, CellMask_Create);
 void CellMask_Free(CellMask *m)
 {
     Pool *p = &gCellMaskPool;
-    int slot = *(int *)((char *)m->item + p->index_offset);
+    int slot = *(int *)((char *)m->item + p->size);
 
     p->used--;
     if (slot != p->used) {
-        char *last = p->data + p->slots[p->used] * p->stride;
-        int item = p->slots[slot];
-        int lastSlot = *(int *)(last + p->index_offset);
+        char *last = p->data + p->free[p->used] * p->stride;
+        int item = p->free[slot];
+        int lastSlot = *(int *)(last + p->size);
 
-        p->slots[slot] = p->slots[lastSlot];
-        p->slots[lastSlot] = item;
-        *(int *)(last + p->index_offset) = slot;
+        p->free[slot] = p->free[lastSlot];
+        p->free[lastSlot] = item;
+        *(int *)(last + p->size) = slot;
     }
     Mem_Free(m);
 }

@@ -5,79 +5,13 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "param/paramtypes.h"
+#include "win/wintypes.h"
+#include "vehicle/vehicletypes.h"
 
 FN_EXTERN(Task_Nothing);
 
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
-
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-typedef struct Display {
-    int unk0;
-    int width;
-    int height;
-} Display;
-
-/* "RigidDynCubeObj" (0xF0 bytes), a moving object with a model */
-typedef struct RigidObj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    int unk68;
-    void **model;
-    Matrix matrix;
-    float scale[3];
-    char unkA4[0xF0 - 0xA4];
-} RigidObj;
-
-/* the argument of the create handler of the vehicle parts */
-typedef struct PartCreateArg {
-    const char *model;
-    int unk4;
-    Vec3d pos;
-    Vec3d offset;
-    Matrix matrix;
-    Matrix local;
-    Task *owner;
-    void *params;
-} PartCreateArg;
-
-/* sent by the vehicle each frame to move its parts along */
-typedef struct PartMoveArg {
-    Vec3d *pos;
-    Matrix *matrix;
-} PartMoveArg;
 
 /* the argument of the script argument handlers */
 typedef struct PartScriptArg {
@@ -85,20 +19,6 @@ typedef struct PartScriptArg {
     void *args;
     int index;
 } PartScriptArg;
-
-/* node of a list of task references (vehicle seats, targets) */
-typedef struct RefNode {
-    struct RefNode *next;
-    struct RefNode *prev;
-    Task **ref;
-    char unkC[0x1D];
-    char active;
-} RefNode;
-
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
-_Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
-_Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
-_Static_assert(offsetof(RefNode, active) == 0x29, "RefNode");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
@@ -139,10 +59,10 @@ ORIG(0x4C3440, Vec3d *, DynCubeObj_GetPosition, (void *obj));
 ORIG(0x4C56D0, uint8_t, RigidDynCubeObj_GetEvent0, (void));
 ORIG(0x4C56E0, uint8_t, RigidDynCubeObj_GetEvent1, (void));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
-ORIG(0x4C5710, void, RigidDynCubeObj_Init, (int unk68, void *o, void **model));
+ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, void *o, void **model));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *o, Vec3d *pos, float radius));
-ORIG(0x4C7140, void, DynCube_Add, (int unk, void *o, Vec3d *pos, float radius, int unk2));
-ORIG(0x4C7560, void, DynCube_Remove, (int unk68, void *o));
+ORIG(0x4C7140, void, DynCube_Add, (void *world, void *o, Vec3d *pos, float radius, int unk2));
+ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *o));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
@@ -179,7 +99,7 @@ static inline int round_int(long double f)
 }
 
 /* the largest of the three scale factors */
-static inline float max_scale(const RigidObj *o)
+static inline float max_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] >= o->scale[1] ? o->scale[2] : o->scale[1];
 

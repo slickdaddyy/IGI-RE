@@ -339,7 +339,7 @@ void Water_TestPoints(Water *w, WaterPointQuery *q)
 HOOK(0x518E50, Water_TestPoints);
 
 void Water_Delete(Water *w);
-void Water_GetParamTable(Water *w, ParamTable *out);
+void Water_GetParamTable(Water *w, ParamTable **out);
 void Water_GetInfo(Water *w, WaterInfo *info);
 void Water_ParamsChanged(Water *w);
 
@@ -399,7 +399,7 @@ void Water_Delete(Water *w)
 }
 HOOK(0x5191E0, Water_Delete);
 
-void Water_GetParamTable(Water *w, ParamTable *out)
+void Water_GetParamTable(Water *w, ParamTable **out)
 {
     *out = gWaterParams;
 }
@@ -422,7 +422,7 @@ void Water_GetInfo(Water *w, WaterInfo *info)
     info->matrix.m[6] = 0;
     info->matrix.m[7] = 0;
     info->matrix.m[8] = 1;
-    info->matrix.unk24 = 0;
+    info->matrix.count = 0;
     info->name = NULL;
     h = 0x40000000 >> w->shift;
     info->radius = h + h;

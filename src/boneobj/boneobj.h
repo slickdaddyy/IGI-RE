@@ -4,8 +4,8 @@
 #include "igi.h"
 #include "core/pool.h"
 #include "math/vecmath.h"
+#include "boneobj/boneobjtypes.h"
 
-typedef struct Bone Bone;
 typedef struct BlendNode BlendNode;
 
 /* An animation event handed to the game: sound or effect at an offset from the bone */
@@ -50,66 +50,6 @@ struct BlendNode {
 #define BONE_ANIMATED 0x20000
 #define BONE_ORIENTED 0x40000
 
-struct Bone {
-    int index;
-    unsigned int flags;
-    Vec3f offset;
-    float unk14;
-    Vec3f pos;
-    Matrix matrix;
-    Quat world;
-    Quat local;
-    Bone *parent;
-    Bone *child;
-    Bone *next;
-    BlendNode *blend;
-};
-
-typedef struct BoneObj {
-    int skel;
-    int unk4;
-    Bone *bones;
-} BoneObj;
-
-/* Loaded hierarchy: parent index and offset per bone */
-typedef struct Skeleton {
-    int count;
-    int *parents;
-    Vec3f *offsets;
-} Skeleton;
-
-typedef struct PosKey {
-    float pos[3];
-    float time;
-    float out[3];
-    float in[3];
-} PosKey;
-
-typedef struct PosTrack {
-    int count;
-    PosKey *keys;
-} PosTrack;
-
-/* Only q and time when the track has a single key */
-typedef struct RotKey {
-    float q[4];
-    float time;
-    float a[4];
-    float b[4];
-} RotKey;
-
-typedef struct SlerpInfo {
-    float angle;
-    float invSin;
-} SlerpInfo;
-
-typedef struct RotTrack {
-    int count;
-    RotKey *keys;
-    SlerpInfo *slerp;
-    SlerpInfo *slerp2;
-} RotTrack;
-
 typedef struct EventKey {
     int id;
     int unk4;
@@ -124,14 +64,6 @@ typedef struct EventTrack {
 
 #define ANIM_LOOPS 0x80000000u
 
-typedef struct AnimDesc {
-    float length;
-    unsigned int flags;
-    PosTrack *pos;
-    RotTrack *rot; /* one per bone */
-    EventTrack *events;
-} AnimDesc;
-
 /* Last key used per bone, so playback does not search from the start */
 typedef struct KeyCache {
     int skel;
@@ -139,14 +71,6 @@ typedef struct KeyCache {
     int unk8;
     int *bones;
 } KeyCache;
-
-typedef struct AnimSet {
-    AnimDesc *descs;
-    AnimDesc **byId;
-    Pool caches;
-    int hasCaches;
-    int count;
-} AnimSet;
 
 #define ANIM_LOOP 1
 #define ANIM_REVERSE 2

@@ -5,16 +5,9 @@
 
 #include "igi.h"
 #include "ui/ui.h"
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major, then a counter */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
+#include "qasm/qasmtypes.h"
+#include "coll/colltypes.h"
+#include "comprun/compruntypes.h"
 
 /* the storage of a loaded sprite */
 typedef struct SpriteSlot {
@@ -121,34 +114,12 @@ typedef struct MapCamera {
     float fov;           /* 0x40 */
 } MapCamera;
 
-/* a list of tasks: count, unknown, items */
-typedef struct TaskArray {
-    int count;
-    int unk4;
-    Task *item[1];
-} TaskArray;
-
-typedef struct MapHit {
-    Task *task;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x38];
-    int found;           /* 0x58 */
-    char unk5C[0x14];
-} MapHit;
-
-typedef struct Computer {
-    char unk0[0x14];
-    char *input;         /* 0x14, mouse moves at 0x1B0 / 0x1B4 */
-} Computer;
-
 _Static_assert(sizeof(ComputerRes) == 0x4FC, "ComputerRes");
 _Static_assert(sizeof(ComputerButtonItem) == 0x94, "ComputerButtonItem");
 _Static_assert(sizeof(ComputerTextItem) == 0x90, "ComputerTextItem");
 _Static_assert(sizeof(ComputerMenu) == 0x3C, "ComputerMenu");
 _Static_assert(sizeof(ComputerObjectives) == 0x38, "ComputerObjectives");
 _Static_assert(sizeof(ComputerMap) == 0xAC, "ComputerMap");
-_Static_assert(sizeof(MapHit) == 0x70, "MapHit");
 
 extern uint16_t gComputerLogType;
 extern const char *gLogLines[];

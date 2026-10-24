@@ -4,6 +4,8 @@
 
 #include "hook.h"
 #include "door/door.h"
+#include "coll/colltypes.h"
+#include "humanai/humanaitypes.h"
 
 FN_EXTERN(Param_Three);
 FN_EXTERN(Task_Nothing);
@@ -72,39 +74,12 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 ORIG(0x5096A0, uint8_t, AIGraph_GetEvent, (void));
 
-typedef struct RangeF {
-    float min, max;
-} RangeF;
-
-/* asks for the door nearest to pos */
-typedef struct NearQuery {
-    Vec3d pos;
-    double best;        /* 0x18, squared, below 0 for none yet */
-    Door *found;        /* 0x20 */
-} NearQuery;
-
-/* one result of Coll_Lines (0x70 bytes) */
-typedef struct CollHit {
-    Task *task;
-    char unk4[0x54];
-    int found;          /* 0x58 */
-    char unk5C[0x14];
-} CollHit;
-
-/* passed to Coll_Lines; the first word is left uninitialised */
-typedef struct CollIgnore {
-    int unk0;
-    Door *door;
-} CollIgnore;
-
 /* sent to the children of unkE8 with the MagicObj move event */
 typedef struct DoorMoveMsg {
     Vec3d *pos;
     Matrix *matrix;
     Door *door;
 } DoorMoveMsg;
-
-_Static_assert(sizeof(CollHit) == 0x70, "CollHit");
 
 extern uint16_t gDoorType;
 extern RangeF gDoorSlideRange;
@@ -165,7 +140,7 @@ void Door_Place(Door *d)
 }
 HOOK(0x446290, Door_Place);
 
-void Door_GetMoveMsg(MoveMsg *msg, Obj *o)
+void Door_GetMoveMsg(MoveArg *msg, RigidDynCubeObj *o)
 {
     msg->pos = &o->pos;
     msg->matrix = &o->matrix;
@@ -174,7 +149,7 @@ HOOK(0x446450, Door_GetMoveMsg);
 
 void Door_MoveChildren(Door *d)
 {
-    MoveMsg msg;
+    MoveArg msg;
 
     Door_GetMoveMsg(&msg, &d->o);
     BROADCAST(&d->o.task, RigidDynCubeObj_GetEvent4(), &msg);
@@ -183,7 +158,7 @@ HOOK(0x4463B0, Door_MoveChildren);
 
 /* RigidDynCubeObj event 4: moves along with the object it is fixed to,
    then straightens the closed matrix again */
-void Door_MoveHandler(Door *d, MoveMsg *msg)
+void Door_MoveHandler(Door *d, MoveArg *msg)
 {
     const float *m = d->base.m;
     float x, y, z, a, b, c, e, f, g;
@@ -228,7 +203,7 @@ void Door_MoveHandler(Door *d, MoveMsg *msg)
     d->base.m[6] = e;
     d->base.m[7] = f;
     d->base.m[8] = g;
-    d->base.unk24 = 0;
+    d->base.count = 0;
     d->o.matrix = d->base;
     Door_MoveChildren(d);
 }
@@ -240,7 +215,7 @@ void Door_FindNearest(Door *d, NearQuery *q)
 
     if (!(q->best >= kZeroD) || !(dist >= q->best)) {
         q->best = dist;
-        q->found = d;
+        q->found = (Task *)d;
     }
 }
 HOOK(0x446470, Door_FindNearest);
@@ -340,8 +315,8 @@ HOOK(0x4468F0, Door_CreateHandler);
 void Door_DeleteHandler(Door *d)
 {
     QTaskList_Remove(Game_GetTaskList0(), d);
-    if (d->o.unkE8)
-        Task_Delete(d->o.unkE8);
+    if (d->o.attached)
+        Task_Delete(d->o.attached);
     if (Task_GetId(d) >= 0) {
         TaskFn fn = HANDLER(Level_GetEventDAC(), d->o.task.type);
 
@@ -351,7 +326,7 @@ void Door_DeleteHandler(Door *d)
     VarString_Free(&d->openExpr);
     VarString_Free(&d->closeExpr);
     VarString_Free(&d->lockExpr);
-    DynCube_Remove(d->o.sector, d);
+    DynCube_Remove(d->o.world, d);
 }
 HOOK(0x446AC0, Door_DeleteHandler);
 
@@ -514,7 +489,7 @@ void Door_RunHandler(Door *d)
 
             last_point(d, &from, 1);
             last_point(d, &to, 2);
-            ignore.door = d;
+            ignore.task = (Task *)d;
             Coll_Lines(Game_GetWorld(), &hit, &from, &to, 1, 0xFF, &ignore, 1);
             if (hit.found && hit.task) {
                 d->slideTarget = 1.0f;
@@ -525,13 +500,13 @@ void Door_RunHandler(Door *d)
             }
         }
         Door_MoveChildren(d);
-        if (d->o.unkE8) {
+        if (d->o.attached) {
             DoorMoveMsg msg;
 
             msg.pos = &d->o.pos;
             msg.matrix = &d->o.matrix;
             msg.door = d;
-            BROADCAST(d->o.unkE8, MagicObj_GetMoveEvent(), &msg);
+            BROADCAST(d->o.attached, MagicObj_GetMoveEvent(), &msg);
         }
     }
 
@@ -559,15 +534,15 @@ void Door_RunHandler(Door *d)
         Sound_Stop(d->moveSound);
         d->moveSound = NULL;
     }
-    if (d->o.unkE8)
-        HANDLER(1, d->o.unkE8->type)(d->o.unkE8);
+    if (d->o.attached)
+        HANDLER(1, d->o.attached->type)(d->o.attached);
 }
 HOOK(0x446D10, Door_RunHandler);
 
 /* remembers where the door sits on the object it is fixed to */
 void Door_UpdateLocal(Door *d)
 {
-    Obj *p = Task_FindAncestor(d, RigidDynCubeObj_GetType());
+    RigidDynCubeObj *p = Task_FindAncestor(d, RigidDynCubeObj_GetType());
 
     if (p)
         to_local(&d->offset, &d->local, &d->place, &d->base, p);
@@ -612,10 +587,10 @@ void Door_ParamsChanged(Door *d, char *arg)
         Sound_Stop(d->moveSound);
         d->moveSound = NULL;
     }
-    if (d->o.unkE8)
-        Task_Delete(d->o.unkE8);
+    if (d->o.attached)
+        Task_Delete(d->o.attached);
     t = MagicObjContainer_New(NULL, d);
-    d->o.unkE8 = t;
+    d->o.attached = t;
     RigidDynCubeObj_CreateMagicObjs(t, d, d);
     BROADCAST(&d->o.task, Param_GetChangedEvent(), arg);
     d->lastPos = d->o.pos;

@@ -4,45 +4,14 @@
 #include "igi.h"
 #include "core/list.h"
 #include "script/symtab.h"
+#include "script/scripttypes.h"
 
 struct Expr;
-
-/* A value returned by a symbol handler. Bytes 4 and 20 are never set. */
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
-
-/* Arguments of a function call, either parsed expressions or a running QVM. */
-typedef struct ScriptArgs {
-    int count;
-    void *vm;
-    struct Expr **argv;
-} ScriptArgs;
 
 typedef ScriptValue *(*ScriptHandler)(ScriptValue *out, void *data, ScriptArgs *args);
 
 enum { SCRIPT_VARIABLE, SCRIPT_FUNCTION, SCRIPT_CONSTANT };
 enum { SCRIPT_VOID, SCRIPT_INT, SCRIPT_REAL, SCRIPT_STRING };
-
-typedef struct ScriptSymbol {
-    int kind;
-    int type;
-    int dynamic;
-    int size;
-    void *handler;
-    const char *name;
-    void *data;
-} ScriptSymbol;
-
-/* A counted reference from a parsed expression to a symbol. */
-typedef struct ScriptRef {
-    Node node;
-    ScriptSymbol *sym;
-} ScriptRef;
 
 extern SymbolTable *gScriptSymbols;
 extern const char gScriptEmptyString[];

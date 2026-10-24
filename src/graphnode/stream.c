@@ -211,8 +211,8 @@ void GraphOpen(Graph *g, const char *path)
     if (magic == GRAPH_MAGIC) {
         v.stream = &s;
         v.graph = g;
-        v.unk8 = 0;
-        v.unkC = 0;
+        v.node = 0;
+        v.link = 0;
         while (!File_Eof(s.file)) {
             int hash;
             GraphStreamHandler *h;

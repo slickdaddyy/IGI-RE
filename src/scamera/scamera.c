@@ -86,7 +86,7 @@ void SCamera_ParamsChanged(SCamera *c, char *arg);
 void SCamera_AddSymbols(SCamera *c);
 void SCamera_RemoveSymbols(SCamera *c);
 void SCamera_GetDetectInfo(SCamera *c, char *out);
-void SCamera_WorldRemove(SObj *o, void **arg);
+void SCamera_WorldRemove(RigidDynCubeObj *o, void **arg);
 void SCamera_WorldAdd(SCamera *c, void **arg);
 void SCameraLens_Create(SCameraLens *l);
 void SCameraLens_Run(SCameraLens *l);
@@ -301,7 +301,7 @@ void SCamera_GetDetectInfo(SCamera *c, char *out)
 HOOK(0x442A30, SCamera_GetDetectInfo);
 
 /* arg: {world, ...}; shared by the camera and its lens */
-void SCamera_WorldRemove(SObj *o, void **arg)
+void SCamera_WorldRemove(RigidDynCubeObj *o, void **arg)
 {
     EACH_CHILD(&o->task, World_GetEvent1(), arg);
     Sector_RemoveObject(o);

@@ -5,81 +5,12 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "param/paramtypes.h"
+#include "win/wintypes.h"
+#include "menu/menutypes.h"
+#include "widget/widgettypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Sprite Sprite;
-
-typedef struct Text {
-    void *grid;
-    float x, y, z;
-    float alpha;
-    float color[3];
-    int unk20;
-    unsigned int flags;
-} Text;
-
-/* the "MenuWindow" task (0x54 bytes), base of every menu element */
-typedef struct MenuWindow {
-    Task task;
-    int x, y, w, h;
-    char unk30[0xC];
-    int unk3C;
-    int unk40;
-    void *menu;
-    char unk48[2];
-    char held;
-    char clicked;
-    char selectable;
-    char focused;
-    char unk4E[2];
-    int key;
-} MenuWindow;
-
-/* mouse and keys, as seen by the menu elements */
-typedef struct MenuInput {
-    char button;
-    char pressed;
-    char released;
-    char entered;
-    char back;
-    char select;
-    char pad[2];
-    int wheel;
-    int x, y;
-} MenuInput;
-
-/* a script string parameter that may hold an expression ("$...") */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-typedef struct Display {
-    int unk0;
-    int width;
-    int height;
-} Display;
-
-_Static_assert(sizeof(MenuWindow) == 0x54, "MenuWindow");
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
@@ -123,7 +54,7 @@ ORIG(0x424B60, MenuWindow *, MenuWindow_New, (void *parent, void *menu));
 ORIG(0x41A120, void, MenuWindow_ForwardEvent918, (void *task));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 ORIG(0x4E7180, void, Sound_PlayName, (const char *name, int flags, void *params));
-ORIG(0x491CF0, Display *, Display_GetMode, (void));
+ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 ORIG(0x4028B0, int, Flow_GetFrames, (void));
 ORIG(0x402870, int, Flow_GetFps, (void));
 ORIG(0x48A910, int, Keys_GetCount, (void));

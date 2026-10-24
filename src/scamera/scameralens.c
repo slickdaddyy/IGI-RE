@@ -2,6 +2,9 @@
 
 #include "hook.h"
 #include "scamera/scamera.h"
+#include "qvertex/qvertextypes.h"
+#include "coll/colltypes.h"
+#include "material/materialtypes.h"
 
 ORIG(0x401AE0, Task **, TaskRef_Add, (Task *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
@@ -61,36 +64,10 @@ extern char *gAlarmLightSprite;
 extern uint16_t gSCameraType;
 extern void *gLensList;
 
-typedef struct QVertex {
-    float x, y, z;
-    float u, v;
-    float a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
-
 extern void (*gRenderFuncs[])(QVertexStrip *);
 extern void *gQVertexTexture;
 extern int gQVertexStrip;
 extern void *gQVertexPalette;
-
-typedef struct CollHit {
-    Task *task;
-    char unk4[4];
-    Vec3d pos;          /* 0x08 */
-    char unk20[0x2C];
-    float *material;    /* 0x4C */
-    void *unk50;
-    void *unk54;
-    int found;          /* 0x58 */
-    char unk5C[0x14];
-} CollHit;
 
 extern float kZero;
 extern float kHalf;
@@ -229,7 +206,7 @@ void SCameraLens_Run(SCameraLens *l)
         l->explode = 0;
         c->exploded = 1;
         RigidDynCubeObj_SetModel(l, VirModel_Find(c->broken_model));
-        l->o.unkDC = 0;
+        l->o.lightmapRefs = 0;
         Explosion_Spawn(&l->o.pos, 1, 0, 0.25f, 2048.0f, 0, 0, 7, 3, 0, "1009_01_1", "explo_camera", 0x15, 2,
                         102400.0f, 0);
     }
@@ -639,7 +616,7 @@ void SCameraLens_DrawViewCone(SCameraLens *l, void *arg)
             Coll_Lines(Game_GetWorld(), &hit, &start, &end, 1, ev, &ignore, 0xFFFFFFFF);
             if (!hit.found)
                 break;
-            if (!hit.unk54 || !hit.material || !(*hit.material > kZero)) {
+            if (!hit.close || !hit.material || !(hit.material->unk00 > kZero)) {
                 end = hit.pos;
                 break;
             }
@@ -659,10 +636,10 @@ void SCameraLens_DrawViewCone(SCameraLens *l, void *arg)
     }
     gQVertexTexture = 0;
     gQVertexPalette = 0;
-    strip.untextured = 0;
+    strip.lines = 0;
     strip.verts = v;
     strip.flags = 0x400C0000;
-    strip.unk8 = -1;
+    strip.queue = -1;
     strip.count = 3;
     ComputerObject_ProjectPos(scr, &depth, &p, arg);
     cone_vertex(&v[0], scr);

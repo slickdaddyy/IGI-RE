@@ -27,7 +27,7 @@ ORIG(0x4B6380, void, Resource_Unload, (const char *path));
 ORIG(0x4B63D0, void, Resource_Flush, (void *res));
 ORIG(0x4B7CF0, void, Palette_Create, (void *palette, int *colors, int unk));
 ORIG(0x4B7D30, void, Palette_Free, (void *palette));
-ORIG(0x4C7560, void, DynCube_Remove, (void *world, MagicTask *t));
+ORIG(0x4C7560, void, DynCube_Remove, (void *world, Task *t));
 ORIG(0x4CE620, void, DynCube_UpdateStart, (World *w, int room));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4D1220, void, QCube_Clear, (void));
@@ -36,7 +36,7 @@ ORIG(0x5175A0, void *, TexSet_Load, (const char *path));
 ORIG(0x5177F0, void, TexSet_Free, (void *p));
 
 extern MagicHandler gTaskHandlers[][0x180];
-extern MagicNode *gTaskStack[];
+extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern int gTaskHandlerDepth;
 extern uint16_t gDynCubeObjType;
@@ -125,15 +125,15 @@ void World_Init(void)
 }
 HOOK(0x4C5900, World_Init);
 
-void DynCubeObj_DeactivateHandler(MagicTask *t, void **arg)
+void DynCubeObj_DeactivateHandler(Task *t, void **arg)
 {
-    MagicNode *n = t->head;
+    Task *n = t->head;
     MagicHandler h;
 
     if (n->next) {
         while (n) {
             gTaskStack[gTaskStackTop++] = n->next && n->next->next ? n->next : NULL;
-            h = gTaskHandlers[World_GetEvent1()][((MagicTask *)n)->type];
+            h = gTaskHandlers[World_GetEvent1()][((Task *)n)->type];
             if (h)
                 h(n, arg);
             n = gTaskStack[--gTaskStackTop];
@@ -278,7 +278,7 @@ void World_Free(World *w)
         Resource_Flush(w->unkDD0);
     for (i = 0; i < gLightmapCount; i++) {
         if (gLightmaps[i].data)
-            Texture_Free(gLightmaps[i].texture);
+            Texture_Free(&gLightmaps[i].texture);
     }
     for (i = 0; i < 6; i++) {
         if (w->rooms[i]->unk3C)
@@ -339,7 +339,7 @@ void World_LoadTextures(World *w, const char *name)
             if (n) {
                 if (Texture_GetTMUs() > 1)
                     Texture_SetActiveTMU(1);
-                Texture_Create(lm->texture, w->palette, n, n, n, 1, 0, 0x20000000, p);
+                Texture_Create(&lm->texture, w->palette, n, n, n, 1, 0, 0x20000000, p);
                 if (Texture_GetTMUs() > 1)
                     Texture_SetActiveTMU(-1);
                 lm->size = n;

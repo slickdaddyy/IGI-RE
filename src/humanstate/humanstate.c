@@ -3,14 +3,16 @@
 #include "hook.h"
 #include "igi.h"
 #include "humanstate/humanstate.h"
+#include "humanai/humanaitypes.h"
+#include "material/materialtypes.h"
 
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
-ORIG(0x408460, void, HumanPlayer_UpdateFall, (Human *h));
+ORIG(0x408460, void, HumanPlayer_UpdateFall, (HumanPlayer *h));
 ORIG(0x416850, char, Game_GetEvent8, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x4388A0, int, PlaceExplosiveTBA_GetTargetId, (void *obj));
-ORIG(0x4137E0, void, HumanPlayer_SetWeaponAnim, (Human *h, int a));
-ORIG(0x413A60, void, HumanPlayer_RequestWeaponAnim, (Human *h, int a));
+ORIG(0x4137E0, void, HumanPlayer_SetWeaponAnim, (HumanPlayer *h, int a));
+ORIG(0x413A60, void, HumanPlayer_RequestWeaponAnim, (HumanPlayer *h, int a));
 ORIG(0x42FDD0, void *, Car_GetMountedGun, (void *obj));
 ORIG(0x42FDF0, void, Car_GetGunnerPos, (void *obj, double *pos, float *mat));
 ORIG(0x43E4E0, uint16_t, Elevator_GetType, (void));
@@ -32,39 +34,39 @@ ORIG(0x4485C0, long double, GenericTBA_GetUseTime, (void *obj));
 ORIG(0x4485D0, short, GenericTBA_GetAnim, (void *obj, int a, int b));
 ORIG(0x450CE0, void, HumanAI_Broadcast, (void *noise));
 ORIG(0x460CE0, void, Human_MarkDelete, (void *obj));
-ORIG(0x4631A0, void, Human_SetPosition, (Human *h, double *pos));
-ORIG(0x463220, void, Human_SetYaw, (Human *h, float yaw));
-ORIG(0x463260, void, Human_SnapToGround, (Human *h));
-ORIG(0x4632D0, void, Human_LeaveGround, (Human *h));
-ORIG(0x463310, void, Human_SetPlatform, (Human *h, void *obj));
-ORIG(0x463550, void, Human_ClearPlatform, (Human *h));
-ORIG(0x463570, void, Human_DisableCollision, (Human *h));
-ORIG(0x463580, void, Human_EnableCollision, (Human *h));
-ORIG(0x463590, void, Human_SetExactMotion, (Human *h));
-ORIG(0x4635A0, void, Human_ClearExactMotion, (Human *h));
-ORIG(0x4635F0, void, Human_FreezeView, (Human *h));
-ORIG(0x463600, void, Human_UnfreezeView, (Human *h));
-ORIG(0x463610, void, Human_BeginUse, (Human *h));
-ORIG(0x463620, void, Human_EndUse, (Human *h));
-ORIG(0x4636A0, void, Human_SetClimbObject, (Human *h, int a));
-ORIG(0x4636E0, void *, Human_GetClimbObject, (Human *h));
-ORIG(0x463700, void, Human_SetAttached, (Human *h, void *a));
-ORIG(0x463740, int, Human_GetAttached, (Human *h));
-ORIG(0x463760, void, HumanViewCam, (Human *h, int mode));
+ORIG(0x4631A0, void, Human_SetPosition, (HumanPlayer *h, double *pos));
+ORIG(0x463220, void, Human_SetYaw, (HumanPlayer *h, float yaw));
+ORIG(0x463260, void, Human_SnapToGround, (HumanPlayer *h));
+ORIG(0x4632D0, void, Human_LeaveGround, (HumanPlayer *h));
+ORIG(0x463310, void, Human_SetPlatform, (HumanPlayer *h, void *obj));
+ORIG(0x463550, void, Human_ClearPlatform, (HumanPlayer *h));
+ORIG(0x463570, void, Human_DisableCollision, (HumanPlayer *h));
+ORIG(0x463580, void, Human_EnableCollision, (HumanPlayer *h));
+ORIG(0x463590, void, Human_SetExactMotion, (HumanPlayer *h));
+ORIG(0x4635A0, void, Human_ClearExactMotion, (HumanPlayer *h));
+ORIG(0x4635F0, void, Human_FreezeView, (HumanPlayer *h));
+ORIG(0x463600, void, Human_UnfreezeView, (HumanPlayer *h));
+ORIG(0x463610, void, Human_BeginUse, (HumanPlayer *h));
+ORIG(0x463620, void, Human_EndUse, (HumanPlayer *h));
+ORIG(0x4636A0, void, Human_SetClimbObject, (HumanPlayer *h, int a));
+ORIG(0x4636E0, void *, Human_GetClimbObject, (HumanPlayer *h));
+ORIG(0x463700, void, Human_SetAttached, (HumanPlayer *h, void *a));
+ORIG(0x463740, int, Human_GetAttached, (HumanPlayer *h));
+ORIG(0x463760, void, HumanViewCam, (HumanPlayer *h, int mode));
 ORIG(0x464700, void, HumanView_LockPitch, (void *view));
 ORIG(0x464710, void, HumanView_UnlockPitch, (void *view));
 ORIG(0x464720, void, HumanView_ClearAngles, (void *view));
 ORIG(0x465800, void, HumanView_GetEye, (double *pos, void *view));
 ORIG(0x475340, void, StationaryGun_Release, (void *obj));
-ORIG(0x489E70, void, Human_PlayAnimSlot, (Human *h, int anim, float blend));
-ORIG(0x489EA0, void, Human_PlayAnim, (Human *h, int anim, int loop, float blend));
+ORIG(0x489E70, void, Human_PlayAnimSlot, (HumanPlayer *h, int anim, float blend));
+ORIG(0x489EA0, void, Human_PlayAnim, (HumanPlayer *h, int anim, int loop, float blend));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B2D00, void, Vec3_ToAngles, (const float *v, float *pitch, float *yaw));
 ORIG(0x4B3100, void, Vec3d_Normalize, (double *v));
 ORIG(0x4B38E0, void, Matrix_SetEuler, (float *m, float ax, float ay, float az));
 ORIG(0x4B3790, void, Matrix_RotateZ, (float *out, const float *m, float a));
 ORIG(0x4B3C50, void, Matrix_GetEuler, (const float *m, float *ax, float *ay, float *az));
-ORIG(0x4C3440, void *, DynCubeObj_GetPosition, (Human *h));
+ORIG(0x4C3440, void *, DynCubeObj_GetPosition, (HumanPlayer *h));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, void *result, const double *from, const double *to, int a, char b,
                                   void *filter, unsigned flags));
 ORIG(0x4D2FB0, void, BoneObj_GetRootMotion, (void *a, float *move, void *anim));
@@ -88,17 +90,6 @@ extern const int gWireDragSounds[];
 #define PI_F 0x1.921fb6p+1f
 #define HALF_PI_F 0x1.921fb6p+0f
 #define FPS 30.0f
-
-/* the 0x1C byte message passed to 0x450CE0, probably a noise AI can hear */
-typedef struct HumanNoise {
-    int type;
-    int unk4;
-    int unk8;
-    float radius;
-    void *unk10;
-    void *unk14;
-    void *unk18;
-} HumanNoise;
 
 /* fcomp: equal also when unordered */
 static int x87_eq(long double a, long double b)
@@ -138,50 +129,50 @@ static int x87_fistp(long double x)
     return (int)r;
 }
 
-static void State_Change(HumanState *sm, Human *h, int state)
+static void State_Change(HumanPlayerSM *sm, HumanPlayer *h, int state)
 {
     sm->prev = sm->state;
     sm->state = state;
-    sm->update = sm->enter[state];
-    sm->update(sm, h);
+    sm->run = sm->states[state];
+    sm->run(sm, h);
 }
 
-static void Human_Noise(Human *h, int type, void *a, void *b)
+static void Human_Noise(HumanPlayer *h, int type, void *a, void *b)
 {
-    HumanNoise n;
+    AIMessage n;
 
     n.type = type;
-    n.unk4 = h->unkFC;
-    n.unk8 = 0x46;
+    n.team = h->team;
+    n.flags = 0x46;
     n.radius = 20480.0f;
-    n.unk10 = DynCubeObj_GetPosition(h);
-    n.unk14 = a;
-    n.unk18 = b;
+    n.pos = DynCubeObj_GetPosition(h);
+    n.from = a;
+    n.about = b;
     HumanAI_Broadcast(&n);
 }
 
 /* --- running ------------------------------------------------------------ */
 
-static float Run_Start(HumanState *sm, Human *h)
+static float Run_Start(HumanPlayerSM *sm, HumanPlayer *h)
 {
     float phase;
 
-    h->unk33D = 1;
+    h->crouch = 1;
     phase = x87_float(Anim_GetPhase(h->anim, 0));
     Human_PlayAnimSlot(h, sm->state, 0.2f);
     return phase;
 }
 
-static void Run_Finish(HumanState *sm, Human *h, int keepPhase, float phase, HumanStateFn update)
+static void Run_Finish(HumanPlayerSM *sm, HumanPlayer *h, int keepPhase, float phase, HumanStateFn update)
 {
     if (keepPhase)
         Anim_SetTime(h->anim, 0, (float)(Anim_GetLength(h->anim, 0) * phase));
     HumanPlayer_RequestWeaponAnim(h, 5);
-    sm->update = update;
+    sm->run = update;
 }
 
 /* falling, unk10000 and dying win over everything else */
-static int Run_Common(HumanState *sm, Human *h, unsigned in)
+static int Run_Common(HumanPlayerSM *sm, HumanPlayer *h, unsigned in)
 {
     if (!(in & HUMAN_ON_GROUND)) {
         State_Change(sm, h, HSTATE_FALL);
@@ -198,14 +189,14 @@ static int Run_Common(HumanState *sm, Human *h, unsigned in)
     return 0;
 }
 
-static void Run_Stop(HumanState *sm, Human *h, unsigned in, int walk, int crouch)
+static void Run_Stop(HumanPlayerSM *sm, HumanPlayer *h, unsigned in, int walk, int crouch)
 {
     if (in & HUMAN_RUN)
         return;
     State_Change(sm, h, (in & HUMAN_CROUCH) ? crouch : walk);
 }
 
-void HumanPlayer_RunForwardLeftUpdate(HumanState *sm, Human *h)
+void HumanPlayer_RunForwardLeftUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     unsigned in = sm->input;
 
@@ -223,9 +214,9 @@ void HumanPlayer_RunForwardLeftUpdate(HumanState *sm, Human *h)
 }
 HOOK(0x40AEF0, HumanPlayer_RunForwardLeftUpdate);
 
-void HumanPlayer_RunForwardRightUpdate(HumanState *sm, Human *h);
+void HumanPlayer_RunForwardRightUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_RunForwardRightEnter(HumanState *sm, Human *h)
+void HumanPlayer_RunForwardRightEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     float phase = Run_Start(sm, h);
     int prev = sm->prev;
@@ -235,7 +226,7 @@ void HumanPlayer_RunForwardRightEnter(HumanState *sm, Human *h)
 }
 HOOK(0x40B020, HumanPlayer_RunForwardRightEnter);
 
-void HumanPlayer_RunForwardRightUpdate(HumanState *sm, Human *h)
+void HumanPlayer_RunForwardRightUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     unsigned in = sm->input;
 
@@ -253,9 +244,9 @@ void HumanPlayer_RunForwardRightUpdate(HumanState *sm, Human *h)
 }
 HOOK(0x40B0A0, HumanPlayer_RunForwardRightUpdate);
 
-void HumanPlayer_RunBackUpdate(HumanState *sm, Human *h);
+void HumanPlayer_RunBackUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_RunBackEnter(HumanState *sm, Human *h)
+void HumanPlayer_RunBackEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     float phase = Run_Start(sm, h);
 
@@ -263,7 +254,7 @@ void HumanPlayer_RunBackEnter(HumanState *sm, Human *h)
 }
 HOOK(0x40B1D0, HumanPlayer_RunBackEnter);
 
-void HumanPlayer_RunBackUpdate(HumanState *sm, Human *h)
+void HumanPlayer_RunBackUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     unsigned in = sm->input;
 
@@ -285,9 +276,9 @@ void HumanPlayer_RunBackUpdate(HumanState *sm, Human *h)
 }
 HOOK(0x40B240, HumanPlayer_RunBackUpdate);
 
-void HumanPlayer_RunBackLeftUpdate(HumanState *sm, Human *h);
+void HumanPlayer_RunBackLeftUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_RunBackLeftEnter(HumanState *sm, Human *h)
+void HumanPlayer_RunBackLeftEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     float phase = Run_Start(sm, h);
     int prev = sm->prev;
@@ -297,7 +288,7 @@ void HumanPlayer_RunBackLeftEnter(HumanState *sm, Human *h)
 }
 HOOK(0x40B390, HumanPlayer_RunBackLeftEnter);
 
-void HumanPlayer_RunBackLeftUpdate(HumanState *sm, Human *h)
+void HumanPlayer_RunBackLeftUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     unsigned in = sm->input;
 
@@ -315,9 +306,9 @@ void HumanPlayer_RunBackLeftUpdate(HumanState *sm, Human *h)
 }
 HOOK(0x40B410, HumanPlayer_RunBackLeftUpdate);
 
-void HumanPlayer_RunBackRightUpdate(HumanState *sm, Human *h);
+void HumanPlayer_RunBackRightUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_RunBackRightEnter(HumanState *sm, Human *h)
+void HumanPlayer_RunBackRightEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     float phase = Run_Start(sm, h);
     int prev = sm->prev;
@@ -327,7 +318,7 @@ void HumanPlayer_RunBackRightEnter(HumanState *sm, Human *h)
 }
 HOOK(0x40B540, HumanPlayer_RunBackRightEnter);
 
-void HumanPlayer_RunBackRightUpdate(HumanState *sm, Human *h)
+void HumanPlayer_RunBackRightUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     unsigned in = sm->input;
 
@@ -345,9 +336,9 @@ void HumanPlayer_RunBackRightUpdate(HumanState *sm, Human *h)
 }
 HOOK(0x40B5C0, HumanPlayer_RunBackRightUpdate);
 
-void HumanPlayer_RunLeftUpdate(HumanState *sm, Human *h);
+void HumanPlayer_RunLeftUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_RunLeftEnter(HumanState *sm, Human *h)
+void HumanPlayer_RunLeftEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     float phase = Run_Start(sm, h);
 
@@ -355,7 +346,7 @@ void HumanPlayer_RunLeftEnter(HumanState *sm, Human *h)
 }
 HOOK(0x40B6F0, HumanPlayer_RunLeftEnter);
 
-void HumanPlayer_RunLeftUpdate(HumanState *sm, Human *h)
+void HumanPlayer_RunLeftUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     unsigned in = sm->input;
 
@@ -377,9 +368,9 @@ void HumanPlayer_RunLeftUpdate(HumanState *sm, Human *h)
 }
 HOOK(0x40B760, HumanPlayer_RunLeftUpdate);
 
-void HumanPlayer_RunRightUpdate(HumanState *sm, Human *h);
+void HumanPlayer_RunRightUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_RunRightEnter(HumanState *sm, Human *h)
+void HumanPlayer_RunRightEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     float phase = Run_Start(sm, h);
 
@@ -387,7 +378,7 @@ void HumanPlayer_RunRightEnter(HumanState *sm, Human *h)
 }
 HOOK(0x40B8B0, HumanPlayer_RunRightEnter);
 
-void HumanPlayer_RunRightUpdate(HumanState *sm, Human *h)
+void HumanPlayer_RunRightUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     unsigned in = sm->input;
 
@@ -411,44 +402,44 @@ HOOK(0x40B920, HumanPlayer_RunRightUpdate);
 
 /* --- jumping and falling ------------------------------------------------ */
 
-static void Human_Land(Human *h)
+static void Human_Land(HumanPlayer *h)
 {
     void *sound;
     char *name;
 
-    if (h->ground) {
+    if (h->ground.material) {
         /* the name is also left on the stack as a second argument */
-        name = h->ground + 0x114;
+        name = h->ground.material->landSound;
         sound = Sound_Play(Level_GetDynamic(name), name);
         if (sound)
-            Sound_SetPos(sound, h->unk6A8);
+            Sound_SetPos(sound, &h->ground.pos.x);
     }
     h->vel[0] = 0;
     h->vel[1] = 0;
     h->vel[2] = 0;
-    h->unk670[0] = 0;
-    h->unk670[1] = 0;
-    h->unk670[2] = 0;
+    h->push[0] = 0;
+    h->push[1] = 0;
+    h->push[2] = 0;
 }
 
-void HumanPlayer_JumpUpdate(HumanState *sm, Human *h);
+void HumanPlayer_JumpUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_JumpEnter(HumanState *sm, Human *h)
+void HumanPlayer_JumpEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     long double x, y;
     float fx;
     uint16_t *obj;
 
-    if (h->unk768 && (obj = *h->unk768) != NULL && obj[0x1C / 2] == Elevator_GetType()) {
+    if (h->groundRef && (obj = (uint16_t *)*h->groundRef) != NULL && obj[0x1C / 2] == Elevator_GetType()) {
         State_Change(sm, h, HSTATE_STAND);
         return;
     }
-    h->unk33D = 0;
+    h->crouch = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
     Anim_SetSpeed(h->anim, 0, 0.4f);
     Sound_Play(h->view, "jump_1");
-    x = h->move[0];
-    y = h->move[1];
+    x = h->delta[0];
+    y = h->delta[1];
     if (x87_eq(x, 0) && x87_eq(y, 0)) {
         fx = (float)x;
     } else {
@@ -459,15 +450,15 @@ void HumanPlayer_JumpEnter(HumanState *sm, Human *h)
         fx = x87_float(gJumpSpeed * (long double)fx);
         y = y * gJumpSpeed;
     }
-    h->vel[0] = (float)(fx + (long double)h->unk728[0]);
-    h->vel[1] = (float)(y + h->unk728[1]);
-    h->vel[2] = (float)((long double)gJumpUp + h->unk728[2]);
+    h->vel[0] = (float)(fx + (long double)h->movePos[0]);
+    h->vel[1] = (float)(y + h->movePos[1]);
+    h->vel[2] = (float)((long double)gJumpUp + h->movePos[2]);
     Human_LeaveGround(h);
-    sm->update = HumanPlayer_JumpUpdate;
+    sm->run = HumanPlayer_JumpUpdate;
 }
 HOOK(0x40BA70, HumanPlayer_JumpEnter);
 
-void HumanPlayer_JumpUpdate(HumanState *sm, Human *h)
+void HumanPlayer_JumpUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     unsigned in;
 
@@ -502,20 +493,20 @@ void HumanPlayer_JumpUpdate(HumanState *sm, Human *h)
 }
 HOOK(0x40BBD0, HumanPlayer_JumpUpdate);
 
-void HumanPlayer_FallUpdate(HumanState *sm, Human *h);
+void HumanPlayer_FallUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_FallEnter(HumanState *sm, Human *h)
+void HumanPlayer_FallEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
-    h->unk33D = 0;
+    h->crouch = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
-    h->vel[0] = h->move[0] + h->unk728[0];
-    h->vel[1] = h->move[1] + h->unk728[1];
-    h->vel[2] = h->unk728[2];
-    sm->update = HumanPlayer_FallUpdate;
+    h->vel[0] = h->delta[0] + h->movePos[0];
+    h->vel[1] = h->delta[1] + h->movePos[1];
+    h->vel[2] = h->movePos[2];
+    sm->run = HumanPlayer_FallUpdate;
 }
 HOOK(0x40BDB0, HumanPlayer_FallEnter);
 
-void HumanPlayer_FallUpdate(HumanState *sm, Human *h)
+void HumanPlayer_FallUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     HumanPlayer_UpdateFall(h);
     if (!(sm->input & HUMAN_ON_GROUND))
@@ -541,13 +532,13 @@ static const double kUse35Back = 3481.6;
 static const double kUse36Back = 2048.0;
 
 /* move = rot * move, every row from the old vector */
-static void Human_RotateMove(Human *h)
+static void Human_RotateMove(HumanPlayer *h)
 {
-    float *m = h->rot;
-    float *v = h->move;
+    float *m = h->matrix.m;
+    float *v = h->delta;
     float x, y;
 
-    BoneObj_GetRootMotion(h->unk514, v, h->anim);
+    BoneObj_GetRootMotion(h->boneOffset, v, h->anim);
     x = (float)((long double)m[2] * v[2] + (long double)m[1] * v[1] + (long double)m[0] * v[0]);
     y = (float)((long double)m[5] * v[2] + (long double)m[4] * v[1] + (long double)m[3] * v[0]);
     v[2] = (float)((long double)m[8] * v[2] + (long double)m[7] * v[1] + (long double)m[6] * v[0]);
@@ -556,7 +547,7 @@ static void Human_RotateMove(Human *h)
 }
 
 /* true when the human is on the negative side of the object's Y axis */
-static int Human_IsBehind(Human *h, const double *pos, const float *mat)
+static int Human_IsBehind(HumanPlayer *h, const double *pos, const float *mat)
 {
     long double dx = (long double)h->pos[0] - pos[0];
     long double dy = (long double)h->pos[1] - pos[1];
@@ -566,7 +557,7 @@ static int Human_IsBehind(Human *h, const double *pos, const float *mat)
 }
 
 /* turn to the object's heading plus offset */
-static void Human_FaceObject(Human *h, const float *mat, float offset)
+static void Human_FaceObject(HumanPlayer *h, const float *mat, float offset)
 {
     float ax, ay, az;
 
@@ -574,7 +565,7 @@ static void Human_FaceObject(Human *h, const float *mat, float offset)
     Human_SetYaw(h, (float)((long double)az + offset));
 }
 
-static void Action_Begin(Human *h)
+static void Action_Begin(HumanPlayer *h)
 {
     HumanViewCam(h, 3);
     HumanPlayer_SetFlagD68(h);
@@ -586,9 +577,9 @@ static void Action_Begin(Human *h)
 
 /* 0 while the action runs, 1 when it completed, 2 when it was cancelled
    by letting go of the use key or dying */
-static int Action_Tick(HumanState *sm, Human *h)
+static int Action_Tick(HumanPlayerSM *sm, HumanPlayer *h)
 {
-    int cancel = x87_eq(h->unk1D4, 0);
+    int cancel = x87_eq(h->input[9], 0);
 
     if (sm->input & HUMAN_DEAD)
         cancel = 1;
@@ -599,7 +590,7 @@ static int Action_Tick(HumanState *sm, Human *h)
     return h->actionFrame == h->actionFrames;
 }
 
-static void Action_End(Human *h)
+static void Action_End(HumanPlayer *h)
 {
     HumanPlayer_ClearFlagD44(h);
     HumanView_UnlockPitch(h->view);
@@ -611,16 +602,16 @@ static void Action_End(Human *h)
     Human_ClearExactMotion(h);
 }
 
-static void Action_Done(HumanState *sm, Human *h)
+static void Action_Done(HumanPlayerSM *sm, HumanPlayer *h)
 {
     if (h->actionSound)
         Sound_Stop(h->actionSound);
     State_Change(sm, h, HSTATE_STAND);
 }
 
-void HumanPlayer_PicklockUpdate(HumanState *sm, Human *h);
+void HumanPlayer_PicklockUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_PicklockEnter(HumanState *sm, Human *h)
+void HumanPlayer_PicklockEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     void *obj = Human_GetClimbObject(h);
     double pos[3];
@@ -652,23 +643,23 @@ void HumanPlayer_PicklockEnter(HumanState *sm, Human *h)
     Action_Begin(h);
     HumanPlayer_SetFlagD44(h);
     h->actionSound = Sound_Play(h, "picklock_loop");
-    sm->update = HumanPlayer_PicklockUpdate;
+    sm->run = HumanPlayer_PicklockUpdate;
 }
 HOOK(0x40BED0, HumanPlayer_PicklockEnter);
 
-void HumanPlayer_SetFlagD44(Human *h)
+void HumanPlayer_SetFlagD44(HumanPlayer *h)
 {
-    h->unkD44 = 1;
+    h->weaponLock = 1;
 }
 HOOK(0x40C140, HumanPlayer_SetFlagD44);
 
-void HumanPlayer_SetFlagD68(Human *h)
+void HumanPlayer_SetFlagD68(HumanPlayer *h)
 {
-    h->unkD68 = 1;
+    h->showBar = 1;
 }
 HOOK(0x40C150, HumanPlayer_SetFlagD68);
 
-void HumanPlayer_PicklockUpdate(HumanState *sm, Human *h)
+void HumanPlayer_PicklockUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     void *obj = Human_GetClimbObject(h);
     void *sound;
@@ -689,27 +680,27 @@ void HumanPlayer_PicklockUpdate(HumanState *sm, Human *h)
 }
 HOOK(0x40C160, HumanPlayer_PicklockUpdate);
 
-void HumanPlayer_PicklockNoise(void *obj, Human *h)
+void HumanPlayer_PicklockNoise(void *obj, HumanPlayer *h)
 {
     Human_Noise(h, 0xC, obj, h);
 }
 HOOK(0x40C270, HumanPlayer_PicklockNoise);
 
-void HumanPlayer_ClearFlagD44(Human *h)
+void HumanPlayer_ClearFlagD44(HumanPlayer *h)
 {
-    h->unkD44 = 0;
+    h->weaponLock = 0;
 }
 HOOK(0x40C2D0, HumanPlayer_ClearFlagD44);
 
-void HumanPlayer_ClearFlagD68(Human *h)
+void HumanPlayer_ClearFlagD68(HumanPlayer *h)
 {
-    h->unkD68 = 0;
+    h->showBar = 0;
 }
 HOOK(0x40C2E0, HumanPlayer_ClearFlagD68);
 
-void HumanPlayer_Use31Update(HumanState *sm, Human *h);
+void HumanPlayer_Use31Update(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_Use31Enter(HumanState *sm, Human *h)
+void HumanPlayer_Use31Enter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     void *obj = Human_GetClimbObject(h);
     double pos[3];
@@ -735,11 +726,11 @@ void HumanPlayer_Use31Enter(HumanState *sm, Human *h)
     h->actionFrame = 0;
     h->actionFrames = FRAMES(Cabinet_GetSearchTime(obj));
     Action_Begin(h);
-    sm->update = HumanPlayer_Use31Update;
+    sm->run = HumanPlayer_Use31Update;
 }
 HOOK(0x40C2F0, HumanPlayer_Use31Enter);
 
-void HumanPlayer_Use31Update(HumanState *sm, Human *h)
+void HumanPlayer_Use31Update(HumanPlayerSM *sm, HumanPlayer *h)
 {
     void *obj = Human_GetClimbObject(h);
     int r;
@@ -770,9 +761,9 @@ void HumanPlayer_Use31Update(HumanState *sm, Human *h)
 }
 HOOK(0x40C510, HumanPlayer_Use31Update);
 
-void HumanPlayer_TypeComputerUpdate(HumanState *sm, Human *h);
+void HumanPlayer_TypeComputerUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_TypeComputerEnter(HumanState *sm, Human *h)
+void HumanPlayer_TypeComputerEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     void *obj = Human_GetClimbObject(h);
     double pos[3];
@@ -780,7 +771,7 @@ void HumanPlayer_TypeComputerEnter(HumanState *sm, Human *h)
     long double x;
     double y, z;
 
-    h->unk33D = 0;
+    h->crouch = 0;
     HumanPlayer_SetWeaponAnim(h, 0);
     Human_PlayAnim(h, 0x5A, 1, 0.0f);
     Human_RotateMove(h);
@@ -799,11 +790,11 @@ void HumanPlayer_TypeComputerEnter(HumanState *sm, Human *h)
     h->actionFrames = FRAMES(GenericTBA_GetUseTime(obj));
     Action_Begin(h);
     h->actionSound = Sound_Play(h, "typecomp_loop");
-    sm->update = HumanPlayer_TypeComputerUpdate;
+    sm->run = HumanPlayer_TypeComputerUpdate;
 }
 HOOK(0x40C670, HumanPlayer_TypeComputerEnter);
 
-void HumanPlayer_TypeComputerUpdate(HumanState *sm, Human *h)
+void HumanPlayer_TypeComputerUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     void *obj = Human_GetClimbObject(h);
     void *sound;
@@ -822,9 +813,9 @@ void HumanPlayer_TypeComputerUpdate(HumanState *sm, Human *h)
 }
 HOOK(0x40C870, HumanPlayer_TypeComputerUpdate);
 
-void HumanPlayer_Use33Update(HumanState *sm, Human *h);
+void HumanPlayer_Use33Update(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_Use33Enter(HumanState *sm, Human *h)
+void HumanPlayer_Use33Enter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     void *obj = Human_GetClimbObject(h);
     double pos[3];
@@ -850,19 +841,19 @@ void HumanPlayer_Use33Enter(HumanState *sm, Human *h)
     Human_FreezeView(h);
     Human_SetPlatform(h, obj);
     Human_SetExactMotion(h);
-    h->unk4D0 = 0;
-    sm->update = HumanPlayer_Use33Update;
+    h->weaponReady = 0;
+    sm->run = HumanPlayer_Use33Update;
 }
 HOOK(0x40C970, HumanPlayer_Use33Enter);
 
-void HumanPlayer_Use33Update(HumanState *sm, Human *h)
+void HumanPlayer_Use33Update(HumanPlayerSM *sm, HumanPlayer *h)
 {
     void *obj = Human_GetClimbObject(h);
-    int leave = !x87_eq(h->unk1D4, 0) && x87_eq(h->unk134, 0);
+    int leave = !x87_eq(h->input[9], 0) && x87_eq(h->prevInput[9], 0);
 
     if (!(sm->input & HUMAN_DEAD) && !leave)
         return;
-    h->unk4D0 = 1;
+    h->weaponReady = 1;
     HumanPlayer_ClearFlagD44(h);
     HumanView_UnlockPitch(h->view);
     Human_UnfreezeView(h);
@@ -875,9 +866,9 @@ void HumanPlayer_Use33Update(HumanState *sm, Human *h)
 }
 HOOK(0x40CAE0, HumanPlayer_Use33Update);
 
-void HumanPlayer_Use34Update(HumanState *sm, Human *h);
+void HumanPlayer_Use34Update(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_Use34Enter(HumanState *sm, Human *h)
+void HumanPlayer_Use34Enter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     void *obj = Human_GetClimbObject(h);
     double pos[3];
@@ -905,11 +896,11 @@ void HumanPlayer_Use34Enter(HumanState *sm, Human *h)
     Human_DisableCollision(h);
     Human_LeaveGround(h);
     Human_SetExactMotion(h);
-    sm->update = HumanPlayer_Use34Update;
+    sm->run = HumanPlayer_Use34Update;
 }
 HOOK(0x40CB90, HumanPlayer_Use34Enter);
 
-void HumanPlayer_Use34Update(HumanState *sm, Human *h)
+void HumanPlayer_Use34Update(HumanPlayerSM *sm, HumanPlayer *h)
 {
     void *obj = Human_GetClimbObject(h);
 
@@ -928,9 +919,9 @@ void HumanPlayer_Use34Update(HumanState *sm, Human *h)
 }
 HOOK(0x40CCC0, HumanPlayer_Use34Update);
 
-void HumanPlayer_StartAction(Human *h, int action)
+void HumanPlayer_StartAction(HumanPlayer *h, int action)
 {
-    HumanState *sm = &h->sm;
+    HumanPlayerSM *sm = &h->sm;
     void *obj;
 
     Human_SetClimbObject(h, Human_GetAttached(h));
@@ -967,12 +958,12 @@ void HumanPlayer_StartAction(Human *h, int action)
         return;
     case 9:
         if (Wire_IsSloped(Human_GetClimbObject(h)))
-            h->unkDA0 = 1;
+            h->ziplineEnter = 1;
         else
-            h->unkD93 = 1;
+            h->wireEnter = 1;
         return;
     case 10:
-        h->unkD78 = 1;
+        h->ladderEnter = 1;
         return;
     case 11:
         h->unkD90 = 1;
@@ -991,9 +982,9 @@ void HumanPlayer_StartAction(Human *h, int action)
 }
 HOOK(0x40CD30, HumanPlayer_StartAction);
 
-void HumanPlayer_Use35Update(HumanState *sm, Human *h);
+void HumanPlayer_Use35Update(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_Use35Enter(HumanState *sm, Human *h)
+void HumanPlayer_Use35Enter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     void *obj = Human_GetClimbObject(h);
     double pos[3];
@@ -1001,7 +992,7 @@ void HumanPlayer_Use35Enter(HumanState *sm, Human *h)
     long double x;
     double y, z;
 
-    h->unk33D = 0;
+    h->crouch = 0;
     HumanPlayer_SetWeaponAnim(h, 0);
     Human_PlayAnim(h, GenericTBA_GetAnim(obj, 1, 0), 1, 0.0f);
     Human_RotateMove(h);
@@ -1020,13 +1011,13 @@ void HumanPlayer_Use35Enter(HumanState *sm, Human *h)
     h->actionFrames = FRAMES(GenericTBA_GetUseTime(obj));
     Action_Begin(h);
     h->actionSound = NULL;
-    sm->update = HumanPlayer_Use35Update;
+    sm->run = HumanPlayer_Use35Update;
 }
 HOOK(0x40CF70, HumanPlayer_Use35Enter);
 
 typedef struct TraceFilter {
     int unk0;
-    Human *ignore;
+    HumanPlayer *ignore;
 } TraceFilter;
 
 typedef struct TraceResult {
@@ -1043,7 +1034,7 @@ typedef struct TraceResult {
 
 /* like Use35, but stands where the line from the camera to the object
    first hits something, facing away from the surface */
-void HumanPlayer_Use36Enter(HumanState *sm, Human *h)
+void HumanPlayer_Use36Enter(HumanPlayerSM *sm, HumanPlayer *h)
 {
     void *obj = Human_GetClimbObject(h);
     double pos[3], start[3], cam[3], d[3];
@@ -1056,7 +1047,7 @@ void HumanPlayer_Use36Enter(HumanState *sm, Human *h)
     void *world;
     uint16_t *o;
 
-    h->unk33D = 0;
+    h->crouch = 0;
     HumanPlayer_SetWeaponAnim(h, 0);
     Human_PlayAnim(h, GenericTBA_GetAnim(obj, 1, 0), 1, 0.0f);
     Human_RotateMove(h);
@@ -1127,11 +1118,11 @@ void HumanPlayer_Use36Enter(HumanState *sm, Human *h)
     h->actionFrames = FRAMES(GenericTBA_GetUseTime(obj));
     Action_Begin(h);
     h->actionSound = NULL;
-    sm->update = HumanPlayer_Use35Update;
+    sm->run = HumanPlayer_Use35Update;
 }
 HOOK(0x40D180, HumanPlayer_Use36Enter);
 
-void HumanPlayer_Use35Update(HumanState *sm, Human *h)
+void HumanPlayer_Use35Update(HumanPlayerSM *sm, HumanPlayer *h)
 {
     void *obj = Human_GetClimbObject(h);
     int r = Action_Tick(sm, h);
@@ -1147,7 +1138,7 @@ HOOK(0x40D580, HumanPlayer_Use35Update);
 
 /* --- ladders and wires -------------------------------------------------- */
 
-static void Human_StepSound(Human *h, int *counter, const int *sounds)
+static void Human_StepSound(HumanPlayer *h, int *counter, const int *sounds)
 {
     char buf[32];
     void *sound;
@@ -1161,27 +1152,27 @@ static void Human_StepSound(Human *h, int *counter, const int *sounds)
     Human_Noise(h, 0xE, h, h);
 }
 
-void HumanPlayer_LadderUpdate(HumanState *sm, Human *h);
+void HumanPlayer_LadderUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_LadderEnter(HumanState *sm, Human *h)
+void HumanPlayer_LadderEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
-    h->unk33D = 0;
+    h->crouch = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
     HumanPlayer_SetWeaponAnim(h, 0);
     h->ladderDir = 0;
     h->ladderStep = -1.0f;
-    sm->update = HumanPlayer_LadderUpdate;
+    sm->run = HumanPlayer_LadderUpdate;
 }
 HOOK(0x40D660, HumanPlayer_LadderEnter);
 
-void HumanPlayer_LadderUpdate(HumanState *sm, Human *h)
+void HumanPlayer_LadderUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     unsigned in = sm->input;
     int dir;
 
-    if (h->unk538 == 8 && !x87_eq(h->unk540, h->ladderStep)) {
+    if (h->animEvent.sound == 8 && !x87_eq(h->animEvent.param, h->ladderStep)) {
         Anim_SetSpeed(h->anim, 0, 0.0f);
-        h->ladderStep = h->unk540;
+        h->ladderStep = h->animEvent.param;
         dir = h->ladderDir;
         h->ladderDir = 0;
         h->ladderPos += dir;
@@ -1198,7 +1189,7 @@ void HumanPlayer_LadderUpdate(HumanState *sm, Human *h)
         }
         if (in & HUMAN_BACK) {
             if (h->ladderPos == 0) {
-                h->unkD7A = 1;
+                h->ladderLeave = 1;
                 State_Change(sm, h, HSTATE_STAND);
                 return;
             }
@@ -1206,32 +1197,32 @@ void HumanPlayer_LadderUpdate(HumanState *sm, Human *h)
             Anim_SetSpeed(h->anim, 0, -1.0f);
         }
     }
-    if (!x87_eq(h->unk1D4, 0) && x87_eq(h->unk134, 0)) {
+    if (!x87_eq(h->input[9], 0) && x87_eq(h->prevInput[9], 0)) {
         State_Change(sm, h, HSTATE_LADDER_SLIDE);
         return;
     }
     if (in & HUMAN_DEAD)
-        h->unkD7A = 1;
+        h->ladderLeave = 1;
 }
 HOOK(0x40D6B0, HumanPlayer_LadderUpdate);
 
-void HumanPlayer_LadderOnUpdate(HumanState *sm, Human *h);
+void HumanPlayer_LadderOnUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_LadderOnEnter(HumanState *sm, Human *h)
+void HumanPlayer_LadderOnEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
-    h->unk33D = 0;
+    h->crouch = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
     HumanPlayer_SetWeaponAnim(h, 0);
-    sm->update = HumanPlayer_LadderOnUpdate;
+    sm->run = HumanPlayer_LadderOnUpdate;
 }
 HOOK(0x40D8E0, HumanPlayer_LadderOnEnter);
 
-void HumanPlayer_LadderOnUpdate(HumanState *sm, Human *h)
+void HumanPlayer_LadderOnUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     unsigned in = sm->input;
 
-    if (h->unk538 == 8 && !x87_eq(h->unk540, h->ladderStep)) {
-        h->ladderStep = h->unk540;
+    if (h->animEvent.sound == 8 && !x87_eq(h->animEvent.param, h->ladderStep)) {
+        h->ladderStep = h->animEvent.param;
         Human_StepSound(h, &h->ladderSound, gLadderSounds);
     }
     if (in & HUMAN_ANIM_DONE) {
@@ -1239,88 +1230,88 @@ void HumanPlayer_LadderOnUpdate(HumanState *sm, Human *h)
         return;
     }
     if (in & HUMAN_DEAD)
-        h->unkD7A = 1;
+        h->ladderLeave = 1;
 }
 HOOK(0x40D920, HumanPlayer_LadderOnUpdate);
 
-void HumanPlayer_LadderOffTopUpdate(HumanState *sm, Human *h);
+void HumanPlayer_LadderOffTopUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_LadderOffTopEnter(HumanState *sm, Human *h)
+void HumanPlayer_LadderOffTopEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
-    h->unk33D = 0;
+    h->crouch = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
     HumanPlayer_SetWeaponAnim(h, 0);
-    sm->update = HumanPlayer_LadderOffTopUpdate;
+    sm->run = HumanPlayer_LadderOffTopUpdate;
 }
 HOOK(0x40DA40, HumanPlayer_LadderOffTopEnter);
 
-void HumanPlayer_LadderOffTopUpdate(HumanState *sm, Human *h)
+void HumanPlayer_LadderOffTopUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     unsigned in = sm->input;
 
-    if (h->unk538 == 8 && !x87_eq(h->unk540, h->ladderStep)) {
-        h->ladderStep = h->unk540;
+    if (h->animEvent.sound == 8 && !x87_eq(h->animEvent.param, h->ladderStep)) {
+        h->ladderStep = h->animEvent.param;
         Human_StepSound(h, &h->ladderSound, gLadderSounds);
     }
     if (in & HUMAN_ANIM_DONE) {
-        h->unkD7A = 1;
+        h->ladderLeave = 1;
         State_Change(sm, h, HSTATE_STAND);
         return;
     }
     if (in & HUMAN_DEAD)
-        h->unkD7A = 1;
+        h->ladderLeave = 1;
 }
 HOOK(0x40DA80, HumanPlayer_LadderOffTopUpdate);
 
-void HumanPlayer_LadderSlideUpdate(HumanState *sm, Human *h);
+void HumanPlayer_LadderSlideUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_LadderSlideEnter(HumanState *sm, Human *h)
+void HumanPlayer_LadderSlideEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
-    h->unk33D = 0;
+    h->crouch = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
     HumanPlayer_SetWeaponAnim(h, 0);
     Human_EnableCollision(h);
-    h->wireSlideSound = Sound_Play(h, "wire_slide_1");
-    sm->update = HumanPlayer_LadderSlideUpdate;
+    h->ziplineSound = Sound_Play(h, "wire_slide_1");
+    sm->run = HumanPlayer_LadderSlideUpdate;
 }
 HOOK(0x40DBA0, HumanPlayer_LadderSlideEnter);
 
-void HumanPlayer_LadderSlideUpdate(HumanState *sm, Human *h)
+void HumanPlayer_LadderSlideUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     h->vel[0] = (float)((long double)h->vel[0] * 0.99f);
     h->vel[1] = (float)((long double)h->vel[1] * 0.99f);
     h->vel[2] = (float)(((long double)h->vel[2] - 0x1.64ce9ep+5f) * 0.99f);
     if (!(sm->input & HUMAN_ON_GROUND))
         return;
-    h->unkD7A = 1;
+    h->ladderLeave = 1;
     h->vel[0] = 0;
     h->vel[1] = 0;
     h->vel[2] = 0;
-    h->unk670[0] = 0;
-    h->unk670[1] = 0;
-    h->unk670[2] = 0;
-    if (h->wireSlideSound) {
-        Sound_Stop(h->wireSlideSound);
-        h->wireSlideSound = NULL;
+    h->push[0] = 0;
+    h->push[1] = 0;
+    h->push[2] = 0;
+    if (h->ziplineSound) {
+        Sound_Stop(h->ziplineSound);
+        h->ziplineSound = NULL;
     }
     State_Change(sm, h, HSTATE_STAND);
 }
 HOOK(0x40DBF0, HumanPlayer_LadderSlideUpdate);
 
-void HumanPlayer_State41Update(HumanState *sm, Human *h);
+void HumanPlayer_State41Update(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_State41Enter(HumanState *sm, Human *h)
+void HumanPlayer_State41Enter(HumanPlayerSM *sm, HumanPlayer *h)
 {
-    h->unk33D = 0;
+    h->crouch = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
     HumanPlayer_SetWeaponAnim(h, 0);
     h->actionFrame = 0;
     h->actionFrames = FRAMES(Fence_GetClimbTime());
-    sm->update = HumanPlayer_State41Update;
+    sm->run = HumanPlayer_State41Update;
 }
 HOOK(0x40DCA0, HumanPlayer_State41Enter);
 
-void HumanPlayer_State41Update(HumanState *sm, Human *h)
+void HumanPlayer_State41Update(HumanPlayerSM *sm, HumanPlayer *h)
 {
     unsigned in;
 
@@ -1337,27 +1328,27 @@ void HumanPlayer_State41Update(HumanState *sm, Human *h)
 }
 HOOK(0x40DD00, HumanPlayer_State41Update);
 
-void HumanPlayer_WireDragUpdate(HumanState *sm, Human *h);
+void HumanPlayer_WireDragUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_WireDragEnter(HumanState *sm, Human *h)
+void HumanPlayer_WireDragEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
-    h->unk33D = 0;
+    h->crouch = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
     HumanPlayer_SetWeaponAnim(h, 0);
     h->wireStep = -1.0f;
-    sm->update = HumanPlayer_WireDragUpdate;
+    sm->run = HumanPlayer_WireDragUpdate;
 }
 HOOK(0x40DD60, HumanPlayer_WireDragEnter);
 
-void HumanPlayer_WireDragUpdate(HumanState *sm, Human *h)
+void HumanPlayer_WireDragUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     unsigned in = sm->input;
     char buf[32];
     int n;
 
-    if (h->unk538 == 8 && !x87_eq(h->unk540, h->wireStep)) {
+    if (h->animEvent.sound == 8 && !x87_eq(h->animEvent.param, h->wireStep)) {
         Anim_SetSpeed(h->anim, 0, 0.0f);
-        h->wireStep = h->unk540;
+        h->wireStep = h->animEvent.param;
         h->ladderDir = 0;
     }
     if (h->ladderDir != 0)
@@ -1379,33 +1370,33 @@ void HumanPlayer_WireDragUpdate(HumanState *sm, Human *h)
 }
 HOOK(0x40DDA0, HumanPlayer_WireDragUpdate);
 
-void HumanPlayer_ZiplineUpdate(HumanState *sm, Human *h);
+void HumanPlayer_ZiplineUpdate(HumanPlayerSM *sm, HumanPlayer *h);
 
-void HumanPlayer_ZiplineEnter(HumanState *sm, Human *h)
+void HumanPlayer_ZiplineEnter(HumanPlayerSM *sm, HumanPlayer *h)
 {
-    h->unk33D = 0;
+    h->crouch = 0;
     Human_PlayAnimSlot(h, sm->state, 0.0f);
     HumanPlayer_SetWeaponAnim(h, 0);
     h->vel[0] = 0;
     h->vel[1] = 0;
     h->vel[2] = 0;
-    h->unk670[0] = 0;
-    h->unk670[1] = 0;
-    h->unk670[2] = 0;
-    sm->update = HumanPlayer_ZiplineUpdate;
+    h->push[0] = 0;
+    h->push[1] = 0;
+    h->push[2] = 0;
+    sm->run = HumanPlayer_ZiplineUpdate;
 }
 HOOK(0x40DE90, HumanPlayer_ZiplineEnter);
 
-void HumanPlayer_ZiplineUpdate(HumanState *sm, Human *h)
+void HumanPlayer_ZiplineUpdate(HumanPlayerSM *sm, HumanPlayer *h)
 {
     long double speed;
 
     Human_GetClimbObject(h);
-    speed = -(long double)h->wireDir[2] * 0x1.613d32p+6f + (long double)h->wireSpeed * 0.99f;
-    h->wireSpeed = (float)speed;
-    h->vel[0] = (float)(speed * h->wireDir[0]);
-    h->vel[1] = (float)(speed * h->wireDir[1]);
-    h->vel[2] = (float)(speed * h->wireDir[2]);
+    speed = -(long double)h->ziplineDir[2] * 0x1.613d32p+6f + (long double)h->ziplineSpeed * 0.99f;
+    h->ziplineSpeed = (float)speed;
+    h->vel[0] = (float)(speed * h->ziplineDir[0]);
+    h->vel[1] = (float)(speed * h->ziplineDir[1]);
+    h->vel[2] = (float)(speed * h->ziplineDir[2]);
 }
 HOOK(0x40DEF0, HumanPlayer_ZiplineUpdate);
 

@@ -7,10 +7,6 @@
 #include "hook.h"
 #include "mission/mission.h"
 
-typedef struct RangeF {
-    float min, max;
-} RangeF;
-
 ORIG(0x416D50, char, Game_IsPaused, (void));
 ORIG(0x418E40, void *, MenuManager_FindFont, (void *mm, const char *name));
 ORIG(0x468DD0, void, ComputerLog_Clear, (void));
@@ -546,9 +542,9 @@ void StatusMessageScreen_DrawBox(StatusMessageScreen *s, int i, float x, float y
     v[2].y = y1;
     v[3].x = x1;
     v[3].y = y1;
-    strip.untextured = 0;
+    strip.lines = 0;
     strip.flags = 0x80000;
-    strip.unk8 = flags;
+    strip.queue = flags;
     strip.count = 4;
     strip.verts = v;
     gRenderFuncs[gQVertexStrip](&strip);
@@ -571,8 +567,8 @@ void StatusMessageScreen_DrawBox(StatusMessageScreen *s, int i, float x, float y
     v[3].x = x0;
     v[3].y = y1;
     v[4] = v[0];
-    strip.untextured = 1;
-    strip.unk8 = flags;
+    strip.lines = 1;
+    strip.queue = flags;
     strip.count = 5;
     strip.verts = v;
     gRenderFuncs[gQVertexStrip](&strip);

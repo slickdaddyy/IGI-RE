@@ -2,6 +2,9 @@
 
 #include "hook.h"
 #include "igi.h"
+#include "d3d/d3dtypes.h"
+#include "camfeed/camfeedtypes.h"
+#include "qvertex/qvertextypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x490370, int, Timer_GetMs, (void));
@@ -33,72 +36,6 @@ ORIG(0x4B6F30, void, Text_Free, (void *text));
 ORIG(0x4B6F50, void, Text_DrawAlt, (void *text));
 ORIG(0x4B72E0, void *, SortRender_Add, (void (*fn)(void *), int size, unsigned int key));
 
-typedef struct Task {
-    void *next, *prev;
-    void *head, *tail, *tailpred;
-    void *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
-
-/* static noise lines over the map computer screen */
-typedef struct LineFilter {
-    Task task;
-    int unk20, unk24, unk28;
-    float z;
-    float level;
-    int sorted; /* draw through SortRender, else at once */
-} LineFilter;
-
-/* black bars above and below a clip window */
-typedef struct WideScreenFilter {
-    Task task;
-    float color[3];
-    float unk2C;
-    float w, h, x, y;
-    float barH;
-} WideScreenFilter;
-
-typedef struct FilterTexture {
-    int device;
-    int unk4[7];
-    void *surface;
-} FilterTexture;
-
-/* security camera feed: rolling bands, noise and "CAMERA n" */
-typedef struct BandFilter {
-    Task task;
-    float z;
-    float level; /* noise, falls back to 0 */
-    float maxLevel; /* 0 = no signal, a flat rectangle */
-    FilterTexture tex;
-    int counter; /* 0..period, bands shift half a step past 45 */
-    int period;
-    int timer;
-    int interval;
-    int camera;
-    float color[3];
-    void *font;
-} BandFilter;
-
-/* camcorder view: scan lines, corner marks, battery and timecode */
-typedef struct HandiCamFilter {
-    Task task;
-    float color[3];
-    float z;
-    void *font;
-    char battery[0x18]; /* a Sprite */
-    float blink;
-    int lastMs;
-} HandiCamFilter;
-
-_Static_assert(sizeof(LineFilter) == 0x38, "LineFilter");
-_Static_assert(sizeof(WideScreenFilter) == 0x44, "WideScreenFilter");
-_Static_assert(sizeof(BandFilter) == 0x74, "BandFilter");
-_Static_assert(sizeof(HandiCamFilter) == 0x54, "HandiCamFilter");
-
 /* a render queue node or SortRender item */
 typedef struct FilterPrim {
     void *next;
@@ -114,27 +51,6 @@ typedef struct ClipPrim {
     float x, y, w, h;
     int unk1C, unk20;
 } ClipPrim;
-
-typedef struct Text {
-    void *grid;
-    float x, y, z;
-    float alpha;
-    float color[3];
-    int unk20;
-    unsigned int flags;
-} Text;
-
-typedef struct Vertex {
-    float x, y, z, rhw;
-    uint32_t color;
-    float u, v;
-} Vertex;
-
-typedef struct DynVB {
-    void *vb;
-    int size;
-    int used;
-} DynVB;
 
 extern uint16_t gBandFilterType;
 extern uint16_t gHandiCamFilterType;
@@ -252,7 +168,7 @@ void LineFilter_Draw(LineFilter *t)
     FilterPrim prim, *p;
 
     if (t->sorted) {
-        p = SortRender_Add((void (*)(void *))LineFilter_DrawPrim, sizeof(FilterPrim), fbits(t->z));
+        p = SortRender_Add((void (*)(void *))LineFilter_DrawPrim, sizeof(FilterPrim), fbits(t->depth));
         p->task = t;
         p->id = gLineFilterPrim;
         return;
@@ -273,8 +189,8 @@ void WideScreenFilter_DrawPrim(FilterPrim *p)
     rect[2] = t->w;
     rect[3] = t->h;
     Scene_SetRect(gScene, rect);
-    Draw_RectZ(t->x, t->y + t->h - t->barH, t->w, t->barH, t->color[0], t->color[1], t->color[2], 0, -1, kOne);
-    Draw_RectZ(t->x, t->y, t->w, t->barH, t->color[0], t->color[1], t->color[2], 0, -1, kOne);
+    Draw_RectZ(t->x, t->y + t->h - t->barHeight, t->w, t->barHeight, t->color[0], t->color[1], t->color[2], 0, -1, kOne);
+    Draw_RectZ(t->x, t->y, t->w, t->barHeight, t->color[0], t->color[1], t->color[2], 0, -1, kOne);
 }
 HOOK(0x4A35B0, WideScreenFilter_DrawPrim);
 
@@ -318,7 +234,7 @@ static void draw_label(void *font, float x, float y, float z, const char *str)
 
 void BandFilter_Draw(BandFilter *t)
 {
-    FilterPrim *p = SortRender_Add((void (*)(void *))BandFilter_DrawPrim, sizeof(FilterPrim), fbits(t->z));
+    FilterPrim *p = SortRender_Add((void (*)(void *))BandFilter_DrawPrim, sizeof(FilterPrim), fbits(t->depth));
     char buf[52];
     char mode;
     float z;
@@ -331,12 +247,12 @@ void BandFilter_Draw(BandFilter *t)
             Mem_SetDefaultMode();
         crt_sprintf(buf, "CAMERA %d", t->camera);
         draw_label(t->font, gScreenW * gBandTextX + gBandTextDX + gViewX, gScreenH * gBandTextY + gBandTextDY + gViewY,
-                   t->z, buf);
+                   t->depth, buf);
         if (!mode)
             Mem_ClearMode();
     }
     if (is_zero(t->maxLevel)) {
-        z = t->z > gNearPlane ? t->z : gNearPlane;
+        z = t->depth > gNearPlane ? t->depth : gNearPlane;
         Draw_RectZ((int)round_ll(gViewX), (int)round_ll(gViewY), (int)round_ll(gScreenW), (int)round_ll(gScreenH),
                    t->color[0] * k128, t->color[1] * k128, t->color[2] * k128, 0x80000000, 0, z);
     }
@@ -365,9 +281,9 @@ void BandFilter_Run(BandFilter *t)
 HOOK(0x4A38A0, BandFilter_Run);
 
 /* NULL when the lock failed */
-static Vertex *vb_lock(int n, int *start)
+static TLVertex *vb_lock(int n, int *start)
 {
-    Vertex *p = NULL;
+    TLVertex *p = NULL;
     long hr;
 
     if (gVBTL.used + n > gVBTL.size) {
@@ -411,7 +327,7 @@ static void overlay_states(void)
     DEV_SetRenderState(gDevice, 0x0E, 0);
 }
 
-static void vertex(Vertex *v, float x, float y, float z, float rhw)
+static void vertex(TLVertex *v, float x, float y, float z, float rhw)
 {
     v->x = x;
     v->y = y;
@@ -419,14 +335,14 @@ static void vertex(Vertex *v, float x, float y, float z, float rhw)
     v->rhw = rhw;
 }
 
-static void uv(Vertex *v, float u, float tv)
+static void uv(TLVertex *v, float u, float tv)
 {
     v->u = u;
     v->v = tv;
 }
 
 /* one textured quad across the screen per pair of band edges */
-static Vertex *band_quads(Vertex *p, const float *ys, int pairs, float vz, float rhw, float h)
+static TLVertex *band_quads(TLVertex *p, const float *ys, int pairs, float vz, float rhw, float h)
 {
     int left = (int)round_ll(gViewX);
     float right = (long double)left + gScreenW;
@@ -473,10 +389,10 @@ void BandFilter_Render(BandFilter *t)
     float ys[100];
     float z, vz, rhw, h, top, bottom;
     long double y;
-    Vertex *p;
+    TLVertex *p;
     int n, start;
 
-    z = t->z > gNearPlane ? t->z : gNearPlane;
+    z = t->depth > gNearPlane ? t->depth : gNearPlane;
     if (is_zero(t->maxLevel))
         return;
     overlay_depth(z, &vz, &rhw);
@@ -534,10 +450,10 @@ void HandiCamFilter_Render(HandiCamFilter *t)
     float z, vz, rhw, y;
     long double next, limit, a, b, jx, jy;
     uint32_t color;
-    Vertex *p;
+    TLVertex *p;
     int n, start, i, j, x0, x1, iy, cx, cy;
 
-    z = t->z > gNearPlane ? t->z : gNearPlane;
+    z = t->depth > gNearPlane ? t->depth : gNearPlane;
     overlay_depth(z, &vz, &rhw);
     overlay_states();
     DEV_SetTextureStageState(gDevice, 0, 4, 3);
@@ -637,7 +553,7 @@ HOOK(0x4A4CB0, HandiCamFilter_Run);
 
 void HandiCamFilter_Draw(HandiCamFilter *t)
 {
-    FilterPrim *p = SortRender_Add((void (*)(void *))HandiCamFilter_DrawPrim, sizeof(FilterPrim), fbits(t->z));
+    FilterPrim *p = SortRender_Add((void (*)(void *))HandiCamFilter_DrawPrim, sizeof(FilterPrim), fbits(t->depth));
     char buf[64];
     char mode;
     int frames, sec, min;
@@ -655,7 +571,7 @@ void HandiCamFilter_Draw(HandiCamFilter *t)
     min = sec / 60 % 60;
     crt_sprintf(buf, "%2.2d : %2.2d : %2.2d : %2.2d", min / 60, min, sec % 60, frames % 24);
     draw_label(t->font, gScreenW * kTimecodeX + gViewX - (long double)gTimecodeX,
-               gScreenH * kTimecodeY + gViewY - (long double)gTimecodeY, t->z, buf);
+               gScreenH * kTimecodeY + gViewY - (long double)gTimecodeY, t->depth, buf);
     if (!mode)
         Mem_ClearMode();
 
@@ -668,7 +584,7 @@ void HandiCamFilter_Draw(HandiCamFilter *t)
     top = y;
     bottom = y + h;
     right = left + w;
-    QVertex_DrawQuadEx(t->battery, left, bottom, right, bottom, left, top, right, top, k128, k128, k128, t->z, alpha, 0,
+    QVertex_DrawQuadEx(t->battery, left, bottom, right, bottom, left, top, right, top, k128, k128, k128, t->depth, alpha, 0,
                        0x10C0000, 0);
 }
 HOOK(0x4A4D10, HandiCamFilter_Draw);

@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "animtrig/animtrig.h"
+#include "sound/soundtypes.h"
 
 ORIG(0x4A5980, int, crt_stricmp, (const char *a, const char *b));
 ORIG(0x4A5BB0, char *, crt_strstr, (const char *s, const char *find));
@@ -28,12 +29,6 @@ typedef struct AnimTriggerFireArg {
     void *data;
     void *pos;
 } AnimTriggerFireArg;
-
-typedef struct FileInfo {
-    const char *path;
-    void *data;
-    char isDir;
-} FileInfo;
 
 extern AnimTrigger gAnimTriggers[];
 extern int gAnimTriggerCount;

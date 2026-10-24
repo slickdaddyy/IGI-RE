@@ -7,41 +7,7 @@
 
 #include "hook.h"
 #include "igi.h"
-
-typedef struct FcNode {
-    struct FcNode *next;
-    struct FcNode *prev;
-} FcNode;
-
-typedef struct FcList {
-    FcNode *head;
-    FcNode *tail;
-    FcNode *tailpred;
-} FcList;
-
-typedef struct Task {
-    FcNode node;
-    FcList children;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
-
-/* fixed size item pool; slots[] maps a slot number to an item number */
-typedef struct Pool {
-    char *data;
-    int *slots;
-    int used;
-    int capacity;
-    int stride;
-    int index_offset;
-} Pool;
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
+#include "task/tasktypes.h"
 
 typedef void (*TaskHandler)();
 

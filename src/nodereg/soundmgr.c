@@ -1,6 +1,7 @@
 /* SoundManager task type; its handlers live after this range. */
 #include "hook.h"
 #include "nodereg/nodereg.h"
+#include "flatwater/flatwatertypes.h"
 
 FN_EXTERN(SoundManager_Create);
 FN_EXTERN(SoundManager_Delete);
@@ -8,15 +9,6 @@ FN_EXTERN(SoundManager_GetInfo);
 FN_EXTERN(SoundManager_GetParams);
 FN_EXTERN(SoundManager_ParamsChanged);
 FN_EXTERN(SubLevel_Run);
-
-/* "SoundManager" (0x44) */
-typedef struct SoundManager {
-    Task task;
-    char name[32];
-    int unk40;
-} SoundManager;
-
-_Static_assert(sizeof(SoundManager) == 0x44, "SoundManager");
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));

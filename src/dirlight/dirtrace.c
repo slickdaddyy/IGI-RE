@@ -46,7 +46,7 @@ void Dirlight_TraceVertices(Dirlight *dl, TraceArg *arg)
 
     saved = Mem_Alloc(info->set->count * 4, 4);
     for (i = 0; i < info->set->count; i++) {
-        Task *obj = info->set->refs[i].obj;
+        Task *obj = (Task *)info->set->refs[i].obj;
 
         saved[i] = OBJ_A4(obj);
         OBJ_A4(obj) = -1;
@@ -62,7 +62,7 @@ void Dirlight_TraceVertices(Dirlight *dl, TraceArg *arg)
     v.z = -v.z;
     set = info->set;
     center = set->center;
-    M = set->refs[0].matrix;
+    M = set->refs[0].matrix->m;
     r0 = center.z * M[2] + center.y * M[1] + center.x * M[0];
     r1 = center.z * M[5] + center.y * M[4] + center.x * M[3];
     r2 = center.z * M[8] + center.y * M[7] + center.x * M[6];
@@ -166,7 +166,7 @@ void Dirlight_TraceVertices(Dirlight *dl, TraceArg *arg)
         float *nrm = arg->normals[ids[j]];
 
         if (*area > 0) {
-            float *R = info->set->refs[0].matrix;
+            float *R = info->set->refs[0].matrix->m;
             long double R0 = R[2] * nrm[2] + R[1] * nrm[1] + nrm[0] * R[0];
             long double R1 = R[3] * nrm[0] + R[5] * nrm[2] + R[4] * nrm[1];
             long double R2 = R[6] * nrm[0] + R[8] * nrm[2] + R[7] * nrm[1];

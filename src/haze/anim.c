@@ -72,7 +72,7 @@ void Anim_PrepareSlerps(int skel)
                     }
                     continue;
                 }
-                slerp_prepare(&t->slerp[k], &t->keys[k].q.x, &t->keys[next].q.x);
+                slerp_prepare(&t->slerp[k], t->keys[k].q, t->keys[next].q);
                 if (gBoneSmoothAnims)
                     slerp_prepare(&t->slerp2[k], t->keys[k].a, t->keys[next].b);
             }
@@ -186,7 +186,7 @@ void Bone_Rotate(Bone *b, const Quat *q, int depth, int rotDepth, int posDepth)
                 l->w = lw * r;
             }
         }
-        b->matrix.unk24 = w->unk10;
+        b->matrix.count = w->unk10;
         xx = w->x * w->x;
         xx += xx;
         xy = w->y * w->x;

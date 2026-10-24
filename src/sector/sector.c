@@ -6,6 +6,10 @@
 
 #include "sector/sector.h"
 #include "hook.h"
+#include "litmap/litmaptypes.h"
+#include "bonemesh/bonemeshtypes.h"
+#include "transctx/transctxtypes.h"
+#include "glowmesh/glowmeshtypes.h"
 
 FN_EXTERN(SectorInteriorObject_WorldAdd);
 FN_EXTERN(SectorInteriorObject_WorldRemove);
@@ -70,30 +74,6 @@ ORIG(0x4E55B0, uint8_t, CellMask_GetDrawEvent, (void));
 #define SectorInteriorObject_WorldRemove (FN(0x4DED30, SectorInteriorObject_WorldRemove))
 #define sub_4D3710 (FN(0x4D3710, Task_Nothing))
 
-/* a view space vertex with its screen position and outcode */
-typedef struct ClipVertex {
-    float x, y, z;
-    float sx, sy, rhw;
-    int code;
-} ClipVertex;
-
-/* the active camera (0xBCAAE0), fields used here */
-typedef struct TransCtx {
-    float m[9];
-    int unk24;
-    Vec3d pos;
-    float fov;
-    float fovY;
-    float scaleX, scaleY;
-    float centerX, centerY;
-} TransCtx;
-
-/* the screen area being drawn (0xBCABA0) */
-typedef struct SceneArea {
-    char unk0[0x30];
-    float minX, minY, maxX, maxY;
-} SceneArea;
-
 /* argument of the locate event: which sector holds pos */
 typedef struct LocateArg {
     Vec3d *pos;
@@ -101,13 +81,13 @@ typedef struct LocateArg {
     Sector *sector;
     SectorObject *owner;
     Vec3d floor;        /* 0x10 */
-    int unk28;
+    float radius;
     int unk2C;
 } LocateArg;
 
 /* line query sent to slot 9 of each sector */
 typedef struct LineHit {
-    Obj *obj;
+    RigidDynCubeObj *obj;
     int unk4;
     Vec3d point;
     char unk20[0x38];
@@ -127,34 +107,6 @@ typedef struct LineQuery {
     LineHit *hit;
 } LineQuery;
 
-/* one LOD of an object in a sector object's lightmap set */
-typedef struct LightmapRef {
-    void *lightmaps;
-    void *lod;
-    Obj *obj;
-    Matrix *matrix;
-    Vec3d *pos;
-    int unkD8;
-    int lodIndex;
-    int lodCount;
-    int unk20;
-} LightmapRef;
-
-typedef struct LightmapSet {
-    int count;
-    VirModel *model;
-    float radius;
-    Vec3f center;
-    LightmapRef refs[];
-} LightmapSet;
-
-/* an object placed in a sector */
-typedef struct SectorLink {
-    Obj **slot;
-    Sector *sector;
-    SectorObject *owner;
-} SectorLink;
-
 /* a sector to draw this frame, with the screen rectangle it is seen through */
 typedef struct VisSector {
     float min[2];
@@ -165,26 +117,9 @@ typedef struct VisSector {
     int unk1C;
 } VisSector;
 
-typedef struct DrawArg {
-    Obj *obj;
-    int *lights;
-    int lightCount;
-    int *fog;
-    int fogCount;
-} DrawArg;
-
-typedef struct PlaceArg {
-    Vec3d pos;
-    Matrix matrix;
-} PlaceArg;
-
-_Static_assert(offsetof(TransCtx, centerY) == 0x54, "TransCtx");
-_Static_assert(offsetof(SceneArea, maxY) == 0x3C, "SceneArea");
 _Static_assert(sizeof(LocateArg) == 0x30, "LocateArg");
 _Static_assert(sizeof(LineQuery) == 0x24, "LineQuery");
 _Static_assert(sizeof(LineHit) == 0x70, "LineHit");
-_Static_assert(sizeof(LightmapRef) == 0x24, "LightmapRef");
-_Static_assert(sizeof(LightmapSet) == 0x18, "LightmapSet");
 
 extern void (*gRenderFuncs[])(void *);
 extern int gQCubeInside;
@@ -223,7 +158,6 @@ static inline int feq0(long double x)
 {
     return !(x < 0 || x > 0);
 }
-
 
 /* screen outcode: 1 left, 2 top, 4 right, 8 bottom, 0x10 in front of the near plane */
 static int outcode(float sx, float sy)
@@ -509,11 +443,11 @@ void SectorObject_LocateHandler(SectorObject *so, LocateArg *arg)
     LineQuery q;
     LineHit hit;
     Vec3d from, to;
-    Obj *o;
+    RigidDynCubeObj *o;
     long double r, rx;
     float scale, ry, rz;
     float *m = so->s.o.matrix.m;
-    Vec3f *v = &so->offset;
+    Vec3f *v = &so->center;
 
     if (!so->sectors)
         return;
@@ -523,7 +457,7 @@ void SectorObject_LocateHandler(SectorObject *so, LocateArg *arg)
     scale = so->s.o.scale[2] < so->s.o.scale[1] ? so->s.o.scale[1] : so->s.o.scale[2];
     if (so->s.o.scale[0] > scale)
         scale = so->s.o.scale[0];
-    r = VirModel_GetRadius(so->s.o.model) * scale;
+    r = VirModel_GetRadius((VirModel *)so->s.o.model) * scale;
     hit.obj = NULL;
     hit.found = 0;
     q.hit = &hit;
@@ -543,11 +477,11 @@ void SectorObject_LocateHandler(SectorObject *so, LocateArg *arg)
         if (o == &so->s.o) {
             if (!so->sectors)
                 break;
-            o = (Obj *)so->sectors->head;
+            o = (RigidDynCubeObj *)so->sectors->head;
             if (!o->task.next)
                 break;
         } else {
-            o = (Obj *)o->task.next;
+            o = (RigidDynCubeObj *)o->task.next;
             if (!o || !o->task.next)
                 break;
         }
@@ -562,7 +496,7 @@ void SectorObject_LocateHandler(SectorObject *so, LocateArg *arg)
     arg->floor.x = rx + hit.obj->pos.x;
     arg->floor.y = ry + hit.obj->pos.y;
     arg->floor.z = rz + hit.obj->pos.z;
-    arg->unk28 = so->unk19C;
+    arg->radius = so->radius;
 }
 HOOK(0x4DBCC0, SectorObject_LocateHandler);
 
@@ -571,13 +505,13 @@ void SectorObject_MatchLightmaps(SectorObject *so, int *arg)
 {
     LightmapSet *set = (LightmapSet *)arg[0];
 
-    arg[1] = set ? set->model == so->s.o.model : 0;
+    arg[1] = set ? set->model == (VirModel *)so->s.o.model : 0;
 }
 HOOK(0x4DBF00, SectorObject_MatchLightmaps);
 
-static int lightmapped(Obj *o)
+static int lightmapped(RigidDynCubeObj *o)
 {
-    return o->model && lod_mesh(o->model, 0)->format == 3;
+    return o->model && lod_mesh((VirModel *)o->model, 0)->format == 3;
 }
 
 /* adds the LODs of lightmapped MagicObjs in the list t and below */
@@ -585,8 +519,8 @@ void SectorObject_CountMagicLods(int *count, Task *t)
 {
     for (; t; t = t->next) {
         if (TaskType_IsA(t->type, MagicObj_GetType())) {
-            if (lightmapped((Obj *)t))
-                *count += ((Obj *)t)->model->lodCount;
+            if (lightmapped((RigidDynCubeObj *)t))
+                *count += ((VirModel *)((RigidDynCubeObj *)t)->model)->lod_count;
             SectorObject_CountMagicLods(count, first_child(t));
         }
         if (!t->next || !t->next->next)
@@ -602,10 +536,10 @@ void SectorObject_CountRigidLods(int *count, Task *t)
     for (; t; t = t->next) {
         if (!TaskType_IsA(t->type, SectorObject_GetType())) {
             if (TaskType_IsA(t->type, RigidDynCubeObj_GetType())) {
-                Obj *o = (Obj *)t;
+                RigidDynCubeObj *o = (RigidDynCubeObj *)t;
 
                 if (lightmapped(o))
-                    *count += o->model->lodCount;
+                    *count += ((VirModel *)o->model)->lod_count;
                 if (o->attached)
                     SectorObject_CountRigidLods(count, first_child(o->attached));
             }
@@ -617,23 +551,23 @@ void SectorObject_CountRigidLods(int *count, Task *t)
 }
 HOOK(0x4DBFA0, SectorObject_CountRigidLods);
 
-static void fill_refs(int *n, LightmapSet *set, Obj *o)
+static void fill_refs(int *n, LightmapSet *set, RigidDynCubeObj *o)
 {
     int i;
 
     o->lightmapRefs = &set->refs[*n];
-    for (i = 0; i < o->model->lodCount; i++) {
+    for (i = 0; i < ((VirModel *)o->model)->lod_count; i++) {
         LightmapRef *r = &set->refs[*n];
 
         r->lightmaps = NULL;
         r->obj = o;
         r->matrix = &o->matrix;
         r->pos = &o->pos;
-        r->unkD8 = o->unkD8;
+        r->unk14 = o->unkD8;
         r->lodIndex = i;
-        r->lodCount = o->model->lodCount;
-        r->lod = o->model->lod[i];
-        r->unk20 = 0;
+        r->lodCount = ((VirModel *)o->model)->lod_count;
+        r->lod = ((VirModel *)o->model)->lods[i];
+        r->uploaded = 0;
         (*n)++;
     }
 }
@@ -641,8 +575,8 @@ static void fill_refs(int *n, LightmapSet *set, Obj *o)
 void SectorObject_FillMagicRefs(int *n, LightmapSet *set, Task *t, int top)
 {
     for (; t; t = t->next) {
-        if (TaskType_IsA(t->type, MagicObj_GetType()) && lightmapped((Obj *)t)) {
-            fill_refs(n, set, (Obj *)t);
+        if (TaskType_IsA(t->type, MagicObj_GetType()) && lightmapped((RigidDynCubeObj *)t)) {
+            fill_refs(n, set, (RigidDynCubeObj *)t);
             SectorObject_FillMagicRefs(n, set, first_child(t), top);
         }
         if (!t->next || !t->next->next)
@@ -656,7 +590,7 @@ void SectorObject_FillRigidRefs(int *n, LightmapSet *set, Task *t)
     for (; t; t = t->next) {
         if (!TaskType_IsA(t->type, SectorObject_GetType())) {
             if (TaskType_IsA(t->type, RigidDynCubeObj_GetType())) {
-                Obj *o = (Obj *)t;
+                RigidDynCubeObj *o = (RigidDynCubeObj *)t;
 
                 if (lightmapped(o))
                     fill_refs(n, set, o);
@@ -675,7 +609,7 @@ void SectorObject_ClearMagicRefs(Task *t)
 {
     for (; t; t = t->next) {
         if (TaskType_IsA(t->type, MagicObj_GetType())) {
-            ((Obj *)t)->lightmapRefs = NULL;
+            ((RigidDynCubeObj *)t)->lightmapRefs = NULL;
             SectorObject_ClearMagicRefs(first_child(t));
         }
         if (!t->next || !t->next->next)
@@ -689,7 +623,7 @@ void SectorObject_ClearRigidRefs(Task *t)
     for (; t; t = t->next) {
         if (!TaskType_IsA(t->type, SectorObject_GetType())) {
             if (TaskType_IsA(t->type, RigidDynCubeObj_GetType())) {
-                Obj *o = (Obj *)t;
+                RigidDynCubeObj *o = (RigidDynCubeObj *)t;
 
                 o->lightmapRefs = NULL;
                 if (o->attached)
@@ -704,14 +638,14 @@ void SectorObject_ClearRigidRefs(Task *t)
 HOOK(0x4DC340, SectorObject_ClearRigidRefs);
 
 /* the sector object, then its sectors */
-static Obj *next_part(SectorObject *so, Obj *o)
+static RigidDynCubeObj *next_part(SectorObject *so, RigidDynCubeObj *o)
 {
     if (o == &so->s.o) {
         if (!so->sectors)
             return NULL;
-        o = (Obj *)so->sectors->head;
+        o = (RigidDynCubeObj *)so->sectors->head;
     } else {
-        o = (Obj *)o->task.next;
+        o = (RigidDynCubeObj *)o->task.next;
         if (!o)
             return NULL;
     }
@@ -725,13 +659,13 @@ void SectorObject_LoadLightmaps(SectorObject *so, LightmapSet **arg)
 {
     LightmapSet *old = *arg, *set;
     int count = 0, n = 0;
-    Obj *o;
+    RigidDynCubeObj *o;
 
     HANDLER(Mesh3D_GetEvent2(), so->s.o.task.type)(so, &old);
     if (so->sectors) {
         for (o = &so->s.o; o; o = next_part(so, o)) {
             if (o->model) {
-                count += o->model->lodCount;
+                count += ((VirModel *)o->model)->lod_count;
                 SectorObject_CountMagicLods(&count, first_child(o->attached));
             }
         }
@@ -741,7 +675,7 @@ void SectorObject_LoadLightmaps(SectorObject *so, LightmapSet **arg)
         return;
     set = Mem_Alloc(count * sizeof(LightmapRef) + sizeof(LightmapSet), 4);
     set->count = count;
-    set->model = so->s.o.model;
+    set->model = (VirModel *)so->s.o.model;
     if (so->sectors) {
         for (o = &so->s.o; o; o = next_part(so, o)) {
             if (o->model) {
@@ -761,9 +695,9 @@ typedef struct Sphere {
     float r;
 } Sphere;
 
-static void add_sphere(Pool *pool, Obj *o)
+static void add_sphere(Pool *pool, RigidDynCubeObj *o)
 {
-    SectorMesh *m = lod_mesh(o->model, 0);
+    SectorMesh *m = lod_mesh((VirModel *)o->model, 0);
     Sphere *s = pool_take(pool);
 
     s->c = m->center;
@@ -778,7 +712,7 @@ void SectorObject_GetBounds(SectorObject *so, Vec3f *center, float *radius)
 {
     Pool pool;
     Sphere *a, *b, *last;
-    Obj *o;
+    RigidDynCubeObj *o;
     float min, dx, dy, dz, p1x, p1y, p1z, p2x, p2y, cx, cy, cz;
     long double d, len, s, z1, z2;
     int i, j;
@@ -788,7 +722,7 @@ void SectorObject_GetBounds(SectorObject *so, Vec3f *center, float *radius)
 
         if (!so->s.o.model)
             return;
-        m = lod_mesh(so->s.o.model, 0);
+        m = lod_mesh((VirModel *)so->s.o.model, 0);
         *center = m->center;
         *radius = m->radius2;
         return;
@@ -883,7 +817,7 @@ void SectorObject_AddChildSpheres(Pool *pool, Task *t)
     if (!c->next || !c)
         return;
     for (;;) {
-        add_sphere(pool, (Obj *)c);
+        add_sphere(pool, (RigidDynCubeObj *)c);
         SectorObject_AddChildSpheres(pool, c);
         c = c->next;
         if (!c || !c->next)
@@ -895,7 +829,7 @@ HOOK(0x4DCBA0, SectorObject_AddChildSpheres);
 /* event from 0x4CFC80 */
 void SectorObject_FreeLightmaps(SectorObject *so, void **arg)
 {
-    Obj *o;
+    RigidDynCubeObj *o;
 
     if (*arg)
         Mem_Free(*arg);
@@ -910,7 +844,7 @@ void SectorObject_FreeLightmaps(SectorObject *so, void **arg)
 HOOK(0x4DCC20, SectorObject_FreeLightmaps);
 
 /* puts obj into the sector holding pos; returns 1 when it found one */
-int Sector_AddObject(int world, Obj *obj, Vec3d *pos)
+int Sector_AddObject(int world, RigidDynCubeObj *obj, Vec3d *pos)
 {
     LocateArg q;
     Sector *s;
@@ -936,7 +870,7 @@ int Sector_AddObject(int world, Obj *obj, Vec3d *pos)
 }
 HOOK(0x4DCCB0, Sector_AddObject);
 
-void Sector_RemoveObject(Obj *obj)
+void Sector_RemoveObject(RigidDynCubeObj *obj)
 {
     int i;
 
@@ -956,7 +890,7 @@ void Sector_RemoveObject(Obj *obj)
 }
 HOOK(0x4DCDD0, Sector_RemoveObject);
 
-int Sector_MoveObject(int world, Obj *obj, Vec3d *pos)
+int Sector_MoveObject(int world, RigidDynCubeObj *obj, Vec3d *pos)
 {
     Sector_RemoveObject(obj);
     return Sector_AddObject(world, obj, pos);
@@ -993,7 +927,7 @@ void Sector_Open(void)
     TaskType_SetHandler(gSectorObjectType, World_GetEvent1(), SectorObject_WorldRemove);
     Pool_Init(&gVisSectors, sizeof(VisSector), 20, 0);
     Pool_Init(&gSectorLinks, sizeof(SectorLink), 1000, 0);
-    gSectorInteriorObjectType = TaskType_New("SectorInteriorObject", sizeof(Obj), RigidDynCubeObj_GetType(), 0);
+    gSectorInteriorObjectType = TaskType_New("SectorInteriorObject", sizeof(RigidDynCubeObj), RigidDynCubeObj_GetType(), 0);
     TaskType_SetHandler(gSectorInteriorObjectType, World_GetEvent0(), SectorInteriorObject_WorldAdd);
     TaskType_SetHandler(gSectorInteriorObjectType, World_GetEvent1(), SectorInteriorObject_WorldRemove);
 }
@@ -1003,16 +937,16 @@ HOOK(0x4DCF20, Sector_Open);
    children and draws the objects inside */
 void Sector_Render(Sector *s)
 {
-    DrawArg d;
-    PlaceArg a;
+    MeshDrawArg d;
+    Frame a;
     Task *c;
     int i;
 
-    d.obj = &s->o;
+    d.obj = (struct BoneDynCubeObj *)&s->o;
     d.lights = gSectorLights;
     d.lightCount = gSectorLightCount;
-    d.fog = gSectorFog;
-    d.fogCount = gSectorFogCount;
+    d.haze = gSectorFog;
+    d.hazeCount = gSectorFogCount;
     gRenderFuncs[Mesh3D_GetDrawRigidMethod()](&d);
     a.pos = s->o.pos;
     a.matrix = s->o.matrix;
@@ -1036,7 +970,7 @@ void Sector_Render(Sector *s)
         }
     }
     for (i = 0; i < s->objects.used; i++) {
-        Obj *o = *(Obj **)pool_get(&s->objects, i);
+        RigidDynCubeObj *o = *(RigidDynCubeObj **)pool_get(&s->objects, i);
         TaskFn fn = HANDLER(4, o->task.type);
 
         if (fn)
@@ -1138,13 +1072,13 @@ int Portal_GetScreenRect(Sector *s, int lod, int k, float *clipMin, float *clipM
    with the same portal visible */
 void Sector_FloodPortals(Sector *s, float *min, float *max, int lod)
 {
-    SectorMesh *m = lod_mesh(s->o.model, lod);
+    SectorMesh *m = lod_mesh((VirModel *)s->o.model, lod);
     float rmin[2], rmax[2];
     int k, j;
 
     for (k = 0; k < m->portalCount; k++) {
         int id = m->portals[k].id;
-        Obj *o;
+        RigidDynCubeObj *o;
 
         if (!Portal_GetScreenRect(s, lod, k, min, max, rmin, rmax))
             continue;
@@ -1165,7 +1099,7 @@ void Sector_FloodPortals(Sector *s, float *min, float *max, int lod)
             l = ModelObj_GetLOD(o);
             if (l == -1)
                 continue;
-            m2 = lod_mesh(o->model, l);
+            m2 = lod_mesh((VirModel *)o->model, l);
             for (j = 0; j < m2->portalCount; j++)
                 if (m2->portals[j].id == id)
                     Sector_AddVisible((Sector *)o, rmin, rmax, l);
@@ -1178,7 +1112,7 @@ HOOK(0x4DD650, Sector_FloodPortals);
    is closed, faces away too far, or is off screen */
 int Portal_GetScreenRect(Sector *s, int lod, int k, float *clipMin, float *clipMax, float *outMin, float *outMax)
 {
-    SectorMesh *m = lod_mesh(s->o.model, lod);
+    SectorMesh *m = lod_mesh((VirModel *)s->o.model, lod);
     Portal *p = &m->portals[k];
     float *mx = s->o.matrix.m;
     float min[2], max[2], *rect[2];
@@ -1273,9 +1207,9 @@ int Portal_GetScreenRect(Sector *s, int lod, int k, float *clipMin, float *clipM
         float rz = v->y * mx[7] + mx[8] * v->z + mx[6] * v->x;
         long double X = (long double)rx + cx, Y = (long double)ry + cy, Z = (long double)rz + cz;
 
-        c->x = Z * gView.m[2] + Y * gView.m[1] + X * gView.m[0];
-        c->y = Z * gView.m[5] + Y * gView.m[4] + X * gView.m[3];
-        c->z = Z * gView.m[8] + Y * gView.m[7] + X * gView.m[6];
+        c->x = Z * gView.matrix.m[2] + Y * gView.matrix.m[1] + X * gView.matrix.m[0];
+        c->y = Z * gView.matrix.m[5] + Y * gView.matrix.m[4] + X * gView.matrix.m[3];
+        c->z = Z * gView.matrix.m[8] + Y * gView.matrix.m[7] + X * gView.matrix.m[6];
         if (!(c->z >= kNearZ)) {
             c->code = 0x10;
         } else {

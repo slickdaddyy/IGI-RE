@@ -1,14 +1,16 @@
 #include "hook.h"
 #include "igi.h"
 #include "widget/widget.h"
+#include "script/scripttypes.h"
+#include "config/configtypes.h"
 
 ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
 ORIG(0x4B8920, void, Script_UnregisterSymbol, (const char *name));
 ORIG(0x4B7EE0, void, Script_RegisterBool8, (const char *name, char *value));
 ORIG(0x4B8A20, int, Script_GetArgInt, (void *args, int i));
 ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
-ORIG(0x4061B0, struct KeyBinding *, Config_GetDefaultKeys, (void));
-ORIG(0x4061C0, struct KeyBinding *, Profile_GetKeys, (void));
+ORIG(0x4061B0, struct InputRemap *, Config_GetDefaultKeys, (void));
+ORIG(0x4061C0, struct InputRemap *, Profile_GetKeys, (void));
 ORIG(0x4061E0, int, Profile_GetKeyCount, (void));
 ORIG(0x406240, void, Config_GetKey, (int i, int *value, const char **name));
 ORIG(0x406270, int, Config_GetKeyCount, (void));
@@ -26,21 +28,6 @@ ORIG(0x4B6E90, void, Text_SetString, (Text *t, const char *s));
 ORIG(0x4B6EC0, Text *, Text_New, (Sprite *s, float x, float y, const char *str));
 ORIG(0x4B6F30, void, Text_Free, (Text *t));
 ORIG(0x4B6F50, void, Text_DrawAlt, (Text *t));
-
-/* one action's binding in a player profile */
-typedef struct KeyBinding {
-    int action;
-    int device; /* 1 = keyboard, 3 = joystick button */
-    int key;
-} KeyBinding;
-
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *type;
-    int unk14;
-} ScriptValue;
 
 #define ROWS 64
 #define ROW_HEIGHT 20
@@ -125,7 +112,7 @@ ScriptValue *ControlsMenu_ConvertFloatFromOffset(ScriptValue *out, void *data, v
     __asm__("fistpll %0" : "=m"(i) : "t"(f) : "st");
     out->i = (int)i;
     out->d = f;
-    out->type = gEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x4231E0, ControlsMenu_ConvertFloatFromOffset);
@@ -139,7 +126,7 @@ ScriptValue *ControlsMenu_ConvertOffsetFromFloat(ScriptValue *out, void *data, v
     __asm__("fistpll %0" : "=m"(i) : "t"(f) : "st");
     out->i = (int)i;
     out->d = f;
-    out->type = gEmptyString;
+    out->s = gEmptyString;
     return out;
 }
 HOOK(0x423240, ControlsMenu_ConvertOffsetFromFloat);
@@ -325,12 +312,12 @@ int ControlsMenu_FindKey(int device, int key);
 /* the defaults are indexed like the profile's bindings */
 void ControlsMenu_LoadDefaults(ControlsMenu *cm)
 {
-    KeyBinding *defaults = Config_GetDefaultKeys();
+    InputRemap *defaults = Config_GetDefaultKeys();
     int n = Config_GetActionCount();
     int i;
 
     for (i = 0; i < n; i++) {
-        KeyBinding *k = &defaults[ControlsMenu_FindBinding(i)];
+        InputRemap *k = &defaults[ControlsMenu_FindBinding(i)];
 
         ControlsMenu_SetBinding(cm, i, ControlsMenu_FindKey(k->device, k->key));
     }
@@ -341,7 +328,7 @@ HOOK(0x4237C0, ControlsMenu_LoadDefaults);
 int ControlsMenu_FindBinding(int action)
 {
     int n = Profile_GetKeyCount();
-    KeyBinding *k = Profile_GetKeys();
+    InputRemap *k = Profile_GetKeys();
     int value, i;
 
     Config_GetAction(action, &value, NULL);
@@ -417,9 +404,9 @@ void ControlsMenu_DrawFrame(ControlsMenu *cm, float alpha)
     v[3].x = fx;
     v[3].y = v[2].y;
     v[4] = v[0];
-    strip.untextured = 1;
+    strip.lines = 1;
     strip.flags = 0x80000;
-    strip.unk8 = 0;
+    strip.queue = 0;
     strip.count = 5;
     strip.verts = v;
     gRenderFuncs[gQVertexStrip](&strip);
@@ -455,20 +442,20 @@ void ControlsMenu_DrawList(ControlsMenu *cm, float alpha)
             if (name && key) {
                 float ty;
 
-                name->r = 0.0f;
-                name->b = 0.0f;
+                name->color[0] = 0.0f;
+                name->color[2] = 0.0f;
                 name->x = fx + nameX;
-                name->g = 128.0f;
+                name->color[1] = 128.0f;
                 name->flags |= 0x80000;
                 name->alpha = alpha;
                 ty = (float)y + textY;
                 name->y = ty;
                 Text_DrawAlt(name);
                 key->flags |= 0x80000;
-                key->r = 128.0f;
-                key->g = 85.0f;
+                key->color[0] = 128.0f;
+                key->color[1] = 85.0f;
                 key->x = fx + keyX;
-                key->b = 0.0f;
+                key->color[2] = 0.0f;
                 key->alpha = alpha;
                 key->y = ty;
                 Text_DrawAlt(key);
@@ -520,7 +507,7 @@ HOOK(0x423D30, ControlsMenu_Deactivate);
 /* shows the active profile's bindings */
 void ControlsMenu_Load(ControlsMenu *cm)
 {
-    KeyBinding *keys = Profile_GetKeys();
+    InputRemap *keys = Profile_GetKeys();
     int n = Config_GetActionCount();
     int i;
 
@@ -540,13 +527,13 @@ HOOK(0x423DB0, ControlsMenu_Load);
 /* writes the bindings back to the active profile */
 void ControlsMenu_Save(ControlsMenu *cm)
 {
-    KeyBinding *keys = Profile_GetKeys();
+    InputRemap *keys = Profile_GetKeys();
     int n = Config_GetActionCount();
     int i;
 
     for (i = 0; i < n; i++) {
         unsigned int value = ControlsMenu_GetKeyValue(cm->bindings[i]);
-        KeyBinding *k = &keys[ControlsMenu_FindBinding(i)];
+        InputRemap *k = &keys[ControlsMenu_FindBinding(i)];
 
         k->device = (int)value >> 30 & 3;
         k->key = value & 0x3FFFFFFF;

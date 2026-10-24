@@ -105,10 +105,10 @@ static const float kEdgeY1[4] = {0, 1, 1, 0};
 static const float kEdgeY0[4] = {0, 0, 1, 1};
 static const float kEdgeX1[4] = {1, 0, 0, 1};
 
-typedef struct Vertex {
+typedef struct ColorVertex {
     float x, y, z, rhw;
     uint32_t color;
-} Vertex;
+} ColorVertex;
 
 #define DEV_GetTransform(d, a, b) COM(d, 12, long (__stdcall *)(void *, int, float *))(d, a, b)
 #define DEV_SetRenderState(d, a, b) COM(d, 20, long (__stdcall *)(void *, int, int))(d, a, b)
@@ -204,7 +204,7 @@ static uint32_t rgb(const float *c)
     return v << 8 | (uint32_t)round_ll(c[2] * k255);
 }
 
-static void vertex(Vertex *v, float x, float y, float z, float rhw, uint32_t color)
+static void vertex(ColorVertex *v, float x, float y, float z, float rhw, uint32_t color)
 {
     v->x = x;
     v->y = y;
@@ -218,7 +218,7 @@ long ComputerStartup_Render(ComputerStartup *t)
 {
     float m[16];
     unsigned int size;
-    Vertex *v;
+    ColorVertex *v;
     float rhw, z, barH, halfW, left, top, y1, y2;
     long double frac, x1, x2;
     uint32_t c;

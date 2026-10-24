@@ -21,12 +21,6 @@ ORIG(0x4B8770, int, Script_EvalExpr, (const char *text));
 ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Matrix *m, float a));
 ORIG(0x4B3320, char, Vec3d_IsZero, (const Vec3d *v));
 
-/* a TaskRef to a graph, on gGraphRefs */
-typedef struct GraphRef {
-    Node node;
-    Task **ref;
-} GraphRef;
-
 /* bytes per node of each graph task type */
 typedef struct NodeSize {
     uint16_t type;
@@ -65,11 +59,11 @@ void Graph_Create(Graph *g)
     g->capacity = 0;
     g->nodeCount = 0;
     g->linkCount = 0;
-    g->unk65[0] = 0;
-    g->unk65[3] = 0;
-    g->unk69[0] = 0;
-    g->unk65[1] = 0;
-    g->unk65[2] = 0;
+    g->unk65 = 0;
+    g->unk68 = 0;
+    g->unk69 = 0;
+    g->unk66[0] = 0;
+    g->unk66[1] = 0;
     g->nodes = NULL;
     r = Mem_Alloc(sizeof(GraphRef), 4);
     r->ref = TaskRef_Add(g);
@@ -395,7 +389,7 @@ void Graph_GetNodeMatrix(Matrix *out, GraphNode *node, char rotate)
 
         for (i = 0; i < 9; i++)
             out->m[i] = i % 4 == 0 ? 1.0f : 0.0f;
-        out->unk24 = 0;
+        out->count = 0;
     }
     g = node->graph;
     if (g->attached) {
@@ -413,7 +407,7 @@ void Graph_GetNodeMatrix(Matrix *out, GraphNode *node, char rotate)
         r.m[6] = a[6] * p[0] + a[8] * p[6] + p[3] * a[7];
         r.m[7] = a[6] * p[1] + p[7] * a[8] + p[4] * a[7];
         r.m[8] = a[8] * p[8] + p[2] * a[6] + p[5] * a[7];
-        r.unk24 = pt->matrix.unk24 + out->unk24 + 1;
+        r.count = pt->matrix.count + out->count + 1;
         *out = r;
     }
 }

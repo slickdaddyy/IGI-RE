@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "vehicle/vehicle.h"
+#include "heli/helitypes.h"
 
 ORIG(0x4B3160, long double, Vec3d_LengthSq, (const Vec3d *v));
 ORIG(0x4B31F0, long double, Vec3d_Angle, (const Vec3d *a, const Vec3d *b));
@@ -21,24 +22,6 @@ ORIG(0x485320, int, GameScreen_GetView, (void *cmd));
 ORIG(0x463170, char, Human_IsDead, (Task *t));
 ORIG(0x42FDC0, uint16_t, Car_GetType, (void));
 ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
-
-/* the parts of the "Car" task used here */
-typedef struct Car {
-    Task task;
-    Vec3d pos;
-    char unk38[0x38];
-    Matrix matrix;
-    char unk98[0x60];
-    float speed;
-    char unkFC[0x720 - 0xFC];
-    float unk720;
-    char unk724[0x91D - 0x724];
-    char hunting;
-    char unk91E[0xAA8 - 0x91E];
-    RefNode *passengers;
-    char unkAAC[0x2ED0 - 0xAAC];
-    Task *attacker;
-} Car;
 
 /* drives a car along a graph, following an AI command list */
 typedef struct CarAI {
@@ -75,7 +58,6 @@ typedef struct CarControl {
     float brake;
 } CarControl;
 
-_Static_assert(offsetof(Car, attacker) == 0x2ED0, "Car");
 _Static_assert(sizeof(CarAI) == 0x84, "CarAI");
 
 extern uint16_t gCarAIType;
@@ -149,7 +131,7 @@ long double CarAI_GetSpeed(CarAI *ai)
     lsq = Vec3d_LengthSq(&d);
     dist = lsq;
     if (lsq > kFar) {
-        a = Vec3d_YawAngle(to_local(ai->car->matrix.m, -d.x, -d.y, -d.z));
+        a = Vec3d_YawAngle(to_local(ai->car->v.matrix.m, -d.x, -d.y, -d.z));
         if (!(a >= kZero))
             a = -a;
         return speed_for_angle(ai->maxSpeed, a);
@@ -217,7 +199,7 @@ long double CarAI_GetChaseSpeed(CarAI *ai)
     lsq = Vec3d_LengthSq(&d);
     dist = lsq;
     if (lsq > kFarChase) {
-        a = Vec3d_YawAngle(to_local(ai->car->matrix.m, -d.x, -d.y, -d.z));
+        a = Vec3d_YawAngle(to_local(ai->car->v.matrix.m, -d.x, -d.y, -d.z));
         if (!(a >= kZero))
             a = -a;
         return speed_for_angle(ai->maxSpeed, a);
@@ -245,7 +227,7 @@ HOOK(0x425900, CarAI_GetChaseSpeed);
 
 Vec3d *CarAI_GetCarPos(CarAI *ai)
 {
-    return &ai->car->pos;
+    return &ai->car->v.pos;
 }
 HOOK(0x425B70, CarAI_GetCarPos);
 
@@ -411,7 +393,7 @@ int CarAI_UpdateChase(CarAI *ai)
     Car *car = ai->car;
     RefNode *n;
 
-    if (!car->hunting) {
+    if (!car->unk91D) {
         ai->enemy = NULL;
         ai->chaseTicks = 0;
         return 0;
@@ -426,7 +408,7 @@ int CarAI_UpdateChase(CarAI *ai)
         ai->enemy = ai->car->attacker;
         return 1;
     }
-    for (n = car->passengers; n->next; n = n->next) {
+    for (n = (RefNode *)car->light.enemies.head; n->next; n = n->next) {
         if (n->active && *n->ref) {
             ai->chaseTicks = 600;
             ai->enemy = *n->ref;
@@ -472,7 +454,7 @@ void CarAI_Drive(CarAI *ai)
     c = CarAI_GetCarPos(ai);
     car = ai->car;
     Graph_GetNodePos(&t, ai->target);
-    a = Vec3d_YawAngle(to_local(car->matrix.m, t.x - c->x, t.y - c->y, t.z - c->z));
+    a = Vec3d_YawAngle(to_local(car->v.matrix.m, t.x - c->x, t.y - c->y, t.z - c->z));
     af = a;
     if (a > kSteerMax)
         ai->steer = -1.0f;
@@ -487,8 +469,8 @@ HOOK(0x426140, CarAI_Drive);
 void CarAI_GetPedals(float *throttle, float *brake, CarAI *ai)
 {
     Car *car = ai->car;
-    long double d = ai->speed - car->speed * kCarSpeed;
-    long double r = car->unk720 + d * kThrottleScale;
+    long double d = ai->speed - car->v.body.speed * kCarSpeed;
+    long double r = car->v.speed + d * kThrottleScale;
 
     *throttle = r;
     if (!(r >= kZeroF))
@@ -507,7 +489,7 @@ void CarAI_Chase(CarAI *ai)
 {
     int close = ZERO_OR_NAN(ai->maxSpeed);
     Vec3d *c = CarAI_GetCarPos(ai);
-    float *m = ai->car->matrix.m;
+    float *m = ai->car->v.matrix.m;
     Vec3d t, d;
     long double a;
     float af, abs;
@@ -556,7 +538,7 @@ void CarAI_SendControl(CarAI *ai, int tick, float throttle, float steer, float b
     ctl.throttle = throttle;
     ctl.brake = ZERO_OR_NAN(brake) ? kNoBrake : brake;
     car = ai->car;
-    ((void (*)(void *, void *))HANDLER(Vehicle_GetControlEvent(), car->task.type))(car, &ctl);
+    ((void (*)(void *, void *))HANDLER(Vehicle_GetControlEvent(), car->v.task.type))(car, &ctl);
 }
 HOOK(0x426510, CarAI_SendControl);
 
@@ -569,7 +551,7 @@ HOOK(0x426590, CarAI_GetParams);
 void CarAI_Changed(CarAI *ai)
 {
     ai->car = (Car *)Task_FindById(ai->carId);
-    if (ai->car && ai->car->task.type != Car_GetType())
+    if (ai->car && ai->car->v.task.type != Car_GetType())
         ai->car = NULL;
     ai->graph = Task_FindById(ai->graphId);
     if (ai->graph && ai->graph->type != AIGraph_GetType())

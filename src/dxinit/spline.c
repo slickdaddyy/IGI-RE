@@ -2,37 +2,8 @@
 
 #include "hook.h"
 #include "dxinit/dxinit.h"
-
-/* a part of a mesh: vertices are x, y, z, unused */
-typedef struct MeshPart {
-    int unk0;
-    int count;
-    int unk8[3];
-    float (*verts)[4];
-    int unk18[2];
-} MeshPart;
-
-/* An object whose mesh is bent along a chain of segments. Its x axis runs from start to end
-   and is split into equal segments, each with a position and a rotation. */
-typedef struct SplineObj {
-    char unk0[0x6C];
-    char **models;
-    float rot[9];
-    char unk94[0x68];
-    float start;
-    float end;
-    float pos[21][3];
-    float segRot[23][10];
-    int unk598;
-    int segments;
-    char unk5A0[0x14];
-    char rigid;
-    char reversed;
-} SplineObj;
-
-_Static_assert(offsetof(SplineObj, start) == 0xFC, "start");
-_Static_assert(offsetof(SplineObj, segRot) == 0x200, "segRot");
-_Static_assert(offsetof(SplineObj, rigid) == 0x5B4, "rigid");
+#include "sound/soundtypes.h"
+#include "magicobj/magicobjtypes.h"
 
 extern float gSplineVerts[];
 extern void *gSplineCache[];
@@ -67,7 +38,7 @@ HOOK(0x49A010, SplineCache_Remove);
 
 /* Vertices of one mesh part bent along the segments (or turned by rot when rigid), in a
    static buffer. */
-float *SplineMesh_GetVerts(SplineObj *o, int model, int part, int unused3, int unused4, int *count)
+float *SplineMesh_GetVerts(SplineObjSegment *o, int model, int part, int unused3, int unused4, int *count)
 {
     float inv = kOne / (o->end - o->start);
     char *m = *(char **)(*(char **)(o->models[model] + 0xC) + 0xC);
@@ -81,7 +52,7 @@ float *SplineMesh_GetVerts(SplineObj *o, int model, int part, int unused3, int u
     if (o->rigid) {
         float mid = (o->start + o->end) * kHalfF;
 
-        for (i = 0; i < p->count; i++, v++, out += 3) {
+        for (i = 0; i < p->vertCount; i++, v++, out += 3) {
             long double px = v[0][0] - mid;
             float py = v[0][1], pz = v[0][2];
 
@@ -95,7 +66,7 @@ float *SplineMesh_GetVerts(SplineObj *o, int model, int part, int unused3, int u
 
         if (o->reversed)
             scale = -scale;
-        for (i = 0; i < p->count; i++, v++, out += 3) {
+        for (i = 0; i < p->vertCount; i++, v++, out += 3) {
             long double t = (base + v[0][0]) * scale;
             long double f, a0, b0;
             float a1, a2, b1, b2;
@@ -111,8 +82,8 @@ float *SplineMesh_GetVerts(SplineObj *o, int model, int part, int unused3, int u
                 f = kOne;
             ra = o->segRot[k];
             rb = o->segRot[k + 1];
-            pa = o->pos[k];
-            pb = o->pos[k + 1];
+            pa = o->segPos[k];
+            pb = o->segPos[k + 1];
             a0 = ra[2] * v[0][2] + ra[1] * v[0][1];
             a1 = ra[5] * v[0][2] + ra[4] * v[0][1];
             a2 = ra[8] * v[0][2] + ra[7] * v[0][1];
@@ -131,8 +102,8 @@ float *SplineMesh_GetVerts(SplineObj *o, int model, int part, int unused3, int u
         }
     }
     if (count)
-        *count = p->count;
-    return out - p->count * 3;
+        *count = p->vertCount;
+    return out - p->vertCount * 3;
 }
 HOOK(0x49A050, SplineMesh_GetVerts);
 

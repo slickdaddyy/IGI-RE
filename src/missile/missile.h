@@ -5,95 +5,10 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "missile/missiletypes.h"
 
 typedef void (*TaskFn1)(Task *task);
 typedef void (*TaskFn2)(Task *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24; /* sum of the inputs' values plus one on each multiply */
-} Matrix;
-
-typedef struct CollHit {
-    char unk0[0x58];
-    int found;
-    char unk5C[0x14];
-} CollHit;
-
-typedef struct CollIgnore {
-    int unk0;
-    Task *task;
-} CollIgnore;
-
-/* the physics object type a vehicle was made from (DefinePhysicsObjType) */
-typedef struct PhysType {
-    char unk0[0x2D4];
-    void *data;
-} PhysType;
-
-/* "Vehicle" (0x748 bytes), a subtype of RigidDynCubeObj */
-typedef struct Vehicle {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x30];
-    int unk68;
-    void **model;       /* 0x6C */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0x44];
-    Task *coll;         /* 0xE8, its children get the move event */
-    char unkEC[4];
-    struct {
-        char unk0[8];
-        float unk8;
-        char unkC[0xC];
-        Vec3f velocity; /* 0x108 */
-        Vec3f unk24;    /* 0x114 */
-    } body;             /* 0xF0, see 0x4ECDB0 */
-    char unk120[0x34];
-    char name[0x14];    /* 0x154 */
-    Vec3d pos2;         /* 0x168 */
-    char unk180[0xC];
-    Matrix matrix2;     /* 0x18C */
-    PhysType *phys;     /* 0x1B4 */
-    int unk1B8;
-    char unk1BC[0x4D8];
-    Matrix prev_matrix; /* 0x694 */
-    char unk6BC[4];
-    Vec3d prev_pos;     /* 0x6C0 */
-    char unk6D8[0x48];
-    float speed;        /* 0x720 */
-    float turn[3];      /* 0x724 */
-    float target_speed; /* 0x730 */
-    float steer[3];     /* 0x734 */
-    float unk740;
-    char unk744;
-    char unk745;
-    char unk746[2];
-} Vehicle;
 
 /* per type data of a missile physics type, read by Missile_ParseArgs */
 typedef struct MissileConfig {
@@ -152,54 +67,11 @@ typedef struct Missile {
     int unk894;
 } Missile;
 
-/* script string that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-typedef struct Train {
-    Vehicle v;
-    float frac;         /* 0x748, model front as a fraction of its length */
-    float length;       /* 0x74C */
-    float accel;        /* 0x750 */
-    float max_speed;    /* 0x754 */
-    float start_speed;  /* 0x758 */
-    int unk75C;
-    int unk760;
-    float velocity;     /* 0x764 */
-    float dist;         /* 0x768, along the path */
-    float start_dist;   /* 0x76C */
-    float offset[2];    /* 0x770 */
-    int wagons;         /* 0x778 */
-    int path;           /* 0x77C */
-    char model[0x100];  /* 0x780 */
-    char reverse;       /* 0x880 */
-    char unk881[3];
-    float *sound_params; /* 0x884 */
-    int last_tick;      /* 0x888 */
-    Task *loop_sound;   /* 0x88C */
-    VarString script;   /* 0x890 */
-} Train;
-
-_Static_assert(offsetof(Vehicle, coll) == 0xE8, "coll");
-_Static_assert(offsetof(Vehicle, body.velocity) == 0x108, "velocity");
-_Static_assert(offsetof(Vehicle, name) == 0x154, "name");
-_Static_assert(offsetof(Vehicle, phys) == 0x1B4, "phys");
-_Static_assert(offsetof(Vehicle, prev_matrix) == 0x694, "prev_matrix");
-_Static_assert(offsetof(Vehicle, prev_pos) == 0x6C0, "prev_pos");
-_Static_assert(offsetof(Vehicle, speed) == 0x720, "speed");
-_Static_assert(sizeof(Vehicle) == 0x748, "Vehicle");
 _Static_assert(offsetof(MissileConfig, smoke) == 0x118, "smoke");
 _Static_assert(sizeof(MissileConfig) == 0x250, "MissileConfig");
 _Static_assert(offsetof(Missile, target) == 0x828, "target");
 _Static_assert(offsetof(Missile, fuel) == 0x864, "fuel");
 _Static_assert(sizeof(Missile) == 0x898, "Missile");
-_Static_assert(offsetof(Train, model) == 0x780, "model");
-_Static_assert(sizeof(Train) == 0x8E0, "Train");
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
@@ -285,7 +157,7 @@ static inline void mat_mul(Matrix *m, const Matrix *r, int b_rows)
             n.m[i * 3 + j] = b_rows & (1 << i) ? (p1 + p2) + p0 : (p2 + p0) + p1;
         }
     }
-    n.unk24 = r->unk24 + m->unk24 + 1;
+    n.count = r->count + m->count + 1;
     *m = n;
 }
 

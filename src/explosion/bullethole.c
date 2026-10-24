@@ -34,28 +34,28 @@ void BulletHole_Place(const Vec3d *pos, const Matrix *m, BulletHole *bh, Hole *h
 
 static void *pool_take(Pool *p)
 {
-    char *item = p->data + p->slots[p->used] * p->stride;
+    char *item = p->data + p->free[p->used] * p->stride;
 
-    *(int *)(item + p->index_offset) = p->used;
+    *(int *)(item + p->size) = p->used;
     p->used++;
     return item;
 }
 
 static void pool_release(Pool *p, void *item)
 {
-    int index = *(int *)((char *)item + p->index_offset);
+    int index = *(int *)((char *)item + p->size);
     char *last;
     int last_index, tmp;
 
     p->used--;
     if (index == p->used)
         return;
-    last = p->data + p->slots[p->used] * p->stride;
-    last_index = *(int *)(last + p->index_offset);
-    tmp = p->slots[index];
-    p->slots[index] = p->slots[last_index];
-    p->slots[last_index] = tmp;
-    *(int *)(last + p->index_offset) = index;
+    last = p->data + p->free[p->used] * p->stride;
+    last_index = *(int *)(last + p->size);
+    tmp = p->free[index];
+    p->free[index] = p->free[last_index];
+    p->free[last_index] = tmp;
+    *(int *)(last + p->size) = index;
 }
 
 static int nonzero(const Vec3f *v)
@@ -123,7 +123,7 @@ static void add_hole(Task *obj, HoleMsg *msg, const Vec3d *pos, const Matrix *m,
     int i;
 
     for (i = 0; i < gHolePool.used; i++) {
-        bh = *(BulletHole **)(gHolePool.data + gHolePool.slots[i] * gHolePool.stride);
+        bh = *(BulletHole **)(gHolePool.data + gHolePool.free[i] * gHolePool.stride);
         if (bh->obj != obj)
             continue;
         for (i = bh->last; i >= 0; i--)
@@ -155,12 +155,12 @@ static void add_hole(Task *obj, HoleMsg *msg, const Vec3d *pos, const Matrix *m,
         bh->time = Timer_GetMs();
         return;
     }
-    if (gHolePool.used == gHolePool.capacity) {
+    if (gHolePool.used == gHolePool.count) {
         BulletHole *oldest = NULL;
         unsigned int best = 0xFFFFFFFF;
 
         for (i = 0; i < gHolePool.used; i++) {
-            bh = *(BulletHole **)(gHolePool.data + gHolePool.slots[i] * gHolePool.stride);
+            bh = *(BulletHole **)(gHolePool.data + gHolePool.free[i] * gHolePool.stride);
             if (bh->time <= best) {
                 oldest = bh;
                 best = bh->time;
@@ -261,7 +261,7 @@ void BulletHole_Delete(BulletHole *bh)
 HOOK(0x47D320, BulletHole_Delete);
 
 /* bullet hole event of a RigidDynCubeObj */
-void BulletHole_AddRigid(RigidObj *obj, HoleMsg *msg)
+void BulletHole_AddRigid(RigidDynCubeObj *obj, HoleMsg *msg)
 {
     add_hole(&obj->task, msg, &obj->pos, &obj->matrix, 0);
 }

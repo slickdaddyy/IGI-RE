@@ -5,65 +5,15 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "coll/colltypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major, plus a serial number */
-typedef struct Matrix {
-    float m[9];
-    int serial;
-} Matrix;
-
-/* a hit of the collision queries, 0x70 bytes */
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x18];
-    float normal[3];
-    int unk44;
-    int unk48;
-    float *material;
-    int unk50;
-    int unk54;
-    int found;
-    int unk5C;
-    double dist;
-    char unk68[8];
-} CollHit;
-
-/* the second word is the object the lines ignore */
-typedef struct CollFilter {
-    int unk0;
-    Task *ignore;
-} CollFilter;
 
 typedef struct Explosion Explosion;
 
 Explosion *Explosion_Spawn(Vec3d *pos, int count, int delay, float unk50, float radius, float unk58,
                            float burnSize, int unk68, int unk6C, Task **burn, const char *sprite, const char *sound,
                            int noiseType, int noiseUnk8, float noiseRadius, int unk84);
-
-_Static_assert(sizeof(CollHit) == 0x70, "CollHit");
-_Static_assert(offsetof(CollHit, found) == 0x58, "CollHit.found");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

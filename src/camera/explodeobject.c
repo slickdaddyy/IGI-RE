@@ -6,16 +6,11 @@
 
 #include "hook.h"
 #include "camera/camera.h"
+#include "param/paramtypes.h"
+#include "magicobj/magicobjtypes.h"
+#include "glass/glasstypes.h"
 
 FN_EXTERN(Task_Nothing);
-
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
 
 /* a placed object that explodes once its damage reaches its health, or when
    its script value or timer says so (0x238 bytes, parent SectorInteriorObject) */
@@ -59,25 +54,12 @@ typedef struct ExplodeObject {
     char pad235[3];
 } ExplodeObject;
 
-/* sent to the children with the RigidDynCubeObj event 4 */
-typedef struct MoveArg {
-    Vec3d *pos;
-    Matrix *matrix;
-} MoveArg;
-
-/* the argument of the Game event 9 handler */
-typedef struct HitArg {
-    int unk0;
-    float damage;
-} HitArg;
-
 /* the argument of the World event 0 handler */
 typedef struct JoinArg {
     int unk0;
     void *world;
 } JoinArg;
 
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 _Static_assert(offsetof(ExplodeObject, unkDC) == 0xDC, "ExplodeObject.unkDC");
 _Static_assert(offsetof(ExplodeObject, local) == 0x148, "ExplodeObject.local");
 _Static_assert(offsetof(ExplodeObject, trigger) == 0x194, "ExplodeObject.trigger");
@@ -443,7 +425,7 @@ void ExplodeObject_MoveHandler(ExplodeObject *o, MoveArg *arg)
     r.m[6] = m[8] * l[6] + m[6] * l[0] + m[7] * l[3];
     r.m[7] = m[8] * l[7] + m[6] * l[1] + m[7] * l[4];
     r.m[8] = m[8] * l[8] + m[6] * l[2] + m[7] * l[5];
-    r.serial = arg->matrix->serial + o->local.serial + 1;
+    r.count = arg->matrix->count + o->local.count + 1;
     o->placeMatrix = r;
     DynCube_Move(o->world, o, &o->place, VirModel_GetRadius(o->model) * max_scale(o));
     o->matrix = o->placeMatrix;

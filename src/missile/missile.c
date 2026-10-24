@@ -162,7 +162,7 @@ void Missile_Open(void)
     gMissileParams = ParamTable_New(3);
     /* the original passes a dummy Missile on its stack, only the difference
        of the two pointers is kept */
-    ParamTable_Add(gMissileParams, NULL, FIELD(v.pos2), Param_ObjectPos(), 7, NULL);
+    ParamTable_Add(gMissileParams, NULL, FIELD(v.startPos), Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gMissileParams, NULL, FIELD(v.matrix), Param_Real32x9(), 7, NULL);
     ParamTable_Add(gMissileParams, NULL, FIELD(v.name), Param_String16(), 7, NULL);
     Script_RegisterConstant("TASKTYPE_MISSILE", gMissileType);
@@ -197,7 +197,7 @@ void Missile_Reset(Missile *m)
     DynCube_Add(Game_GetWorld(), m, &zero, radius, 2);
     m->v.name[0] = 0;
     Vehicle_Init(m);
-    m->v.unk740 = 0;
+    m->v.start_speed = 0;
     m->follow = NULL;
     m->target_task = NULL;
     m->owner = NULL;
@@ -249,7 +249,7 @@ void Missile_Run(Missile *m)
     Missile_UpdateSound(m);
     Vehicle_RunParts(m);
     BROADCAST(m->v.task.head, 1);
-    if (m->v.unk1B8) {
+    if (m->v.touching) {
         pos = m->v.pos;
         ignore.task = &m->v.task;
         dz = -12288.0;
@@ -290,7 +290,7 @@ void Missile_EmitSmoke(Missile *m)
     if (++m->smoke_tick < n)
         return;
     size = Random_Float(gMissileRandom) * kSmokeSize + kSmokeMin;
-    spacing = m->v.body.unk8;
+    spacing = m->v.body.speed;
     m->smoke_tick = 0;
     switch (*(short *)(*(char **)(*(char **)((char *)model[0] + 0xC) + 0xC) + 0x7C)) {
     case 0:
@@ -317,14 +317,14 @@ void Missile_EmitSmoke(Missile *m)
         pos.z = pos.z + m->v.pos.z;
         break;
     }
-    color = m->v.body.unk24;
+    color = m->v.body.dir;
     n = round_int(spacing / m->smoke_spacing);
     if (n <= 1)
         n = 1;
     inv = kOne / (long double)n;
-    step.x = inv * m->v.body.velocity.x;
-    step.y = (float)inv * (double)m->v.body.velocity.y;
-    step.z = (float)inv * (double)m->v.body.velocity.z;
+    step.x = inv * m->v.body.vel.x;
+    step.y = (float)inv * (double)m->v.body.vel.y;
+    step.z = (float)inv * (double)m->v.body.vel.z;
     do {
         Random_Float(gMissileRandom);
         Random_Float(gMissileRandom);
@@ -532,23 +532,23 @@ void Missile_Move(Missile *m)
         if (cfg->part_count) {
             Vec3f v;
 
-            v.x = -m->v.body.velocity.x;
-            v.y = -m->v.body.velocity.y;
-            v.z = -m->v.body.velocity.z;
+            v.x = -m->v.body.vel.x;
+            v.y = -m->v.body.vel.y;
+            v.z = -m->v.body.vel.z;
             Body_AddAeroForces(m->parts, cfg->part_count, 0x1.56e264p-12f, &m->v.body, &m->v.matrix, &v);
         }
         event = Game_GetEvent7();
         world = Game_GetWorld();
         PhysicsObj_Collide(m, 0x1.64ce9ep+5f, 0x1.e66666p-1f, 0x1.d70a3ep-1f, world, event, &msg);
     }
-    if (m->v.coll) {
+    if (m->v.attached) {
         struct {
             Vec3d *pos;
             Matrix *matrix;
             Missile *m;
         } msg = {&m->v.pos, &m->v.matrix, m};
 
-        BROADCAST(m->v.coll->head, MagicObj_GetMoveEvent(), &msg);
+        BROADCAST(m->v.attached->head, MagicObj_GetMoveEvent(), &msg);
     }
 }
 HOOK(0x428D00, Missile_Move);
@@ -559,7 +559,7 @@ void Missile_ParamsChanged(Missile *m)
     void **model;
     float scale, radius;
 
-    m->v.matrix2 = m->v.matrix;
+    m->v.startMatrix = m->v.matrix;
     model = VirModel_Find(m->v.name);
     Vehicle_DeleteParts(m);
     if (model) {
@@ -570,13 +570,13 @@ void Missile_ParamsChanged(Missile *m)
         strcpy(name, m->v.name);
         crt_sprintf(m->v.name, "** %s **", name);
     }
-    m->v.target_speed = m->v.unk740;
-    m->v.speed = m->v.unk740;
+    m->v.target_speed = m->v.start_speed;
+    m->v.speed = m->v.start_speed;
     scale = max_scale(&m->v);
     radius = VirModel_GetRadius(m->v.model) * scale;
-    DynCube_Move(Game_GetWorld(), m, &m->v.pos2, radius);
+    DynCube_Move(Game_GetWorld(), m, &m->v.startPos, radius);
     Vehicle_NewParts(m);
-    BROADCAST(m->v.coll->head, Param_GetChangedEvent(), NULL);
+    BROADCAST(m->v.attached->head, Param_GetChangedEvent(), NULL);
 }
 HOOK(0x429540, Missile_ParamsChanged);
 
@@ -746,9 +746,9 @@ Missile *Missile_New(void *parent, Task *owner, Task *target, Vec3d *pos, float 
     } else if (aim) {
         m->target = *aim;
     }
-    m->v.body.velocity.x = matrix[1] * speed * kSpeedScale;
-    m->v.body.velocity.y = matrix[4] * speed * kSpeedScale;
-    m->v.body.velocity.z = matrix[7] * speed * kSpeedScale;
+    m->v.body.vel.x = matrix[1] * speed * kSpeedScale;
+    m->v.body.vel.y = matrix[4] * speed * kSpeedScale;
+    m->v.body.vel.z = matrix[7] * speed * kSpeedScale;
     Body_Update(&m->v.body);
     m->unk894 = (int)weapon;
     return m;

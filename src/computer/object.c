@@ -13,19 +13,19 @@ ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
-ORIG(0x4168B0, TaskArray *, Game_GetTaskList1, (void));
-ORIG(0x4168E0, TaskArray *, Game_GetTaskList4, (void));
+ORIG(0x4168B0, QTaskList *, Game_GetTaskList1, (void));
+ORIG(0x4168E0, QTaskList *, Game_GetTaskList4, (void));
 ORIG(0x418E40, void *, MenuManager_FindFont, (void *mm, const char *name));
-ORIG(0x443660, TaskArray *, SCameraLens_GetList, (void));
+ORIG(0x443660, QTaskList *, SCameraLens_GetList, (void));
 ORIG(0x447D20, uint16_t, Door_GetType, (void));
-ORIG(0x460C60, TaskArray *, Human_GetList, (void));
+ORIG(0x460C60, QTaskList *, Human_GetList, (void));
 ORIG(0x469450, int, Computer_DrawWrapped, (int x, int y, float z, int width, int unused, const char *text, void *font,
                                            int color));
 ORIG(0x46AB10, char *, ComputerMap_Get, (void));
 ORIG(0x46AB30, int16_t, ComputerMap_GetZoom, (void));
 ORIG(0x46B4D0, char *, ComputerRes_Get, (void));
 ORIG(0x46C070, void *, Computer_GetView, (void));
-ORIG(0x46EAD0, TaskArray *, GunHolder_GetList, (void));
+ORIG(0x46EAD0, QTaskList *, GunHolder_GetList, (void));
 ORIG(0x491CF0, int *, Display_GetMode, (void));
 ORIG(0x491D40, long double, Display_GetAspect, (void));
 ORIG(0x498040, void, TransContext_ScaleSize, (float *out, float *in, float depth));
@@ -99,8 +99,8 @@ static const float kMinMarker = 3072.0f;
 void ComputerObject_Create(ComputerObject *o);
 void ComputerObject_Delete(ComputerObject *o);
 void ComputerObject_Draw(ComputerObject *o);
-void ComputerObject_DrawVehicle(Obj *v, MapQuery *q);
-void ComputerObject_DrawLine(Obj *o);
+void ComputerObject_DrawVehicle(RigidDynCubeObj *v, MapQuery *q);
+void ComputerObject_DrawLine(RigidDynCubeObj *o);
 
 void ComputerObject_Project(float *out, float *in, MapQuery *q)
 {
@@ -116,7 +116,7 @@ HOOK(0x4675B0, ComputerObject_Project);
 void ComputerObject_ProjectPos(float *out, float *depth, Vec3d *pos, MapQuery *q)
 {
     long double dx, dy, dz;
-    float *m = q->view;
+    float *m = (float *)q->view;
     float v0, v1, v2, s, h;
 
     dx = pos->x - q->center->x;
@@ -160,7 +160,7 @@ void ComputerObject_Open(void)
 HOOK(0x467700, ComputerObject_Open);
 
 /* the line between model points 10 and 11 (doors bright, others dim) */
-void ComputerObject_DrawLine(Obj *o)
+void ComputerObject_DrawLine(RigidDynCubeObj *o)
 {
     float color[3];
     Vec3d a, b;
@@ -238,7 +238,7 @@ void ComputerObject_Draw(ComputerObject *o)
     int i;
 
     q.center = (Vec3d *)(view + 0x28);
-    q.view = (float *)view;
+    q.view = (Matrix *)((float *)view);
     memcpy(&q.zoom, view + 0x40, sizeof(float));
     q.marker = -1;
     q.color = -1;
@@ -273,7 +273,7 @@ void ComputerObject_Draw(ComputerObject *o)
 HOOK(0x467970, ComputerObject_Draw);
 
 /* vehicles shown with a yellow box */
-void ComputerObject_DrawVehicle(Obj *v, MapQuery *q)
+void ComputerObject_DrawVehicle(RigidDynCubeObj *v, MapQuery *q)
 {
     float scale;
 
@@ -340,7 +340,7 @@ static void to_view(float *v, MapQuery *q)
     d[0] = q->pos->x - q->center->x;
     d[1] = q->pos->y - q->center->y;
     d[2] = q->pos->z - q->center->z;
-    m = q->view;
+    m = (float *)q->view;
     v[0] = d[2] * m[6] + d[1] * m[3] + d[0] * m[0];
     v[1] = d[2] * m[7] + d[1] * m[4] + d[0] * m[1];
     v[2] = d[2] * m[8] + d[1] * m[5] + d[0] * m[2];

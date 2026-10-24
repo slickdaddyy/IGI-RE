@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "core/pool.h"
 #include "transctx/transctx.h"
+#include "lod/lodtypes.h"
 
 FN_EXTERN(crt_CIpow);
 
@@ -73,14 +74,6 @@ typedef struct QCallback {
     void (*fn)(void *arg);
 } QCallback;
 
-/* Cached data of a visited cell, 2048 of them */
-typedef struct QCacheEntry {
-    int cell[4];
-    int frame; /* -1 = free */
-    int kind;  /* which pool data comes from */
-    char *data;
-} QCacheEntry;
-
 /* What the enclosing event fills in: the task the camera is inside */
 typedef struct QEnclosing {
     const double *pos;
@@ -93,7 +86,6 @@ typedef struct QEnclosing {
 
 _Static_assert(offsetof(QTask, next) == 0x58, "QTask");
 _Static_assert(sizeof(QWorld) == 0xDEC, "QWorld");
-_Static_assert(sizeof(QCacheEntry) == 0x1C, "QCacheEntry");
 _Static_assert(offsetof(QEnclosing, radius) == 0x28, "QEnclosing");
 
 typedef void (*QHandler)(QTask *task, void *arg);

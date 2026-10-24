@@ -44,7 +44,7 @@ extern uint16_t gBinocularType;
 
 /* "Binocular" (0x1C8 bytes), a weapon */
 typedef struct Binocular {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     char unkF0[0x14];
     char id[0x24];          /* 0x104 */
     char *weaponType;       /* 0x128, its +0x6E4 holds the zoom limits */
@@ -300,14 +300,14 @@ void Binocular_Close(void)
 HOOK(0x470EB0, Binocular_Close);
 
 /* screen position and depth of a world point */
-void View_Project(View *v, float *out, float *depth, const Vec3d *p)
+void View_Project(TransCtx *v, float *out, float *depth, const Vec3d *p)
 {
     long double dx = p->x - v->pos.x;
     long double dy = p->y - v->pos.y;
     long double dz = p->z - v->pos.z;
-    float a = dz * v->m[2] + dy * v->m[1] + dx * v->m[0];
-    float b = dz * v->m[5] + dy * v->m[4] + dx * v->m[3];
-    long double c = dz * v->m[8] + dy * v->m[7] + dx * v->m[6];
+    float a = dz * v->matrix.m[2] + dy * v->matrix.m[1] + dx * v->matrix.m[0];
+    float b = dz * v->matrix.m[5] + dy * v->matrix.m[4] + dx * v->matrix.m[3];
+    long double c = dz * v->matrix.m[8] + dy * v->matrix.m[7] + dx * v->matrix.m[6];
     long double k;
 
     *depth = c;
@@ -320,7 +320,7 @@ void View_Project(View *v, float *out, float *depth, const Vec3d *p)
 HOOK(0x470EC0, View_Project);
 
 /* screen size of something of the given size at a depth */
-void View_ScaleSize(View *v, float *out, const float *size, float depth)
+void View_ScaleSize(TransCtx *v, float *out, const float *size, float depth)
 {
     long double k = kOne / depth;
 

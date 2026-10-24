@@ -100,7 +100,7 @@ void Cabinet_Open(void)
     ParamTable_Add(gCabinetParams, NULL, FIELD(place), Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gCabinetParams, NULL, FIELD(yaw), Param_Angle(), 7, NULL);
     ParamTable_Add(gCabinetParams, NULL, FIELD(model), Param_String16(), 7, NULL);
-    ParamTable_Add(gCabinetParams, NULL, FIELD(search_time), Param_Real32(), 7, NULL);
+    ParamTable_Add(gCabinetParams, NULL, FIELD(searchTime), Param_Real32(), 7, NULL);
     gDrawerType = TaskType_New("Drawer", sizeof(Drawer), MagicObj_GetType(), 0);
     TaskType_SetHandler(gDrawerType, 0, Drawer_Create);
     TaskType_SetHandler2(gDrawerType, 1, Drawer_Run);
@@ -189,12 +189,12 @@ void Cabinet_Create(Cabinet *c)
     c->model[0] = 0;
     c->opening = 0;
     c->closing = 0;
-    c->in_use = 0;
-    c->last_in_use = 0;
-    c->use_tick = 0;
+    c->inUse = 0;
+    c->lastInUse = 0;
+    c->useTick = 0;
     c->searched = 0;
     c->registered = 0;
-    c->search_time = 4.0f;
+    c->searchTime = 4.0f;
     c->moving = 0;
 }
 HOOK(0x444420, Cabinet_Create);

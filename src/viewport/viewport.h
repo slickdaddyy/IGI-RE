@@ -5,23 +5,10 @@
 
 #include "igi.h"
 #include "transctx/transctx.h"
+#include "haze/hazetypes.h"
 
 FN_EXTERN(SubLevel_Run);
 FN_EXTERN(Task_Nothing);
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
 
 typedef void (*TaskFn)(Task *task);
 
@@ -51,15 +38,6 @@ extern int gTaskStackTop;
             c_ = gTaskStack[--gTaskStackTop];               \
         } while (c_);                                       \
     } while (0)
-
-/* rotation (9 floats and a spare word), position and fov, what a view looks through */
-typedef struct Camera {
-    float m[9];
-    int unk24;
-    double pos[3];
-    float fov;
-    float squeeze; /* 0x44, vertical scale of the view around its centre */
-} Camera;
 
 /* "ViewportQTask", 200 bytes */
 typedef struct Viewport {

@@ -5,89 +5,10 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "param/paramtypes.h"
+#include "magicobj/magicobjtypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-/* "RigidDynCubeObj" (0xF0 bytes), the fields used here */
-typedef struct Obj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    int world;
-    void **model;
-    Matrix matrix;
-    float scale[3];
-    char unkA4[0xDC - 0xA4];
-    int unkDC;
-    char unkE0[8];
-    Task *unkE8;
-    int unkEC;
-} Obj;
-
-/* filled by the RigidDynCubeObj slot 7 handler */
-typedef struct ObjInfo {
-    Vec3d pos;
-    int unk18[3];
-    Matrix matrix;
-    float radius;
-    char *name;
-} ObjInfo;
-
-/* sent to children with the RigidDynCubeObj event 4 */
-typedef struct MoveArg {
-    Vec3d *pos;
-    Matrix *matrix;
-} MoveArg;
-
-/* min and max of a script parameter */
-typedef struct RangeF {
-    float min, max;
-} RangeF;
-
-typedef struct RangeI {
-    int min, max;
-} RangeI;
-
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
-_Static_assert(sizeof(Obj) == 0xF0, "Obj");
-_Static_assert(offsetof(ObjInfo, name) == 0x50, "ObjInfo");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
@@ -202,14 +123,14 @@ static inline long long round_ll(long double f)
 }
 
 /* the largest of the three scale factors */
-static inline float max_scale(const Obj *o)
+static inline float max_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] >= o->scale[1] ? o->scale[2] : o->scale[1];
 
     return o->scale[0] > m ? o->scale[0] : m;
 }
 
-static inline float obj_radius(Obj *o)
+static inline float obj_radius(RigidDynCubeObj *o)
 {
     float s = max_scale(o);
 

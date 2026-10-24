@@ -5,6 +5,7 @@
 
 #include "igi.h"
 #include "core/list.h"
+#include "model/modeltypes.h"
 
 #define VIRMODEL_MAX 600
 #define VIRMODEL_LODS 5
@@ -38,32 +39,13 @@ typedef struct MeshAnim {
     void *data;
 } MeshAnim;
 
-/* A mesh from LOCAL:models/<name>.mef */
-typedef struct Mesh {
-    Node node;
-    void *res;
-    float *header;    /* MESH chunk, version 0.1 */
-    int anim_count;
-    MeshAnim *anims;
-} Mesh;
-
 /* A collision mesh from <dir>models/<name>.mef */
-typedef struct CollMesh {
+typedef struct CollMeshRes {
     Node node;
     int count;
     int *parts;       /* 0x1C bytes each, the first three words become pointers */
     void *res;
-} CollMesh;
-
-/* A named mesh instance with its textures. VirModel LODs point at these. */
-typedef struct ModelLod {
-    Node node;
-    const char *name;
-    Mesh *mesh;
-    void **textures;
-    void **texinfo;
-    int count;
-} ModelLod;
+} CollMeshRes;
 
 /* One loaded <dir><name>.mtp file */
 typedef struct ModelFile {
@@ -71,7 +53,7 @@ typedef struct ModelFile {
     void *mtp;
     void *res;
     List meshes;      /* Mesh */
-    List coll;        /* CollMesh */
+    List coll;        /* CollMeshRes */
     List lods;        /* ModelLod */
     char *textures;   /* 0x24 bytes each */
     char *texinfo;    /* 0xC bytes each */
@@ -80,16 +62,6 @@ typedef struct ModelFile {
     int unk44;
     int unk48;
 } ModelFile;
-
-/* Up to five LODs named <name>, then the last letter counted up */
-typedef struct VirModel {
-    ModelLod *lods[VIRMODEL_LODS];
-    char name[16];
-    int unk24;
-    char unk28[0x14];
-    uint16_t lod_count;
-    uint16_t lod_dist[VIRMODEL_LODS];
-} VirModel;
 
 int Model_GetInitMethod(void);
 int Model_GetDeinitMethod(void);
@@ -112,7 +84,7 @@ Node *List_GetNth(List *list, int n);
 void ModelFile_LoadMeshes(ModelFile *f);
 Mesh *Mesh_Load(const char *name);
 void ModelFile_LoadCollMeshes(ModelFile *f);
-CollMesh *CollMesh_Load(const char *name);
+CollMeshRes *CollMesh_Load(const char *name);
 void ModelFile_LoadTextures(ModelFile *f);
 
 #endif

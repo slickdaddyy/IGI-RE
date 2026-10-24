@@ -5,30 +5,8 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "coll/colltypes.h"
+#include "terrain/terraintypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -73,41 +51,7 @@ static inline int x87_fistp(long double x)
     return (int)r;
 }
 
-/* the hit record of Coll_DropPoints */
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x38];
-    int found;
-    char unk5C[0x14];
-} CollHit;
-
-/* one .bit or .hmp table entry */
-typedef struct TerrainMap {
-    void *data;
-    char flag;
-    char unk5[3];
-    int size;
-} TerrainMap;
-
-typedef struct Terrain {
-    char unk0[0xDCC];
-    TerrainMap *bit;
-    TerrainMap *hmp;
-    char unkDD4[0xC];
-    int offset[3];
-} Terrain;
 extern Terrain *gCurrentWorld;
-
-/* a task kept in the dynamic cube trees */
-typedef struct DynCubeObj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    Terrain *world;
-    int unk6C;
-} DynCubeObj;
 
 /* MenuItem: one selectable item of a menu panel */
 typedef struct MenuItem {
@@ -130,7 +74,5 @@ typedef struct MenuItemEvent {
 } MenuItemEvent;
 
 _Static_assert(sizeof(MenuItem) == 0x54, "MenuItem");
-_Static_assert(offsetof(Terrain, offset) == 0xDE0, "Terrain");
-_Static_assert(sizeof(DynCubeObj) == 0x70, "DynCubeObj");
 
 #endif

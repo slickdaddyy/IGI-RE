@@ -17,7 +17,7 @@ ORIG(0x416830, uint8_t, Game_GetEvent7, (void));
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
 ORIG(0x416860, uint8_t, Game_GetEvent11, (void));
 ORIG(0x416880, uint8_t, Game_GetEvent13, (void));
-ORIG(0x4168D0, TaskArray *, Game_GetTaskList3, (void));
+ORIG(0x4168D0, QTaskList *, Game_GetTaskList3, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416930, char *, Game_AddTexture, (const char *name));
 ORIG(0x4169D0, char *, Game_AddSprite, (const char *name));
@@ -365,10 +365,10 @@ void Explosion_Burst(Explosion *e)
         msg.unk14 = 90;
         msg.unk84 = e->unk84;
         for (i = 0; i < Game_GetTaskList3()->count; i++) {
-            uint16_t type = Game_GetTaskList3()->tasks[i]->type;
+            uint16_t type = Game_GetTaskList3()->items[i]->type;
             TaskFn fn = HANDLER(Game_GetEvent11(), type);
 
-            fn(Game_GetTaskList3()->tasks[i], &msg);
+            fn(Game_GetTaskList3()->items[i], &msg);
         }
     }
 }
@@ -409,7 +409,7 @@ FireBall *FireBall_New(Vec3d *pos, const char *model, float scale, int life, int
     fb->size = scale * kFireballScale;
     fb->angle = angle;
     fb->spin = spin;
-    Debug_Log(fb->obj.unkA4 + 0x1C, vm);
+    Debug_Log(fb->obj.unkC0, vm);
     return fb;
 }
 HOOK(0x480060, FireBall_New);
@@ -616,24 +616,24 @@ void FireBall_Draw(FireBall *fb)
         scale_vec(n.m + 6, (n.m[6] * n.m[6] + n.m[7] * n.m[7]) + n.m[8] * n.m[8]);
     for (i = 0; i < 9; i++)
         m[i] = n.m[i];
-    fb->obj.matrix.stamp = 0;
+    fb->obj.matrix.count = 0;
 
     for (i = 0; i < 9; i++)
         n.m[i] = i % 4 == 0 ? 1.0f : 0.0f;
-    n.stamp = 0;
+    n.count = 0;
     Matrix_RotateZ(&n, &n, fb->angle);
     fb->angle = fb->spin + fb->angle;
 
     /* matrix = transpose(matrix) * n */
     for (i = 0; i < 9; i++)
         t.m[i] = m[(i % 3) * 3 + i / 3];
-    t.stamp = fb->obj.matrix.stamp;
+    t.count = fb->obj.matrix.count;
     for (i = 0; i < 3; i++) {
         m[i] = (n.m[i] * t.m[0] + n.m[3 + i] * t.m[1]) + n.m[6 + i] * t.m[2];
         m[3 + i] = (n.m[6 + i] * t.m[5] + n.m[i] * t.m[3]) + n.m[3 + i] * t.m[4];
         m[6 + i] = (n.m[6 + i] * t.m[8] + n.m[3 + i] * t.m[7]) + n.m[i] * t.m[6];
     }
-    fb->obj.matrix.stamp = t.stamp + n.stamp + 1;
+    fb->obj.matrix.count = t.count + n.count + 1;
     Light_GetActive(&junk[0]);
     Haze_GetVisible(&junk[1], &junk[2]);
     if (fb->frame >= 0) {

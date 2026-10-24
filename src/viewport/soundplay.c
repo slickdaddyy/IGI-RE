@@ -2,56 +2,13 @@
 
 #include "hook.h"
 #include "viewport/viewport.h"
+#include "qasm/qasmtypes.h"
+#include "sound/soundtypes.h"
+#include "viewport/viewporttypes.h"
 
 /* Playing sounds by name or through a handle, on top of the sound system of src/sound. */
 
-typedef struct SoundParams {
-    float volume;
-    float pitch;
-    float pan;
-    int unkC;
-    double minDist;
-    double maxDist;
-    char rest[0x38];
-} SoundParams;
-
-/* one playing (or wanted) sound, there is one per DirectSound voice */
-typedef struct SoundInst {
-    struct SoundInst *prev;
-    struct SoundInst *next;
-    uint32_t flags;
-    int bucket;
-    int hash;
-    int id;
-    uint32_t age;
-    void *voice;
-    SoundParams params;
-} SoundInst;
-
-/* what callers keep to restart or query a sound of theirs */
-typedef struct SoundHandle {
-    int bucket;
-    int hash;
-    int id; /* 0 until first played */
-    uint32_t flags;
-    SoundParams params;
-} SoundHandle;
-
-typedef struct QTaskList {
-    int count;
-    int capacity;
-    Task *items[1];
-} QTaskList;
-
-typedef struct SoundFindArg {
-    const char *name;
-    Task *found;
-} SoundFindArg;
-
 typedef void (*TaskFn2)(Task *task, void *arg);
-
-_Static_assert(sizeof(SoundParams) == 0x58, "SoundParams");
-_Static_assert(sizeof(SoundInst) == 0x78, "SoundInst");
 
 extern int gSoundUnusedOff;
 extern SoundInst *gSoundFree;

@@ -51,7 +51,7 @@ HOOK(0x472D00, Dragunov_Open);
 void Dragunov_Create(ZoomGun *g, void *arg)
 {
     HANDLER(0, Gun_GetType())(g, arg);
-    crt_sprintf(g->gun.id, "WEAPON_ID_DRAGUNOV");
+    crt_sprintf(g->gun.name, "WEAPON_ID_DRAGUNOV");
     g->zoomed = 0;
 }
 HOOK(0x472E10, Dragunov_Create);
@@ -60,7 +60,7 @@ HOOK(0x472E10, Dragunov_Create);
 void Dragunov_Use(ZoomGun *g, WeaponUseMsg *msg)
 {
     Human *h = msg->h;
-    float *minFov = g->gun.info->data;
+    float *minFov = g->gun.wt->data2;
     HumanView *v = h->view;
     long double t;
 
@@ -81,17 +81,17 @@ void Dragunov_Use(ZoomGun *g, WeaponUseMsg *msg)
         if (h->input[15] == kZero)
             return;
         t = x87_tan(kAngle45);
-        if (t > v->fov) {
-            v->fov = v->fov * kDragunovZoomOut;
-            v->unk1E8 = v->unk1E8 * kDragunovZoomOut;
+        if (t > v->fovX) {
+            v->fovX = v->fovX * kDragunovZoomOut;
+            v->fovY = v->fovY * kDragunovZoomOut;
         }
-        if (t < v->fov) {
-            v->fov = t;
-            v->unk1E8 = x87_tan(kAngle30);
+        if (t < v->fovX) {
+            v->fovX = t;
+            v->fovY = x87_tan(kAngle30);
         }
-    } else if (v->fov > *minFov) {
-        v->fov = v->fov * kDragunovZoomIn;
-        v->unk1E8 = v->unk1E8 * kDragunovZoomIn;
+    } else if (v->fovX > *minFov) {
+        v->fovX = v->fovX * kDragunovZoomIn;
+        v->fovY = v->fovY * kDragunovZoomIn;
     }
 }
 HOOK(0x472E50, Dragunov_Use);
@@ -148,18 +148,18 @@ void Dragunov_Config(void *task, WeaponConfigMsg *m)
     ConfigVar *var;
     float t;
 
-    m->info->unk668 = 0.0f;
-    m->info->unk664 = 0.0f;
-    if (m->info->data) {
-        Mem_Free(m->info->data);
-        m->info->data = NULL;
+    m->info->spread[1] = 0.0f;
+    m->info->spread[0] = 0.0f;
+    if (m->info->data2) {
+        Mem_Free(m->info->data2);
+        m->info->data2 = NULL;
     }
     var = TagItem_Find(m->config, "Zoom - Min FOV (degrees)");
     if (!var)
         var = TagItem_AddReal32(m->config, "Zoom - Min FOV (degrees)", 5.0f);
     t = x87_tan(var->v.f * kHalf * kDegToRad);
-    m->info->data = Mem_Alloc(4, 4);
-    *(float *)m->info->data = t;
+    m->info->data2 = Mem_Alloc(4, 4);
+    *(float *)m->info->data2 = t;
 }
 HOOK(0x473330, Dragunov_Config);
 

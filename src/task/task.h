@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "core/list.h"
+#include "task/tasktypes.h"
 
 #define TASK_MAX_TYPES 0x180
 #define TASK_MAX_SLOTS 254
@@ -15,41 +16,6 @@ enum {
     TASK_SLOT_DELETE,
     TASK_SLOT_PREDELETE,
 };
-
-/* Fixed size item pool. slots[] maps a slot number to an item number, so
-   used items are always slots 0..used-1. */
-typedef struct Pool {
-    char *data;
-    int *slots;
-    int used;
-    int capacity;
-    int stride;
-    int index_offset;
-} Pool;
-
-typedef struct TaskType {
-    const char *name;
-    int size;
-    uint16_t parent;
-    uint16_t unk0A;
-    Pool pool;
-    char pooled;
-    char used;
-    char unk26[2];
-    uint16_t mask;
-    uint16_t unk2A;
-    uint32_t flags;
-} TaskType;
-
-typedef struct Task {
-    Node node;
-    List children;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
 
 typedef struct TaskEvent {
     uint16_t type;

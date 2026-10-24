@@ -69,7 +69,7 @@ typedef struct Force {
 
 /* Game event 9 (a hit) and event 11 (an explosion) */
 typedef struct HitMsg {
-    RigidObj *src;
+    RigidDynCubeObj *src;
     Vec3d *center;      /* event 11 */
     Vec3f dir;          /* event 9 */
 } HitMsg;
@@ -100,7 +100,7 @@ void GenericPhysicsMagicObj_Collide(PhysObj *o);
 void GenericPhysicsMagicObj_Run(PhysObj *o)
 {
     GenericPhysicsMagicObj_Collide(o);
-    BROADCAST(&o->obj.task, 1);
+    BROADCAST(&o->task, 1);
 }
 HOOK(0x43E580, GenericPhysicsMagicObj_Run);
 
@@ -134,7 +134,7 @@ static void push(PhysObj *o, Force *f, float v0, float v1, float v2, float k)
 
 void GenericPhysicsMagicObj_Hit(PhysObj *o, HitMsg *msg)
 {
-    const float *m = o->obj.matrix.m;
+    const float *m = o->matrix.m;
     long double d0 = msg->dir.x, d1 = msg->dir.y, d2 = msg->dir.z;
     float v0, v1, v2;
     Force f;
@@ -150,10 +150,10 @@ HOOK(0x43E670, GenericPhysicsMagicObj_Hit);
 
 void GenericPhysicsObj_Explode(PhysObj *o, HitMsg *msg)
 {
-    const float *m = o->obj.matrix.m;
-    long double dx = o->obj.pos.x - msg->center->x;
-    double dy = o->obj.pos.y - msg->center->y;
-    double dz = o->obj.pos.z - msg->center->z;
+    const float *m = o->matrix.m;
+    long double dx = o->pos.x - msg->center->x;
+    double dy = o->pos.y - msg->center->y;
+    double dz = o->pos.z - msg->center->z;
     float v0, v1, v2;
     Force f;
 
@@ -185,12 +185,12 @@ void GenericPhysicsObj_Open(void)
     TaskType_SetHandler(gGenericPhysicsObjType, Game_GetEvent9(), GenericPhysicsObj_Hit);
     TaskType_SetHandler(gGenericPhysicsObjType, Game_GetEvent11(), GenericPhysicsObj_Explode);
     gGenericPhysicsObjParams = ParamTable_New(0x14);
-    ParamTable_Add(gGenericPhysicsObjParams, &o, &o.start_pos, Param_ObjectPos(), 7, NULL);
-    ParamTable_Add(gGenericPhysicsObjParams, &o, &o.obj.matrix, Param_Real32x9(), 7, NULL);
-    ParamTable_Add(gGenericPhysicsObjParams, &o, &o.start_velocity, Param_Real32x3(), 7, NULL);
+    ParamTable_Add(gGenericPhysicsObjParams, &o, &o.startPos, Param_ObjectPos(), 7, NULL);
+    ParamTable_Add(gGenericPhysicsObjParams, &o, &o.matrix, Param_Real32x9(), 7, NULL);
+    ParamTable_Add(gGenericPhysicsObjParams, &o, &o.startVel, Param_Real32x3(), 7, NULL);
     ParamTable_Add(gGenericPhysicsObjParams, &o, o.name, Param_String16(), 7, NULL);
-    ParamTable_Add(gGenericPhysicsObjParams, &o, &o.unk6D8, Param_Bool8(), 7, NULL);
-    ParamTable_Add(gGenericPhysicsObjParams, &o, &o.unk6D9, Param_Bool8(), 7, NULL);
+    ParamTable_Add(gGenericPhysicsObjParams, &o, &o.collide, Param_Bool8(), 7, NULL);
+    ParamTable_Add(gGenericPhysicsObjParams, &o, &o.upright, Param_Bool8(), 7, NULL);
     Script_RegisterConstant("TASKTYPE_GENERICPHYSICSOBJ", gGenericPhysicsObjType);
 }
 HOOK(0x43E8D0, GenericPhysicsObj_Open);
@@ -209,8 +209,8 @@ void GenericPhysicsObj_Init(PhysObj *o)
     float scale, radius;
 
     RigidDynCubeObj_Init(Game_GetWorld(), o, NULL);
-    scale = max_scale(&o->obj);
-    radius = VirModel_GetRadius(o->obj.model) * scale;
+    scale = max_scale((RigidDynCubeObj *)o);
+    radius = VirModel_GetRadius(o->model) * scale;
     DynCube_Add(Game_GetWorld(), o, &zero, radius, 2);
     o->name[0] = 0;
     PhysicsObj_Init(o);
@@ -222,7 +222,7 @@ void GenericPhysicsObj_Collide(PhysObj *o);
 void GenericPhysicsObj_Run(PhysObj *o)
 {
     GenericPhysicsObj_Collide(o);
-    BROADCAST(&o->obj.task, 1);
+    BROADCAST(&o->task, 1);
 }
 HOOK(0x43EBA0, GenericPhysicsObj_Run);
 
@@ -248,7 +248,7 @@ void GenericPhysicsObj_ParamsChanged(PhysObj *o)
     void **model;
     float scale, radius;
 
-    o->obj.matrix = o->start_matrix;
+    o->matrix = o->startMatrix;
     model = VirModel_Find(o->name);
     if (model) {
         RigidDynCubeObj_SetModel(o, model);
@@ -260,17 +260,17 @@ void GenericPhysicsObj_ParamsChanged(PhysObj *o)
         strcpy(name, o->name);
         crt_sprintf(o->name, "** %s **", name);
     }
-    o->body.velocity = o->start_velocity;
+    o->body.vel = o->startVel;
     Body_Update(&o->body);
-    scale = max_scale(&o->obj);
-    radius = VirModel_GetRadius(o->obj.model) * scale;
-    DynCube_Move(Game_GetWorld(), o, &o->start_pos, radius);
+    scale = max_scale((RigidDynCubeObj *)o);
+    radius = VirModel_GetRadius(o->model) * scale;
+    DynCube_Move(Game_GetWorld(), o, &o->startPos, radius);
 }
 HOOK(0x43EC80, GenericPhysicsObj_ParamsChanged);
 
 void GenericPhysicsObj_Hit(PhysObj *o, HitMsg *msg)
 {
-    const float *m = o->obj.matrix.m;
+    const float *m = o->matrix.m;
     long double d0 = msg->dir.x, d1 = msg->dir.y, d2 = msg->dir.z;
     float v0, v1, v2;
     Force f;
@@ -306,11 +306,11 @@ PhysObj *GenericPhysicsObj_New(void *parent, const Vec3d *pos, const Matrix *m, 
     } else {
         o = (PhysObj *)Task_New(parent, gGenericPhysicsObjType, NULL);
     }
-    o->start_pos = *pos;
-    o->start_matrix = *m;
-    memcpy(&o->start_velocity, vel, sizeof(Vec3f));
+    o->startPos = *pos;
+    o->startMatrix = *m;
+    memcpy(&o->startVel, vel, sizeof(Vec3f));
     strcpy(o->name, name);
-    fn = HANDLER(Param_GetChangedEvent(), o->obj.task.type);
+    fn = HANDLER(Param_GetChangedEvent(), o->task.type);
     if (fn)
         fn(o, NULL);
     return o;

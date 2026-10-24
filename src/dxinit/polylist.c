@@ -4,12 +4,10 @@
 
 #include "hook.h"
 #include "dxinit/dxinit.h"
+#include "d3d/d3dtypes.h"
+#include "sector/sectortypes.h"
 
 FN_EXTERN(Task_Nothing);
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
 
 /* one triangle of a PolyListDynCubeObj (the same layout as HoleTri in explosion) */
 typedef struct PolyTri {
@@ -47,26 +45,12 @@ _Static_assert(offsetof(PolyList, owner) == 0xB4, "owner");
 _Static_assert(sizeof(PolyList) == 0xB8, "PolyList");
 _Static_assert(sizeof(PolyTri) == 0x50, "PolyTri");
 
-/* the lights of the level */
-typedef struct Light {
-    Vec3f dir;
-    float r, g, b;
-    char unk18[0xD];
-    char on;
-} Light;
-
 typedef struct PrimArg {
     int unk0;
     int prim;
     int unk8;
     void *obj;
 } PrimArg;
-
-typedef struct DynVB {
-    IDirect3DVertexBuffer7 *vb;
-    int size;
-    int used;
-} DynVB;
 
 typedef struct LitVertex {
     float x, y, z;
@@ -152,7 +136,7 @@ void PolyList_Render(PolyList *p)
 {
     if (p->count) {
         long double px = p->pos.x - gViewPos.x, py = p->pos.y - gViewPos.y, pz = p->pos.z - gViewPos.z;
-        float depth = gView.m[8] * pz + gView.m[7] * py + gView.m[6] * px;
+        float depth = gView.matrix.m[8] * pz + gView.matrix.m[7] * py + gView.matrix.m[6] * px;
 
         *(PolyList **)SortRender_Add((void (*)(void *))PolyList_DrawItem, 4, f2u(depth)) = p;
     }
@@ -245,9 +229,9 @@ void PolyList_SetLightsCB(void)
         Light *l = Light_Get(i);
 
         light.dltType = D3DLIGHT_DIRECTIONAL;
-        light.dcvDiffuse.r = gNearPlaneScale * l->r;
-        light.dcvDiffuse.g = gNearPlaneScale * l->g;
-        light.dcvDiffuse.b = gNearPlaneScale * l->b;
+        light.dcvDiffuse.r = gNearPlaneScale * l->color.x;
+        light.dcvDiffuse.g = gNearPlaneScale * l->color.y;
+        light.dcvDiffuse.b = gNearPlaneScale * l->color.z;
         light.dvDirection.x = -l->dir.x;
         light.dvDirection.y = -l->dir.y;
         light.dvDirection.z = -l->dir.z;
@@ -328,9 +312,9 @@ void PolyList_Draw(void **msg)
             Light *l = Light_Get(i);
 
             if (l->on) {
-                r += l->r;
-                g += l->g;
-                b += l->b;
+                r += l->color.x;
+                g += l->color.y;
+                b += l->color.z;
             }
         }
         light[1] = g;

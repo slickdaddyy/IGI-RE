@@ -2,38 +2,13 @@
 
 #include "aiaction/aiaction.h"
 #include "hook.h"
+#include "glass/glasstypes.h"
 
 ORIG(0x44A630, void, GlassShatter_PlaySound, (const Vec3d *pos));
 ORIG(0x44A670, void, GlassShatter_AddTri, (float *a, float *b, float *c));
 ORIG(0x49A450, void *, PolyList_New, (void *world, int a, const Vec3d *pos, const Matrix *m, void *polys, int count,
                                     int b, int c, int d, int e, int f));
 ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
-
-/* "GlassShatter" (0x2B048), the pieces of a broken Glass */
-typedef struct GlassShatter {
-    Task task;
-    char unk20[0x48];
-    void **model;       /* 0x68 */
-    Vec3f dir;          /* 0x6C, in model space */
-    Vec3d pos;          /* 0x78 */
-    Matrix matrix;      /* 0x90 */
-    int count;          /* 0xB8 */
-    int frames;         /* 0xBC */
-    char shards[1000][0x60]; /* 0xC0 */
-    char polys[1000][0x50]; /* 0x177C0 */
-    void *mesh;         /* 0x2B040 */
-    char unk2B044[4];
-} GlassShatter;
-
-/* the collision mesh of a model LOD */
-typedef struct TriMesh {
-    int count;
-    char unk4[0xC];
-    uint16_t (*tris)[4]; /* 0x10 */
-    float (*verts)[4];  /* 0x14 */
-} TriMesh;
-
-_Static_assert(sizeof(GlassShatter) == 0x2B048, "GlassShatter");
 
 extern const float *gShatterColor;
 extern float gShatterSpeed;

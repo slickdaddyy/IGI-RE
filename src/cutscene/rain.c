@@ -6,41 +6,24 @@
 
 #include "hook.h"
 #include "camera/camera.h"
+#include "param/paramtypes.h"
+#include "dxinit/dxinittypes.h"
 
 FN_EXTERN(crt_CIfmod);
 
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* one cube of the 7x7x7 grid of rain around the camera */
-typedef struct RainCell {
-    double x, y, z;
-    float density;
-    int visible;
-} RainCell;
-
-typedef struct RainDrop {
+typedef struct RainParticle {
     Vec3f pos;
     Vec3f vel;
     Vec3f trail;
     float alpha;
-} RainDrop;
+} RainParticle;
 
 /* "RainDynCubeObj", 0x4290 bytes, parent DynCubeObj */
 typedef struct RainObj {
     char base[0x68];
     RainCell cells[7][7][7];
-    RainDrop *dropMem;
-    RainDrop *drops[20];
+    RainParticle *dropMem;
+    RainParticle *drops[20];
     int unk2B9C;
     int soundBucket;
     int soundHash;
@@ -106,7 +89,6 @@ typedef struct RainPrim {
 
 typedef void (*RainCallback)(char *state);
 
-_Static_assert(sizeof(RainCell) == 0x20, "RainCell");
 _Static_assert(offsetof(RainObj, dropMem) == 0x2B48, "RainObj.dropMem");
 _Static_assert(offsetof(RainObj, soundBucket) == 0x2BA0, "RainObj.soundBucket");
 _Static_assert(offsetof(RainObj, pos) == 0x2C08, "RainObj.pos");
@@ -258,7 +240,7 @@ HOOK(0x4F65E0, RainObj_FindCell);
 
 void RainObj_AddDrop(RainObj *r, const Vec3f *pos, const Vec3f *vel, int unused)
 {
-    RainDrop *d;
+    RainParticle *d;
 
     if (r->dropCount >= RAIN_DROPS)
         return;
@@ -352,8 +334,8 @@ void RainObj_PlaceCells(RainObj *r)
 
                 c->x = i * r->cellSize + bx;
                 c->y = j * r->cellSize + by;
-                c->visible = 1;
-                c->density = 0.0f;
+                c->flags = 1;
+                c->depth = 0.0f;
                 c->z = k * r->cellSize + bz;
             }
         }
@@ -454,8 +436,8 @@ void RainObj_Simulate(RainObj *r)
     for (i = 0; i < RAIN_CELLS; i++) {
         RainCell *c = cell_at(r, i);
 
-        if (!(c->density >= r->maxDensity))
-            c->density = r->maxDensity / growth + c->density;
+        if (!(c->depth >= r->maxDensity))
+            c->depth = r->maxDensity / growth + c->depth;
     }
 }
 HOOK(0x4F6D70, RainObj_Simulate);
@@ -493,7 +475,7 @@ void RainObj_MoveDrops(RainObj *r)
     int i;
 
     for (i = 0; i < r->dropCount; i++) {
-        RainDrop *d = r->drops[i];
+        RainParticle *d = r->drops[i];
         long double z;
 
         d->pos.x = d->vel.x + d->pos.x;
@@ -513,7 +495,7 @@ void RainObj_RemoveDrop(RainObj *r, int i)
     if (!n)
         return;
     if (n - 1 != i) {
-        RainDrop *d = r->drops[i];
+        RainParticle *d = r->drops[i];
 
         r->drops[i] = r->drops[n - 1];
         r->drops[r->dropCount - 1] = d;
@@ -635,10 +617,10 @@ void RainObj_Draw(RainPrim *prim)
     for (i = 0; i < RAIN_CELLS; i++) {
         RainCell *c = cell_at(r, i);
 
-        if (!c->visible)
+        if (!c->flags)
             continue;
         for (n = 0; n < r->dropCount; n++) {
-            RainDrop *d = r->drops[n];
+            RainParticle *d = r->drops[n];
             Vec3d a, b;
             long double z;
 
@@ -654,7 +636,7 @@ void RainObj_Draw(RainPrim *prim)
             b.x = b.x - r->move.x;
             b.y = b.y - r->move.y;
             b.z = z - r->move.z;
-            Line3D_Draw2(&a, &b, color, 0.0f, color, d->alpha * c->density);
+            Line3D_Draw2(&a, &b, color, 0.0f, color, d->alpha * c->depth);
         }
     }
 }
@@ -730,7 +712,7 @@ void RainObj_UpdateCells(RainObj *r)
     n = 0;
     for (i = 0; i < 7; i++) {
         for (j = 0; j < 7; j++) {
-            for (k = 0; k < 7 && !r->cells[i][j][k].visible; k++)
+            for (k = 0; k < 7 && !r->cells[i][j][k].flags; k++)
                 ;
             if (k == 7)
                 continue;
@@ -754,7 +736,7 @@ void RainObj_UpdateCells(RainObj *r)
             RainCell *c = &r->cells[colI[k]][colJ[k]][j];
 
             if (!(c->z - r->cellSize * kHalf >= r->hits[k].pos.z))
-                c->visible = 0;
+                c->flags = 0;
         }
     }
     r->cameraCellVisible = RainObj_IsCameraCellVisible(r);
@@ -777,7 +759,7 @@ int RainObj_IsCameraCellVisible(RainObj *r)
         float dz = c->z - r->pos.z;
 
         if (__builtin_fabsl(dx) <= half && __builtin_fabsf(dy) <= half && __builtin_fabsf(dz) <= half)
-            v |= c->visible;
+            v |= c->flags;
     }
     return v;
 }
@@ -837,12 +819,12 @@ void RainObj_CheckCell(RainObj *r, RainCell *c)
             d.z = d.z * inv;
         }
         if (__builtin_fabsl(Vec3_Angle(&d, &r->viewDir)) > kMaxAngle) {
-            c->visible = 0;
+            c->flags = 0;
             return;
         }
     }
     gRainVisibleCubes++;
-    c->visible = 1;
+    c->flags = 1;
 }
 HOOK(0x4F7DF0, RainObj_CheckCell);
 
@@ -889,12 +871,12 @@ void RainObj_AllocDrops(RainObj *r)
 
     if (!mode)
         Mem_SetDefaultMode();
-    r->dropMem = Mem_Alloc(RAIN_DROPS * sizeof(RainDrop), 4);
+    r->dropMem = Mem_Alloc(RAIN_DROPS * sizeof(RainParticle), 4);
     if (!mode)
         Mem_ClearMode();
     for (i = 0; i < RAIN_DROPS; i++)
         r->drops[i] = r->dropMem + i;
-    gRainMemory += RAIN_DROPS * sizeof(RainDrop);
+    gRainMemory += RAIN_DROPS * sizeof(RainParticle);
 }
 HOOK(0x4F8040, RainObj_AllocDrops);
 

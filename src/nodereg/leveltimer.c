@@ -5,10 +5,6 @@
 #include "hook.h"
 #include "nodereg/nodereg.h"
 
-typedef struct VarString {
-    char text[0x50];
-} VarString;
-
 /* "LevelTimer" (0x110) */
 typedef struct LevelTimer {
     Task task;
@@ -61,7 +57,7 @@ void LevelTimer_Create(LevelTimer *t);
 void LevelTimer_Register(LevelTimer *t);
 void LevelTimer_Unregister(LevelTimer *t);
 void LevelTimer_Delete(LevelTimer *t);
-void LevelTimer_GetParamTable(LevelTimer *t, ParamTable *out);
+void LevelTimer_GetParamTable(LevelTimer *t, ParamTable **out);
 void LevelTimer_Run(LevelTimer *t);
 void LevelTimer_ParamsChanged(LevelTimer *t, const char *name);
 
@@ -102,7 +98,7 @@ void LevelTimer_Create(LevelTimer *t)
     t->matrix.m[6] = 0;
     t->matrix.m[7] = 0;
     t->matrix.m[8] = 1;
-    t->matrix.unk24 = 0;
+    t->matrix.count = 0;
     t->registered = 0;
     t->isRun = 1;
     t->nTick = 0;
@@ -153,7 +149,7 @@ void LevelTimer_Delete(LevelTimer *t)
 }
 HOOK(0x51BDB0, LevelTimer_Delete);
 
-void LevelTimer_GetParamTable(LevelTimer *t, ParamTable *out)
+void LevelTimer_GetParamTable(LevelTimer *t, ParamTable **out)
 {
     *out = gLevelTimerParams;
 }

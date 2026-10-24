@@ -5,29 +5,7 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-typedef struct Node {
-    struct Node *next;
-    struct Node *prev;
-} Node;
-
-typedef struct List {
-    Node *head;
-    Node *tail;
-    Node *tailpred;
-} List;
-
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    struct Task *tail;
-    struct Task *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    uint16_t pooled;
-} Task;
+#include "task/tasktypes.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 

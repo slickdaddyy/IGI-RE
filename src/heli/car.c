@@ -76,7 +76,7 @@ void Car_ParamsChanged(Car *c)
             c->light_cfg[0] = c->light_params[0] * kDegToRad;
             c->light_cfg[1] = c->light_params[1] * kDegToRad;
             c->light_cfg[2] = c->light_params[2] * kFixed;
-            AIDetector_Init(c->light, 1, 4, Human_GetMaskType(4, 8), 4, 8);
+            AIDetector_Init(&c->light, 1, 4, Human_GetMaskType(4, 8), 4, 8);
         }
     } else if (c->v.name[0] && c->v.name[1] != '*') {
         crt_sprintf(buf, "Model \"%s\" not available", c->v.name);
@@ -87,11 +87,11 @@ void Car_ParamsChanged(Car *c)
     c->v.speed = c->v.start_speed;
     c->unk91D = 0;
     r = radius(c);
-    DynCube_Move(Game_GetWorld(), c, &c->v.pos2, r);
-    c->v.matrix = c->v.matrix2;
+    DynCube_Move(Game_GetWorld(), c, &c->v.startPos, r);
+    c->v.matrix = c->v.startMatrix;
     Vehicle_DeleteParts(c);
     Vehicle_NewParts(c);
-    BROADCAST(c->v.coll->head, Param_GetChangedEvent(), NULL);
+    BROADCAST(c->v.attached->head, Param_GetChangedEvent(), NULL);
     VarString_Bind(&c->vars[0], c);
     VarString_Bind(&c->vars[1], c);
     VarString_Bind(&c->vars[2], c);
@@ -248,7 +248,7 @@ HOOK(0x42FC50, Car_CollFilter);
 
 void Car_GetLight(Car *c, void **out)
 {
-    out[0] = c->light;
+    out[0] = &c->light;
 }
 HOOK(0x42FC70, Car_GetLight);
 
@@ -309,7 +309,7 @@ HOOK(0x42FDC0, Car_GetType);
 
 Task *Car_GetMountedGun(Car *c)
 {
-    Task *coll = c->v.coll;
+    Task *coll = c->v.attached;
 
     return Task_FindChild(coll, StationaryGun_GetType());
 }
@@ -332,13 +332,13 @@ long double Car_GetTrackFactor(Car *c, int joint)
     float s = c->v.turn[2];
 
     if (s > kHundredth) {
-        if (c->v.joints[joint].side == 1) {
+        if (c->v.contacts[joint].side == 1) {
             long double d = kHalf - s;
 
             return d + d;
         }
     } else if (!(s >= kMinusHundredth)) {
-        if (c->v.joints[joint].side == 0) {
+        if (c->v.contacts[joint].side == 0) {
             long double d = s + kHalf;
 
             return d + d;
@@ -351,7 +351,7 @@ HOOK(0x4304B0, Car_GetTrackFactor);
 /* moves a joint up or down by amount, within max of its model point */
 void Car_LiftJoint(Car *c, int joint, float amount, float max)
 {
-    float *z = &c->v.joints[joint].pos.z;
+    float *z = &c->v.contacts[joint].point.z;
     CarConfig *cfg = c->v.phys->data;
     long double d, top, n;
     float pm, lim;
@@ -500,8 +500,8 @@ void Car_UpdateWheel(Car *c, int i, int joint)
     }
     if (ct->hit && joint >= 0) {
         float steer = wc->steered ? angle : 0;
-        float gx = c->v.joints[joint].unk1C;
-        float gy = c->v.joints[joint].unk20;
+        float gx = c->v.contacts[joint].unk1C;
+        float gy = c->v.contacts[joint].friction;
 
         if (c->v.brake) {
             c->v.speed = c->v.speed * kHeliDamp;

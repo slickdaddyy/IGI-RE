@@ -257,9 +257,9 @@ void FlatSky_Render(FlatSky *s)
             v->a = v->a * l->alpha;
             v->z = v->z * k16;
         }
-        strip.untextured = 0;
+        strip.lines = 0;
         strip.flags = 0x41480000;
-        strip.unk8 = -1;
+        strip.queue = -1;
         strip.count = SKY_ROWS * 2;
         strip.verts = verts;
         gQVertexTexture = l->loaded ? l->texture : NULL;

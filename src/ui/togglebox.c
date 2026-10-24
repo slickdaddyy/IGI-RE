@@ -1,28 +1,12 @@
 #include "hook.h"
 #include "igi.h"
 #include "ui/ui.h"
+#include "ui/uitypes.h"
 
 ORIG(0x4B4AF0, void, Draw_RectAZ, (float x, float y, float w, float h, float r, float g, float b, float a, float z,
                                    int flags, int unk));
 ORIG(0x41E5A0, void, ToggleBox_Activate, (void *tb));
 ORIG(0x41E600, void, ToggleBox_Deactivate, (void *tb));
-
-/* a Yes / No switch; the script sees the state as "<name>.isOn" */
-typedef struct ToggleBox {
-    MenuWindow w;
-    char unk54[0x40];
-    MenuWindow *left;
-    MenuWindow *right;
-    Text *yes;
-    Text *no;
-    int isOn;
-    char registered;
-    char padA9[3];
-    VarString value;
-    VarString forward;
-} ToggleBox;
-
-_Static_assert(sizeof(ToggleBox) == 0x14C, "ToggleBox");
 
 extern uint16_t gToggleBoxType;
 extern void *gToggleBoxParams;
@@ -65,17 +49,17 @@ void ToggleBox_Create(ToggleBox *tb, void *arg)
     tb->left->menu = tb->w.menu;
     tb->right->menu = tb->w.menu;
     tb->unk54[0] = 0;
-    tb->right->unk40 = 0;
-    tb->left->unk40 = 0;
-    tb->right->unk3C = 0;
-    tb->left->unk3C = 0;
+    tb->right->centreY = 0;
+    tb->left->centreY = 0;
+    tb->right->centreX = 0;
+    tb->left->centreX = 0;
     tb->isOn = 1;
     tb->w.w = 50;
     tb->w.h = 15;
     tb->yes = NULL;
     tb->no = NULL;
-    tb->w.unk3C = 1;
-    tb->w.unk40 = 1;
+    tb->w.centreX = 1;
+    tb->w.centreY = 1;
     VarString_Init(&tb->value);
     VarString_Init(&tb->forward);
     tb->registered = 0;

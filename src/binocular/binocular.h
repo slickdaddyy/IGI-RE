@@ -5,95 +5,19 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "param/paramtypes.h"
+#include "vehicle/vehicletypes.h"
+#include "transctx/transctxtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
-
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-/* "RigidDynCubeObj" (0xF0 bytes), a moving object with a model */
-typedef struct RigidObj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x30];
-    void *world;
-    void **model;
-    Matrix matrix;
-    float scale[3];
-    char unkA4[0xF0 - 0xA4];
-} RigidObj;
-
-/* argument of the create handler of vehicle parts */
-typedef struct PartCreateArg {
-    const char *model;
-    void *world;
-    Vec3d pos;
-    Vec3d offset;
-    Matrix matrix;
-    Matrix local;
-    RigidObj *owner;
-    void *def;
-} PartCreateArg;
-
-/* sent by a vehicle each frame to move its parts along */
-typedef struct PartMoveArg {
-    Vec3d *pos;
-    Matrix *matrix;
-} PartMoveArg;
-
-/* argument of the script argument parsers */
-typedef struct ScriptArg {
-    void *out;
-    void *args;
-    int index;
-} ScriptArg;
 
 /* argument of the weapon config handlers */
 typedef struct ConfigArg {
     void *config;
     char *weaponType;
 } ConfigArg;
-
-/* node of a list of task references */
-typedef struct RefNode {
-    struct RefNode *next;
-    struct RefNode *prev;
-    Task **ref;
-    char unkC[0x1D];
-    char active;
-} RefNode;
 
 /* what a weapon gets through the Human event 0 slot */
 typedef struct WeaponUseArg {
@@ -113,25 +37,7 @@ typedef struct WeaponUseArg {
     char *human;
 } WeaponUseArg;
 
-/* the view the frame is drawn with (0xBCAAE0) */
-typedef struct View {
-    float m[9];
-    int unk24;
-    Vec3d pos;
-    float unk40;
-    float unk44;
-    float scaleX;
-    float scaleY;
-    float centerX;
-    float centerY;
-} View;
-
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
-_Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
-_Static_assert(offsetof(PartCreateArg, owner) == 0x88, "PartCreateArg");
-_Static_assert(offsetof(RefNode, active) == 0x29, "RefNode");
 _Static_assert(sizeof(WeaponUseArg) == 0x30, "WeaponUseArg");
-_Static_assert(offsetof(View, centerY) == 0x54, "View");
 
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }
@@ -139,7 +45,7 @@ _Static_assert(offsetof(View, centerY) == 0x54, "View");
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern View gView;
+extern TransCtx gView;
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
@@ -235,7 +141,7 @@ static inline void mat_mul(Matrix *out, const Matrix *a, const Matrix *b, int la
                                         + (long double)a->m[i * 3 + k1] * b->m[k1 * 3 + j]
                                         + (long double)a->m[i * 3 + last] * b->m[last * 3 + j]);
     }
-    out->unk24 = a->unk24 + b->unk24 + 1;
+    out->count = a->count + b->count + 1;
 }
 
 /* the same where column 0 of b is still unrounded in col0 */
@@ -257,7 +163,7 @@ static inline void mat_mul_col0(Matrix *out, const Matrix *a, const Matrix *b, c
             out->m[i * 3 + j] = (float)(a->m[i * 3 + k0] * b0 + a->m[i * 3 + k1] * b1 + a->m[i * 3 + last] * b2);
         }
     }
-    out->unk24 = a->unk24 + b->unk24 + 1;
+    out->count = a->count + b->count + 1;
 }
 
 /* column 0 of a * b without rounding, summed like mat_mul */

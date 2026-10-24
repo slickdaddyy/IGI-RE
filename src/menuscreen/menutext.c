@@ -100,8 +100,8 @@ void MenuTextConditional_Create(MenuTextConditional *mt, void *arg)
     mt->glow = NULL;
     mt->w.x = 300;
     mt->w.y = 230;
-    mt->w.unk3C = 1;
-    mt->w.unk40 = 1;
+    mt->w.centreX = 1;
+    mt->w.centreY = 1;
     VarString_Init(&mt->action);
     VarString_Init(&mt->enabledExpr);
     VarString_Init(&mt->visibleExpr);
@@ -170,7 +170,7 @@ HOOK(0x420640, MenuTextConditional_Changed);
 #define RUN_ACTION(mt)                                                          \
     do {                                                                        \
         MenuWindow_HitTest(mt, (mt)->w.x, (mt)->w.y, (mt)->w.w, (mt)->w.h, NULL, NULL); \
-        if ((mt)->w.over && !(mt)->w.wasOver)                                   \
+        if ((mt)->w.hover && !(mt)->w.wasHover)                                   \
             MenuManager_FocusItem((mt)->w.menu, mt);                            \
         if (((mt)->w.clicked || (mt)->w.key == -7) && VarString_HasExpr(&(mt)->action)) { \
             VarString_EvalReal(&(mt)->action, mt);                              \
@@ -315,8 +315,8 @@ void MenuText_Create(MenuText *mt, void *arg)
     mt->label = NULL;
     mt->glow = NULL;
     mt->w.y = 230;
-    mt->w.unk3C = 1;
-    mt->w.unk40 = 1;
+    mt->w.centreX = 1;
+    mt->w.centreY = 1;
     VarString_Init(&mt->action);
 }
 HOOK(0x420E90, MenuText_Create);

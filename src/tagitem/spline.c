@@ -68,12 +68,12 @@ static int IsZeroL(long double x)
 
 static Waypoint *Waypoint_Next(Waypoint *w)
 {
-    return (Waypoint *)Task_FindNext(&w->task, gWaypointType);
+    return (Waypoint *)Task_FindNext(&w->obj.task, gWaypointType);
 }
 
 static Waypoint *Waypoint_Prev(Waypoint *w)
 {
-    return (Waypoint *)Task_FindPrev(&w->task, gWaypointType);
+    return (Waypoint *)Task_FindPrev(&w->obj.task, gWaypointType);
 }
 
 /* the segment of w runs from its previous waypoint to w */
@@ -163,7 +163,7 @@ static void Segment_BlendRot(Matrix *m, SplineObjSegment *seg, int i, float t)
     a = a + a;
     b = (long double)r[1] * r[0];
     b = b + b;
-    memcpy(&m->stamp, &r[4], 4);
+    memcpy(&m->count, &r[4], 4);
     c = 2 * ((long double)r[2] * r[0]);
     d = 2 * ((long double)r[3] * r[0]);
     e = 2 * ((long double)r[1] * r[1]);
@@ -458,7 +458,7 @@ HOOK(0x4FEC10, SplineObj_GetPoints);
 /* a new waypoint copies its neighbour and is placed one segment length beyond it */
 void SplineObjWaypoint_Create(Waypoint *w)
 {
-    SplineObj *obj = (SplineObj *)w->task.parent;
+    SplineObj *obj = (SplineObj *)w->obj.task.parent;
     Waypoint *p = Waypoint_Prev(w);
     char notify = 0;
 
@@ -554,7 +554,7 @@ void SplineObjWaypoint_Create(Waypoint *w)
     RigidDynCubeObj_Init(gWorld, w, VirModel_Find(w->modelName));
     w->tree = gWorld;
     if (notify) {
-        uint16_t type = Waypoint_Next(w)->task.type;
+        uint16_t type = Waypoint_Next(w)->obj.task.type;
         TaskFn fn = gTaskHandlers[Param_GetChangedEvent()][type];
 
         fn(Waypoint_Next(w), NULL);
@@ -564,12 +564,12 @@ HOOK(0x5008F0, SplineObjWaypoint_Create);
 
 void SplineObjWaypoint_Delete(Waypoint *w)
 {
-    SplineObj *obj = (SplineObj *)w->task.parent;
+    SplineObj *obj = (SplineObj *)w->obj.task.parent;
     Waypoint *next = Waypoint_Next(w);
     Waypoint *prev = Waypoint_Prev(w);
 
     /* looks for a waypoint below this one, so it finds none */
-    w->seg = (SplineObjSegment *)Task_FindChild(&w->task, gWaypointType);
+    w->seg = (SplineObjSegment *)Task_FindChild(&w->obj.task, gWaypointType);
     if (w->seg)
         MenuManager_Free(w->seg);
     if (prev) {
@@ -673,15 +673,15 @@ static void Waypoint_AutoOrient(Waypoint *w, Waypoint *prev, Waypoint *next)
     m.m[6] = u[2];
     m.m[7] = c[2];
     m.m[8] = d[2];
-    m.stamp = 0;
+    m.count = 0;
     memcpy(&w->rot, &m, sizeof(Matrix));
 }
 
 static float Waypoint_MaxScale(Waypoint *w)
 {
-    float m = w->scale[2] >= w->scale[1] ? w->scale[2] : w->scale[1];
+    float m = w->obj.scale[2] >= w->obj.scale[1] ? w->obj.scale[2] : w->obj.scale[1];
 
-    return w->scale[0] > m ? w->scale[0] : m;
+    return w->obj.scale[0] > m ? w->obj.scale[0] : m;
 }
 
 /* lines up a run of "straight" waypoints evenly between its two ends */
@@ -729,7 +729,7 @@ static void Waypoint_Straighten(Waypoint *w, Waypoint *next, SplineObj *obj)
     Matrix_SetEuler(&m, 0.0f, pitch, yaw);
     memcpy(&pos, &first->point, sizeof(Vec3d));
     memcpy(&first->rot, &m, sizeof(Matrix));
-    memcpy(&first->matrix, &m, sizeof(Matrix));
+    memcpy(&first->obj.matrix, &m, sizeof(Matrix));
     if (first->seg)
         Waypoint_SetupSegment(first, Waypoint_Prev(first), obj);
 
@@ -741,15 +741,15 @@ static void Waypoint_Straighten(Waypoint *w, Waypoint *next, SplineObj *obj)
         pos.y = step[1] + pos.y;
         pos.z = step[2] + pos.z;
         memcpy(&cur->point, &pos, sizeof(Vec3d));
-        memcpy(&cur->matrix, &m, sizeof(Matrix));
+        memcpy(&cur->obj.matrix, &m, sizeof(Matrix));
         if (inTree)
-            DynCube_Move(cur->tree, cur, &cur->point, VirModel_GetRadius(cur->model));
+            DynCube_Move(cur->tree, cur, &cur->point, VirModel_GetRadius(cur->obj.model));
         if (cur->seg)
             Waypoint_SetupSegment(cur, Waypoint_Prev(cur), obj);
     }
 
     memcpy(&last->rot, &m, sizeof(Matrix));
-    memcpy(&last->matrix, &m, sizeof(Matrix));
+    memcpy(&last->obj.matrix, &m, sizeof(Matrix));
     if (last->seg)
         Waypoint_SetupSegment(last, Waypoint_Prev(last), obj);
     p = Waypoint_Next(last);
@@ -762,7 +762,7 @@ void SplineObjWaypoint_Changed(Waypoint *w)
 {
     Waypoint *next = Waypoint_Next(w);
     Waypoint *prev = Waypoint_Prev(w);
-    SplineObj *obj = (SplineObj *)w->task.parent;
+    SplineObj *obj = (SplineObj *)w->obj.task.parent;
     Waypoint *p;
     int n;
 
@@ -789,22 +789,22 @@ void SplineObjWaypoint_Changed(Waypoint *w)
 
     if (w->inTree) {
         if (!obj->collide) {
-            DynCube_Remove(w->world, w);
+            DynCube_Remove(w->obj.world, w);
             w->inTree = 0;
         }
     } else if (obj->collide) {
         float scale = Waypoint_MaxScale(w);
 
-        DynCube_Add(gWorld, w, &w->point, VirModel_GetRadius(w->model) * scale, 1);
+        DynCube_Add(gWorld, w, &w->point, VirModel_GetRadius(w->obj.model) * scale, 1);
         w->inTree = 1;
     }
 
-    memcpy(&w->matrix, &w->rot, sizeof(Matrix));
+    memcpy(&w->obj.matrix, &w->rot, sizeof(Matrix));
     if (w->modelName[0] != '*' && w->modelName[0]) {
         void **model = VirModel_Find(w->modelName);
 
         if (model) {
-            w->model = model;
+            w->obj.model = model;
         } else {
             char name[0x38];
 
@@ -813,7 +813,7 @@ void SplineObjWaypoint_Changed(Waypoint *w)
         }
     }
     if (w->inTree)
-        DynCube_Move(w->tree, w, &w->point, VirModel_GetRadius(w->model));
+        DynCube_Move(w->tree, w, &w->point, VirModel_GetRadius(w->obj.model));
 
     if (prev) {
         if (!w->seg)
@@ -840,8 +840,8 @@ void SplineObjWaypoint_Changed(Waypoint *w)
                 obj->length = p->seg->length + obj->length;
     }
     if (w->seg) {
-        memcpy(&w->seg->unkA8, &obj->unk50, sizeof(Vec3f));
-        memcpy(&w->seg->unkB4, &obj->unk5C, sizeof(Vec3f));
+        memcpy(&w->seg->color1, &obj->color1, sizeof(Vec3f));
+        memcpy(&w->seg->color2, &obj->color2, sizeof(Vec3f));
     }
     SplineObjWaypoint_UpdateAttach(w);
 }

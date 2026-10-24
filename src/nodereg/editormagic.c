@@ -108,7 +108,7 @@ void EditorMagicObj_Move(EditorMagicObj *o, MagicMove *mv)
     a.m[6] = r.m[6] * w[8] + r.m[0] * w[6] + r.m[3] * w[7];
     a.m[7] = r.m[7] * w[8] + r.m[1] * w[6] + r.m[4] * w[7];
     a.m[8] = r.m[8] * w[8] + r.m[2] * w[6] + r.m[5] * w[7];
-    a.unk24 = o->local.unk24 + r.unk24 + 1;
+    a.count = o->local.count + r.count + 1;
     b.m[0] = a.m[6] * p[2] + a.m[0] * p[0] + a.m[3] * p[1];
     b.m[1] = a.m[7] * p[2] + a.m[1] * p[0] + a.m[4] * p[1];
     b.m[2] = a.m[8] * p[2] + a.m[2] * p[0] + a.m[5] * p[1];
@@ -118,7 +118,7 @@ void EditorMagicObj_Move(EditorMagicObj *o, MagicMove *mv)
     b.m[6] = a.m[6] * p[8] + a.m[0] * p[6] + a.m[3] * p[7];
     b.m[7] = a.m[7] * p[8] + a.m[1] * p[6] + a.m[4] * p[7];
     b.m[8] = a.m[8] * p[8] + a.m[2] * p[6] + a.m[5] * p[7];
-    b.unk24 = mv->matrix.unk24 + a.unk24 + 1;
+    b.count = mv->matrix.count + a.count + 1;
     o->matrix = b;
     ((void (*)(void *, void *))gTaskHandlers[4][RigidDynCubeObj_GetType()])(o, NULL);
 }

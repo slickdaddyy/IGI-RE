@@ -5,41 +5,13 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "param/paramtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
-
 typedef void (*TaskFn)(void *task, void *arg);
 
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
-
 /* what the param table handlers get: the table is stored through out */
-typedef void *ParamTable;
 
 #define TASK_NO_TYPE 0x181
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))

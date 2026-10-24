@@ -7,6 +7,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "soldier/soldier.h"
+#include "config/configtypes.h"
 
 #define INPUT_FRAMES 9000
 
@@ -33,18 +34,12 @@ typedef struct InputMsg {
     float *input;
 } InputMsg;
 
-typedef struct Profile {
-    char unk0[0x538];
-    int invertMouse;
-    float mouseSpeed;
-} Profile;
-
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
-ORIG(0x406220, Profile *, Profile_GetActive, (void));
+ORIG(0x406220, PlayerProfile *, Profile_GetActive, (void));
 ORIG(0x414FD0, int, Game_CheatKeyDown, (int key));
 ORIG(0x415020, int, Game_CheatKeyPressed, (int key));
 ORIG(0x46C0A0, void, Computer_SetMapEnabled, (int value));
@@ -228,7 +223,7 @@ HOOK(0x45E040, HumanPlayerInput_Close);
 /* the controls as 40 floats: mouse x and y, then one per action */
 void HumanPlayerInput_ReadChannels(float *out, HumanPlayerInput *t)
 {
-    Profile *p = Profile_GetActive();
+    PlayerProfile *p = Profile_GetActive();
     uint32_t c;
     float k;
 
@@ -241,9 +236,9 @@ void HumanPlayerInput_ReadChannels(float *out, HumanPlayerInput *t)
     out[3] = c & 2;
     out[4] = c & 4;
     out[5] = c & 8;
-    if (p->invertMouse)
+    if (p->invert_mouse)
         out[1] = -out[1];
-    k = p->mouseSpeed;
+    k = p->mouse_sensitivity;
     if (!(k >= kMouseSpeedMin))
         k = kMouseSpeedMin;
     else if (k > kMouseSpeedMax)

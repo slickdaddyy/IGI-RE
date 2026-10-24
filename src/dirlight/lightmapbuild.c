@@ -28,59 +28,6 @@ extern int gLightmapBuilt;
 
 #define LIGHTMAP_MAGIC 0x3DF5C28F
 
-typedef struct LightmapVertex {
-    Vec3f pos;
-    char unkC[0x14];
-    float uv[2];
-} LightmapVertex;
-
-/* a run of triangles; the next one starts next bytes after the indices */
-typedef struct LightmapChunk {
-    char unk0[0xC];
-    uint16_t indexCount;
-    uint16_t next;
-    uint8_t unk10;
-    char unk11;
-    uint16_t texture;
-    uint16_t base;
-    char unk16[8];
-    uint8_t unk1E;
-    char unk1F;
-    uint16_t index[];
-} LightmapChunk;
-
-typedef struct LightmapMesh {
-    int unk0;
-    int texCount;
-    int unk8;
-    char unkC[8];
-    LightmapVertex *verts;
-    short (*sizes)[4];
-    LightmapChunk *chunks;
-    char unk20[8];
-    int unk28;
-} LightmapMesh;
-
-typedef struct LightmapMeshHeader {
-    float version;
-    int time[7];
-    int format;
-    LightmapMesh *mesh;
-} LightmapMeshHeader;
-
-typedef struct MeshLod {
-    char unk0[0xC];
-    struct {
-        char unk0[0xC];
-        LightmapMeshHeader *header;
-    } *data;
-} MeshLod;
-
-_Static_assert(sizeof(LightmapVertex) == 0x28, "LightmapVertex");
-_Static_assert(offsetof(LightmapChunk, index) == 0x20, "LightmapChunk");
-_Static_assert(offsetof(LightmapMesh, unk28) == 0x28, "LightmapMesh");
-_Static_assert(offsetof(LightmapMeshHeader, mesh) == 0x24, "LightmapMeshHeader");
-
 static const float kHalf = 0.5f;
 static const float kZero = 0.0f;
 static const double kOneD = 1.0;
@@ -100,7 +47,7 @@ static inline long double heron(long double a, long double b, long double c)
 Lightmaps *Lightmap_BuildLod(void *lodp, int lodIndex, float scale, const char *name, int index, int full, int flags,
                              int unk)
 {
-    LightmapMeshHeader *mh = ((MeshLod *)lodp)->data->header;
+    MeshHeader *mh = ((ModelLod *)lodp)->mesh->header;
     LightmapMesh *mesh;
     Lightmaps *lm;
     char path[0x200];
@@ -108,7 +55,7 @@ Lightmaps *Lightmap_BuildLod(void *lodp, int lodIndex, float scale, const char *
 
     if (mh->format != 3)
         return NULL;
-    mesh = mh->mesh;
+    mesh = (LightmapMesh *)mh->data;
     if (!mesh->unk8 || !mesh)
         return NULL;
     mesh->unk28 = 0;
@@ -123,7 +70,7 @@ Lightmaps *Lightmap_BuildLod(void *lodp, int lodIndex, float scale, const char *
 
                 file = Resource_Load(path, 0);
                 file->info = NULL;
-                file->loaded = 1;
+                file->fromResource = 1;
                 file->built = 0;
                 px = (char *)&file->tex[file->count];
                 for (i = 0; i < file->count; i++) {
@@ -146,7 +93,7 @@ Lightmaps *Lightmap_BuildLod(void *lodp, int lodIndex, float scale, const char *
     lm = Mem_Alloc(mesh->texCount * sizeof(LightmapTex) + sizeof(Lightmaps), 4);
     lm->count = mesh->texCount;
     lm->info = Mem_Alloc(mesh->texCount * sizeof(LightmapTexInfo), 4);
-    lm->loaded = 0;
+    lm->fromResource = 0;
     lm->built = 1;
     gLightmapBuilt = 1;
     lm->texels = 0;

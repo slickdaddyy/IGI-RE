@@ -60,8 +60,8 @@ HOOK(0x41B310, PictureBox_Init);
 void PictureBox_Create(PictureBox *pb, void *arg)
 {
     CALL_BASE(0, pb, arg);
-    pb->w.unk3C = 1;
-    pb->w.unk40 = 1;
+    pb->w.centreX = 1;
+    pb->w.centreY = 1;
     pb->w.x = 320;
     pb->w.y = 240;
     pb->w.w = 256;

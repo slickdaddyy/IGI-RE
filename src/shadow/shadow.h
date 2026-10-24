@@ -5,94 +5,9 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "sector/sectortypes.h"
 
 typedef void (*TaskFn)();
-
-/* fixed size item pool; slots[] maps a slot number to an item number */
-typedef struct Pool {
-    char *data;
-    int *slots;
-    int used;
-    int capacity;
-    int stride;
-    int index_offset;
-} Pool;
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Matrix {
-    float m[9];
-    int unk24;          /* changes since the last re-orthonormalization */
-} Matrix;
-
-/* "RigidDynCubeObj" (0xF0 bytes), the fields used here */
-typedef struct Obj {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x28];
-    int inSector;       /* 0x60, set by Sector_AddObject */
-    int unk64;
-    void *world;        /* 0x68 */
-    void **model;       /* 0x6C, VirModel */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0x44];
-    Task *parts;        /* 0xE8, MagicObjContainer */
-    int unkEC;
-} Obj;
-
-/* create argument of the RigidDynCubeObj kinds made from DefineMagicObj */
-typedef struct MagicArg {
-    const char *model;
-    void *world;
-    Vec3d pos;          /* 0x08 */
-    Vec3d offset;       /* 0x20, from the owner */
-    Matrix matrix;      /* 0x38 */
-    Matrix local;       /* 0x60 */
-    void *owner;        /* 0x88 */
-    void *data;         /* 0x8C, the DefineMagicObj data block */
-} MagicArg;
-
-/* "Sector" (0x148 bytes): a magic object that owns other objects */
-typedef struct Sector {
-    Obj o;
-    Vec3d offset;       /* 0xF0 */
-    Matrix local;       /* 0x108 */
-    Pool links;         /* 0x130, pointers into gSectorLinks */
-} Sector;
-
-/* "SectorObject" (0x1A0 bytes), a building made of sectors */
-typedef struct SectorObject {
-    Sector s;
-    Task *sectors;      /* 0x148, MagicObjContainer of child sectors */
-    char unk14C[0x40];
-    int built;          /* 0x18C */
-    float center[3];    /* 0x190 */
-    float radius;       /* 0x19C */
-} SectorObject;
-
-/* one entry of the link pool at 0xA5E318 */
-typedef struct SectorLink {
-    void **item;        /* entry in the sector's links pool */
-    Sector *sector;
-    int index;
-} SectorLink;
 
 /* "Shadow" (0x124 bytes), a blob shadow quad under its owner */
 typedef struct ShadowPoly {
@@ -190,22 +105,22 @@ static inline Task *first_child(Task *t)
 
 static inline void pool_release(Pool *p, void *item)
 {
-    int index = *(int *)((char *)item + p->index_offset);
+    int index = *(int *)((char *)item + p->size);
     char *last;
     int last_index, tmp;
 
     p->used--;
     if (index == p->used)
         return;
-    last = p->data + p->slots[p->used] * p->stride;
-    last_index = *(int *)(last + p->index_offset);
-    tmp = p->slots[index];
-    p->slots[index] = p->slots[last_index];
-    p->slots[last_index] = tmp;
-    *(int *)(last + p->index_offset) = index;
+    last = p->data + p->free[p->used] * p->stride;
+    last_index = *(int *)(last + p->size);
+    tmp = p->free[index];
+    p->free[index] = p->free[last_index];
+    p->free[last_index] = tmp;
+    *(int *)(last + p->size) = index;
 }
 
-static inline float obj_scale(const Obj *o)
+static inline float obj_scale(const RigidDynCubeObj *o)
 {
     float m = !(o->scale[2] >= o->scale[1]) ? o->scale[1] : o->scale[2];
 

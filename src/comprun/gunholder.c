@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "comprun/comprun.h"
+#include "levelflow/levelflowtypes.h"
 
 FN_EXTERN(Car_CollFilter);
 
@@ -52,21 +53,9 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 
 #define GunHolder_Handler42FC50 (FN(0x42FC50, Car_CollFilter))
 
-/* where the detection looks from */
-typedef struct DetectView {
-    Vec3d pos;
-    Matrix matrix;
-    double angleX; /* 0x40 */
-    double angleY;
-    double range;
-    char unk58[0x18];
-    char unk70;
-    char unk71[7];
-} DetectView;
-
 /* "AIStationaryGunHolder" (0x26A0 bytes), a fixed gun that spots enemies */
 typedef struct GunHolder {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     DetectView view;      /* 0xF0 */
     char detect[0x2430];  /* 0x168, AIDetection */
     Vec3d pos;            /* 0x2598 */
@@ -98,7 +87,6 @@ typedef struct DrawArg {
     char *sprite;
 } DrawArg;
 
-_Static_assert(sizeof(DetectView) == 0x78, "DetectView");
 _Static_assert(offsetof(GunHolder, pos) == 0x2598, "pos");
 _Static_assert(offsetof(GunHolder, activeExpr) == 0x25F4, "activeExpr");
 _Static_assert(offsetof(GunHolder, team) == 0x2694, "team");
@@ -112,7 +100,7 @@ extern void *gGunHolderList;
 static const float kDegToRad = 0x1.1df46ap-6f;
 static const float kRangeScale = 4096.0f;
 
-static long double radius(RigidObj *o)
+static long double radius(RigidDynCubeObj *o)
 {
     float s = max_scale(o);
 
@@ -189,21 +177,21 @@ void GunHolder_Run(GunHolder *t)
     if (t->active) {
         t->view.pos = t->obj.pos;
         t->view.matrix = t->obj.matrix;
-        t->view.unk70 = 0;
+        t->view.hasSecond = 0;
         AIDetector_Update(t->detect, &t->view, t, t->team);
     } else if (was) {
         AIDetection_RemoveRefs(t->detect);
         AIDetector_Init(t->detect, 1, 4, Human_GetMaskType(), 4, 8);
     }
     CALL_CHILDREN_RUN(t);
-    if (t->obj.child) {
+    if (t->obj.attached) {
         MoveInfo info;
 
-        ((void (*)(void *))gTaskHandlers[1][t->obj.child->type])(t->obj.child);
+        ((void (*)(void *))gTaskHandlers[1][t->obj.attached->type])(t->obj.attached);
         info.pos = &t->obj.pos;
         info.matrix = &t->obj.matrix;
         info.owner = t;
-        CALL_CHILDREN_EV(t->obj.child, MagicObj_GetMoveEvent(), &info);
+        CALL_CHILDREN_EV(t->obj.attached, MagicObj_GetMoveEvent(), &info);
     }
 }
 HOOK(0x46E5B0, GunHolder_Run);
@@ -212,8 +200,8 @@ void GunHolder_Destroy(GunHolder *t)
 {
     VarString_Free(&t->activeExpr);
     VarString_Free(&t->teamExpr);
-    if (t->obj.child)
-        Task_Delete(t->obj.child);
+    if (t->obj.attached)
+        Task_Delete(t->obj.attached);
     DynCube_Remove(t->obj.world, t);
     AIDetection_RemoveRefs(t->detect);
 }
@@ -227,17 +215,17 @@ void GunHolder_Changed(GunHolder *t)
     RigidDynCubeObj_SetModel(t, VirModel_Find(t->model));
     r = radius(&t->obj);
     DynCube_Move(Game_GetWorld(), t, &t->pos, r);
-    old = t->obj.child;
+    old = t->obj.attached;
     t->obj.matrix = t->matrix;
     if (old)
         Task_Delete(old);
-    t->obj.child = MagicObjContainer_New(NULL, t);
-    RigidDynCubeObj_CreateMagicObjs(t->obj.child, t, t);
-    CALL_CHILDREN_EV(t->obj.child, Param_GetChangedEvent(), NULL);
+    t->obj.attached = MagicObjContainer_New(NULL, t);
+    RigidDynCubeObj_CreateMagicObjs(t->obj.attached, t, t);
+    CALL_CHILDREN_EV(t->obj.attached, Param_GetChangedEvent(), NULL);
     VarString_Bind(&t->activeExpr, t);
     VarString_Bind(&t->teamExpr, t);
-    t->view.angleX = t->angleX * kDegToRad;
-    t->view.angleY = t->angleY * kDegToRad;
+    t->view.maxPitch = t->angleX * kDegToRad;
+    t->view.maxYaw = t->angleY * kDegToRad;
     t->view.range = t->range * kRangeScale;
     AIDetector_Init(t->detect, 1, 4, Human_GetMaskType(), 4, 8);
 }

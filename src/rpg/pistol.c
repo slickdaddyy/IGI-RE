@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "rpg/soldier.h"
+#include "material/materialtypes.h"
 
 FN_EXTERN(SoldierPistol_State13Update);
 FN_EXTERN(Soldier_State10Update);
@@ -63,18 +64,18 @@ void SoldierPistol_Footstep(Soldier *h)
     void *snd;
     int i;
 
-    if (h->unk538 != 0x3F2 || h->unk53C != Anim_GetId(h->anim, 0))
+    if (h->h.animEvent.sound != 0x3F2 || h->h.animEvent.anim != Anim_GetId(h->h.anim, 0))
         return;
-    i = gFootstepSeq[h->footstep];
-    h->footstep = (unsigned)(h->footstep + 1) % 12;
-    if (!h->ground)
+    i = gFootstepSeq[h->h.footstep];
+    h->h.footstep = (unsigned)(h->h.footstep + 1) % 12;
+    if (!h->h.ground.material)
         return;
     pitch = Random_Float(Game_GetRandom()) * kPitchRange + 1.0f - kPitchDown;
-    snd = Sound_Play(Level_GetDynamic(h->ground + 0x54 + i * 0x20), h->ground + 0x54 + i * 0x20);
+    snd = Sound_Play(Level_GetDynamic(h->h.ground.material->stepSounds[i]), h->h.ground.material->stepSounds[i]);
     if (snd) {
         if (Human_IsCrouching(h))
             Sound_SetVolume(snd, -1.0f, 0x1.51eb86p-1f);
-        Sound_SetPos(snd, h->soundPos);
+        Sound_SetPos(snd, &h->h.ground.pos.x);
         Sound_SetPitch(snd, pitch);
     }
     if (!Game_IsRaining())
@@ -82,7 +83,7 @@ void SoldierPistol_Footstep(Soldier *h)
     crt_sprintf(name, "walk_rain_%1d", i + 1);
     snd = Sound_Play(Level_GetDynamic(name), name);
     if (snd) {
-        Sound_SetPos(snd, h->soundPos);
+        Sound_SetPos(snd, &h->h.ground.pos.x);
         Sound_SetPitch(snd, pitch);
     }
 }
@@ -147,8 +148,8 @@ static void ps_sides(SoldierSM *sm, Soldier *h, uint32_t b)
 
 static void ps_enter(SoldierSM *sm, Soldier *h, char moving, SoldierStateFn run)
 {
-    h->unk33D = moving;
-    h->unk696 = 0;
+    h->h.crouch = moving;
+    h->h.unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0);
     sm->run = run;
 }
@@ -158,12 +159,12 @@ static void ps_enter_phase(SoldierSM *sm, Soldier *h, int keep, SoldierStateFn r
 {
     float phase;
 
-    h->unk33D = 0;
-    h->unk696 = 0;
-    phase = Anim_GetPhase(h->anim, 0);
+    h->h.crouch = 0;
+    h->h.unk696 = 0;
+    phase = Anim_GetPhase(h->h.anim, 0);
     Human_PlayAnimSlot(h, sm->state, 0);
     if (keep)
-        Anim_SetTime(h->anim, 0, Anim_GetLength(h->anim, 0) * phase);
+        Anim_SetTime(h->h.anim, 0, Anim_GetLength(h->h.anim, 0) * phase);
     sm->run = run;
 }
 
@@ -171,12 +172,12 @@ void SoldierPistol_StandUpdate(SoldierSM *sm, Soldier *h);
 
 void SoldierPistol_StandEnter(SoldierSM *sm, Soldier *h)
 {
-    h->unk33D = 0;
-    h->unk696 = 0;
+    h->h.crouch = 0;
+    h->h.unk696 = 0;
     if (h->idleAnim == -1) {
         Human_PlayAnimSlot(h, sm->state, 0);
-    } else if (Anim_Exists(h->anim, 0, h->idleAnim)) {
-        Anim_Play(h->anim, 0, h->idleAnim, 0, 0);
+    } else if (Anim_Exists(h->h.anim, 0, h->idleAnim)) {
+        Anim_Play(h->h.anim, 0, h->idleAnim, 0, 0);
     } else {
         Warning_Show("Animation #%d not found", h->idleAnim);
         Human_PlayAnimSlot(h, sm->state, 0);
@@ -321,7 +322,7 @@ HOOK(0x458570, SoldierPistol_State6Enter);
 
 void SoldierPistol_State7Enter(SoldierSM *sm, Soldier *h)
 {
-    h->unk696 = 0;
+    h->h.unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0);
     sm->run = SoldierPistol_State7Update;
 }
@@ -329,8 +330,8 @@ HOOK(0x4585A0, SoldierPistol_State7Enter);
 
 void SoldierPistol_State8Enter(SoldierSM *sm, Soldier *h)
 {
-    ((SoldierF *)h)->unkD18 = 0;
-    h->unk696 = 0;
+    ((HumanSoldier *)h)->thrown = 0;
+    h->h.unk696 = 0;
     Human_PlayAnimSlot(h, sm->state, 0);
     sm->run = SoldierPistol_State8Update;
 }
@@ -340,8 +341,8 @@ void SoldierPistol_MeleeUpdate(SoldierSM *sm, Soldier *h);
 
 void SoldierPistol_MeleeEnter(SoldierSM *sm, Soldier *h)
 {
-    h->unk696 = 0;
-    ((SoldierF *)h)->unkD19 = 1;
+    h->h.unk696 = 0;
+    ((HumanSoldier *)h)->meleeDone = 1;
     Human_PlayAnimSlot(h, sm->state, 0);
     sm->run = SoldierPistol_MeleeUpdate;
 }
@@ -350,22 +351,22 @@ HOOK(0x458600, SoldierPistol_MeleeEnter);
 /* on the hit frame of the punch animation the target may get punched */
 void SoldierPistol_MeleeUpdate(SoldierSM *sm, Soldier *h)
 {
-    SoldierF *f = (SoldierF *)h;
+    HumanSoldier *f = (HumanSoldier *)h;
     uint32_t b = sm->bits;
-    SoldierAI *ai = h->ai;
+    HumanAI *ai = h->h.ai;
     SoldierPunch msg;
     TaskHandler fn;
     char *t;
 
     if (ps_common(sm, h, b))
         return;
-    if (h->unk538 == 0xC && h->unk53C == Anim_GetId(h->anim, 0) && !f->unkD19) {
-        f->unkD19 = 1;
-        if (!(Random_Float(Game_GetRandom()) > ai->unk3DA8) && ai->unk3AA8) {
-            char ***list = (char ***)((char *)ai->unk3AA8 + 0xC);
+    if (h->h.animEvent.sound == 0xC && h->h.animEvent.anim == Anim_GetId(h->h.anim, 0) && !f->meleeDone) {
+        f->meleeDone = 1;
+        if (!(Random_Float(Game_GetRandom()) > ai->meleeChance) && ai->target) {
+            char ***list = (char ***)((char *)ai->target + 0xC);
 
             if (*list && **list) {
-                *(int *)&msg.damage = ai->unk3DAC;
+                msg.damage = ai->meleeDamage;
                 msg.attacker = h;
                 t = **list;
                 fn = TASK_HANDLER(Human_GetPunchEvent(), *(uint16_t *)(t + 0x1C));

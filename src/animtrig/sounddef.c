@@ -4,6 +4,9 @@
 #include "hook.h"
 #include "igi.h"
 #include "animtrig/animtrig.h"
+#include "qasm/qasmtypes.h"
+#include "sound/soundtypes.h"
+#include "define/definetypes.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4974A0, void, SoundParams_Init, (void *params));
@@ -24,56 +27,6 @@ ORIG(0x4E6730, int, Sound_GetStopEvent, (void));
 ORIG(0x4E6FF0, long double, SoundParams_ClampVolume, (void *params));
 ORIG(0x4E7030, void, SoundGraph_Eval, (float *out, float *graph, float x));
 
-/* a voice's play parameters, see notes/transctx.md */
-typedef struct SoundParams {
-    float volume;
-    float pitch;
-    float pan;
-    int unkC;
-    double minDist;
-    double maxDist;
-    double pos[3];
-    int unk38[6];
-    float start;
-    int unk54;
-} SoundParams;
-
-/* filled by the sound info event of the owner */
-typedef struct SoundInfo {
-    double *pos;
-    float *matrix;
-    int *params; /* count, then that many values */
-} SoundInfo;
-
-/* "DefineGraph": a sound whose volume and pitch follow graphs of values the owner reports */
-typedef struct SoundDefGraph {
-    Task task;
-    int unk20[2];
-    int unk28;
-    int unk2C;
-    SoundParams params;
-    double pos[3];
-    double basePos[3];
-    float volume;
-    float volume2;
-    float pitch;
-    int unkC4;
-    float minDist;
-    float maxDist;
-    float unkD0;
-    int unkD4;
-    int volumeParam;
-    int pitchParam;
-    int pitchAddParam;
-    int nameParam;
-    float volumeGraph[11];
-    float pitchGraph[11];
-    char unk140[0x20];
-    char name[0x20];
-    int bucket;
-    int hash;
-} SoundDefGraph;
-
 /* "DefineGroup": a named group of sound definitions */
 typedef struct SoundDefGroup {
     Task task;
@@ -83,21 +36,6 @@ typedef struct SoundDefGroup {
     double pos[3];
 } SoundDefGroup;
 
-typedef struct SoundCreateArg {
-    SoundDefGroup *def;
-    char keep;
-} SoundCreateArg;
-
-typedef struct SoundWriteArg {
-    char *buf;
-    int depth;
-} SoundWriteArg;
-
-typedef struct SoundFindArg {
-    const char *name;
-    Task *found;
-} SoundFindArg;
-
 typedef struct SoundSysMicrophone {
     Task task;
     float matrix[10];
@@ -106,24 +44,8 @@ typedef struct SoundSysMicrophone {
     int unk64;
 } SoundSysMicrophone;
 
-typedef struct SoundPlayArg {
-    SoundSysMicrophone *listener;
-    char defs; /* 1: definitions do not play */
-} SoundPlayArg;
-
-typedef struct QTaskList {
-    int count;
-    int capacity;
-    Task *items[1];
-} QTaskList;
-
 ORIG(0x4E7330, QTaskList *, Sound_GetTasks, (void));
 
-_Static_assert(offsetof(SoundDefGraph, params) == 0x30, "params");
-_Static_assert(offsetof(SoundDefGraph, volume) == 0xB8, "volume");
-_Static_assert(offsetof(SoundDefGraph, volumeGraph) == 0xE8, "graph");
-_Static_assert(offsetof(SoundDefGraph, name) == 0x160, "name");
-_Static_assert(sizeof(SoundDefGraph) == 0x188, "SoundDefGraph");
 _Static_assert(sizeof(SoundDefGroup) == 0x60, "SoundDefGroup");
 _Static_assert(sizeof(SoundSysMicrophone) == 0x68, "SoundSysMicrophone");
 
@@ -144,50 +66,50 @@ void SoundDefGraph_Update(SoundDefGraph *s)
 
     info.pos = NULL;
     info.matrix = NULL;
-    info.params = NULL;
+    info.values = NULL;
     owner = s->task.parent;
     fn = gTaskHandlers[Sound_GetInfoEvent()][owner->type];
     if (fn)
         fn(owner, &info);
-    SoundParams_Init(&s->params);
-    memcpy(s->pos, s->basePos, sizeof(s->pos));
+    SoundParams_Init(&s->h.params);
+    memcpy(&s->pos, &s->offset, sizeof(s->pos));
     if (info.matrix) {
         const float *m = info.matrix;
         double r[3];
 
-        r[0] = ((long double)m[1] * s->pos[1] + (long double)m[2] * s->pos[2]) + (long double)m[0] * s->pos[0];
-        r[1] = ((long double)m[4] * s->pos[1] + (long double)m[5] * s->pos[2]) + (long double)m[3] * s->pos[0];
-        r[2] = ((long double)m[7] * s->pos[1] + (long double)m[8] * s->pos[2]) + (long double)m[6] * s->pos[0];
-        memcpy(s->pos, r, sizeof(r));
+        r[0] = ((long double)m[1] * s->pos.y + (long double)m[2] * s->pos.z) + (long double)m[0] * s->pos.x;
+        r[1] = ((long double)m[4] * s->pos.y + (long double)m[5] * s->pos.z) + (long double)m[3] * s->pos.x;
+        r[2] = ((long double)m[7] * s->pos.y + (long double)m[8] * s->pos.z) + (long double)m[6] * s->pos.x;
+        memcpy(&s->pos, r, sizeof(r));
     }
     if (info.pos) {
-        s->pos[0] = info.pos[0] + s->pos[0];
-        s->pos[1] = info.pos[1] + s->pos[1];
-        s->pos[2] = info.pos[2] + s->pos[2];
+        s->pos.x = info.pos->x + s->pos.x;
+        s->pos.y = info.pos->y + s->pos.y;
+        s->pos.z = info.pos->z + s->pos.z;
     }
-    if (info.params) {
-        int *vals = info.params + 1;
+    if (info.values) {
+        int *vals = info.values + 1;
 
-        if (s->volumeParam != -1) {
-            float v = ((float *)vals)[s->volumeParam];
+        if (s->volumeIndex != -1) {
+            float v = ((float *)vals)[s->volumeIndex];
 
             if (!(v >= kZero))
-                s->params.volume = 0;
+                s->h.params.volume = 0;
             else
-                SoundGraph_Eval(&s->params.volume, s->volumeGraph, v);
+                SoundGraph_Eval(&s->h.params.volume, s->volumeGraph, v);
         }
-        if (s->pitchParam != -1)
-            SoundGraph_Eval(&s->params.pitch, s->pitchGraph, ((float *)vals)[s->pitchParam]);
-        if (s->pitchAddParam != -1)
-            s->params.pitch = ((float *)vals)[s->pitchAddParam] + s->params.pitch;
-        if (s->nameParam != -1) {
-            char *name = ((char **)vals)[s->nameParam];
+        if (s->pitchIndex != -1)
+            SoundGraph_Eval(&s->h.params.pitch, s->pitchGraph, ((float *)vals)[s->pitchIndex]);
+        if (s->pitchAddIndex != -1)
+            s->h.params.pitch = ((float *)vals)[s->pitchAddIndex] + s->h.params.pitch;
+        if (s->sampleIndex != -1) {
+            char *name = ((char **)vals)[s->sampleIndex];
 
-            if (name && strcmp(name, s->name) != 0) {
-                strcpy(s->name, name);
-                s->bucket = Sound_HashBucket(s->name);
-                s->hash = Sound_HashName(s->name);
-                s->unk28 = 0;
+            if (name && strcmp(name, s->sample) != 0) {
+                strcpy(s->sample, name);
+                s->bucket = Sound_HashBucket(s->sample);
+                s->hash = Sound_HashName(s->sample);
+                s->h.id = 0;
             }
         }
     }
@@ -199,13 +121,13 @@ void SoundDefGraph_Update(SoundDefGraph *s)
         s->volume2 = 0;
     else if (s->volume2 > kOne)
         s->volume2 = 1.0f;
-    memset(s->params.unk38, 0, sizeof(s->params.unk38));
-    s->params.volume = (long double)s->volume2 * s->volume * s->params.volume;
-    memcpy(s->params.pos, s->pos, sizeof(s->pos));
-    s->params.pitch = (long double)s->pitch * s->params.pitch;
-    s->params.minDist = s->minDist;
-    s->params.maxDist = s->maxDist;
-    s->unkD0 = SoundParams_ClampVolume(&s->params);
+    memset(&s->h.params.vel, 0, sizeof(s->h.params.vel));
+    s->h.params.volume = (long double)s->volume2 * s->volume * s->h.params.volume;
+    memcpy(&s->h.params.pos, &s->pos, sizeof(s->pos));
+    s->h.params.pitch = (long double)s->pitch * s->h.params.pitch;
+    s->h.params.minDist = s->minDist;
+    s->h.params.maxDist = s->maxDist;
+    s->range = SoundParams_ClampVolume(&s->h.params);
 }
 HOOK(0x4EAEB0, SoundDefGraph_Update);
 
@@ -254,8 +176,8 @@ void SoundDefGroup_Create(SoundDefGroup *g, SoundCreateArg *arg)
         g->keep = 1;
         return;
     }
-    g->keep = arg->keep;
-    strcpy(g->name, arg->def->name);
+    g->keep = arg->isDef;
+    strcpy(g->name, ((SoundDefGroup *)arg->def)->name);
     g->stopped = 0;
 }
 HOOK(0x4EB360, SoundDefGroup_Create);
@@ -283,16 +205,16 @@ void SoundDefGroup_Write(SoundDefGroup *g, SoundWriteArg *a)
     Task *last;
     int i;
 
-    for (i = 0; i < a->depth; i++)
+    for (i = 0; i < a->indent; i++)
         strcat(a->buf, "  ");
     crt_sprintf(line, "%s(\"%s\"", "DefineGroup", g->name);
     strcat(a->buf, line);
-    a->depth++;
+    a->indent++;
     if (g->task.head->next && g->task.head) {
         strcat(a->buf, ",\r\n");
         CALL_CHILDREN(&g->task, Sound_GetListEvent(), a);
     }
-    if (--a->depth == 0) {
+    if (--a->indent == 0) {
         end = ");\r\n";
     } else {
         last = g->task.parent->tailpred;
@@ -313,7 +235,7 @@ void SoundDefGroup_Info(SoundDefGroup *g, SoundInfo *info)
     if (fn)
         fn(owner, info);
     if (!info->pos)
-        info->pos = g->pos;
+        info->pos = (Vec3d *)g->pos;
 }
 HOOK(0x4EB620, SoundDefGroup_Info);
 
@@ -403,7 +325,7 @@ ScriptValue *DefineGroup(ScriptValue *out, Task *parent, ScriptArgs *args)
     int i = 1;
 
     arg.def = &def;
-    arg.keep = 1;
+    arg.isDef = 1;
     Script_GetArgString(args, 0, def.name, 0x20);
     def.keep = 1;
     t = Task_New(parent, gSoundDefGroupType2, &arg);

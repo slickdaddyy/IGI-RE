@@ -2,18 +2,7 @@
 #define SYMTAB_H
 
 #include "core/list.h"
-
-typedef struct Symbol {
-    Node node;
-    char *name;
-    void *value;
-    char text[];
-} Symbol;
-
-typedef struct SymbolTable {
-    List *buckets;
-    unsigned int count;
-} SymbolTable;
+#include "qsc/qsctypes.h"
 
 unsigned int SymbolTable_Hash(const char *name, unsigned int count);
 char SymbolTable_Find(SymbolTable *table, Symbol **out, const char *name);

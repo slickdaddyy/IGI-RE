@@ -168,7 +168,7 @@ void AnimObj_Control(AnimObj *o, AnimControlMsg *msg)
         x.m[6] = e[0] * r[6] + e[3] * r[7] + e[6] * r[8];
         x.m[7] = e[4] * r[7] + e[7] * r[8] + e[1] * r[6];
         x.m[8] = e[5] * r[7] + e[8] * r[8] + e[2] * r[6];
-        x.unk24 = o->rot.unk24 + rot.unk24 + 1;
+        x.count = o->rot.count + rot.count + 1;
         o->rot = x;
         x.m[0] = r[6] * pm[2] + r[0] * pm[0] + r[3] * pm[1];
         x.m[1] = r[7] * pm[2] + r[1] * pm[0] + r[4] * pm[1];
@@ -179,7 +179,7 @@ void AnimObj_Control(AnimObj *o, AnimControlMsg *msg)
         x.m[6] = r[3] * pm[7] + r[6] * pm[8] + r[0] * pm[6];
         x.m[7] = r[1] * pm[6] + r[4] * pm[7] + r[7] * pm[8];
         x.m[8] = r[5] * pm[7] + r[8] * pm[8] + r[2] * pm[6];
-        x.unk24 = ((const int *)pm)[9] + o->rot.unk24 + 1;
+        x.count = ((const int *)pm)[9] + o->rot.count + 1;
         o->matrix = x;
         /* the speed is added a second time */
         k = msg->keys;
@@ -209,7 +209,7 @@ void AnimObj_Control(AnimObj *o, AnimControlMsg *msg)
         x.m[6] = e[6] * m[8] + e[0] * m[6] + e[3] * m[7];
         x.m[7] = e[7] * m[8] + e[1] * m[6] + e[4] * m[7];
         x.m[8] = e[8] * m[8] + e[2] * m[6] + e[5] * m[7];
-        x.unk24 = o->matrix.unk24 + rot.unk24 + 1;
+        x.count = o->matrix.count + rot.count + 1;
         o->matrix = x;
         p.x = (long double)v0 + o->pos.x;
         p.y = (long double)v1 + o->pos.y;

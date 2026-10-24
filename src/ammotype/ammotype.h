@@ -5,32 +5,12 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "ammotype/ammotypetypes.h"
 
 #define AMMO_TYPE_MAX 32
 #define AMMO_LIST_MAX 32
 
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    struct Task *tail;
-    struct Task *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
-
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
 
 extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) (gTaskHandlers[(uint8_t)(slot)][(uint16_t)(type)])
@@ -50,12 +30,6 @@ typedef struct AmmoType {
     char unk148[0x10];
     char sound[0x10];
 } AmmoType;
-
-typedef struct AmmoEntry {
-    int id;
-    int count;
-    int limit; /* -1: none */
-} AmmoEntry;
 
 /* The ammo a human carries (Human + 0x340). */
 typedef struct AmmoList {

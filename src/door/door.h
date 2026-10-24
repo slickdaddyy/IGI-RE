@@ -6,97 +6,15 @@
 #include <string.h>
 
 #include "igi.h"
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "param/paramtypes.h"
+#include "door/doortypes.h"
+#include "props/propstypes.h"
 
 typedef void (*TaskFn)();
 
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-/* "SectorInteriorObject" (0xF0 bytes), a RigidDynCubeObj placed in a sector */
-typedef struct Obj {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x30];
-    void *sector;       /* 0x68 */
-    void **model;       /* 0x6C */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0x44];
-    Task *unkE8;        /* 0xE8 */
-    int unkEC;
-} Obj;
-
-/* the search for what a human can use (see 0x416AD0) */
-typedef struct UseQuery {
-    Task *human;
-    int unk4;
-    Vec3d pos;          /* 0x08 */
-} UseQuery;
-
-/* sent with the RigidDynCubeObj event 4: move along with the parent */
-typedef struct MoveMsg {
-    Vec3d *pos;
-    Matrix *matrix;
-} MoveMsg;
-
-/* "Cabinet" (0x138) */
-typedef struct Cabinet {
-    Obj o;
-    Vec3d place;        /* 0xF0 */
-    float yaw;          /* 0x108 */
-    char model[0x10];   /* 0x10C */
-    char opening;       /* 0x11C */
-    char closing;       /* 0x11D */
-    char reset;         /* 0x11E */
-    char inUse;         /* 0x11F */
-    char lastInUse;     /* 0x120 */
-    char unk121[3];
-    int useTick;        /* 0x124 */
-    char searched;      /* 0x128 */
-    char registered;    /* 0x129 */
-    char unk12A[2];
-    float searchTime;   /* 0x12C */
-    char moving;        /* 0x130 */
-    char unk131[7];
-} Cabinet;
-
 /* "Switch" (0x228) */
 typedef struct Switch {
-    Obj o;
+    RigidDynCubeObj o;
     Vec3d place;        /* 0xF0 */
     Matrix matrix;      /* 0x108 */
     Vec3d offset;       /* 0x130, place relative to the parent object */
@@ -119,7 +37,7 @@ typedef struct Switch {
 
 /* "Door" (0x328): turns around z and/or slides in x/y */
 typedef struct Door {
-    Obj o;
+    RigidDynCubeObj o;
     Vec3d place;        /* 0xF0 */
     float slide[2];     /* 0x108 */
     Matrix base;        /* 0x110, the closed matrix */
@@ -157,9 +75,6 @@ typedef struct Door {
     Matrix local;       /* 0x300, base relative to the parent object */
 } Door;
 
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
-_Static_assert(sizeof(Obj) == 0xF0, "Obj");
-_Static_assert(sizeof(Cabinet) == 0x138, "Cabinet");
 _Static_assert(offsetof(Switch, models) == 0x170, "Switch");
 _Static_assert(offsetof(Switch, on) == 0x1D0, "Switch");
 _Static_assert(sizeof(Switch) == 0x228, "Switch");
@@ -221,7 +136,7 @@ ORIG(0x416AD0, char, UseQuery_Consider, (UseQuery *q, void *obj, const Vec3d *po
 extern double kUseWidth;
 
 /* offers o to the human when it stands in front of model point 0 */
-static inline void check_use(Obj *o, UseQuery *q)
+static inline void check_use(RigidDynCubeObj *o, UseQuery *q)
 {
     const float *m = o->matrix.m;
     long double x, a, b;
@@ -247,7 +162,7 @@ static inline void check_use(Obj *o, UseQuery *q)
 }
 
 /* the largest of the three scale factors, compared like the original */
-static inline float max_scale(const Obj *o)
+static inline float max_scale(const RigidDynCubeObj *o)
 {
     float m = o->scale[2] >= o->scale[1] ? o->scale[2] : o->scale[1];
 
@@ -275,7 +190,7 @@ static inline void mat_mul(Matrix *out, const Matrix *a, const Matrix *b, int or
             n.m[i * 3 + j] = o == SUM01_2 ? (p0 + p1) + p2 : o == SUM02_1 ? (p0 + p2) + p1 : (p1 + p2) + p0;
         }
     }
-    n.unk24 = a->unk24 + b->unk24 + 1;
+    n.count = a->count + b->count + 1;
     *out = n;
 }
 
@@ -294,7 +209,7 @@ static inline void place_from(Vec3d *place, const Matrix *m, const Vec3d *offset
 }
 
 /* offset and local are place and m seen from the parent object */
-static inline void to_local(Vec3d *offset, Matrix *local, const Vec3d *place, const Matrix *m, const Obj *parent)
+static inline void to_local(Vec3d *offset, Matrix *local, const Vec3d *place, const Matrix *m, const RigidDynCubeObj *parent)
 {
     const float *t = parent->matrix.m;
     long double z;
@@ -317,7 +232,7 @@ static inline void to_local(Vec3d *offset, Matrix *local, const Vec3d *place, co
     local->m[6] = t[2];
     local->m[7] = t[5];
     local->m[8] = t[8];
-    local->unk24 = parent->matrix.unk24;
+    local->count = parent->matrix.count;
     mat_mul(local, m, local, ORDER(SUM01_2, SUM02_1, SUM12_0));
 }
 

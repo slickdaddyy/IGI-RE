@@ -1,28 +1,7 @@
 #ifndef MATH_VECMATH_H
 #define MATH_VECMATH_H
 
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major */
-typedef struct Matrix {
-    float m[9];
-    int unk24; /* sum of the inputs' values plus one on each multiply */
-} Matrix;
-
-typedef struct Quat {
-    float x, y, z, w;
-    int unk10;
-} Quat;
-
-typedef struct Random {
-    unsigned int a, b, c;
-} Random;
+#include "types.h"
 
 #define HALF_PI 0x1.921fb54442d1bp+0
 #define PI      0x1.921fb54442d1bp+1

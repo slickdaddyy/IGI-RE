@@ -3,6 +3,8 @@
 
 #include "hook.h"
 #include "editcam/editcam.h"
+#include "magicobj/magicobjtypes.h"
+#include "editcam/editcamtypes.h"
 
 FN_EXTERN(SubLevel_Run);
 
@@ -36,46 +38,6 @@ ORIG(0x4F1E20, void *, Param_EnumString32, (void));
 ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
 #define SubLevel_Run (FN(0x488700, SubLevel_Run))
-
-/* a camera key of a cut scene */
-typedef struct EditCamera {
-    Task task;
-    Vec3d pos;
-    float duration;
-    float angles[3];
-    Vec3d attachPos;    /* offset from the position target */
-    Matrix attachRot;
-    float fov;
-    int posAttach;      /* task id followed by the position, -1 none */
-    int rotAttach;      /* task id the camera looks at, -1 none */
-    char smooth;
-    char posFollow;
-    char rotFollow;
-    char unk97;
-    float unk98;
-    Task **refs[3];
-    char unkA8;
-    char filterName[0x23];
-    int filter;
-    float filterLevel;
-    float color[3];
-    float shake;
-    int unkE4;
-} EditCamera;
-
-/* filled by the slot 7 handler of a task */
-typedef struct ObjInfo {
-    Vec3d pos;
-    int unk18[3];
-    Matrix matrix;
-    float radius;
-    char *name;
-} ObjInfo;
-
-_Static_assert(sizeof(EditCamera) == 0xE8, "EditCamera");
-_Static_assert(offsetof(EditCamera, filterName) == 0xA9, "EditCamera.filterName");
-_Static_assert(offsetof(EditCamera, filter) == 0xCC, "EditCamera.filter");
-_Static_assert(offsetof(ObjInfo, name) == 0x50, "ObjInfo");
 
 extern uint16_t gEditCameraType;
 extern char gEditCameraFilterEnum[];
@@ -346,12 +308,12 @@ void EditCamera_AttachPosition(Vec3d *pos, Matrix *rot, Vec3d *off, Matrix *offR
     c[3] = a[7] * b[6] + a[4] * b[3] + a[1] * b[0];
     c[4] = a[1] * b[1] + a[7] * b[7] + a[4] * b[4];
     c[5] = a[7] * b[8] + a[4] * b[5] + a[1] * b[2];
-    c9 = rot->unk24 + offRot->unk24 + 1;
+    c9 = rot->count + offRot->count + 1;
     c[6] = a[8] * b[6] + a[5] * b[3] + a[2] * b[0];
     c[7] = a[2] * b[1] + a[8] * b[7] + a[5] * b[4];
     c[8] = a[8] * b[8] + a[5] * b[5] + a[2] * b[2];
     memcpy(b, c, sizeof(c));
-    rot->unk24 = c9;
+    rot->count = c9;
 
     c[0] = m[2] * b[6] + m[1] * b[3] + m[0] * b[0];
     c[1] = m[0] * b[1] + m[2] * b[7] + m[1] * b[4];
@@ -359,12 +321,12 @@ void EditCamera_AttachPosition(Vec3d *pos, Matrix *rot, Vec3d *off, Matrix *offR
     c[3] = m[5] * b[6] + m[4] * b[3] + m[3] * b[0];
     c[4] = m[3] * b[1] + m[5] * b[7] + m[4] * b[4];
     c[5] = m[5] * b[8] + m[4] * b[5] + m[3] * b[2];
-    c9 = rot->unk24 + info.matrix.unk24 + 1;
+    c9 = rot->count + info.matrix.count + 1;
     c[6] = m[8] * b[6] + m[7] * b[3] + m[6] * b[0];
     c[7] = m[6] * b[1] + m[8] * b[7] + m[7] * b[4];
     c[8] = m[8] * b[8] + m[7] * b[5] + m[6] * b[2];
     memcpy(b, c, sizeof(c));
-    rot->unk24 = c9;
+    rot->count = c9;
 }
 HOOK(0x508940, EditCamera_AttachPosition);
 

@@ -1,71 +1,11 @@
 #pragma GCC optimize("excess-precision=standard")
 
 #include "freecam/freecam.h"
+#include "terredit/terredittypes.h"
 
 /* Quad tree of the water surface around the camera, split finer near the
    viewer. The top level is an 8x8 grid; the 2x2 children of every split
    node of level n go into the 4x4 grid n. */
-
-typedef struct WaterNode {
-    double x, y;
-    int unk10;
-    uint32_t flags;     /* which side of the parent: 2/4 y, 8/0x10 x */
-    uint32_t edges;     /* sides that border finer neighbours */
-    uint32_t level;
-    uint32_t size;
-    int visible;
-    int active;
-    struct WaterNode *parent;
-} WaterNode;
-
-typedef struct WaterMesh {
-    char unk0[0x40];
-    WaterNode top[8][8];
-    WaterNode grid[20][4][4];
-    char unk4840[0x30];
-    Vec3d cam;
-    char unk4888[0x1C0];
-    float camDir[3];
-    char unk4A54[0x24];
-    double camHeight;
-    char unk4A80[0x10];
-    float edgeZ;
-    float height;
-    char unk4A98[0x24];
-    uint32_t maxLevel;
-    int envMap;
-    int unk4AC4;
-    int debugColors;
-} WaterMesh;
-
-/* argument of TerrainMesh_DrawTriangle */
-typedef struct WaterTri {
-    Vec3d pos[3];
-    float color[3][3];
-    float uv[3][2];
-    void *fogLayers;
-    int envMap;
-} WaterTri;
-
-/* filled by WaterMesh_GetVertex */
-typedef struct WaterVertex {
-    char unk0[8];
-    Vec3d pos;
-    char unk20[0x18];
-    float normal[3];
-    char unk44[0x2C];
-} WaterVertex;
-
-_Static_assert(sizeof(WaterNode) == 0x30, "WaterNode");
-_Static_assert(offsetof(WaterMesh, grid) == 0xC40, "grid");
-_Static_assert(offsetof(WaterMesh, cam) == 0x4870, "cam");
-_Static_assert(offsetof(WaterMesh, camDir) == 0x4A48, "camDir");
-_Static_assert(offsetof(WaterMesh, camHeight) == 0x4A78, "camHeight");
-_Static_assert(offsetof(WaterMesh, edgeZ) == 0x4A90, "edgeZ");
-_Static_assert(offsetof(WaterMesh, maxLevel) == 0x4ABC, "maxLevel");
-_Static_assert(offsetof(WaterMesh, debugColors) == 0x4AC8, "debugColors");
-_Static_assert(offsetof(WaterTri, envMap) == 0x88, "WaterTri");
-_Static_assert(offsetof(WaterVertex, normal) == 0x38, "WaterVertex");
 
 ORIG(0x4B3100, void, Vec3d_Normalize, (Vec3d *v));
 ORIG(0x4B4010, void, Matrix_SetDirection, (float *m, const float *dir));
@@ -254,7 +194,7 @@ void WaterMesh_SetEdgeFlags(WaterMesh *w, int level, int x, int y)
     WaterNode *nb, *c;
     int k;
 
-    if ((uint32_t)(level + 1) >= w->maxLevel) {
+    if ((uint32_t)(level + 1) >= w->count) {
         w->grid[level][x][y].edges = 0;
         return;
     }
@@ -311,7 +251,7 @@ void WaterMesh_CheckVisible(WaterMesh *w, WaterNode *n)
     long double h = n->size >> 1;
     long double cx = h + n->x;
     double cy = h + n->y;
-    double cz = w->height;
+    double cz = w->level;
     long double inv;
     float d[3];
 
@@ -372,8 +312,8 @@ void WaterMesh_Subdivide(WaterMesh *w, WaterNode *n)
             ch->flags = 0;
             ch->x = offX + n->x;
             ch->y = (long double)(uint32_t)(j * half) + n->y;
-            if (w->maxLevel <= ch->level)
-                w->maxLevel = ch->level;
+            if (w->count <= ch->level)
+                w->count = ch->level;
             ch->flags |= i ? 8 : 0x10;
             ch->flags |= j ? 2 : 4;
             if ((long double)ch->size > kSplitMin) {

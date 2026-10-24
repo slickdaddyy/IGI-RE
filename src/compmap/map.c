@@ -33,13 +33,13 @@ ORIG(0x4E8210, MapCamera *, Viewport_GetCamera, (void *view));
 ORIG(0x4E8220, void, Viewport_SetList, (void *view, int i, char on));
 ORIG(0x4E8250, void, Viewport_SetDrawWorld, (void *view, char on));
 ORIG(0x491D40, long double, Display_GetAspect, (void));
-ORIG(0x460C60, TaskArray *, Human_GetList, (void));
-ORIG(0x476030, TaskArray *, Mine_GetList, (void));
-ORIG(0x443660, TaskArray *, SCameraLens_GetList, (void));
+ORIG(0x460C60, QTaskList *, Human_GetList, (void));
+ORIG(0x476030, QTaskList *, Mine_GetList, (void));
+ORIG(0x443660, QTaskList *, SCameraLens_GetList, (void));
 ORIG(0x4C3440, Vec3d *, DynCubeObj_GetPosition, (Task *obj));
-ORIG(0x4CC2A0, void, Coll_Lines, (void *world, MapHit *results, Vec3d *starts, Vec3d *ends, int count, int unk,
+ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *results, Vec3d *starts, Vec3d *ends, int count, int unk,
                                   void *query, unsigned int flags));
-ORIG(0x4CB9F0, void, Coll_DropPointsMat, (void *world, MapHit *results, Vec3d *points, int count, const double *dz,
+ORIG(0x4CB9F0, void, Coll_DropPointsMat, (void *world, CollHit *results, Vec3d *points, int count, const double *dz,
                                           int unk, int unk2, unsigned int flags));
 ORIG(0x466F60, MapLimit *, ComputerLimit_Get, (void));
 ORIG(0x467D70, char *, ComputerObject_New, (void *parent));
@@ -242,7 +242,7 @@ HOOK(0x469D70, ComputerMap_OnTab);
 void ComputerMap_OnButton(ComputerButtonItem *b, int *id)
 {
     ComputerMap *map = gMap;
-    char *in = Computer_Get()->input;
+    char *in = (char *)(Computer_Get()->obj.task.parent);
     float sound[3] = {1.0f, 1.0f, 0};
     float dx, dy, sdx;
     long double f;
@@ -417,7 +417,7 @@ HOOK(0x46A200, ComputerMap_ClampCamera);
 void ComputerMap_DropCamera(ComputerMap *map)
 {
     double dz = kDrop;
-    MapHit hit;
+    CollHit hit;
 
     Coll_DropPointsMat(Game_GetWorld(), &hit, &gMapPos, 1, &dz, 0xFF, 0, 0x80000000);
     if (hit.found)
@@ -478,12 +478,12 @@ void ComputerMap_Trace(ComputerMap *map)
         float mx = map->clickX, my = map->clickY;
         const float *rect = Viewport_GetRect(Computer_GetView());
         MapCamera *cam;
-        TaskArray *humans, *objs, *cams;
+        QTaskList *humans, *objs, *cams;
         float aspect;
         double sx, sy, t;
         long double fx;
         Vec3d start, dir, n, end, tmp;
-        MapHit hit;
+        CollHit hit;
         int i, count, found1 = 0, found2 = 0, found3 = 0;
         Task *h = NULL;
 
@@ -515,7 +515,7 @@ void ComputerMap_Trace(ComputerMap *map)
         count = humans->count;
         for (i = 0; i < count; i++) {
             tmp = hit.pos;
-            h = humans->item[i];
+            h = humans->items[i];
             tmp.z = DynCubeObj_GetPosition(h)->z;
             if (Vec3d_DistanceSq(DynCubeObj_GetPosition(h), &tmp) < map->fov * kNear) {
                 found1 = 1;
@@ -524,7 +524,7 @@ void ComputerMap_Trace(ComputerMap *map)
         }
         count = objs->count;
         for (i = 0; i < count; i++) {
-            char *o = (char *)objs->item[i];
+            char *o = (char *)objs->items[i];
 
             tmp = hit.pos;
             tmp.z = *(double *)(o + 0x30);
@@ -537,7 +537,7 @@ void ComputerMap_Trace(ComputerMap *map)
         }
         count = cams->count;
         for (i = 0; i < count; i++) {
-            Task *c = cams->item[i];
+            Task *c = cams->items[i];
 
             tmp = hit.pos;
             tmp.z = DynCubeObj_GetPosition(c)->z;

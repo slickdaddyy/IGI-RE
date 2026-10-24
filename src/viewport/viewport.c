@@ -2,16 +2,11 @@
 
 #include "hook.h"
 #include "viewport/viewport.h"
+#include "win/wintypes.h"
 
 /* "ViewportQTask": a rectangle of the screen drawn through a camera. Its
    draw handler sets up a scene and a TransContext, then sends the draw
    event to its children. */
-
-typedef struct DisplayMode {
-    int unk0;
-    int width;
-    int height;
-} DisplayMode;
 
 typedef void (*ViewportCallback)(Camera *camera);
 
@@ -88,8 +83,8 @@ void ViewportQTask_DrawHandler(Viewport *v)
     ViewSlot_SetCurrent(v->slot);
     mid = (h + y) * kHalf;
     left = x * dw;
-    top = ((y - mid) * v->camera->squeeze + mid) * dh;
-    bottom = ((h - mid) * v->camera->squeeze + mid) * dh;
+    top = ((y - mid) * v->camera->aspect + mid) * dh;
+    bottom = ((h - mid) * v->camera->aspect + mid) * dh;
     v->rect[0] = (float)x87_fistp(left);
     v->rect[1] = (float)x87_fistp(top);
     v->rect[2] = (float)x87_fistp(w * dw - left);
@@ -99,7 +94,7 @@ void ViewportQTask_DrawHandler(Viewport *v)
 
     cam = v->camera;
     memcpy(rot, cam, sizeof(rot));
-    memcpy(pos, cam->pos, sizeof(pos));
+    memcpy(pos, &cam->pos, sizeof(pos));
     TransContext_Create(&ctx, rot, pos, cam->fov * v->fovScale);
     TransContext_SetUnk5C(&ctx, 1.0f);
     TransContext_Select(&ctx);

@@ -5,82 +5,13 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "param/paramtypes.h"
+#include "script/scripttypes.h"
+#include "qvertex/qvertextypes.h"
+#include "win/wintypes.h"
+#include "res/restypes.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-/* 3x3 rotation, row major, plus a serial number */
-typedef struct Matrix {
-    float m[9];
-    int serial;
-} Matrix;
-
-/* a script string parameter that may hold an expression */
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
-
-typedef struct Sprite {
-    char unk0[0x18];
-} Sprite;
-
-typedef struct Text {
-    void *grid;
-    float x, y, z;
-    float alpha;
-    float color[3];
-    int unk20;
-    unsigned int flags;
-} Text;
-
-typedef struct Display {
-    int unk0;
-    int width;
-    int height;
-} Display;
-
-typedef struct QVertex {
-    float x, y, z;
-    float u, v;
-    float a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
 
 /* a "StatusMessage" task (0x1E0 bytes): a text shown on the status screen when cond becomes true */
 typedef struct StatusMessage {
@@ -213,7 +144,7 @@ ORIG(0x401AE0, Task **, TaskRef_Add, (void *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416D40, char *, Game_Get, (void));
-ORIG(0x491CF0, Display *, Display_GetMode, (void));
+ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4B0D60, void, Mem_PushMode, (char mode));

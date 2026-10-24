@@ -5,19 +5,9 @@
 
 #include "hook.h"
 #include "dxinit/dxinit.h"
-
-typedef struct MapHit {
-    Task *task;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x50];
-} MapHit;
-
-typedef struct DisplayMode {
-    int unk0;
-    int width;
-    int height;
-} DisplayMode;
+#include "win/wintypes.h"
+#include "coll/colltypes.h"
+#include "dxinit/dxinittypes.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401400, void, TaskType_SetHandler, (int type, uint8_t slot, void *fn));
@@ -37,7 +27,7 @@ ORIG(0x4B47C0, int, Random_Int, (void *r, int n));
 ORIG(0x4B72E0, void *, SortRender_Add, (void (*fn)(void *), int size, uint32_t key));
 ORIG(0x4C6840, void, DynCube_ListRemove, (void *world, void *obj, int list));
 ORIG(0x4C6890, void, DynCube_ListAdd, (void *world, void *obj, int list));
-ORIG(0x4CB9F0, void, Coll_DropPointsMat, (void *world, MapHit *results, Vec3d *points, int count, const double *dz,
+ORIG(0x4CB9F0, void, Coll_DropPointsMat, (void *world, CollHit *results, Vec3d *points, int count, const double *dz,
                                           int unk, int unk2, unsigned int flags));
 
 /* one falling drop or flake, positions inside a 10895.36 square tile */
@@ -47,13 +37,6 @@ typedef struct RainDrop {
     float dx, dy;
     int kind; /* bit 0 / 1: tile wrapped in x / y, picks the vertex group */
 } RainDrop;
-
-/* a ground sample of the 24x24 grid around the camera (12x12 tiled twice) */
-typedef struct RainCell {
-    double x, y, z;
-    float depth;
-    unsigned flags; /* 0x20 = valid, bits 0-4 outcodes */
-} RainCell;
 
 /* heights of the drops in one vertex group, in drawing order */
 typedef struct RainList {
@@ -271,7 +254,7 @@ void Rain_UpdateGrid(Rain *r)
             c->flags &= mask;
             if (!c->flags && budget-- > 0) {
                 double dz = -r->fallDist;
-                MapHit hit;
+                CollHit hit;
 
                 c->x = x;
                 c->y = cy;
@@ -350,9 +333,9 @@ void Rain_FillVB(Rain *r)
         RainList *l;
 
         if (r->snow == 1) {
-            float vx = gView.m[1] * d->y + gView.m[0] * d->x + gView.m[2] * d->z;
-            float vy = gView.m[4] * d->y + gView.m[3] * d->x + gView.m[5] * d->z;
-            float vz = gView.m[7] * d->y + gView.m[6] * d->x + gView.m[8] * d->z;
+            float vx = gView.matrix.m[1] * d->y + gView.matrix.m[0] * d->x + gView.matrix.m[2] * d->z;
+            float vy = gView.matrix.m[4] * d->y + gView.matrix.m[3] * d->x + gView.matrix.m[5] * d->z;
+            float vz = gView.matrix.m[7] * d->y + gView.matrix.m[6] * d->x + gView.matrix.m[8] * d->z;
             float x0 = vx - size, x1 = vx + size;
             float y0 = vy - size, y1 = vy + size;
 
@@ -396,9 +379,9 @@ void Rain_FillVB(Rain *r)
     r->vb->lpVtbl->Unlock(r->vb);
     if (r->snow == 1) {
         for (i = 0; i < 3; i++) {
-            r->matrix[i * 4] = gView.m[i * 3] * gNearPlaneScale;
-            r->matrix[i * 4 + 1] = gView.m[i * 3 + 1] * gNearPlaneScale;
-            r->matrix[i * 4 + 2] = gView.m[i * 3 + 2] * gNearPlaneScale;
+            r->matrix[i * 4] = gView.matrix.m[i * 3] * gNearPlaneScale;
+            r->matrix[i * 4 + 1] = gView.matrix.m[i * 3 + 1] * gNearPlaneScale;
+            r->matrix[i * 4 + 2] = gView.matrix.m[i * 3 + 2] * gNearPlaneScale;
             r->matrix[i * 4 + 3] = 0.0f;
         }
     } else {
@@ -502,7 +485,7 @@ HOOK(0x499430, Rain_DrawCell);
 
 static float Rain_View(int row, long double px, long double py, long double pz)
 {
-    return gView.m[row + 2] * pz + gView.m[row + 1] * py + gView.m[row] * px;
+    return gView.matrix.m[row + 2] * pz + gView.matrix.m[row + 1] * py + gView.matrix.m[row] * px;
 }
 
 /* Outcodes of the cells around the camera: bit 5 set, bits 0-4 the outcodes shared by the
@@ -526,7 +509,7 @@ void Rain_ClipCells(Rain *r, double z)
 
                 v[0] = Rain_View(0, px, py, pz);
                 v[1] = Rain_View(3, px, py, pz);
-                depth = gView.m[8] * pz + gView.m[7] * py + gView.m[6] * px;
+                depth = gView.matrix.m[8] * pz + gView.matrix.m[7] * py + gView.matrix.m[6] * px;
                 v[2] = depth;
                 if (depth > kZero) {
                     TransContext_ProjectView(s, v);
@@ -546,7 +529,7 @@ void Rain_ClipCells(Rain *r, double z)
                 pz = z2 - gViewPos.z;
                 u[0] = Rain_View(0, px, py, pz);
                 u[1] = Rain_View(3, px, py, pz);
-                depth = gView.m[8] * pz + gView.m[7] * py + gView.m[6] * px;
+                depth = gView.matrix.m[8] * pz + gView.matrix.m[7] * py + gView.matrix.m[6] * px;
                 u[2] = depth;
                 if (depth > kZero) {
                     TransContext_ProjectView(s, u);

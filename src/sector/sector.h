@@ -5,45 +5,10 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
+#include "sector/sectortypes.h"
+#include "model/modeltypes.h"
 
 typedef void (*TaskFn)();
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-typedef struct Matrix {
-    float m[9];
-    int unk24;
-} Matrix;
-
-/* count fixed size slots; the slot index is kept at slot + size */
-typedef struct Pool {
-    char *data;
-    int *free;
-    int used;
-    int count;
-    int stride;
-    int size;
-} Pool;
 
 /* a portal of a sector mesh (0x14 bytes) */
 typedef struct Portal {
@@ -71,54 +36,11 @@ typedef struct SectorMesh {
     Portal *portals;    /* 0x98 */
 } SectorMesh;
 
-typedef struct VirModel {
-    void *lod[15];
-    short lodCount;     /* 0x3C */
-} VirModel;
-
 static inline SectorMesh *lod_mesh(VirModel *m, int i)
 {
-    return *(SectorMesh **)(*(char **)((char *)m->lod[i] + 0xC) + 0xC);
+    return *(SectorMesh **)(*(char **)((char *)m->lods[i] + 0xC) + 0xC);
 }
 
-/* "RigidDynCubeObj" (0xF0 bytes), the fields used here */
-typedef struct Obj {
-    Task task;
-    Vec3d pos;          /* 0x20 */
-    char unk38[0x28];
-    int inSector;       /* 0x60 */
-    int unk64;
-    int world;          /* 0x68 */
-    VirModel *model;    /* 0x6C */
-    Matrix matrix;      /* 0x70 */
-    float scale[3];     /* 0x98 */
-    char unkA4[0x34];
-    int unkD8;
-    void *lightmapRefs; /* 0xDC */
-    char unkE0[8];
-    Task *attached;     /* 0xE8 */
-    char unkEC[4];
-} Obj;
-
-/* "Sector" (0x148 bytes): a room; objects inside are kept in its pool */
-typedef struct Sector {
-    Obj o;
-    char unkF0[0x40];
-    Pool objects;       /* 0x130, slots hold Obj pointers */
-} Sector;
-
-/* "SectorObject" (0x1A0 bytes): a building made of sectors */
-typedef struct SectorObject {
-    Sector s;
-    Task *sectors;      /* 0x148 */
-    char portalOpen[0x44];  /* 0x14C, by portal id */
-    Vec3f offset;       /* 0x190 */
-    int unk19C;
-} SectorObject;
-
-_Static_assert(sizeof(Obj) == 0xF0, "Obj");
-_Static_assert(sizeof(Sector) == 0x148, "Sector");
-_Static_assert(sizeof(SectorObject) == 0x1A0, "SectorObject");
 _Static_assert(offsetof(SectorMesh, portals) == 0x98, "SectorMesh");
 
 extern TaskFn gTaskHandlers[][0x180];

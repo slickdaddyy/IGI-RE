@@ -3,15 +3,7 @@
 
 #include "hook.h"
 #include "compmap/compmap.h"
-
-/* one mission objective (0xCC bytes) */
-typedef struct Objective {
-    char name[0x20];
-    int taskId;          /* 0x20, -1 = none */
-    char unk24[0xA0];
-    int complete;        /* 0xC4 */
-    int failed;          /* 0xC8 */
-} Objective;
+#include "computer/computertypes.h"
 
 ORIG(0x488700, void, SubLevel_Run, (void *task));
 ORIG(0x4D3710, void, Task_Nothing, (void *task));

@@ -5,67 +5,14 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "magicobj/magicobjtypes.h"
+#include "qasm/qasmtypes.h"
+#include "explosion/explosiontypes.h"
 
 FN_EXTERN(Task_FalseHandler);
 FN_EXTERN(Task_Nothing);
 
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
-
 typedef void (*TaskFn)(void *task, void *arg);
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* 3x3 rotation, row major, and a counter the engine bumps on changes */
-typedef struct Matrix {
-    float m[9];
-    int stamp;
-} Matrix;
-
-/* fixed size item pool; slots[] maps a slot number to an item number */
-typedef struct Pool {
-    char *data;
-    int *slots;
-    int used;
-    int capacity;
-    int stride;
-    int index_offset;
-} Pool;
-
-/* the array behind Game_GetTaskList3 and Human_GetList */
-typedef struct TaskArray {
-    int count;
-    int unk4;
-    Task *tasks[1];
-} TaskArray;
-
-/* "RigidDynCubeObj" (0xF0 bytes), a moving object with a model */
-typedef struct RigidObj {
-    Task task;
-    Vec3d pos;
-    char unk38[0x34];
-    void **model;
-    Matrix matrix;
-    float scale[3];
-    char unkA4[0xF0 - 0xA4];
-} RigidObj;
 
 /* the start of the 0x70 byte collision hit sent with the bullet hole event */
 typedef struct HoleHit {
@@ -140,27 +87,6 @@ typedef struct FlashBang {
     int unk44;
 } FlashBang;
 
-/* "Explosion0" (0x88 bytes), a burst of fireballs, smoke and fragments */
-typedef struct Explosion {
-    Task task;
-    Vec3d pos;
-    int bursts;   /* 0x38 */
-    int interval; /* 0x3C */
-    int timer;    /* 0x40 */
-    Vec3f dir;    /* 0x44 */
-    float blast;  /* 0x50 */
-    float size;   /* 0x54 */
-    float unk58;
-    float spread;   /* 0x5C */
-    float minSpeed; /* 0x60 */
-    float maxSpeed; /* 0x64 */
-    int fragments;  /* 0x68 */
-    int fireballs;  /* 0x6C */
-    char sound[16]; /* 0x70 */
-    void *group;    /* 0x80, the fragments */
-    int unk84;
-} Explosion;
-
 /* "ExplosionSmoke" (0x48 bytes) */
 typedef struct ExplosionSmoke {
     Task task;
@@ -173,7 +99,7 @@ typedef struct ExplosionSmoke {
 
 /* "FireBall" (0x118 bytes), an animated sprite model that faces the camera */
 typedef struct FireBall {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     int frame;  /* 0xF0, -1 when not animated */
     int life;   /* 0xF4 */
     int frames; /* 0xF8 */
@@ -240,7 +166,6 @@ typedef struct RenderArg {
     int unk10;
 } RenderArg;
 
-_Static_assert(sizeof(RigidObj) == 0xF0, "RigidObj");
 _Static_assert(offsetof(HoleHit, dir) == 0x38, "HoleHit");
 _Static_assert(sizeof(HolePoly) == 0x40, "HolePoly");
 _Static_assert(sizeof(Hole) == 0x58, "Hole");
@@ -249,7 +174,6 @@ _Static_assert(offsetof(BulletHole, last) == 0x44E0, "BulletHole");
 _Static_assert(offsetof(BulletHole, mesh) == 0xE12C, "BulletHole");
 _Static_assert(sizeof(BulletHole) == 0xE148, "BulletHole");
 _Static_assert(sizeof(FlashBang) == 0x48, "FlashBang");
-_Static_assert(sizeof(Explosion) == 0x88, "Explosion");
 _Static_assert(sizeof(ExplosionSmoke) == 0x48, "ExplosionSmoke");
 _Static_assert(sizeof(FireBall) == 0x118, "FireBall");
 _Static_assert(sizeof(Fragment) == 0x118, "Fragment");

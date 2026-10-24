@@ -40,10 +40,6 @@ typedef struct ScrollListBox {
 
 _Static_assert(sizeof(ScrollListBox) == 0x13FC, "ScrollListBox");
 
-typedef struct Color {
-    float r, g, b;
-} Color;
-
 extern uint16_t gScrollListBoxType;
 extern void *gScrollListBoxParams;
 extern ScrollListBox *gScrollListBoxFilling;
@@ -97,8 +93,8 @@ void ScrollListBox_Create(ScrollListBox *lb, void *arg)
     VarString_Init(&lb->forward);
     VarString_Init(&lb->action);
     lb->registered = 0;
-    lb->w.unk3C = 1;
-    lb->w.unk40 = 1;
+    lb->w.centreX = 1;
+    lb->w.centreY = 1;
     lb->font[0] = 0;
     lb->w.w = 100;
     lb->w.h = 100;

@@ -111,7 +111,7 @@ void NoiseQTask_Create(NoiseQTask *n)
     for (i = 0; i < 9; i++)
         n->matrix.m[i] = 0;
     n->matrix.m[0] = n->matrix.m[4] = n->matrix.m[8] = 1.0f;
-    n->matrix.unk24 = 0;
+    n->matrix.count = 0;
     n->pos.x = n->pos.y = n->pos.z = 0;
     n->target = n->value = n->current = n->noise = 0;
     n->noiseTime = 0;

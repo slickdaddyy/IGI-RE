@@ -7,6 +7,8 @@
 #include "hook.h"
 #include "igi.h"
 #include "game/game.h"
+#include "win/wintypes.h"
+#include "qasm/qasmtypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A5234, int, crt_fclose, (void *f));
@@ -164,28 +166,6 @@ typedef struct GameSprite {
     char name[0x18];
     char sprite[0x18];
 } GameSprite;
-
-typedef struct DisplayMode {
-    int unk0;
-    int width;
-    int height;
-    int unkC;
-    int depth;
-    char unk14;
-    char unk15;
-    char unk16;
-    char unk17;
-    int renderMode;
-    char device[0x80];
-    char desc[0x80];
-} DisplayMode;
-
-/* only the fields read here */
-typedef struct QTaskList {
-    int count;
-    int max;
-    Task *items[];
-} QTaskList;
 
 typedef struct WeaponGive {
     int id;
@@ -452,7 +432,7 @@ void LevelStart(Game *g)
     LoadingScreen_Step(loading, 1);
     StatusMessages_Load();
     LoadingScreen_Step(loading, 1);
-    gGame->unk44 = GameScreen_New(Flow_GetUnk20());
+    gGame->root = GameScreen_New(Flow_GetUnk20());
     gGame->unk4C = Level_New(Game_Get());
     LoadingScreen_Step(loading, 1);
     Sound_SetUnusedByte(0);
@@ -481,7 +461,7 @@ void LevelStart(Game *g)
     Lod_SendChanged();
     CutScene_SetCamera(gGame->unk60);
     CutScene_SetTicksPerSecond(30);
-    CutScene_SetFilterParent(GameScreen_GetView(Game_Get()->unk44));
+    CutScene_SetFilterParent(GameScreen_GetView(Game_Get()->root));
     LevelLoad(gMissionPath, 30);
     LoadingScreen_Step(loading, 1);
     for (i = 0; i < 6; i++)
@@ -520,7 +500,7 @@ void Game_SetDisplayMode(void)
     m.width = *(int *)(p + 0xC);
     m.height = *(int *)(p + 0x10);
     m.unk14 = 1;
-    m.unkC = 1;
+    m.backBuffers = 1;
     m.depth = *(int *)(p + 0x14);
     m.renderMode = Direct3D_GetRenderMode();
     m.unk16 = 1;
@@ -569,14 +549,14 @@ HOOK(0x4161D0, Game_LoadSprites);
    stack so a handler may delete the following task */
 static void RunChildren(Task *task)
 {
-    GameNode *n = task->head;
+    Task *n = task->head;
     TaskFn1 fn;
 
     if (!n->next)
         return;
     do {
         gTaskStack[gTaskStackTop++] = n->next && n->next->next ? n->next : NULL;
-        fn = gTaskHandlers1[1][((Task *)n)->type];
+        fn = gTaskHandlers1[1][n->type];
         if (fn)
             fn(n);
         n = gTaskStack[--gTaskStackTop];
@@ -671,7 +651,7 @@ void LevelQuit(void)
     TaskRef_Remove(gGame->ref54);
     if (gGame->unk48)
         Task_Delete(gGame->unk48);
-    Task_Delete(gGame->unk44);
+    Task_Delete(gGame->root);
     Game_FreeSprites();
     Resource_Flush(gGame->sprites);
     Game_FreeTextures();
@@ -1025,9 +1005,9 @@ void Game_ResetState(void)
     if (t)
         gGame->players[0] = TaskRef_Add(t);
     gGame->unk58 = 0;
-    gGame->unk5C = HumanCamera_New(*gGame->ref54, gGame->unk60);
+    gGame->camera = HumanCamera_New(*gGame->ref54, gGame->unk60);
     if (t)
-        HumanCamera_SetHuman(gGame->unk5C, t);
+        HumanCamera_SetHuman(gGame->camera, t);
     {
         float music = Profile_GetMusicVolume();
 
@@ -1041,13 +1021,13 @@ HOOK(0x416D90, Game_ResetState);
 
 void Game_DeleteTasksOfType(Task *parent)
 {
-    GameNode *n = parent->head, *next;
+    Task *n = parent->head, *next;
 
     if (!n->next)
         return;
     while (n) {
         next = n->next && n->next->next ? n->next : NULL;
-        if (((Task *)n)->type == TerrainLightMap_GetType())
+        if (n->type == TerrainLightMap_GetType())
             Task_Delete(n);
         else
             Game_DeleteTasksOfType((Task *)n);

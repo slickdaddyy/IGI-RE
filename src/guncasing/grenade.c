@@ -29,7 +29,7 @@ ORIG(0x416880, uint8_t, Game_GetEvent13, (void));
 ORIG(0x4168F0, void *, Game_GetCutsceneList, (void));
 ORIG(0x416920, void *, Game_GetWorld, (void));
 ORIG(0x416C90, long double, Game_BlastFalloff, (void *blast, void *obj, Vec3d *pos, float radius, int unk));
-ORIG(0x450CE0, void, HumanAI_Broadcast, (Noise *noise));
+ORIG(0x450CE0, void, HumanAI_Broadcast, (AIMessage *noise));
 ORIG(0x47E9A0, void, FlashBang_Explode, (Vec3d *pos, CollHit *hit, float radius, float falloff));
 ORIG(0x480FE0, void, Explosion_Spawn, (Vec3d *pos, int a, int b, float c, float d, float e, float f, int g, int h,
                                        CollHit *hit, const char *sprite, const char *sound, int j, int k, float l,
@@ -134,9 +134,9 @@ void Grenade_WeaponConfigHandler(void *type, GrenadeConfigMsg *msg)
     uint32_t f, r, d;
     GrenadeConfig *c;
 
-    if (msg->wt->grenade) {
-        Mem_Free(msg->wt->grenade);
-        msg->wt->grenade = NULL;
+    if (msg->wt->data) {
+        Mem_Free(msg->wt->data);
+        msg->wt->data = NULL;
     }
     falloff = TagItem_Find(msg->table, kFalloff);
     if (!falloff)
@@ -150,8 +150,8 @@ void Grenade_WeaponConfigHandler(void *type, GrenadeConfigMsg *msg)
     f = *(uint32_t *)&CONFIG_VALUE(falloff);
     r = *(uint32_t *)&CONFIG_VALUE(radius);
     d = *(uint32_t *)&CONFIG_VALUE(damage);
-    msg->wt->grenade = Mem_Alloc(sizeof(GrenadeConfig), 4);
-    c = msg->wt->grenade;
+    msg->wt->data = Mem_Alloc(sizeof(GrenadeConfig), 4);
+    c = msg->wt->data;
     *(uint32_t *)&c->damage = d;
     *(uint32_t *)&c->radius = r;
     *(uint32_t *)&c->falloff = f;
@@ -198,7 +198,7 @@ void Grenade_RunHandler(Grenade *g)
     dz = -2048.0;
     ev = Game_GetEvent13();
     Coll_DropPoints(Game_GetWorld(), &hit, &g->o.pos, 1, &dz, ev, &ignore, -1);
-    if (g->weapon && (c = g->weapon->grenade) != NULL) {
+    if (g->weapon && (c = g->weapon->data) != NULL) {
         if (gt->explosion == 0)
             Explosion_Spawn(&g->o.pos, 1, 1, c->damage, c->radius * kMeter, c->falloff * kMeter, 6144.0f, 3, 1,
                             &hit, "1009_01_1", "explo_02_m", 0x15, 2, 40960.0f, 0);
@@ -242,15 +242,15 @@ HOOK(0x476CC0, Grenade_UpdateBounce);
 
 void Grenade_MakeNoise(Grenade *g, int kind, int unk8, float radius)
 {
-    Noise n;
+    AIMessage n;
 
-    n.kind = kind;
-    n.unk4 = -1;
-    n.unk8 = unk8;
+    n.type = kind;
+    n.team = -1;
+    n.flags = unk8;
     n.radius = radius;
     n.pos = &g->o.pos;
-    n.source = &g->o.task;
-    n.unk18 = 0;
+    n.from = &g->o.task;
+    n.about = 0;
     HumanAI_Broadcast(&n);
 }
 HOOK(0x476D40, Grenade_MakeNoise);

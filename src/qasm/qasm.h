@@ -4,18 +4,7 @@
 #include <stddef.h>
 
 #include "igi.h"
-
-/* Same layout as core/list.h. */
-typedef struct Node {
-    struct Node *next;
-    struct Node *prev;
-} Node;
-
-typedef struct List {
-    Node *head;
-    Node *tail;
-    Node *tailpred;
-} List;
+#include "qasm/qasmtypes.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -30,24 +19,7 @@ typedef struct QvmReader {
     char *cur;
 } QvmReader;
 
-/* Token rule, built by QvmLex_AddRule. */
-typedef struct QvmLexRule {
-    Node node;
-    char pattern[0x100];
-    char prog[0x2800];
-    char classes[0x2000];
-    int accept; /* stop at this rule when it matches */
-    int id;
-} QvmLexRule;
-
 #define QVM_TOKEN_TEXT 0x2BC
-
-/* Also the node of a pushed back token. */
-typedef struct QvmToken {
-    Node node;
-    char text[QVM_TOKEN_TEXT];
-    int type;
-} QvmToken;
 
 typedef struct QvmLexer {
     List *rules;
@@ -69,33 +41,6 @@ enum {
     TOKEN_LABEL = 10,
     TOKEN_ADDRESS = 12, /* @hex */
 };
-
-typedef struct QvmAsm {
-    int pc;
-    int failed;
-    int unk08;
-    int pass;
-    void *file;
-    QvmToken *token;
-    QvmLexer *lexer;
-    void *labelTable;
-    List labels;
-    List symbols;
-    List strings;
-    List fixups;
-} QvmAsm;
-
-typedef struct QvmLabelRef {
-    Node node;
-    int offset;
-    int base;
-} QvmLabelRef;
-
-typedef struct QvmFixup {
-    Node node;
-    int offset;
-    int value;
-} QvmFixup;
 
 /* Name or string table of a loaded Qvm (at 0x30 and 0x48). */
 typedef struct QvmTable {

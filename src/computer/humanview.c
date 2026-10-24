@@ -2,29 +2,7 @@
 
 #include "hook.h"
 #include "computer/computer.h"
-
-/* "HumanView" (the eye of a human), the fields set here */
-typedef struct HumanView {
-    char unk0[0x13A];
-    char camOverride;
-    char unk13B[0x180 - 0x13B];
-    int target[6];
-    char hasTarget;
-    char unk199[0x1B4 - 0x199];
-    float shake;
-    float shakeAmount;
-    float shakeAngle;
-    float shakeStep;
-    float dip;
-    int unk1C8;
-    char unk1CC[0x1E4 - 0x1CC];
-    float fovX;
-    float fovY;
-    int zoomed;
-} HumanView;
-
-_Static_assert(offsetof(HumanView, hasTarget) == 0x198, "HumanView");
-_Static_assert(offsetof(HumanView, zoomed) == 0x1EC, "HumanView");
+#include "viewcam/viewcamtypes.h"
 
 static const double kOne = 1.0;
 static const double kQuarterPi = 0x1.921fb6p-1;
@@ -51,11 +29,11 @@ void HumanView_SetTarget(HumanView *v, const int *target, char flag)
     v->hasTarget = flag;
     if (target) {
         for (i = 0; i < 6; i++)
-            v->target[i] = target[i];
+            v->targetWords[i] = target[i];
         return;
     }
     for (i = 0; i < 6; i++)
-        v->target[i] = 0;
+        v->targetWords[i] = 0;
 }
 HOOK(0x465920, HumanView_SetTarget);
 
@@ -71,7 +49,7 @@ HOOK(0x465970, HumanView_Shake);
 void HumanView_SetDip(HumanView *v, float dip)
 {
     v->dip = dip;
-    v->unk1C8 = 0;
+    v->dipPhase = 0;
 }
 HOOK(0x4659B0, HumanView_SetDip);
 

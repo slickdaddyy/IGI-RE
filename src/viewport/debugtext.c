@@ -3,6 +3,7 @@
 
 #include "hook.h"
 #include "viewport/viewport.h"
+#include "win/wintypes.h"
 
 /* A text window on a Grid with a cursor, and the "DebugText" task that
    draws one with the built in font LOCAL:debug.fnt when debug text is on. */
@@ -15,12 +16,6 @@ typedef struct TextWin {
     int curX, curY;
     int unk20; /* last argument of Grid_Draw, never set here */
 } TextWin;
-
-typedef struct DisplayMode {
-    int unk0;
-    int width;
-    int height;
-} DisplayMode;
 
 extern char gDebugTextOwnScene;
 extern char gDebugFontData[];

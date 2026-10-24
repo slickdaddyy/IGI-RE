@@ -4,23 +4,8 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-/* Terrain octree node. At the deepest level, leaf points at the triangles. */
-typedef struct CollNode {
-    uint16_t child[8]; /* index into Terrain.nodes */
-    uint8_t code[8];   /* orientation change when entering each child */
-    uint8_t mask;      /* which children exist */
-    uint8_t pad19[3];
-    const short *leaf;
-} CollNode;
+#include "coll/colltypes.h"
+#include "terrain/terraintypes.h"
 
 /* A task in the object octree (only the fields used here) */
 typedef struct CollTask {
@@ -42,16 +27,6 @@ typedef struct ObjNode {
     uint16_t flags;           /* 0x38 */
 } ObjNode;
 
-typedef struct Terrain {
-    char unk0[0xC];
-    CollNode *nodes;      /* 0x0C, node 1 is the root */
-    char unk10[0x10];
-    ObjNode *objects;     /* 0x20 */
-    char unk24[0xD18];
-    void *materials[41];  /* 0xD3C */
-    int origin[3];        /* 0xDE0, added to world coordinates */
-} Terrain;
-
 /* Position while walking down the terrain octree. Coordinates are
    world + origin, and the root cell covers the whole 2^31 range. */
 typedef struct CollCursor {
@@ -63,46 +38,6 @@ typedef struct CollCursor {
     Terrain *terrain;
     ObjNode *objects;
 } CollCursor;
-
-typedef struct CollHit {
-    int unk0;
-    int unk4;
-    Vec3d pos;       /* 0x08 */
-    char unk20[0x18];
-    Vec3f normal;    /* 0x38 */
-    int unk44;
-    int unk48;
-    void *material;  /* 0x4C */
-    void *material2; /* 0x50 */
-    int unk54;
-    int found;       /* 0x58 */
-    int unk5C;
-    double dist;     /* 0x60 */
-    char unk68[8];
-} CollHit;
-
-/* Passed to the tasks' collision handlers */
-typedef struct CollQuery {
-    const Vec3d *points;
-    int count;
-    void *results;
-    char active[128]; /* a handler clears an entry to take over that point */
-    char unk8C;
-    int unk90;
-    int unk94;
-} CollQuery;
-
-typedef struct CollLineQuery {
-    const Vec3d *starts;
-    const Vec3d *ends;
-    int count;
-    char unkC;
-    int unk10;
-    int unk14;
-    int unk18;
-    int magic; /* 'ABCD' */
-    CollHit *results;
-} CollLineQuery;
 
 void Coll_GetPointMaterials(Terrain *t, void **results, const Vec3d *points, int count, char unk, int unk2,
                             unsigned int flags);

@@ -1,5 +1,6 @@
 #include "hook.h"
 #include "mission/mission.h"
+#include "mission/missiontypes.h"
 
 FN_EXTERN(ConditionalContainer_Activate);
 FN_EXTERN(ConditionalContainer_Deactivate);
@@ -8,27 +9,12 @@ FN_EXTERN(ConditionalContainer_WorldAdd);
 FN_EXTERN(ConditionalContainer_WorldRemove);
 FN_EXTERN(MagicObjContainer_Event);
 
-/* "ConditionalContainer" (0x114 bytes): shows its children while cond is true */
-typedef struct ConditionalContainer {
-    Task task;
-    VarString cond;
-    VarString onTrue;
-    VarString onFalse;
-    char active;
-    char unk111;
-    char shown;
-    char pad113;
-} ConditionalContainer;
-
 /* sent to the children when they are put into the world */
 typedef struct WorldArg {
     int unk0;
     void *world;
     int unk8;
 } WorldArg;
-
-_Static_assert(offsetof(ConditionalContainer, active) == 0x110, "ConditionalContainer.active");
-_Static_assert(sizeof(ConditionalContainer) == 0x114, "ConditionalContainer");
 
 ORIG(0x467D90, uint8_t, ComputerObject_GetEvent0, (void));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
@@ -87,7 +73,7 @@ void ConditionalContainer_Create(ConditionalContainer *c)
     VarString_Init(&c->onFalse);
     c->active = 0;
     c->shown = 1;
-    c->unk111 = 0;
+    c->registered = 0;
 }
 HOOK(0x4874A0, ConditionalContainer_Create);
 

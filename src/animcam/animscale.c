@@ -4,20 +4,8 @@
 
 #include "hook.h"
 #include "animcam/animcam.h"
-
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-typedef struct AnimKey {
-    char channel;
-    char unk1[3];
-    float value;
-} AnimKey;
+#include "param/paramtypes.h"
+#include "vehbase/vehbasetypes.h"
 
 enum {
     ANIM_CHANNELS = 0x22,
@@ -110,7 +98,7 @@ void AnimScaleTask_Create(AnimScaleTask *t)
     t->matrix.m[4] = 1.0f;
     t->matrix.m[5] = t->matrix.m[6] = t->matrix.m[7] = 0.0f;
     t->matrix.m[8] = 1.0f;
-    t->matrix.unk24 = 0;
+    t->matrix.count = 0;
     t->keyCount = 1;
     t->keys[0].channel = ANIM_WAIT;
     t->keys[0].value = 0.0f;

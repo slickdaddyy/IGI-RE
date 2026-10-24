@@ -6,6 +6,9 @@
 
 #include "hook.h"
 #include "glowmesh/glowmesh.h"
+#include "bonemesh/bonemeshtypes.h"
+#include "lod/lodtypes.h"
+#include "terrain/terraintypes.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -24,14 +27,6 @@ ORIG(0x518240, int, ViewSlot_GetCurrent, (void));
 ORIG(0x512C30, void, TerrainMesh_DrawD3D, (void));
 ORIG(0x4C1780, void, Debug_Log, (int unk));
 ORIG(0x4DA790, void, Fog_Compute, (float *out, const double *pos, float depth, float scale, void *layers, int count));
-
-/* view space vertex with its screen position and outcode, as
-   Direct3DRender_ClipTriangleDepth takes them */
-typedef struct ClipVertex {
-    float x, y, z;
-    float sx, sy, rhw;
-    int code;
-} ClipVertex;
 
 typedef struct TerrainMeshVertex {
     float x, y, z;
@@ -53,13 +48,6 @@ typedef struct TerrainMesh {
     TerrainMeshVertex verts[];
 } TerrainMesh;
 
-typedef struct Terrain {
-    char unk0[0xDBC];
-    int textures;
-    char unkDC0[0x34];
-    void *palette;
-} Terrain;
-
 typedef struct TerrainFog {
     float value;
     float delta;
@@ -73,23 +61,6 @@ typedef struct TerrainClipVertex {
     float u, v;
     int unk28, unk2C;
 } TerrainClipVertex;
-
-typedef struct Pool {
-    char *data;
-    int *free;
-    int used;
-    int count;
-    int stride;
-    int size;
-} Pool;
-
-/* a slot of the QCube cache; data is the cell's mesh */
-typedef struct QCacheEntry {
-    int cell[4];
-    int frame;
-    int kind; /* pool the data comes from */
-    char *data;
-} QCacheEntry;
 
 /* a terrain cell QCube wants built this frame */
 typedef struct TerrainCell {
@@ -131,20 +102,6 @@ typedef struct TerrainMaterialMapInfo {
     int unk2C;
 } TerrainMaterialMapInfo;
 
-/* texture placement of a material at one level, 0xC28FE4 + material * 900 + level * 28 */
-typedef struct TerrainLevelMat {
-    char unk0[0xC];
-    float scaleA;
-    int tileA;
-    float scaleB;
-    int tileB;
-} TerrainLevelMat;
-
-typedef struct TerrainMaterial {
-    int unk0;
-    TerrainLevelMat levels[32];
-} TerrainMaterial;
-
 typedef struct TerrainMatEntry {
     int shift; /* 0 ends the list */
     float scale;
@@ -179,13 +136,10 @@ typedef struct TerrainPoly {
     int fogCount;
 } TerrainPoly;
 
-_Static_assert(sizeof(ClipVertex) == 0x1C, "ClipVertex");
 _Static_assert(sizeof(TerrainCell) == 0x30, "TerrainCell");
 _Static_assert(sizeof(TerrainLightMapInfo) == 0x30, "TerrainLightMapInfo");
 _Static_assert(sizeof(TerrainHeightMapInfo) == 0x30, "TerrainHeightMapInfo");
 _Static_assert(sizeof(TerrainMaterialMapInfo) == 0x30, "TerrainMaterialMapInfo");
-_Static_assert(sizeof(TerrainLevelMat) == 0x1C, "TerrainLevelMat");
-_Static_assert(sizeof(TerrainMaterial) == 900, "TerrainMaterial");
 _Static_assert(sizeof(TerrainVertRec) == 0x24, "TerrainVertRec");
 _Static_assert(sizeof(TerrainMatRec) == 0x28, "TerrainMatRec");
 _Static_assert(offsetof(TerrainPoly, fogLayers) == 0x84, "TerrainPoly");
@@ -403,7 +357,7 @@ HOOK(0x50FAE0, TerrainMesh_SetupLighting);
 
 void TerrainMesh_SetTextures(Terrain *t)
 {
-    gTerrainTextures = t->textures;
+    gTerrainTextures = (int)t->textures;
 }
 HOOK(0x50FD00, TerrainMesh_SetTextures);
 
@@ -802,7 +756,7 @@ void TerrainMesh_Build(void)
         m = 0;
         do {
             int mat = list[m], sh1 = (0x17 - level) & 31, sh2 = (0x16 - level) & 31, ax, ay, bx, by;
-            const TerrainLevelMat *t = &gTerrainMaterials[mat].levels[level];
+            const TerrainLayer *t = &gTerrainMaterials[mat].layers[level];
             TerrainMatRec *r = &mrec[m];
             long double fA = t->scaleA;
             float fB = t->scaleB;
@@ -940,7 +894,7 @@ HOOK(0x511500, TerrainMesh_Render);
 
 void TerrainMesh_SetUnusedTextures(Terrain *t)
 {
-    gTerrainMeshUnusedTextures = t->textures;
+    gTerrainMeshUnusedTextures = (int)t->textures;
 }
 HOOK(0x5116B0, TerrainMesh_SetUnusedTextures);
 

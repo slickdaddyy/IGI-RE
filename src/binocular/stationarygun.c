@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "binocular/binocular.h"
+#include "binocular/binoculartypes.h"
 
 FN_EXTERN(VehiclePart_Delete);
 
@@ -68,10 +69,10 @@ typedef struct GunDef {
 
 /* "AIStationaryGun" (0x1E8 bytes), a turning gun mounted on a vehicle */
 typedef struct AIStationaryGun {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d offset;           /* 0xF0 */
     Matrix local;           /* 0x108 */
-    RigidObj *owner;        /* 0x130 */
+    RigidDynCubeObj *owner;        /* 0x130 */
     int unk134;
     Vec3d pos;              /* 0x138 */
     Matrix matrix;          /* 0x150 */
@@ -96,14 +97,6 @@ typedef struct Detection {
     RefNode *targets;
 } Detection;
 
-/* AIDetection event 0: may the detector see this pair of tasks */
-typedef struct DetectQuery {
-    char result;
-    char pad[7];
-    Task *a;
-    Task *b;
-} DetectQuery;
-
 _Static_assert(sizeof(GunDef) == 0x60, "GunDef");
 _Static_assert(offsetof(AIStationaryGun, def) == 0x1B8, "AIStationaryGun");
 _Static_assert(offsetof(AIStationaryGun, hold) == 0x1D4, "AIStationaryGun");
@@ -127,7 +120,7 @@ HOOK(0x46EAD0, GunHolder_GetList);
 
 void AIStationaryGun_PlaceInitial(AIStationaryGun *g, Matrix *parent);
 
-void AIStationaryGun_Create(AIStationaryGun *g, PartCreateArg *arg)
+void AIStationaryGun_Create(AIStationaryGun *g, MagicCreateArg *arg)
 {
     void **model = VirModel_Find(arg->model);
     float s;
@@ -144,7 +137,7 @@ void AIStationaryGun_Create(AIStationaryGun *g, PartCreateArg *arg)
     s = max_scale(g->obj.scale);
     DynCube_Add(arg->world, g, &arg->pos, (float)(VirModel_GetRadius(g->obj.model) * s), 1);
     g->obj.matrix = arg->matrix;
-    g->def = arg->def;
+    g->def = arg->data;
     g->pos = arg->pos;
     g->matrix = arg->matrix;
     g->pitch = 0;
@@ -443,7 +436,7 @@ void AIStationaryGun_Move(AIStationaryGun *g, PartMoveArg *a)
     Matrix r, m, b;
     Vec3d pos;
     float s;
-    PartMoveArg out;
+    MoveArg out;
 
     pos.x = (long double)p->m[2] * g->offset.z + (long double)p->m[1] * g->offset.y
             + (long double)p->m[0] * g->offset.x;

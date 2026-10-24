@@ -1,5 +1,6 @@
 #include "hook.h"
 #include "litmap/litmap.h"
+#include "dirlight/dirlighttypes.h"
 
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
 ORIG(0x4D3710, void, Task_Nothing, (void *task));
@@ -40,14 +41,6 @@ typedef struct LensflareItem {
 } LensflareItem;
 
 _Static_assert(sizeof(LensflareItem) == 0x40, "LensflareItem");
-
-/* the part of a Dirlight read here */
-typedef struct Dirlight {
-    Task task;
-    int unk20;
-    float dir[3];
-    float color[3];
-} Dirlight;
 
 typedef struct LensflareSlot {
     int id;
@@ -181,12 +174,12 @@ void Lensflare_Changed(Lensflare *l)
         d = (Dirlight *)Task_FindById(l->lightId);
     if (!d || d->task.type != Dirlight_GetType())
         return;
-    l->dir[0] = d->dir[0];
-    l->dir[1] = d->dir[1];
-    l->dir[2] = d->dir[2];
-    l->color[0] = d->color[0];
-    l->color[1] = d->color[1];
-    l->color[2] = d->color[2];
+    l->dir[0] = d->dir.x;
+    l->dir[1] = d->dir.y;
+    l->dir[2] = d->dir.z;
+    l->color[0] = d->color.x;
+    l->color[1] = d->color.y;
+    l->color[2] = d->color.z;
 }
 HOOK(0x520F50, Lensflare_Changed);
 

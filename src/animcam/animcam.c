@@ -197,7 +197,7 @@ void AnimCam_Relative(AnimCam *c)
         Matrix e, r;
         const float *m = e.m, *n = a.m;
 
-        info.unk50 = 0;
+        info.name = 0;
         fn(t, &info);
         p = info.pos;
         b = info.matrix;
@@ -210,7 +210,7 @@ void AnimCam_Relative(AnimCam *c)
         r.m[4] = m[7] * n[5] + m[4] * n[4] + m[1] * n[3];
         r.m[5] = m[8] * n[5] + m[5] * n[4] + m[2] * n[3];
         r.m[6] = m[6] * n[8] + m[3] * n[7] + m[0] * n[6];
-        r.unk24 = e.unk24 + a.unk24 + 1;
+        r.count = e.count + a.count + 1;
         r.m[7] = m[7] * n[8] + m[4] * n[7] + m[1] * n[6];
         r.m[8] = m[8] * n[8] + m[5] * n[7] + m[2] * n[6];
         a = r;
@@ -349,7 +349,7 @@ static void object_pos(int id, Vec3d *pos)
     if ((t = Task_FindById(id)) && (fn = HANDLER(7, t->type))) {
         ObjInfo info;
 
-        info.unk50 = 0;
+        info.name = 0;
         fn(t, &info);
         *pos = info.pos;
     }
@@ -467,7 +467,7 @@ void AnimCam_Aim(AnimCam *c)
     x.m[6] = m[6] * uz + m[3] * uy + m[0] * ux;
     x.m[7] = m[7] * uz + m[4] * uy + m[1] * ux;
     x.m[8] = m[8] * uz + m[5] * uy + m[2] * ux;
-    x.unk24 = rot.unk24 + 1;
+    x.count = rot.count + 1;
     if (!fixed) {
         t.x = x.m[1] * c->disp.y + x.m[2] * c->disp.z + x.m[0] * c->disp.x;
         t.y = x.m[4] * c->disp.y + x.m[5] * c->disp.z + x.m[3] * c->disp.x;
@@ -578,7 +578,7 @@ void AnimCam_ReadModeKeys(AnimCam *c, float **msg)
             double a1, a2, b1, b2;
             long double sx;
 
-            info.unk50 = 0;
+            info.name = 0;
             fn(t, &info);
             a1 = m[4] * kAimBack;
             a2 = m[7] * kAimBack;

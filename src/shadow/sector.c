@@ -12,11 +12,11 @@ ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
 ORIG(0x4B0B00, void, Pool_Init, (Pool *pool, int stride, int count, int unk));
 ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));
-ORIG(0x4C3440, Vec3d *, DynCubeObj_GetPosition, (Obj *o));
+ORIG(0x4C3440, Vec3d *, DynCubeObj_GetPosition, (RigidDynCubeObj *o));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
-ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (Task *parts, Obj *o, Obj *owner));
+ORIG(0x4C4950, void, RigidDynCubeObj_CreateMagicObjs, (Task *parts, RigidDynCubeObj *o, RigidDynCubeObj *owner));
 ORIG(0x4C5700, uint8_t, RigidDynCubeObj_GetEvent3, (void));
-ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, Obj *o, void **model));
+ORIG(0x4C5710, void, RigidDynCubeObj_Init, (void *world, RigidDynCubeObj *o, void **model));
 ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, Vec3d *pos, float radius, int category));
 ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *obj));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
@@ -47,11 +47,11 @@ void SectorObject_Create(SectorObject *so)
     so->s.o.matrix.m[5] = 0;
     so->s.o.matrix.m[6] = 0;
     so->s.o.matrix.m[7] = 0;
-    so->s.o.matrix.unk24 = 0;
+    so->s.o.matrix.count = 0;
     so->sectors = NULL;
-    memset(so->unk14C, 1, sizeof(so->unk14C));
+    memset(so->portalOpen, 1, sizeof(so->portalOpen));
     so->built = 1;
-    Pool_Init(&so->s.links, 4, 100, 0);
+    Pool_Init(&so->s.objects, 4, 100, 0);
 }
 HOOK(0x4DDF60, SectorObject_Create);
 
@@ -60,9 +60,9 @@ void Sector_RemoveAllObjects(Sector *s);
 void SectorObject_Delete(SectorObject *so)
 {
     Sector_RemoveAllObjects(&so->s);
-    Pool_Free(&so->s.links);
-    if (so->s.o.parts)
-        Task_Delete(so->s.o.parts);
+    Pool_Free(&so->s.objects);
+    if (so->s.o.attached)
+        Task_Delete(so->s.o.attached);
     if (so->sectors)
         Task_Delete(so->sectors);
 }
@@ -74,16 +74,16 @@ void Sector_RemoveAllObjects(Sector *s)
 {
     int i;
 
-    while (s->links.used > 0) {
-        void **item = (void **)(s->links.data + s->links.slots[0] * s->links.stride);
-        Obj *obj = *item;
+    while (s->objects.used > 0) {
+        void **item = (void **)(s->objects.data + s->objects.free[0] * s->objects.stride);
+        RigidDynCubeObj *obj = *item;
         int found = 0;
 
         for (i = 0; i < gSectorLinks.used && !found; i++) {
-            SectorLink *l = (SectorLink *)(gSectorLinks.data + gSectorLinks.slots[i] * gSectorLinks.stride);
+            SectorLink *l = (SectorLink *)(gSectorLinks.data + gSectorLinks.free[i] * gSectorLinks.stride);
 
-            if (l->item == item) {
-                pool_release(&l->sector->links, l->item);
+            if ((void **)l->slot == item) {
+                pool_release(&l->sector->objects, l->slot);
                 pool_release(&gSectorLinks, l);
                 found = 1;
                 obj->inSector = 0;
@@ -91,7 +91,7 @@ void Sector_RemoveAllObjects(Sector *s)
         }
     }
     for (i = gSectorLinks.used - 1; i >= 0; i--) {
-        SectorLink *l = (SectorLink *)(gSectorLinks.data + gSectorLinks.slots[i] * gSectorLinks.stride);
+        SectorLink *l = (SectorLink *)(gSectorLinks.data + gSectorLinks.free[i] * gSectorLinks.stride);
 
         if (l->sector == s)
             pool_release(&gSectorLinks, l);
@@ -163,52 +163,52 @@ void SectorObject_Run(SectorObject *so)
     Task *s;
 
     EACH_CHILD(&so->s.o.task, 1);
-    if (so->s.o.parts)
-        EACH_CHILD(so->s.o.parts, 1);
+    if (so->s.o.attached)
+        EACH_CHILD(so->s.o.attached, 1);
     if (!so->s.o.model || !so->sectors || !(s = first_child(so->sectors)))
         return;
     do {
         EACH_CHILD(s, 1);
-        if (((Obj *)s)->parts)
-            EACH_CHILD(((Obj *)s)->parts, 1);
+        if (((RigidDynCubeObj *)s)->attached)
+            EACH_CHILD(((RigidDynCubeObj *)s)->attached, 1);
     } while ((s = next_task(s)) != NULL);
 }
 HOOK(0x4DE4E0, SectorObject_Run);
 
-void Sector_Create(Sector *s, MagicArg *arg)
+void Sector_Create(Sector *s, MagicCreateArg *arg)
 {
     RigidDynCubeObj_Init(arg->world, &s->o, NULL);
     s->o.pos = arg->pos;
     s->o.matrix = arg->matrix;
     s->o.model = VirModel_Find(arg->model);
-    s->o.parts = MagicObjContainer_New(NULL, s);
-    RigidDynCubeObj_CreateMagicObjs(s->o.parts, &s->o, &s->o);
+    s->o.attached = MagicObjContainer_New(NULL, s);
+    RigidDynCubeObj_CreateMagicObjs(s->o.attached, &s->o, &s->o);
     s->offset = arg->offset;
     s->local = arg->local;
-    Pool_Init(&s->links, 4, 100, 0);
+    Pool_Init(&s->objects, 4, 100, 0);
 }
 HOOK(0x4DE6B0, Sector_Create);
 
 void Sector_Delete(Sector *s)
 {
     Sector_RemoveAllObjects(s);
-    Pool_Free(&s->links);
-    Task_Delete(s->o.parts);
+    Pool_Free(&s->objects);
+    Task_Delete(s->o.attached);
 }
 HOOK(0x4DE740, Sector_Delete);
 
 void Sector_WorldAdd(Sector *s, void **arg)
 {
-    if (s->o.parts)
-        EACH_CHILD(s->o.parts, World_GetEvent0(), arg);
+    if (s->o.attached)
+        EACH_CHILD(s->o.attached, World_GetEvent0(), arg);
 }
 HOOK(0x4DE770, Sector_WorldAdd);
 
 void Sector_WorldRemove(Sector *s, void **arg)
 {
     Sector_RemoveAllObjects(s);
-    if (s->o.parts)
-        EACH_CHILD(s->o.parts, World_GetEvent1(), arg);
+    if (s->o.attached)
+        EACH_CHILD(s->o.attached, World_GetEvent1(), arg);
 }
 HOOK(0x4DE800, Sector_WorldRemove);
 
@@ -223,8 +223,8 @@ void SectorObject_NearClip(SectorObject *so, void *arg)
         int i;
 
         HANDLER(slot, RigidDynCubeObj_GetType())(s, arg);
-        for (i = 0; i < s->links.used; i++) {
-            Task *obj = *(Task **)(s->links.data + s->links.slots[i] * s->links.stride);
+        for (i = 0; i < s->objects.used; i++) {
+            Task *obj = *(Task **)(s->objects.data + s->objects.free[i] * s->objects.stride);
             TaskFn fn = HANDLER(QCube_GetNearClipEvent(), obj->type);
 
             if (fn)
@@ -243,8 +243,8 @@ HOOK(0x4DE8A0, SectorObject_NearClip);
 
 void SectorObject_WorldAdd(SectorObject *so, void **arg)
 {
-    if (so->s.o.parts)
-        EACH_CHILD(so->s.o.parts, World_GetEvent0(), arg);
+    if (so->s.o.attached)
+        EACH_CHILD(so->s.o.attached, World_GetEvent0(), arg);
     if (so->sectors)
         EACH_CHILD(so->sectors, World_GetEvent0(), arg);
 }
@@ -255,32 +255,32 @@ void SectorObject_WorldRemove(SectorObject *so, void **arg)
     Sector_RemoveAllObjects(&so->s);
     if (so->sectors)
         EACH_CHILD(so->sectors, World_GetEvent1(), arg);
-    if (so->s.o.parts)
-        EACH_CHILD(so->s.o.parts, World_GetEvent1(), arg);
+    if (so->s.o.attached)
+        EACH_CHILD(so->s.o.attached, World_GetEvent1(), arg);
 }
 HOOK(0x4DEA80, SectorObject_WorldRemove);
 
 /* arg[1] is the world */
-void SectorInteriorObject_WorldAdd(Obj *o, void **arg)
+void SectorInteriorObject_WorldAdd(RigidDynCubeObj *o, void **arg)
 {
     float scale = obj_scale(o);
 
     DynCube_Add(arg[1], o, &o->pos, VirModel_GetRadius(o->model) * scale, 1);
     Sector_AddObject(arg[1], o, DynCubeObj_GetPosition(o));
     EACH_CHILD(&o->task, World_GetEvent0(), arg);
-    if (o->parts)
-        EACH_CHILD(o->parts, World_GetEvent0(), arg);
+    if (o->attached)
+        EACH_CHILD(o->attached, World_GetEvent0(), arg);
 }
 HOOK(0x4DEB90, SectorInteriorObject_WorldAdd);
 
 /* arg[0] is the world */
-void SectorInteriorObject_WorldRemove(Obj *o, void **arg)
+void SectorInteriorObject_WorldRemove(RigidDynCubeObj *o, void **arg)
 {
     Sector_RemoveObject(o);
     DynCube_Remove(arg[0], o);
     EACH_CHILD(&o->task, World_GetEvent1(), arg);
-    if (o->parts)
-        EACH_CHILD(o->parts, World_GetEvent1(), arg);
+    if (o->attached)
+        EACH_CHILD(o->attached, World_GetEvent1(), arg);
 }
 HOOK(0x4DED30, SectorInteriorObject_WorldRemove);
 
@@ -311,12 +311,6 @@ void SectorObject_SetModel(SectorObject *so, const char *name)
 }
 HOOK(0x4DEE90, SectorObject_SetModel);
 
-typedef struct MoveArg {
-    Vec3d *pos;
-    Matrix *matrix;
-    Sector *owner;
-} MoveArg;
-
 /* Places each child sector from its local frame, or builds the sectors and
    magic objects first when the model changed. Then tells the magic objects
    of the object and of each sector that they moved. */
@@ -328,14 +322,14 @@ void SectorObject_Update(SectorObject *so)
     if (!so->s.o.model)
         return;
     if (!so->built) {
-        if (so->s.o.parts)
-            Task_Delete(so->s.o.parts);
+        if (so->s.o.attached)
+            Task_Delete(so->s.o.attached);
         if (so->sectors)
             Task_Delete(so->sectors);
-        so->s.o.parts = MagicObjContainer_New(NULL, so);
+        so->s.o.attached = MagicObjContainer_New(NULL, so);
         so->sectors = MagicObjContainer_New(NULL, so);
         Sector_CreateMagicObjs(&so->s, so);
-        SectorObject_CalcBounds(so, so->center, &so->radius);
+        SectorObject_CalcBounds(so, &so->center.x, &so->radius);
         so->built = 1;
         return;
     }
@@ -357,7 +351,7 @@ void SectorObject_Update(SectorObject *so)
             r[6] = m[3] * l[7] + l[8] * m[6] + m[0] * l[6];
             r[7] = m[4] * l[7] + m[7] * l[8] + l[6] * m[1];
             r[8] = m[5] * l[7] + m[2] * l[6] + m[8] * l[8];
-            s->o.matrix.unk24 = s->local.unk24 + so->s.o.matrix.unk24 + 1;
+            s->o.matrix.count = s->local.count + so->s.o.matrix.count + 1;
             x = m[2] * (long double)s->offset.z + m[0] * (long double)s->offset.x + m[1] * (long double)s->offset.y;
             y = m[4] * (long double)s->offset.y + m[3] * (long double)s->offset.x + m[5] * (long double)s->offset.z;
             z = m[7] * (long double)s->offset.y + m[6] * (long double)s->offset.x + m[8] * (long double)s->offset.z;
@@ -368,12 +362,12 @@ void SectorObject_Update(SectorObject *so)
     }
     s = &so->s;
     do {
-        MoveArg arg;
+        PartMoveArg arg;
 
         arg.pos = &s->o.pos;
         arg.matrix = &s->o.matrix;
         arg.owner = s;
-        EACH_CHILD(s->o.parts, MagicObj_GetMoveEvent(), &arg);
+        EACH_CHILD(s->o.attached, MagicObj_GetMoveEvent(), &arg);
         if (s == &so->s) {
             if (!so->sectors)
                 return;
@@ -398,7 +392,7 @@ static inline const float *model_bounds(void **model)
     return (const float *)(model_info(model) + 0x50);
 }
 
-#define SPHERE(p, i) ((float *)((p)->data + (p)->slots[i] * (p)->stride))
+#define SPHERE(p, i) ((float *)((p)->data + (p)->free[i] * (p)->stride))
 
 /* Merges the bounding spheres of all sectors and their magic objects into
    one, always joining the two closest. */
@@ -427,14 +421,14 @@ void SectorObject_CalcBounds(SectorObject *so, float *center, float *radius)
         const float *info = model_bounds(s->o.model);
         float *item = SPHERE(&sp, sp.used);
 
-        *(int *)((char *)item + sp.index_offset) = sp.used;
+        *(int *)((char *)item + sp.size) = sp.used;
         sp.used++;
         item[0] = info[0];
         item[1] = info[1];
         item[2] = info[2];
         item[3] = info[3];
-        if (s->o.parts)
-            SectorObject_AddChildSpheres(&sp, s->o.parts);
+        if (s->o.attached)
+            SectorObject_AddChildSpheres(&sp, s->o.attached);
     } while ((t = next_task(t)) != NULL);
     a = b = center;
     for (n = sp.used; n > 1; n = sp.used) {
@@ -521,14 +515,6 @@ typedef struct ModelAttach {
     float m[9];         /* 0x1C */
 } ModelAttach;
 
-typedef struct MagicObjDef {
-    char name[16];
-    char model[16];
-    uint16_t type;
-    uint16_t unk22;
-    void *data;
-} MagicObjDef;
-
 extern int gMagicObjDefCount;
 extern MagicObjDef gMagicObjDefs[];
 
@@ -559,7 +545,7 @@ void Sector_CreateMagicObjs(Sector *s, void *owner)
         ModelAttach *att = (ModelAttach *)ModelLod_GetAttach(s->o.model[0], i);
         const float *a = att->m;
         MagicObjDef *def = NULL;
-        MagicArg arg, arg2;
+        MagicCreateArg arg, arg2;
         double rx, ry, rz;
         float c0, c1, e[3], f[3], W[3], E[3], F[3], *R, *A;
         long double c2;
@@ -614,7 +600,7 @@ void Sector_CreateMagicObjs(Sector *s, void *owner)
         R[6] = F[0];
         R[7] = F[1];
         R[8] = F[2];
-        arg.local.unk24 = 0;
+        arg.local.count = 0;
 
         /* world frame: the object's matrix times the local one, then
            re-orthonormalized (the original also does that a second time
@@ -662,7 +648,7 @@ void Sector_CreateMagicObjs(Sector *s, void *owner)
             A[6] = D[0];
             A[7] = D[1];
             A[8] = D[2];
-            arg.matrix.unk24 = 0;
+            arg.matrix.count = 0;
         }
 
         for (j = 0; j < gMagicObjDefCount && !def; j++)
@@ -685,7 +671,7 @@ void Sector_CreateMagicObjs(Sector *s, void *owner)
         if (*(int *)(model_info(model) + 0x98))
             t = Task_New(((SectorObject *)s)->sectors, gSectorType, &arg);
         else
-            t = Task_New(s->o.parts, def->type, &arg);
+            t = Task_New(s->o.attached, def->type, &arg);
         /* only these four fields are set, like the original */
         arg2.data = def->data;
         arg2.model = def->model;

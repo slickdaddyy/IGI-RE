@@ -269,7 +269,7 @@ ScriptValue *Flow_RequestEvent(ScriptValue *ret, void *unused, void *args)
     Flow_SetRequest(Script_GetArgInt(args, 0));
     ret->i = 1;
     ret->d = 1.0;
-    ret->type = gScriptNumberType;
+    ret->s = gScriptNumberType;
     return ret;
 }
 HOOK(0x402780, Flow_RequestEvent);

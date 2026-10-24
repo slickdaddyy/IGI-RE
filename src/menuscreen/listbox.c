@@ -86,10 +86,10 @@ void ListBox_Create(ListBox *lb, void *arg)
     lb->font[0] = 0;
     lb->prev = MenuButton_New(NULL);
     lb->next = MenuButton_New(NULL);
-    lb->next->w.unk40 = 0;
-    lb->prev->w.unk40 = 0;
-    lb->next->w.unk3C = 0;
-    lb->prev->w.unk3C = 0;
+    lb->next->w.centreY = 0;
+    lb->prev->w.centreY = 0;
+    lb->next->w.centreX = 0;
+    lb->prev->w.centreX = 0;
     lb->count = 0;
     ListBox_Clear(lb);
     VarString_Init(&lb->fill);
@@ -97,8 +97,8 @@ void ListBox_Create(ListBox *lb, void *arg)
     VarString_Init(&lb->forward);
     VarString_Init(&lb->action);
     lb->registered = 0;
-    lb->w.unk3C = 1;
-    lb->w.unk40 = 1;
+    lb->w.centreX = 1;
+    lb->w.centreY = 1;
     lb->text = NULL;
 }
 HOOK(0x41E8C0, ListBox_Create);

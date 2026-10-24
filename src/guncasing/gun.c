@@ -127,7 +127,7 @@ void Gun_DrawHandler(Gun *g);
 void Gun_GetParamTableHandler(Gun *g, void **out);
 void Gun_ParamChangedHandler(Gun *g);
 void Gun_GetStateHandler(Gun *g, char **out);
-void Gun_MoveHandler(Gun *g, MoveMsg *msg);
+void Gun_MoveHandler(Gun *g, PartMoveArg *msg);
 void GunCasing_CreateHandler(GunCasing *c);
 void GunCasing_RunHandler(GunCasing *c);
 void GunCasing_DeleteHandler(GunCasing *c);
@@ -181,7 +181,7 @@ Gun *Gun_New(void *parent, int16_t count, int id, int rounds, char unkF1)
     Mem_PushMode(1);
     wt = WeaponType_Find(id);
     if (wt)
-        type = wt->gunType;
+        type = wt->taskType2;
     else {
         Warning_Show("Unknown weapon type: %d", id);
         type = gGunType;
@@ -311,7 +311,7 @@ void GunCasing_RunHandler(GunCasing *c)
     r.m[6] = (m[8] * s[6] + m[7] * s[3]) + m[6] * s[0];
     r.m[7] = (m[7] * s[4] + m[8] * s[7]) + m[6] * s[1];
     r.m[8] = (m[7] * s[5] + m[8] * s[8]) + m[6] * s[2];
-    r.unk24 = c->spin.unk24 + c->o.matrix.unk24 + 1;
+    r.count = c->spin.count + c->o.matrix.count + 1;
     c->o.matrix = r;
 }
 HOOK(0x4782D0, GunCasing_RunHandler);
@@ -351,7 +351,7 @@ void Gun_CreateHandler(Gun *g)
     g->ammoType = NULL;
     shots = GunShot_New(Level_GetDynamic(), &g->o.task, g->o.task.parent);
     g->shots = TaskRef_Add(shots);
-    g->o.coll = MagicObjContainer_New(NULL, g);
+    g->o.attached = MagicObjContainer_New(NULL, g);
 }
 HOOK(0x478540, Gun_CreateHandler);
 
@@ -377,14 +377,14 @@ void Gun_RunHandler(Gun *g)
     long double step, v;
 
     if (g->rounds == -2)
-        g->rounds = wt->rounds;
+        g->rounds = wt->clipSize;
     if (g->remove) {
         Task_Delete(g);
         return;
     }
     if (g->cooldown)
         g->cooldown--;
-    BROADCAST(g->o.coll->head, 1);
+    BROADCAST(g->o.attached->head, 1);
     if (!(g->recoil >= kZero)) {
         step = kMinute / ((kMinute / (long double)wt->rate) * kFpsD);
         v = step + g->recoil;
@@ -438,7 +438,7 @@ void Gun_DeleteHandler(Gun *g)
     }
     if (g->unk190)
         TaskRef_Remove(g->unk190);
-    Task_Delete(g->o.coll);
+    Task_Delete(g->o.attached);
 }
 HOOK(0x478840, Gun_DeleteHandler);
 
@@ -468,7 +468,7 @@ HOOK(0x478900, Gun_HideHandler);
 /* binoculars are only drawn while they have a charge */
 void Gun_DrawHandler(Gun *g)
 {
-    if (g->rounds || g->wt->category != 5)
+    if (g->rounds || g->wt->ammoDisplay != 5)
         TASK_HANDLER(4, RigidDynCubeObj_GetType())(g, 0);
 }
 HOOK(0x478970, Gun_DrawHandler);
@@ -495,13 +495,13 @@ void Gun_ParamChangedHandler(Gun *g)
         g->ammoType = NULL;
         return;
     }
-    g->ammoType = AmmoType_FindByCaliber(wt->ammo);
+    g->ammoType = AmmoType_FindByCaliber(wt->caliber);
     model = VirModel_Find(wt->key);
     if (model)
         RigidDynCubeObj_SetModel(g, model);
-    if (g->o.coll)
-        Task_DeleteChildren(g->o.coll);
-    RigidDynCubeObj_CreateMagicObjs(g->o.coll, g, g);
+    if (g->o.attached)
+        Task_DeleteChildren(g->o.attached);
+    RigidDynCubeObj_CreateMagicObjs(g->o.attached, g, g);
 }
 HOOK(0x4789C0, Gun_ParamChangedHandler);
 
@@ -511,7 +511,7 @@ void Gun_GetStateHandler(Gun *g, char **out)
 }
 HOOK(0x478A80, Gun_GetStateHandler);
 
-void Gun_MoveHandler(Gun *g, MoveMsg *msg)
+void Gun_MoveHandler(Gun *g, PartMoveArg *msg)
 {
     if (g->inWorld) {
         float s = max_scale(&g->o);
@@ -627,7 +627,7 @@ void Gun_FireHandler(Gun *g, GunFire *msg)
                 out.m[6] = a[8] * e[6] + a[7] * e[3] + a[6] * e[0];
                 out.m[7] = a[8] * e[7] + a[7] * e[4] + a[6] * e[1];
                 out.m[8] = a[8] * e[8] + a[7] * e[5] + a[6] * e[2];
-                out.unk24 = rot.unk24 + aim.unk24 + 1;
+                out.count = rot.count + aim.count + 1;
                 /* the original then re-orthonormalises a copy once unk24
                    passes 1000, but never uses the result */
             }

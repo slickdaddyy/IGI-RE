@@ -4,40 +4,10 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "param/paramtypes.h"
+#include "qvertex/qvertextypes.h"
 
 FN_EXTERN(SubLevel_Run);
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    void *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
-
-typedef struct Vec3f {
-    float x, y, z;
-} Vec3f;
-
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct VarString {
-    char *text;
-    char *expanded;
-    void *expr;
-    void *refs[16];
-    int refCount;
-} VarString;
-
-_Static_assert(sizeof(VarString) == 0x50, "VarString");
 
 typedef void (*TaskFn1)(void *task);
 typedef void (*TaskFn2)(void *task, void *arg);
@@ -143,18 +113,6 @@ extern float gViewH;
 extern float gViewCX;
 extern float gViewCY;
 extern double gCamPos[];
-
-typedef struct QVertex {
-    float x, y, z, u, v, a, r, g, b;
-} QVertex;
-
-typedef struct QVertexStrip {
-    int untextured;
-    unsigned int flags;
-    int unk8;
-    int count;
-    QVertex *verts;
-} QVertexStrip;
 
 extern void *gQVertexTexture;
 extern int gQVertexStrip;

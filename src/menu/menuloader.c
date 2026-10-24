@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "menu/menu.h"
+#include "game/gametypes.h"
 
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
@@ -22,11 +23,6 @@ typedef struct MenuLoader {
 } MenuLoader;
 
 _Static_assert(sizeof(MenuLoader) == 0x124, "MenuLoader");
-
-typedef struct Game {
-    char unk0[0x44];
-    Task *root;
-} Game;
 
 extern uint16_t gMenuLoaderType;
 extern void *gMenuLoaderParams;

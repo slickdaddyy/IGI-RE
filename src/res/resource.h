@@ -2,17 +2,7 @@
 #define RES_RESOURCE_H
 
 #include "igi.h"
-
-typedef struct Node {
-    struct Node *next;
-    struct Node *prev;
-} Node;
-
-typedef struct List {
-    Node *head;
-    Node *tail;
-    Node *tailpred;
-} List;
+#include "types.h"
 
 enum {
     RES_PACK,   /* an "IRES" ILFF form or a "RESOURCE" pack, owns its data */
@@ -37,18 +27,6 @@ typedef struct Resource {
     const char *info;        /* text of a DBUG/CSTR chunk */
     int time[2];
 } Resource;
-
-/* Fixed size object pool: slot i of the order table holds the index of
-   the i-th allocated object, each object stores its order position just
-   past its own size. */
-typedef struct Pool {
-    char *base;
-    int *order;
-    int used;
-    int capacity;
-    int stride;
-    int size;
-} Pool;
 
 /* Chunk header of an ILFF file */
 typedef struct Chunk {

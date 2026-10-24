@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "elevator/elevator.h"
+#include "glass/glasstypes.h"
 
 FN_EXTERN(Glass_Delete);
 
@@ -34,16 +35,9 @@ typedef struct ExplodeCreateArg {
     ExplodeParams *params;
 } ExplodeCreateArg;
 
-/* the argument of the script argument handler */
-typedef struct ScriptArg {
-    ExplodeParams *out;
-    void *args;
-    int index;
-} ScriptArg;
-
 /* a magic object that swaps its model and explodes once it took enough damage */
 typedef struct ExplodeMagicObj {
-    Obj obj;
+    RigidDynCubeObj obj;
     Vec3d offset;
     Matrix local;
     void *owner;
@@ -55,12 +49,6 @@ typedef struct ExplodeMagicObj {
     char exploded;
     char pad149[7];
 } ExplodeMagicObj;
-
-/* the argument of the Game event 9 handler */
-typedef struct HitArg {
-    int unk0;
-    float damage;
-} HitArg;
 
 _Static_assert(sizeof(ExplodeParams) == 0x3C, "ExplodeParams");
 _Static_assert(offsetof(ExplodeCreateArg, params) == 0x8C, "ExplodeCreateArg");
@@ -131,7 +119,7 @@ void ExplodeMagicObj_Run(ExplodeMagicObj *o)
             ;
     }
     RigidDynCubeObj_SetModel(o, model);
-    o->obj.unkDC = 0;
+    o->obj.lightmapRefs = 0;
     CALL_CHILDREN(&o->obj.task, Mesh3D_GetEvent5());
     p = o->params;
     Explosion_Spawn(&o->obj.pos, 1, 0, o->unk144, p->unk14 * kUnits, p->unk18 * kUnits, 6144.0f, p->unk24, p->unk28, 0,

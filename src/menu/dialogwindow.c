@@ -20,10 +20,6 @@ typedef struct DialogWindow {
 
 _Static_assert(sizeof(DialogWindow) == 0x5C, "DialogWindow");
 
-typedef struct IntRange {
-    int min, max;
-} IntRange;
-
 extern uint16_t gDialogWindowType;
 extern IntRange gDialogRange;
 extern void *gDialogWindowParams;
@@ -66,8 +62,8 @@ HOOK(0x4199F0, DialogWindow_Init);
 void DialogWindow_Create(DialogWindow *dw, void *arg)
 {
     HANDLER(0, MenuWindow_GetType())(dw, arg);
-    dw->w.unk3C = 1;
-    dw->w.unk40 = 1;
+    dw->w.centreX = 1;
+    dw->w.centreY = 1;
     dw->unk58 = 0;
     dw->unk54 = 0;
     dw->horizontal = 1;
@@ -149,9 +145,9 @@ void DialogWindow_DrawFrame(DialogWindow *dw, float alpha)
     set_vertex(&v[2], x1, y1, alpha, 0.75f);
     set_vertex(&v[3], x0, y1, alpha, 0.75f);
     v[4] = v[0];
-    s.untextured = 1;
+    s.lines = 1;
     s.flags = 0x80000;
-    s.unk8 = 0;
+    s.queue = 0;
     s.count = 5;
     s.verts = v;
     gRenderFuncs[gQVertexStrip](&s);
@@ -167,8 +163,8 @@ void DialogWindow_DrawFrame(DialogWindow *dw, float alpha)
     set_vertex(&v[1], x1, y0, a1, 1.0f);
     set_vertex(&v[2], x0, y1, a2, 0);
     set_vertex(&v[3], x1, y1, a2, 0);
-    s.untextured = 0;
-    s.unk8 = 0;
+    s.lines = 0;
+    s.queue = 0;
     s.count = 4;
     gRenderFuncs[gQVertexStrip](&s);
 

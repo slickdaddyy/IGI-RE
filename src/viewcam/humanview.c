@@ -13,31 +13,10 @@ FN_EXTERN(HumanAttach_Detect);
 FN_EXTERN(SubLevel_Run);
 FN_EXTERN(Task_FalseHandler);
 
-typedef struct Vec3d {
-    double x, y, z;
-} Vec3d;
-
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    double pos[3];
-    char unk20[0x38];
-    int found;
-    int unk5C;
-    double dist;
-    char unk68[8];
-} CollHit;
-
-/* the second word is the object the line ignores */
-typedef struct CollFilter {
-    uint32_t unk0;
-    Human *ignore;
-} CollFilter;
-
 /* where sounds are heard from */
 typedef struct SoundEar {
     double *pos;
-    Rot *rot;
+    Matrix *rot;
     int unk8;
 } SoundEar;
 
@@ -63,23 +42,23 @@ ORIG(0x4B0DB0, char, Mem_GetMode, (void));
 ORIG(0x4B3100, void, Vec3d_Normalize, (double *v));
 ORIG(0x4B3130, long double, Vec3d_Length, (const double *v));
 ORIG(0x4B3320, char, Vec3d_IsZero, (const double *v));
-ORIG(0x4B38E0, void, Matrix_SetEuler, (Rot *m, float ax, float ay, float az));
-ORIG(0x4B3B60, void, Matrix_SetRotX, (Rot *m, float a));
+ORIG(0x4B38E0, void, Matrix_SetEuler, (Matrix *m, float ax, float ay, float az));
+ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
 ORIG(0x4B4770, long double, Random_Float, (void *rng));
 ORIG(0x4C48C0, uint16_t, RigidDynCubeObj_GetType, (void));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, double *pos, float radius));
 ORIG(0x4C7140, void, DynCube_Add, (void *world, void *obj, double *pos, float radius, int category));
 ORIG(0x4C7560, void, DynCube_Remove, (void *world, void *obj));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, double *from, double *to, int count, uint8_t event,
-                                  CollFilter *filter, unsigned flags));
+                                  CollIgnore *filter, unsigned flags));
 ORIG(0x4CDB20, void, Coll_LinesEx, (void *world, CollHit *hits, double *from, double *to, int count, uint8_t event,
-                                    CollFilter *filter, unsigned flags, int unk));
+                                    CollIgnore *filter, unsigned flags, int unk));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4CEC10, void *, VirModel_Find, (const char *name));
 ORIG(0x4D2FB0, void, BoneObj_GetRootMotion, (float *out, float *unk, void *anim));
 ORIG(0x4D3210, void, BoneObj_GetEvents, (int *out, void *anim));
-ORIG(0x4D38C0, void, BoneObj_Update, (Rot *m, void *anim));
+ORIG(0x4D38C0, void, BoneObj_Update, (Matrix *m, void *anim));
 ORIG(0x4D6110, void, Anim_PlayNow, (void *anim, int a, int b, int c));
 ORIG(0x4D9610, uint16_t, BoneDynCubeObj_GetType, (void));
 ORIG(0x4D9620, void, BoneDynCubeObj_Init, (void *world, void *obj, int a, void *model));
@@ -88,7 +67,7 @@ ORIG(0x4E6610, uint8_t, Sound_GetInfoEvent, (void));
 ORIG(0x4E81F0, char *, Viewport_GetCurrentCamera, (void));
 ORIG(0x4EC0E0, void, AnimTrigger_Fire, (int bone, void *obj, double *pos));
 ORIG(0x4F2060, Task *, WeaponSlots_Get, (Task **slots, int i));
-ORIG(0x4F2310, void, Weapon_Move, (Task *w, double *pos, Rot *m));
+ORIG(0x4F2310, void, Weapon_Move, (Task *w, double *pos, Matrix *m));
 
 extern uint16_t gHumanViewType;
 extern int gHumanMaskType;
@@ -145,13 +124,13 @@ void HumanView_CreateHandler(HumanView *v)
     v->unk139 = 1;
     v->camOverride = 0;
     v->hasTarget = 0;
-    memset(v->offset, 0, sizeof(v->offset));
-    memset(v->unk1A8, 0, sizeof(v->unk1A8));
+    memset(v->lean, 0, sizeof(v->lean));
+    memset(v->leanSpeed, 0, sizeof(v->leanSpeed));
     v->shake = 0.0f;
     v->dip = 0.0f;
     HumanView_ClearWeaponAngles(v);
     v->zoomed = 0;
-    v->bone = -1;
+    v->animEvent.sound = -1;
     v->duck = 0.0f;
     v->duckNow = 0.0f;
     v->fovX = x87_tan(kFovX);
@@ -174,7 +153,7 @@ typedef struct WeaponPlace {
     int firstPerson;
     int unk4;
     double pos[3];
-    Rot rot;
+    Matrix rot;
 } WeaponPlace;
 
 /* camera of the player being shown: also moves the held weapon */
@@ -453,14 +432,14 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
     float e0, e1, e2, o[3];
     long double z;
     double eye[3], start[3], end[3];
-    CollFilter filter;
+    CollIgnore filter;
     CollHit hit;
     uint8_t ev;
     void *world;
 
-    e0 = h->pitch + v->pitch;
+    e0 = h->rotX + v->pitch;
     e1 = 0.0f;
-    e2 = h->yaw + v->yaw;
+    e2 = h->rotZ + v->yaw;
     if (!x87_eq(v->shake, 0.0f)) {
         e0 = v->shakeAngle * v->shake * shake_random() + e0;
         e1 = v->shakeAngle * v->shake * shake_random();
@@ -468,9 +447,9 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
     }
     Matrix_SetEuler(&v->cam, e0, e1, e2);
     Human_GetEyePos(eye, h);
-    o[0] = v->offset[0];
-    o[1] = v->offset[1];
-    o[2] = v->offset[2];
+    o[0] = v->lean[0];
+    o[1] = v->lean[1];
+    o[2] = v->lean[2];
     z = o[2];
     if (!x87_eq(v->shake, 0.0f)) {
         long double n;
@@ -510,7 +489,7 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
         end[1] = b + eye[1];
         end[2] = z + eye[2];
         memcpy(&filter.unk0, &o[0], 4);
-        filter.ignore = h;
+        filter.task = (Task *)h;
         ev = Game_GetEvent8();
         world = Game_GetWorld();
         Coll_LinesEx(world, &hit, start, end, 1, ev, &filter, 0xFFFFFFFF, 1);
@@ -518,9 +497,9 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
             double d[3], len;
             long double t;
 
-            d[0] = hit.pos[0] - start[0];
-            d[1] = hit.pos[1] - start[1];
-            d[2] = hit.pos[2] - start[2];
+            d[0] = hit.pos.x - start[0];
+            d[1] = hit.pos.y - start[1];
+            d[2] = hit.pos.z - start[2];
             len = Vec3d_Length(d);
             Vec3d_Normalize(d);
             t = len - kWallGap;
@@ -545,7 +524,7 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
         filter.unk0 = (uint32_t)(uintptr_t)&v->cam.m[2];
         memcpy(start, eye, sizeof(start));
         end[0] = a + eye[0];
-        filter.ignore = h;
+        filter.task = (Task *)h;
         end[1] = b + eye[1];
         end[2] = c + eye[2];
         ev = Game_GetEvent8();
@@ -574,7 +553,7 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
         double pos[3];
         long double x;
         float y, zz;
-        Rot m, rot;
+        Matrix m, rot;
 
         Matrix_SetEuler(&m, v->weaponPitch, 0.0f, v->weaponYaw);
         if (v->zoomed)
@@ -588,15 +567,15 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
         rot.m[6] = (m.m[6] * c[8] + m.m[0] * c[6]) + m.m[3] * c[7];
         rot.m[7] = (m.m[7] * c[8] + m.m[1] * c[6]) + m.m[4] * c[7];
         rot.m[8] = (m.m[8] * c[8] + m.m[2] * c[6]) + m.m[5] * c[7];
-        rot.serial = v->cam.serial + m.serial + 1;
+        rot.count = v->cam.count + m.count + 1;
         v->rotDirty = 1;
         v->rot = rot;
         BoneObj_GetRootMotion(v->weaponPos, v->unk1FC, v->anim);
-        v->bone = -1;
-        BoneObj_GetEvents(&v->unk208, v->anim);
+        v->animEvent.sound = -1;
+        BoneObj_GetEvents(&v->animEvent.unk0, v->anim);
         r = v->rot.m;
-        if (v->bone != -1) {
-            const float *b = v->bonePos;
+        if (v->animEvent.sound != -1) {
+            const float *b = v->animEvent.offset;
 
             x = (r[2] * b[2] + r[1] * b[1]) + b[0] * r[0];
             y = (r[5] * b[2] + r[4] * b[1]) + r[3] * b[0];
@@ -604,7 +583,7 @@ void HumanView_UpdateBody(HumanView *v, Human *h)
             pos[0] = x + v->pos[0];
             pos[1] = y + v->pos[1];
             pos[2] = zz + v->pos[2];
-            AnimTrigger_Fire(v->bone, v, pos);
+            AnimTrigger_Fire(v->animEvent.sound, v, pos);
         }
         HumanView_GetEye(eye, h->view);
         w = v->weaponPos;
@@ -672,7 +651,7 @@ void Human_GetEyePos(double *out, Human *h)
 }
 HOOK(0x465820, Human_GetEyePos);
 
-void HumanView_GetMatrix(Rot *out, HumanView *v)
+void HumanView_GetMatrix(Matrix *out, HumanView *v)
 {
     *out = v->cam;
 }
@@ -686,7 +665,7 @@ void HumanView_GetForward(float *out, HumanView *v)
 }
 HOOK(0x4658A0, HumanView_GetForward);
 
-void HumanView_SetCamera(HumanView *v, const double *pos, const Rot *rot)
+void HumanView_SetCamera(HumanView *v, const double *pos, const Matrix *rot)
 {
     v->camOverride = 1;
     memcpy(v->camPos, pos, sizeof(v->camPos));

@@ -3,10 +3,8 @@
 
 #include "igi.h"
 #include "hook.h"
-
-typedef struct RigidVec3d {
-    double x, y, z;
-} RigidVec3d;
+#include "magicobj/magicobjtypes.h"
+#include "coll/colltypes.h"
 
 typedef struct RigidCollVert {
     float x, y, z;
@@ -25,15 +23,6 @@ typedef struct RigidCollFace {
     uint16_t material;
     uint16_t unkA;
 } RigidCollFace;
-
-/* bounding sphere tree over the triangles */
-typedef struct RigidCollNode {
-    float x, y, z, radius;
-    uint16_t first_tri;
-    uint16_t tri_count;
-    uint16_t child;
-    uint16_t sibling;
-} RigidCollNode;
 
 typedef struct RigidCollMesh {
     int unk0;
@@ -62,51 +51,6 @@ typedef struct RigidLod {
     RigidModelPart *part;
 } RigidLod;
 
-typedef struct RigidObj {
-    char unk0[0x1C];
-    uint16_t type;
-    char unk1E[2];
-    RigidVec3d pos;
-    char unk38[0x30];
-    char *unk68; /* material pointers at +0xD3C */
-    RigidLod **lods;
-    float m[9];
-    int unk94;
-    float scale[3];
-    int lod;
-} RigidObj;
-
-typedef struct RigidLineHit {
-    void *obj;
-    int unk4;
-    RigidVec3d pos;
-    float local[3];
-    float local_normal[3];
-    float normal[3];
-    int unk44;
-    int tri;
-    void *material;  /* the hit came from behind the triangle */
-    void *material2; /* from the front */
-    int close;       /* within 0.1 of an earlier hit */
-    int found;
-    int unk5C;
-    double dist;
-    float u, v;
-} RigidLineHit;
-
-typedef struct RigidLineQuery {
-    const RigidVec3d *starts;
-    const RigidVec3d *ends;
-    int count;
-    uint8_t slot; /* 0xFF: none, else a handler that must set *slot_arg */
-    char unkD[3];
-    char *slot_arg;
-    int mesh;
-    int all_faces;
-    int magic;
-    RigidLineHit *results;
-} RigidLineQuery;
-
 /* the segment in object space, divided by the x scale */
 typedef struct RigidLineWalk {
     float p0x, p0y, p0z;
@@ -116,16 +60,7 @@ typedef struct RigidLineWalk {
     float max_x, max_y, max_z;
 } RigidLineWalk;
 
-_Static_assert(sizeof(RigidCollNode) == 0x18, "RigidCollNode");
 _Static_assert(sizeof(RigidCollMesh) == 0x20, "RigidCollMesh");
-_Static_assert(offsetof(RigidObj, m) == 0x70, "RigidObj.m");
-_Static_assert(offsetof(RigidObj, lod) == 0xA4, "RigidObj.lod");
-_Static_assert(offsetof(RigidLineHit, normal) == 0x38, "RigidLineHit.normal");
-_Static_assert(offsetof(RigidLineHit, material) == 0x4C, "RigidLineHit.material");
-_Static_assert(offsetof(RigidLineHit, found) == 0x58, "RigidLineHit.found");
-_Static_assert(offsetof(RigidLineHit, dist) == 0x60, "RigidLineHit.dist");
-_Static_assert(sizeof(RigidLineHit) == 0x70, "RigidLineHit");
-_Static_assert(offsetof(RigidLineQuery, results) == 0x20, "RigidLineQuery");
 
 ORIG(0x4BD070, int, Qvm_GetArgLine, (RigidLod *lod, RigidCollTri *tri, float u, float v));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (RigidLod **model));
@@ -152,7 +87,7 @@ static void RigidLineWalk_SetBox(RigidLineWalk *w, float x, float y, float z)
    the squared offsets in a different order for a first child. */
 static int RigidLineWalk_NodeHit(const RigidLineWalk *w, const RigidCollNode *n, int first_child)
 {
-    long double cx = n->x - w->p0x, cy = n->y - w->p0y, cz = n->z - w->p0z;
+    long double cx = n->center[0] - w->p0x, cy = n->center[1] - w->p0y, cz = n->center[2] - w->p0z;
     double dx = cx, dy = cy, dz = cz;
     long double along = (cz * w->dz + cy * w->dy) + cx * w->dx;
     long double d2;
@@ -163,17 +98,17 @@ static int RigidLineWalk_NodeHit(const RigidLineWalk *w, const RigidCollNode *n,
         d2 = (dx * dx + dy * dy) + dz * dz;
     if (n->radius * n->radius < d2 - along * along * w->inv_len2)
         return 0;
-    if (n->radius + n->x < w->min_x || n->y + n->radius < w->min_y || n->z + n->radius < w->min_z)
+    if (n->radius + n->center[0] < w->min_x || n->center[1] + n->radius < w->min_y || n->center[2] + n->radius < w->min_z)
         return 0;
-    if (n->x - n->radius > w->max_x || n->y - n->radius > w->max_y || n->z - n->radius > w->max_z)
+    if (n->center[0] - n->radius > w->max_x || n->center[1] - n->radius > w->max_y || n->center[2] - n->radius > w->max_z)
         return 0;
     return 1;
 }
 
-void RigidDynCubeObj_LineHit(RigidObj *obj, RigidLineQuery *q)
+void RigidDynCubeObj_LineHit(RigidDynCubeObj *obj, CollLineQuery *q)
 {
-    const RigidVec3d *start = q->starts, *end = q->ends;
-    RigidLineHit *hit = q->results;
+    const Vec3d *start = q->starts, *end = q->ends;
+    CollHit *hit = q->results;
     RigidCollNode *stack[100];
     RigidCollMesh *cm;
     RigidCollVert *verts;
@@ -182,9 +117,9 @@ void RigidDynCubeObj_LineHit(RigidObj *obj, RigidLineQuery *q)
     char close = 0;
     int i;
 
-    if (!obj->lods || obj->lod == -1)
+    if (!obj->model || obj->lod == -1)
         return;
-    lod = obj->lods[obj->lod];
+    lod = obj->model[obj->lod];
     data = lod->part->data;
     if (data->unk28)
         return;
@@ -193,16 +128,16 @@ void RigidDynCubeObj_LineHit(RigidObj *obj, RigidLineQuery *q)
         return;
     verts = cm->verts;
     if (q->slot != 0xFF) {
-        RigidTaskHandler fn = gTaskHandlers[q->slot][obj->type];
+        RigidTaskHandler fn = gTaskHandlers[q->slot][obj->task.type];
         if (fn) {
-            fn(obj, q->slot_arg);
-            if (!*q->slot_arg)
+            fn(obj, q->slotArg);
+            if (!*q->slotArg)
                 return;
         }
     }
 
     for (i = 0; i < q->count; i++, start++, end++, hit++) {
-        const float *m = obj->m;
+        const float *m = obj->matrix.m;
         RigidLineWalk w;
         RigidCollNode *node;
         RigidCollTri *hit_tri = NULL;
@@ -217,7 +152,7 @@ void RigidDynCubeObj_LineHit(RigidObj *obj, RigidLineQuery *q)
 
         scale = obj->scale[2] < obj->scale[1] ? obj->scale[1] : obj->scale[2];
         scale = obj->scale[0] > scale ? obj->scale[0] : scale;
-        rad = VirModel_GetRadius(obj->lods) * scale;
+        rad = VirModel_GetRadius((RigidLod **)obj->model) * scale;
         radius = rad;
 
         /* bounding box of the object against the segment */
@@ -316,7 +251,7 @@ void RigidDynCubeObj_LineHit(RigidObj *obj, RigidLineQuery *q)
             }
 
             /* the last node tried, even one that failed the sphere test */
-            for (k = node->first_tri; k < node->first_tri + node->tri_count; k++) {
+            for (k = node->firstTri; k < node->firstTri + node->triCount; k++) {
                 RigidCollTri *tri = &cm->tris[k];
                 const RigidCollVert *v0 = &verts[tri->v[0]], *v1 = &verts[tri->v[1]], *v2 = &verts[tri->v[2]];
                 float e1x, e1y, e1z, e2x, e2y, e2z, nx, ny, nz, nyn, ax2, ay2, az2, t, px, py, pz, fu, fv;
@@ -324,7 +259,7 @@ void RigidDynCubeObj_LineHit(RigidObj *obj, RigidLineQuery *q)
                 double dend, b;
                 char back;
 
-                if (cm->faces[tri->face].unk4 != -1 && !q->all_faces)
+                if (cm->faces[tri->face].unk4 != -1 && !q->allFaces)
                     continue;
                 if (!(w.min_x <= v0->x || w.min_x <= v1->x || w.min_x <= v2->x))
                     continue;
@@ -456,8 +391,8 @@ void RigidDynCubeObj_LineHit(RigidObj *obj, RigidLineQuery *q)
 
             /* next sibling that passes, going back up when there is none */
             for (;;) {
-                if (node->sibling) {
-                    node = &cm->nodes[node->sibling];
+                if (node->next) {
+                    node = &cm->nodes[node->next];
                     stack[depth] = node;
                     if (RigidLineWalk_NodeHit(&w, node, 0))
                         break;
@@ -484,7 +419,7 @@ void RigidDynCubeObj_LineHit(RigidObj *obj, RigidLineQuery *q)
         {
             const RigidCollVert *a = &verts[hit_tri->v[0]], *b = &verts[hit_tri->v[1]], *c = &verts[hit_tri->v[2]];
             uint16_t mi = cm->faces[hit_tri->face].material;
-            void **mats = (void **)(obj->unk68 + 0xD3C);
+            void **mats = (void **)(obj->world + 0xD3C);
             void *mat = mi == 0xFFFF ? mats[1] : mats[mi];
             long double cx = c->x - a->x, cy = c->y - a->y, cz = c->z - a->z;
             float bx = b->x - a->x, by = b->y - a->y;
@@ -495,18 +430,18 @@ void RigidDynCubeObj_LineHit(RigidObj *obj, RigidLineQuery *q)
             float wx, wy;
             long double sx, sy, sz, wz;
 
-            hit->normal[0] = nx;
-            hit->normal[1] = ny;
-            hit->normal[2] = nz;
-            hit->local_normal[0] = nx;
-            hit->local_normal[1] = ny;
-            hit->local_normal[2] = nz;
-            hit->normal[0] = (m[2] * nz + m[1] * ny) + m[0] * nx;
-            hit->normal[1] = (nx * m[3] + m[5] * nz) + m[4] * ny;
-            hit->normal[2] = (m[8] * nz + m[7] * ny) + m[6] * nx;
-            hit->local[0] = hx;
-            hit->local[1] = hy;
-            hit->local[2] = hz;
+            hit->normal.x = nx;
+            hit->normal.y = ny;
+            hit->normal.z = nz;
+            hit->localNormal.x = nx;
+            hit->localNormal.y = ny;
+            hit->localNormal.z = nz;
+            hit->normal.x = (m[2] * nz + m[1] * ny) + m[0] * nx;
+            hit->normal.y = (nx * m[3] + m[5] * nz) + m[4] * ny;
+            hit->normal.z = (m[8] * nz + m[7] * ny) + m[6] * nx;
+            hit->local.x = hx;
+            hit->local.y = hy;
+            hit->local.z = hz;
             sx = hx * obj->scale[0];
             sy = hy * obj->scale[1];
             sz = hz * obj->scale[2];
@@ -516,10 +451,10 @@ void RigidDynCubeObj_LineHit(RigidObj *obj, RigidLineQuery *q)
             hit->pos.x = wx + obj->pos.x;
             hit->pos.y = wy + obj->pos.y;
             hit->pos.z = wz + obj->pos.z;
-            hit->material2 = side ? NULL : mat;
+            hit->back = side ? NULL : mat;
             hit->material = side ? mat : NULL;
             hit->dist = best;
-            hit->obj = obj;
+            hit->task = &obj->task;
             hit->close = close;
             hit->found = 1;
             hit->tri = hit_tri - cm->tris;

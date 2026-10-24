@@ -45,6 +45,8 @@ ORIG(0x4CABF0, void, Coll_DropPoints, (void *world, CollHit *hit, Vec3d *points,
 /* a box of terrain whose .bit map entry marks material holes */
 typedef struct TextureModifier {
     DynCubeObj obj;
+    Terrain *world;
+    int unk6C;
     Vec3d place;
     Vec3d min;
     Vec3d max;
@@ -69,22 +71,8 @@ typedef struct TextureModifier {
     int unkEC;
 } TextureModifier;
 
-/* what Coll reads while walking the terrain */
-typedef struct CollHole {
-    int material;
-    int texShift;
-    int unk8;
-    int sizeShift;
-    float scale;
-    int unk14;
-    double x, y;
-    void *bits;
-    int unk2C;
-} CollHole;
-
 _Static_assert(sizeof(TextureModifier) == 0xF0, "TextureModifier");
 _Static_assert(offsetof(TextureModifier, slot) == 0xE4, "TextureModifier.slot");
-_Static_assert(sizeof(CollHole) == 0x30, "CollHole");
 
 extern void *gTexModParams;
 extern uint16_t gTexModType;
@@ -105,7 +93,7 @@ static const float kOne = 1.0f;
 
 void TextureModifier_Create(TextureModifier *tm)
 {
-    tm->obj.world = gCurrentWorld;
+    tm->world = gCurrentWorld;
     tm->bitIndex = -1;
     tm->lastBit = -1;
     tm->slot = -1;
@@ -130,7 +118,7 @@ HOOK(0x505D50, TextureModifier_Create);
 /* pushes the hole while the walk is inside the box */
 void TextureModifier_Enter(TextureModifier *tm)
 {
-    if (tm->bitIndex >= 0 && tm->obj.world->bit[tm->bitIndex].data) {
+    if (tm->bitIndex >= 0 && tm->world->bit[tm->bitIndex].data) {
         if (gCollHoleCount >= 20) {
             Error_Show("Too many items in texture modifier stack!");
             for (;;)
@@ -221,7 +209,7 @@ void TextureModifier_Delete(TextureModifier *tm)
         }
         gTexModCount--;
     }
-    DynCube_Remove(tm->obj.world, tm);
+    DynCube_Remove(tm->world, tm);
 }
 HOOK(0x506240, TextureModifier_Delete);
 
@@ -269,7 +257,7 @@ void TextureModifier_Changed(TextureModifier *tm)
             Task_Delete(tm->children);
             tm->children = NULL;
         }
-        bits = tm->obj.world->bit;
+        bits = tm->world->bit;
         if (tm->slot == -1) {
             gTexMods[gTexModCount] = tm;
             tm->slot = gTexModCount;
@@ -289,14 +277,14 @@ void TextureModifier_Changed(TextureModifier *tm)
         q.z = q.z + kLiftZ;
         hit.found = 0;
         for (i = 0; i < 5; i++) {
-            Coll_DropPoints(tm->obj.world, &hit, &q, 1, &dz, 0xFF, 0, 0x80000000);
+            Coll_DropPoints(tm->world, &hit, &q, 1, &dz, 0xFF, 0, 0x80000000);
             if (hit.found)
                 break;
         }
         if (hit.found)
             p.z = hit.pos.z;
     }
-    w = tm->obj.world;
+    w = tm->world;
     p.x = w->offset[0] + p.x;
     p.y = w->offset[1] + p.y;
     p.z = w->offset[2] + p.z;
@@ -327,7 +315,7 @@ void TextureModifier_Changed(TextureModifier *tm)
     tm->max.z = tm->max.z - w->offset[2];
     if (tm->moved)
         DynCube_AddBox(w, tm, &p, &tm->min, &tm->max, 4);
-    DynCube_MoveBox(tm->obj.world, tm, &p, &tm->min, &tm->max);
+    DynCube_MoveBox(tm->world, tm, &p, &tm->min, &tm->max);
     if (!tm->isChild) {
         if (tm->bitIndex >= 0x100)
             tm->bitIndex = 0xFF;
@@ -422,7 +410,7 @@ void TextureModifier_Changed(TextureModifier *tm)
                 r = Random_Float(gTexModRandom);
                 q.y = (r + r - kOne) * cell + q.y;
                 q.z = q.z + kLiftZ;
-                Coll_DropPoints(tm->obj.world, &hit, &q, 1, &dz, 0xFF, 0, 0x80000000);
+                Coll_DropPoints(tm->world, &hit, &q, 1, &dz, 0xFF, 0, 0x80000000);
                 while (hit.found) {
                     long double v = hit.pos.z;
 
@@ -432,7 +420,7 @@ void TextureModifier_Changed(TextureModifier *tm)
                         hi = v;
                     q = hit.pos;
                     q.z = v - kLayerGap;
-                    Coll_DropPoints(tm->obj.world, &hit, &q, 1, &dz, 0xFF, 0, 0x80000000);
+                    Coll_DropPoints(tm->world, &hit, &q, 1, &dz, 0xFF, 0, 0x80000000);
                 }
             }
             q = c;
@@ -462,7 +450,7 @@ void TextureModifier_Changed(TextureModifier *tm)
             Mem_ClearMode();
     }
     hole = &gCollHoles[tm->slot];
-    bits = tm->obj.world->bit;
+    bits = tm->world->bit;
     hole->sizeShift = tm->sizeShift;
     n = bits[tm->bitIndex].size;
     hole->scale = (long double)(n - 1) / n;

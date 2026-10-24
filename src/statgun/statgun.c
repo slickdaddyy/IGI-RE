@@ -2,47 +2,7 @@
 
 #include "hook.h"
 #include "statgun/statgun.h"
-
-/* "StationaryGun" (0x220 bytes): a mounted M2HB a human can take over */
-typedef struct StatGun {
-    RigidObj obj;
-    Vec3d basePos;          /* 0xF0, script parameter */
-    Matrix baseMatrix;      /* 0x108, script parameter */
-    Vec3d relPos;           /* 0x130, base in the frame of the carrier */
-    Matrix relMatrix;       /* 0x148 */
-    Vec3d muzzlePos;        /* 0x170 */
-    Matrix muzzleMatrix;    /* 0x188 */
-    char model[0x10];       /* 0x1B0 */
-    char weapon[0x20];      /* 0x1C0, weapon id expression */
-    float maxPitch;         /* 0x1E0, degrees */
-    float minPitch;
-    float yawRange;
-    int ammo;
-    float recoilPitch;      /* 0x1F0 */
-    float recoilYaw;
-    float pitch;            /* 0x1F8, radians */
-    float yaw;
-    float outPitch;         /* 0x200, pitch and yaw with recoil */
-    float outYaw;
-    Human *user;            /* 0x208 */
-    Task *slots[3];         /* 0x20C */
-    int lastTick;           /* 0x218 */
-    char used;              /* 0x21C */
-    char pad21D[3];
-} StatGun;
-
-/* sent with the RigidDynCubeObj move event */
-typedef struct MoveMsg {
-    Vec3d *pos;
-    Matrix *matrix;
-} MoveMsg;
-
-/* the search used to pick what a human can use (see 0x416AD0) */
-typedef struct UseQuery {
-    Task *human;
-    int unk4;
-    Vec3d pos;
-} UseQuery;
+#include "props/propstypes.h"
 
 /* Game event 4: a human takes the gun */
 typedef struct AttachMsg {
@@ -58,10 +18,6 @@ typedef struct DetectMsg {
     void *a;
     void *b;
 } DetectMsg;
-
-_Static_assert(offsetof(StatGun, model) == 0x1B0, "StatGun");
-_Static_assert(offsetof(StatGun, user) == 0x208, "StatGun");
-_Static_assert(sizeof(StatGun) == 0x220, "StatGun");
 
 extern uint16_t gStatGunType;
 extern void *gStatGunParams;
@@ -123,7 +79,7 @@ void StationaryGun_Attach(StatGun *o, AttachMsg *m);
 void StationaryGun_Event6(void *task, Human **msg);
 void StationaryGun_Event14(StatGun *o, int *out);
 void StationaryGun_GetParams(void *task, void **out);
-void StationaryGun_Move(StatGun *o, MoveMsg *m);
+void StationaryGun_Move(StatGun *o, MoveArg *m);
 void StationaryGun_Detect(StatGun *o, DetectMsg *m);
 void StationaryGun_Fire(StatGun *o, char fire);
 void StationaryGun_Aim(StatGun *o);
@@ -258,9 +214,9 @@ void StationaryGun_Fire(StatGun *o, char fire)
     msg.recoilPitch = 0.0f;
     msg.recoilYaw = 0.0f;
     if (o->user)
-        MOV32(msg.unk28, o->user->unk4D4);
+        MOV32(msg.aimError, o->user->aimError);
     else
-        MOV32(msg.unk28, kOne);
+        MOV32(msg.aimError, kOne);
     msg.h = o->user;
     HANDLER(Human_GetEvent0(), w->type)(w, &msg);
     MOV32(o->recoilPitch, msg.recoilPitch);
@@ -289,7 +245,7 @@ void StationaryGun_Aim(StatGun *o)
     Matrix_SetRotZ(&o->obj.matrix, o->outYaw);
     for (i = 0; i < 9; i++)
         t.m[i] = mat_elem(n, i / 3, m, i % 3, kLast[i]);
-    t.unk24 = o->baseMatrix.unk24 + o->obj.matrix.unk24 + 1;
+    t.count = o->baseMatrix.count + o->obj.matrix.count + 1;
     o->obj.matrix = t;
     model = o->obj.model;
     if (model && *(short *)(*(char **)(*(char **)((char *)*model + 0xC) + 0xC) + 0x7C) < 1)
@@ -301,7 +257,7 @@ void StationaryGun_Aim(StatGun *o)
     Matrix_SetEuler(&e, o->outPitch, 0.0f, 0x1.921fb6p+1f);
     for (i = 0; i < 9; i++)
         t.m[i] = mat_elem(m, i / 3, e.m, i % 3, 1);
-    t.unk24 = o->obj.matrix.unk24 + e.unk24 + 1;
+    t.count = o->obj.matrix.count + e.count + 1;
     e = t;
     Weapon_Move(w, &p, &e);
     o->muzzlePos = p;
@@ -350,7 +306,7 @@ HOOK(0x4748B0, StationaryGun_Clamp);
 void StationaryGun_DeleteHandler(StatGun *o)
 {
     QTaskList_Remove(Game_GetTaskList0(), o);
-    DynCube_Remove(o->obj.room, o);
+    DynCube_Remove(o->obj.world, o);
 }
 HOOK(0x474960, StationaryGun_DeleteHandler);
 
@@ -392,7 +348,7 @@ void StationaryGun_UpdateCarrier(StatGun *o)
 {
     static const int kLast[9] = {0, 0, 0, 1, 1, 1, 1, 0, 0};
     Task *c = Task_FindAncestor(o, RigidDynCubeObj_GetType());
-    RigidObj *a = (RigidObj *)c;
+    RigidDynCubeObj *a = (RigidDynCubeObj *)c;
     float *n = o->baseMatrix.m;
     float *am;
     long double dz;
@@ -421,10 +377,10 @@ void StationaryGun_UpdateCarrier(StatGun *o)
         MOV32(o->relMatrix.m[i * 3 + 1], am[i + 3]);
         MOV32(o->relMatrix.m[i * 3 + 2], am[i + 6]);
     }
-    o->relMatrix.unk24 = a->matrix.unk24;
+    o->relMatrix.count = a->matrix.count;
     for (i = 0; i < 9; i++)
         t.m[i] = mat_elem(n, i / 3, o->relMatrix.m, i % 3, kLast[i]);
-    t.unk24 = o->relMatrix.unk24 + o->baseMatrix.unk24 + 1;
+    t.count = o->relMatrix.count + o->baseMatrix.count + 1;
     o->relMatrix = t;
 }
 HOOK(0x474AE0, StationaryGun_UpdateCarrier);
@@ -469,7 +425,7 @@ void StationaryGun_Event6(void *task, Human **msg)
 {
     Human *h = *msg;
 
-    StatusScreen_DrawActionIcon(h, h->unk434);
+    StatusScreen_DrawActionIcon(h, (char *)h + 0x434);
 }
 HOOK(0x474F10, StationaryGun_Event6);
 
@@ -489,10 +445,10 @@ void StationaryGun_GetParams(void *task, void **out)
 HOOK(0x474F50, StationaryGun_GetParams);
 
 /* the carrier moved: move the base along and tell the children */
-void StationaryGun_Move(StatGun *o, MoveMsg *m)
+void StationaryGun_Move(StatGun *o, MoveArg *m)
 {
     float *f = m->matrix->m;
-    MoveMsg out;
+    MoveArg out;
     Vec3d p;
     Matrix t;
     float radius;
@@ -507,10 +463,10 @@ void StationaryGun_Move(StatGun *o, MoveMsg *m)
     o->basePos.z = m->pos->z + o->basePos.z;
     for (i = 0; i < 9; i++)
         t.m[i] = mat_elem(f, i / 3, o->relMatrix.m, i % 3, 1);
-    t.unk24 = m->matrix->unk24 + o->relMatrix.unk24 + 1;
+    t.count = m->matrix->count + o->relMatrix.count + 1;
     o->baseMatrix = t;
     radius = StationaryGun_Radius(o);
-    DynCube_Move(o->obj.room, o, &o->basePos, radius);
+    DynCube_Move(o->obj.world, o, &o->basePos, radius);
     o->obj.matrix = o->baseMatrix;
     StationaryGun_Aim(o);
     out.pos = &o->basePos;

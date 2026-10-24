@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "terrain/terrain.h"
+#include "coll/colltypes.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B2450, void, Texture_Download, (void *tex, void *palette, int pitch, int width, int height, int format,
@@ -29,12 +30,6 @@ extern TerrainLightmap gLightmaps[];
 extern TerrainMaterial gTerrainMaterials[];
 extern uint8_t gTerrainTileMaps[][64];
 
-_Static_assert(offsetof(Terrain, slot_count) == 0x118, "Terrain");
-_Static_assert(offsetof(Terrain, nodes) == 0xD00, "Terrain");
-_Static_assert(offsetof(Terrain, unkDBC) == 0xDBC, "Terrain");
-_Static_assert(offsetof(Terrain, offset) == 0xDE0, "Terrain");
-_Static_assert(sizeof(Terrain) == 0xF00, "Terrain");
-_Static_assert(sizeof(TerrainMaterial) == 900, "TerrainMaterial");
 _Static_assert(sizeof(TerrainLightmap) == 0x2C, "TerrainLightmap");
 
 ScriptValue *CreateTerrainMaterial(ScriptValue *out, void *data, void *args);
@@ -148,7 +143,7 @@ void Terrain_Load(Terrain *t, const char *path)
     Script_UnregisterSymbol("CreateTerrainTileMap");
 
     for (i = 0; i < (int)(ctr_size >> 5); i++)
-        t->ctr[i].cmd += (uintptr_t)t->cmd;
+        t->ctr[i].leaf = (const short *)((const char *)t->ctr[i].leaf + (uintptr_t)t->cmd);
 
     t->unkDC0 = Mem_Alloc(0x1000, 4);
     t->unkDC4 = Mem_Alloc(0x10000, 4);
@@ -181,10 +176,10 @@ ScriptValue *CreateTerrainMaterial(ScriptValue *out, void *data, void *args)
         l->unk0 = Script_GetArgInt(args, i - 1);
         l->unk4 = Script_GetArgReal(args, i);
         l->unk8 = Script_GetArgReal(args, i + 1);
-        l->unkC = Script_GetArgReal(args, i + 2) * 0.5f;
-        l->unk10 = Script_GetArgInt(args, i + 3);
-        l->unk14 = Script_GetArgReal(args, i + 4) * 0.5f;
-        l->unk18 = Script_GetArgInt(args, i + 5);
+        l->scaleA = Script_GetArgReal(args, i + 2) * 0.5f;
+        l->tileA = Script_GetArgInt(args, i + 3);
+        l->scaleB = Script_GetArgReal(args, i + 4) * 0.5f;
+        l->tileB = Script_GetArgInt(args, i + 5);
     }
     return ret_zero(out);
 }

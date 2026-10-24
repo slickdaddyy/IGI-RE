@@ -55,9 +55,7 @@ HOOK(0x4D7550, BoneDynCubeObj_Open);
 void BoneDynCubeObj_GetInfo(BoneDynCubeObj *o, ObjInfo *info)
 {
     info->pos = o->pos;
-    info->unk18[0] = 0;
-    info->unk18[1] = 0;
-    info->unk18[2] = 0;
+    info->velocity = (Vec3f){0};
     info->matrix = o->matrix;
     memcpy(&info->radius, &o->radius, 4);
     if (info->name)
@@ -67,7 +65,7 @@ HOOK(0x4D9480, BoneDynCubeObj_GetInfo);
 
 void BoneDynCubeObj_ActivateHandler(BoneDynCubeObj *o, int *arg)
 {
-    HzNode *n;
+    Task *n;
     HzHandler h;
 
     if (arg[0] == 0)
@@ -77,7 +75,7 @@ void BoneDynCubeObj_ActivateHandler(BoneDynCubeObj *o, int *arg)
         return;
     while (n) {
         gTaskStack[gTaskStackTop++] = n->next && n->next->next ? n->next : NULL;
-        h = gTaskHandlers[World_GetEvent0()][((HzTask *)n)->type];
+        h = gTaskHandlers[World_GetEvent0()][((Task *)n)->type];
         if (h)
             h(n, arg);
         n = gTaskStack[--gTaskStackTop];
@@ -123,7 +121,7 @@ void BoneDynCubeObj_Init(void *world, BoneDynCubeObj *o, short skel, void **mode
     o->unkB4 = 0;
     memset(o->unkB8, 0, sizeof(o->unkB8));
     o->unkCC = 1;
-    o->unkD4 = 1;
+    o->layer = 1;
 }
 HOOK(0x4D9620, BoneDynCubeObj_Init);
 

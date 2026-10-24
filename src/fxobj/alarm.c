@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "fxobj/fxobj.h"
+#include "elevator/elevatortypes.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -47,25 +48,9 @@ ORIG(0x4F0F70, void *, Param_Real32x9, (void));
 #define AlarmLight_Deactivate (FN(0x43A790, AlarmLight_Deactivate))
 #define VehiclePart_Delete (FN(0x426860, VehiclePart_Delete))
 
-/* a rotating warning light ("AlarmLight", 0x1F8 bytes) */
-typedef struct AlarmLight {
-    RigidObj obj;
-    Vec3d pos;
-    Matrix local;
-    char offModel[16];
-    char onModel[16];
-    char deadModel[16];
-    char onSound[32];
-    char deadSound[32];
-    char on;
-    char destroyed;
-    char unk1A2[2];
-    VarString cond;
-} AlarmLight;
-
 /* the turning reflector inside an alarm light ("AlarmLightReflector", 0x140 bytes) */
 typedef struct Reflector {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d offset;
     Matrix local;
     AlarmLight *light;
@@ -74,8 +59,6 @@ typedef struct Reflector {
     int unk13C;
 } Reflector;
 
-_Static_assert(offsetof(AlarmLight, on) == 0x1A0, "AlarmLight.on");
-_Static_assert(offsetof(AlarmLight, cond) == 0x1A4, "AlarmLight.cond");
 _Static_assert(offsetof(Reflector, light) == 0x130, "Reflector.light");
 _Static_assert(sizeof(Reflector) == 0x140, "Reflector");
 
@@ -102,7 +85,7 @@ static inline long double crt_fmod(long double x, long double y)
     return r;
 }
 
-void AlarmLightReflector_Create(Reflector *t, PartCreateArg *a);
+void AlarmLightReflector_Create(Reflector *t, MagicCreateArg *a);
 void AlarmLightReflector_Run(Reflector *t);
 void AlarmLightReflector_Draw(Reflector *t, void *arg);
 
@@ -123,8 +106,8 @@ void AlarmLight_Init(void)
     TaskType_SetHandler2(gAlarmLightType, Level_GetEventDAC(), AlarmLight_Deactivate);
     Script_RegisterConstant("TASKTYPE_ALARMLIGHT", gAlarmLightType);
     gAlarmLightParams = ParamTable_New(8);
-    ParamTable_Add(gAlarmLightParams, &l, &l.pos, Param_ObjectPos(), 7, NULL);
-    ParamTable_Add(gAlarmLightParams, &l, &l.local, Param_Real32x9(), 7, NULL);
+    ParamTable_Add(gAlarmLightParams, &l, &l.place, Param_ObjectPos(), 7, NULL);
+    ParamTable_Add(gAlarmLightParams, &l, &l.placeMatrix, Param_Real32x9(), 7, NULL);
     ParamTable_Add(gAlarmLightParams, &l, &l.cond, Param_VarString(), 7, NULL);
     for (i = 0; i < 3; i++)
         ParamTable_Add(gAlarmLightParams, &l, l.offModel + 0x10 * i, Param_String16(), 7, NULL);
@@ -140,7 +123,7 @@ void AlarmLight_Init(void)
 }
 HOOK(0x4397C0, AlarmLight_Init);
 
-void AlarmLightReflector_Create(Reflector *t, PartCreateArg *a)
+void AlarmLightReflector_Create(Reflector *t, MagicCreateArg *a)
 {
     void **model;
     long double r;
@@ -153,13 +136,13 @@ void AlarmLightReflector_Create(Reflector *t, PartCreateArg *a)
         for (;;)
             ;
     }
-    RigidDynCubeObj_Init((void *)(intptr_t)a->unk4, t, model);
+    RigidDynCubeObj_Init((void *)(intptr_t)a->world, t, model);
     {
         float s = max_scale(&t->obj);
 
         r = VirModel_GetRadius(t->obj.model) * s;
     }
-    DynCube_Add((void *)(intptr_t)a->unk4, t, &a->pos, r, 1);
+    DynCube_Add((void *)(intptr_t)a->world, t, &a->pos, r, 1);
     t->obj.matrix = a->matrix;
     t->light = (AlarmLight *)a->owner;
     RigidDynCubeObj_CreateMagicObjs(t, t, a->owner);
@@ -172,7 +155,7 @@ void AlarmLightReflector_Run(Reflector *t)
 {
     AlarmLight *l = t->light;
 
-    if (l->on && !l->destroyed) {
+    if (l->isOn && !l->isDestroyed) {
         const float *L = l->obj.matrix.m, *T = t->local.m, *R;
         long double x0, x3, x6;
         float x1, x2, x4, x5, x7, x8;
@@ -190,7 +173,7 @@ void AlarmLightReflector_Run(Reflector *t)
         x4 = R[7] * T[5] + R[1] * T[3] + R[4] * T[4];
         x5 = R[8] * T[5] + R[2] * T[3] + R[5] * T[4];
         x6 = R[3] * T[7] + R[6] * T[8] + R[0] * T[6];
-        stamp = t->local.stamp + r.stamp + 1;
+        stamp = t->local.count + r.count + 1;
         x7 = R[4] * T[7] + R[7] * T[8] + R[1] * T[6];
         x8 = R[5] * T[7] + R[8] * T[8] + R[2] * T[6];
         r.m[0] = x0 * L[0] + x6 * L[2] + x3 * L[1];
@@ -200,7 +183,7 @@ void AlarmLightReflector_Run(Reflector *t)
         r.m[4] = x1 * L[3] + x7 * L[5] + x4 * L[4];
         r.m[5] = x2 * L[3] + x8 * L[5] + x5 * L[4];
         r.m[6] = x6 * L[8] + x3 * L[7] + x0 * L[6];
-        r.stamp = l->obj.matrix.stamp + stamp + 1;
+        r.count = l->obj.matrix.count + stamp + 1;
         r.m[7] = x7 * L[8] + x4 * L[7] + x1 * L[6];
         r.m[8] = x8 * L[8] + x5 * L[7] + x2 * L[6];
         t->obj.matrix = r;
@@ -213,9 +196,9 @@ void AlarmLightReflector_DrawFlare(Reflector *t, int point);
 
 void AlarmLightReflector_Draw(Reflector *t, void *arg)
 {
-    if (t->light->destroyed)
+    if (t->light->isDestroyed)
         return;
-    if (t->light->on)
+    if (t->light->isOn)
         AlarmLightReflector_DrawFlare(t, 0);
     gTaskHandlers[4][RigidDynCubeObj_GetType()](t, arg);
 }
@@ -235,7 +218,7 @@ void AlarmLightReflector_DrawFlare(Reflector *t, int point)
     p.y = p.y + t->obj.pos.y;
     p.z = p.z + t->obj.pos.z;
     {
-        float m1 = l->local.m[1], m4 = l->local.m[4], m7 = l->local.m[7];
+        float m1 = l->placeMatrix.m[1], m4 = l->placeMatrix.m[4], m7 = l->placeMatrix.m[7];
         long double dx = gViewPos.x - l->obj.pos.x;
         long double dy = gViewPos.y - l->obj.pos.y;
         long double dz = gViewPos.z - l->obj.pos.z;

@@ -2,6 +2,9 @@
 
 #include "hook.h"
 #include "graphnode/graphnode.h"
+#include "coll/colltypes.h"
+#include "litmap/litmaptypes.h"
+#include "terrain/terraintypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -46,15 +49,6 @@ ORIG(0x4C6E70, void, DynCube_MoveBox, (void *world, void *obj, Vec3d *center, co
 ORIG(0x4CB9F0, void, Coll_DropPointsMat, (void *world, void *results, Vec3d *points, int count, const double *dz,
                                           int unk, int unk2, unsigned int flags));
 
-typedef struct Terrain {
-    char unk0[0xDE0];
-    int offset[3];
-    int lightMapCount;
-    int unkDF0;
-    void *palette;
-    void *lmpData;
-} Terrain;
-
 /* a square of terrain lightmap; tall ones get a child per cell height */
 typedef struct TerrainLightMap {
     Task task;
@@ -86,12 +80,6 @@ typedef struct TerrainLightMap {
 
 _Static_assert(sizeof(TerrainLightMap) == 0x110, "TerrainLightMap");
 
-typedef struct Lightmap {
-    int unk0;
-    void *data;
-    char texture[0x24];
-} Lightmap;
-
 typedef struct LightMapDraw {
     int unk0;
     int shift;
@@ -102,15 +90,6 @@ typedef struct LightMapDraw {
     void *texture;
     int unk2C;
 } LightMapDraw;
-
-typedef struct CollHit {
-    Task *task;
-    int unk4;
-    Vec3d pos;
-    char unk20[0x38];
-    int found;
-    char unk5C[0x14];
-} CollHit;
 
 #define LIGHTMAP_MAX 0x800
 
@@ -303,9 +282,9 @@ static void place(TerrainLightMap *lm)
             ;
     }
     lm->world->lightMapCount = n;
-    if (lm->world->lmpData) {
+    if (lm->world->lmp) {
         if (lm->lightmap != -1 && gLightmaps[lm->lightmap].data)
-            lm->texture = gLightmaps[lm->lightmap].texture;
+            lm->texture = &gLightmaps[lm->lightmap].texture;
     } else if (lm->lightmap != -1) {
         load_texture(lm);
     }

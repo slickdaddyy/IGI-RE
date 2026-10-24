@@ -55,7 +55,7 @@ HOOK(0x46ABE0, ComputerMenu_Create);
 
 void ComputerMenu_Run(ComputerMenu *m)
 {
-    char *in = Computer_Get()->input;
+    char *in = (char *)(Computer_Get()->obj.task.parent);
     unsigned int buttons = 0, old;
     float fw = Display_GetMode()->width;
     float fh = Display_GetMode()->height;

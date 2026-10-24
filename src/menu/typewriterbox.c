@@ -47,10 +47,6 @@ typedef struct TypeWriterBox {
 
 _Static_assert(sizeof(TypeWriterBox) == 0x88, "TypeWriterBox");
 
-typedef struct Color {
-    float r, g, b;
-} Color;
-
 extern uint16_t gTypeWriterBoxType;
 extern TypeLine gTypeLines[];
 extern const Color gMenuColors[];
@@ -95,8 +91,8 @@ void TypeWriterBox_Create(TypeWriterBox *tw, void *arg)
     HANDLER(0, MenuWindow_GetType())(tw, arg);
     tw->w.w = 100;
     tw->w.h = 100;
-    tw->w.unk3C = 1;
-    tw->w.unk40 = 1;
+    tw->w.centreX = 1;
+    tw->w.centreY = 1;
     tw->fonts[0] = NULL;
     tw->fonts[1] = NULL;
     tw->fonts[2] = NULL;

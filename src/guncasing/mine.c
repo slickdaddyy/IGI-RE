@@ -146,7 +146,7 @@ Mine *Mine_New(void *parent, const Vec3d *pos, const Matrix *matrix, const char 
     m = (Mine *)Task_New(parent, gMineType, 0);
     m->placePos = *pos;
     m->placeMatrix = *matrix;
-    strcpy(m->sound, sound);
+    strcpy(m->model, sound);
     m->delay = delay;
     m->armDelay = armDelay;
     m->radius = radius;

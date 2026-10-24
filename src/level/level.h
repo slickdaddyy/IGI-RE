@@ -4,92 +4,10 @@
 #include <stdint.h>
 
 #include "igi.h"
-
-typedef struct Node {
-    struct Node *next;
-    struct Node *prev;
-} Node;
-
-typedef struct List {
-    Node *head;
-    Node *tail;
-    Node *tailpred;
-} List;
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    Node node;
-    List children;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
-
-/* the "Level" task, root of everything a level script creates */
-typedef struct Level {
-    Task task;
-    int unk20;
-    int time;
-    int tick;
-    int fps;
-    int msPerTick;
-    int unk34;
-} Level;
-
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
-
-typedef struct ScriptArgs {
-    int count;
-    void *vm;
-    void **argv;
-} ScriptArgs;
-
-/* where a parameter parser is in the arguments of a script Task_New call */
-typedef struct ParamCursor {
-    int index;
-    ScriptArgs *args;
-    const char *file;
-    int line;
-} ParamCursor;
-
-/* output of the parameter format operation, appended to buf */
-typedef struct ParamText {
-    int unk0;
-    char *buf;
-} ParamText;
-
-typedef struct ParamEntry {
-    int offset;
-    int type;
-    void *extra;
-    char flags;
-    char unk0D[3];
-} ParamEntry;
-
-typedef struct ParamTable {
-    int count;
-    int max;
-    ParamEntry *entries;
-} ParamTable;
-
-typedef struct VarString {
-    char *text;
-} VarString;
-
-/* a text note attached to a task, kept in a hash of lists by task address */
-typedef struct TaskNote {
-    Node node;
-    Task **ref;
-    char text[0x41];
-} TaskNote;
+#include "param/paramtypes.h"
+#include "script/scripttypes.h"
+#include "physobj/physobjtypes.h"
+#include "level/leveltypes.h"
 
 typedef void (*TaskFn)(Task *task);
 

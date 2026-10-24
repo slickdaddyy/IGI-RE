@@ -8,7 +8,7 @@ FN_EXTERN(Human_ClearResult);
 
 /* "GunCABarrel" and "GunCAClip" (0x138 bytes each), MagicObj parts */
 typedef struct GunCAPart {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     Vec3d unkF0;
     Matrix unk108;
     void *unk130;
@@ -94,7 +94,7 @@ void GunCAPart_Create(GunCAPart *o, GunCAArgs *a)
     o->unkF0 = a->unk20;
     o->unk108 = a->unk60;
     RigidDynCubeObj_Init(a->world, o, model);
-    o->obj.unkEC = 0;
+    o->obj.hidden = 0;
     o->obj.matrix = a->matrix;
     o->unk130 = a->unk88;
     RigidDynCubeObj_CreateMagicObjs(o, o, a->unk88);

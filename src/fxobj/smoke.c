@@ -63,12 +63,6 @@ typedef struct Smoke {
     char moved;
 } Smoke;
 
-/* sent by a moving parent each frame */
-typedef struct MoveArg {
-    Vec3d *pos;
-    float *m;
-} MoveArg;
-
 _Static_assert(offsetof(Smoke, expr) == 0xA4, "Smoke.expr");
 _Static_assert(offsetof(Smoke, local) == 0x130, "Smoke.local");
 _Static_assert(offsetof(Smoke, enabled) == 0x170, "Smoke.enabled");
@@ -83,7 +77,7 @@ extern char *gSmokeBlood;
 extern char *gSmokeSmoke2;
 extern char *gSmokeSmoke1;
 extern const char *gSmokeKindNames[];
-extern ParamEnum gSmokeKindEnum;
+extern ParamComboList gSmokeKindEnum;
 extern RangeF gSmokeUnk84Range;
 extern RangeF gSmokeYawRange;
 extern RangeF gSmokeUnk88Range;
@@ -202,7 +196,7 @@ HOOK(0x437510, Smoke_Init);
 /* follows the parent: pos = parent pos + parent rotation * local */
 void Smoke_Move(Smoke *t, MoveArg *a)
 {
-    const float *m = a->m;
+    const float *m = a->matrix->m;
     Vec3d v;
 
     v.x = m[2] * t->local.z + m[1] * t->local.y + m[0] * t->local.x;
@@ -418,7 +412,7 @@ HOOK(0x438000, Smoke_Changed);
 /* the offset from the nearest moving ancestor, in its frame */
 void Smoke_UpdateLocal(Smoke *t)
 {
-    RigidObj *p = Task_FindAncestor(t, RigidDynCubeObj_GetType());
+    RigidDynCubeObj *p = Task_FindAncestor(t, RigidDynCubeObj_GetType());
     const float *m;
     long double z;
     Vec3d v;
@@ -465,7 +459,7 @@ BSS(57BDC8) char *gSmokeFireball;
 PAD(igb, 57BDC8, 57BDCC, 0x4);
 BSS(57BDC8) RangeF gSmokeUnk84Range;
 BSS(57BDC8) RangeF gSmokeYawRange;
-BSS(57BDC8) ParamEnum gSmokeKindEnum;
+BSS(57BDC8) ParamComboList gSmokeKindEnum;
 STORE(igb, 57BDC8, 1) char store_57BDE8[16];
 ALIAS(gSmokeRandom, store_57BDE8, 0);
 BSS(57BDC8) RangeF gSmokeUnk88Range;

@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "fxobj/fxobj.h"
+#include "define/definetypes.h"
 
 ORIG(0x416840, uint8_t, Game_GetEvent9, (void));
 ORIG(0x4B38E0, void, Matrix_SetEuler, (Matrix *m, float ax, float ay, float az));
@@ -22,7 +23,7 @@ ORIG(0x4F0F70, void *, Param_Real32x9, (void));
 
 /* a model spinning around its axes ("RotatingObject", 0x200 bytes) */
 typedef struct RotatingObject {
-    RigidObj obj;
+    RigidDynCubeObj obj;
     char sound[16];
     char unk100[16];
     char model[16];
@@ -39,13 +40,6 @@ typedef struct RotatingObject {
     char stopped;
     VarString cond;
 } RotatingObject;
-
-/* what the sound of an object needs to follow it */
-typedef struct SoundInfo {
-    Vec3d *pos;
-    Matrix *matrix;
-    float *params;
-} SoundInfo;
 
 _Static_assert(offsetof(RotatingObject, maxSpeed) == 0x120, "maxSpeed");
 _Static_assert(offsetof(RotatingObject, target) == 0x13C, "target");
@@ -133,7 +127,7 @@ HOOK(0x438C30, RotatingObject_Create);
 
 void RotatingObject_Delete(RotatingObject *t)
 {
-    DynCube_Remove((void *)(intptr_t)t->obj.unk68, t);
+    DynCube_Remove((void *)(intptr_t)t->obj.world, t);
     if (t->soundRef)
         TaskRef_Remove(t->soundRef);
     if (t->soundParams)
@@ -215,7 +209,7 @@ void RotatingObject_Run(RotatingObject *t)
         o[6] = m[3] * b[7] + m[6] * b[8] + m[0] * b[6];
         o[7] = m[4] * b[7] + m[7] * b[8] + m[1] * b[6];
         o[8] = m[5] * b[7] + m[8] * b[8] + m[2] * b[6];
-        t->obj.matrix.stamp = t->base.stamp + e.stamp + 1;
+        t->obj.matrix.count = t->base.count + e.count + 1;
     }
     if (t->soundParams) {
         float *p = t->soundParams;
@@ -278,8 +272,8 @@ HOOK(0x439750, RotatingObject_Stop);
 void RotatingObject_GetSoundInfo(RotatingObject *t, SoundInfo *out)
 {
     out->pos = &t->obj.pos;
-    out->matrix = &t->obj.matrix;
-    out->params = t->soundParams;
+    out->matrix = t->obj.matrix.m;
+    out->values = (int *)t->soundParams;
 }
 HOOK(0x439770, RotatingObject_GetSoundInfo);
 

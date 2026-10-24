@@ -5,22 +5,10 @@
 #include <stdint.h>
 
 #include "igi.h"
+#include "task/tasktypes.h"
+#include "script/scripttypes.h"
 
 FN_EXTERN(Task_Nothing);
-
-/* the first 0x20 bytes of every task */
-typedef struct Task {
-    struct Task *next;
-    struct Task *prev;
-    struct Task *head;
-    void *tail;
-    struct Task *tailpred;
-    struct Task *parent;
-    int refs;
-    uint16_t type;
-    char pooled;
-    char unk1F;
-} Task;
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -64,17 +52,6 @@ extern int gTaskStackTop;
             c_ = gTaskStack[--gTaskStackTop];                           \
         } while (c_);                                                   \
     } while (0)
-
-/* A script function result. Bytes 4 and 20 are never set. */
-typedef struct ScriptValue {
-    int i;
-    int unk4;
-    double d;
-    const char *s;
-    int unk14;
-} ScriptValue;
-
-typedef struct ScriptArgs ScriptArgs;
 
 extern const char gScriptEmptyString[];
 
