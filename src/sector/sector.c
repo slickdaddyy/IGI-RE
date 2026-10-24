@@ -117,11 +117,6 @@ typedef struct VisSector {
     int unk1C;
 } VisSector;
 
-typedef struct PlaceArg {
-    Vec3d pos;
-    Matrix matrix;
-} PlaceArg;
-
 _Static_assert(sizeof(LocateArg) == 0x30, "LocateArg");
 _Static_assert(sizeof(LineQuery) == 0x24, "LineQuery");
 _Static_assert(sizeof(LineHit) == 0x70, "LineHit");
@@ -943,7 +938,7 @@ HOOK(0x4DCF20, Sector_Open);
 void Sector_Render(Sector *s)
 {
     MeshDrawArg d;
-    PlaceArg a;
+    Frame a;
     Task *c;
     int i;
 
@@ -1212,9 +1207,9 @@ int Portal_GetScreenRect(Sector *s, int lod, int k, float *clipMin, float *clipM
         float rz = v->y * mx[7] + mx[8] * v->z + mx[6] * v->x;
         long double X = (long double)rx + cx, Y = (long double)ry + cy, Z = (long double)rz + cz;
 
-        c->x = Z * gView.m[2] + Y * gView.m[1] + X * gView.m[0];
-        c->y = Z * gView.m[5] + Y * gView.m[4] + X * gView.m[3];
-        c->z = Z * gView.m[8] + Y * gView.m[7] + X * gView.m[6];
+        c->x = Z * gView.matrix.m[2] + Y * gView.matrix.m[1] + X * gView.matrix.m[0];
+        c->y = Z * gView.matrix.m[5] + Y * gView.matrix.m[4] + X * gView.matrix.m[3];
+        c->z = Z * gView.matrix.m[8] + Y * gView.matrix.m[7] + X * gView.matrix.m[6];
         if (!(c->z >= kNearZ)) {
             c->code = 0x10;
         } else {

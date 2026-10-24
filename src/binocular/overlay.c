@@ -80,8 +80,8 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 
-void View_Project(View *v, float *out, float *depth, const Vec3d *p);
-void View_ScaleSize(View *v, float *out, const float *size, float depth);
+void View_Project(TransCtx *v, float *out, float *depth, const Vec3d *p);
+void View_ScaleSize(TransCtx *v, float *out, const float *size, float depth);
 
 #define BINOCULAROVERLAY_DRAWHANDLER (FN(0x472400, BinocularOverlay_DrawHandler))
 #define BINOCULAROVERLAY_USEHANDLER (FN(0x472440, BinocularOverlay_UseHandler))
@@ -453,9 +453,9 @@ void BinocularOverlay_TrackMovement(BinocularOverlay *ov)
         dy = pos.y - gView.pos.y;
         dz = pos.z - gView.pos.z;
         radius = *(float *)(hm + 0xA0);
-        v[0] = gView.m[2] * dz + gView.m[1] * dy + gView.m[0] * dx;
-        v[1] = gView.m[5] * dz + gView.m[4] * dy + gView.m[3] * dx;
-        v[2] = gView.m[8] * dz + gView.m[7] * dy + gView.m[6] * dx;
+        v[0] = gView.matrix.m[2] * dz + gView.matrix.m[1] * dy + gView.matrix.m[0] * dx;
+        v[1] = gView.matrix.m[5] * dz + gView.matrix.m[4] * dy + gView.matrix.m[3] * dx;
+        v[2] = gView.matrix.m[8] * dz + gView.matrix.m[7] * dy + gView.matrix.m[6] * dx;
         if (Mesh3D_Exclude(v, radius, NULL))
             continue;
         filter.task = player;

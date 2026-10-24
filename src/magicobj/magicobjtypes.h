@@ -56,12 +56,6 @@ typedef struct PartMoveArg {
     void *owner;
 } PartMoveArg;
 
-/* a position and rotation, sent to children with the RigidDynCubeObj event 2 */
-typedef struct Frame {
-    Vec3d pos;
-    Matrix matrix;
-} Frame;
-
 /* one DefineMagicObj() entry */
 typedef struct MagicObjDef {
     char name[16];
@@ -93,5 +87,11 @@ typedef struct RigidCollNode {
     uint16_t next;
 } RigidCollNode;
 _Static_assert(sizeof(RigidCollNode) == 0x18, "RigidCollNode");
+
+/* a position and rotation, sent to children with the RigidDynCubeObj event 2 */
+typedef struct Frame {
+    Vec3d pos;
+    Matrix matrix;
+} Frame;
 
 #endif

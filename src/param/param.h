@@ -24,18 +24,6 @@ typedef struct ParamType {
 
 typedef struct ScriptArgs ScriptArgs;
 
-/* where a parameter parser is in the arguments of a script Task_New call */
-typedef struct ParamCursor {
-    int index;
-    ScriptArgs *args;
-    const char *file;
-    int line;
-} ParamCursor;
-
-typedef struct ParamRange {
-    float min, max;
-} ParamRange;
-
 /* script constants whose names match one of the regex patterns */
 typedef struct ParamEnum {
     List patterns;

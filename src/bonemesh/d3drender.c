@@ -46,12 +46,6 @@ ORIG(0x4DAA20, int, Light_GetActive, (int *a));
 #define ID_CMAT 0x434D4154
 #define ID_CSPH 0x43535048
 
-/* what a rigid object passes to its children */
-typedef struct PlaceArg {
-    Vec3d pos;
-    Matrix matrix;
-} PlaceArg;
-
 typedef struct SphereArg {
     Vec3d pos;
     float radius;
@@ -364,7 +358,7 @@ HOOK(0x4A0110, Direct3DRender_Shutdown);
 void RigidDynCubeObj_EnterHandler(RigidDynCubeObj *obj)
 {
     MeshDrawArg d;
-    PlaceArg a;
+    Frame a;
 
     d.obj = (struct BoneDynCubeObj *)obj;
     d.lights = (int *)(Light_GetActive(&d.lightCount));
@@ -773,9 +767,9 @@ void RigidDynCubeObj_NearZHandler(RigidDynCubeObj *obj, NearZArg *arg)
     wx = x + pos.x;
     wy = y + pos.y;
     wz = z + pos.z;
-    pos.x = gTransCtx.m[2] * wz + gTransCtx.m[1] * wy + gTransCtx.m[0] * wx;
-    pos.y = gTransCtx.m[5] * wz + gTransCtx.m[4] * wy + gTransCtx.m[3] * wx;
-    pos.z = gTransCtx.m[8] * wz + gTransCtx.m[7] * wy + gTransCtx.m[6] * wx;
+    pos.x = gTransCtx.matrix.m[2] * wz + gTransCtx.matrix.m[1] * wy + gTransCtx.matrix.m[0] * wx;
+    pos.y = gTransCtx.matrix.m[5] * wz + gTransCtx.matrix.m[4] * wy + gTransCtx.matrix.m[3] * wx;
+    pos.z = gTransCtx.matrix.m[8] * wz + gTransCtx.matrix.m[7] * wy + gTransCtx.matrix.m[6] * wx;
     s = obj->scale[1] < obj->scale[0] ? obj->scale[0] : obj->scale[1];
     if (s > obj->scale[2])
         s = obj->scale[1] < obj->scale[0] ? obj->scale[0] : obj->scale[1];
@@ -791,30 +785,30 @@ void RigidDynCubeObj_NearZHandler(RigidDynCubeObj *obj, NearZArg *arg)
         wx = obj->pos.x - gTransCtx.pos.x;
         wy = obj->pos.y - gTransCtx.pos.y;
         wz = obj->pos.z - gTransCtx.pos.z;
-        o.x = gTransCtx.m[2] * wz + gTransCtx.m[1] * wy + gTransCtx.m[0] * wx;
-        o.y = gTransCtx.m[5] * wz + gTransCtx.m[4] * wy + gTransCtx.m[3] * wx;
-        o.z = wz * gTransCtx.m[8] + wy * gTransCtx.m[7] + wx * gTransCtx.m[6];
+        o.x = gTransCtx.matrix.m[2] * wz + gTransCtx.matrix.m[1] * wy + gTransCtx.matrix.m[0] * wx;
+        o.y = gTransCtx.matrix.m[5] * wz + gTransCtx.matrix.m[4] * wy + gTransCtx.matrix.m[3] * wx;
+        o.z = wz * gTransCtx.matrix.m[8] + wy * gTransCtx.matrix.m[7] + wx * gTransCtx.matrix.m[6];
         r = h->render;
         minZ = arg->minZ;
-        rot.m[0] = gTransCtx.m[1] * obj->matrix.m[3] + gTransCtx.m[0] * obj->matrix.m[0] +
-                   gTransCtx.m[2] * obj->matrix.m[6];
-        rot.m[1] = gTransCtx.m[1] * obj->matrix.m[4] + gTransCtx.m[2] * obj->matrix.m[7] +
-                   gTransCtx.m[0] * obj->matrix.m[1];
-        rot.m[2] = gTransCtx.m[1] * obj->matrix.m[5] + gTransCtx.m[2] * obj->matrix.m[8] +
-                   gTransCtx.m[0] * obj->matrix.m[2];
-        rot.m[3] = gTransCtx.m[4] * obj->matrix.m[3] + gTransCtx.m[3] * obj->matrix.m[0] +
-                   gTransCtx.m[5] * obj->matrix.m[6];
-        rot.m[4] = gTransCtx.m[4] * obj->matrix.m[4] + gTransCtx.m[5] * obj->matrix.m[7] +
-                   gTransCtx.m[3] * obj->matrix.m[1];
-        rot.m[5] = gTransCtx.m[4] * obj->matrix.m[5] + gTransCtx.m[5] * obj->matrix.m[8] +
-                   gTransCtx.m[3] * obj->matrix.m[2];
-        rot.m[6] = gTransCtx.m[7] * obj->matrix.m[3] + gTransCtx.m[6] * obj->matrix.m[0] +
-                   gTransCtx.m[8] * obj->matrix.m[6];
-        rot.m[7] = gTransCtx.m[7] * obj->matrix.m[4] + gTransCtx.m[8] * obj->matrix.m[7] +
-                   gTransCtx.m[6] * obj->matrix.m[1];
-        rot.m[8] = gTransCtx.m[7] * obj->matrix.m[5] + gTransCtx.m[8] * obj->matrix.m[8] +
-                   gTransCtx.m[6] * obj->matrix.m[2];
-        rot.count = obj->matrix.count + gTransCtx.unk24 + 1;
+        rot.m[0] = gTransCtx.matrix.m[1] * obj->matrix.m[3] + gTransCtx.matrix.m[0] * obj->matrix.m[0] +
+                   gTransCtx.matrix.m[2] * obj->matrix.m[6];
+        rot.m[1] = gTransCtx.matrix.m[1] * obj->matrix.m[4] + gTransCtx.matrix.m[2] * obj->matrix.m[7] +
+                   gTransCtx.matrix.m[0] * obj->matrix.m[1];
+        rot.m[2] = gTransCtx.matrix.m[1] * obj->matrix.m[5] + gTransCtx.matrix.m[2] * obj->matrix.m[8] +
+                   gTransCtx.matrix.m[0] * obj->matrix.m[2];
+        rot.m[3] = gTransCtx.matrix.m[4] * obj->matrix.m[3] + gTransCtx.matrix.m[3] * obj->matrix.m[0] +
+                   gTransCtx.matrix.m[5] * obj->matrix.m[6];
+        rot.m[4] = gTransCtx.matrix.m[4] * obj->matrix.m[4] + gTransCtx.matrix.m[5] * obj->matrix.m[7] +
+                   gTransCtx.matrix.m[3] * obj->matrix.m[1];
+        rot.m[5] = gTransCtx.matrix.m[4] * obj->matrix.m[5] + gTransCtx.matrix.m[5] * obj->matrix.m[8] +
+                   gTransCtx.matrix.m[3] * obj->matrix.m[2];
+        rot.m[6] = gTransCtx.matrix.m[7] * obj->matrix.m[3] + gTransCtx.matrix.m[6] * obj->matrix.m[0] +
+                   gTransCtx.matrix.m[8] * obj->matrix.m[6];
+        rot.m[7] = gTransCtx.matrix.m[7] * obj->matrix.m[4] + gTransCtx.matrix.m[8] * obj->matrix.m[7] +
+                   gTransCtx.matrix.m[6] * obj->matrix.m[1];
+        rot.m[8] = gTransCtx.matrix.m[7] * obj->matrix.m[5] + gTransCtx.matrix.m[8] * obj->matrix.m[8] +
+                   gTransCtx.matrix.m[6] * obj->matrix.m[2];
+        rot.count = obj->matrix.count + gTransCtx.matrix.count + 1;
         if (h->format == 0) {
             for (i = 0; i < 9; i++)
                 rot.m[i] = rot.m[i] * obj->scale[i % 3];
@@ -908,15 +902,15 @@ BSS(B8179C) float gFrustumT;
 ALIAS(gExclBottom, gFrustumT, 0);
 BSS(B817A4) float gFrustumLScale;
 ALIAS(gExclLeftCos, gFrustumLScale, 0);
-BSS(BCAD7C) StateList *gStateListB;
+BSS(BCAD7C) PtrList *gStateListB;
 ALIAS(gD3DListB, gStateListB, 0);
 ALIAS(gD3DStatesB, gStateListB, 0);
 ALIAS(gStateCache1, gStateListB, 0);
-BSS(BCADAC) StateList *gStateListC;
+BSS(BCADAC) PtrList *gStateListC;
 ALIAS(gD3DListC, gStateListC, 0);
 ALIAS(gD3DStatesC, gStateListC, 0);
 ALIAS(gStateCache2, gStateListC, 0);
-BSS(BCADC4) StateList *gStateListD;
+BSS(BCADC4) PtrList *gStateListD;
 ALIAS(gD3DStateList, gStateListD, 0);
 ALIAS(gD3DStatesD, gStateListD, 0);
 ALIAS(gStateCache3, gStateListD, 0);
@@ -925,7 +919,7 @@ ALIAS(gD3DUnkBCADCC, gFarZ, 0);
 ALIAS(gFarPlane, gFarZ, 0);
 BSS(BCADDC) float gNearZ;
 ALIAS(gD3DUnkBCADDC, gNearZ, 0);
-BSS(BCADE8) StateList *gStateListA;
+BSS(BCADE8) PtrList *gStateListA;
 ALIAS(gD3DListA, gStateListA, 0);
 ALIAS(gD3DStatesA, gStateListA, 0);
 ALIAS(gStateCache0, gStateListA, 0);

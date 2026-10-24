@@ -52,4 +52,23 @@ typedef struct ScriptArg {
     int index;
 } ScriptArg;
 
+typedef struct ParamCursor {
+    int index;
+    struct ScriptArgs *args;
+    const char *file;
+    int line;
+} ParamCursor;
+
+/* the extra argument of a ranged script parameter */
+typedef union ParamRange {
+    RangeI i;
+    RangeF f;
+} ParamRange;
+
+/* the names of a drop down combo script parameter */
+typedef struct ParamComboList {
+    int count;
+    const char **names;
+} ParamComboList;
+
 #endif

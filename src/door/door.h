@@ -11,15 +11,9 @@
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "door/doortypes.h"
+#include "props/propstypes.h"
 
 typedef void (*TaskFn)();
-
-/* the search for what a human can use (see 0x416AD0) */
-typedef struct UseQuery {
-    Task *human;
-    int unk4;
-    Vec3d pos;          /* 0x08 */
-} UseQuery;
 
 /* "Switch" (0x228) */
 typedef struct Switch {

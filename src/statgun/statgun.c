@@ -3,13 +3,7 @@
 #include "hook.h"
 #include "statgun/statgun.h"
 #include "statgun/statguntypes.h"
-
-/* the search used to pick what a human can use (see 0x416AD0) */
-typedef struct UseQuery {
-    Task *human;
-    int unk4;
-    Vec3d pos;
-} UseQuery;
+#include "props/propstypes.h"
 
 /* Game event 4: a human takes the gun */
 typedef struct AttachMsg {

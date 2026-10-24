@@ -8,6 +8,7 @@
 #include "task/tasktypes.h"
 #include "script/scripttypes.h"
 #include "physobj/physobjtypes.h"
+#include "param/paramtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -45,14 +46,6 @@ typedef struct PhysicsObjType {
     float unk2D0;
     void *data;         /* 0x2D4, filled by the task type */
 } PhysicsObjType;
-
-/* where a parameter parser is in the arguments of a script Task_New call */
-typedef struct ParamCursor {
-    int index;
-    void *args;
-    const char *file;
-    int line;
-} ParamCursor;
 
 _Static_assert(sizeof(PhysicsObjType) == 0x2D8, "PhysicsObjType");
 _Static_assert(offsetof(PhysicsObjType, model) == 0x138, "model");

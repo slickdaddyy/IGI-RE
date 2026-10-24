@@ -9,11 +9,6 @@
 /* Task parameters: a type's table lists the fields a script may set,
    with their offset, value type and a range or enum list. */
 
-typedef union ParamRange {
-    struct { int min, max; } i;
-    struct { float min, max; } f;
-} ParamRange;
-
 ORIG(0x4F0CF0, void *, Task_RunScript, (void *parent, const char *path, int unk));
 ORIG(0x4F0EF0, void *, Param_PushButton, (void));
 ORIG(0x4F0F50, void *, Param_Real32, (void));

@@ -10,6 +10,7 @@
 #include "bonemesh/bonemeshtypes.h"
 #include "glowmesh/glowmeshtypes.h"
 #include "haze/hazetypes.h"
+#include "magicobj/magicobjtypes.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
@@ -40,12 +41,6 @@ typedef struct VirModel {
     MeshLod *lod;
 } VirModel;
 
-/* what children get told: where the object is */
-typedef struct PlaceArg {
-    double pos[3];
-    float matrix[10];
-} PlaceArg;
-
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern TaskHandler gTaskHandlers[][0x180];
@@ -58,15 +53,15 @@ void BoneDynCubeObj_NearZHandler(BoneDynCubeObj *obj, NearZArg *arg);
 void BoneDynCubeObj_EnterHandler(BoneDynCubeObj *obj)
 {
     MeshDrawArg d;
-    PlaceArg a;
+    Frame a;
     Task *c;
 
     d.obj = obj;
     d.lights = (int *)(Light_GetActive(&d.lightCount));
     Haze_GetVisible(&d.haze, &d.hazeCount);
     gRenderFuncs[Mesh3D_GetDrawBoneMethod()](&d);
-    memcpy(a.pos, &obj->pos, sizeof(a.pos));
-    memcpy(a.matrix, &obj->matrix, sizeof(a.matrix));
+    memcpy(&a.pos, &obj->pos, sizeof(a.pos));
+    memcpy(&a.matrix, &obj->matrix, sizeof(a.matrix));
     c = (Task *)obj->task.head;
     if (!c->node.next)
         return;

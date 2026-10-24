@@ -11,14 +11,6 @@
 #include "physobj/physobjtypes.h"
 #include "level/leveltypes.h"
 
-/* where a parameter parser is in the arguments of a script Task_New call */
-typedef struct ParamCursor {
-    int index;
-    ScriptArgs *args;
-    const char *file;
-    int line;
-} ParamCursor;
-
 typedef void (*TaskFn)(Task *task);
 
 extern void * gTaskHandlers[][0x180];

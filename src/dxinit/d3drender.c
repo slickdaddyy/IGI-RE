@@ -139,7 +139,7 @@ void Fog_SetRange(const Vec3d *pos, float radius)
 {
     float y = pos->y, z = pos->z;
     long double px = pos->x - gViewPos.x, py = y - gViewPos.y, pz = z - gViewPos.z;
-    long double d = gView.m[8] * pz + gView.m[7] * py + gView.m[6] * px;
+    long double d = gView.matrix.m[8] * pz + gView.matrix.m[7] * py + gView.matrix.m[6] * px;
     float n = d - radius;
     float f = d + radius;
     float a = kOne / x87_exp(gNearPlaneScale * n * gFogDensity);

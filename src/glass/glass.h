@@ -29,12 +29,6 @@ typedef struct ExplodeObj {
     char unk191[0xA7];
 } ExplodeObj;
 
-/* {count, names} extra data of an enum parameter */
-typedef struct ParamEnum {
-    int count;
-    char **names;
-} ParamEnum;
-
 _Static_assert(sizeof(MagicPart) == 0x4C, "MagicPart");
 _Static_assert(sizeof(ExplodeObj) == 0x238, "ExplodeObj");
 

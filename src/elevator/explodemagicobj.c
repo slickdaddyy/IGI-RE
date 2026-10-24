@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "elevator/elevator.h"
+#include "glass/glasstypes.h"
 
 FN_EXTERN(Glass_Delete);
 
@@ -48,12 +49,6 @@ typedef struct ExplodeMagicObj {
     char exploded;
     char pad149[7];
 } ExplodeMagicObj;
-
-/* the argument of the Game event 9 handler */
-typedef struct HitArg {
-    int unk0;
-    float damage;
-} HitArg;
 
 _Static_assert(sizeof(ExplodeParams) == 0x3C, "ExplodeParams");
 _Static_assert(offsetof(ExplodeCreateArg, params) == 0x8C, "ExplodeCreateArg");

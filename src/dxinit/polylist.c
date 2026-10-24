@@ -136,7 +136,7 @@ void PolyList_Render(PolyList *p)
 {
     if (p->count) {
         long double px = p->pos.x - gViewPos.x, py = p->pos.y - gViewPos.y, pz = p->pos.z - gViewPos.z;
-        float depth = gView.m[8] * pz + gView.m[7] * py + gView.m[6] * px;
+        float depth = gView.matrix.m[8] * pz + gView.matrix.m[7] * py + gView.matrix.m[6] * px;
 
         *(PolyList **)SortRender_Add((void (*)(void *))PolyList_DrawItem, 4, f2u(depth)) = p;
     }

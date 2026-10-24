@@ -389,10 +389,10 @@ void LineFilter_Render(LineFilter *t)
     DEV_GetTransform(gDevice, 3, m);
     rhw = kOne.f / (gNearPlaneScale * depth);
     z = (kOne.f - gD3DMinZ * rhw) * m[10] * (gD3DViewMaxZ - gD3DViewMinZ) + gD3DViewMinZ;
-    gStateListA->cur = -1;
-    gStateListB->cur = -1;
-    gStateListC->cur = -1;
-    gStateListD->cur = -1;
+    gStateListA->current = -1;
+    gStateListB->current = -1;
+    gStateListC->current = -1;
+    gStateListD->current = -1;
     DEV_SetRenderState(gDevice, 0x2F, 0);
     DEV_SetRenderState(gDevice, 0x1C, 0);
     DEV_SetRenderState(gDevice, 0x1D, 0);

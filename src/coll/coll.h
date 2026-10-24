@@ -58,17 +58,6 @@ typedef struct CollCursor {
     ObjNode *objects;
 } CollCursor;
 
-/* Passed to the tasks' collision handlers */
-typedef struct CollQuery {
-    const Vec3d *points;
-    int count;
-    void *results;
-    char active[128]; /* a handler clears an entry to take over that point */
-    char unk8C;
-    int unk90;
-    int unk94;
-} CollQuery;
-
 void Coll_GetPointMaterials(Terrain *t, void **results, const Vec3d *points, int count, char unk, int unk2,
                             unsigned int flags);
 int Coll_Descend(Terrain *t, CollCursor *c, CollCursor *unused, const Vec3d *p, int depth);

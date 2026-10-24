@@ -8,6 +8,7 @@
 #include "camera/camera.h"
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "glass/glasstypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -52,12 +53,6 @@ typedef struct ExplodeObject {
     char inWorld;
     char pad235[3];
 } ExplodeObject;
-
-/* the argument of the Game event 9 handler */
-typedef struct HitArg {
-    int unk0;
-    float damage;
-} HitArg;
 
 /* the argument of the World event 0 handler */
 typedef struct JoinArg {

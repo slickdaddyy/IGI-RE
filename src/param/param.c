@@ -261,24 +261,24 @@ HOOK(0x4F1C20, ParamCursor_Need);
 
 ParamRange *Param_Range01(void)
 {
-    gParamRange01.min = 0.0f;
-    gParamRange01.max = 1.0f;
+    gParamRange01.f.min = 0.0f;
+    gParamRange01.f.max = 1.0f;
     return &gParamRange01;
 }
 HOOK(0x4F1C70, Param_Range01);
 
 ParamRange *Param_Range02(void)
 {
-    gParamRange02.min = 0.0f;
-    gParamRange02.max = 2.0f;
+    gParamRange02.f.min = 0.0f;
+    gParamRange02.f.max = 2.0f;
     return &gParamRange02;
 }
 HOOK(0x4F1C90, Param_Range02);
 
 ParamRange *Param_Range0100(void)
 {
-    gParamRange0100.min = 0.0f;
-    gParamRange0100.max = 100.0f;
+    gParamRange0100.f.min = 0.0f;
+    gParamRange0100.f.max = 100.0f;
     return &gParamRange0100;
 }
 HOOK(0x4F1CB0, Param_Range0100);

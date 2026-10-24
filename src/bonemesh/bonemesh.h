@@ -11,6 +11,7 @@
 #include "render/rendertypes.h"
 #include "glowmesh/glowmeshtypes.h"
 #include "transctx/transctxtypes.h"
+#include "res/restypes.h"
 
 typedef void (*TaskHandler)(Task *task, void *arg);
 
@@ -58,14 +59,6 @@ typedef struct MeshLoadArg {
     void *res;
 } MeshLoadArg;
 
-/* PtrList (0x4B73F0): current index at +4, functions at +0x14 */
-typedef struct StateList {
-    int unk0;
-    int cur;
-    int unk8[3];
-    void (*fn[])(int);
-} StateList;
-
 _Static_assert(sizeof(MeshRender) == 0x38, "MeshRender");
 _Static_assert(offsetof(MeshHeader, radius) == 0x3C, "MeshHeader");
 
@@ -77,10 +70,10 @@ extern void (*gRenderFuncs[])(void *);
 extern TaskHandler gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern StateList *gStateListA;
-extern StateList *gStateListB;
-extern StateList *gStateListC;
-extern StateList *gStateListD;
+extern PtrList *gStateListA;
+extern PtrList *gStateListB;
+extern PtrList *gStateListC;
+extern PtrList *gStateListD;
 
 /* method idx of a COM object */
 #define COM(obj, idx, type) ((type)(*(void ***)(obj))[idx])
@@ -100,9 +93,9 @@ extern StateList *gStateListD;
 /* selects entry idx of a state list unless it is already the current one */
 #define STATE_SELECT(list, idx)              \
     do {                                     \
-        if ((list)->cur != (idx)) {          \
-            (list)->cur = (idx);             \
-            (list)->fn[(list)->cur](0);      \
+        if ((list)->current != (idx)) {          \
+            (list)->current = (idx);             \
+            ((void (*)(int))(list)->items[(list)->current])(0);      \
         }                                    \
     } while (0)
 

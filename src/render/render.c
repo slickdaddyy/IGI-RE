@@ -14,23 +14,9 @@
 #include "d3d/d3dtypes.h"
 #include "litmap/litmaptypes.h"
 #include "render/rendertypes.h"
+#include "transctx/transctxtypes.h"
 
 /* Direct3D mesh renderer: rigid, spline and lightmapped meshes. */
-
-/* the view the frame is drawn with (0xBCAAE0, 0xA8 bytes) */
-typedef struct View {
-    Matrix matrix;
-    double pos[3];
-    float fov;
-    float fovY;
-    float scaleX;
-    float scaleY;
-    float centerX;
-    float centerY;
-    char unk58[8];
-    int layer;
-    char unk64[0x44];
-} View;
 
 /* screen area being drawn (0xBCABA0) */
 typedef struct Scene {
@@ -39,16 +25,6 @@ typedef struct Scene {
     float halfW, halfH;
     float minX, minY, maxX, maxY;
 } Scene;
-
-/* PtrList of state functions: the current index is cached at +4 */
-typedef struct StateList {
-    int magic;
-    int current;
-    int count;
-    int capacity;
-    int magic2;
-    void (*items[])(int);
-} StateList;
 
 typedef struct VBUpload {
     struct VBUpload *next;
@@ -194,7 +170,6 @@ typedef struct SortedPrim {
     int unk64;
 } SortedPrim;
 
-_Static_assert(sizeof(View) == 0xA8, "View");
 _Static_assert(offsetof(Scene, minX) == 0x30, "Scene");
 _Static_assert(sizeof(ModelVB) == 0x24, "ModelVB");
 _Static_assert(sizeof(ModelSlot) == 0xFA8, "ModelSlot");
@@ -214,7 +189,7 @@ _Static_assert(sizeof(SortedPrim) == 0x68, "SortedPrim");
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x491D40, long double, Display_GetAspect, (void));
 ORIG(0x4950F0, void, Direct3D_MakeMatrix, (D3DMATRIX *out, const float *rot, const float *pos));
-ORIG(0x497E70, void, TransContext_Select, (View *v));
+ORIG(0x497E70, void, TransContext_Select, (TransCtx *v));
 ORIG(0x49B2D0, void, Fog_SetRange, (const double *pos, float radius));
 ORIG(0x49B4B0, void, MeshBatch_Flush, (int slot));
 ORIG(0x4A0340, void, Direct3DRender_ClipTriangleDepth, (ProjVert a, ProjVert b, ProjVert c, float *nearZ, float nearPlane));
@@ -254,18 +229,18 @@ extern DWORD gFogDensity;
 extern float gLayerFov[];
 extern float gLightColor[];
 extern float gFogColor[];
-extern View gView;
+extern TransCtx gView;
 extern Scene gScene;
 extern float gWorldScale;
 extern int gD3DClippingOnIndex;
-extern StateList *gD3DListB;
+extern PtrList *gD3DListB;
 extern DWORD gD3DZEnable;
 extern DynVB gVBNormal;
-extern StateList *gD3DListC;
+extern PtrList *gD3DListC;
 extern float gNearPlane;
-extern StateList *gD3DStateList;
+extern PtrList *gD3DStateList;
 extern int gD3DClippingOffIndex;
-extern StateList *gD3DListA;
+extern PtrList *gD3DListA;
 extern DWORD gFogEnable;
 
 /* a float constant from the exe, bit exact */
@@ -291,11 +266,11 @@ static int x87_fistp(long double x)
     return (int)r;
 }
 
-static void use_state(StateList *l, int i)
+static void use_state(PtrList *l, int i)
 {
     if (l->current != i) {
         l->current = i;
-        l->items[i](0);
+        ((void (*)(int))l->items[i])(0);
     }
 }
 
@@ -325,17 +300,17 @@ static void scale_matrix(Matrix *rot, const Matrix *m, const float *scale)
 /* view space offset of p scaled to Direct3D units; the x difference stays unrounded */
 static void view_offset(float *pos, const double *p)
 {
-    long double dx = p[0] - gView.pos[0];
+    long double dx = p[0] - gView.pos.x;
 
-    pos[1] = p[1] - gView.pos[1];
-    pos[2] = p[2] - gView.pos[2];
+    pos[1] = p[1] - gView.pos.y;
+    pos[2] = p[2] - gView.pos.z;
     pos[0] = gWorldScale * dx;
     pos[1] = gWorldScale * pos[1];
     pos[2] = gWorldScale * pos[2];
 }
 
 /* Layer 0 objects are drawn with the field of view of the main camera. */
-static void select_layer_view(View *saved, View *tc)
+static void select_layer_view(TransCtx *saved, TransCtx *tc)
 {
     float t;
 
@@ -459,9 +434,9 @@ void Direct3DRender_SplineNearZ(ModelObj *o, NearZQuery *q)
         return;
     h = (MeshHeader *)o->model->lods[0]->mesh->header;
     if (o->offset) {
-        float x = o->pos[0] - gView.pos[0];
-        float y = o->pos[1] - gView.pos[1];
-        float zf = o->pos[2] - gView.pos[2];
+        float x = o->pos[0] - gView.pos.x;
+        float y = o->pos[1] - gView.pos.y;
+        float zf = o->pos[2] - gView.pos.z;
         long double z;
 
         x = x + o->offset[0];
@@ -472,9 +447,9 @@ void Direct3DRender_SplineNearZ(ModelObj *o, NearZQuery *q)
         c[2] = ((long double)vm[8] * z + (long double)vm[7] * y) + (long double)vm[6] * x;
         radius = o->offset[3];
     } else {
-        dx = o->pos[0] - gView.pos[0];
-        dy = o->pos[1] - gView.pos[1];
-        dz = o->pos[2] - gView.pos[2];
+        dx = o->pos[0] - gView.pos.x;
+        dy = o->pos[1] - gView.pos.y;
+        dz = o->pos[2] - gView.pos.z;
         c[0] = (vm[2] * dz + vm[1] * dy) + vm[0] * dx;
         c[1] = (vm[5] * dz + vm[4] * dy) + vm[3] * dx;
         c[2] = (vm[8] * dz + vm[7] * dy) + vm[6] * dx;
@@ -509,9 +484,9 @@ void Direct3DRender_SplineNearZ(ModelObj *o, NearZQuery *q)
         sy = tmp[0];
         rhw = tmp[1];
     }
-    dx = o->pos[0] - gView.pos[0];
-    dy = o->pos[1] - gView.pos[1];
-    dz = o->pos[2] - gView.pos[2];
+    dx = o->pos[0] - gView.pos.x;
+    dy = o->pos[1] - gView.pos.y;
+    dz = o->pos[2] - gView.pos.z;
     tx = (dz * vm[2] + dy * vm[1]) + dx * vm[0];
     ty = (dz * vm[5] + dy * vm[4]) + dx * vm[3];
     tz = (dz * vm[8] + dy * vm[7]) + dx * vm[6];
@@ -641,9 +616,9 @@ void Direct3DRender_DrawSplineMesh(ModelObj **prim)
         return;
     ml = vm->lods[lod];
     h = (MeshHeader *)ml->mesh->header;
-    pos[0] = o->pos[0] - gView.pos[0];
-    pos[1] = o->pos[1] - gView.pos[1];
-    dz = o->pos[2] - gView.pos[2];
+    pos[0] = o->pos[0] - gView.pos.x;
+    pos[1] = o->pos[1] - gView.pos.y;
+    dz = o->pos[2] - gView.pos.z;
     pos[0] = gWorldScale * pos[0];
     pos[1] = gWorldScale * pos[1];
     pos[2] = gWorldScale * dz;
@@ -668,9 +643,9 @@ void Direct3DRender_DrawSplineMesh(ModelObj **prim)
             Direct3DRender_SetObjectFog(o, h);
             draw_group(d, gVBNormal.vb, base, ml, g);
         } else {
-            long double x = o->pos[0] - gView.pos[0];
-            long double y = o->pos[1] - gView.pos[1];
-            long double z = o->pos[2] - gView.pos[2];
+            long double x = o->pos[0] - gView.pos.x;
+            long double y = o->pos[1] - gView.pos.y;
+            long double z = o->pos[2] - gView.pos.z;
             float key = (gView.matrix.m[8] * z + gView.matrix.m[7] * y) + gView.matrix.m[6] * x;
             SplinePrim *p = SortRender_Add((void (*)(void *))Direct3DRender_DrawSortedFaceGroup_Spline,
                                            0x30, key);
@@ -1020,7 +995,7 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
     int inside[4], lod, base;
     ModelLod *ml;
     MeshHeader *h;
-    View saved, tc;
+    TransCtx saved, tc;
     float pos[3], vz[3], depth;
     long double dx, dy, dz;
     Matrix rot;
@@ -1047,9 +1022,9 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
     ModelLod_ApplyTexAnims(ml);
     if (!o->layer)
         select_layer_view(&saved, &tc);
-    pos[0] = o->pos[0] - gView.pos[0];
-    pos[1] = o->pos[1] - gView.pos[1];
-    dz = o->pos[2] - gView.pos[2];
+    pos[0] = o->pos[0] - gView.pos.x;
+    pos[1] = o->pos[1] - gView.pos.y;
+    dz = o->pos[2] - gView.pos.z;
     pos[0] = gWorldScale * pos[0];
     pos[1] = gWorldScale * pos[1];
     pos[2] = gWorldScale * dz;
@@ -1062,9 +1037,9 @@ void Direct3DRender_DrawRigidMesh(ModelObj **prim)
             + (long double)gView.matrix.m[6] * o->matrix.m[1];
     vz[2] = ((long double)gView.matrix.m[8] * o->matrix.m[8] + (long double)gView.matrix.m[7] * o->matrix.m[5])
             + (long double)gView.matrix.m[6] * o->matrix.m[2];
-    dx = o->pos[0] - gView.pos[0];
-    dy = o->pos[1] - gView.pos[1];
-    dz = o->pos[2] - gView.pos[2];
+    dx = o->pos[0] - gView.pos.x;
+    dy = o->pos[1] - gView.pos.y;
+    dz = o->pos[2] - gView.pos.z;
     depth = (dz * gView.matrix.m[8] + dy * gView.matrix.m[7]) + dx * gView.matrix.m[6];
     if (h->type == 0) {
         RigidMesh *d = h->data;
@@ -1217,7 +1192,7 @@ void Direct3DRender_DrawSortedFaceGroup_Rigid(SortedPrim *p)
     ModelLod *ml = p->lod;
     RigidMesh *d;
     MeshGroup *g = p->group;
-    View saved, tc;
+    TransCtx saved, tc;
     float pos[3];
     Matrix rot;
     D3DMATRIX mat;
@@ -1252,7 +1227,7 @@ void Direct3DRender_DrawSortedFaceGroup_Lightmap(SortedPrim *p)
 {
     LmMesh *d = p->mesh;
     LmGroup *g = p->group;
-    View saved, tc;
+    TransCtx saved, tc;
     float pos[3];
     Matrix rot;
     D3DMATRIX mat;
@@ -1320,7 +1295,7 @@ BSS(7AC0A0) int gUnlitIdx;
 ALIAS(gStateC1, gUnlitIdx, 0);
 PAD(igb, B818EC, B818EC, 0x34);
 ALIAS(gFogColor, pad_B818EC, 0);
-BSS(BCAAE0) View gView;
+BSS(BCAAE0) TransCtx gView;
 ALIAS(gCamDir, gView, 24);
 ALIAS(gCamMatrix, gView, 0);
 ALIAS(gCamPos, gView, 40);

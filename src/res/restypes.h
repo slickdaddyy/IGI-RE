@@ -65,6 +65,7 @@ typedef struct Text {
     unsigned int flags;
 } Text;
 
+/* PtrList (0x4B73F0): current index at +4, functions at +0x14 */
 typedef struct PtrList {
     unsigned int magic;
     int current;

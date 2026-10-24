@@ -11,15 +11,9 @@
 #include "types.h"
 #include "task/tasktypes.h"
 #include "res/restypes.h"
+#include "transctx/transctxtypes.h"
 
-/* the view the frame is drawn with (0xBCAAE0) */
-typedef struct View {
-    float m[9];
-    int frame;
-    Vec3d pos;
-} View;
-
-extern View gView;
+extern TransCtx gView;
 extern Vec3d gViewPos;
 extern float gNearPlaneScale;
 extern int gD3DTnL;

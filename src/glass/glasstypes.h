@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "types.h"
+
 /* the collision mesh of a model LOD */
 typedef struct TriMesh {
     int count;
@@ -10,5 +12,11 @@ typedef struct TriMesh {
     uint16_t (*tris)[4]; /* 0x10 */
     float (*verts)[4];  /* 0x14 */
 } TriMesh;
+
+typedef struct HitArg {
+    void *hit;
+    float damage;
+    Vec3f dir;
+} HitArg;
 
 #endif

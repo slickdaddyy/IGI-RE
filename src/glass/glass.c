@@ -4,6 +4,7 @@
 
 #include "glass/glass.h"
 #include "hook.h"
+#include "glass/glasstypes.h"
 
 FN_EXTERN(RocketPod_GetArgSize);
 FN_EXTERN(Task_FalseHandler);
@@ -29,13 +30,6 @@ typedef struct Glass {
 } Glass;
 
 _Static_assert(sizeof(Glass) == 0x148, "Glass");
-
-/* a bullet hit (Game event 9) */
-typedef struct HitArg {
-    void *hit;
-    float damage;
-    Vec3f dir;
-} HitArg;
 
 /* an explosion (Game event 11) */
 typedef struct BlastArg {

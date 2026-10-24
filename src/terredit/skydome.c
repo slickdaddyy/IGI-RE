@@ -5,6 +5,7 @@
 
 #include "hook.h"
 #include "terredit/terredit.h"
+#include "res/restypes.h"
 
 /* The sky dome of FlatSky: a vertex buffer of 321 coloured vertices (the
    top, 15 rings of 20 from 90 degrees down by 6, and a ring below the
@@ -33,12 +34,6 @@ typedef struct SkyDome {
     uint16_t index[SKY_INDICES];
 } SkyDome;
 
-/* the state lists of the renderer; drawing here leaves their state unknown */
-typedef struct StateList {
-    int unk0;
-    int current;
-} StateList;
-
 _Static_assert(sizeof(SkyDome) == 0xEDC, "SkyDome");
 
 extern IDirect3D7 *gD3D;
@@ -52,11 +47,11 @@ extern int gLightCount;
 extern int gLightStride;
 extern float gWorldScale;
 extern int gD3DTnL;
-extern StateList *gD3DListB;
-extern StateList *gD3DListC;
+extern PtrList *gD3DListB;
+extern PtrList *gD3DListC;
 extern float gSkyRadius;
-extern StateList *gD3DStateList;
-extern StateList *gD3DListA;
+extern PtrList *gD3DStateList;
+extern PtrList *gD3DListA;
 
 static const float kHalfPi = 0x1.921fb6p+0f;
 static const float kRingStep = 0x1.aceeap-4f;

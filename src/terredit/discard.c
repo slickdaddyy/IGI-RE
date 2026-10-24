@@ -1,6 +1,7 @@
 #pragma GCC optimize("excess-precision=standard")
 #include "hook.h"
 #include "terredit/terredit.h"
+#include "coll/colltypes.h"
 
 FN_EXTERN(VehiclePart_Delete);
 
@@ -51,14 +52,6 @@ typedef struct DiscardTerrain {
     int shift;          /* cell size is 2^31 >> shift */
     int unk154;
 } DiscardTerrain;
-
-/* the argument of collision slot 11 */
-typedef struct CollQuery {
-    const Vec3d *points;
-    int count;
-    void *results;
-    char active[128];   /* cleared for points a handler takes */
-} CollQuery;
 
 /* the argument of world event 0 */
 typedef struct WorldEventArg {

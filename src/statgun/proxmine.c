@@ -21,13 +21,13 @@ typedef struct GunMoveMsg {
 } GunMoveMsg;
 
 /* the filter Coll_Lines passes to the objects it meets */
-typedef struct CollQuery {
+typedef struct ProxQuery {
     float unk0;
     void *self;
     Task *owner;
     int unkC;
     float unk10;
-} CollQuery;
+} ProxQuery;
 
 extern uint16_t gProxMineType;
 
@@ -45,7 +45,7 @@ ORIG(0x449D20, uint16_t, Glass_GetType, (void));
 ORIG(0x447D20, uint16_t, Door_GetType, (void));
 ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *results, Vec3d *starts, Vec3d *ends, int count, char event,
-                                  CollQuery *query, unsigned int flags));
+                                  ProxQuery *query, unsigned int flags));
 ORIG(0x414A60, void, Matrix_SetYAxis, (Matrix *m, const Vec3f *dir));
 ORIG(0x476040, void, Mine_New, (void *a, Vec3d *pos, Matrix *m, char *key, int armTicks, float countdown,
                                   float activate, float explode, char alt));
@@ -105,7 +105,7 @@ void ProxMine_Use(Gun *g, WeaponUseMsg *msg)
     WeaponInfo *info = g->info;
     ProxData *d = info->data;
     long double s, inv;
-    CollQuery q;
+    ProxQuery q;
     CollHit hit;
     Vec3d start, end;
     Vec3f dir;

@@ -67,4 +67,15 @@ typedef struct CollLineQuery {
 } CollLineQuery;
 _Static_assert(offsetof(CollLineQuery, results) == 0x20, "CollLineQuery");
 
+typedef struct CollQuery {
+    const Vec3d *points;
+    int count;
+    void *results;
+    char active[128]; /* a handler clears an entry to take over that point */
+    char unk8C;
+    int unk90;
+    int unk94;
+} CollQuery;
+_Static_assert(sizeof(CollQuery) == 0x98, "CollQuery");
+
 #endif

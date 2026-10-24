@@ -19,12 +19,6 @@ typedef struct RangeD {
     double min, max;
 } RangeD;
 
-/* {count, names} extra data of an enum parameter */
-typedef struct ParamEnum {
-    int count;
-    const char **names;
-} ParamEnum;
-
 /* the argument of the script argument parsers */
 typedef struct ParseArg {
     void *out;

@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "animtrig/animtrig.h"
+#include "param/paramtypes.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4CEC10, void *, VirModel_Find, (const char *name));
@@ -35,11 +36,6 @@ typedef struct ModelLODSettings {
     char name[16];
     float dist[5];
 } ModelLODSettings;
-
-typedef struct ParamRange {
-    float min;
-    float max;
-} ParamRange;
 
 _Static_assert(sizeof(LODSettings) == 0x40, "LODSettings");
 _Static_assert(sizeof(ModelLODSettings) == 0x44, "ModelLODSettings");
@@ -81,14 +77,14 @@ void LODSettings_Init(void)
     LODSettings s;
     ModelLODSettings m;
 
-    gModelLodDistRange.min = 0;
-    gModelLodDistRange.max = 1000.0f;
-    gLodDetailRange.min = 0;
-    gLodDetailRange.max = 1500.0f;
-    gLodCullRange.min = 0;
-    gLodCullRange.max = 10000.0f;
-    gLodBlendRange.min = 0;
-    gLodBlendRange.max = 1.0f;
+    gModelLodDistRange.f.min = 0;
+    gModelLodDistRange.f.max = 1000.0f;
+    gLodDetailRange.f.min = 0;
+    gLodDetailRange.f.max = 1500.0f;
+    gLodCullRange.f.min = 0;
+    gLodCullRange.f.max = 10000.0f;
+    gLodBlendRange.f.min = 0;
+    gLodBlendRange.f.max = 1.0f;
     gLODSettingsType = TaskType_New("LODSettings", 0x40, Task_GetRootType(), 0);
     gModelLODSettingsType = TaskType_New("ModelLODSettings", 0x44, Task_GetRootType(), 0);
     gModelLODSettingsContainerType = TaskType_New("ModelLODSettingsContainer", 0x20, Task_GetRootType(), 0);

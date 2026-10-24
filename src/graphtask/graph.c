@@ -3,6 +3,7 @@
 #include "igi.h"
 #include "graphtask/graphtask.h"
 #include "graphnode/graphnodetypes.h"
+#include "param/paramtypes.h"
 
 typedef struct GraphLink GraphLink;
 
@@ -42,11 +43,6 @@ typedef struct GraphNodeSize {
     uint16_t type;
     int size;
 } GraphNodeSize;
-
-typedef struct ParamCursor {
-    int index;
-    void *args;
-} ParamCursor;
 
 _Static_assert(offsetof(GraphNode, links) == 0x13C, "GraphNode");
 _Static_assert(sizeof(GraphNode) == 0x240, "GraphNode size");

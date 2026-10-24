@@ -11,31 +11,17 @@
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "graphtask/graphtasktypes.h"
+#include "props/propstypes.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)();
-
-/* the search used to pick what a human can use (see 0x416AD0) */
-typedef struct UseQuery {
-    Task *human;
-    int unk4;
-    Vec3d pos;          /* 0x08 */
-    Matrix matrix;      /* 0x20 */
-    char unk48[0x28];
-    float best_pitch;   /* 0x70 */
-    float best_yaw;     /* 0x74 */
-    double range;       /* 0x78 */
-    void *best;         /* 0x80 */
-} UseQuery;
 
 /* the collision filter message of 0x4FC0E0 */
 typedef struct CollMsg {
     int unk0;
     void *obj;
 } CollMsg;
-
-_Static_assert(offsetof(UseQuery, range) == 0x78, "UseQuery");
 
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];

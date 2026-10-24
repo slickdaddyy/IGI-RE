@@ -49,7 +49,7 @@ _Static_assert(offsetof(GenericTBA, script) == 0x258, "GenericTBA");
 _Static_assert(sizeof(GenericTBA) == 0x2A8, "GenericTBA");
 
 extern uint16_t gTBAType;
-extern ParamEnum gTBAIcons;
+extern ParamComboList gTBAIcons;
 extern void *gTBAParams;
 
 /* handlers shared with the Terminal and others */
@@ -72,7 +72,7 @@ void GenericTBA_DrawIcon(GenericTBA *t, char **arg);
 void GenericTBA_Open(void)
 {
     gTBAIcons.count = 10;
-    gTBAIcons.names = StatusScreen_GetActionSprites();
+    gTBAIcons.names = (const char **)(StatusScreen_GetActionSprites());
     gTBAType = TaskType_New("GenericTBA", sizeof(GenericTBA), ExplodeObject_GetType(), 0);
     TaskType_SetHandler(gTBAType, 0, GenericTBA_Create);
     TaskType_SetHandler2(gTBAType, 1, GenericTBA_Run);
@@ -285,6 +285,6 @@ HOOK(0x4485D0, GenericTBA_GetAnim);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(53C7DC) uint16_t gTBAType INIT(385);
 PAD(igd, 53C7DC, 53C7DE, 0x2);
-BSS(57C1F0) ParamEnum gTBAIcons;
+BSS(57C1F0) ParamComboList gTBAIcons;
 PAD(igb, 57C1F0, 57C1F8, 0x4);
 BSS(57C1F0) void *gTBAParams;

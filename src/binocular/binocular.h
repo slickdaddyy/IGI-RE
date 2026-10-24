@@ -10,6 +10,7 @@
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "vehicle/vehicletypes.h"
+#include "transctx/transctxtypes.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -39,21 +40,7 @@ typedef struct WeaponUseArg {
     char *human;
 } WeaponUseArg;
 
-/* the view the frame is drawn with (0xBCAAE0) */
-typedef struct View {
-    float m[9];
-    int unk24;
-    Vec3d pos;
-    float unk40;
-    float unk44;
-    float scaleX;
-    float scaleY;
-    float centerX;
-    float centerY;
-} View;
-
 _Static_assert(sizeof(WeaponUseArg) == 0x30, "WeaponUseArg");
-_Static_assert(offsetof(View, centerY) == 0x54, "View");
 
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }
@@ -61,7 +48,7 @@ _Static_assert(offsetof(View, centerY) == 0x54, "View");
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern View gView;
+extern TransCtx gView;
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
