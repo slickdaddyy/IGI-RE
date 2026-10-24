@@ -64,12 +64,9 @@ extern uint8_t gVehicleLoadEvent;
 extern uint8_t gVehicleKeysEvent;
 extern int gAnimDataType;
 extern void *gAnimTaskParams;
-extern char gAnimTasks[];
-extern void *gAnimTasksHead;
-extern void *gAnimTasksTail;
-extern void *gAnimTasksTailPred;
-extern int gUnkA76C20;
-extern int gUnkA76C34;
+extern List gAnimTasks;
+extern int gAnimTaskUnused1;
+extern int gAnimTaskUnused2;
 
 extern float kZero;
 extern float kOne;
@@ -227,11 +224,11 @@ void AnimTask_InitType(void)
     /* the AnimData parameter covers the whole task */
     ParamTable_Add(gAnimTaskParams, &t, &t, (void *)gAnimDataType, 7, NULL);
     TaskType_SetHandler(RigidDynCubeObj_GetType(), gAnimEventDB, TASK_NOTHING);
-    gAnimTasksHead = &gAnimTasksTail;
-    gAnimTasksTailPred = &gAnimTasksHead;
-    gAnimTasksTail = NULL;
-    gUnkA76C20 = 60;
-    gUnkA76C34 = 0x400;
+    gAnimTasks.head = (Node *)&gAnimTasks.tail;
+    gAnimTasks.tailpred = (Node *)&gAnimTasks.head;
+    gAnimTasks.tail = NULL;
+    gAnimTaskUnused1 = 60;
+    gAnimTaskUnused2 = 0x400;
 }
 HOOK(0x4F36C0, AnimTask_InitType);
 
@@ -269,7 +266,7 @@ void AnimTask_Create(AnimTask *t)
     memset(t->channels, 0, sizeof(t->channels));
     t->node.prev = NULL;
     t->node.next = NULL;
-    List_AddTail(gAnimTasks, &t->node);
+    List_AddTail(&gAnimTasks, &t->node);
     t->self = t;
     t->button[0] = 0;
     t->button[1] = 0;
@@ -529,7 +526,7 @@ HOOK(0x4F4140, Vehicle_GetKeysEvent);
 
 void *AnimTask_GetList(void)
 {
-    return gAnimTasks;
+    return &gAnimTasks;
 }
 HOOK(0x4F4150, AnimTask_GetList);
 

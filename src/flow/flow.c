@@ -6,6 +6,7 @@
 #include "hook.h"
 #include "flow/flow.h"
 #include "win/wintypes.h"
+#include "animtrig/animtrigtypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A5350, FILE *, crt_fopen, (const char *path, const char *mode));
@@ -62,8 +63,10 @@ extern void (* gTaskHandlers[][TASK_MAX_TYPES])(Task *);
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern char gUnk5C8E00;
-extern int gUnkA4438C[];
-extern int gUnkBC20A0;
+extern int gCollLineCalls;
+extern int gCollLineCount;
+extern int gCollSightCalls;
+extern InputPort gInputPorts[];
 extern int gFlowFrames;
 extern char gKeyboardPresent;
 extern Mouse gMouse;
@@ -119,7 +122,7 @@ void Flow_CreateHandler(Flow *flow)
         /* the original reuses the pushes above as the arguments after keys */
         InputPort_Setup(0, Profile_GetKeyCount(keys), keys, mode, 0.03f, 0.001f, 0.001f, 0.03f, 0.001f, 0.001f, 0.03f,
                         0.001f, 0.001f, 0.03f, 0.001f, 0.001f);
-        gUnkBC20A0 = 1;
+        gInputPorts[0].active = 1;
     }
     AppContext_SetActiveCallback(Flow_FocusChanged, 0);
     /* disc check: first byte of anys.afp must be ':' */
@@ -174,9 +177,9 @@ void Flow_RunHandler(Flow *flow)
         frames = gFlow->frames;
         due = (int)llrint((double)(gFlow->paused_time + gFlow->start_time) + 1000.0 / gFlow->fps * frames);
         if (due < now && gFlow->ticks_since_render < 11 && (gFlow->need_render || frames > 2)) {
-            gUnkA4438C[0] = 0;
-            gUnkA4438C[1] = 0;
-            gUnkA4438C[2] = 0;
+            gCollLineCalls = 0;
+            gCollLineCount = 0;
+            gCollSightCalls = 0;
             DebugText_Clear();
             DebugText_SetCursor(0, 0);
             if (frames < 2)

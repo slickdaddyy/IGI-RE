@@ -7,6 +7,7 @@
 #include "game/game.h"
 #include "menu/menutypes.h"
 #include "win/wintypes.h"
+#include "animtrig/animtrigtypes.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -56,7 +57,7 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 
 extern uint16_t gMenuManagerType;
 extern void *gMenuManagerParams;
-extern int gUnkBC20A0;
+extern InputPort gInputPorts[];
 extern char gKeyboardPresent;
 extern Mouse gMouse;
 
@@ -127,7 +128,7 @@ void MenuManager_Create(MenuManager *mm)
         InputPort_Setup(0, Profile_GetKeyCount(keys), keys, mode, 0.05f, 0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.25f,
                         0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.05f, 0x1.b4e81cp-9f, 0x1.b4e81cp-9f, 0.25f, 0x1.b4e81cp-9f,
                         0x1.b4e81cp-9f);
-        gUnkBC20A0 = 1;
+        gInputPorts[0].active = 1;
     }
     Keys_Install();
     mm->unk26BE = 1;

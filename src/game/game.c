@@ -10,6 +10,7 @@
 #include "win/wintypes.h"
 #include "qasm/qasmtypes.h"
 #include "core/coretypes.h"
+#include "animtrig/animtrigtypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A5234, int, crt_fclose, (void *f));
@@ -209,7 +210,7 @@ extern int gGameSpriteCount;
 extern char gMusicEnabled;
 extern void *gCurrentWorld;
 extern RenderMode gRenderModeCurrent;
-extern int gUnkBC20A0;
+extern InputPort gInputPorts[];
 extern char gKeyboardPresent;
 extern Mouse gMouse;
 
@@ -455,7 +456,7 @@ void LevelStart(Game *g)
         InputPort_Setup(0, Profile_GetKeyCount(keys), keys, mode, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f,
                         0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f, 0x1.2c5f92p-5f, 0x1.2c5f92p-5f, 0.1f, 0x1.2c5f92p-5f,
                         0x1.2c5f92p-5f);
-        gUnkBC20A0 = 1;
+        gInputPorts[0].active = 1;
     }
     RainDynCubeObj_SetCallback(Game_SetRaining);
     EnvironmentSound_SetListener(gGame->unk60);
