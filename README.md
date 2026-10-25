@@ -1,6 +1,6 @@
 <div align="center">
 
-# igi-decomp
+# IGI-RE
 
 **A decompilation of Project I.G.I.: I'm Going In (Innerloop Studios, 2000): the whole game rewritten as readable C,
 one verified function at a time.**
@@ -13,7 +13,7 @@ one verified function at a time.**
 > **You need your own copy of the game.** This repository contains no game assets and no original code. The build
 > runs only from the folder of an installed copy of the EU release (see [Target](#target)).
 
-igi-decomp rewrites the code of `IGI.exe` in C, function by function, and checks every rewrite against the original
+IGI-RE rewrites the code of `IGI.exe` in C, function by function, and checks every rewrite against the original
 machine code. It is a **functional** decompilation: a rewrite does not have to compile to the same bytes, it has to
 *behave* exactly like the original: same return value, same memory writes, same calls in the same order.
 
@@ -34,10 +34,9 @@ The Microsoft C runtime that was linked into `IGI.exe` is not decompiled; the sy
 
 ## The goal
 
-**A complete source port of I.G.I. for modern systems.** The game can already be built from this source alone as a
-32-bit Windows program. Next comes the port itself: replacing the DirectX 7, DirectSound and Win32 layers with
-portable ones so that it builds natively on Linux and macOS and as a 64-bit program
-([docs/ROADMAP.md](docs/ROADMAP.md)).
+**The original game, as readable and verified source.** IGI-RE stays faithful: it doesn't change how the game looks,
+sounds or plays. It is a complete record of how I.G.I. works, down to its rounding and its bugs, and a base that
+others can build on. What is still open is in [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## What you need
 

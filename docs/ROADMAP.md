@@ -19,14 +19,12 @@
 6. **Standalone exe.** `igidecomp.exe` is the game built from this source alone, with the system `msvcrt.dll` in place
    of the C runtime that was linked into `IGI.exe`.
 
-## Next: the port
+## Open
 
-- **Platform layers.** `src/win` (window, input, timer, movies) and `src/d3d` (DirectDraw, Direct3D 7, DirectSound)
-  are the only code that talks to Windows. Replace them with SDL plus a modern renderer and a small video decoder.
-- **Free the layout.** The exe keeps `IGI.exe`'s data layout because a few code paths rely on one global sitting next
-  to another. Finding each global's true extent (the test suite can record every data byte the code touches) lets the
-  data go anywhere, which a 64-bit build needs.
-- **64-bit.** Fix the 32-bit assumptions, such as pointers stored inside file structures, and check float results
-  against the x87 build, since SSE math rounds differently.
+- **Struct fields.** Fields are named where the code shows what they are. About 300 that the code touches are still
+  `unk<offset>`; the code never touches the rest one by one.
 - **Other releases.** Only the EU exe is supported. Other versions need their own address map, or a check that their
   code matches.
+- **Free the layout.** `igidecomp.exe` keeps `IGI.exe`'s data layout because a few code paths rely on one global
+  sitting next to another. Finding each global's true extent (the test suite can record every data byte the code
+  touches) would let the data go anywhere, which anyone porting the code to other platforms or to 64-bit will need.

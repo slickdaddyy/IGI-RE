@@ -69,4 +69,4 @@ the task system and the script VM. Most other areas call each other only through
 only the area being worked on (`-DIGI_DIRS=sound`).
 
 The platform layers are `src/win` (window, input, timer, movies) and `src/d3d` (DirectDraw, Direct3D 7,
-DirectSound). They are what the port replaces ([ROADMAP.md](ROADMAP.md)).
+DirectSound). They are what a port to other platforms would replace.
