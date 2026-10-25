@@ -44,7 +44,7 @@ typedef struct TerrainLayer {
 _Static_assert(sizeof(TerrainLayer) == 0x1C, "TerrainLayer");
 
 typedef struct TerrainMaterial {
-    int unk0;
+    int material; /* the collision material */
     TerrainLayer layers[32];
 } TerrainMaterial;
 _Static_assert(sizeof(TerrainMaterial) == 900, "TerrainMaterial");
@@ -64,12 +64,6 @@ typedef struct DynCubeNode {
     uint16_t sub_mask;         /* event masks of all children */
     void *unk3C;
 } DynCubeNode;
-
-typedef struct TerrainLightmap {
-    int size;
-    void *data;
-    char texture[0x24];
-} TerrainLightmap;
 
 typedef struct Terrain {
     int unk0;

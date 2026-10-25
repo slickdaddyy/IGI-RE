@@ -53,7 +53,7 @@ extern int gCollLineCount;
 extern int gCollLeafTests;
 extern int gCollTriangleTests;
 /* 900 byte TerrainMaterial records; only the low byte of the first field is read */
-extern const uint8_t gTerrainMaterials[];
+extern TerrainMaterial gTerrainMaterials[];
 
 #define SAR(v, n) ((int)(v) >> ((n) & 31))
 
@@ -815,7 +815,7 @@ unsigned int Coll_GetHitMaterial(Terrain *t, const Vec3d *p)
     }
     if (!gCollWalkTasks)
         Coll_ResetMods();
-    return gTerrainMaterials[idx * 900];
+    return (uint8_t)gTerrainMaterials[idx].material;
 }
 HOOK(0x4CB810, Coll_GetHitMaterial);
 

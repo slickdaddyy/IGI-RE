@@ -154,5 +154,6 @@ typedef struct Lightmap {
     int *data;
     Texture texture;
 } Lightmap;
+_Static_assert(sizeof(Lightmap) == 0x2C, "Lightmap");
 
 #endif

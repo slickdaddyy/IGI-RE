@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "terrain/terrain.h"
 #include "coll/colltypes.h"
+#include "litmap/litmaptypes.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B2450, void, Texture_Download, (void *tex, void *palette, int pitch, int width, int height, int format,
@@ -26,11 +27,10 @@ ORIG(0x4D11C0, void, QCube_Reset, (void));
 extern const char gEmptyString[];
 extern char gHmpResident[];
 extern char gBitResident[];
-extern TerrainLightmap gLightmaps[];
+extern Lightmap gLightmaps[];
 extern TerrainMaterial gTerrainMaterials[];
 extern uint8_t gTerrainTileMaps[][8][8];
 
-_Static_assert(sizeof(TerrainLightmap) == 0x2C, "TerrainLightmap");
 
 ScriptValue *CreateTerrainMaterial(ScriptValue *out, void *data, void *args);
 ScriptValue *CreateTerrainTileMap(ScriptValue *out, void *data, void *args);
@@ -38,7 +38,7 @@ ScriptValue *CreateTerrainTileMap(ScriptValue *out, void *data, void *args);
 /* Uploads the lightmaps in <name>.lmp: an int size n, then n*n bytes, repeated. */
 void Terrain_LoadLightmaps(Terrain *t)
 {
-    TerrainLightmap *lm;
+    Lightmap *lm;
     unsigned int size;
     int *p;
     int pos;
@@ -56,7 +56,7 @@ void Terrain_LoadLightmaps(Terrain *t)
             if (n) {
                 if (Texture_GetTMUs() > 1)
                     Texture_SetActiveTMU(1);
-                Texture_Download(lm->texture, t->palette, n, n, n, 1, p);
+                Texture_Download(&lm->texture, t->palette, n, n, n, 1, p);
                 if (Texture_GetTMUs() > 1)
                     Texture_SetActiveTMU(-1);
                 lm->size = n;
@@ -171,7 +171,7 @@ ScriptValue *CreateTerrainMaterial(ScriptValue *out, void *data, void *args)
     TerrainLayer *l = m->layers;
     int i;
 
-    m->unk0 = Script_GetArgInt(args, 1);
+    m->material = Script_GetArgInt(args, 1);
     for (i = 3; i < 0xE3; i += 7, l++) {
         l->unk0 = Script_GetArgInt(args, i - 1);
         l->unk4 = Script_GetArgReal(args, i);
