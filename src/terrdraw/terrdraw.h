@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "types.h"
+
 typedef struct TerrNode {
     struct TerrNode *next;
     struct TerrNode *prev;
@@ -13,15 +15,6 @@ typedef struct TerrList {
     TerrNode *tail;
     TerrNode *tailpred;
 } TerrList;
-
-typedef struct TerrPool {
-    char *data;
-    int *free;
-    int used;
-    int count;
-    int stride;
-    int size;
-} TerrPool;
 
 /* A render chunk: a block of the terrain at (x, y), kept in a hash table. */
 typedef struct TerrChunk {

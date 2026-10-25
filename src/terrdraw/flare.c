@@ -21,15 +21,15 @@ typedef struct Flare {
 
 _Static_assert(sizeof(Flare) == 0x24, "Flare");
 
-ORIG(0x4B0B00, void, Pool_Init, (TerrPool *pool, int size, int count, unsigned int align));
-ORIG(0x4B0B70, void, Pool_Free, (TerrPool *pool));
+ORIG(0x4B0B00, void, Pool_Init, (Pool *pool, int size, int count, unsigned int align));
+ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));
 ORIG(0x512820, void, Glow_Init, (void));
 ORIG(0x512920, void, Glow_Shutdown, (void));
 
 extern int gViewSlotCurrent;
 extern char gViewSlotUsed[];
-extern TerrPool gFlarePool;
-extern TerrPool gGlowPool;
+extern Pool gFlarePool;
+extern Pool gGlowPool;
 extern Scene gScene;
 
 static const union {
@@ -143,4 +143,4 @@ HOOK(0x5182B0, LensFlare_Draw);
 BSS(A800BC) int gViewSlotCurrent;
 STORE(igb, A800BC, 1) char store_A800C0[16];
 ALIAS(gViewSlotUsed, store_A800C0, 0);
-BSS(A800BC) TerrPool gFlarePool;
+BSS(A800BC) Pool gFlarePool;

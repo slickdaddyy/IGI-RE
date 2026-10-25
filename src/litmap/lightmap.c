@@ -21,15 +21,6 @@ ORIG(0x4CFC80, uint8_t, Mesh3D_GetEvent2, (void));
 
 /* fixed size slots with a table of slot indices; the index of a used slot
    in the table is stored right after its data */
-typedef struct SlotPool {
-    char *data;
-    int *order;
-    int used;
-    int count;
-    int stride;
-    int size;
-} SlotPool;
-
 /* delta form factors of a hemicube with size x size pixels on top and
    size x size/2 on each side */
 typedef struct Hemicube {
@@ -63,7 +54,7 @@ extern int gLightmapBufCount;
 extern int gLightmapBuilt;
 extern char gLightmapDir[];
 extern char gLightmapResPath[];
-extern SlotPool gLightmapInfoPool;
+extern Pool gLightmapInfoPool;
 extern const char *gLightmapScanName;
 extern int gLightmapFileFound;
 extern float gHemicubeTopMax;
@@ -202,12 +193,12 @@ void LightmapInfo_MakeName(LightmapInfo *li);
 
 void LightmapInfo_Create(LightmapInfo *li)
 {
-    SlotPool *p = &gLightmapInfoPool;
+    Pool *p = &gLightmapInfoPool;
     char *item;
 
     if (!p->used && Resource_Exists(Lightmap_GetResPath()))
         Resource_Load(Lightmap_GetResPath(), NULL);
-    item = p->data + p->order[p->used] * p->stride;
+    item = p->data + p->free[p->used] * p->stride;
     *(int *)(item + p->size) = p->used;
     p->used++;
     li->slot = item;
@@ -242,7 +233,7 @@ void LightmapInfo_MakeName(LightmapInfo *li)
     int n, i, used;
 
     for (n = 0;; n++) {
-        SlotPool *p = &gLightmapInfoPool;
+        Pool *p = &gLightmapInfoPool;
 
         used = 0;
         crt_sprintf(name, "%s%05d", "obj", n);
@@ -250,7 +241,7 @@ void LightmapInfo_MakeName(LightmapInfo *li)
         gLightmapScanName = name;
         File_ScanDir(Lightmap_GetDir(), LightmapInfo_ScanFile, NULL);
         for (i = 0; i < p->used; i++) {
-            LightmapInfo *o = *(LightmapInfo **)(p->data + p->order[i] * p->stride);
+            LightmapInfo *o = *(LightmapInfo **)(p->data + p->free[i] * p->stride);
 
             if (crt_strstr(o->name, name)) {
                 used = 1;
@@ -284,7 +275,7 @@ void Lightmaps_Free(Lightmaps *lm);
 
 void LightmapInfo_Delete(LightmapInfo *li)
 {
-    SlotPool *p = &gLightmapInfoPool;
+    Pool *p = &gLightmapInfoPool;
     LightmapSet *set = li->set;
     Task *owner;
     int i, idx;
@@ -312,12 +303,12 @@ void LightmapInfo_Delete(LightmapInfo *li)
     idx = *(int *)(li->slot + p->size);
     p->used--;
     if (idx != p->used) {
-        char *last = p->data + p->order[p->used] * p->stride;
-        int t = p->order[idx];
+        char *last = p->data + p->free[p->used] * p->stride;
+        int t = p->free[idx];
         int k = *(int *)(last + p->size);
 
-        p->order[idx] = p->order[k];
-        p->order[k] = t;
+        p->free[idx] = p->free[k];
+        p->free[k] = t;
         *(int *)(last + p->size) = idx;
     }
     if (!p->used && Resource_Find(Lightmap_GetResPath()))
@@ -373,7 +364,7 @@ BSS(A839CC) void *gLightmapBufD;
 BSS(A839CC) void *gLightmapBufA;
 PAD(igb, A839CC, A839D4, 0x1C);
 BSS(A839CC) void *gLightmapBufB;
-BSS(A83A00) SlotPool gLightmapInfoPool;
+BSS(A83A00) Pool gLightmapInfoPool;
 STORE(igb, A83A20, 1) char store_A83A20[260];
 ALIAS(gLightmapDir, store_A83A20, 0);
 BSS(A83A20) const char *gLightmapScanName;

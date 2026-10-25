@@ -11,8 +11,8 @@
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4AF910, void, List_AddHead, (TerrList *list, TerrNode *node));
-ORIG(0x4B0B00, void, Pool_Init, (TerrPool *pool, int size, int count, unsigned int align));
-ORIG(0x4B0B70, void, Pool_Free, (TerrPool *pool));
+ORIG(0x4B0B00, void, Pool_Init, (Pool *pool, int size, int count, unsigned int align));
+ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));
 ORIG(0x495170, void, Direct3D_AddSetModeCallback, (void (*fn)(void)));
 ORIG(0x4951E0, void, Direct3D_AddUnsetModeCallback, (void (*fn)(void)));
 ORIG(0x495200, void, Direct3D_AddRestoreCallback, (void (*fn)(void)));
@@ -25,7 +25,7 @@ extern uint32_t gTerrainFogColorD3D;
 #define CHUNK_HASH_SIZE 0x1FD
 
 extern TerrList gChunkHash[CHUNK_HASH_SIZE];
-extern TerrPool gTerrainChunkPool;
+extern Pool gTerrainChunkPool;
 extern IDirect3DVertexBuffer7 *gTerrainVB;
 extern int gD3DTnL;
 

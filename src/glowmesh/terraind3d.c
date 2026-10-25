@@ -50,15 +50,6 @@ typedef struct TdChunk {
     int pass;
 } TdChunk;
 
-typedef struct TdPool {
-    char *data;
-    int *free;
-    int used;
-    int count;
-    int stride;
-    int size;
-} TdPool;
-
 typedef struct TdVert {
     float x, y, z;
     union {
@@ -93,7 +84,7 @@ extern int gTerrMirror;
 extern float gClipZBias;
 extern float gClipZScale;
 extern D3DVIEWPORT7 gTerrViewport;
-extern TdPool gTerrainChunkPool;
+extern Pool gTerrainChunkPool;
 extern float gTerrainFogScale;
 extern float gTerrainFogColor[];
 extern TdMesh *gTerrainMeshes[];
@@ -647,7 +638,7 @@ BSS(A7E06C) int gTerrMirror;
 BSS(A7E074) float gClipZBias;
 BSS(A7E074) int gTerrVertCount;
 BSS(A7F860) D3DVIEWPORT7 gTerrViewport;
-BSS(A7F860) TdPool gTerrainChunkPool;
+BSS(A7F860) Pool gTerrainChunkPool;
 BSS(A7F894) float gClipZScale;
 PAD(igb, A7F894, A7F898, 0x4);
 BSS(A7F894) TdTLVertex *gTerrVBData;
