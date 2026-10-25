@@ -59,8 +59,8 @@ ORIG(0x4F0F10, void *, Param_ScriptFile, (void));
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
 ORIG(0x4F0FE0, void *, Param_String32, (void));
 ORIG(0x4F1030, Task *, Task_FindById, (int id));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F9720, void *, Graph_GetNode, (void *graph, int id));
 ORIG(0x509880, unsigned, AIGraph_GetStairCriteria, (void));
 ORIG(0x509890, char, GraphNode_HasCriteria, (void *node, unsigned mask));
@@ -157,7 +157,7 @@ extern List gGridsFree;
 extern List gGridsUsed;
 extern List gAIMoveFree;
 extern List gAITargets;
-extern int gAIUnk5BDA38[8];
+extern int gHumanAIUnusedInts[8];
 
 extern uint16_t gHumanAIType;
 extern const char *gAIScriptNames[];
@@ -211,8 +211,8 @@ void HumanAI_Init(void)
     TaskType_SetHandler(gHumanAIType, HumanAI_GetEventSlot(), HumanAI_OnEvent);
     TaskType_SetHandler(gHumanAIType, Param_GetTableEvent(), HumanAI_GetParams);
     TaskType_SetHandler(gHumanAIType, Param_GetChangedEvent(), HumanAI_Changed);
-    TaskType_SetHandler2(gHumanAIType, Level_GetEventDA8(), HumanAI_OnLevelDA8);
-    TaskType_SetHandler2(gHumanAIType, Level_GetEventDAC(), HumanAI_OnLevelDAC);
+    TaskType_SetHandler2(gHumanAIType, Level_GetActivateEvent(), HumanAI_OnLevelDA8);
+    TaskType_SetHandler2(gHumanAIType, Level_GetDeactivateEvent(), HumanAI_OnLevelDAC);
     TaskType_SetHandler(gHumanAIType, 4, NULL);
     gHumanAIParams = ParamTable_New(3);
     ParamTable_Add(gHumanAIParams, &t, t.aiTypeExpr, Param_String32(), 7, NULL);
@@ -268,7 +268,7 @@ void HumanAI_Init(void)
         mt->target = NULL;
     }
     for (i = 0; i < 8; i++)
-        gAIUnk5BDA38[i] = 0;
+        gHumanAIUnusedInts[i] = 0;
 #undef LIST_INIT
 #undef NODES
 }
@@ -1118,6 +1118,6 @@ BSS(57E1C8) MoveItem gAIMoveItems[AI_MOVE_ITEMS];
 BSS(57E1C8) List gAIMoveFree;
 BSS(57E1C8) void *gHumanAIParams;
 BSS(58AA28) NodeGrid gNodeGrids[AI_GRIDS];
-BSS(5BDA38) int gAIUnk5BDA38[8];
+BSS(5BDA38) int gHumanAIUnusedInts[8];
 BSS(5BDA38) HumanAI *gAICurrent;
 BSS(5BDA60) List *gAIEventList;

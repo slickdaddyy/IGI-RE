@@ -475,7 +475,7 @@ def test_device_shutdown():
     (0x4B1BE0, "Device_SetInit"), (0x4B1C00, "Device_SetShutdown"), (0x4B1C20, "Device_SetOpen"),
     (0x4B1C40, "Device_SetClose"), (0x4B1C60, "Device_SetRead"), (0x4B1C80, "Device_SetWrite"),
     (0x4B1CA0, "Device_SetSeek"), (0x4B1CC0, "Device_SetTell"), (0x4B1CE0, "Device_SetSize"),
-    (0x4B1D00, "Device_SetError"), (0x4B1D20, "Device_SetUnk2C"), (0x4B1D40, "Device_SetEof"),
+    (0x4B1D00, "Device_SetError"), (0x4B1D20, "Device_SetUnused"), (0x4B1D40, "Device_SetEof"),
     (0x4B1D60, "Device_SetControl"), (0x4B1D80, "Device_SetDelete"), (0x4B1DA0, "Device_SetEnumDir"),
     (0x4B1DC0, "Device_SetGetTime"),
 ])

@@ -22,10 +22,10 @@ extern TaskEvent gTaskEvents[];
 extern uint8_t gTaskEventSlot[];
 extern uint8_t gTaskSlotEvent[];
 extern uint16_t gTaskRootType;
-extern int gTaskUnk54F92C;
+extern int gTaskUnusedInt;
 extern int gTaskCount;
 extern uint32_t gTaskGlobalFlags;
-extern int gTaskUnk567C60;
+extern int gTaskUnusedRoot;
 extern int gTaskSetDepth;
 extern int gTaskSetDepth2;
 extern int gTaskHandlerChanges;
@@ -76,7 +76,7 @@ void Task_InitSystem(void)
 
     memset(gTaskStack, 0, 64 * sizeof(Task *));
     gTaskStackTop = 0;
-    gTaskUnk54F92C = 0;
+    gTaskUnusedInt = 0;
     TaskEvent_ResetAll();
     TaskType_ResetAll();
     memset(gTaskEventSlot, 0xFF, 16);
@@ -596,11 +596,11 @@ void Task_BroadcastType(Task *task, uint8_t slot, uint16_t type, void *arg)
 }
 HOOK(0x401E70, Task_BroadcastType);
 
-void Task_SetUnk567C60(int value)
+void Task_SetUnusedRoot(int value)
 {
-    gTaskUnk567C60 = value;
+    gTaskUnusedRoot = value;
 }
-HOOK(0x401F30, Task_SetUnk567C60);
+HOOK(0x401F30, Task_SetUnusedRoot);
 
 void Task_ClearPair(int *a, int *b)
 {
@@ -634,7 +634,7 @@ DATA(544954) char str_544955[1] INIT("");
 PAD(igd, 544954, 544956, 0x2);
 DATA(54F928) uint16_t gTaskRootType;
 PAD(igd, 54F928, 54F92A, 0x2);
-DATA(54F928) int gTaskUnk54F92C;
+DATA(54F928) int gTaskUnusedInt;
 STORE(igd, 54F928, 2) __typeof__(gTaskEvents[0]) store_54F930[254];
 ALIAS(gTaskEvents, store_54F930, 0);
 STORE(igd, 54F928, 1) uint8_t store_54FF24[16];
@@ -645,7 +645,7 @@ BSS(567C38) Pool gTaskRefs;
 PAD(igb, 567C38, 567C50, 0x8);
 BSS(567C38) int gTaskCount;
 BSS(567C38) uint32_t gTaskGlobalFlags;
-BSS(567C38) int gTaskUnk567C60;
+BSS(567C38) int gTaskUnusedRoot;
 PAD(igb, 567C38, 567C64, 0x8);
 BSS(567C38) int gTaskSetDepth;
 BSS(567C38) int gTaskSetDepth2;

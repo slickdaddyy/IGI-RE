@@ -26,7 +26,7 @@ ORIG(0x4DCDD0, void, Sector_RemoveObject, (void *obj));
 ORIG(0x4DCF00, void, Sector_MoveObject, (void *world, void *obj, Vec3d *pos));
 ORIG(0x4E0930, Task *, MagicObjContainer_New, (void *parent, void *obj));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 
@@ -55,7 +55,7 @@ void Cabinet_Delete(Cabinet *c)
 {
     QTaskList_Remove(Game_GetTaskList0(), c);
     if (Task_GetId(c) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), c->o.task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), c->o.task.type);
 
         if (fn)
             fn(c);

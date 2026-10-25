@@ -198,7 +198,7 @@ def test_eof(pos, size):
 
 
 def test_getters():
-    for orig, ours in ((0x50A5A0, "LocalDevice_GetUnk2C"), (0x50A5B0, "LocalDevice_GetError")):
+    for orig, ours in ((0x50A5A0, "LocalDevice_GetUnused"), (0x50A5B0, "LocalDevice_GetError")):
         check(e, fk, orig, ours, setup=lambda em: (1, lfile(em, 1)))
     for arg in (0, 1, 2):
         check(e, fk, 0x50A5C0, "LocalDevice_Control", args=(1, 0, arg))

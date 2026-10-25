@@ -121,7 +121,7 @@ def test_forward(has, children):
         for i in range(children):
             add_child(e, lb, task(e, 0x54, CHILD if i % 2 else BOX))
         return (lb,)
-    run(emu, 0x41F140, "ListBox_Forward918", setup)
+    run(emu, 0x41F140, "ListBox_Save", setup)
 
 
 @pytest.mark.parametrize("on", [0, 1])

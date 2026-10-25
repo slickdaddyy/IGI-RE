@@ -60,7 +60,7 @@ typedef struct GunShot {
     Task **gun;             /* 0x6C */
     Task **ref70;           /* 0x70 */
     int unk74;
-    Vec3d unk78;            /* 0x78 */
+    Vec3d muzzlePos;        /* 0x78 */
     int total;              /* 0x90 */
     int active;             /* 0x94 */
     int trailRate;          /* steps until the next trail */

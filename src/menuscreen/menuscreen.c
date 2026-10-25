@@ -49,10 +49,10 @@ void MenuScreen_Init(void)
     TaskType_SetHandler2(gMenuScreenType, 2, MenuScreen_Delete);
     TaskType_SetHandler(gMenuScreenType, Param_GetTableEvent(), MenuScreen_GetParams);
     TaskType_SetHandler(gMenuScreenType, Param_GetChangedEvent(), MenuScreen_UpdateInternalDataHandler);
-    TaskType_SetHandler2(gMenuScreenType, Level_GetEventDA8(), MenuScreen_Activate);
-    TaskType_SetHandler2(gMenuScreenType, Level_GetEventDAC(), MenuScreen_Deactivate);
-    TaskType_SetHandler2(gMenuScreenType, MenuWindow_GetEvent914(), MenuScreen_Layout);
-    TaskType_SetHandler2(gMenuScreenType, MenuWindow_GetEvent918(), MenuScreen_Forward918);
+    TaskType_SetHandler2(gMenuScreenType, Level_GetActivateEvent(), MenuScreen_Activate);
+    TaskType_SetHandler2(gMenuScreenType, Level_GetDeactivateEvent(), MenuScreen_Deactivate);
+    TaskType_SetHandler2(gMenuScreenType, MenuWindow_GetLoadEvent(), MenuScreen_Layout);
+    TaskType_SetHandler2(gMenuScreenType, MenuWindow_GetSaveEvent(), MenuScreen_Forward918);
     gMenuScreenParams = ParamTable_New(8);
     ParamTable_Add(gMenuScreenParams, &ms, ms.pic, Param_String32(), 7, NULL);
     ParamTable_Add(gMenuScreenParams, &ms, &ms.frameX0, Param_Int32(), 7, NULL);
@@ -84,7 +84,7 @@ void MenuScreen_Delete(MenuScreen *ms)
     VarString_Free(&ms->onLayout);
     VarString_Free(&ms->onForward);
     if (Task_GetId(ms) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), ms->w.task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), ms->w.task.type);
 
         if (fn)
             ((void (*)(void *))fn)(ms);

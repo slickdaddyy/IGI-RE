@@ -98,7 +98,7 @@ ORIG(0x4F2060, void *, WeaponSlots_Get, (Task **slots, int i));
 extern uint16_t gHumanPlayerType;
 extern char gInputChannels[][16];
 extern uint16_t gQObjType;
-extern void *gUnk56E09C;
+extern void *gHumanPlayerParams;
 extern float gMoveScale;
 extern float gFenceDamage;
 extern void *gHumanPlayerList;
@@ -1029,7 +1029,7 @@ HOOK(0x413730, HumanPlayer_MapMarkerHandler);
 void HumanPlayer_Close(void)
 {
     QTaskList_Free(gHumanPlayerList);
-    QTaskList_Free(gUnk56E09C);
+    QTaskList_Free(gHumanPlayerParams);
     TaskType_Free(gHumanPlayerType);
 }
 HOOK(0x413770, HumanPlayer_Close);

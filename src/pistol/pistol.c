@@ -110,7 +110,7 @@ ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 
 extern void *gSoldierPistolList;
 extern uint16_t gSoldierPistolType;
-extern int gSoldierPistolUnk;
+extern int gSoldierPistolUnusedInt;
 extern SoldierStateFn gSoldierPistolStates[];
 extern char gSoldierPistolCombos[];
 extern char gSoldierPistolAnimSlots[];
@@ -564,7 +564,7 @@ void SoldierPistol_Open(void)
        of the two pointers is kept */
     ParamTable_Add(gSoldierPistolList, NULL, FIELD(model), Param_Int32(), 7, NULL);
     ParamTable_Add(gSoldierPistolList, NULL, FIELD(idleAnim), Param_Int32(), 7, NULL);
-    gSoldierPistolUnk = 0;
+    gSoldierPistolUnusedInt = 0;
 }
 HOOK(0x459880, SoldierPistol_Open);
 
@@ -982,4 +982,4 @@ ALIAS(gSoldierPistolSpeeds, store_53EAE8, 0);
 BSS(5BDAA4) void *gSoldierPistolList;
 BSS(5BDAA4) uint16_t gSoldierPistolType;
 PAD(igb, 5BDAA4, 5BDAAA, 0x6);
-BSS(5BDAA4) int gSoldierPistolUnk;
+BSS(5BDAA4) int gSoldierPistolUnusedInt;

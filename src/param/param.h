@@ -62,13 +62,13 @@ extern Task **gLevelTaskIds[];
 extern List gTaskNotes[];
 extern Level *gLevel;
 extern char gLevelPaused;
-extern char gLevelA758BE;
+extern char gLevelForceRunning;
 
-extern uint8_t gLevelEventDA4;
+extern uint8_t gLevelDebugInfoEvent;
 extern uint8_t gLevelNameEvent;
-extern int gLevelEventDA8;
-extern int gLevelEventDAC;
-extern int gLevelEventDB0;
+extern int gLevelActivateEvent;
+extern int gLevelDeactivateEvent;
+extern int gLevelUnusedNewTaskEvent;
 
 extern char gEmptyString[];
 

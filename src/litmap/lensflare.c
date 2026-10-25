@@ -61,7 +61,7 @@ extern char gLensflareRandom[];
 extern int gLensflareTextureUsed[];
 extern char gLensflareTextures[];
 extern LensflareSlot gLensflareSlots[];
-extern int gLensflareUnk[];
+extern int gLensflareUnusedInts[];
 
 static const float kItemSize = 64.0f;
 
@@ -108,7 +108,7 @@ void Lensflare_Init(void)
         gLensflareSlots[i].unk8 = 0;
     }
     for (i = 0; i < LENSFLARE_TEXTURES; i++)
-        gLensflareUnk[i] = 0;
+        gLensflareUnusedInts[i] = 0;
 }
 HOOK(0x520BB0, Lensflare_Init);
 
@@ -201,7 +201,7 @@ HOOK(0x521030, Lensflare_GetType);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 STORE(igb, A83860, 4) int store_A83860[10];
-ALIAS(gLensflareUnk, store_A83860, 0);
+ALIAS(gLensflareUnusedInts, store_A83860, 0);
 STORE(igb, A83860, 1) char store_A83888[12];
 ALIAS(gLensflareRandom, store_A83888, 0);
 BSS(A83860) uint16_t gLensflareType;

@@ -62,8 +62,8 @@ ORIG(0x523D40, Lightmaps *, BuildLod, (void *lod, int lodIndex, float scale, con
 
 extern uint16_t gLightmapInfoType;
 extern void *gLightmapInfoParams;
-extern int gLightmapCountA839F4;
-extern int gLightmapCountA83B4C;
+extern int gLightmapFlaggedTexelCount;
+extern int gLightmapTexelCount;
 extern Pool gLightmapInfoPool;
 extern char gLightmapRandom[];
 extern Matrix gLightmapRotations[];
@@ -145,8 +145,8 @@ void LightmapInfo_Changed(LightmapInfo *info)
 
     info->texelsA8 = 0;
     info->texelsAC = 0;
-    gLightmapCountA83B4C = 0;
-    gLightmapCountA839F4 = 0;
+    gLightmapTexelCount = 0;
+    gLightmapFlaggedTexelCount = 0;
     for (i = 0; i < info->set->count; i++) {
         LightmapRef *r = &info->set->refs[i];
         int full = stale || info->unkDC || edited;
@@ -163,8 +163,8 @@ void LightmapInfo_Changed(LightmapInfo *info)
                 info->texelsA8 += t->height * t->width;
             }
     }
-    info->unkC0 = gLightmapCountA83B4C;
-    info->unkC4 = gLightmapCountA839F4;
+    info->unkC0 = gLightmapTexelCount;
+    info->unkC4 = gLightmapFlaggedTexelCount;
     for (i = 0; i < info->set->count; i++) {
         Task *obj = (Task *)info->set->refs[i].obj;
 
@@ -439,7 +439,7 @@ BSS(A8397C) uint8_t gLightSourceTraceEvent;
 PAD(igb, A8397C, A8397D, 0x3);
 STORE(igb, A8397C, 1) char store_A83980[76];
 ALIAS(gLightmapScene, store_A83980, 0);
-BSS(A839F4) int gLightmapCountA839F4;
+BSS(A839F4) int gLightmapFlaggedTexelCount;
 BSS(A83A18) uint8_t gLightSourceIsEvent;
 PAD(igb, A83A18, A83A19, 0x3);
 BSS(A83B28) int *gLightmapBuffer;

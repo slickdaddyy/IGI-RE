@@ -58,8 +58,8 @@ ORIG(0x4F0F70, void *, Param_Real32x9, (void));
 ORIG(0x4F0FC0, void *, Param_VarString, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
@@ -124,8 +124,8 @@ void AreaActivate_Open(void)
     TaskType_SetHandler(gAreaActivateType, Param_GetChangedEvent(), AreaActivate_Changed);
     TaskType_SetHandler(gAreaActivateType, Param_GetTableEvent(), AreaActivate_GetParams);
     TaskType_SetHandler2(gAreaActivateType, 1, AreaActivate_Run);
-    TaskType_SetHandler2(gAreaActivateType, Level_GetEventDA8(), AreaActivate_Activate);
-    TaskType_SetHandler2(gAreaActivateType, Level_GetEventDAC(), AreaActivate_Deactivate);
+    TaskType_SetHandler2(gAreaActivateType, Level_GetActivateEvent(), AreaActivate_Activate);
+    TaskType_SetHandler2(gAreaActivateType, Level_GetDeactivateEvent(), AreaActivate_Deactivate);
     gAreaActivateParams = ParamTable_New(4);
     ParamTable_Add(gAreaActivateParams, &a, &a.pos, Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gAreaActivateParams, &a, &a.matrix, Param_Real32x9(), 7, NULL);
@@ -241,7 +241,7 @@ HOOK(0x5048A0, AreaActivate_Run);
 void AreaActivate_Delete(AreaActivate *a)
 {
     if (Task_GetId(a) >= 0)
-        ((void (*)(void *))gTaskHandlers[Level_GetEventDAC()][a->task.type])(a);
+        ((void (*)(void *))gTaskHandlers[Level_GetDeactivateEvent()][a->task.type])(a);
     if (a->criteria) {
         Mem_Free(a->criteria);
         a->criteria = NULL;

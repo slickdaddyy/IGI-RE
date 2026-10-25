@@ -76,8 +76,8 @@ void StatusMessage_Init(void)
     TaskType_SetHandler2(gStatusMessageType, 2, StatusMessage_Delete);
     TaskType_SetHandler(gStatusMessageType, Param_GetTableEvent(), StatusMessage_GetParams);
     TaskType_SetHandler(gStatusMessageType, Param_GetChangedEvent(), StatusMessage_Changed);
-    TaskType_SetHandler2(gStatusMessageType, Level_GetEventDA8(), StatusMessage_Activate);
-    TaskType_SetHandler2(gStatusMessageType, Level_GetEventDAC(), StatusMessage_Deactivate);
+    TaskType_SetHandler2(gStatusMessageType, Level_GetActivateEvent(), StatusMessage_Activate);
+    TaskType_SetHandler2(gStatusMessageType, Level_GetDeactivateEvent(), StatusMessage_Deactivate);
     gStatusDurationRange.max = 100.0f;
     gStatusDurationRange.min = 0.0f;
     gStatusMessageParams = ParamTable_New(9);
@@ -138,7 +138,7 @@ HOOK(0x4855F0, StatusMessage_Run);
 void StatusMessage_Delete(StatusMessage *m)
 {
     if (Task_GetId(m) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), m->task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), m->task.type);
 
         if (fn)
             ((void (*)(void *))fn)(m);

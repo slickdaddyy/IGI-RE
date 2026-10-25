@@ -55,8 +55,8 @@ SETTERS = [
 SETTER_NAMES = [
     "AppContext_SetCmdLine", "AppContext_SethInstance", "AppContext_SethWnd", "AppContext_SetFileSysCfg",
     "AppContext_SetFullscreen", "AppContext_SetDebugged", "AppContext_SetCompileScripts",
-    "AppContext_SetDebugText", "AppContext_SetUnk44", "AppContext_SetPlayIntro", "AppContext_SetLightmapsUsed",
-    "AppContext_SetTerrainLightmapsUsed", "AppContext_SetWinInput", "AppContext_SetUnk4C", "AppContext_SetUnk50",
+    "AppContext_SetDebugText", "AppContext_SetUnused44", "AppContext_SetPlayIntro", "AppContext_SetLightmapsUsed",
+    "AppContext_SetTerrainLightmapsUsed", "AppContext_SetWinInput", "AppContext_SetUnused4C", "AppContext_SetUnused50",
     "AppContext_SetGerman", "AppContext_SetQvmOnly",
 ]
 

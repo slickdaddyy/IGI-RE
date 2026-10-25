@@ -173,12 +173,12 @@ int WINAPI AppMain_WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR c
     AppContext_SetLightmapsUsed(1);
     AppContext_SetTerrainLightmapsUsed(1);
     AppContext_SetWinInput(0);
-    AppContext_SetUnk4C(0);
-    AppContext_SetUnk50(0);
+    AppContext_SetUnused4C(0);
+    AppContext_SetUnused50(0);
     AppContext_SetPlayIntro(1);
     AppContext_SetGerman(0);
     AppContext_SetCountry("");
-    AppContext_SetUnk44(0);
+    AppContext_SetUnused44(0);
 
     memset(gWinProcs, 0, sizeof(WinProcEntry) * WINPROC_MAX);
     gWinProcList.head = (WinNode *)&gWinProcList.tail;

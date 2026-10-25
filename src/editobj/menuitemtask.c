@@ -94,8 +94,8 @@ HOOK(0x504E00, MenuItemTask_GetPointerEvent);
 
 void MenuItemTask_Run(MenuItemTask *t);
 void MenuItemTask_SetPointer(MenuItemTask *t, int *pos);
-void MenuItemTask_Forward508F70(MenuItemTask *t, void *arg);
-void MenuItemTask_Forward508F60(MenuItemTask *t, void *arg);
+void MenuItemTask_ForwardSyncEvent1(MenuItemTask *t, void *arg);
+void MenuItemTask_ForwardSyncEvent0(MenuItemTask *t, void *arg);
 void MenuItemTask_ForwardList(MenuItemTask *t, void *arg);
 
 void MenuItemTask_Open(void)
@@ -105,8 +105,8 @@ void MenuItemTask_Open(void)
     gMenuItemTaskPointerEvent = TaskEvent_Alloc(0);
     TaskType_SetHandler2(gMenuItemTaskType, 1, MenuItemTask_Run);
     TaskType_SetHandler2(gMenuItemTaskType, Screen_GetDrawEvent(), MENUWINDOW_DRAW);
-    TaskType_SetHandler(gMenuItemTaskType, Sync_GetEvent1(), MenuItemTask_Forward508F70);
-    TaskType_SetHandler(gMenuItemTaskType, Sync_GetEvent0(), MenuItemTask_Forward508F60);
+    TaskType_SetHandler(gMenuItemTaskType, Sync_GetEvent1(), MenuItemTask_ForwardSyncEvent1);
+    TaskType_SetHandler(gMenuItemTaskType, Sync_GetEvent0(), MenuItemTask_ForwardSyncEvent0);
     TaskType_SetHandler(gMenuItemTaskType, MenuItemTask_GetListEvent(), MenuItemTask_ForwardList);
     TaskType_SetHandler(gMenuItemTaskType, MenuItemTask_GetPointerEvent(), MenuItemTask_SetPointer);
 }
@@ -183,17 +183,17 @@ void MenuItemTask_SetPointer(MenuItemTask *t, int *pos)
 }
 HOOK(0x5053B0, MenuItemTask_SetPointer);
 
-void MenuItemTask_Forward508F70(MenuItemTask *t, void *arg)
+void MenuItemTask_ForwardSyncEvent1(MenuItemTask *t, void *arg)
 {
     CALL_CHILDREN(&t->task, Sync_GetEvent1(), arg);
 }
-HOOK(0x5053F0, MenuItemTask_Forward508F70);
+HOOK(0x5053F0, MenuItemTask_ForwardSyncEvent1);
 
-void MenuItemTask_Forward508F60(MenuItemTask *t, void *arg)
+void MenuItemTask_ForwardSyncEvent0(MenuItemTask *t, void *arg)
 {
     CALL_CHILDREN(&t->task, Sync_GetEvent0(), arg);
 }
-HOOK(0x505480, MenuItemTask_Forward508F60);
+HOOK(0x505480, MenuItemTask_ForwardSyncEvent0);
 
 void MenuItemTask_ForwardList(MenuItemTask *t, void *arg)
 {

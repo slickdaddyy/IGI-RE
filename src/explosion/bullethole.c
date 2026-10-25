@@ -12,7 +12,7 @@ ORIG(0x490370, unsigned int, Timer_GetMs, (void));
 ORIG(0x49A430, void, PolyList_SetPos, (void *mesh, DrawMsg *msg));
 ORIG(0x49A450, void *, PolyList_New, (void *world, void *owner, const Vec3d *pos, const Matrix *m, HoleTri *tris,
                                     int count, int a, int b, int c, int d, int e));
-ORIG(0x49A510, void, PolyList_SetUnk98, (void *mesh, int a));
+ORIG(0x49A510, void, PolyList_SetUnusedMode, (void *mesh, int a));
 ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));
 ORIG(0x4B4010, void, Matrix_SetDirection, (Matrix *m, const Vec3f *dir));
 ORIG(0x4CE410, char, Coll_LineOfSight, (void *world, const Vec3d *from, const Vec3d *to, int unk, int unk2,
@@ -174,7 +174,7 @@ static void add_hole(Task *obj, HoleMsg *msg, const Vec3d *pos, const Matrix *m,
     *item = bh;
     bh->obj = obj;
     bh->mesh = PolyList_New(Game_GetWorld(), bh, pos, m, bh->tris, 0, 0, 0, 1, 0, 0);
-    PolyList_SetUnk98(bh->mesh, 2);
+    PolyList_SetUnusedMode(bh->mesh, 2);
     bh->count = 1;
     bh->last = 0;
     bh->next = 0;

@@ -30,10 +30,10 @@ typedef struct ChildSize {
 } ChildSize;
 
 extern uint16_t gMenuWindowType;
-extern int gEvent910;
-extern int gEvent914;
-extern int gEvent918;
-extern int gEvent91C;
+extern int gMenuWindowArrangeEvent;
+extern int gMenuWindowLoadEvent;
+extern int gMenuWindowSaveEvent;
+extern int gMenuWindowUpdateTextEvent;
 extern uint8_t gPlaceEvent;
 extern uint8_t gSizeEvent;
 
@@ -55,29 +55,29 @@ void MenuWindow_Place(MenuWindow *w, LineUp *l);
 void MenuWindow_GetSize(MenuWindow *w, ChildSize *out);
 void MenuWindow_Arrange(MenuWindow *w);
 void MenuWindow_Draw(MenuWindow *w);
-void MenuWindow_ForwardEvent914(MenuWindow *w);
-void MenuWindow_ForwardEvent91C(MenuWindow *w);
+void MenuWindow_ForwardLoad(MenuWindow *w);
+void MenuWindow_ForwardUpdateText(MenuWindow *w);
 
 void MenuWindow_Init(void)
 {
     gMenuWindowType = TaskType_New("MenuWindow", sizeof(MenuWindow), Task_GetRootType(), 0);
-    gEvent910 = TaskEvent_Alloc2(gMenuWindowType);
+    gMenuWindowArrangeEvent = TaskEvent_Alloc2(gMenuWindowType);
     gPlaceEvent = TaskEvent_Alloc(gMenuWindowType);
     gSizeEvent = TaskEvent_Alloc(gMenuWindowType);
-    gEvent914 = TaskEvent_Alloc2(gMenuWindowType);
-    gEvent918 = TaskEvent_Alloc2(gMenuWindowType);
-    gEvent91C = TaskEvent_Alloc2(gMenuWindowType);
+    gMenuWindowLoadEvent = TaskEvent_Alloc2(gMenuWindowType);
+    gMenuWindowSaveEvent = TaskEvent_Alloc2(gMenuWindowType);
+    gMenuWindowUpdateTextEvent = TaskEvent_Alloc2(gMenuWindowType);
     TaskType_SetHandler(gMenuWindowType, 0, MenuWindow_Create);
     TaskType_SetHandler(gMenuWindowType, Param_GetChangedEvent(), MenuWindow_Changed);
     TaskType_SetHandler(gMenuWindowType, gPlaceEvent, MenuWindow_Place);
     TaskType_SetHandler(gMenuWindowType, gSizeEvent, MenuWindow_GetSize);
     TaskType_SetHandler2(gMenuWindowType, 2, Task_Nothing);
-    TaskType_SetHandler2(gMenuWindowType, gEvent910, MenuWindow_Arrange);
+    TaskType_SetHandler2(gMenuWindowType, gMenuWindowArrangeEvent, MenuWindow_Arrange);
     TaskType_SetHandler2(gMenuWindowType, Screen_GetDrawEvent(), MenuWindow_Draw);
     TaskType_SetHandler2(gMenuWindowType, 1, SubLevel_Run);
-    TaskType_SetHandler2(gMenuWindowType, gEvent914, MenuWindow_ForwardEvent914);
-    TaskType_SetHandler2(gMenuWindowType, gEvent918, MenuWindow_ForwardEvent918);
-    TaskType_SetHandler2(gMenuWindowType, gEvent91C, MenuWindow_ForwardEvent91C);
+    TaskType_SetHandler2(gMenuWindowType, gMenuWindowLoadEvent, MenuWindow_ForwardLoad);
+    TaskType_SetHandler2(gMenuWindowType, gMenuWindowSaveEvent, MenuWindow_ForwardSave);
+    TaskType_SetHandler2(gMenuWindowType, gMenuWindowUpdateTextEvent, MenuWindow_ForwardUpdateText);
     Script_RegisterConstant("LINEUPMODE_NONE", LINEUPMODE_NONE);
     Script_RegisterConstant("LINEUPMODE_VERT_TOP", LINEUPMODE_VERT_TOP);
     Script_RegisterConstant("LINEUPMODE_VERT_CENTRE", LINEUPMODE_VERT_CENTRE);
@@ -145,17 +145,17 @@ void MenuWindow_Draw(MenuWindow *w)
 }
 HOOK(0x424280, MenuWindow_Draw);
 
-void MenuWindow_ForwardEvent914(MenuWindow *w)
+void MenuWindow_ForwardLoad(MenuWindow *w)
 {
-    CALL_CHILDREN(w, MenuWindow_GetEvent914());
+    CALL_CHILDREN(w, MenuWindow_GetLoadEvent());
 }
-HOOK(0x424300, MenuWindow_ForwardEvent914);
+HOOK(0x424300, MenuWindow_ForwardLoad);
 
-void MenuWindow_ForwardEvent91C(MenuWindow *w)
+void MenuWindow_ForwardUpdateText(MenuWindow *w)
 {
-    CALL_CHILDREN(w, MenuWindow_GetEvent91C());
+    CALL_CHILDREN(w, MenuWindow_GetUpdateTextEvent());
 }
-HOOK(0x424380, MenuWindow_ForwardEvent91C);
+HOOK(0x424380, MenuWindow_ForwardUpdateText);
 
 void MenuWindow_GetSize(MenuWindow *w, ChildSize *out)
 {
@@ -277,7 +277,7 @@ void MenuWindow_Arrange(MenuWindow *w)
             } while (c_);
         }
     }
-    CALL_CHILDREN(w, gEvent910);
+    CALL_CHILDREN(w, gMenuWindowArrangeEvent);
 }
 HOOK(0x4244B0, MenuWindow_Arrange);
 
@@ -292,10 +292,10 @@ void MenuWindow_Shutdown(void)
     Script_UnregisterSymbol("LINEUPMODE_HOR_CENTRE");
     Script_UnregisterSymbol("LINEUPMODE_HOR_RIGHT");
     Script_UnregisterSymbol("LINEUPMODE_HOR_FILLOUT");
-    TaskEvent_Free2(gEvent910);
-    TaskEvent_Free2(gEvent914);
-    TaskEvent_Free2(gEvent918);
-    TaskEvent_Free2(gEvent91C);
+    TaskEvent_Free2(gMenuWindowArrangeEvent);
+    TaskEvent_Free2(gMenuWindowLoadEvent);
+    TaskEvent_Free2(gMenuWindowSaveEvent);
+    TaskEvent_Free2(gMenuWindowUpdateTextEvent);
     TaskEvent_Free(gPlaceEvent);
     TaskEvent_Free(gSizeEvent);
     TaskType_Free(gMenuWindowType);
@@ -309,29 +309,29 @@ uint16_t MenuWindow_GetType(void)
 }
 HOOK(0x424850, MenuWindow_GetType);
 
-int MenuWindow_GetEvent910(void)
+int MenuWindow_GetArrangeEvent(void)
 {
-    return gEvent910;
+    return gMenuWindowArrangeEvent;
 }
-HOOK(0x424860, MenuWindow_GetEvent910);
+HOOK(0x424860, MenuWindow_GetArrangeEvent);
 
-int MenuWindow_GetEvent914(void)
+int MenuWindow_GetLoadEvent(void)
 {
-    return gEvent914;
+    return gMenuWindowLoadEvent;
 }
-HOOK(0x424870, MenuWindow_GetEvent914);
+HOOK(0x424870, MenuWindow_GetLoadEvent);
 
-int MenuWindow_GetEvent918(void)
+int MenuWindow_GetSaveEvent(void)
 {
-    return gEvent918;
+    return gMenuWindowSaveEvent;
 }
-HOOK(0x424880, MenuWindow_GetEvent918);
+HOOK(0x424880, MenuWindow_GetSaveEvent);
 
-int MenuWindow_GetEvent91C(void)
+int MenuWindow_GetUpdateTextEvent(void)
 {
-    return gEvent91C;
+    return gMenuWindowUpdateTextEvent;
 }
-HOOK(0x424890, MenuWindow_GetEvent91C);
+HOOK(0x424890, MenuWindow_GetUpdateTextEvent);
 
 /* updates the pointer state flags for the rectangle and returns the pointer */
 void MenuWindow_HitTest(MenuWindow *w, int x, int y, int width, int height, int *mx, int *my)
@@ -419,10 +419,10 @@ HOOK(0x424B80, MenuWindow_GetPlaceEvent);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(53B90C) uint16_t gMenuWindowType INIT(385);
 PAD(igd, 53B90C, 53B90E, 0x2);
-DATA(53B90C) int gEvent910 INIT(255);
-DATA(53B90C) int gEvent914 INIT(255);
-DATA(53B90C) int gEvent918 INIT(255);
-DATA(53B90C) int gEvent91C INIT(255);
+DATA(53B90C) int gMenuWindowArrangeEvent INIT(255);
+DATA(53B90C) int gMenuWindowLoadEvent INIT(255);
+DATA(53B90C) int gMenuWindowSaveEvent INIT(255);
+DATA(53B90C) int gMenuWindowUpdateTextEvent INIT(255);
 DATA(53B90C) uint8_t gPlaceEvent INIT(255);
 DATA(53B90C) uint8_t gSizeEvent INIT(255);
 PAD(igd, 53B90C, 53B922, 0x2);

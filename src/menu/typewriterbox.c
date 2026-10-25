@@ -75,11 +75,11 @@ void TypeWriterBox_Init(void)
     TaskType_SetHandler(gTypeWriterBoxType, 0, TypeWriterBox_Create);
     TaskType_SetHandler(gTypeWriterBoxType, Param_GetTableEvent(), TypeWriterBox_GetParams);
     TaskType_SetHandler(gTypeWriterBoxType, Param_GetChangedEvent(), TypeWriterBox_Changed);
-    TaskType_SetHandler2(gTypeWriterBoxType, MenuWindow_GetEvent914(), TypeWriterBox_Restart);
-    TaskType_SetHandler2(gTypeWriterBoxType, MenuWindow_GetEvent918(), MenuWindow_ForwardEvent918);
-    TaskType_SetHandler2(gTypeWriterBoxType, Level_GetEventDA8(), TypeWriterBox_Activate);
-    TaskType_SetHandler2(gTypeWriterBoxType, Level_GetEventDAC(), TypeWriterBox_Deactivate);
-    TaskType_SetHandler2(gTypeWriterBoxType, MenuWindow_GetEvent91C(), TypeWriterBox_UpdateText);
+    TaskType_SetHandler2(gTypeWriterBoxType, MenuWindow_GetLoadEvent(), TypeWriterBox_Restart);
+    TaskType_SetHandler2(gTypeWriterBoxType, MenuWindow_GetSaveEvent(), MenuWindow_ForwardSave);
+    TaskType_SetHandler2(gTypeWriterBoxType, Level_GetActivateEvent(), TypeWriterBox_Activate);
+    TaskType_SetHandler2(gTypeWriterBoxType, Level_GetDeactivateEvent(), TypeWriterBox_Deactivate);
+    TaskType_SetHandler2(gTypeWriterBoxType, MenuWindow_GetUpdateTextEvent(), TypeWriterBox_UpdateText);
     gTypeWriterBoxParams = ParamTable_New(2);
     ParamTable_Add(gTypeWriterBoxParams, &tw, &tw.w.w, Param_Int32(), 7, NULL);
     ParamTable_Add(gTypeWriterBoxParams, &tw, &tw.w.h, Param_Int32(), 7, NULL);
@@ -108,7 +108,7 @@ void TypeWriterBox_Delete(TypeWriterBox *tw)
     for (i = 0; i < 4; i++)
         if (tw->fonts[i])
             Text_Free(tw->fonts[i]);
-    ((void (*)(void *))HANDLER(Level_GetEventDAC(), tw->w.task.type))(tw);
+    ((void (*)(void *))HANDLER(Level_GetDeactivateEvent(), tw->w.task.type))(tw);
 }
 HOOK(0x41A3C0, TypeWriterBox_Delete);
 
@@ -128,7 +128,7 @@ static void resolve_lines(TypeWriterBox *tw)
 
 void TypeWriterBox_UpdateText(TypeWriterBox *tw)
 {
-    CALL_CHILDREN(&tw->w.task, MenuWindow_GetEvent91C);
+    CALL_CHILDREN(&tw->w.task, MenuWindow_GetUpdateTextEvent);
     if (tw->w.menu)
         resolve_lines(tw);
 }
@@ -293,7 +293,7 @@ HOOK(0x41A9E0, TypeWriterBox_GetParams);
 
 void TypeWriterBox_Restart(TypeWriterBox *tw)
 {
-    CALL_CHILDREN(&tw->w.task, MenuWindow_GetEvent914);
+    CALL_CHILDREN(&tw->w.task, MenuWindow_GetLoadEvent);
     tw->chars = 0;
     tw->line = 0;
     tw->firstLine = 0;

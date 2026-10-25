@@ -29,7 +29,7 @@ extern const float *gShatterColor;
 extern char gShatterRandom[];
 extern float gShatterSpeed;
 extern uint16_t gShatterType;
-extern int gShatter244;
+extern int gShatterMode;
 extern float gShatterAlpha;
 extern Vec3f gShatterHitA;
 extern GlassShatter *gShatterTask;
@@ -192,7 +192,7 @@ void GlassShatter_Spawn(void **model, Vec3f *dir, Vec3d *pos, Matrix *matrix, vo
     float xs, ys, n0, n1, n2;
     int i;
 
-    gShatter244 = 0;
+    gShatterMode = 0;
     mesh = *(TriMesh **)(info + 0x2C);
     if (!mesh->count)
         return;
@@ -510,7 +510,7 @@ void GlassShatter_AddTri(float *a, float *b, float *c)
         }
     }
 
-    if (gShatter244 != 0 && gShatter244 != 1)
+    if (gShatterMode != 0 && gShatterMode != 1)
         return;
     if (!(m3c >= (!(m20 >= m10) ? m20 : m10)))
         r = m3c;
@@ -612,7 +612,7 @@ ALIAS(gShatterRandom, store_57C230, 0);
 BSS(57C228) float gShatterSpeed;
 BSS(57C228) uint16_t gShatterType;
 PAD(igb, 57C228, 57C242, 0x2);
-BSS(57C228) int gShatter244;
+BSS(57C228) int gShatterMode;
 BSS(57C228) float gShatterAlpha;
 PAD(igb, 57C228, 57C24C, 0x4);
 BSS(57C228) Vec3f gShatterHitA;

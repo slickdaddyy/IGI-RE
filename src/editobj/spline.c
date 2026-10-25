@@ -36,7 +36,7 @@ ORIG(0x4F0FD0, void *, Param_String16, (void));
 ORIG(0x4F1000, void *, Param_Bool8, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1030, Task *, Task_FindById, (int id));
-ORIG(0x4F11F0, uint8_t, Level_GetEventDA4, (void));
+ORIG(0x4F11F0, uint8_t, Level_GetDebugInfoEvent, (void));
 ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
@@ -192,7 +192,7 @@ void SplineObj_Open(void)
     TaskType_SetHandler(gSplineObjWaypointType, Param_GetChangedEvent(), SPLINEOBJWAYPOINT_CHANGED);
     TaskType_SetHandler(gSplineObjWaypointType, Param_GetTableEvent(), SplineObjWaypoint_GetParams);
     TaskType_SetHandler(gSplineObjWaypointType, 7, SplineObjWaypoint_GetInfo);
-    TaskType_SetHandler(gSplineObjWaypointType, Level_GetEventDA4(), SplineObjWaypoint_GetDebugText);
+    TaskType_SetHandler(gSplineObjWaypointType, Level_GetDebugInfoEvent(), SplineObjWaypoint_GetDebugText);
     TaskType_SetHandler(gSplineObjWaypointType, RigidDynCubeObj_GetEvent4(), TASK_NOTHING);
     TaskType_SetHandler(gSplineObjWaypointType, 9, SplineObjWaypoint_CollLines);
     TaskType_SetHandler(gSplineObjWaypointType, 8, SplineObjWaypoint_CollLine);

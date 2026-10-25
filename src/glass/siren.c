@@ -66,8 +66,8 @@ void Siren_Open(void)
     TaskType_SetHandler2(gSirenType, 2, Siren_Delete);
     TaskType_SetHandler(gSirenType, Param_GetTableEvent(), Siren_GetParamsHandler);
     TaskType_SetHandler(gSirenType, Param_GetChangedEvent(), Siren_ParamsChanged);
-    TaskType_SetHandler2(gSirenType, Level_GetEventDA8(), Siren_AddSymbols);
-    TaskType_SetHandler2(gSirenType, Level_GetEventDAC(), Siren_RemoveSymbols);
+    TaskType_SetHandler2(gSirenType, Level_GetActivateEvent(), Siren_AddSymbols);
+    TaskType_SetHandler2(gSirenType, Level_GetDeactivateEvent(), Siren_RemoveSymbols);
     TaskType_SetHandler(gSirenType, Sound_GetInfoEvent(), Siren_GetSoundSource);
     gSirenParams = ParamTable_Extend(ExplodeObject_GetParams(), 3);
     ParamTable_Add(gSirenParams, NULL, FIELD(sound_name), Param_String32(), 7, NULL);
@@ -131,7 +131,7 @@ void Siren_AddSymbols(Siren *s)
         return;
     s->registered = 1;
     type = ExplodeObject_GetType();
-    gTaskHandlers[Level_GetEventDA8()][type](s);
+    gTaskHandlers[Level_GetActivateEvent()][type](s);
     Task_GetName(name, s);
     crt_sprintf(buf, "%s.isOn", name);
     Script_RegisterBool8(buf, &s->on);
@@ -148,7 +148,7 @@ void Siren_RemoveSymbols(Siren *s)
     if (!s->registered)
         return;
     type = ExplodeObject_GetType();
-    gTaskHandlers[Level_GetEventDAC()][type](s);
+    gTaskHandlers[Level_GetDeactivateEvent()][type](s);
     Task_GetName(name, s);
     s->registered = 0;
     crt_sprintf(buf, "%s.isOn", name);

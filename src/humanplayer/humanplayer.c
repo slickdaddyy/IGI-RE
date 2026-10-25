@@ -184,7 +184,7 @@ extern int gWeaponCycle[];
 extern char gShowPosition;
 extern int gAmmoLimitCount;
 extern AmmoLimit gAmmoLimits[];
-extern void *gUnk56E09C;
+extern void *gHumanPlayerParams;
 extern WeaponCategory gWeaponCategories[];
 extern float gMoveScale;
 extern float gJumpSpeed;
@@ -1114,7 +1114,7 @@ void HumanPlayer_Open(void)
     TaskType_SetHandler(gHumanPlayerType, FlashBang_GetEvent(), FN(0x413090, HumanPlayer_FlashbangHandler));
     TaskType_SetHandler(gHumanPlayerType, StatusScreen_GetEvent(), FN(0x413120, HumanPlayer_RenderHandler));
     TaskType_SetHandler(gHumanPlayerType, ComputerObject_GetEvent0(), HumanPlayer_MapMarkerHandler);
-    gUnk56E09C = ParamTable_Extend(Human_GetParamTable(), 1);
+    gHumanPlayerParams = ParamTable_Extend(Human_GetParamTable(), 1);
     Script_RegisterFunction("DefineHumanPlayerGeneral", DefineHumanPlayerGeneral, NULL, -1);
     Script_RegisterFunction("DefineHumanPlayerWeaponCycle", DefineHumanPlayerWeaponCycle, NULL, -1);
     Script_RegisterFunction("DefineHumanPlayerWeaponCategory", DefineHumanPlayerWeaponCategory, NULL, -1);
@@ -1326,7 +1326,7 @@ HOOK(0x410840, HumanPlayer_DeleteHandler);
 void HumanPlayer_GetParamTableHandler(HumanPlayer *h, void **out)
 {
     (void)h;
-    *out = gUnk56E09C;
+    *out = gHumanPlayerParams;
 }
 HOOK(0x4108B0, HumanPlayer_GetParamTableHandler);
 
@@ -1580,7 +1580,7 @@ PAD(igb, 56DF18, 56DF95, 0x3);
 BSS(56DF18) int gAmmoLimitCount;
 STORE(igb, 56DF18, 4) __typeof__(gAmmoLimits[0]) store_56DF9C[32];
 ALIAS(gAmmoLimits, store_56DF9C, 0);
-BSS(56DF18) void *gUnk56E09C;
+BSS(56DF18) void *gHumanPlayerParams;
 PAD(igb, 56DF18, 56E0A0, 0x148);
 ALIAS(gWeaponCategories, pad_56E0A0, 0);
 BSS(56DF18) float gMoveScale;

@@ -22,7 +22,7 @@ ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4E6C00, void, Sound_Stop, (Task *sound));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1340, void, VarString_Free, (VarString *v));
 ORIG(0x4F1400, void, VarString_Bind, (VarString *v, void *task));
@@ -94,7 +94,7 @@ void Elevator_DeleteHandler(Elevator *e)
         e->moving = NULL;
     }
     if (Task_GetId(e) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), e->obj.task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), e->obj.task.type);
 
         if (fn)
             fn(e);

@@ -54,8 +54,8 @@ void ConditionalContainer_Init(void)
     TaskType_SetHandler(gConditionalContainerType, Param_GetChangedEvent(), ConditionalContainer_Changed);
     TaskType_SetHandler(gConditionalContainerType, ComputerObject_GetEvent0(), ConditionalContainer_ComputerEvent);
     TaskType_SetHandler2(gConditionalContainerType, 3, ConditionalContainer_Show);
-    TaskType_SetHandler2(gConditionalContainerType, Level_GetEventDA8(), ConditionalContainer_Activate);
-    TaskType_SetHandler2(gConditionalContainerType, Level_GetEventDAC(), ConditionalContainer_Deactivate);
+    TaskType_SetHandler2(gConditionalContainerType, Level_GetActivateEvent(), ConditionalContainer_Activate);
+    TaskType_SetHandler2(gConditionalContainerType, Level_GetDeactivateEvent(), ConditionalContainer_Deactivate);
     TaskType_SetHandler(gConditionalContainerType, RigidDynCubeObj_GetEvent4(), ConditionalContainer_Move);
     TaskType_SetHandler(gConditionalContainerType, World_GetEvent1(), ConditionalContainer_Removed);
     TaskType_SetHandler(gConditionalContainerType, World_GetEvent0(), ConditionalContainer_Added);
@@ -114,7 +114,7 @@ HOOK(0x4874E0, ConditionalContainer_Run);
 void ConditionalContainer_Delete(ConditionalContainer *c)
 {
     if (Task_GetId(c) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), c->task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), c->task.type);
 
         if (fn)
             ((void (*)(void *))fn)(c);

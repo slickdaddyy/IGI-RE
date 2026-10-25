@@ -35,11 +35,11 @@ extern uint16_t gStaticType;
 extern uint16_t gDynamicType;
 extern uint16_t gIdleType;
 extern uint16_t gCameraBaseType;
-extern uint8_t gLevelEventDA4;
+extern uint8_t gLevelDebugInfoEvent;
 extern uint8_t gLevelNameEvent;
-extern int gLevelEventDA8;
-extern int gLevelEventDAC;
-extern int gLevelEventDB0;
+extern int gLevelActivateEvent;
+extern int gLevelDeactivateEvent;
+extern int gLevelUnusedNewTaskEvent;
 
 /* parameter type ids */
 extern int gParamReal32x3;

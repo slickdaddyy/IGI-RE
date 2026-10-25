@@ -55,7 +55,7 @@ void MenuScreen_Open(MenuScreen *ms)
 {
     if (VarString_HasExpr(&ms->onLayout))
         VarString_EvalReal(&ms->onLayout, ms);
-    CALL_CHILDREN(ms, MenuWindow_GetEvent914());
+    CALL_CHILDREN(ms, MenuWindow_GetLoadEvent());
 }
 HOOK(0x422260, MenuScreen_Open);
 
@@ -63,7 +63,7 @@ void MenuScreen_Apply(MenuScreen *ms)
 {
     if (VarString_HasExpr(&ms->onForward))
         VarString_EvalReal(&ms->onForward, ms);
-    CALL_CHILDREN(ms, MenuWindow_GetEvent918());
+    CALL_CHILDREN(ms, MenuWindow_GetSaveEvent());
 }
 HOOK(0x422300, MenuScreen_Apply);
 

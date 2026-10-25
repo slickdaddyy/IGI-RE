@@ -336,11 +336,11 @@ void Device_SetError(int dev, void *fn)
 }
 HOOK(0x4B1D00, Device_SetError);
 
-void Device_SetUnk2C(int dev, void *fn)
+void Device_SetUnused(int dev, void *fn)
 {
-    *(void **)&gDevices[dev].unk2C = fn;
+    *(void **)&gDevices[dev].unused = fn;
 }
-HOOK(0x4B1D20, Device_SetUnk2C);
+HOOK(0x4B1D20, Device_SetUnused);
 
 void Device_SetEof(int dev, void *fn)
 {
@@ -417,7 +417,7 @@ STORE(igb, 9435B0, 1) char store_9435B0[256];
 ALIAS(gOpenPath, store_9435B0, 0);
 STORE(igb, 9435B0, 4) __typeof__(gDevices[0]) store_9436B0[5];
 ALIAS(gDevices, store_9436B0, 0);
-PAD(igb, 943980, 943980, 0x8);
-ALIAS(gNullFile, pad_943980, 0);
+STORE(igb, 943980, 4) __typeof__(gNullFile[0]) store_943980[1];
+ALIAS(gNullFile, store_943980, 0);
 STORE(igb, 943A98, 1) char store_943A98[136];
 ALIAS(gDeletePath, store_943A98, 0);

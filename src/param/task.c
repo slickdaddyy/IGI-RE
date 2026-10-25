@@ -38,7 +38,7 @@ HOOK(0x4F1110, Level_ClearTaskIdTree);
 
 int Level_IsRunning(void)
 {
-    if (!gLevelA758BE && gLevelPaused)
+    if (!gLevelForceRunning && gLevelPaused)
         return 0;
     return 1;
 }
@@ -74,11 +74,11 @@ TaskNote *TaskNote_Find(Task *task)
 }
 HOOK(0x4F11A0, TaskNote_Find);
 
-char Level_GetEventDA4(void)
+char Level_GetDebugInfoEvent(void)
 {
-    return gLevelEventDA4;
+    return gLevelDebugInfoEvent;
 }
-HOOK(0x4F11F0, Level_GetEventDA4);
+HOOK(0x4F11F0, Level_GetDebugInfoEvent);
 
 char Level_GetNameEvent(void)
 {
@@ -86,23 +86,23 @@ char Level_GetNameEvent(void)
 }
 HOOK(0x4F1200, Level_GetNameEvent);
 
-int Level_GetEventDA8(void)
+int Level_GetActivateEvent(void)
 {
-    return gLevelEventDA8;
+    return gLevelActivateEvent;
 }
-HOOK(0x4F1210, Level_GetEventDA8);
+HOOK(0x4F1210, Level_GetActivateEvent);
 
-int Level_GetEventDAC(void)
+int Level_GetDeactivateEvent(void)
 {
-    return gLevelEventDAC;
+    return gLevelDeactivateEvent;
 }
-HOOK(0x4F1220, Level_GetEventDAC);
+HOOK(0x4F1220, Level_GetDeactivateEvent);
 
-int Level_GetEventDB0(void)
+int Level_GetUnusedNewTaskEvent(void)
 {
-    return gLevelEventDB0;
+    return gLevelUnusedNewTaskEvent;
 }
-HOOK(0x4F1230, Level_GetEventDB0);
+HOOK(0x4F1230, Level_GetUnusedNewTaskEvent);
 
 /* number of ids in use before the first free one */
 int Level_CountTaskIds(void)
@@ -138,6 +138,6 @@ Level *Level_Get(void)
 HOOK(0x4F17C0, Level_Get);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-DATA(54DDA4) uint8_t gLevelEventDA4 INIT(255);
+DATA(54DDA4) uint8_t gLevelDebugInfoEvent INIT(255);
 DATA(54DDA4) uint8_t gLevelNameEvent INIT(255);
 PAD(igd, 54DDA4, 54DDA6, 0x2);

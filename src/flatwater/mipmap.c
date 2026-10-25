@@ -26,9 +26,9 @@ extern int gMipMapModeRange[];
 extern void *gMipMapParams;
 extern float gMipMapBiasRange[];
 extern D3DDevice *gD3DDevice;
-extern uint32_t gRenderUnk24;
+extern uint32_t gMipMapUnusedBias;
 extern signed char gRenderMipMapMode;
-extern char gRenderUnk2C;
+extern char gMipMapUnusedFlag;
 extern float gRenderLodBias;
 
 #define D3DTSS_MIPMAPLODBIAS 19
@@ -86,9 +86,9 @@ void MipMapControl_Create(MipMapControl *m)
 
     __asm__("flds %1\n\tfstps %0" : "=m"(bias) : "m"(gRenderLodBias));
     m->lodBias = bias;
-    *(uint32_t *)&m->unk24 = gRenderUnk24;
+    *(uint32_t *)&m->unk24 = gMipMapUnusedBias;
     m->mode = gRenderMipMapMode;
-    m->unk2C = gRenderUnk2C;
+    m->unk2C = gMipMapUnusedFlag;
 }
 HOOK(0x51EE80, MipMapControl_Create);
 
@@ -114,8 +114,8 @@ BSS(A83788) void *gMipMapParams;
 PAD(igb, A83788, A83794, 0x4);
 STORE(igb, A83788, 4) float store_A83798[2];
 ALIAS(gMipMapBiasRange, store_A83798, 0);
-BSS(BC79E8) uint32_t gRenderUnk24;
+BSS(BC79E8) uint32_t gMipMapUnusedBias;
 BSS(BC79E8) signed char gRenderMipMapMode;
-BSS(BC79E8) char gRenderUnk2C;
+BSS(BC79E8) char gMipMapUnusedFlag;
 PAD(igb, BC79E8, BC79EE, 0x2);
 BSS(BC79E8) float gRenderLodBias;

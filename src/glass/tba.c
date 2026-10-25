@@ -78,8 +78,8 @@ void GenericTBA_Open(void)
     TaskType_SetHandler2(gTBAType, 2, GenericTBA_Delete);
     TaskType_SetHandler(gTBAType, Param_GetTableEvent(), GenericTBA_GetParamsHandler);
     TaskType_SetHandler(gTBAType, Param_GetChangedEvent(), GenericTBA_ParamsChanged);
-    TaskType_SetHandler2(gTBAType, Level_GetEventDA8(), GenericTBA_AddSymbols);
-    TaskType_SetHandler2(gTBAType, Level_GetEventDAC(), GenericTBA_RemoveSymbols);
+    TaskType_SetHandler2(gTBAType, Level_GetActivateEvent(), GenericTBA_AddSymbols);
+    TaskType_SetHandler2(gTBAType, Level_GetDeactivateEvent(), GenericTBA_RemoveSymbols);
     TaskType_SetHandler(gTBAType, Game_GetEvent2(), Terminal_CheckUse);
     TaskType_SetHandler(gTBAType, Game_GetEvent3(), FN(0x51BAA0, EditorMagicObj_GetArgSize));
     TaskType_SetHandler(gTBAType, Game_GetEvent4(), GenericTBA_Use);
@@ -140,7 +140,7 @@ void GenericTBA_Delete(GenericTBA *t)
     QTaskList_Remove(Game_GetTaskList0(), t);
     HANDLER(2, ExplodeObject_GetType())(t);
     if (Task_GetId(t) >= 0) {
-        TaskFn fn = gTaskHandlers[Level_GetEventDAC()][t->e.o.task.type];
+        TaskFn fn = gTaskHandlers[Level_GetDeactivateEvent()][t->e.o.task.type];
 
         if (fn)
             fn(t);
@@ -187,7 +187,7 @@ void GenericTBA_AddSymbols(GenericTBA *t)
         return;
     t->registered = 1;
     type = ExplodeObject_GetType();
-    gTaskHandlers[Level_GetEventDA8()][type](t);
+    gTaskHandlers[Level_GetActivateEvent()][type](t);
     Task_GetName(name, t);
     crt_sprintf(buf, "%s.isInUse", name);
     Script_RegisterBool8(buf, &t->in_use);
@@ -210,7 +210,7 @@ void GenericTBA_RemoveSymbols(GenericTBA *t)
     if (!t->registered)
         return;
     type = ExplodeObject_GetType();
-    gTaskHandlers[Level_GetEventDAC()][type](t);
+    gTaskHandlers[Level_GetDeactivateEvent()][type](t);
     Task_GetName(name, t);
     t->registered = 0;
     crt_sprintf(buf, "%s.isInUse", name);

@@ -35,8 +35,8 @@ void TextBox_Init(void)
     TaskType_SetHandler2(gTextBoxType, 1, TextBox_Run);
     TaskType_SetHandler2(gTextBoxType, Screen_GetDrawEvent(), TextBox_Draw);
     TaskType_SetHandler2(gTextBoxType, 2, TextBox_Delete);
-    TaskType_SetHandler2(gTextBoxType, MenuWindow_GetEvent914(), TextBox_Layout);
-    TaskType_SetHandler2(gTextBoxType, MenuWindow_GetEvent918(), MenuWindow_ForwardEvent918);
+    TaskType_SetHandler2(gTextBoxType, MenuWindow_GetLoadEvent(), TextBox_Layout);
+    TaskType_SetHandler2(gTextBoxType, MenuWindow_GetSaveEvent(), MenuWindow_ForwardSave);
     TaskType_SetHandler(gTextBoxType, 0, TextBox_Create);
     TaskType_SetHandler(gTextBoxType, Param_GetTableEvent(), TextBox_GetParams);
     TaskType_SetHandler(gTextBoxType, Param_GetChangedEvent(), TextBox_Changed);

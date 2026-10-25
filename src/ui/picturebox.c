@@ -47,8 +47,8 @@ void PictureBox_Init(void)
     TaskType_SetHandler(gPictureBoxType, 0, PictureBox_Create);
     TaskType_SetHandler(gPictureBoxType, Param_GetTableEvent(), PictureBox_GetParams);
     TaskType_SetHandler(gPictureBoxType, Param_GetChangedEvent(), PictureBox_Changed);
-    TaskType_SetHandler2(gPictureBoxType, MenuWindow_GetEvent914(), PictureBox_Layout);
-    TaskType_SetHandler2(gPictureBoxType, MenuWindow_GetEvent918(), MenuWindow_ForwardEvent918);
+    TaskType_SetHandler2(gPictureBoxType, MenuWindow_GetLoadEvent(), PictureBox_Layout);
+    TaskType_SetHandler2(gPictureBoxType, MenuWindow_GetSaveEvent(), MenuWindow_ForwardSave);
     gPictureBoxParams = ParamTable_New(4);
     ParamTable_Add(gPictureBoxParams, &pb, &pb.w.w, Param_Int32(), 7, NULL);
     ParamTable_Add(gPictureBoxParams, &pb, &pb.w.h, Param_Int32(), 7, NULL);
@@ -134,7 +134,7 @@ void PictureBox_Layout(PictureBox *pb)
     gPictureBoxFilling = NULL;
     for (i = 0; i < pb->count; i++)
         pb->items[i].sprite = MenuManager_FindSprite(pb->w.menu, pb->items[i].name);
-    CALL_CHILDREN(&pb->w.task, MenuWindow_GetEvent914);
+    CALL_CHILDREN(&pb->w.task, MenuWindow_GetLoadEvent);
 }
 HOOK(0x41B750, PictureBox_Layout);
 

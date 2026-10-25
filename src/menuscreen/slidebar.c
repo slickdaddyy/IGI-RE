@@ -47,7 +47,7 @@ void SlideBar_Create(SlideBar *sb, void *arg);
 void SlideBar_GetParams(void *task, void **out);
 void SlideBar_Changed(SlideBar *sb, void *arg);
 void SlideBar_Layout(SlideBar *sb);
-void SlideBar_Forward918(SlideBar *sb);
+void SlideBar_Save(SlideBar *sb);
 void SlideBar_Activate(SlideBar *sb);
 void SlideBar_Deactivate(SlideBar *sb);
 int SlideBar_GetPos(SlideBar *sb);
@@ -64,10 +64,10 @@ void SlideBar_Init(void)
     TaskType_SetHandler(gSlideBarType, 0, SlideBar_Create);
     TaskType_SetHandler(gSlideBarType, Param_GetTableEvent(), SlideBar_GetParams);
     TaskType_SetHandler(gSlideBarType, Param_GetChangedEvent(), SlideBar_Changed);
-    TaskType_SetHandler2(gSlideBarType, MenuWindow_GetEvent914(), SlideBar_Layout);
-    TaskType_SetHandler2(gSlideBarType, MenuWindow_GetEvent918(), SlideBar_Forward918);
-    TaskType_SetHandler2(gSlideBarType, Level_GetEventDA8(), SlideBar_Activate);
-    TaskType_SetHandler2(gSlideBarType, Level_GetEventDAC(), SlideBar_Deactivate);
+    TaskType_SetHandler2(gSlideBarType, MenuWindow_GetLoadEvent(), SlideBar_Layout);
+    TaskType_SetHandler2(gSlideBarType, MenuWindow_GetSaveEvent(), SlideBar_Save);
+    TaskType_SetHandler2(gSlideBarType, Level_GetActivateEvent(), SlideBar_Activate);
+    TaskType_SetHandler2(gSlideBarType, Level_GetDeactivateEvent(), SlideBar_Deactivate);
     gSlideBarParams = ParamTable_New(8);
     ParamTable_Add(gSlideBarParams, &sb, sb.name, Param_String32(), 7, NULL);
     ParamTable_Add(gSlideBarParams, &sb, &sb.horizontal, Param_Bool8(), 7, NULL);
@@ -122,7 +122,7 @@ void SlideBar_Delete(SlideBar *sb)
     VarString_Free(&sb->stepsExpr);
     MenuManager_Free(sb->dec);
     MenuManager_Free(sb->inc);
-    CALL_OWN(Level_GetEventDAC(), sb);
+    CALL_OWN(Level_GetDeactivateEvent(), sb);
 }
 HOOK(0x41F6C0, SlideBar_Delete);
 
@@ -314,16 +314,16 @@ void SlideBar_Layout(SlideBar *sb)
         else
             SlideBar_SetPos(sb, round_int(VarString_EvalReal(&sb->valueExpr, sb)));
     }
-    CALL_CHILDREN(&sb->w.task, MenuWindow_GetEvent914);
+    CALL_CHILDREN(&sb->w.task, MenuWindow_GetLoadEvent);
 }
 HOOK(0x41FF30, SlideBar_Layout);
 
-void SlideBar_Forward918(SlideBar *sb)
+void SlideBar_Save(SlideBar *sb)
 {
     EVAL(&sb->forward, sb);
-    CALL_CHILDREN(&sb->w.task, MenuWindow_GetEvent918);
+    CALL_CHILDREN(&sb->w.task, MenuWindow_GetSaveEvent);
 }
-HOOK(0x420020, SlideBar_Forward918);
+HOOK(0x420020, SlideBar_Save);
 
 void SlideBar_Activate(SlideBar *sb)
 {

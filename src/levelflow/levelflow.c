@@ -49,8 +49,8 @@ void LevelFlow_Init(void)
     TaskType_SetHandler2(gLevelFlowType, 2, LevelFlow_Delete);
     TaskType_SetHandler(gLevelFlowType, Param_GetTableEvent(), LevelFlow_GetParams);
     TaskType_SetHandler(gLevelFlowType, Param_GetChangedEvent(), LevelFlow_Changed);
-    TaskType_SetHandler2(gLevelFlowType, Level_GetEventDA8(), LevelFlow_Activate);
-    TaskType_SetHandler2(gLevelFlowType, Level_GetEventDAC(), LevelFlow_Deactivate);
+    TaskType_SetHandler2(gLevelFlowType, Level_GetActivateEvent(), LevelFlow_Activate);
+    TaskType_SetHandler2(gLevelFlowType, Level_GetDeactivateEvent(), LevelFlow_Deactivate);
     TaskType_SetHandler(gLevelFlowType, 7, NULL);
     gLevelFlowParams = ParamTable_New(7);
     ParamTable_Add(gLevelFlowParams, NULL, FIELD(LevelFlow, pos), Param_ObjectPos(), 7, NULL);
@@ -197,7 +197,7 @@ void LevelFlow_Delete(LevelFlow *lf)
     gLevelFlow = NULL;
     Game_ClearPlayers();
     if (Task_GetId(lf) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), lf->task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), lf->task.type);
 
         if (fn)
             fn(lf);

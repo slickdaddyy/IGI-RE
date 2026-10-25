@@ -112,7 +112,7 @@ def test_send_event(window):
     def setup(e):
         mm = menu(e)
         return mm, e.u32(mm + 0x30) if window else 0
-    compare(emu, 0x417660, "MenuManager_SendEvent910", setup=setup, check_eax=False, normalized=True)
+    compare(emu, 0x417660, "MenuManager_ArrangeWindow", setup=setup, check_eax=False, normalized=True)
 
 
 SCRIPT = [(0x4174A0, "MenuManager_RequestScreen"), (0x417690, "MenuManager_PushScreen"),

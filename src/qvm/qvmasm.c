@@ -61,8 +61,8 @@ ORIG(0x4F1D80, void, ParamEnum_Free, (List *list));
 
 extern void *gAsmErrorContext;
 extern void *gQvmAsmLogData;
-extern int gQvmAsmUnkA43EC4;
-extern int gQvmAsmUnkA43ECC;
+extern int gQvmAsmUnused0;
+extern int gQvmAsmUnused1;
 extern int gAsmErrorCount;
 extern QvmAsmCallback gQvmAsmLogFn;
 extern QvmAsmCallback gAsmErrorHandler;
@@ -294,18 +294,18 @@ HOOK(0x4BBC30, QvmAsm_Log);
 void QvmAsm_Init(void)
 {
     gAsmErrorHandler = NULL;
-    gQvmAsmUnkA43ECC = 0;
+    gQvmAsmUnused1 = 0;
     gQvmAsmLogFn = NULL;
     gAsmErrorContext = NULL;
-    gQvmAsmUnkA43EC4 = 0;
+    gQvmAsmUnused0 = 0;
     gQvmAsmLogData = NULL;
     QvmAsm_RegisterOps();
 }
 HOOK(0x4BBC80, QvmAsm_Init);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-BSS(A43EC4) int gQvmAsmUnkA43EC4;
+BSS(A43EC4) int gQvmAsmUnused0;
 BSS(A43EC4) void *gQvmAsmLogData;
-BSS(A43EC4) int gQvmAsmUnkA43ECC;
+BSS(A43EC4) int gQvmAsmUnused1;
 BSS(A43EC4) int gAsmErrorCount;
 BSS(A43EC4) QvmAsmCallback gQvmAsmLogFn;

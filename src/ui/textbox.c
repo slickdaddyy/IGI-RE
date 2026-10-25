@@ -170,7 +170,7 @@ void TextBox_Layout(TextBox *tb)
     gTextBoxFilling = NULL;
     for (i = 0; i < tb->count; i++)
         tb->items[i].str = MenuManager_GetString(tb->w.menu, tb->items[i].text);
-    CALL_CHILDREN(&tb->w.task, MenuWindow_GetEvent914);
+    CALL_CHILDREN(&tb->w.task, MenuWindow_GetLoadEvent);
 }
 HOOK(0x41B170, TextBox_Layout);
 

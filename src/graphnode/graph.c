@@ -34,9 +34,9 @@ extern uint16_t gGraphType;
 extern uint8_t gGraphLoadEvent;
 extern uint8_t gGraphSaveEvent;
 extern uint8_t gGraphNodeLoadEvent;
-extern uint8_t gGraphEvent36E;
+extern uint8_t gGraphUnusedEvent0;
 extern uint8_t gGraphNodeAddEvent;
-extern uint8_t gGraphEvent371;
+extern uint8_t gGraphUnusedEvent1;
 extern uint8_t gGraphAllocEvent;
 extern List gGraphRefs;
 extern NodeSize gGraphNodeSizes[];
@@ -142,11 +142,11 @@ uint8_t Graph_GetNodeLoadEvent(void)
 }
 HOOK(0x4F9240, Graph_GetNodeLoadEvent);
 
-uint8_t Graph_GetEvent36E(void)
+uint8_t Graph_GetUnusedEvent0(void)
 {
-    return gGraphEvent36E;
+    return gGraphUnusedEvent0;
 }
-HOOK(0x4F9250, Graph_GetEvent36E);
+HOOK(0x4F9250, Graph_GetUnusedEvent0);
 
 uint8_t Graph_GetNodeAddEvent(void)
 {
@@ -154,11 +154,11 @@ uint8_t Graph_GetNodeAddEvent(void)
 }
 HOOK(0x4F9260, Graph_GetNodeAddEvent);
 
-uint8_t Graph_GetEvent371(void)
+uint8_t Graph_GetUnusedEvent1(void)
 {
-    return gGraphEvent371;
+    return gGraphUnusedEvent1;
 }
-HOOK(0x4F9270, Graph_GetEvent371);
+HOOK(0x4F9270, Graph_GetUnusedEvent1);
 
 uint8_t Graph_GetAllocEvent(void)
 {
@@ -524,10 +524,10 @@ PAD(igd, 54E368, 54E36A, 0x1) INIT({0xFF});
 DATA(54E368) uint8_t gGraphLoadEvent INIT(255);
 DATA(54E368) uint8_t gGraphSaveEvent INIT(255);
 DATA(54E368) uint8_t gGraphNodeLoadEvent INIT(255);
-DATA(54E368) uint8_t gGraphEvent36E INIT(255);
+DATA(54E368) uint8_t gGraphUnusedEvent0 INIT(255);
 DATA(54E368) uint8_t gGraphNodeAddEvent INIT(255);
 PAD(igd, 54E368, 54E370, 0x1) INIT({0xFF});
-DATA(54E368) uint8_t gGraphEvent371 INIT(255);
+DATA(54E368) uint8_t gGraphUnusedEvent1 INIT(255);
 PAD(igd, 54E368, 54E372, 0x2);
 STORE(igb, A77228, 4) __typeof__(gGraphNodeSizes[0]) store_A77228[4];
 ALIAS(gGraphNodeSizes, store_A77228, 0);

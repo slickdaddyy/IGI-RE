@@ -15,8 +15,8 @@ ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4F0FC0, void *, Param_VarString, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
 ORIG(0x4F1080, int, Level_GetTick, (void));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1320, void, VarString_Init, (VarString *v));
 ORIG(0x4F1340, void, VarString_Free, (VarString *v));
@@ -74,8 +74,8 @@ void AlarmControl_Open(void)
     TaskType_SetHandler2(gAlarmControlType, 2, AlarmControl_Delete);
     TaskType_SetHandler(gAlarmControlType, Param_GetTableEvent(), AlarmControl_GetParams);
     TaskType_SetHandler(gAlarmControlType, Param_GetChangedEvent(), AlarmControl_ParamsChanged);
-    TaskType_SetHandler2(gAlarmControlType, Level_GetEventDA8(), AlarmControl_Activate);
-    TaskType_SetHandler2(gAlarmControlType, Level_GetEventDAC(), AlarmControl_Deactivate);
+    TaskType_SetHandler2(gAlarmControlType, Level_GetActivateEvent(), AlarmControl_Activate);
+    TaskType_SetHandler2(gAlarmControlType, Level_GetDeactivateEvent(), AlarmControl_Deactivate);
     gAlarmControlParams = ParamTable_Extend(Terminal_GetParams(), 2);
     ParamTable_Add(gAlarmControlParams, &a, &a.trigger, Param_VarString(), 7, NULL);
     ParamTable_Add(gAlarmControlParams, &a, &a.alarm, Param_VarString(), 7, NULL);
@@ -117,7 +117,7 @@ void AlarmControl_Delete(AlarmControl *a)
 {
     HANDLER(2, Terminal_GetType())(a);
     if (Task_GetId(a) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), a->task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), a->task.type);
 
         if (fn)
             fn(a);
@@ -152,7 +152,7 @@ void AlarmControl_Activate(AlarmControl *a)
         return;
     a->registered = 1;
     type = Terminal_GetType();
-    HANDLER(Level_GetEventDA8(), type)(a);
+    HANDLER(Level_GetActivateEvent(), type)(a);
     Task_GetName(name, a);
     crt_sprintf(buf, "%s.isTrigger", name);
     Script_RegisterBool8(buf, &a->isTrigger);
@@ -171,7 +171,7 @@ void AlarmControl_Deactivate(AlarmControl *a)
     if (!a->registered)
         return;
     type = Terminal_GetType();
-    HANDLER(Level_GetEventDAC(), type)(a);
+    HANDLER(Level_GetDeactivateEvent(), type)(a);
     Task_GetName(name, a);
     a->registered = 0;
     crt_sprintf(buf, "%s.isTrigger", name);

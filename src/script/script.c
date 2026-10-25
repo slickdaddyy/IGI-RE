@@ -45,12 +45,12 @@ ORIG(0x4C1780, void, Debug_Log, (void));
 extern int gScriptWarningSp;
 extern int gScriptWarningStack[];
 extern int gScriptLineSize;
-extern int gScriptUnkA43E60;
-extern int gScriptUnkA43E64;
+extern int gScriptUnused0;
+extern int gScriptUnused1;
 extern void *gScriptErrorContext;
-extern int gScriptUnkA43E6C;
+extern int gScriptUnused2;
 extern void *gScriptErrorHandler;
-extern int gScriptUnkA43E74;
+extern int gScriptUnused3;
 
 static void Path_SetExtension(char *path, const char *ext)
 {
@@ -355,11 +355,11 @@ HOOK(0x4B8B00, Script_HasArg);
 void Script_Init(void)
 {
     gScriptErrorHandler = NULL;
-    gScriptUnkA43E74 = 0;
-    gScriptUnkA43E64 = 0;
+    gScriptUnused3 = 0;
+    gScriptUnused1 = 0;
     gScriptErrorContext = NULL;
-    gScriptUnkA43E6C = 0;
-    gScriptUnkA43E60 = 0;
+    gScriptUnused2 = 0;
+    gScriptUnused0 = 0;
     Script_InitSymbols();
     Script_SetWarningLevel(1);
     Script_RegisterConstant("TRUE", 1);
@@ -412,11 +412,11 @@ void Script_Shutdown(void)
 HOOK(0x4B8CC0, Script_Shutdown);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-BSS(A43E60) int gScriptUnkA43E60;
-BSS(A43E60) int gScriptUnkA43E64;
+BSS(A43E60) int gScriptUnused0;
+BSS(A43E60) int gScriptUnused1;
 BSS(A43E60) void *gScriptErrorContext;
-BSS(A43E60) int gScriptUnkA43E6C;
-BSS(A43E74) int gScriptUnkA43E74;
+BSS(A43E60) int gScriptUnused2;
+BSS(A43E74) int gScriptUnused3;
 BSS(A96598) int gScriptWarningLevel;
 BSS(A96598) int gScriptWarningSp;
 BSS(A96598) int gScriptBreakEnabled;

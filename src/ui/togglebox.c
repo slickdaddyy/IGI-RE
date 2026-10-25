@@ -18,7 +18,7 @@ void ToggleBox_Run(ToggleBox *tb);
 void ToggleBox_Draw(ToggleBox *tb);
 void ToggleBox_GetParams(void *task, void **out);
 void ToggleBox_Layout(ToggleBox *tb);
-void ToggleBox_Forward918(ToggleBox *tb);
+void ToggleBox_Save(ToggleBox *tb);
 
 void ToggleBox_Init(void)
 {
@@ -31,10 +31,10 @@ void ToggleBox_Init(void)
     TaskType_SetHandler(gToggleBoxType, 0, ToggleBox_Create);
     TaskType_SetHandler(gToggleBoxType, Param_GetTableEvent(), ToggleBox_GetParams);
     TaskType_SetHandler(gToggleBoxType, Param_GetChangedEvent(), ToggleBox_Changed);
-    TaskType_SetHandler2(gToggleBoxType, MenuWindow_GetEvent914(), ToggleBox_Layout);
-    TaskType_SetHandler2(gToggleBoxType, MenuWindow_GetEvent918(), ToggleBox_Forward918);
-    TaskType_SetHandler2(gToggleBoxType, Level_GetEventDA8(), ToggleBox_Activate);
-    TaskType_SetHandler2(gToggleBoxType, Level_GetEventDAC(), ToggleBox_Deactivate);
+    TaskType_SetHandler2(gToggleBoxType, MenuWindow_GetLoadEvent(), ToggleBox_Layout);
+    TaskType_SetHandler2(gToggleBoxType, MenuWindow_GetSaveEvent(), ToggleBox_Save);
+    TaskType_SetHandler2(gToggleBoxType, Level_GetActivateEvent(), ToggleBox_Activate);
+    TaskType_SetHandler2(gToggleBoxType, Level_GetDeactivateEvent(), ToggleBox_Deactivate);
     gToggleBoxParams = ParamTable_New(2);
     ParamTable_Add(gToggleBoxParams, &tb, &tb.value, Param_VarString(), 7, NULL);
     ParamTable_Add(gToggleBoxParams, &tb, &tb.forward, Param_VarString(), 7, NULL);
@@ -76,7 +76,7 @@ void ToggleBox_Delete(ToggleBox *tb)
     Task_Delete(tb->right);
     VarString_Free(&tb->value);
     VarString_Free(&tb->forward);
-    CALL_OWN(Level_GetEventDAC(), tb);
+    CALL_OWN(Level_GetDeactivateEvent(), tb);
 }
 HOOK(0x41DEB0, ToggleBox_Delete);
 
@@ -185,17 +185,17 @@ void ToggleBox_Layout(ToggleBox *tb)
         tb->isOn = MenuExpr_Eval(&tb->value, tb) != 0;
     Text_SetString(tb->yes, MenuManager_GetString(menu, "Yes"));
     Text_SetString(tb->no, MenuManager_GetString(menu, "No"));
-    CALL_CHILDREN(&tb->w.task, MenuWindow_GetEvent914);
+    CALL_CHILDREN(&tb->w.task, MenuWindow_GetLoadEvent);
 }
 HOOK(0x41E420, ToggleBox_Layout);
 
-void ToggleBox_Forward918(ToggleBox *tb)
+void ToggleBox_Save(ToggleBox *tb)
 {
     if (VarString_HasExpr(&tb->forward))
         MenuExpr_Eval(&tb->forward, tb);
-    CALL_CHILDREN(&tb->w.task, MenuWindow_GetEvent918);
+    CALL_CHILDREN(&tb->w.task, MenuWindow_GetSaveEvent);
 }
-HOOK(0x41E500, ToggleBox_Forward918);
+HOOK(0x41E500, ToggleBox_Save);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(53B674) uint16_t gToggleBoxType INIT(385);

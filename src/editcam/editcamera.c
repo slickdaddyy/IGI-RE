@@ -26,7 +26,7 @@ ORIG(0x4F1000, void *, Param_Bool8, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1030, Task *, Task_FindById, (int id));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
@@ -136,7 +136,7 @@ void EditCamera_Delete(EditCamera *ec)
     int i;
 
     if (Task_GetId(ec) >= 0) {
-        void (*fn)(void *) = (void (*)(void *))HANDLER(Level_GetEventDAC(), ec->task.type);
+        void (*fn)(void *) = (void (*)(void *))HANDLER(Level_GetDeactivateEvent(), ec->task.type);
 
         if (fn)
             fn(ec);

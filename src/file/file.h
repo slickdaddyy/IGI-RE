@@ -28,7 +28,7 @@ typedef struct Device {
     int (*size)(int dev, File *f);
     int (*eof)(int dev, File *f);
     void *unk28;
-    int (*unk2C)(int dev, File *f);
+    int (*unused)(int dev, File *f);
     int (*error)(int dev, File *f);
     int (*control)(int dev, File *f, int arg);
     void *(*load)(int dev, File *f, int *size, LoadedFile *lf);

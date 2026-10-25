@@ -68,7 +68,7 @@ void TaskEvent_UnmapSlot(uint8_t slot);
 void Task_Broadcast(Task *task, uint8_t slot, void *arg);
 void Task_BroadcastChildren(Task *task, uint8_t slot, void *arg);
 void Task_BroadcastType(Task *task, uint8_t slot, uint16_t type, void *arg);
-void Task_SetUnk567C60(int value);
+void Task_SetUnusedRoot(int value);
 void Task_ClearPair(int *a, int *b);
 void Task_SetGlobalFlags(uint32_t flags);
 void Task_ClearGlobalFlags(uint32_t flags);

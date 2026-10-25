@@ -53,8 +53,8 @@ ORIG(0x4F0FC0, void *, Param_VarString, (void));
 ORIG(0x4F0FD0, void *, Param_String16, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, uint8_t, Level_GetEventDA8, (void));
-ORIG(0x4F1220, uint8_t, Level_GetEventDAC, (void));
+ORIG(0x4F1210, uint8_t, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, uint8_t, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1320, void, VarString_Init, (VarString *v));
 ORIG(0x4F1340, void, VarString_Free, (VarString *v));
@@ -109,8 +109,8 @@ void SCamera_Open(void)
     TaskType_SetHandler2(gSCameraType, 2, SCamera_Delete);
     TaskType_SetHandler(gSCameraType, Param_GetTableEvent(), SCamera_GetParams);
     TaskType_SetHandler(gSCameraType, Param_GetChangedEvent(), SCamera_ParamsChanged);
-    TaskType_SetHandler2(gSCameraType, Level_GetEventDA8(), SCamera_AddSymbols);
-    TaskType_SetHandler2(gSCameraType, Level_GetEventDAC(), SCamera_RemoveSymbols);
+    TaskType_SetHandler2(gSCameraType, Level_GetActivateEvent(), SCamera_AddSymbols);
+    TaskType_SetHandler2(gSCameraType, Level_GetDeactivateEvent(), SCamera_RemoveSymbols);
     TaskType_SetHandler(gSCameraType, AIDetection_GetEvent1(), SCamera_GetDetectInfo);
     TaskType_SetHandler(gSCameraType, AIDetection_GetEvent0(), FN(0x42FC50, Car_CollFilter));
     TaskType_SetHandler(gSCameraType, World_GetEvent1(), SCamera_WorldRemove);
@@ -218,7 +218,7 @@ void SCamera_Delete(SCamera *c)
 {
     AIDetection_Remove(c);
     if (Task_GetId(c) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), c->o.task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), c->o.task.type);
 
         if (fn)
             fn(c);

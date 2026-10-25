@@ -85,7 +85,7 @@ def test_forward_event(children, handled):
             set_handler(e, EV918, CHILD, 0)
         u32(e, 0xAFA7E0, 3)
         return (d,)
-    run(0x41A120, "MenuWindow_ForwardEvent918", setup, check_eax=False)
+    run(0x41A120, "MenuWindow_ForwardSave", setup, check_eax=False)
 
 
 @pytest.mark.parametrize("value", [0, 1, 0x7F, 0x80, 0xFF])

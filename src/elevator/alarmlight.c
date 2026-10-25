@@ -75,7 +75,7 @@ void AlarmLight_Delete(AlarmLight *al)
     QTaskList_Remove(Game_GetTaskList3(), al);
     VarString_Free(&al->cond);
     if (Task_GetId(al) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), al->obj.task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), al->obj.task.type);
 
         if (fn)
             ((void (*)(void *))fn)(al);

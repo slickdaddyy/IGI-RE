@@ -122,8 +122,8 @@ ORIG(0x4F0FD0, void *, Param_String16, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1030, Human *, Task_FindById, (int id));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
@@ -144,7 +144,7 @@ extern int gHumanCriteria;
 extern int gHumanTeamCriteria[];
 extern char gHumanCriteriaNames[][0x20];
 extern const char *gHumanTeamNames[];
-extern int gHumanUnk5BDC28[];
+extern int gHumanUnusedInts[];
 extern int gShadowTex;
 extern int gBloodHole1;
 extern int gBloodHole2;
@@ -299,8 +299,8 @@ void Human_Open(void)
     TaskType_SetHandler(gHumanType, Grenade_GetEvent(), Human_Handler4F64E0);
     TaskType_SetHandler(gHumanType, 0xC, Human_Handler45F920);
     TaskType_SetHandler(gHumanType, AIGraph_GetEvent(), Human_ClearResult);
-    TaskType_SetHandler2(gHumanType, Level_GetEventDA8(), Human_Handler460850);
-    TaskType_SetHandler2(gHumanType, Level_GetEventDAC(), Human_Handler4608D0);
+    TaskType_SetHandler2(gHumanType, Level_GetActivateEvent(), Human_Handler460850);
+    TaskType_SetHandler2(gHumanType, Level_GetDeactivateEvent(), Human_Handler4608D0);
     TaskType_SetHandler(gHumanType, World_GetEvent0(), Human_Handler460950);
     TaskType_SetHandler(gHumanType, World_GetEvent1(), Human_Handler4609A0);
     TaskType_SetHandler(gHumanType, ComputerMap_GetSelectEvent(), Human_Handler4609F0);
@@ -318,7 +318,7 @@ void Human_Open(void)
     for (i = 0; i < 2; i++)
         Script_RegisterConstant(gHumanTeamNames[i], i);
     for (i = 0; i < 5; i++)
-        gHumanUnk5BDC28[i] = 0;
+        gHumanUnusedInts[i] = 0;
     Script_RegisterFunction("Human_GetCutSceneDeltaTime", Human_GetCutSceneDeltaTime, NULL, 0);
     gShadowTex = Game_AddTexture("shadow1.tex");
     gBloodHole1 = Game_AddTexture("hole_blood1.tex");
@@ -479,7 +479,7 @@ void Human_DeleteHandler(Human *h)
         if (h->texts[i])
             Text_Free(h->texts[i]);
     if (Task_GetId(h) >= 0) {
-        fn = (TaskHandler1)TASK_HANDLER(Level_GetEventDAC(), h->task.type);
+        fn = (TaskHandler1)TASK_HANDLER(Level_GetDeactivateEvent(), h->task.type);
         if (fn)
             fn(h);
     }
@@ -520,4 +520,4 @@ ALIAS(gHumanCriteriaNames, store_5BDB18, 0);
 BSS(5BDB18) void *gHumanParams;
 BSS(5BDC24) void *gHumanList;
 STORE(igb, 5BDC24, 4) int store_5BDC28[5];
-ALIAS(gHumanUnk5BDC28, store_5BDC28, 0);
+ALIAS(gHumanUnusedInts, store_5BDC28, 0);

@@ -30,7 +30,7 @@ typedef struct PolyList {
     PolyTri *tris;
     float rot[9];
     int unk94;
-    int unk98;
+    int unusedMode;
     int count;
     unsigned flags; /* 8: additive, 0x10: multiply */
     int lit;
@@ -159,7 +159,7 @@ PolyList *PolyList_New(void *world, void *owner, const Vec3d *pos, const float *
     p->lit = lit;
     p->unkB0 = unkB0;
     p->unkAC = unkAC;
-    p->unk98 = 0;
+    p->unusedMode = 0;
     p->owner = owner ? TaskRef_Add(owner) : NULL;
     p->pos = *pos;
     memcpy(p->rot, rot, 10 * sizeof(float));
@@ -169,11 +169,11 @@ PolyList *PolyList_New(void *world, void *owner, const Vec3d *pos, const float *
 }
 HOOK(0x49A450, PolyList_New);
 
-void PolyList_SetUnk98(PolyList *p, int v)
+void PolyList_SetUnusedMode(PolyList *p, int v)
 {
-    p->unk98 = v;
+    p->unusedMode = v;
 }
-HOOK(0x49A510, PolyList_SetUnk98);
+HOOK(0x49A510, PolyList_SetUnusedMode);
 
 void PolyList_Draw(void **msg);
 void PolyList_SetStagesCB(void);

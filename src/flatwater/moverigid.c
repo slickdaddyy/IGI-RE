@@ -56,8 +56,8 @@ void MoveRigidObj_Open(void)
     TaskType_SetHandler2(gMoveRigidObjType, 2, MoveRigidObj_Delete);
     TaskType_SetHandler(gMoveRigidObjType, Param_GetTableEvent(), MoveRigidObj_GetParams);
     TaskType_SetHandler(gMoveRigidObjType, Param_GetChangedEvent(), MOVERIGID_PARAMS_CHANGED);
-    TaskType_SetHandler2(gMoveRigidObjType, Level_GetEventDA8(), MoveRigidObj_Activate);
-    TaskType_SetHandler2(gMoveRigidObjType, Level_GetEventDAC(), MoveRigidObj_Deactivate);
+    TaskType_SetHandler2(gMoveRigidObjType, Level_GetActivateEvent(), MoveRigidObj_Activate);
+    TaskType_SetHandler2(gMoveRigidObjType, Level_GetDeactivateEvent(), MoveRigidObj_Deactivate);
     gMoveRigidObjParams = ParamTable_New(20);
     for (i = 0; i < 2; i++) {
         crt_sprintf(gMovePosNames[i], "Position %d", i);
@@ -146,7 +146,7 @@ HOOK(0x51F9E0, MoveRigidObj_Deactivate);
 void MoveRigidObj_Delete(MoveRigidObj *t)
 {
     if (Task_GetId(t) >= 0) {
-        TaskFn1 fn = TASK_HANDLER(Level_GetEventDAC(), t->obj.task.type);
+        TaskFn1 fn = TASK_HANDLER(Level_GetDeactivateEvent(), t->obj.task.type);
 
         if (fn)
             fn(t);

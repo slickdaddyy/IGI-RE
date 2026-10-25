@@ -41,7 +41,7 @@ extern int gTaskStackTop;
 extern int gTaskHandlerChanges;
 extern uint16_t gDynCubeObjType;
 extern char gWorldEvents[];
-extern int gWorldUnkA44348[];
+extern int gWorldUnusedInts[];
 extern char gWorldName[];
 extern Lightmap gLightmaps[];
 #define gLightmapCount 0x800
@@ -121,7 +121,7 @@ void World_Init(void)
     gWorldEvents[0] = TaskEvent_Alloc(0x181);
     gWorldEvents[1] = TaskEvent_Alloc(0x181);
     TaskType_SetHandler(gDynCubeObjType, gWorldEvents[1], DynCubeObj_DeactivateHandler);
-    memset(gWorldUnkA44348, 0, 17 * sizeof(int));
+    memset(gWorldUnusedInts, 0, 17 * sizeof(int));
 }
 HOOK(0x4C5900, World_Init);
 
@@ -358,7 +358,7 @@ PAD(igd, 548174, 548174, 0x2) INIT({0xFF, 0xF0});
 STORE(igd, 548174, 1) char store_548176[138] INIT({-1, -1, 73, 110, 118, 97, 108, 105, 100, 32, 100, 121, 110, 99, 117, 98, 101, 116, 114, 101, 101, 0, 46, 108, 109, 112, 0, 0, 0, 0, 46, 116, 101, 120, 0, 0, 0, 0, 67, 114, 101, 97, 116, 101, 84, 101, 114, 114, 97, 105, 110, 84, 105, 108, 101, 77, 97, 112, 0, 0, 0, 0, 67, 114, 101, 97, 116, 101, 84, 101, 114, 114, 97, 105, 110, 77, 97, 116, 101, 114, 105, 97, 108, 0, 0, 0, 46, 99, 116, 114, 0, 0, 0, 0, 46, 99, 109, 100, 0, 0, 0, 0, 46, 104, 109, 112, 0, 0, 0, 0, 46, 98, 105, 116, 0, 0, 0, 0, 73, 110, 118, 97, 108, 105, 100, 32, 99, 97, 116, 101, 103, 111, 114, 121});
 ALIAS(gWorldEvents, store_548176, 0);
 STORE(igb, A44348, 4) int store_A44348[17];
-ALIAS(gWorldUnkA44348, store_A44348, 0);
+ALIAS(gWorldUnusedInts, store_A44348, 0);
 STORE(igb, B81B20, 4) __typeof__(gLightmaps[0]) store_B81B20[2048];
 ALIAS(gLightmaps, store_B81B20, 0);
 STORE(igb, B97C20, 1) char store_B97C20[256];

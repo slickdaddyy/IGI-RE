@@ -53,7 +53,7 @@ void ScrollListBox_Run(ScrollListBox *lb);
 void ScrollListBox_Draw(ScrollListBox *lb);
 void ScrollListBox_GetParams(void *task, void **out);
 void ScrollListBox_Layout(ScrollListBox *lb);
-void ScrollListBox_Forward918(ScrollListBox *lb);
+void ScrollListBox_Save(ScrollListBox *lb);
 void ScrollListBox_Activate(ScrollListBox *lb);
 void ScrollListBox_Deactivate(ScrollListBox *lb);
 
@@ -68,10 +68,10 @@ void ScrollListBox_Init(void)
     TaskType_SetHandler(gScrollListBoxType, 0, ScrollListBox_Create);
     TaskType_SetHandler(gScrollListBoxType, Param_GetTableEvent(), ScrollListBox_GetParams);
     TaskType_SetHandler(gScrollListBoxType, Param_GetChangedEvent(), ScrollListBox_Changed);
-    TaskType_SetHandler2(gScrollListBoxType, MenuWindow_GetEvent914(), ScrollListBox_Layout);
-    TaskType_SetHandler2(gScrollListBoxType, MenuWindow_GetEvent918(), ScrollListBox_Forward918);
-    TaskType_SetHandler2(gScrollListBoxType, Level_GetEventDA8(), ScrollListBox_Activate);
-    TaskType_SetHandler2(gScrollListBoxType, Level_GetEventDAC(), ScrollListBox_Deactivate);
+    TaskType_SetHandler2(gScrollListBoxType, MenuWindow_GetLoadEvent(), ScrollListBox_Layout);
+    TaskType_SetHandler2(gScrollListBoxType, MenuWindow_GetSaveEvent(), ScrollListBox_Save);
+    TaskType_SetHandler2(gScrollListBoxType, Level_GetActivateEvent(), ScrollListBox_Activate);
+    TaskType_SetHandler2(gScrollListBoxType, Level_GetDeactivateEvent(), ScrollListBox_Deactivate);
     gScrollListBoxParams = ParamTable_New(7);
     ParamTable_Add(gScrollListBoxParams, &lb, lb.font, Param_String32(), 7, NULL);
     ParamTable_Add(gScrollListBoxParams, &lb, &lb.fill, Param_VarString(), 7, NULL);
@@ -132,7 +132,7 @@ void ScrollListBox_Delete(ScrollListBox *lb)
     VarString_Free(&lb->select);
     VarString_Free(&lb->forward);
     VarString_Free(&lb->action);
-    CALL_OWN(Level_GetEventDAC(), lb);
+    CALL_OWN(Level_GetDeactivateEvent(), lb);
 }
 HOOK(0x41BC00, ScrollListBox_Delete);
 
@@ -330,17 +330,17 @@ found:
     lb->frame->w = lb->w.w - sw;
     lb->keyboard = 0;
     lb->lastClick = -1;
-    CALL_CHILDREN(&lb->w.task, MenuWindow_GetEvent914);
+    CALL_CHILDREN(&lb->w.task, MenuWindow_GetLoadEvent);
 }
 HOOK(0x41C310, ScrollListBox_Layout);
 
-void ScrollListBox_Forward918(ScrollListBox *lb)
+void ScrollListBox_Save(ScrollListBox *lb)
 {
     if (VarString_HasExpr(&lb->forward))
         VarString_EvalReal(&lb->forward, lb);
-    CALL_CHILDREN(&lb->w.task, MenuWindow_GetEvent918);
+    CALL_CHILDREN(&lb->w.task, MenuWindow_GetSaveEvent);
 }
-HOOK(0x41C500, ScrollListBox_Forward918);
+HOOK(0x41C500, ScrollListBox_Save);
 
 void ScrollListBox_Activate(ScrollListBox *lb)
 {

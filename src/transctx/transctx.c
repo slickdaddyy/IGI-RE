@@ -22,7 +22,7 @@ ORIG(0x4B0EE0, void, RenderMode_ForEach, (void *fn, void *user));
 int Primitive_Register(const char *name);
 
 extern int gTransContextPrim;
-extern int gUnk543A64;
+extern int gTransContextAutoNear;
 extern int gSetActiveTransContextMethod;
 extern int gSetNearClippingPlaneMethod;
 extern int gTransContextValid;
@@ -52,7 +52,7 @@ static const double kOneD = 1.0;
 
 void TransContext_SetAutoNear(int v)
 {
-    gUnk543A64 = v;
+    gTransContextAutoNear = v;
 }
 HOOK(0x497940, TransContext_SetAutoNear);
 
@@ -306,7 +306,7 @@ int TransContext_GetNearClipMethod(void)
 HOOK(0x498070, TransContext_GetNearClipMethod);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-DATA(543A64) int gUnk543A64 INIT(1);
+DATA(543A64) int gTransContextAutoNear INIT(1);
 DATA(543A64) int gTransContextPrim INIT(-1);
 BSS(6E5BA4) int gSetActiveTransContextMethod;
 BSS(6E5BA4) int gSetNearClippingPlaneMethod;

@@ -43,7 +43,7 @@ ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, int type, int flags, void *extra));
-ORIG(0x4F9270, uint8_t, Graph_GetEvent371, (void));
+ORIG(0x4F9270, uint8_t, Graph_GetUnusedEvent1, (void));
 ORIG(0x4F9720, void *, Graph_GetNode, (void *graph, int id));
 ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
@@ -104,7 +104,7 @@ void GraphNode_Open(void)
     TaskType_SetHandler2(gGraphNodeType, 2, GraphNode_Delete);
     TaskType_SetHandler(gGraphNodeType, Param_GetChangedEvent(), GraphNode_ParamsChanged);
     TaskType_SetHandler(gGraphNodeType, Param_GetTableEvent(), GraphNode_GetParamTable);
-    TaskType_SetHandler(gGraphNodeType, Graph_GetEvent371(), TASK_NOTHING);
+    TaskType_SetHandler(gGraphNodeType, Graph_GetUnusedEvent1(), TASK_NOTHING);
     gGraphNodeModel = VirModel_Add("1703_01_1");
     for (i = 0; i < NODECRITERIA_MAX; i++) {
         gNodeCriteria[i].used = 0;

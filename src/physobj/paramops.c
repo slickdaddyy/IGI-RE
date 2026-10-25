@@ -83,20 +83,20 @@ extern uint16_t gStaticType;
 extern uint16_t gDynamicType;
 extern uint16_t gIdleType;
 extern uint16_t gCameraBaseType;
-extern uint8_t gLevelEventDA4;
+extern uint8_t gLevelDebugInfoEvent;
 extern uint8_t gLevelNameEvent;
-extern int gLevelEventDA8;
-extern int gLevelEventDAC;
-extern int gLevelEventDB0;
+extern int gLevelActivateEvent;
+extern int gLevelDeactivateEvent;
+extern int gLevelUnusedNewTaskEvent;
 
 /* LevelQTaskID -> task reference */
 extern void *gLevelTaskIds[];
 /* 251 buckets of task references, Amiga style lists */
 extern List gTaskNotes[LEVEL_NOTE_LISTS];
 extern char gLevelPaused;
-extern char gLevelA758BE;
-extern int gLevelA758C0;
-extern int gLevelA758C4;
+extern char gLevelForceRunning;
+extern int gLevelUnused0;
+extern int gLevelUnused1;
 
 /* parameter type ids */
 extern int gParamQuat32;
@@ -259,11 +259,11 @@ void Level_Open(void)
     new_type("Dynamic", 0x20, &gDynamicType);
     new_type("Idle", 0x20, &gIdleType);
     new_type("CameraBase", 0x20, &gCameraBaseType);
-    gLevelEventDA4 = TaskEvent_Alloc(0);
+    gLevelDebugInfoEvent = TaskEvent_Alloc(0);
     gLevelNameEvent = TaskEvent_Alloc(0);
-    gLevelEventDA8 = TaskEvent_Alloc2(0);
-    gLevelEventDAC = TaskEvent_Alloc2(0);
-    gLevelEventDB0 = TaskEvent_Alloc2(0);
+    gLevelActivateEvent = TaskEvent_Alloc2(0);
+    gLevelDeactivateEvent = TaskEvent_Alloc2(0);
+    gLevelUnusedNewTaskEvent = TaskEvent_Alloc2(0);
     TaskType_SetHandler2(gLevelType, 1, FN(0x4F0580, Level_Run));
     TaskType_SetHandler(gLevelType, 0, FN(0x4F0600, Level_Create));
     TaskType_SetHandler2(gLevelType, 2, FN(0x4F0610, Level_Delete));
@@ -292,14 +292,14 @@ void Level_Open(void)
     Script_RegisterFunction("Task_New", FN(0x4F0780, Level_NewTask), NULL, -1);
     Script_RegisterFunction("Task_DeclareParameters", FN(0x4F0740, Task_DeclareParameters), NULL, -1);
     gLevelPaused = 0;
-    gLevelA758BE = 0;
+    gLevelForceRunning = 0;
     for (l = gTaskNotes; l < gTaskNotes + LEVEL_NOTE_LISTS; l++) {
         l->head = (Node *)&l->tail;
         l->tailpred = (Node *)l;
         l->tail = NULL;
     }
-    gLevelA758C0 = 0;
-    gLevelA758C4 = 0;
+    gLevelUnused0 = 0;
+    gLevelUnused1 = 0;
 }
 HOOK(0x4EE970, Level_Open);
 
@@ -686,9 +686,9 @@ DATA(54DD0C) uint16_t gLevelType INIT(385);
 DATA(54DD0C) uint16_t gStaticType INIT(385);
 DATA(54DD0C) uint16_t gDynamicType INIT(385);
 DATA(54DD0C) uint16_t gIdleType INIT(385);
-DATA(54DDA8) int gLevelEventDA8 INIT(255);
-DATA(54DDA8) int gLevelEventDAC INIT(255);
-DATA(54DDA8) int gLevelEventDB0 INIT(255);
+DATA(54DDA8) int gLevelActivateEvent INIT(255);
+DATA(54DDA8) int gLevelDeactivateEvent INIT(255);
+DATA(54DDA8) int gLevelUnusedNewTaskEvent INIT(255);
 BSS(A70C68) int gParamReal32x3;
 BSS(A70C68) int gParamReal32x9;
 BSS(A70C68) int gParamDropDownCombo;
@@ -719,7 +719,7 @@ PAD(igb, A75890, A7589C, 0x4);
 BSS(A75890) int gParamBitfield;
 BSS(A758BC) char gLevelInsertHead;
 BSS(A758BC) char gLevelPaused;
-BSS(A758BC) char gLevelA758BE;
+BSS(A758BC) char gLevelForceRunning;
 PAD(igb, A758BC, A758BF, 0x1);
-BSS(A758BC) int gLevelA758C0;
-BSS(A758BC) int gLevelA758C4;
+BSS(A758BC) int gLevelUnused0;
+BSS(A758BC) int gLevelUnused1;

@@ -72,9 +72,9 @@ _Static_assert(offsetof(AIDetector, slots) == 0x30, "AIDetector");
 extern QTaskList *gAIDetectList;
 extern uint16_t gAIDetectMaskTypes[];
 extern int gAIDetectPhase;
-extern int gAIDetectUnk5C8B0C;
-extern int gAIDetectUnk5C8B10;
-extern int gAIDetectUnk5C8B14;
+extern int gAIDetectUnused0;
+extern int gAIDetectUnused1;
+extern int gAIDetectUnused2;
 extern uint8_t gAIDetectEvent0;
 extern uint8_t gAIDetectEvent1;
 extern uint8_t gAIDetectEvent2;
@@ -111,9 +111,9 @@ void AIDetection_Init(void)
 {
     int i;
 
-    gAIDetectUnk5C8B0C = 0;
-    gAIDetectUnk5C8B10 = 0;
-    gAIDetectUnk5C8B14 = 0;
+    gAIDetectUnused0 = 0;
+    gAIDetectUnused1 = 0;
+    gAIDetectUnused2 = 0;
     gAIDetectList = QTaskList_New(AIDETECT_MAX);
     for (i = 0; i < 32; i++)
         gAIDetectMaskTypes[i] = AIDETECT_NO_TYPE;
@@ -316,6 +316,6 @@ BSS(5C8AC0) QTaskList *gAIDetectList;
 STORE(igb, 5C8AC0, 2) uint16_t store_5C8AC4[34];
 ALIAS(gAIDetectMaskTypes, store_5C8AC4, 0);
 BSS(5C8AC0) int gAIDetectPhase;
-BSS(5C8AC0) int gAIDetectUnk5C8B0C;
-BSS(5C8AC0) int gAIDetectUnk5C8B10;
-BSS(5C8AC0) int gAIDetectUnk5C8B14;
+BSS(5C8AC0) int gAIDetectUnused0;
+BSS(5C8AC0) int gAIDetectUnused1;
+BSS(5C8AC0) int gAIDetectUnused2;

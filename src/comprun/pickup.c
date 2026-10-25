@@ -69,8 +69,8 @@ ORIG(0x4F0FB0, void *, Param_Int16, (void));
 ORIG(0x4F0FD0, void *, Param_String16, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
@@ -225,7 +225,7 @@ static void unregister_flag(void *t, char *registered)
 static void call_dac(Task *t)
 {
     if (Task_GetId(t) >= 0) {
-        TaskFn fn = gTaskHandlers[Level_GetEventDAC()][t->type];
+        TaskFn fn = gTaskHandlers[Level_GetDeactivateEvent()][t->type];
 
         if (fn)
             ((void (*)(void *))fn)(t);
@@ -255,8 +255,8 @@ void GenericPickup_Init(void)
     TaskType_SetHandler2(gGenericPickupType, 2, GenericPickup_Destroy);
     TaskType_SetHandler(gGenericPickupType, Param_GetTableEvent(), GenericPickup_GetParams);
     TaskType_SetHandler(gGenericPickupType, Param_GetChangedEvent(), GenericPickup_Changed);
-    TaskType_SetHandler2(gGenericPickupType, Level_GetEventDA8(), GenericPickup_Register);
-    TaskType_SetHandler2(gGenericPickupType, Level_GetEventDAC(), GenericPickup_Unregister);
+    TaskType_SetHandler2(gGenericPickupType, Level_GetActivateEvent(), GenericPickup_Register);
+    TaskType_SetHandler2(gGenericPickupType, Level_GetDeactivateEvent(), GenericPickup_Unregister);
     TaskType_SetHandler(gGenericPickupType, Game_GetEvent8(), Task_HandlerNothing45F920);
     TaskType_SetHandler(gGenericPickupType, Game_GetEvent13(), Task_HandlerNothing45F920);
     TaskType_SetHandler(gGenericPickupType, Game_GetEvent1(), GenericPickup_Touch);
@@ -466,8 +466,8 @@ void GunPickup_Init(void)
     TaskType_SetHandler2(gGunPickupType, 2, Pickup_Destroy);
     TaskType_SetHandler(gGunPickupType, Param_GetTableEvent(), GunPickup_GetParams);
     TaskType_SetHandler(gGunPickupType, Param_GetChangedEvent(), GunPickup_Changed);
-    TaskType_SetHandler2(gGunPickupType, Level_GetEventDA8(), GunPickup_Register);
-    TaskType_SetHandler2(gGunPickupType, Level_GetEventDAC(), GunPickup_Unregister);
+    TaskType_SetHandler2(gGunPickupType, Level_GetActivateEvent(), GunPickup_Register);
+    TaskType_SetHandler2(gGunPickupType, Level_GetDeactivateEvent(), GunPickup_Unregister);
     TaskType_SetHandler(gGunPickupType, Game_GetEvent8(), Task_HandlerNothing45F920);
     TaskType_SetHandler(gGunPickupType, Game_GetEvent13(), Task_HandlerNothing45F920);
     TaskType_SetHandler(gGunPickupType, Game_GetEvent1(), GunPickup_Touch);
@@ -648,8 +648,8 @@ void AmmoPickup_Init(void)
     TaskType_SetHandler2(gAmmoPickupType, 2, Pickup_Destroy);
     TaskType_SetHandler(gAmmoPickupType, Param_GetTableEvent(), AmmoPickup_GetParams);
     TaskType_SetHandler(gAmmoPickupType, Param_GetChangedEvent(), AmmoPickup_Changed);
-    TaskType_SetHandler2(gAmmoPickupType, Level_GetEventDA8(), AmmoPickup_Register);
-    TaskType_SetHandler2(gAmmoPickupType, Level_GetEventDAC(), AmmoPickup_Unregister);
+    TaskType_SetHandler2(gAmmoPickupType, Level_GetActivateEvent(), AmmoPickup_Register);
+    TaskType_SetHandler2(gAmmoPickupType, Level_GetDeactivateEvent(), AmmoPickup_Unregister);
     TaskType_SetHandler(gAmmoPickupType, Game_GetEvent8(), Task_HandlerNothing45F920);
     TaskType_SetHandler(gAmmoPickupType, Game_GetEvent13(), Task_HandlerNothing45F920);
     TaskType_SetHandler(gAmmoPickupType, Game_GetEvent1(), AmmoPickup_Touch);

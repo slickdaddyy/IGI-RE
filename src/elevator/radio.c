@@ -54,8 +54,8 @@ void Radio_Init(void)
     TaskType_SetHandler2(gRadioType, 2, Radio_Delete);
     TaskType_SetHandler(gRadioType, Param_GetTableEvent(), Radio_GetParams);
     TaskType_SetHandler(gRadioType, Param_GetChangedEvent(), Radio_Changed);
-    TaskType_SetHandler2(gRadioType, Level_GetEventDA8(), Radio_Activate);
-    TaskType_SetHandler2(gRadioType, Level_GetEventDAC(), Radio_Deactivate);
+    TaskType_SetHandler2(gRadioType, Level_GetActivateEvent(), Radio_Activate);
+    TaskType_SetHandler2(gRadioType, Level_GetDeactivateEvent(), Radio_Deactivate);
     TaskType_SetHandler(gRadioType, ComputerObject_GetEvent0(), HANDLER_443DC0);
     gRadioParams = ParamTable_Extend(ExplodeObject_GetParams(), 6);
     for (i = 0; i < 4; i++) {
@@ -166,7 +166,7 @@ void Radio_Activate(Radio *r)
         return;
     r->registered = 1;
     base = ExplodeObject_GetType();
-    ((void (*)(void *))HANDLER(Level_GetEventDA8(), base))(r);
+    ((void (*)(void *))HANDLER(Level_GetActivateEvent(), base))(r);
     Task_GetName(name, r);
     crt_sprintf(buf, "%s.isOn", name);
     Script_RegisterBool8(buf, &r->isOn);
@@ -182,7 +182,7 @@ void Radio_Deactivate(Radio *r)
     if (!r->registered)
         return;
     base = ExplodeObject_GetType();
-    ((void (*)(void *))HANDLER(Level_GetEventDAC(), base))(r);
+    ((void (*)(void *))HANDLER(Level_GetDeactivateEvent(), base))(r);
     Task_GetName(name, r);
     crt_sprintf(buf, "%s.isOn", name);
     Script_RemoveSymbol(buf);

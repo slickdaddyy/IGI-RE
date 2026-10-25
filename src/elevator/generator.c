@@ -51,8 +51,8 @@ void Generator_Init(void)
     TaskType_SetHandler2(gGeneratorType, 2, Generator_Delete);
     TaskType_SetHandler(gGeneratorType, Param_GetTableEvent(), Generator_GetParams);
     TaskType_SetHandler(gGeneratorType, Param_GetChangedEvent(), Generator_Changed);
-    TaskType_SetHandler2(gGeneratorType, Level_GetEventDA8(), Generator_Activate);
-    TaskType_SetHandler2(gGeneratorType, Level_GetEventDAC(), Generator_Deactivate);
+    TaskType_SetHandler2(gGeneratorType, Level_GetActivateEvent(), Generator_Activate);
+    TaskType_SetHandler2(gGeneratorType, Level_GetDeactivateEvent(), Generator_Deactivate);
     gGeneratorParams = ParamTable_Extend(ExplodeObject_GetParams(), 5);
     ParamTable_Add(gGeneratorParams, &g, g.onSound, Param_String16(), 7, NULL);
     ParamTable_Add(gGeneratorParams, &g, g.offSound, Param_String16(), 7, NULL);
@@ -147,7 +147,7 @@ void Generator_Activate(Generator *g)
         return;
     g->registered = 1;
     base = ExplodeObject_GetType();
-    ((void (*)(void *))HANDLER(Level_GetEventDA8(), base))(g);
+    ((void (*)(void *))HANDLER(Level_GetActivateEvent(), base))(g);
     Task_GetName(name, g);
     crt_sprintf(buf, "%s.isOn", name);
     Script_RegisterBool8(buf, &g->isOn);
@@ -165,7 +165,7 @@ void Generator_Deactivate(Generator *g)
     if (!g->registered)
         return;
     base = ExplodeObject_GetType();
-    ((void (*)(void *))HANDLER(Level_GetEventDAC(), base))(g);
+    ((void (*)(void *))HANDLER(Level_GetDeactivateEvent(), base))(g);
     Task_GetName(name, g);
     crt_sprintf(buf, "%s.isOn", name);
     Script_RemoveSymbol(buf);

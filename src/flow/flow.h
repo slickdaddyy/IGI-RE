@@ -17,7 +17,7 @@ enum {
 
 typedef struct Flow {
     Task task;
-    void *unk20;
+    void *screen;
     void *unk24;
     int event;
     int request;
@@ -45,7 +45,7 @@ void Flow_New(Task *parent);
 void FramesSet(int fps);
 int Flow_GetFps(void);
 Flow *Flow_Get(void);
-void *Flow_GetUnk20(void);
+void *Flow_GetScreen(void);
 void Flow_SetRequest(int event);
 int Flow_GetFrames(void);
 int Flow_GetRenders(void);

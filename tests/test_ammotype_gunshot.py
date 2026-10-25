@@ -179,7 +179,7 @@ def test_set_unk78():
         p = e.alloc(24)
         d64(e, p, 1.0, 2.0, 3.0)
         return shot(e), p
-    run(0x47B270, "GunShot_SetUnk78", setup)
+    run(0x47B270, "GunShot_SetMuzzlePos", setup)
 
 
 @pytest.mark.parametrize("cw", [0x37F, 0x7F])

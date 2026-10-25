@@ -217,11 +217,11 @@ void GunShot_AddBullet(GunShot *s, Vec3d *pos, Vec3f *dir, char *type, int a5, i
 }
 HOOK(0x47B190, GunShot_AddBullet);
 
-void GunShot_SetUnk78(GunShot *s, Vec3d *v)
+void GunShot_SetMuzzlePos(GunShot *s, Vec3d *v)
 {
-    s->unk78 = *v;
+    s->muzzlePos = *v;
 }
-HOOK(0x47B270, GunShot_SetUnk78);
+HOOK(0x47B270, GunShot_SetMuzzlePos);
 
 /* bullets of this frame passing within 16384 of pos: writes the closest
    point of each path to out, returns how many */
@@ -302,7 +302,7 @@ void GunShot_Create(GunShot *s)
     float m[10];
     int i;
 
-    memset(&s->unk78, 0, sizeof(s->unk78));
+    memset(&s->muzzlePos, 0, sizeof(s->muzzlePos));
     s->released = 0;
     s->gun = NULL;
     s->ref70 = NULL;

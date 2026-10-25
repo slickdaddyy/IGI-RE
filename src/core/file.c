@@ -5,6 +5,7 @@
 #include "core/error.h"
 #include "core/file.h"
 #include "core/list.h"
+#include "file/filetypes.h"
 
 ORIG(0x4AAD10, int, crt_strncmp, (const char *a, const char *b, size_t n));
 ORIG(0x4AA0A0, char *, crt_strchr, (const char *s, int c));
@@ -17,7 +18,7 @@ extern FileAlias gAliases[];
 extern FileDevice gDevices[];
 extern int gDeviceCount;
 extern List gLoadedFiles;
-extern int gUnk943988;
+extern File gNullFile[];
 extern char gExpandedPath[];
 
 /* Expands an alias at the start of path into its index'th path. Returns the
@@ -92,7 +93,7 @@ void File_Init(void)
     memset(gDevices, 0, sizeof(FileDevice) * FILE_DEVICE_MAX);
     gExpandedPath[0] = 0;
     LocalDevice_Register();
-    gUnk943988 = 0;
+    gNullFile->unk04[1] = 0;
     gLoadedFiles.head = (Node *)&gLoadedFiles.tail;
     gLoadedFiles.tailpred = (Node *)&gLoadedFiles;
     gLoadedFiles.tail = NULL;
@@ -194,6 +195,5 @@ STORE(igb, 942330, 4) __typeof__(gAliases[0]) store_942330[32];
 ALIAS(gAliases, store_942330, 0);
 BSS(94396C) int gDeviceCount;
 BSS(94396C) List gLoadedFiles;
-BSS(943988) int gUnk943988;
 STORE(igb, 943A18, 1) char store_943A18[128];
 ALIAS(gExpandedPath, store_943A18, 0);

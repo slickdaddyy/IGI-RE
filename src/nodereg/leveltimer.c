@@ -36,8 +36,8 @@ ORIG(0x4F0FC0, int, Param_VarString, (void));
 ORIG(0x4F1000, int, Param_Bool8, (void));
 ORIG(0x4F1010, int, Param_ObjectPos, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1320, void, VarString_Init, (VarString *v));
 ORIG(0x4F1340, void, VarString_Free, (VarString *v));
@@ -72,8 +72,8 @@ void LevelTimer_Open(void)
     TaskType_SetHandler2(gLevelTimerType, 2, LevelTimer_Delete);
     TaskType_SetHandler(gLevelTimerType, Param_GetTableEvent(), LevelTimer_GetParamTable);
     TaskType_SetHandler(gLevelTimerType, Param_GetChangedEvent(), LevelTimer_ParamsChanged);
-    TaskType_SetHandler2(gLevelTimerType, Level_GetEventDA8(), LevelTimer_Register);
-    TaskType_SetHandler2(gLevelTimerType, Level_GetEventDAC(), LevelTimer_Unregister);
+    TaskType_SetHandler2(gLevelTimerType, Level_GetActivateEvent(), LevelTimer_Register);
+    TaskType_SetHandler2(gLevelTimerType, Level_GetDeactivateEvent(), LevelTimer_Unregister);
     gLevelTimerParams = ParamTable_New(5);
     ParamTable_Add(gLevelTimerParams, &p, &p.pos, Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gLevelTimerParams, &p, &p.matrix, Param_Real32x9(), 7, NULL);
@@ -139,7 +139,7 @@ HOOK(0x51BD40, LevelTimer_Unregister);
 void LevelTimer_Delete(LevelTimer *t)
 {
     if (Task_GetId(t) >= 0) {
-        TaskFn fn = gTaskHandlers[Level_GetEventDAC()][t->task.type];
+        TaskFn fn = gTaskHandlers[Level_GetDeactivateEvent()][t->task.type];
 
         if (fn)
             ((void (*)(void *))fn)(t);

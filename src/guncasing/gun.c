@@ -12,7 +12,7 @@ FN_EXTERN(Gun_FillClipHandler);
 FN_EXTERN(Gun_GetAmmoHandler);
 FN_EXTERN(Gun_GetShotSourceHandler);
 FN_EXTERN(Gun_GetTypeHandler);
-FN_EXTERN(Gun_Handler479CA0);
+FN_EXTERN(Gun_UnusedPointsHandler);
 FN_EXTERN(Gun_HudHandler);
 FN_EXTERN(Gun_ReloadHandler);
 FN_EXTERN(Gun_RemoveFromWorldHandler);
@@ -33,7 +33,7 @@ ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x401AE0, Task **, TaskRef_Add, (void *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x413B50, uint8_t, Weapon_GetTypeEvent, (void));
-ORIG(0x413B60, uint8_t, Weapon_GetEventB2, (void));
+ORIG(0x413B60, uint8_t, Weapon_GetUnusedPointsEvent, (void));
 ORIG(0x413BD0, WeaponType *, WeaponType_Find, (int id));
 ORIG(0x413DE0, void *, WeaponType_GetIdEnum, (void));
 ORIG(0x414E20, void, Model_GetPoint, (Vec3d *out, void *obj, int i));
@@ -52,7 +52,7 @@ ORIG(0x460C10, uint8_t, Human_GetEvent1, (void));
 ORIG(0x47B100, uint8_t, GunShot_GetEvent, (void));
 ORIG(0x47B110, Task *, GunShot_New, (void *parent, Task *gun, Task *owner));
 ORIG(0x47B170, void, GunShot_Release, (Task *shots, int unk));
-ORIG(0x47B270, void, GunShot_SetUnk78, (Task *shots, Vec3d *pos));
+ORIG(0x47B270, void, GunShot_SetMuzzlePos, (Task *shots, Vec3d *pos));
 ORIG(0x47CD70, void *, AmmoType_FindByCaliber, (int id));
 ORIG(0x47E6F0, uint8_t, BulletHole_GetEvent, (void));
 ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
@@ -247,7 +247,7 @@ void Gun_Open(void)
     TaskType_SetHandler2(gGunType, Weapon_GetDeselectEvent(), FN(0x479C10, Gun_RemoveFromWorldHandler));
     TaskType_SetHandler(gGunType, Weapon_GetEvent7b(), FN(0x479C20, Gun_DropHandler));
     TaskType_SetHandler(gGunType, Weapon_GetTypeEvent(), FN(0x479C80, Gun_GetTypeHandler));
-    TaskType_SetHandler(gGunType, Weapon_GetEventB2(), FN(0x479CA0, Gun_Handler479CA0));
+    TaskType_SetHandler(gGunType, Weapon_GetUnusedPointsEvent(), FN(0x479CA0, Gun_UnusedPointsHandler));
     TaskType_SetHandler(gGunType, StatusScreen_GetEvent(), FN(0x479D20, Gun_HudHandler));
     TaskType_SetHandler(gGunType, AIDetection_GetEvent0(), FN(0x47A8E0, Gun_CollFilter));
     TaskType_SetHandler(gGunType, GunShot_GetEvent(), FN(0x47A940, Gun_GetShotSourceHandler));
@@ -525,7 +525,7 @@ void Gun_MoveHandler(Gun *g, PartMoveArg *msg)
     g->point.x = g->o.pos.x + g->point.x;
     g->point.y = g->o.pos.y + g->point.y;
     g->point.z = g->o.pos.z + g->point.z;
-    GunShot_SetUnk78(*g->shots, &g->point);
+    GunShot_SetMuzzlePos(*g->shots, &g->point);
 }
 HOOK(0x478A90, Gun_MoveHandler);
 

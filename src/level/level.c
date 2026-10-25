@@ -29,8 +29,8 @@ ORIG(0x4B8B00, int, Script_HasArg, (ScriptArgs *args, int i));
 /* empty in this build */
 ORIG(0x4C1780, void, Debug_Log, (Task *task, const char *text));
 ORIG(0x4CF9D0, void, ModelFile_Free, (void *models));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1230, int, Level_GetEventDB0, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1230, int, Level_GetUnusedNewTaskEvent, (void));
 ORIG(0x4F1A40, void, ParamType_Free, (int type));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
@@ -221,11 +221,11 @@ ScriptValue *Level_NewTask(ScriptValue *out, Task *parent, ScriptArgs *args)
     }
     gLevelTaskNewEnabled = 1;
     if (id >= 0) {
-        slot = Level_GetEventDA8();
+        slot = Level_GetActivateEvent();
         if (HANDLER(slot, task))
             HANDLER(slot, task)(task);
     }
-    slot = Level_GetEventDB0();
+    slot = Level_GetUnusedNewTaskEvent();
     if (HANDLER(slot, task))
         HANDLER(slot, task)(task);
     Script_SetSymbolContext(kTaskNew, task);
@@ -280,16 +280,16 @@ void Level_Shutdown(void)
     ParamType_Free(gParamLevelExpression);
     ParamType_Free(gParamQTaskNote);
     ParamType_Free(gParamBool8);
-    TaskEvent_Free(gLevelEventDA4);
+    TaskEvent_Free(gLevelDebugInfoEvent);
     TaskEvent_Free(gLevelNameEvent);
-    TaskEvent_Free2(gLevelEventDA8);
-    TaskEvent_Free2(gLevelEventDAC);
-    TaskEvent_Free2(gLevelEventDB0);
-    gLevelEventDA4 = 0xFF;
+    TaskEvent_Free2(gLevelActivateEvent);
+    TaskEvent_Free2(gLevelDeactivateEvent);
+    TaskEvent_Free2(gLevelUnusedNewTaskEvent);
+    gLevelDebugInfoEvent = 0xFF;
     gLevelNameEvent = 0xFF;
-    gLevelEventDA8 = 0xFF;
-    gLevelEventDAC = 0xFF;
-    gLevelEventDB0 = 0xFF;
+    gLevelActivateEvent = 0xFF;
+    gLevelDeactivateEvent = 0xFF;
+    gLevelUnusedNewTaskEvent = 0xFF;
     TaskType_Free(gStaticType);
     TaskType_Free(gDynamicType);
     TaskType_Free(gIdleType);

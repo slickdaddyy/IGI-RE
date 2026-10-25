@@ -43,7 +43,7 @@ void InputBox_InsertChar(InputBox *ib, int pos, char c);
 void InputBox_Draw(InputBox *ib);
 void InputBox_GetParams(void *task, void **out);
 void InputBox_Layout(InputBox *ib);
-void InputBox_Forward918(InputBox *ib);
+void InputBox_Save(InputBox *ib);
 void InputBox_Activate(InputBox *ib);
 void InputBox_Deactivate(InputBox *ib);
 
@@ -58,10 +58,10 @@ void InputBox_Init(void)
     TaskType_SetHandler(gInputBoxType, 0, InputBox_Create);
     TaskType_SetHandler(gInputBoxType, Param_GetTableEvent(), InputBox_GetParams);
     TaskType_SetHandler(gInputBoxType, Param_GetChangedEvent(), InputBox_Changed);
-    TaskType_SetHandler2(gInputBoxType, MenuWindow_GetEvent914(), InputBox_Layout);
-    TaskType_SetHandler2(gInputBoxType, MenuWindow_GetEvent918(), InputBox_Forward918);
-    TaskType_SetHandler2(gInputBoxType, Level_GetEventDA8(), InputBox_Activate);
-    TaskType_SetHandler2(gInputBoxType, Level_GetEventDAC(), InputBox_Deactivate);
+    TaskType_SetHandler2(gInputBoxType, MenuWindow_GetLoadEvent(), InputBox_Layout);
+    TaskType_SetHandler2(gInputBoxType, MenuWindow_GetSaveEvent(), InputBox_Save);
+    TaskType_SetHandler2(gInputBoxType, Level_GetActivateEvent(), InputBox_Activate);
+    TaskType_SetHandler2(gInputBoxType, Level_GetDeactivateEvent(), InputBox_Deactivate);
     gInputBoxParams = ParamTable_New(6);
     ParamTable_Add(gInputBoxParams, &ib, &ib.w.w, Param_Int32(), 7, NULL);
     ParamTable_Add(gInputBoxParams, &ib, &ib.maxLength, Param_Int32(), 7, NULL);
@@ -101,7 +101,7 @@ void InputBox_Delete(InputBox *ib)
     VarString_Free(&ib->init);
     VarString_Free(&ib->forward);
     VarString_Free(&ib->enter);
-    CALL_OWN(Level_GetEventDAC(), ib);
+    CALL_OWN(Level_GetDeactivateEvent(), ib);
 }
 HOOK(0x41D330, InputBox_Delete);
 
@@ -315,17 +315,17 @@ void InputBox_Layout(InputBox *ib)
         VarString_EvalReal(&ib->init, ib);
         gInputBoxFilling = NULL;
     }
-    CALL_CHILDREN(&ib->w.task, MenuWindow_GetEvent914);
+    CALL_CHILDREN(&ib->w.task, MenuWindow_GetLoadEvent);
 }
 HOOK(0x41D9E0, InputBox_Layout);
 
-void InputBox_Forward918(InputBox *ib)
+void InputBox_Save(InputBox *ib)
 {
     if (VarString_HasExpr(&ib->forward))
         VarString_EvalReal(&ib->forward, ib);
-    CALL_CHILDREN(&ib->w.task, MenuWindow_GetEvent918);
+    CALL_CHILDREN(&ib->w.task, MenuWindow_GetSaveEvent);
 }
-HOOK(0x41DA90, InputBox_Forward918);
+HOOK(0x41DA90, InputBox_Save);
 
 void InputBox_Activate(InputBox *ib)
 {

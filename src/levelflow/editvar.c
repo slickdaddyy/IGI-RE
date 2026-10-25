@@ -37,8 +37,8 @@ void EditVariable_Init(void)
     TaskType_SetHandler2(gEditVariableType, 3, TASK_NOTHING);
     TaskType_SetHandler(gEditVariableType, Param_GetTableEvent(), EditVariable_GetParams);
     TaskType_SetHandler(gEditVariableType, Param_GetChangedEvent(), EditVariable_Changed);
-    TaskType_SetHandler2(gEditVariableType, Level_GetEventDA8(), EditVariable_Activate);
-    TaskType_SetHandler2(gEditVariableType, Level_GetEventDAC(), EditVariable_Deactivate);
+    TaskType_SetHandler2(gEditVariableType, Level_GetActivateEvent(), EditVariable_Activate);
+    TaskType_SetHandler2(gEditVariableType, Level_GetDeactivateEvent(), EditVariable_Deactivate);
     gEditVariableParams = ParamTable_New(4);
     ParamTable_Add(gEditVariableParams, NULL, FIELD(EditVariable, pos), Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gEditVariableParams, NULL, FIELD(EditVariable, nValue), Param_Int32(), 7, NULL);
@@ -69,7 +69,7 @@ void EditVariable_Delete(EditVariable *v)
 {
     Task_GetId(v);
     if (Task_GetId(v) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), v->task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), v->task.type);
 
         if (fn)
             fn(v);

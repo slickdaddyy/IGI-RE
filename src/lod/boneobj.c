@@ -41,8 +41,8 @@ extern Pool gOrientPool;
 extern Pool gInstPool;
 extern Pool gFadePool;
 extern Pool gNodePool;
-extern int gBoneUnkA54684;
-extern int gBoneUnkA54688;
+extern int gBoneUnused0;
+extern int gBoneUnused1;
 extern float gTicksPerFrame;
 extern int gBoneSmoothAnims;
 
@@ -73,8 +73,8 @@ void BoneObj_Init(void)
     Pool_Init_(&gOrientPool, 0x1C, 0x80, 4);
     Pool_Init_(&gNodePool, 0x2C, 0x80, 4);
     Pool_Init_(&gSourcePool, 0x14, 0x100, 4);
-    gBoneUnkA54684 = 0;
-    gBoneUnkA54688 = 0;
+    gBoneUnused0 = 0;
+    gBoneUnused1 = 0;
     gTicksPerFrame = 0;
 }
 HOOK(0x4D2C30, BoneObj_Init);
@@ -268,5 +268,5 @@ PAD(igb, A542F0, A5465C, 0x4);
 BSS(A542F0) Pool gNodePool;
 BSS(A5467C) Bone *gBoneBuildBones;
 PAD(igb, A5467C, A54680, 0x4);
-BSS(A5467C) int gBoneUnkA54684;
-BSS(A5467C) int gBoneUnkA54688;
+BSS(A5467C) int gBoneUnused0;
+BSS(A5467C) int gBoneUnused1;

@@ -255,7 +255,7 @@ def test_shutdown():
 
 
 def test_small_setters():
-    compare(emu, 0x401F30, "Task_SetUnk567C60", args=(0x1234,), check_eax=False)
+    compare(emu, 0x401F30, "Task_SetUnusedRoot", args=(0x1234,), check_eax=False)
     compare(emu, 0x401F40, "Task_ClearPair", setup=lambda e: (e.alloc(4), e.alloc(4)), check_eax=False)
     compare(emu, 0x401F60, "Task_SetGlobalFlags", args=(0x30,), check_eax=False)
     compare(emu, 0x401F80, "Task_ClearGlobalFlags", setup=lambda e: (e.call(0x401F60, 0xF0), (0x30,))[1], check_eax=False)

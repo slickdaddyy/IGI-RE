@@ -4,8 +4,8 @@
 #include "litmap/litmap.h"
 
 ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F0F70, void *, Param_Real32x9, (void));
 ORIG(0x4F0FC0, void *, Param_VarString, (void));
 ORIG(0x4F0F80, void *, Param_Real64, (void));
@@ -81,8 +81,8 @@ void NoiseQTask_Init(void)
     TaskType_SetHandler2(gNoiseQTaskType, 2, NoiseQTask_Delete);
     TaskType_SetHandler(gNoiseQTaskType, Param_GetTableEvent(), NoiseQTask_GetParams);
     TaskType_SetHandler(gNoiseQTaskType, Param_GetChangedEvent(), NoiseQTask_Changed);
-    TaskType_SetHandler2(gNoiseQTaskType, Level_GetEventDA8(), NoiseQTask_Register);
-    TaskType_SetHandler2(gNoiseQTaskType, Level_GetEventDAC(), NoiseQTask_Unregister);
+    TaskType_SetHandler2(gNoiseQTaskType, Level_GetActivateEvent(), NoiseQTask_Register);
+    TaskType_SetHandler2(gNoiseQTaskType, Level_GetDeactivateEvent(), NoiseQTask_Unregister);
     gNoiseQTaskParams = ParamTable_New(20);
     ParamTable_Add(gNoiseQTaskParams, &t, &t.pos, Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gNoiseQTaskParams, &t, &t.matrix, Param_Real32x9(), 7, NULL);
@@ -153,7 +153,7 @@ HOOK(0x520350, NoiseQTask_Unregister);
 void NoiseQTask_Delete(NoiseQTask *n)
 {
     if (Task_GetId(n) >= 0) {
-        void (*fn)(void *) = TASK_HANDLER(Level_GetEventDAC(), n->task.type);
+        void (*fn)(void *) = TASK_HANDLER(Level_GetDeactivateEvent(), n->task.type);
 
         if (fn)
             fn(n);

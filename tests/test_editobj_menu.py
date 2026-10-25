@@ -162,7 +162,7 @@ def test_set_pointer():
     run(emu, 0x5053B0, "MenuItemTask_SetPointer", setup)
 
 
-@pytest.mark.parametrize("orig,ours", [(0x5053F0, "MenuItemTask_Forward508F70"), (0x505480, "MenuItemTask_Forward508F60"),
+@pytest.mark.parametrize("orig,ours", [(0x5053F0, "MenuItemTask_ForwardSyncEvent1"), (0x505480, "MenuItemTask_ForwardSyncEvent0"),
                                        (0x505510, "MenuItemTask_ForwardList")])
 @pytest.mark.parametrize("n", [0, 3])
 def test_forward(orig, ours, n):

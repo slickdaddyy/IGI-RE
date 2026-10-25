@@ -230,7 +230,7 @@ def test_get_type():
 
 @pytest.mark.parametrize("cw", [0x37F, 0x7F])
 def test_479ca0(cw):
-    run(0x479CA0, "Gun_Handler479CA0", lambda e: (0x5555, e.alloc(24)), cw)
+    run(0x479CA0, "Gun_UnusedPointsHandler", lambda e: (0x5555, e.alloc(24)), cw)
 
 
 # --- HUD ------------------------------------------------------------------

@@ -158,7 +158,7 @@ def test_polylist_new(owner, in_world):
 def test_polylist_set_unk98():
     def setup(e):
         return poly_list(e, random.Random(3)), 0xABCDEF
-    compare(e, 0x49A510, "PolyList_SetUnk98", setup=setup, check_eax=False)
+    compare(e, 0x49A510, "PolyList_SetUnusedMode", setup=setup, check_eax=False)
 
 
 def test_polylist_init():

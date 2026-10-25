@@ -57,8 +57,8 @@ ORIG(0x4BF1F0, int, Parse_Block, (void *lexer, Block **out));
 ORIG(0x4BF8F0, void, Block_Free, (Block *b));
 
 extern void *gQscGenErrorData;
-extern int gQscGenUnkA442B8;
-extern int gQscGenUnkA442BC;
+extern int gQscGenUnused0;
+extern int gQscGenUnused1;
 extern QscGenCallback gQscGenLogFn;
 extern QscGenCallback gQscGenErrorFn;
 extern int gQscGenErrors;
@@ -460,9 +460,9 @@ void QscGen_Init(void)
 {
     gQscGenErrorFn = NULL;
     gQscGenLogFn = NULL;
-    gQscGenUnkA442B8 = 0;
+    gQscGenUnused0 = 0;
     gQscGenErrorData = NULL;
-    gQscGenUnkA442BC = 0;
+    gQscGenUnused1 = 0;
     gQscGenLogData = NULL;
 }
 HOOK(0x4BC920, QscGen_Init);
@@ -471,8 +471,8 @@ HOOK(0x4BC920, QscGen_Init);
 STORE(igb, A43EE0, 1) char store_A43EE0[49][20];
 ALIAS(gQscGenOpText, store_A43EE0, 0);
 BSS(A43EE0) void *gQscGenErrorData;
-BSS(A43EE0) int gQscGenUnkA442B8;
-BSS(A43EE0) int gQscGenUnkA442BC;
+BSS(A43EE0) int gQscGenUnused0;
+BSS(A43EE0) int gQscGenUnused1;
 BSS(A43EE0) QscGenCallback gQscGenLogFn;
 BSS(A43EE0) QscGenCallback gQscGenErrorFn;
 BSS(A43EE0) int gQscGenErrors;

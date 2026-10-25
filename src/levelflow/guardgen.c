@@ -72,8 +72,8 @@ void GuardGenerator_Init(void)
     TaskType_SetHandler2(gGuardGeneratorType, 2, GuardGenerator_Delete);
     TaskType_SetHandler(gGuardGeneratorType, Param_GetTableEvent(), GuardGenerator_GetParams);
     TaskType_SetHandler(gGuardGeneratorType, Param_GetChangedEvent(), GuardGenerator_Changed);
-    TaskType_SetHandler2(gGuardGeneratorType, Level_GetEventDA8(), GuardGenerator_Activate);
-    TaskType_SetHandler2(gGuardGeneratorType, Level_GetEventDAC(), GuardGenerator_Deactivate);
+    TaskType_SetHandler2(gGuardGeneratorType, Level_GetActivateEvent(), GuardGenerator_Activate);
+    TaskType_SetHandler2(gGuardGeneratorType, Level_GetDeactivateEvent(), GuardGenerator_Deactivate);
     TaskType_SetHandler(gGuardGeneratorType, World_GetEvent1(), GuardGenerator_WorldRemove);
     TaskType_SetHandler(gGuardGeneratorType, World_GetEvent0(), GuardGenerator_WorldAdd);
     TaskType_SetHandler(gGuardGeneratorType, RigidDynCubeObj_GetEvent2(), HANDLER_4E0890);
@@ -181,7 +181,7 @@ void GuardGenerator_Delete(GuardGenerator *g)
 {
     GuardGenerator_FreeTree(g);
     if (Task_GetId(g) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), g->task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), g->task.type);
 
         if (fn)
             fn(g);

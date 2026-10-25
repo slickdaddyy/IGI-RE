@@ -34,12 +34,12 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x424850, uint16_t, MenuWindow_GetType, (void));
-ORIG(0x424870, int, MenuWindow_GetEvent914, (void));
-ORIG(0x424880, int, MenuWindow_GetEvent918, (void));
-ORIG(0x424890, int, MenuWindow_GetEvent91C, (void));
+ORIG(0x424870, int, MenuWindow_GetLoadEvent, (void));
+ORIG(0x424880, int, MenuWindow_GetSaveEvent, (void));
+ORIG(0x424890, int, MenuWindow_GetUpdateTextEvent, (void));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4D3710, void, Task_Nothing, (void *task));
 ORIG(0x491CF0, int *, Display_GetMode, (void));
 
@@ -82,6 +82,6 @@ uint16_t MenuManager_GetType(void);
 MenuManager *MenuManager_New(Task *parent, const char *script, char ownsDisplay, char start, char idleTimeout);
 Task *BackgroundFX_New(Task *parent);
 int DialogWindow_IsHorizontal(MenuWindow *w);
-void MenuWindow_ForwardEvent918(Task *t);
+void MenuWindow_ForwardSave(Task *t);
 
 #endif

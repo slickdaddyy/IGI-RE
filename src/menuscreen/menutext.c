@@ -66,7 +66,7 @@ void MenuTextConditional_Init(void)
     TaskType_SetHandler(gMenuTextCondType, 0, MenuTextConditional_Create);
     TaskType_SetHandler(gMenuTextCondType, Param_GetTableEvent(), MenuTextConditional_GetParams);
     TaskType_SetHandler(gMenuTextCondType, Param_GetChangedEvent(), MenuTextConditional_Changed);
-    TaskType_SetHandler2(gMenuTextCondType, MenuWindow_GetEvent91C(), MenuText_UpdateText);
+    TaskType_SetHandler2(gMenuTextCondType, MenuWindow_GetUpdateTextEvent(), MenuText_UpdateText);
     TaskType_SetHandler(gMenuTextCondType, MenuWindow_GetPlaceEvent(), MenuTextConditional_Place);
     gMenuTextCondParams = ParamTable_New(7);
     ParamTable_Add(gMenuTextCondParams, &mt, mt.text, Param_String32(), 7, NULL);
@@ -261,7 +261,7 @@ void MenuText_UpdateText(MenuText *mt)
         mt->w.w = Text_GetWidth(mt->label);
         mt->w.h = Text_GetHeight(mt->label);
     }
-    CALL_CHILDREN(&mt->w.task, MenuWindow_GetEvent91C);
+    CALL_CHILDREN(&mt->w.task, MenuWindow_GetUpdateTextEvent);
 }
 HOOK(0x420BC0, MenuText_UpdateText);
 
@@ -291,7 +291,7 @@ void MenuText_Init(void)
     TaskType_SetHandler(gMenuTextType, 0, MenuText_Create);
     TaskType_SetHandler(gMenuTextType, Param_GetTableEvent(), MenuText_GetParams);
     TaskType_SetHandler(gMenuTextType, Param_GetChangedEvent(), MenuText_Changed);
-    TaskType_SetHandler2(gMenuTextType, MenuWindow_GetEvent91C(), MenuText_UpdateText);
+    TaskType_SetHandler2(gMenuTextType, MenuWindow_GetUpdateTextEvent(), MenuText_UpdateText);
     gMenuTextParams = ParamTable_New(5);
     ParamTable_Add(gMenuTextParams, &mt, mt.text, Param_String32(), 7, NULL);
     ParamTable_Add(gMenuTextParams, &mt, mt.font, Param_String32(), 7, NULL);

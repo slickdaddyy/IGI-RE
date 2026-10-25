@@ -81,7 +81,7 @@ def test_get_params():
     run(emu, 0x41E410, "ToggleBox_GetParams", setup)
 
 
-@pytest.mark.parametrize("orig,ours", [(0x41E420, "ToggleBox_Layout"), (0x41E500, "ToggleBox_Forward918")])
+@pytest.mark.parametrize("orig,ours", [(0x41E420, "ToggleBox_Layout"), (0x41E500, "ToggleBox_Save")])
 @pytest.mark.parametrize("has", [0, 1])
 @pytest.mark.parametrize("value", [0, 1, 7])
 @pytest.mark.parametrize("children", [0, 2])

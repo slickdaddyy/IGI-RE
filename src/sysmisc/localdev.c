@@ -13,7 +13,7 @@ typedef struct LocalFile {
     File file;
     void *fp;
     int error;          /* a read or write came up short */
-    int unkA0;
+    int unused;
     int mode;
     int used;
 } LocalFile;
@@ -44,7 +44,7 @@ ORIG(0x4B1CA0, void, Device_SetSeek, (int dev, void *fn));
 ORIG(0x4B1CC0, void, Device_SetTell, (int dev, void *fn));
 ORIG(0x4B1CE0, void, Device_SetSize, (int dev, void *fn));
 ORIG(0x4B1D00, void, Device_SetError, (int dev, void *fn));
-ORIG(0x4B1D20, void, Device_SetUnk2C, (int dev, void *fn));
+ORIG(0x4B1D20, void, Device_SetUnused, (int dev, void *fn));
 ORIG(0x4B1D40, void, Device_SetEof, (int dev, void *fn));
 ORIG(0x4B1D60, void, Device_SetControl, (int dev, void *fn));
 ORIG(0x4B1D80, void, Device_SetDelete, (int dev, void *fn));
@@ -65,7 +65,7 @@ int LocalDevice_Seek(int dev, LocalFile *f, long offset, int whence);
 int LocalDevice_Size(int dev, LocalFile *f);
 int LocalDevice_Tell(int dev, LocalFile *f);
 int LocalDevice_Eof(int dev, LocalFile *f);
-int LocalDevice_GetUnk2C(int dev, LocalFile *f);
+int LocalDevice_GetUnused(int dev, LocalFile *f);
 int LocalDevice_GetError(int dev, LocalFile *f);
 int LocalDevice_Control(int dev, LocalFile *f, int arg);
 int LocalDevice_GetTime(int dev, FILETIME *time, const char *path);
@@ -103,7 +103,7 @@ int LocalDevice_Init(const char *name)
     Device_SetTell(dev, LocalDevice_Tell);
     Device_SetSize(dev, LocalDevice_Size);
     Device_SetEof(dev, LocalDevice_Eof);
-    Device_SetUnk2C(dev, LocalDevice_GetUnk2C);
+    Device_SetUnused(dev, LocalDevice_GetUnused);
     Device_SetError(dev, LocalDevice_GetError);
     Device_SetControl(dev, LocalDevice_Control);
     Device_SetEnumDir(dev, LocalDevice_EnumDir);
@@ -199,7 +199,7 @@ LocalFile *LocalDevice_Open(int dev, const char *path, int mode)
     f->mode = mode;
     f->used = 1;
     f->error = 0;
-    f->unkA0 = 0;
+    f->unused = 0;
     return f;
 }
 HOOK(0x50A370, LocalDevice_Open);
@@ -279,11 +279,11 @@ int LocalDevice_Eof(int dev, LocalFile *f)
 }
 HOOK(0x50A570, LocalDevice_Eof);
 
-int LocalDevice_GetUnk2C(int dev, LocalFile *f)
+int LocalDevice_GetUnused(int dev, LocalFile *f)
 {
-    return f->unkA0;
+    return f->unused;
 }
-HOOK(0x50A5A0, LocalDevice_GetUnk2C);
+HOOK(0x50A5A0, LocalDevice_GetUnused);
 
 int LocalDevice_GetError(int dev, LocalFile *f)
 {

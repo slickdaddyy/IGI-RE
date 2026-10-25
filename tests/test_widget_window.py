@@ -61,8 +61,8 @@ def with_children(e, n):
     return w
 
 
-@pytest.mark.parametrize("orig,ours", [(0x424280, "MenuWindow_Draw"), (0x424300, "MenuWindow_ForwardEvent914"),
-                                       (0x424380, "MenuWindow_ForwardEvent91C")])
+@pytest.mark.parametrize("orig,ours", [(0x424280, "MenuWindow_Draw"), (0x424300, "MenuWindow_ForwardLoad"),
+                                       (0x424380, "MenuWindow_ForwardUpdateText")])
 @pytest.mark.parametrize("n", [0, 1, 4])
 def test_forward(orig, ours, n):
     run(emu, orig, ours, lambda e: (with_children(e, n),))
@@ -121,9 +121,9 @@ def test_arrange(mode, sizes):
     run(emu, 0x4244B0, "MenuWindow_Arrange", lambda e: (arrange_tree(e, mode, sizes),))
 
 
-@pytest.mark.parametrize("orig,ours", [(0x424850, "MenuWindow_GetType"), (0x424860, "MenuWindow_GetEvent910"),
-                                       (0x424870, "MenuWindow_GetEvent914"), (0x424880, "MenuWindow_GetEvent918"),
-                                       (0x424890, "MenuWindow_GetEvent91C"), (0x424B80, "MenuWindow_GetPlaceEvent")])
+@pytest.mark.parametrize("orig,ours", [(0x424850, "MenuWindow_GetType"), (0x424860, "MenuWindow_GetArrangeEvent"),
+                                       (0x424870, "MenuWindow_GetLoadEvent"), (0x424880, "MenuWindow_GetSaveEvent"),
+                                       (0x424890, "MenuWindow_GetUpdateTextEvent"), (0x424B80, "MenuWindow_GetPlaceEvent")])
 def test_getters(orig, ours):
     mask = {0x424850: 0xFFFF, 0x424B80: 0xFF}.get(orig, 0xFFFFFFFF)
     run(emu, orig, ours, lambda e: None, check_eax=True, eax_mask=mask)

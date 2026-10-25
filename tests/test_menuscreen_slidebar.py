@@ -112,7 +112,7 @@ def test_forward(has, children):
         for i in range(children):
             add_child(e, sb, task(e, 0x54, CHILD if i % 2 else BOX))
         return (sb,)
-    run(emu, 0x420020, "SlideBar_Forward918", setup)
+    run(emu, 0x420020, "SlideBar_Save", setup)
 
 
 @pytest.mark.parametrize("on", [0, 1])

@@ -39,12 +39,12 @@ ORIG(0x4BACA0, void, Script_UnrefSymbol, (void *ref));
 
 extern int gQvmSavedTsp;
 extern int gQvmSavedSp;
-extern int gQvmUnkA442EC;
-extern int gQvmUnkA442F4;
-extern int gQvmUnkA442F8;
-extern int gQvmUnkA442FC;
-extern int gQvmUnkA44300;
-extern int gQvmUnkA44308;
+extern int gQvmUnused0;
+extern int gQvmUnused1;
+extern int gQvmUnused2;
+extern int gQvmUnused3;
+extern int gQvmUnused4;
+extern int gQvmUnused5;
 
 int Qvm_PopString(Qvm *vm, char **out, int *len, int type);
 int Qvm_Pop(Qvm *vm, int *value, int *size, int *type);
@@ -560,12 +560,12 @@ void Qvm_Init(void)
     Qvm_SetHandler(OP_PUSHSI, 0, Qvm_OpPushName);
     Qvm_SetHandler(OP_PUSHSIB, 0, Qvm_OpPushName);
     Qvm_SetHandler(OP_PUSHSIW, 0, Qvm_OpPushName);
-    gQvmUnkA442F8 = 0;
-    gQvmUnkA442EC = 0;
-    gQvmUnkA44300 = 0;
-    gQvmUnkA442FC = 0;
-    gQvmUnkA44308 = 0;
-    gQvmUnkA442F4 = 0;
+    gQvmUnused2 = 0;
+    gQvmUnused0 = 0;
+    gQvmUnused4 = 0;
+    gQvmUnused3 = 0;
+    gQvmUnused5 = 0;
+    gQvmUnused1 = 0;
 }
 HOOK(0x4BD430, Qvm_Init);
 
@@ -796,13 +796,13 @@ bad:
 HOOK(0x4BDA60, Qvm_OpAssign);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-BSS(A442EC) int gQvmUnkA442EC;
+BSS(A442EC) int gQvmUnused0;
 BSS(A442EC) int gQvmSavedSp;
-BSS(A442EC) int gQvmUnkA442F4;
-BSS(A442EC) int gQvmUnkA442F8;
-BSS(A442EC) int gQvmUnkA442FC;
-BSS(A442EC) int gQvmUnkA44300;
+BSS(A442EC) int gQvmUnused1;
+BSS(A442EC) int gQvmUnused2;
+BSS(A442EC) int gQvmUnused3;
+BSS(A442EC) int gQvmUnused4;
 BSS(A442EC) int gQvmSavedTsp;
-BSS(A442EC) int gQvmUnkA44308;
+BSS(A442EC) int gQvmUnused5;
 PAD(igb, A96108, A96108, 0x490);
 ALIAS(gQvmHandlers, pad_A96108, 0);

@@ -34,7 +34,7 @@ logfake(emu, 0x4F1400, 2)  # VarString_Bind
 logfake(emu, 0x4F16C0, 1, effect=lambda e, a: RET.get(("has", a[0]), 1))  # VarString_HasExpr
 floatret(emu, 0x4F16E0, 2, lambda e, a: RET.get(("eval", a[0]), 0.0))  # VarString_EvalReal
 logfake(emu, 0x4F1050, 1, effect=lambda e, a: RET.get("id", 5))  # Task_GetId
-logfake(emu, 0x4F1220, 0, ret=EV_DAC)  # Level_GetEventDAC
+logfake(emu, 0x4F1220, 0, ret=EV_DAC)  # Level_GetDeactivateEvent
 logfake(emu, 0x4F1A70, 0, ret=EV_CHANGED)  # Param_GetChangedEvent
 logfake(emu, 0x4B7EE0, 2, strings=(0,))  # Script_RegisterBool8
 logfake(emu, 0x4B7E80, 2, strings=(0,))  # Script_RegisterInt

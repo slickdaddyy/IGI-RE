@@ -36,7 +36,7 @@ ORIG(0x4EE1B0, float *, PhysicsObjType_GetSize, (PhysType *t));
 ORIG(0x4F4390, void, Vehicle_CollFilter, (void *task, void *arg));
 
 extern uint16_t gPhysicsObjType;
-extern int gPhysicsObjUnkA774B8;
+extern int gPhysicsObjUnusedInt;
 extern uint8_t gPhysicsObjEvents[];
 
 F32(kOne, 0x3F800000);
@@ -71,7 +71,7 @@ void PhysicsObj_Open(void)
     TaskType_SetHandler(gPhysicsObjType, 12, Vehicle_CollFilter);
     TaskType_SetHandler(gPhysicsObjType, PhysicsObj_GetMotionEvent(), PhysicsObj_GetPointMotion);
     TaskType_SetHandler(gPhysicsObjType, PhysicsObjType_GetFreeEvent(), Rotor_FreeDef);
-    gPhysicsObjUnkA774B8 = 0;
+    gPhysicsObjUnusedInt = 0;
 }
 HOOK(0x4FB1B0, PhysicsObj_Open);
 
@@ -685,4 +685,4 @@ STORE(igd, 54E4CC, 1) uint8_t store_54E4CC[156] INIT({255, 255, 255, 0, 80, 104,
 ALIAS(gPhysicsObjEvents, store_54E4CC, 0);
 BSS(A774B0) uint16_t gPhysicsObjType;
 PAD(igb, A774B0, A774B2, 0x6);
-BSS(A774B0) int gPhysicsObjUnkA774B8;
+BSS(A774B0) int gPhysicsObjUnusedInt;

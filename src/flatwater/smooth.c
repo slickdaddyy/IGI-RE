@@ -56,8 +56,8 @@ void SmoothQTask_Open(void)
     TaskType_SetHandler2(gSmoothType, 2, SmoothQTask_Delete);
     TaskType_SetHandler(gSmoothType, Param_GetTableEvent(), SmoothQTask_GetParams);
     TaskType_SetHandler(gSmoothType, Param_GetChangedEvent(), SmoothQTask_ParamsChanged);
-    TaskType_SetHandler2(gSmoothType, Level_GetEventDA8(), SmoothQTask_Activate);
-    TaskType_SetHandler2(gSmoothType, Level_GetEventDAC(), SmoothQTask_Deactivate);
+    TaskType_SetHandler2(gSmoothType, Level_GetActivateEvent(), SmoothQTask_Activate);
+    TaskType_SetHandler2(gSmoothType, Level_GetDeactivateEvent(), SmoothQTask_Deactivate);
     gSmoothParams = ParamTable_New(10);
     ParamTable_Add(gSmoothParams, &t, &t.pos, Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gSmoothParams, &t, &t.m, Param_Real32x9(), 7, NULL);
@@ -123,7 +123,7 @@ HOOK(0x51F270, SmoothQTask_Deactivate);
 void SmoothQTask_Delete(SmoothQTask *t)
 {
     if (Task_GetId(t) >= 0) {
-        TaskFn1 fn = TASK_HANDLER(Level_GetEventDAC(), t->task.type);
+        TaskFn1 fn = TASK_HANDLER(Level_GetDeactivateEvent(), t->task.type);
 
         if (fn)
             fn(t);

@@ -34,8 +34,8 @@ extern int gWaterPrimitive;
 extern Pool gLightPool;
 extern const char gWaterName[];
 extern uint32_t gWaterSplits[];
-extern int gWaterUnk7C;
-extern int gWaterUnk80;
+extern int gWaterUnusedNodeCount;
+extern int gWaterUnusedInt;
 extern TransContext gTransContext;
 
 extern float kZero;
@@ -281,8 +281,8 @@ void WaterMesh_Draw(WaterDrawNode *node)
     WaterNode *c;
 
     memset(gWaterSplits, 0, 20 * sizeof(uint32_t));
-    gWaterUnk7C = 0;
-    gWaterUnk80 = 0;
+    gWaterUnusedNodeCount = 0;
+    gWaterUnusedInt = 0;
     WaterMesh_Light(w, w->lit, up);
     w->cam = gTransContext.pos;
     h = (long double)w->cam.z - w->level;
@@ -490,7 +490,7 @@ __attribute__((noipa)) void WaterMesh_DrawNode(WaterMesh *w, WaterNode *node, in
     (void)y;
     if (!node->visible)
         return;
-    gWaterUnk7C++;
+    gWaterUnusedNodeCount++;
     if ((uint32_t)node->level > (uint32_t)w->unk4AB8 || w->unk4AB8 == 0) {
         fine = 1;
         n = 6;
@@ -649,6 +649,6 @@ DATA(534CB8) double kFinestSize INIT(8388608.0);
 STORE(igd, 54F75C, 1) const char store_54F75C[12] INIT({87, 97, 116, 101, 114, 77, 101, 115, 104});
 ALIAS(gWaterName, store_54F75C, 0);
 BSS(A84578) int gWaterPrimitive;
-BSS(A84578) int gWaterUnk7C;
-BSS(A84578) int gWaterUnk80;
+BSS(A84578) int gWaterUnusedNodeCount;
+BSS(A84578) int gWaterUnusedInt;
 BSS(B041E0) Pool gLightPool;

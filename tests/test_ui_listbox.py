@@ -154,7 +154,7 @@ def test_forward(has, children):
         for i in range(children):
             add_child(e, lb, task(e, 0x54, CHILD if i % 2 else BOX))
         return (lb,)
-    run(emu, 0x41C500, "ScrollListBox_Forward918", setup)
+    run(emu, 0x41C500, "ScrollListBox_Save", setup)
 
 
 @pytest.mark.parametrize("orig,ours", [(0x41C5A0, "ScrollListBox_Activate"), (0x41C600, "ScrollListBox_Deactivate")])

@@ -60,8 +60,8 @@ ORIG(0x4F0FD0, void *, Param_String16, (void));
 ORIG(0x4F1000, void *, Param_Bool8, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1320, void, VarString_Init, (VarString *v));
 ORIG(0x4F1340, void, VarString_Free, (VarString *v));
@@ -239,8 +239,8 @@ void Door_Open(void)
     TaskType_SetHandler(gDoorType, Game_GetEvent3(), FN(0x4EFB00, Param_Three));
     TaskType_SetHandler(gDoorType, Game_GetEvent4(), TASK_NOTHING);
     TaskType_SetHandler(gDoorType, Game_GetEvent6(), Door_DrawIcon);
-    TaskType_SetHandler2(gDoorType, Level_GetEventDA8(), Door_AddSymbols);
-    TaskType_SetHandler2(gDoorType, Level_GetEventDAC(), Door_RemoveSymbols);
+    TaskType_SetHandler2(gDoorType, Level_GetActivateEvent(), Door_AddSymbols);
+    TaskType_SetHandler2(gDoorType, Level_GetDeactivateEvent(), Door_RemoveSymbols);
     TaskType_SetHandler(gDoorType, RigidDynCubeObj_GetEvent4(), Door_MoveHandler);
     TaskType_SetHandler(gDoorType, HumanAI_GetDoorSlot(), Door_FindNearest);
     TaskType_SetHandler(gDoorType, AIGraph_GetEvent(), Door_AIGraphHandler);
@@ -317,7 +317,7 @@ void Door_DeleteHandler(Door *d)
     if (d->o.attached)
         Task_Delete(d->o.attached);
     if (Task_GetId(d) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), d->o.task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), d->o.task.type);
 
         if (fn)
             fn(d);

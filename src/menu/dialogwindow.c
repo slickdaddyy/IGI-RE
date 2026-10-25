@@ -2,7 +2,7 @@
 #include "igi.h"
 #include "menu/menu.h"
 
-FN_EXTERN(MenuWindow_ForwardEvent914);
+FN_EXTERN(MenuWindow_ForwardLoad);
 
 ORIG(0x4B4AF0, void, Draw_RectAZ, (float x, float y, float w, float h, float r, float g, float b, float a, float z,
                                    int flags, int unk));
@@ -23,7 +23,7 @@ _Static_assert(sizeof(DialogWindow) == 0x5C, "DialogWindow");
 extern uint16_t gDialogWindowType;
 extern IntRange gDialogRange;
 extern void *gDialogWindowParams;
-#define MenuWindow_SetLayout (FN(0x424300, MenuWindow_ForwardEvent914))
+#define MenuWindow_SetLayout (FN(0x424300, MenuWindow_ForwardLoad))
 
 void DialogWindow_Run(DialogWindow *dw);
 void DialogWindow_Draw(DialogWindow *dw);
@@ -46,10 +46,10 @@ void DialogWindow_Init(void)
     TaskType_SetHandler(gDialogWindowType, 0, DialogWindow_Create);
     TaskType_SetHandler(gDialogWindowType, Param_GetTableEvent(), DialogWindow_GetParams);
     TaskType_SetHandler(gDialogWindowType, Param_GetChangedEvent(), DialogWindow_Changed);
-    TaskType_SetHandler2(gDialogWindowType, MenuWindow_GetEvent914(), MenuWindow_SetLayout);
-    TaskType_SetHandler2(gDialogWindowType, MenuWindow_GetEvent918(), MenuWindow_ForwardEvent918);
-    TaskType_SetHandler2(gDialogWindowType, Level_GetEventDA8(), Task_Nothing);
-    TaskType_SetHandler2(gDialogWindowType, Level_GetEventDAC(), Task_Nothing);
+    TaskType_SetHandler2(gDialogWindowType, MenuWindow_GetLoadEvent(), MenuWindow_SetLayout);
+    TaskType_SetHandler2(gDialogWindowType, MenuWindow_GetSaveEvent(), MenuWindow_ForwardSave);
+    TaskType_SetHandler2(gDialogWindowType, Level_GetActivateEvent(), Task_Nothing);
+    TaskType_SetHandler2(gDialogWindowType, Level_GetDeactivateEvent(), Task_Nothing);
     gDialogWindowParams = ParamTable_New(5);
     ParamTable_Add(gDialogWindowParams, &dw, &dw.w.x, Param_Int32(), 7, &gDialogRange);
     ParamTable_Add(gDialogWindowParams, &dw, &dw.w.y, Param_Int32(), 7, &gDialogRange);
@@ -72,7 +72,7 @@ HOOK(0x419BE0, DialogWindow_Create);
 
 void DialogWindow_Delete(DialogWindow *dw)
 {
-    ((void (*)(void *))HANDLER(Level_GetEventDAC(), dw->w.task.type))(dw);
+    ((void (*)(void *))HANDLER(Level_GetDeactivateEvent(), dw->w.task.type))(dw);
 }
 HOOK(0x419C20, DialogWindow_Delete);
 
@@ -180,11 +180,11 @@ void DialogWindow_GetParams(void *task, void **out)
 HOOK(0x41A110, DialogWindow_GetParams);
 
 /* used by several menu window types for this event */
-void MenuWindow_ForwardEvent918(Task *t)
+void MenuWindow_ForwardSave(Task *t)
 {
-    CALL_CHILDREN(t, MenuWindow_GetEvent918);
+    CALL_CHILDREN(t, MenuWindow_GetSaveEvent);
 }
-HOOK(0x41A120, MenuWindow_ForwardEvent918);
+HOOK(0x41A120, MenuWindow_ForwardSave);
 
 void DialogWindow_Shutdown(void)
 {

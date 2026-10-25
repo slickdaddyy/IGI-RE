@@ -151,8 +151,8 @@ extern int gTerrainTextures;
 extern float gTerrainBottom;
 extern float gTerrainRight;
 extern int gMorphStart;
-extern char gUnkC3108C;
-extern int gUnkC31090;
+extern char gTerrainUnusedViewSlot;
+extern int gTerrainUnusedCellTotal;
 extern float gTerrainScaleY;
 extern float gTerrainScaleX;
 extern float gTerrainTop;
@@ -384,7 +384,7 @@ static void setup_view(void)
     nx = -(long double)gTransContext.pos.x;
     py = gTransContext.pos.y;
     pz = gTransContext.pos.z;
-    gUnkC3108C = c;
+    gTerrainUnusedViewSlot = c;
     ny = -(long double)py;
     nz = -(long double)pz;
     t0 = gTransContext.matrix.m[2] * nz + gTransContext.matrix.m[1] * ny + gTransContext.matrix.m[0] * nx;
@@ -402,7 +402,7 @@ void TerrainMesh_Update(void)
 {
     setup_view();
     gTerrMeshTotal = 0;
-    gUnkC31090 = 0;
+    gTerrainUnusedCellTotal = 0;
     if (gTerrainCellCount)
         TerrainMesh_Build();
 }
@@ -503,7 +503,7 @@ void TerrainMesh_Build(void)
     int lmTexture = 0, hmShift = 0, count, ci;
     const signed char *hmap = NULL;
 
-    gUnkC31090 += gTerrainCellCount;
+    gTerrainUnusedCellTotal += gTerrainCellCount;
     mats[4].shift = 0;
     count = gTerrainCellCount;
     for (ci = 0; ci < count; ci++) {
@@ -1130,9 +1130,9 @@ ALIAS(gTerrainTileMaps, store_C30080, 0);
 BSS(C30080) float gTerrainBottom;
 BSS(C30080) float gTerrainRight;
 BSS(C30080) int gMorphStart;
-BSS(C30080) char gUnkC3108C;
+BSS(C30080) char gTerrainUnusedViewSlot;
 PAD(igb, C30080, C3108D, 0x3);
-BSS(C30080) int gUnkC31090;
+BSS(C30080) int gTerrainUnusedCellTotal;
 PAD(igb, C30080, C31094, 0xC);
 STORE(igb, C30080, 4) __typeof__(gTerrainFog[0]) store_C310A0[32];
 ALIAS(gTerrainFog, store_C310A0, 0);

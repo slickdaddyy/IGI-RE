@@ -37,8 +37,8 @@ ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F16C0, char, VarString_HasExpr, (VarString *v));
@@ -46,7 +46,7 @@ ORIG(0x4F16E0, long double, VarString_EvalReal, (VarString *v, void *task));
 ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 ORIG(0x419030, int, MenuManager_GetFade, (void *mm));
 ORIG(0x418FB0, MenuInput *, MenuManager_GetInput, (void *mm));
-ORIG(0x41A120, void, MenuWindow_ForwardEvent918, (void *task));
+ORIG(0x41A120, void, MenuWindow_ForwardSave, (void *task));
 ORIG(0x4D3710, void, Task_Nothing, (void *task));
 ORIG(0x4B4E00, void, Draw_Sprite, (Sprite *s, float x, float y, float r, float g, float b, int frame, int unk4,
                                    int unk8));
@@ -57,10 +57,10 @@ ORIG(0x4B7FA0, void, Script_RegisterInt2, (const char *name, int *value));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 
 uint16_t MenuWindow_GetType(void);
-int MenuWindow_GetEvent910(void);
-int MenuWindow_GetEvent914(void);
-int MenuWindow_GetEvent918(void);
-int MenuWindow_GetEvent91C(void);
+int MenuWindow_GetArrangeEvent(void);
+int MenuWindow_GetLoadEvent(void);
+int MenuWindow_GetSaveEvent(void);
+int MenuWindow_GetUpdateTextEvent(void);
 void MenuWindow_HitTest(MenuWindow *w, int x, int y, int width, int height, int *mx, int *my);
 void MenuWindow_DrawEnd(MenuWindow *w, float fill, float alpha, int focused);
 

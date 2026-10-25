@@ -51,7 +51,7 @@ ORIG(0x4E8370, void, TerraDrawTask_New, (void *view, void *world));
 extern uint16_t gComputerType;
 extern Computer *gComputer;
 extern int gComputerMapEnabled;
-extern int gComputerSaved499;
+extern int gComputerSavedRain;
 
 #define Task_HandlerNothing45F920 (FN(0x45F920, Task_FalseHandler))
 
@@ -116,7 +116,7 @@ void Computer_Create(Computer *t)
     Viewport_SetDrawWorld(t->view, 0);
     Viewport_SetList(t->view, 0, 0);
     Viewport_SetFog(t->view, 0);
-    gComputerSaved499 = Rain_IsEnabled();
+    gComputerSavedRain = Rain_IsEnabled();
     Rain_Enable(0);
     root = GameScreen_GetView(*(void **)(Game_Get() + 0x44));
     Viewport_SetDrawWorld(root, 0);
@@ -179,7 +179,7 @@ void Computer_Destroy(Computer *t)
     Viewport_SetDrawWorld(root, 1);
     Viewport_SetList(root, -1, 1);
     Viewport_SetList(root, 0, 1);
-    Rain_Enable(gComputerSaved499);
+    Rain_Enable(gComputerSavedRain);
 }
 HOOK(0x46BF80, Computer_Destroy);
 
@@ -240,7 +240,7 @@ HOOK(0x46C0B0, Computer_IsMapEnabled);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(53FD98) int gComputerMapEnabled INIT(1);
-DATA(53FD98) int gComputerSaved499 INIT(1);
+DATA(53FD98) int gComputerSavedRain INIT(1);
 BSS(5BE2C4) uint16_t gComputerType;
 PAD(igb, 5BE2C4, 5BE2C6, 0x6);
 BSS(5BE2C4) Computer *gComputer;

@@ -84,10 +84,10 @@ void ControlsMenu_Init(void)
     TaskType_SetHandler(gControlsMenuType, 0, ControlsMenu_Create);
     TaskType_SetHandler(gControlsMenuType, Param_GetTableEvent(), ControlsMenu_GetParams);
     TaskType_SetHandler(gControlsMenuType, Param_GetChangedEvent(), ControlsMenu_Changed);
-    TaskType_SetHandler2(gControlsMenuType, Level_GetEventDA8(), ControlsMenu_Activate);
-    TaskType_SetHandler2(gControlsMenuType, Level_GetEventDAC(), ControlsMenu_Deactivate);
-    TaskType_SetHandler2(gControlsMenuType, MenuWindow_GetEvent914(), ControlsMenu_Load);
-    TaskType_SetHandler2(gControlsMenuType, MenuWindow_GetEvent918(), ControlsMenu_Save);
+    TaskType_SetHandler2(gControlsMenuType, Level_GetActivateEvent(), ControlsMenu_Activate);
+    TaskType_SetHandler2(gControlsMenuType, Level_GetDeactivateEvent(), ControlsMenu_Deactivate);
+    TaskType_SetHandler2(gControlsMenuType, MenuWindow_GetLoadEvent(), ControlsMenu_Load);
+    TaskType_SetHandler2(gControlsMenuType, MenuWindow_GetSaveEvent(), ControlsMenu_Save);
     Script_RegisterFunction("ControlsMenu_ConvertFloatFromOffset", ControlsMenu_ConvertFloatFromOffset, NULL, 1);
     Script_RegisterFunction("ControlsMenu_ConvertOffsetFromFloat", ControlsMenu_ConvertOffsetFromFloat, NULL, 1);
 }
@@ -178,7 +178,7 @@ void ControlsMenu_Delete(ControlsMenu *cm)
     int n = Config_GetActionCount();
 
     FREE_TEXTS(cm, n);
-    ((void (*)(void *))HANDLER(Level_GetEventDAC(), cm->w.task.type))(cm);
+    ((void (*)(void *))HANDLER(Level_GetDeactivateEvent(), cm->w.task.type))(cm);
 }
 HOOK(0x423350, ControlsMenu_Delete);
 
@@ -521,7 +521,7 @@ void ControlsMenu_Load(ControlsMenu *cm)
         Text_SetString(cm->names[i], MenuManager_GetString(cm->w.menu, name));
         ControlsMenu_SetBinding(cm, i, key);
     }
-    CALL_CHILDREN(cm, MenuWindow_GetEvent914());
+    CALL_CHILDREN(cm, MenuWindow_GetLoadEvent());
 }
 HOOK(0x423DB0, ControlsMenu_Load);
 
@@ -539,7 +539,7 @@ void ControlsMenu_Save(ControlsMenu *cm)
         k->device = (int)value >> 30 & 3;
         k->key = value & 0x3FFFFFFF;
     }
-    CALL_CHILDREN(cm, MenuWindow_GetEvent918());
+    CALL_CHILDREN(cm, MenuWindow_GetSaveEvent());
 }
 HOOK(0x423EB0, ControlsMenu_Save);
 

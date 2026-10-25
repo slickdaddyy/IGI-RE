@@ -57,7 +57,7 @@ extern uint8_t gGuideMoveEvent;
 extern uint8_t gGuideStartEvent;
 extern void *gSplinePathGuideParams;
 extern float gFrameRate;
-extern int gUnkA8375C;
+extern int gSplineGuideUnusedInt;
 extern void *gSplinePathGuides;
 
 static const double kSecondsPerHour = 3600.0;
@@ -197,7 +197,7 @@ void SplinePathGuide_ParamsChanged(SplinePathGuide *g)
     float v;
     Task *t;
 
-    gUnkA8375C = 0;
+    gSplineGuideUnusedInt = 0;
     if (!(g->start >= kZeroF))
         v = kZeroF;
     else if (g->start > kOneF)
@@ -246,5 +246,5 @@ DATA(54ED50) uint8_t gGuideMoveEvent INIT(255);
 DATA(54ED50) uint8_t gGuideStartEvent INIT(255);
 BSS(A83754) void *gSplinePathGuideParams;
 BSS(A83754) float gFrameRate;
-BSS(A83754) int gUnkA8375C;
+BSS(A83754) int gSplineGuideUnusedInt;
 BSS(A83754) void *gSplinePathGuides;

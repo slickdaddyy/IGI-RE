@@ -169,7 +169,7 @@ def test_request_event():
 
 @pytest.mark.parametrize("orig,ours,args", [
     (0x4027E0, "Flow_Close", ()), (0x4027F0, "Flow_GetType", ()), (0x402870, "Flow_GetFps", ()),
-    (0x402880, "Flow_Get", ()), (0x402890, "Flow_GetUnk20", ()), (0x4028A0, "Flow_SetRequest", (4,)),
+    (0x402880, "Flow_Get", ()), (0x402890, "Flow_GetScreen", ()), (0x4028A0, "Flow_SetRequest", (4,)),
     (0x4028B0, "Flow_GetFrames", ()), (0x4028C0, "Flow_GetRenders", ()), (0x402820, "FramesSet", (25,)),
     (0x4028D0, "Flow_PauseBegin", ()), (0x4028F0, "Flow_PauseEnd", ()),
     (0x402240, "Flow_FocusChanged", (0,)), (0x402240, "Flow_FocusChanged", (1,)),

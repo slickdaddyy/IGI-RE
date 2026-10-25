@@ -134,7 +134,7 @@ extern char gSoldierFemaleAnimSlots[];
 extern char gSoldierFemaleSpeeds[];
 extern void *gSoldierFemaleParams;
 extern uint16_t gSoldierFemaleType;
-extern int gSoldierFemaleUnk5BDA90;
+extern int gSoldierFemaleUnusedInt;
 
 #define ANIM_WALK_CYCLE 0x3F2
 #define ANIM_DEFAULT 6
@@ -624,7 +624,7 @@ void SoldierFemale_Open(void)
     gSoldierFemaleParams = ParamTable_Extend(Human_GetParamTable(), 2);
     ParamTable_Add(gSoldierFemaleParams, &tmp, &tmp.s.model, Param_Int32(), 7, NULL);
     ParamTable_Add(gSoldierFemaleParams, &tmp, &tmp.s.idleAnim, Param_Int32(), 7, NULL);
-    gSoldierFemaleUnk5BDA90 = 0;
+    gSoldierFemaleUnusedInt = 0;
 }
 HOOK(0x454970, SoldierFemale_Open);
 
@@ -793,4 +793,4 @@ ALIAS(gSoldierFemaleSpeeds, store_53E508, 0);
 BSS(5BDA84) void *gSoldierFemaleParams;
 BSS(5BDA84) uint16_t gSoldierFemaleType;
 PAD(igb, 5BDA84, 5BDA8A, 0x6);
-BSS(5BDA84) int gSoldierFemaleUnk5BDA90;
+BSS(5BDA84) int gSoldierFemaleUnusedInt;

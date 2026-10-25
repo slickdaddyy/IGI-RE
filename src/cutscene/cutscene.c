@@ -98,8 +98,8 @@ ORIG(0x4F0FC0, void *, Param_VarString, (void));
 ORIG(0x4F1000, void *, Param_Bool8, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1320, void, VarString_Init, (VarString *v));
 ORIG(0x4F1340, void, VarString_Free, (VarString *v));
@@ -237,8 +237,8 @@ void CutScene_Open(void)
     TaskType_SetHandler2(gCutSceneType, 2, CutScene_DeleteHandler);
     TaskType_SetHandler(gCutSceneType, Param_GetTableEvent(), CutScene_GetParamTableHandler);
     TaskType_SetHandler(gCutSceneType, Param_GetChangedEvent(), CutScene_ParamChangedHandler);
-    TaskType_SetHandler2(gCutSceneType, Level_GetEventDA8(), CutScene_RegisterVarsHandler);
-    TaskType_SetHandler2(gCutSceneType, Level_GetEventDAC(), CutScene_UnregisterVarsHandler);
+    TaskType_SetHandler2(gCutSceneType, Level_GetActivateEvent(), CutScene_RegisterVarsHandler);
+    TaskType_SetHandler2(gCutSceneType, Level_GetDeactivateEvent(), CutScene_UnregisterVarsHandler);
     TaskType_SetHandler(gCutSceneType, Vehicle_GetControlEvent(), CutScene_ControlHandler);
     TaskType_SetHandler(gCutSceneType, Vehicle_GetInputInfoEvent(), CutScene_InputInfoHandler);
     TaskType_SetHandler(gCutSceneType, Vehicle_GetStateSizeEvent(), Task_ReturnZero);
@@ -343,7 +343,7 @@ static void delete_filter(Task **f)
 void CutScene_DeleteHandler(CutScene *c)
 {
     if (Task_GetId(c) >= 0) {
-        TaskFn f = gTaskHandlers[Level_GetEventDAC()][c->task.type];
+        TaskFn f = gTaskHandlers[Level_GetDeactivateEvent()][c->task.type];
 
         if (f)
             ((void (*)(void *))f)(c);

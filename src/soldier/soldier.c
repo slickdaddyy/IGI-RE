@@ -122,7 +122,7 @@ ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 
 extern void *gSoldierParams;
 extern uint16_t gSoldierType;
-extern int gSoldierUnk5BDAC0;
+extern int gSoldierUnusedInt;
 extern HumanStateFn gSoldierStates[];
 extern char gSoldierCombos[];
 extern char gSoldierAnimSlots[];
@@ -730,7 +730,7 @@ void Soldier_Open(void)
     gSoldierParams = ParamTable_Extend(Human_GetParamTable(), 2);
     ParamTable_Add(gSoldierParams, &tmp, &tmp.s.model, Param_Int32(), 7, NULL);
     ParamTable_Add(gSoldierParams, &tmp, &tmp.s.idleAnim, Param_Int32(), 7, NULL);
-    gSoldierUnk5BDAC0 = 0;
+    gSoldierUnusedInt = 0;
 }
 HOOK(0x45CAB0, Soldier_Open);
 
@@ -1155,4 +1155,4 @@ BSS(5BDAB4) void *gSoldierParams;
 PAD(igb, 5BDAB4, 5BDAB8, 0x4);
 BSS(5BDAB4) uint16_t gSoldierType;
 PAD(igb, 5BDAB4, 5BDABE, 0x2);
-BSS(5BDAB4) int gSoldierUnk5BDAC0;
+BSS(5BDAB4) int gSoldierUnusedInt;

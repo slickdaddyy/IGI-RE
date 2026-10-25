@@ -47,7 +47,7 @@ void ListBox_Create(ListBox *lb, void *arg);
 void ListBox_GetParams(void *task, void **out);
 void ListBox_Changed(ListBox *lb, void *arg);
 void ListBox_Layout(ListBox *lb);
-void ListBox_Forward918(ListBox *lb);
+void ListBox_Save(ListBox *lb);
 void ListBox_Activate(ListBox *lb);
 void ListBox_Deactivate(ListBox *lb);
 void ListBox_Clear(ListBox *lb);
@@ -63,10 +63,10 @@ void ListBox_Init(void)
     TaskType_SetHandler(gListBoxType, 0, ListBox_Create);
     TaskType_SetHandler(gListBoxType, Param_GetTableEvent(), ListBox_GetParams);
     TaskType_SetHandler(gListBoxType, Param_GetChangedEvent(), ListBox_Changed);
-    TaskType_SetHandler2(gListBoxType, MenuWindow_GetEvent914(), ListBox_Layout);
-    TaskType_SetHandler2(gListBoxType, MenuWindow_GetEvent918(), ListBox_Forward918);
-    TaskType_SetHandler2(gListBoxType, Level_GetEventDA8(), ListBox_Activate);
-    TaskType_SetHandler2(gListBoxType, Level_GetEventDAC(), ListBox_Deactivate);
+    TaskType_SetHandler2(gListBoxType, MenuWindow_GetLoadEvent(), ListBox_Layout);
+    TaskType_SetHandler2(gListBoxType, MenuWindow_GetSaveEvent(), ListBox_Save);
+    TaskType_SetHandler2(gListBoxType, Level_GetActivateEvent(), ListBox_Activate);
+    TaskType_SetHandler2(gListBoxType, Level_GetDeactivateEvent(), ListBox_Deactivate);
     gListBoxParams = ParamTable_New(7);
     ParamTable_Add(gListBoxParams, &lb, lb.name, Param_String32(), 7, NULL);
     ParamTable_Add(gListBoxParams, &lb, lb.font, Param_String32(), 7, NULL);
@@ -130,7 +130,7 @@ void ListBox_Delete(ListBox *lb)
     VarString_Free(&lb->select);
     VarString_Free(&lb->forward);
     VarString_Free(&lb->action);
-    CALL_OWN(Level_GetEventDAC(), lb);
+    CALL_OWN(Level_GetDeactivateEvent(), lb);
 }
 HOOK(0x41E9D0, ListBox_Delete);
 
@@ -279,16 +279,16 @@ void ListBox_Layout(ListBox *lb)
                 break;
             }
     }
-    CALL_CHILDREN(&lb->w.task, MenuWindow_GetEvent914);
+    CALL_CHILDREN(&lb->w.task, MenuWindow_GetLoadEvent);
 }
 HOOK(0x41F030, ListBox_Layout);
 
-void ListBox_Forward918(ListBox *lb)
+void ListBox_Save(ListBox *lb)
 {
     EVAL(&lb->forward, lb);
-    CALL_CHILDREN(&lb->w.task, MenuWindow_GetEvent918);
+    CALL_CHILDREN(&lb->w.task, MenuWindow_GetSaveEvent);
 }
-HOOK(0x41F140, ListBox_Forward918);
+HOOK(0x41F140, ListBox_Save);
 
 void ListBox_Activate(ListBox *lb)
 {

@@ -13,7 +13,7 @@ ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 extern const float *gShatterColor;
 extern float gShatterSpeed;
 extern uint16_t gShatterType;
-extern int gShatter244;
+extern int gShatterMode;
 extern GlassShatter *gShatterTask;
 extern void *gShatterPolys;
 extern Vec3f gShatterHit;
@@ -38,7 +38,7 @@ void GlassShatter_SpawnFrom(void **model, const Matrix *matrix, const Vec3d *pos
     int i;
 
     (void)force;
-    gShatter244 = 1;
+    gShatterMode = 1;
     mesh = *(TriMesh **)(info + 0x2C);
     if (!mesh->count)
         return;

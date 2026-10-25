@@ -36,9 +36,9 @@ typedef struct Smoke {
     Vec3f dir;
     float pitch;
     float yaw;
-    float unk84;
-    float unk88;
-    float unk8C;
+    float size;
+    float speedMax;
+    float speedMin;
     float spread;
     float radius;
     double rate;
@@ -46,16 +46,16 @@ typedef struct Smoke {
     VarString expr;
     void *ps;
     int count;
-    float unkFC;
-    float unk100;
+    float fadeDelay;
+    float fadeTime;
     Vec3f unk104;
     int blend;
-    float unk114;
+    float grow;
     int sprite;
     float unk11C;
     float unk120;
-    float unk124;
-    float lastUnk124;
+    float level;
+    float lastLevel;
     int unk12C;
     Vec3d local;
     Matrix localMatrix;
@@ -78,18 +78,18 @@ extern char *gSmokeSmoke2;
 extern char *gSmokeSmoke1;
 extern const char *gSmokeKindNames[];
 extern ParamComboList gSmokeKindEnum;
-extern RangeF gSmokeUnk84Range;
+extern RangeF gSmokeSizeRange;
 extern RangeF gSmokeYawRange;
-extern RangeF gSmokeUnk88Range;
+extern RangeF gSmokeSpeedRange;
 extern RangeF gSmokePitchRange;
 extern RangeF gSmokeRadiusRange;
 extern RangeD gSmokeRateRange;
-extern RangeF gSmokeUnk124Range;
-extern RangeF gSmokeUnk114Range;
+extern RangeF gSmokeLevelRange;
+extern RangeF gSmokeGrowRange;
 extern RangeI gSmokeSpriteRange;
 extern RangeI gSmokeCountRange;
 extern RangeI gSmokeBlendRange;
-extern RangeF gSmokeUnkFCRange;
+extern RangeF gSmokeFadeRange;
 
 static const float kTwoPi = 0x1.921fb6p+2f;
 static const float kUnit = 4096.0f;
@@ -128,20 +128,20 @@ void Smoke_Init(void)
 
     gSmokeKindEnum.count = 3;
     gSmokeKindEnum.names = gSmokeKindNames;
-    gSmokeUnk88Range.min = 0.0f;
-    gSmokeUnk88Range.max = 14.6484375f;
+    gSmokeSpeedRange.min = 0.0f;
+    gSmokeSpeedRange.max = 14.6484375f;
     gSmokeRateRange.min = 0.0;
     gSmokeRateRange.max = 150.0;
     gSmokeCountRange.min = 1;
     gSmokeCountRange.max = 255;
-    gSmokeUnkFCRange.min = 0.0f;
-    gSmokeUnkFCRange.max = 4.0f;
+    gSmokeFadeRange.min = 0.0f;
+    gSmokeFadeRange.max = 4.0f;
     gSmokeRadiusRange.min = 0.0f;
     gSmokeRadiusRange.max = 5.0f;
-    gSmokeUnk84Range.min = 0.0f;
-    gSmokeUnk84Range.max = 5.0f;
-    gSmokeUnk114Range.min = -150.0f;
-    gSmokeUnk114Range.max = 150.0f;
+    gSmokeSizeRange.min = 0.0f;
+    gSmokeSizeRange.max = 5.0f;
+    gSmokeGrowRange.min = -150.0f;
+    gSmokeGrowRange.max = 150.0f;
     gSmokeSpriteRange.min = 0;
     gSmokeSpriteRange.max = 3;
     gSmokeBlendRange.min = 0;
@@ -150,8 +150,8 @@ void Smoke_Init(void)
     gSmokePitchRange.max = 0x1.921fb6p+1f;
     gSmokeYawRange.min = -0x1.921fb6p+1f;
     gSmokeYawRange.max = 0x1.921fb6p+1f;
-    gSmokeUnk124Range.min = 0.0f;
-    gSmokeUnk124Range.max = 1.0f;
+    gSmokeLevelRange.min = 0.0f;
+    gSmokeLevelRange.max = 1.0f;
     gSmokeModel = VirModel_Add("1729_01_1");
     gSmokeType = TaskType_New("Smoke", sizeof(Smoke), EditorRigidObj_GetType(), 0);
     TaskType_SetHandler(gSmokeType, 0, Smoke_Create);
@@ -159,8 +159,8 @@ void Smoke_Init(void)
     TaskType_SetHandler2(gSmokeType, 2, Smoke_Delete);
     TaskType_SetHandler(gSmokeType, Param_GetTableEvent(), Smoke_GetParams);
     TaskType_SetHandler(gSmokeType, Param_GetChangedEvent(), Smoke_Changed);
-    TaskType_SetHandler2(gSmokeType, Level_GetEventDA8(), Smoke_Activate);
-    TaskType_SetHandler2(gSmokeType, Level_GetEventDAC(), Smoke_Deactivate);
+    TaskType_SetHandler2(gSmokeType, Level_GetActivateEvent(), Smoke_Activate);
+    TaskType_SetHandler2(gSmokeType, Level_GetDeactivateEvent(), Smoke_Deactivate);
     TaskType_SetHandler(gSmokeType, RigidDynCubeObj_GetEvent4(), Smoke_Move);
     TaskType_SetHandler(gSmokeType, 4, NULL);
     gSmokeParams = ParamTable_New(21);
@@ -170,18 +170,18 @@ void Smoke_Init(void)
     ParamTable_Add(gSmokeParams, &s, &s.count, Param_Int32(), 7, &gSmokeCountRange);
     ParamTable_Add(gSmokeParams, &s, &s.radius, Param_Real32(), 7, &gSmokeRadiusRange);
     ParamTable_Add(gSmokeParams, &s, &s.spread, Param_Angle(), 7, NULL);
-    ParamTable_Add(gSmokeParams, &s, &s.unk88, Param_Real32(), 7, &gSmokeUnk88Range);
-    ParamTable_Add(gSmokeParams, &s, &s.unk8C, Param_Real32(), 7, &gSmokeUnk88Range);
+    ParamTable_Add(gSmokeParams, &s, &s.speedMax, Param_Real32(), 7, &gSmokeSpeedRange);
+    ParamTable_Add(gSmokeParams, &s, &s.speedMin, Param_Real32(), 7, &gSmokeSpeedRange);
     ParamTable_Add(gSmokeParams, &s, &s.unk104, Param_RGB(), 7, NULL);
-    ParamTable_Add(gSmokeParams, &s, &s.unkFC, Param_Real32(), 7, &gSmokeUnkFCRange);
-    ParamTable_Add(gSmokeParams, &s, &s.unk100, Param_Real32(), 7, &gSmokeUnkFCRange);
+    ParamTable_Add(gSmokeParams, &s, &s.fadeDelay, Param_Real32(), 7, &gSmokeFadeRange);
+    ParamTable_Add(gSmokeParams, &s, &s.fadeTime, Param_Real32(), 7, &gSmokeFadeRange);
     ParamTable_Add(gSmokeParams, &s, &s.blend, Param_Int32(), 7, &gSmokeBlendRange);
     ParamTable_Add(gSmokeParams, &s, &s.sprite, Param_Int32(), 7, &gSmokeSpriteRange);
-    ParamTable_Add(gSmokeParams, &s, &s.unk84, Param_Real32(), 7, &gSmokeUnk84Range);
-    ParamTable_Add(gSmokeParams, &s, &s.unk114, Param_Real32(), 7, &gSmokeUnk114Range);
+    ParamTable_Add(gSmokeParams, &s, &s.size, Param_Real32(), 7, &gSmokeSizeRange);
+    ParamTable_Add(gSmokeParams, &s, &s.grow, Param_Real32(), 7, &gSmokeGrowRange);
     ParamTable_Add(gSmokeParams, &s, &s.unk120, Param_Angle(), 7, NULL);
     ParamTable_Add(gSmokeParams, &s, &s.unk11C, Param_Angle(), 7, NULL);
-    ParamTable_Add(gSmokeParams, &s, &s.unk124, Param_Real32(), 7, &gSmokeUnk124Range);
+    ParamTable_Add(gSmokeParams, &s, &s.level, Param_Real32(), 7, &gSmokeLevelRange);
     ParamTable_Add(gSmokeParams, &s, &s.rate, Param_Real64(), 7, &gSmokeRateRange);
     ParamTable_Add(gSmokeParams, &s, &s.expr, Param_VarString(), 7, NULL);
     ParamTable_Add(gSmokeParams, &s, &s.enabled, Param_Bool8(), 7, NULL);
@@ -221,25 +221,25 @@ void Smoke_Create(Smoke *t)
     t->ps = NULL;
     t->pitch = 0.0f;
     t->yaw = 0.0f;
-    t->unk88 = 4.5f;
-    t->unk8C = 6.0f;
+    t->speedMax = 4.5f;
+    t->speedMin = 6.0f;
     t->spread = 0x1.921fb6p-1f;
     t->rate = 30.0;
     t->acc = 0.0f;
     t->count = 100;
-    t->unk100 = 1.0f;
-    t->unkFC = 0.5f;
+    t->fadeTime = 1.0f;
+    t->fadeDelay = 0.5f;
     t->unk104.x = 2.0f;
     t->unk104.y = 2.0f;
     t->unk104.z = 2.0f;
     t->blend = 0;
-    t->unk114 = 0x1.555556p+1f;
-    t->unk84 = 0.5f;
+    t->grow = 0x1.555556p+1f;
+    t->size = 0.5f;
     t->sprite = 3;
     t->unk11C = 0.0f;
     t->unk120 = 0.0f;
-    t->unk124 = 1.0f;
-    t->lastUnk124 = 1.0f;
+    t->level = 1.0f;
+    t->lastLevel = 1.0f;
     t->enabled = 0;
     t->moved = 0;
     VarString_Init(&t->expr);
@@ -278,7 +278,7 @@ HOOK(0x437D00, Smoke_Deactivate);
 void Smoke_Delete(Smoke *t)
 {
     if (Task_GetId(t) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), t->task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), t->task.type);
 
         if (fn)
             ((void (*)(void *))fn)(t);
@@ -321,16 +321,16 @@ void Smoke_Run(Smoke *t)
         float r = Random_Float(gSmokeRandom) * t->radius * kUnit;
         long double f = Random_Float(gSmokeRandom);
         long double x = (t->unk11C - t->unk120) * f + t->unk120;
-        float c = t->unk124;
+        float c = t->level;
         Vec3d p;
         int n1, n2;
 
         p.z = t->pos.z;
         p.x = x87_cos(angle) * r + t->pos.x;
         p.y = x87_sin(angle) * r + t->pos.y;
-        n1 = round_int(t->unk100 * kRate / c);
-        n2 = round_int(t->unkFC * kRate);
-        Particle2D_Emit(ps, &p, &t->dir, t->spread, t->unk8C * kSpeed, t->unk88 * kSpeed, c, x * kPerFrame, 0, kOneF,
+        n1 = round_int(t->fadeTime * kRate / c);
+        n2 = round_int(t->fadeDelay * kRate);
+        Particle2D_Emit(ps, &p, &t->dir, t->spread, t->speedMin * kSpeed, t->speedMax * kSpeed, c, x * kPerFrame, 0, kOneF,
                    n2, n1);
         acc = t->acc - kRate;
         t->acc = acc;
@@ -340,16 +340,16 @@ HOOK(0x437DB0, Smoke_Run);
 
 void Smoke_UpdateLocal(Smoke *t);
 
-/* rebuilds the emitter unless only unk124 changed */
+/* rebuilds the emitter unless only level changed */
 void Smoke_Changed(Smoke *t)
 {
     t->pos = t->origin;
-    if (t->ps && EQ_OR_NAN(t->unk124, t->lastUnk124)) {
+    if (t->ps && EQ_OR_NAN(t->level, t->lastLevel)) {
         Task_Delete(t->ps);
         t->ps = NULL;
     }
     t->moved = 0;
-    t->lastUnk124 = t->unk124;
+    t->lastLevel = t->level;
     if (!t->ps) {
         Matrix id = {{1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f}, 0};
         Matrix rz, rx;
@@ -391,7 +391,7 @@ void Smoke_Changed(Smoke *t)
             sprite = gSmokeSmoke1 + 0x18;
             break;
         }
-        size[0] = size[1] = t->unk84 * kUnit;
+        size[0] = size[1] = t->size * kUnit;
         zero.x = kZeroF;
         zero.y = kZeroF;
         zero.z = kZeroF;
@@ -400,7 +400,7 @@ void Smoke_Changed(Smoke *t)
         scale.z = t->unk104.z * kScale;
         world = Game_GetWorld();
         root = Level_GetDynamic();
-        t->ps = Particle2D_New(root, world, sprite, &zero, &scale, size, kLife, blend, 0, t->unk114 * kPerFrame, 0,
+        t->ps = Particle2D_New(root, world, sprite, &zero, &scale, size, kLife, blend, 0, t->grow * kPerFrame, 0,
                            t->count, 0);
         Particle2D_SetAutoDelete(t->ps, 0);
     }
@@ -457,12 +457,12 @@ DATA(53C114) char str_53C128[6] INIT("Smoke");
 PAD(igd, 53C114, 53C12E, 0x2);
 BSS(57BDC8) char *gSmokeFireball;
 PAD(igb, 57BDC8, 57BDCC, 0x4);
-BSS(57BDC8) RangeF gSmokeUnk84Range;
+BSS(57BDC8) RangeF gSmokeSizeRange;
 BSS(57BDC8) RangeF gSmokeYawRange;
 BSS(57BDC8) ParamComboList gSmokeKindEnum;
 STORE(igb, 57BDC8, 1) char store_57BDE8[16];
 ALIAS(gSmokeRandom, store_57BDE8, 0);
-BSS(57BDC8) RangeF gSmokeUnk88Range;
+BSS(57BDC8) RangeF gSmokeSpeedRange;
 BSS(57BDC8) uint16_t gSmokeType;
 PAD(igb, 57BDC8, 57BE02, 0x6);
 BSS(57BDC8) RangeF gSmokePitchRange;
@@ -470,8 +470,8 @@ BSS(57BDC8) void *gSmokeParams;
 PAD(igb, 57BDC8, 57BE14, 0x4);
 BSS(57BDC8) RangeF gSmokeRadiusRange;
 BSS(57BDC8) RangeD gSmokeRateRange;
-BSS(57BDC8) RangeF gSmokeUnk124Range;
-BSS(57BDC8) RangeF gSmokeUnk114Range;
+BSS(57BDC8) RangeF gSmokeLevelRange;
+BSS(57BDC8) RangeF gSmokeGrowRange;
 BSS(57BDC8) void *gSmokeModel;
 BSS(57BDC8) char *gSmokeBlood;
 BSS(57BDC8) char *gSmokeSmoke2;
@@ -480,4 +480,4 @@ BSS(57BDC8) RangeI gSmokeSpriteRange;
 BSS(57BDC8) RangeI gSmokeCountRange;
 PAD(igb, 57BDC8, 57BE60, 0x8);
 BSS(57BDC8) RangeI gSmokeBlendRange;
-BSS(57BDC8) RangeF gSmokeUnkFCRange;
+BSS(57BDC8) RangeF gSmokeFadeRange;

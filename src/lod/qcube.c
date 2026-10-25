@@ -125,15 +125,15 @@ extern float gQCubeOutsideMin[];
 extern float gQCubeOutsideMax[];
 extern char gNearClipText[];
 extern TransContext gTransContext;
-extern int gUnk543A64;
-extern uint16_t gQCubeUnkC30064;
-extern int gQCubeUnkB97DF0;
-extern int gQCubeUnkA538DC;
-extern int gQCubeUnkA538E0;
-extern int gQCubeUnkB12B40;
-extern uint8_t gQCubeUnkA538D8;
-extern int gQCubeUnkB12BCC;
-extern int gQCubeUnkB16C68;
+extern int gTransContextAutoNear;
+extern uint16_t gQCubeNeverSetType;
+extern int gQCubeUnused4;
+extern int gQCubeUnused1;
+extern int gQCubeUnused2;
+extern int gQCubeUnused3;
+extern uint8_t gQCubeUnused0;
+extern int gQCubeUnusedLastCount;
+extern int gQCubeUnusedCount;
 
 static const float kOne = 1.0f;
 static const double kHalf = 0.5;
@@ -311,7 +311,7 @@ void QCube_DrawObjects(QWorld *w)
         for (i = 0; i < gQCubeCount; i++, e++) {
             float r = gQCubeEnclosingRadius;
 
-            if (e->task->type == gQCubeUnkC30064 ||
+            if (e->task->type == gQCubeNeverSetType ||
                 !((long double)r * r >= Vec3d_DistanceSq(gQCubeEnclosingBox, e->task->pos))) {
                 if (gQCubeDrawOutside) {
                     if (inside)
@@ -366,11 +366,11 @@ void QCube_Begin(QWorld *w)
     int i, d;
 
     gQCubeOut = gQCubeList;
-    gQCubeUnkB97DF0 = -1;
-    gQCubeUnkA538DC = 0;
-    gQCubeUnkA538E0 = 0;
+    gQCubeUnused4 = -1;
+    gQCubeUnused1 = 0;
+    gQCubeUnused2 = 0;
     gQCubeCount = 0;
-    gQCubeUnkB12B40 = 0;
+    gQCubeUnused3 = 0;
     gQCubeWorld = w;
     for (i = 0; i < 3; i++)
         gQCubeOrigin[i] = w->origin[i];
@@ -378,7 +378,7 @@ void QCube_Begin(QWorld *w)
         gQCubeOriginF[i] = w->origin[i];
     for (i = 0; i < 3; i++)
         gQCubeOriginD[i] = w->origin[i];
-    gQCubeUnkA538D8 = 0;
+    gQCubeUnused0 = 0;
     if (gTransContext.fov > kOne)
         d = gQCubeDetail;
     else
@@ -395,8 +395,8 @@ void QCube_Render(QWorld *w, const char *flags, int full)
 {
     int i;
 
-    gQCubeUnkB12BCC = gQCubeUnkB16C68;
-    gQCubeUnkB16C68 = 0;
+    gQCubeUnusedLastCount = gQCubeUnusedCount;
+    gQCubeUnusedCount = 0;
     if (!w->ready) {
         TerrainMesh_SetupLighting(w, 0);
         w->ready = 1;
@@ -495,7 +495,7 @@ void QCube_UpdateNearPlane(QWorld *w, const char *flags)
     arg.zbuffer = 0;
     if (gRenderModeCurrent.methods[TransContext_GetNearClipMethod()])
         gRenderModeCurrent.methods[TransContext_GetNearClipMethod()](&arg);
-    if (!arg.zbuffer || !gUnk543A64)
+    if (!arg.zbuffer || !gTransContextAutoNear)
         return;
     nearq[0] = 0;
     nearq[1] = 0;
@@ -629,20 +629,20 @@ ALIAS(gQCubeNeighbourBits, store_A50FFC, 0);
 BSS(A538CC) int gQCubeInside;
 BSS(A538CC) QTask *gQCubeEnclosing;
 BSS(A538CC) int gViewSector;
-BSS(A538CC) uint8_t gQCubeUnkA538D8;
+BSS(A538CC) uint8_t gQCubeUnused0;
 PAD(igb, A538CC, A538D9, 0x3);
-BSS(A538CC) int gQCubeUnkA538DC;
-BSS(A538CC) int gQCubeUnkA538E0;
+BSS(A538CC) int gQCubeUnused1;
+BSS(A538CC) int gQCubeUnused2;
 BSS(A538CC) QCallback *gQCubeCallbacks;
 BSS(B04264) float gQCubeEnclosingRadius;
 STORE(igb, B04340, 4) __typeof__(gQCubeCache[0]) store_B04340[2048];
 ALIAS(gQCubeCache, store_B04340, 0);
 STORE(igb, B04340, 1) uint8_t store_B12340[8][256];
 ALIAS(gQCubeBitPerm, store_B12340, 0);
-BSS(B04340) int gQCubeUnkB12B40;
-BSS(B12BCC) int gQCubeUnkB12BCC;
+BSS(B04340) int gQCubeUnused3;
+BSS(B12BCC) int gQCubeUnusedLastCount;
 BSS(B12C20) int gQCubeCount;
-BSS(B16C68) int gQCubeUnkB16C68;
+BSS(B16C68) int gQCubeUnusedCount;
 STORE(igb, B16C70, 4) float store_B16C70[4];
 ALIAS(gQCubeOriginF, store_B16C70, 0);
 STORE(igb, B16C70, 8) double store_B16C80[3];
@@ -651,8 +651,8 @@ BSS(B16C70) QEntry *gQCubeList;
 BSS(B16C70) int gTerrainMeshCount;
 BSS(B16C70) QWorld *gQCubeWorld;
 BSS(B16C70) int gTerrainCellCount;
-BSS(B97DF0) int gQCubeUnkB97DF0;
+BSS(B97DF0) int gQCubeUnused4;
 STORE(igb, C103A0, 1) char store_C103A0[100000];
 ALIAS(gNearClipText, store_C103A0, 0);
-BSS(C30064) uint16_t gQCubeUnkC30064;
+BSS(C30064) uint16_t gQCubeNeverSetType;
 PAD(igb, C30064, C30066, 0x2);

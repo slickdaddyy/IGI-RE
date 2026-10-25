@@ -135,7 +135,7 @@ def test_get_params():
     run(emu, 0x41D9D0, "InputBox_GetParams", setup)
 
 
-@pytest.mark.parametrize("orig,ours", [(0x41D9E0, "InputBox_Layout"), (0x41DA90, "InputBox_Forward918")])
+@pytest.mark.parametrize("orig,ours", [(0x41D9E0, "InputBox_Layout"), (0x41DA90, "InputBox_Save")])
 @pytest.mark.parametrize("has", [0, 1])
 @pytest.mark.parametrize("children", [0, 2])
 def test_layout(orig, ours, has, children):

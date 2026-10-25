@@ -88,9 +88,9 @@ def test_task_note(addr, name, case):
 
 
 @pytest.mark.parametrize("addr,name,mask", [
-    (0x4F11F0, "Level_GetEventDA4", 0xFF), (0x4F1200, "Level_GetNameEvent", 0xFF),
-    (0x4F1210, "Level_GetEventDA8", 0xFFFFFFFF), (0x4F1220, "Level_GetEventDAC", 0xFFFFFFFF),
-    (0x4F1230, "Level_GetEventDB0", 0xFFFFFFFF), (0x4F17C0, "Level_Get", 0xFFFFFFFF)])
+    (0x4F11F0, "Level_GetDebugInfoEvent", 0xFF), (0x4F1200, "Level_GetNameEvent", 0xFF),
+    (0x4F1210, "Level_GetActivateEvent", 0xFFFFFFFF), (0x4F1220, "Level_GetDeactivateEvent", 0xFFFFFFFF),
+    (0x4F1230, "Level_GetUnusedNewTaskEvent", 0xFFFFFFFF), (0x4F17C0, "Level_Get", 0xFFFFFFFF)])
 def test_getters(addr, name, mask):
     def setup(e):
         e.write(0x54DDA4, bytes(range(0x91, 0x91 + 16)))

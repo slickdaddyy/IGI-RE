@@ -85,8 +85,8 @@ ORIG(0x4F0FD0, void *, Param_String16, (void));
 ORIG(0x4F1000, void *, Param_Bool8, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1320, void, VarString_Init, (VarString *v));
 ORIG(0x4F1340, void, VarString_Free, (VarString *v));
 ORIG(0x4F16C0, char, VarString_HasExpr, (VarString *v));
@@ -255,8 +255,8 @@ void Car_Init(void)
     TaskType_SetHandler(gCarType, ComputerMap_GetSelectEvent(), TASK_HANDLER_4E4280);
     TaskType_SetHandler(gCarType, AIDetection_GetEvent2(), CAR_HANDLER_42FC70);
     TaskType_SetHandler(gCarType, World_GetEvent1(), CAR_HANDLER_42FC80);
-    TaskType_SetHandler2(gCarType, Level_GetEventDA8(), CAR_HANDLER_42FCE0);
-    TaskType_SetHandler2(gCarType, Level_GetEventDAC(), CAR_HANDLER_42FD40);
+    TaskType_SetHandler2(gCarType, Level_GetActivateEvent(), CAR_HANDLER_42FCE0);
+    TaskType_SetHandler2(gCarType, Level_GetDeactivateEvent(), CAR_HANDLER_42FD40);
     gCarParams = ParamTable_New(13);
     gCarRange[0] = 0;
     gCarRange[1] = 1000;
@@ -462,7 +462,7 @@ void Car_Delete(Car *o)
     if (o->sound_params)
         QTaskList_Free(o->sound_params);
     if (Task_GetId(o) >= 0) {
-        TaskFn fn = ((TaskFn *)gTaskHandlers)[Level_GetEventDAC() * 0x180 + o->v.task.type];
+        TaskFn fn = ((TaskFn *)gTaskHandlers)[Level_GetDeactivateEvent() * 0x180 + o->v.task.type];
 
         if (fn)
             ((void (*)(void *))fn)(o);

@@ -95,7 +95,7 @@ ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 
 extern uint16_t gSoldierRPGType;
 extern void *gSoldierRPGList;
-extern int gSoldierRPGUnk;
+extern int gSoldierRPGUnusedInt;
 extern SoldierStateFn gSoldierRPGStates[];
 extern char gSoldierRPGCombos[];
 extern char gSoldierRPGAnimSlots[];
@@ -607,7 +607,7 @@ void SoldierRPG_Open(void)
        of the two pointers is kept */
     ParamTable_Add(gSoldierRPGList, NULL, FIELD(model), Param_Int32(), 7, NULL);
     ParamTable_Add(gSoldierRPGList, NULL, FIELD(idleAnim), Param_Int32(), 7, NULL);
-    gSoldierRPGUnk = 0;
+    gSoldierRPGUnusedInt = 0;
 }
 HOOK(0x456AD0, SoldierRPG_Open);
 
@@ -942,4 +942,4 @@ BSS(5BDA94) uint16_t gSoldierRPGType;
 PAD(igb, 5BDA94, 5BDA96, 0x2);
 BSS(5BDA94) void *gSoldierRPGList;
 PAD(igb, 5BDA94, 5BDA9C, 0x4);
-BSS(5BDA94) int gSoldierRPGUnk;
+BSS(5BDA94) int gSoldierRPGUnusedInt;

@@ -28,7 +28,7 @@ ORIG(0x4E9500, void, GlowTask_New, (Task *view));
 
 extern uint16_t gGameScreenType;
 extern Task *gGameStatusScreen;
-extern char gUnk5C8E00;
+extern char gGameScreenSmallMode;
 
 void GameScreen_Create(GameScreen *s);
 
@@ -48,7 +48,7 @@ void GameScreen_Create(GameScreen *s)
     char *game;
     Task *v;
 
-    if (gUnk5C8E00) {
+    if (gGameScreenSmallMode) {
         h = 0.7f;
         w = 0.7f;
         y = 0.3f;
@@ -94,5 +94,5 @@ BSS(5C8A20) Task *gGameStatusScreen;
 PAD(igb, 5C8A20, 5C8A24, 0x4);
 BSS(5C8A20) uint16_t gGameScreenType;
 PAD(igb, 5C8A20, 5C8A2A, 0x2);
-BSS(5C8E00) char gUnk5C8E00;
+BSS(5C8E00) char gGameScreenSmallMode;
 PAD(igb, 5C8E00, 5C8E01, 0x3);

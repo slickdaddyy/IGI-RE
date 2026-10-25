@@ -147,11 +147,11 @@ int AppContext_GetDebugText(void)
 }
 HOOK(0x48F1F0, AppContext_GetDebugText);
 
-void AppContext_SetUnk44(int v)
+void AppContext_SetUnused44(int v)
 {
-    gApp.unk44 = v;
+    gApp.unused44 = v;
 }
-HOOK(0x48F200, AppContext_SetUnk44);
+HOOK(0x48F200, AppContext_SetUnused44);
 
 void AppContext_SetPlayIntro(int on)
 {
@@ -201,17 +201,17 @@ void AppContext_SetWinInput(int on)
 }
 HOOK(0x48F280, AppContext_SetWinInput);
 
-void AppContext_SetUnk4C(int v)
+void AppContext_SetUnused4C(int v)
 {
-    gApp.unk4C = v;
+    gApp.unused4C = v;
 }
-HOOK(0x48F290, AppContext_SetUnk4C);
+HOOK(0x48F290, AppContext_SetUnused4C);
 
-void AppContext_SetUnk50(int v)
+void AppContext_SetUnused50(int v)
 {
-    gApp.unk50 = v;
+    gApp.unused50 = v;
 }
-HOOK(0x48F2A0, AppContext_SetUnk50);
+HOOK(0x48F2A0, AppContext_SetUnused50);
 
 void AppContext_SetGerman(int on)
 {

@@ -22,7 +22,7 @@ ORIG(0x5098F0, int, File_CompareTime, (const int *a, const int *b));
 
 extern Pool gResourcePool;
 extern List gResourceList;
-extern int gResourceUnk;
+extern int gResourceUnusedInt;
 extern char gMemberName[];
 
 static Resource *Pool_New(void)
@@ -222,7 +222,7 @@ void Resource_Init(void)
     gResourceList.tailpred = (Node *)&gResourceList;
     gResourceList.tail = NULL;
     Pool_Init(&gResourcePool, sizeof(Resource), 10000, 0);
-    gResourceUnk = 0;
+    gResourceUnusedInt = 0;
 }
 HOOK(0x4B5E70, Resource_Init);
 
@@ -446,7 +446,7 @@ int Resource_Find(const char *name)
 HOOK(0x4B64E0, Resource_Find);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-BSS(943B90) int gResourceUnk;
+BSS(943B90) int gResourceUnusedInt;
 STORE(igb, 943C20, 1) char store_943C20[512];
 ALIAS(gMemberName, store_943C20, 0);
 BSS(943C20) Pool gResourcePool;

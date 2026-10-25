@@ -61,4 +61,4 @@ def test_close_new_set():
         em.write(v, f64(1.5, -2.25, 3e9) + struct.pack("<f", 7.5))
         return em.alloc(0x100), v
     check(e, fk, 0x472630, "BinocularOverlay_SetPos", setup=setup2)
-    check(e, fk, 0x472650, "BinocularOverlay_SetUnk7C", setup=setup2)
+    check(e, fk, 0x472650, "BinocularOverlay_SetDir", setup=setup2)

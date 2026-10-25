@@ -80,11 +80,11 @@ void BinocularOverlay_SetPos(BinocularOverlay *o, const Vec3d *pos)
 }
 HOOK(0x472630, BinocularOverlay_SetPos);
 
-void BinocularOverlay_SetUnk7C(BinocularOverlay *o, const Vec3f *v)
+void BinocularOverlay_SetDir(BinocularOverlay *o, const Vec3f *v)
 {
     o->dir = *v;
 }
-HOOK(0x472650, BinocularOverlay_SetUnk7C);
+HOOK(0x472650, BinocularOverlay_SetDir);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(5BE348) void *gBinocularHolderParams;

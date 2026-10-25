@@ -103,8 +103,8 @@ void AlarmLight_Init(void)
     TaskType_SetHandler(gAlarmLightType, Param_GetChangedEvent(), AlarmLight_Changed);
     TaskType_SetHandler(gAlarmLightType, Game_GetEvent9(), AlarmLight_Hit);
     TaskType_SetHandler(gAlarmLightType, Game_GetEvent11(), AlarmLight_Blast);
-    TaskType_SetHandler2(gAlarmLightType, Level_GetEventDA8(), AlarmLight_Activate);
-    TaskType_SetHandler2(gAlarmLightType, Level_GetEventDAC(), AlarmLight_Deactivate);
+    TaskType_SetHandler2(gAlarmLightType, Level_GetActivateEvent(), AlarmLight_Activate);
+    TaskType_SetHandler2(gAlarmLightType, Level_GetDeactivateEvent(), AlarmLight_Deactivate);
     Script_RegisterConstant("TASKTYPE_ALARMLIGHT", gAlarmLightType);
     gAlarmLightParams = ParamTable_New(8);
     ParamTable_Add(gAlarmLightParams, &l, &l.place, Param_ObjectPos(), 7, NULL);

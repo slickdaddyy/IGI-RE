@@ -71,8 +71,8 @@ void RainEffect_Init(void)
     TaskType_SetHandler(gRainEffectType, Param_GetTableEvent(), RainEffect_GetParams);
     TaskType_SetHandler(gRainEffectType, Param_GetChangedEvent(), RainEffect_Changed);
     TaskType_SetHandler2(gRainEffectType, 1, RainEffect_Run);
-    TaskType_SetHandler2(gRainEffectType, Level_GetEventDA8(), TASK_NOTHING);
-    TaskType_SetHandler2(gRainEffectType, Level_GetEventDAC(), TASK_NOTHING);
+    TaskType_SetHandler2(gRainEffectType, Level_GetActivateEvent(), TASK_NOTHING);
+    TaskType_SetHandler2(gRainEffectType, Level_GetDeactivateEvent(), TASK_NOTHING);
     gRainEffectParams = ParamTable_New(5);
     ParamTable_Add(gRainEffectParams, &r, &r.unk24, Param_Bool8(), 7, NULL);
     ParamTable_Add(gRainEffectParams, &r, &r.unk28, Param_Real32(), 7, &gRainSizeRange);
@@ -111,7 +111,7 @@ void RainEffect_Delete(RainEffect *t)
 
     Rain_Free(t->rain, world);
     if (Task_GetId(t) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), t->task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), t->task.type);
 
         if (fn)
             ((void (*)(void *))fn)(t);

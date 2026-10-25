@@ -33,7 +33,7 @@ ORIG(0x416A70, int, Game_GetPlayer, (int i));
 ORIG(0x416D50, char, Game_IsPaused, (void));
 ORIG(0x416D60, void, Game_SetPaused, (char on));
 ORIG(0x417590, void, MenuManager_Refresh, (MenuManager *mm, int all));
-ORIG(0x417660, void, MenuManager_SendEvent910, (MenuManager *mm, void *window));
+ORIG(0x417660, void, MenuManager_ArrangeWindow, (MenuManager *mm, void *window));
 ORIG(0x424E40, void, Cursor_SetSprite, (Task *pointer, Sprite *sprite));
 ORIG(0x424E50, void, Cursor_GetState, (Task *pointer, int *x, int *y, int *buttons, int *prev));
 ORIG(0x463170, char, Human_IsDead, (int unk));
@@ -161,7 +161,7 @@ void MenuManager_Delete(MenuManager *mm)
         FramesSet(mm->savedFrames);
     }
     if (Task_GetId(mm) >= 0) {
-        fn = HANDLER(Level_GetEventDAC(), mm->task.type);
+        fn = HANDLER(Level_GetDeactivateEvent(), mm->task.type);
         if (fn)
             ((void (*)(void *))fn)(mm);
     }
@@ -232,7 +232,7 @@ void MenuManager_Update(MenuManager *mm, const char *reload)
     if (reload && *reload)
         MenuManager_LoadResources(mm);
     else
-        MenuManager_SendEvent910(mm, mm->screenTask);
+        MenuManager_ArrangeWindow(mm, mm->screenTask);
     Cursor_SetSprite(mm->pointer, MenuManager_FindSprite(mm, "pointer.spr"));
     mm->language = Profile_GetLanguage();
 }
@@ -570,7 +570,7 @@ void MenuManager_OpenScreen(MenuManager *mm, int screen, int checkLanguage)
     mm->screenTask = Task_FindById(screen);
     if (!mm->screenTask)
         return;
-    MenuManager_SendEvent910(mm, mm->screenTask);
+    MenuManager_ArrangeWindow(mm, mm->screenTask);
     if (checkLanguage)
         MenuManager_CheckLanguage(mm);
     MenuManager_CollectItems(mm, mm->screenTask);
@@ -587,7 +587,7 @@ void MenuManager_CheckLanguage(MenuManager *mm)
 {
     int language = mm->language;
     MenuWindow *w = mm->screenTask;
-    TaskFn fn = HANDLER(MenuWindow_GetEvent914(), w->task.type);
+    TaskFn fn = HANDLER(MenuWindow_GetLoadEvent(), w->task.type);
 
     if (fn)
         ((void (*)(void *))fn)(w);
@@ -630,10 +630,10 @@ void MenuManager_OpenPopup(MenuManager *mm)
     w = mm->popupTask = Task_FindById(mm->popup);
     if (!w)
         return;
-    fn = HANDLER(MenuWindow_GetEvent914(), w->task.type);
+    fn = HANDLER(MenuWindow_GetLoadEvent(), w->task.type);
     if (fn)
         ((void (*)(void *))fn)(w);
-    MenuManager_SendEvent910(mm, mm->popupTask);
+    MenuManager_ArrangeWindow(mm, mm->popupTask);
     MenuManager_CollectItems(mm, mm->popupTask);
     mm->input.pressed = 0;
     mm->input.released = 0;
@@ -650,7 +650,7 @@ void MenuManager_ClosePopup(MenuManager *mm)
         return;
     mm->popupTask = NULL;
     if (mm->screenTask) {
-        MenuManager_SendEvent910(mm, mm->screenTask);
+        MenuManager_ArrangeWindow(mm, mm->screenTask);
         MenuManager_CollectItems(mm, mm->screenTask);
     }
 }
@@ -925,7 +925,7 @@ HOOK(0x419070, MenuExpr_Eval);
 void MenuManager_RefreshScreen(MenuManager *mm)
 {
     if (mm->screenTask)
-        MenuManager_SendEvent910(mm, mm->screenTask);
+        MenuManager_ArrangeWindow(mm, mm->screenTask);
 }
 HOOK(0x419090, MenuManager_RefreshScreen);
 

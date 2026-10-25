@@ -59,8 +59,8 @@ void ModelViewBox_Init(void)
     TaskType_SetHandler(gModelViewBoxType, 0, ModelViewBox_Create);
     TaskType_SetHandler(gModelViewBoxType, Param_GetTableEvent(), ModelViewBox_GetParams);
     TaskType_SetHandler(gModelViewBoxType, Param_GetChangedEvent(), ModelViewBox_Changed);
-    TaskType_SetHandler2(gModelViewBoxType, Level_GetEventDA8(), ModelViewBox_Activate);
-    TaskType_SetHandler2(gModelViewBoxType, Level_GetEventDAC(), ModelViewBox_Deactivate);
+    TaskType_SetHandler2(gModelViewBoxType, Level_GetActivateEvent(), ModelViewBox_Activate);
+    TaskType_SetHandler2(gModelViewBoxType, Level_GetDeactivateEvent(), ModelViewBox_Deactivate);
     gModelViewBoxRange.min = 0;
     gModelViewBoxRange.max = 640;
     gModelViewBoxParams = ParamTable_New(2);
@@ -104,7 +104,7 @@ void ModelViewBox_Delete(ModelViewBox *mv)
     Task_Delete(mv->object);
     Task_Delete(mv->view);
     World_Free(mv->world);
-    ((void (*)(void *))HANDLER(Level_GetEventDAC(), mv->w.task.type))(mv);
+    ((void (*)(void *))HANDLER(Level_GetDeactivateEvent(), mv->w.task.type))(mv);
 }
 HOOK(0x422DF0, ModelViewBox_Delete);
 

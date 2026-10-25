@@ -22,8 +22,8 @@ ORIG(0x5210C0, const char *, Lightmap_GetDir, (void));
 ORIG(0x52D440, void, DateTime_Get, (int *time));
 ORIG(0x52D630, int, DateTime_Compare, (const int *a, const int *b));
 
-extern int gLightmapCountA839F4;
-extern int gLightmapCountA83B4C;
+extern int gLightmapFlaggedTexelCount;
+extern int gLightmapTexelCount;
 extern int gLightmapBuilt;
 
 #define LIGHTMAP_MAGIC 0x3DF5C28F
@@ -81,8 +81,8 @@ Lightmaps *Lightmap_BuildLod(void *lodp, int lodIndex, float scale, const char *
                     px += n * 4;
                     LightmapTex_Alloc(t);
                 }
-                gLightmapCountA83B4C += file->texels;
-                gLightmapCountA839F4 += file->texels2;
+                gLightmapTexelCount += file->texels;
+                gLightmapFlaggedTexelCount += file->texels2;
                 return file;
             }
         } else {
@@ -125,7 +125,7 @@ Lightmaps *Lightmap_BuildLod(void *lodp, int lodIndex, float scale, const char *
         ti->positions = Mem_Alloc(t->height * t->width * 12, 4);
         ti->unk14 = Mem_Alloc(t->height * t->width, 4);
         ti->unk18 = Mem_Alloc(t->height * t->width, 4);
-        ti->firstTexel = gLightmapCountA83B4C;
+        ti->firstTexel = gLightmapTexelCount;
         ti->litCount = 0;
 
         k = 0;
@@ -366,14 +366,14 @@ Lightmaps *Lightmap_BuildLod(void *lodp, int lodIndex, float scale, const char *
                     chunk = foundChunk;
                 }
                 if (!LE(ti->weights[k], 0)) {
-                    ti->texelIds[k] = gLightmapCountA83B4C;
+                    ti->texelIds[k] = gLightmapTexelCount;
                     ti->unk14[k] = chunk->unk1E;
                     ti->unk18[k] = chunk->unk10;
                     if (chunk->unk1E && !lodIndex) {
-                        gLightmapCountA839F4++;
+                        gLightmapFlaggedTexelCount++;
                         lm->texels2++;
                     }
-                    gLightmapCountA83B4C++;
+                    gLightmapTexelCount++;
                     lm->texels++;
                     ti->litCount++;
                 } else {
@@ -448,4 +448,4 @@ Lightmaps *Lightmap_BuildLod(void *lodp, int lodIndex, float scale, const char *
 HOOK(0x523D40, Lightmap_BuildLod);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-BSS(A83B4C) int gLightmapCountA83B4C;
+BSS(A83B4C) int gLightmapTexelCount;

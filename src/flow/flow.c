@@ -63,7 +63,7 @@ extern int gFlowPauseDepth;
 extern void (* gTaskHandlers[][TASK_MAX_TYPES])(Task *);
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern char gUnk5C8E00;
+extern char gGameScreenSmallMode;
 extern int gCollLineCalls;
 extern int gCollLineCount;
 extern int gCollSightCalls;
@@ -95,7 +95,7 @@ void Flow_CreateHandler(Flow *flow)
 
     gFlow = flow;
     gFlow->root = Task_New(NULL, Task_GetRootType(), NULL);
-    Task_SetUnk567C60((int)gFlow->root);
+    Task_SetUnusedRoot((int)gFlow->root);
     FramesSet(30);
     gFlow->ticks_since_render = 0;
     gFlow->time_adjust = 0;
@@ -112,7 +112,7 @@ void Flow_CreateHandler(Flow *flow)
     HumanAIConfig_Load(flow);
     gFlow->event = 0;
     gFlow->request = 0;
-    gFlow->unk20 = Screen_New(gFlow);
+    gFlow->screen = Screen_New(gFlow);
     gFlow->unk24 = InputPort_New(gFlow);
     SoundSys_NewController(gFlow);
     if (gKeyboardPresent) {
@@ -174,7 +174,7 @@ void Flow_RunHandler(Flow *flow)
     int now = Timer_GetMs();
     int frames, due;
 
-    if (!gUnk5C8E00 && !ScreenGrab_IsActive() && !Movie_IsPlaying()) {
+    if (!gGameScreenSmallMode && !ScreenGrab_IsActive() && !Movie_IsPlaying()) {
         frames = gFlow->frames;
         due = (int)llrint((double)(gFlow->paused_time + gFlow->start_time) + 1000.0 / gFlow->fps * frames);
         if (due < now && gFlow->ticks_since_render < 11 && (gFlow->need_render || frames > 2)) {
@@ -224,14 +224,14 @@ void Flow_RunHandler(Flow *flow)
             Game_Quit();
             return;
         case FLOW_EVENT_INTRO:
-            IntroScreen_New(Flow_GetUnk20(), 0, 0);
+            IntroScreen_New(Flow_GetScreen(), 0, 0);
             break;
         case FLOW_EVENT_LEAVE_GAME:
             Task_Delete(Game_Get());
             gFlow->event = FLOW_EVENT_MAINMENU;
             /* fall through */
         case FLOW_EVENT_MAINMENU:
-            MenuManager_New(Flow_GetUnk20(), "LOCAL:menusystem\\mainmenu.qsc", 1, 1, 1);
+            MenuManager_New(Flow_GetScreen(), "LOCAL:menusystem\\mainmenu.qsc", 1, 1, 1);
             break;
         case FLOW_EVENT_GAME:
             Game_New(flow);
@@ -243,10 +243,10 @@ void Flow_RunHandler(Flow *flow)
             gFlow->event = FLOW_EVENT_GAME;
             break;
         case FLOW_EVENT_MOVIE_A:
-            IntroScreen_New(Flow_GetUnk20(), 1, 0);
+            IntroScreen_New(Flow_GetScreen(), 1, 0);
             break;
         case FLOW_EVENT_MOVIE_B:
-            IntroScreen_New(Flow_GetUnk20(), 0, 1);
+            IntroScreen_New(Flow_GetScreen(), 0, 1);
             break;
         }
     }
@@ -321,11 +321,11 @@ Flow *Flow_Get(void)
 }
 HOOK(0x402880, Flow_Get);
 
-void *Flow_GetUnk20(void)
+void *Flow_GetScreen(void)
 {
-    return gFlow->unk20;
+    return gFlow->screen;
 }
-HOOK(0x402890, Flow_GetUnk20);
+HOOK(0x402890, Flow_GetScreen);
 
 void Flow_SetRequest(int event)
 {

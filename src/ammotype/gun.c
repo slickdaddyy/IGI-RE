@@ -304,7 +304,7 @@ extern const float kOff0Z; /* 20.48 */
 extern const float kOff1X; /* 409.6 */
 extern const float kOff1Z; /* 40.96 */
 
-void Gun_Handler479CA0(void *obj, float *out)
+void Gun_UnusedPointsHandler(void *obj, float *out)
 {
     Vec3f v;
 
@@ -317,7 +317,7 @@ void Gun_Handler479CA0(void *obj, float *out)
     memcpy(&out[4], &v.y, 4);
     out[5] = v.z + kOff1Z;
 }
-HOOK(0x479CA0, Gun_Handler479CA0);
+HOOK(0x479CA0, Gun_UnusedPointsHandler);
 
 void Gun_DrawAmmoCount(Gun *g, Hud *hud);
 void Gun_DrawAmmoClip(Gun *g, Hud *hud);

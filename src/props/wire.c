@@ -43,8 +43,8 @@ ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4F0FD0, void *, Param_String16, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
@@ -102,8 +102,8 @@ void Wire_Open(void)
     TaskType_SetHandler(gWireType, Game_GetEvent4(), Wire_SetInUse);
     TaskType_SetHandler(gWireType, Game_GetEvent6(), Wire_DrawIcon);
     TaskType_SetHandler(gWireType, Game_GetEvent8(), FN(0x45E3D0, Human_ClearResult));
-    TaskType_SetHandler2(gWireType, Level_GetEventDA8(), Wire_Activate);
-    TaskType_SetHandler2(gWireType, Level_GetEventDAC(), Wire_Deactivate);
+    TaskType_SetHandler2(gWireType, Level_GetActivateEvent(), Wire_Activate);
+    TaskType_SetHandler2(gWireType, Level_GetDeactivateEvent(), Wire_Deactivate);
     TaskType_SetHandler(gWireType, 8, NULL);
     TaskType_SetHandler(gWireType, BulletHole_GetEvent(), NULL);
     gWireParams = ParamTable_New(3);
@@ -142,7 +142,7 @@ void Wire_Delete(Wire *w)
 {
     QTaskList_Remove(Game_GetTaskList0(), w);
     if (Task_GetId(w) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), w->obj.task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), w->obj.task.type);
 
         if (fn)
             fn(w);

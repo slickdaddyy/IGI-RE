@@ -53,8 +53,8 @@ void Elevator_Init(void)
     TaskType_SetHandler2(gElevatorType, 2, Elevator_DeleteHandler);
     TaskType_SetHandler(gElevatorType, Param_GetTableEvent(), Elevator_GetParams);
     TaskType_SetHandler(gElevatorType, Param_GetChangedEvent(), Elevator_ParamsChanged);
-    TaskType_SetHandler2(gElevatorType, Level_GetEventDA8(), Elevator_Activate);
-    TaskType_SetHandler2(gElevatorType, Level_GetEventDAC(), Elevator_Deactivate);
+    TaskType_SetHandler2(gElevatorType, Level_GetActivateEvent(), Elevator_Activate);
+    TaskType_SetHandler2(gElevatorType, Level_GetDeactivateEvent(), Elevator_Deactivate);
     TaskType_SetHandler(gElevatorType, RigidDynCubeObj_GetEvent4(), Elevator_MoveHandler);
     TaskType_SetHandler(gElevatorType, Game_GetEvent14(), Elevator_GetMotion);
     gElevatorStartRange = (RangeF){0.0f, 10000000.0f};

@@ -31,8 +31,8 @@ ORIG(0x4F1000, void *, Param_Bool8, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1030, Task *, Task_FindById, (int id));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1320, void, VarString_Init, (VarString *v));
 ORIG(0x4F1340, void, VarString_Free, (VarString *v));
@@ -211,8 +211,8 @@ void AnimTask_InitType(void)
     TaskType_SetHandler(gAnimTaskType, Vehicle_GetStateSizeEvent(), AnimTask_GetStateSize);
     TaskType_SetHandler(gAnimTaskType, Vehicle_GetSaveEvent(), AnimTask_SaveState);
     TaskType_SetHandler(gAnimTaskType, Vehicle_GetLoadEvent(), AnimTask_LoadState);
-    TaskType_SetHandler2(gAnimTaskType, Level_GetEventDA8(), AnimTask_RegisterSymbols);
-    TaskType_SetHandler2(gAnimTaskType, Level_GetEventDAC(), AnimTask_RemoveSymbols);
+    TaskType_SetHandler2(gAnimTaskType, Level_GetActivateEvent(), AnimTask_RegisterSymbols);
+    TaskType_SetHandler2(gAnimTaskType, Level_GetDeactivateEvent(), AnimTask_RemoveSymbols);
     gAnimTaskParams = ParamTable_New(8);
     ParamTable_Add(gAnimTaskParams, &t, &t.pos, Param_ObjectPos(), 7, NULL);
     ParamTable_Add(gAnimTaskParams, &t, &t.matrix, Param_Real32x9(), 7, NULL);
@@ -276,7 +276,7 @@ HOOK(0x4F3A00, AnimTask_Create);
 void AnimTask_Delete(AnimTask *t)
 {
     if (Task_GetId(t) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), t->task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), t->task.type);
 
         if (fn)
             fn(t);

@@ -21,7 +21,7 @@ ORIG(0x460C10, uint8_t, Human_GetEvent1, (void));
 ORIG(0x4659D0, void, HumanView_SetZoomed, (void *view));
 ORIG(0x472600, Task *, BinocularOverlay_New, (void *parent));
 ORIG(0x472630, void, BinocularOverlay_SetPos, (Task *o, const Vec3d *pos));
-ORIG(0x472650, void, BinocularOverlay_SetUnk7C, (Task *o, const float *v));
+ORIG(0x472650, void, BinocularOverlay_SetDir, (Task *o, const float *v));
 ORIG(0x477BF0, uint16_t, Gun_GetType, (void));
 ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -228,7 +228,7 @@ void Binocular_StatusDisplay(Binocular *b, void *arg)
     if (!b->zoomed)
         return;
     BinocularOverlay_SetPos(*b->overlay, &b->pos);
-    BinocularOverlay_SetUnk7C(*b->overlay, b->dir);
+    BinocularOverlay_SetDir(*b->overlay, b->dir);
     EACH_CHILD(&b->obj.task, StatusScreen_GetEvent(), arg);
 }
 HOOK(0x470BC0, Binocular_StatusDisplay);

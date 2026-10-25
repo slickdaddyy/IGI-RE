@@ -16,7 +16,7 @@ ORIG(0x4B7EE0, void, Script_RegisterBool8, (const char *name, char *value));
 ORIG(0x4B80A0, void, Script_RemoveSymbol, (const char *name));
 ORIG(0x4B8920, void, Script_UnregisterSymbol, (const char *name));
 ORIG(0x4F1030, Task *, Task_FindById, (int id));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 ORIG(0x4F2070, void, WeaponSlots_Set, (Task **slots, int i, Task *weapon));
@@ -601,7 +601,7 @@ void HumanAI_Destroy(HumanAI *ai, void *arg)
     if (ai->alarmClaim)
         AIClaim_Release(ai->alarmClaim);
     if (Task_GetId(ai) >= 0) {
-        TaskFn fn = gTaskHandlers[Level_GetEventDAC()][ai->task.type];
+        TaskFn fn = gTaskHandlers[Level_GetDeactivateEvent()][ai->task.type];
 
         if (fn)
             ((void (*)(void *))fn)(ai);

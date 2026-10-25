@@ -40,7 +40,7 @@ extern IDirect3D7 *gD3D;
 extern IDirect3DDevice7 *gD3DDevice;
 extern SkyDome *gSkyDome;
 extern void *gSkyModel;
-extern uint32_t gSkyUnk54F720[];
+extern uint32_t gSkyUnusedTint[];
 extern Pool gLightPool;
 extern float gWorldScale;
 extern int gD3DTnL;
@@ -326,9 +326,9 @@ HOOK(0x52D370, SkyDome_Restore);
 
 void Sky_SetTint(const uint32_t *v)
 {
-    gSkyUnk54F720[0] = v[0];
-    gSkyUnk54F720[1] = v[1];
-    gSkyUnk54F720[2] = v[2];
+    gSkyUnusedTint[0] = v[0];
+    gSkyUnusedTint[1] = v[1];
+    gSkyUnusedTint[2] = v[2];
 }
 HOOK(0x52D400, Sky_SetTint);
 
@@ -340,7 +340,7 @@ HOOK(0x52D420, Sky_Init);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 STORE(igd, 54F720, 4) uint32_t store_54F720[15] INIT({1065353216, 1065353216, 1065353216, 7957331, 45, 1681141797, 842016045, 807742820, 25650, 1681010725, 842016045, 807742820, 25650, 1681141797});
-ALIAS(gSkyUnk54F720, store_54F720, 0);
+ALIAS(gSkyUnusedTint, store_54F720, 0);
 BSS(A84568) SkyDome *gSkyDome;
 PAD(igb, A84568, A8456C, 0x4);
 BSS(A84568) void *gSkyModel;

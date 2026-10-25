@@ -33,8 +33,8 @@ ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));
 ORIG(0x4F0F50, void *, Param_Real32, (void));
 ORIG(0x4F0FC0, void *, Param_VarString, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, uint8_t, Level_GetEventDA8, (void));
-ORIG(0x4F1220, uint8_t, Level_GetEventDAC, (void));
+ORIG(0x4F1210, uint8_t, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, uint8_t, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1320, void, VarString_Init, (VarString *v));
 ORIG(0x4F1340, void, VarString_Free, (VarString *v));
@@ -72,8 +72,8 @@ void Terminal_Open(void)
     TaskType_SetHandler2(gTerminalType, 2, Terminal_Delete);
     TaskType_SetHandler(gTerminalType, Param_GetTableEvent(), Terminal_GetParamsHandler);
     TaskType_SetHandler(gTerminalType, Param_GetChangedEvent(), Terminal_ParamsChanged);
-    TaskType_SetHandler2(gTerminalType, Level_GetEventDA8(), Terminal_AddSymbols);
-    TaskType_SetHandler2(gTerminalType, Level_GetEventDAC(), Terminal_RemoveSymbols);
+    TaskType_SetHandler2(gTerminalType, Level_GetActivateEvent(), Terminal_AddSymbols);
+    TaskType_SetHandler2(gTerminalType, Level_GetDeactivateEvent(), Terminal_RemoveSymbols);
     TaskType_SetHandler(gTerminalType, Game_GetEvent2(), Terminal_CheckUse);
     TaskType_SetHandler(gTerminalType, Game_GetEvent3(), Terminal_GetUseKind);
     TaskType_SetHandler(gTerminalType, Game_GetEvent4(), Terminal_Use);
@@ -123,7 +123,7 @@ void Terminal_Delete(Terminal *t)
     QTaskList_Remove(Game_GetTaskList0(), t);
     HANDLER(2, ExplodeObject_GetType())(t);
     if (Task_GetId(t) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), t->o.task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), t->o.task.type);
 
         if (fn)
             fn(t);
@@ -156,7 +156,7 @@ void Terminal_AddSymbols(Terminal *t)
         return;
     t->registered = 1;
     type = ExplodeObject_GetType();
-    HANDLER(Level_GetEventDA8(), type)(t);
+    HANDLER(Level_GetActivateEvent(), type)(t);
     Task_GetName(name, t);
     crt_sprintf(buf, "%s.isInUse", name);
     Script_RegisterBool8(buf, &t->in_use);
@@ -179,7 +179,7 @@ void Terminal_RemoveSymbols(Terminal *t)
     if (!t->registered)
         return;
     type = ExplodeObject_GetType();
-    HANDLER(Level_GetEventDAC(), type)(t);
+    HANDLER(Level_GetDeactivateEvent(), type)(t);
     Task_GetName(name, t);
     t->registered = 0;
     crt_sprintf(buf, "%s.isInUse", name);

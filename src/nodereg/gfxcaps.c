@@ -8,7 +8,7 @@ ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x491DE0, int, Display_GetGFXCapsMethod, (void));
-ORIG(0x4F11F0, uint8_t, Level_GetEventDA4, (void));
+ORIG(0x4F11F0, uint8_t, Level_GetDebugInfoEvent, (void));
 
 extern RenderMode gRenderModeCurrent;
 extern char gGFXCaps[];
@@ -24,7 +24,7 @@ HOOK(0x5196F0, GFXCapsViewer_GetCaps);
 void GFXCapsViewer_Open(void)
 {
     gGFXCapsViewerType = TaskType_New("GFXCapsViewer", sizeof(Task), TASK_NO_TYPE, 0, 0);
-    TaskType_SetHandler(gGFXCapsViewerType, Level_GetEventDA4(), GFXCapsViewer_GetCaps);
+    TaskType_SetHandler(gGFXCapsViewerType, Level_GetDebugInfoEvent(), GFXCapsViewer_GetCaps);
 }
 HOOK(0x519710, GFXCapsViewer_Open);
 

@@ -13,8 +13,8 @@ ORIG(0x4F0FE0, void *, Param_String32, (void));
 ORIG(0x4F1000, void *, Param_Bool8, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1320, void, VarString_Init, (VarString *v));
 ORIG(0x4F1340, void, VarString_Free, (VarString *v));
@@ -80,8 +80,8 @@ void ConditionalSound_Init(void)
     TaskType_SetHandler2(gConditionalSoundType, 2, ConditionalSound_Delete);
     TaskType_SetHandler(gConditionalSoundType, Param_GetTableEvent(), ConditionalSound_GetParams);
     TaskType_SetHandler(gConditionalSoundType, Param_GetChangedEvent(), ConditionalSound_Changed);
-    TaskType_SetHandler2(gConditionalSoundType, Level_GetEventDA8(), ConditionalSound_Activate);
-    TaskType_SetHandler2(gConditionalSoundType, Level_GetEventDAC(), ConditionalSound_Deactivate);
+    TaskType_SetHandler2(gConditionalSoundType, Level_GetActivateEvent(), ConditionalSound_Activate);
+    TaskType_SetHandler2(gConditionalSoundType, Level_GetDeactivateEvent(), ConditionalSound_Deactivate);
     TaskType_SetHandler(gConditionalSoundType, World_GetEvent1(), ConditionalSound_Reset);
     gConditionalSoundParams = ParamTable_New(6);
     ParamTable_Add(gConditionalSoundParams, &cs, &cs.cond, Param_VarString(), 7, NULL);
@@ -192,7 +192,7 @@ void ConditionalSound_Delete(ConditionalSound *cs)
 {
     ConditionalSound_Stop(cs);
     if (Task_GetId(cs) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), cs->task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), cs->task.type);
 
         if (fn)
             ((void (*)(void *))fn)(cs);

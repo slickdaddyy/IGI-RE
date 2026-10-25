@@ -51,8 +51,8 @@ ORIG(0x4F0F70, void *, Param_Real32x9, (void));
 ORIG(0x4F1000, void *, Param_Bool8, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1320, void, VarString_Init, (VarString *v));
 ORIG(0x4F1340, void, VarString_Free, (VarString *v));
@@ -111,8 +111,8 @@ void Switch_Open(void)
     TaskType_SetHandler(gSwitchType, Game_GetEvent4(), TASK_NOTHING);
     TaskType_SetHandler(gSwitchType, Game_GetEvent6(), Switch_DrawIcon);
     TaskType_SetHandler(gSwitchType, Game_GetEvent9(), Switch_Destroy);
-    TaskType_SetHandler2(gSwitchType, Level_GetEventDA8(), Switch_AddSymbols);
-    TaskType_SetHandler2(gSwitchType, Level_GetEventDAC(), Switch_RemoveSymbols);
+    TaskType_SetHandler2(gSwitchType, Level_GetActivateEvent(), Switch_AddSymbols);
+    TaskType_SetHandler2(gSwitchType, Level_GetDeactivateEvent(), Switch_RemoveSymbols);
     TaskType_SetHandler(gSwitchType, RigidDynCubeObj_GetEvent4(), Switch_MoveHandler);
     TaskType_SetHandler(gSwitchType, ComputerObject_GetEvent0(), Terminal_MapHandler);
     TaskType_SetHandler(gSwitchType, BulletHole_GetEvent(), NULL);
@@ -196,7 +196,7 @@ void Switch_DeleteHandler(Switch *s)
 {
     QTaskList_Remove(Game_GetTaskList0(), s);
     if (Task_GetId(s) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), s->o.task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), s->o.task.type);
 
         if (fn)
             fn(s);

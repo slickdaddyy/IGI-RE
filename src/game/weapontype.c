@@ -15,7 +15,7 @@ extern uint8_t gWeaponFireEvent;
 extern uint8_t gWeaponSizeEvent2;
 extern uint8_t gWeaponInitEvent2;
 extern uint8_t gWeaponTypeEvent;
-extern uint8_t gWeaponEventB2;
+extern uint8_t gWeaponUnusedPointsEvent;
 extern char gWeaponCategoryEnum[];
 extern char gWeaponSightEnum[];
 extern char gWeaponAmmoEnum[];
@@ -45,7 +45,7 @@ void WeaponType_Close(void)
     TaskEvent_Free(gWeaponSizeEvent2);
     TaskEvent_Free(gWeaponInitEvent2);
     TaskEvent_Free(gWeaponTypeEvent);
-    TaskEvent_Free(gWeaponEventB2);
+    TaskEvent_Free(gWeaponUnusedPointsEvent);
     gWeaponTypeCount = 0;
 }
 HOOK(0x414810, WeaponType_Close);

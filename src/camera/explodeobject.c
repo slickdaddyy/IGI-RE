@@ -105,8 +105,8 @@ ORIG(0x4F0FC0, void *, Param_VarString, (void));
 ORIG(0x4F0FD0, void *, Param_String16, (void));
 ORIG(0x4F1010, void *, Param_ObjectPos, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, int, Level_GetEventDA8, (void));
-ORIG(0x4F1220, int, Level_GetEventDAC, (void));
+ORIG(0x4F1210, int, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, int, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1320, void, VarString_Init, (VarString *v));
 ORIG(0x4F1340, void, VarString_Free, (VarString *v));
@@ -189,8 +189,8 @@ void ExplodeObject_Open(void)
     TaskType_SetHandler(gExplodeObjectType, Param_GetChangedEvent(), ExplodeObject_ParamChangedHandler);
     TaskType_SetHandler(gExplodeObjectType, Game_GetEvent9(), ExplodeObject_HitHandler);
     TaskType_SetHandler(gExplodeObjectType, Game_GetEvent11(), ExplodeObject_BlastHandler);
-    TaskType_SetHandler2(gExplodeObjectType, Level_GetEventDA8(), ExplodeObject_RegisterVarsHandler);
-    TaskType_SetHandler2(gExplodeObjectType, Level_GetEventDAC(), ExplodeObject_UnregisterVarsHandler);
+    TaskType_SetHandler2(gExplodeObjectType, Level_GetActivateEvent(), ExplodeObject_RegisterVarsHandler);
+    TaskType_SetHandler2(gExplodeObjectType, Level_GetDeactivateEvent(), ExplodeObject_UnregisterVarsHandler);
     TaskType_SetHandler(gExplodeObjectType, RigidDynCubeObj_GetEvent4(), ExplodeObject_MoveHandler);
     TaskType_SetHandler(gExplodeObjectType, 6, TASK_NOTHING);
     TaskType_SetHandler(gExplodeObjectType, World_GetEvent1(), ExplodeObject_LeaveWorldHandler);
@@ -293,7 +293,7 @@ void ExplodeObject_DeleteHandler(ExplodeObject *o)
 {
     QTaskList_Remove(Game_GetTaskList3(), o);
     if (Task_GetId(o) >= 0) {
-        TaskFn f = gTaskHandlers[Level_GetEventDAC()][o->task.type];
+        TaskFn f = gTaskHandlers[Level_GetDeactivateEvent()][o->task.type];
 
         if (f)
             ((void (*)(void *))f)(o);

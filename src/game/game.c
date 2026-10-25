@@ -34,7 +34,7 @@ ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x401F40, void, Task_ClearPair, (int *a, int *b, ...));
 ORIG(0x4027F0, int, Flow_GetType, (int unk));
 ORIG(0x402820, void, FramesSet, (int frames));
-ORIG(0x402890, Task *, Flow_GetUnk20, (void));
+ORIG(0x402890, Task *, Flow_GetScreen, (void));
 ORIG(0x4028A0, void, Flow_SetRequest, (int request));
 ORIG(0x4028D0, void, Flow_PauseBegin, (void));
 ORIG(0x4028F0, void, Flow_PauseEnd, (void));
@@ -434,7 +434,7 @@ void LevelStart(Game *g)
     LoadingScreen_Step(loading, 1);
     StatusMessages_Load();
     LoadingScreen_Step(loading, 1);
-    gGame->root = GameScreen_New(Flow_GetUnk20());
+    gGame->root = GameScreen_New(Flow_GetScreen());
     gGame->unk4C = Level_New(Game_Get());
     LoadingScreen_Step(loading, 1);
     Sound_SetUnusedByte(0);

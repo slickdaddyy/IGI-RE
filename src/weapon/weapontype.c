@@ -28,7 +28,7 @@ extern uint8_t gWeaponFireEvent;
 extern uint8_t gWeaponSizeEvent2;
 extern uint8_t gWeaponInitEvent2;
 extern uint8_t gWeaponTypeEvent;
-extern uint8_t gWeaponEventB2;
+extern uint8_t gWeaponUnusedPointsEvent;
 extern int gWeaponMaxId;
 extern char gWeaponCategoryEnum[];
 extern char gWeaponSightEnum[];
@@ -94,11 +94,11 @@ uint8_t Weapon_GetTypeEvent(void)
 }
 HOOK(0x413B50, Weapon_GetTypeEvent);
 
-uint8_t Weapon_GetEventB2(void)
+uint8_t Weapon_GetUnusedPointsEvent(void)
 {
-    return gWeaponEventB2;
+    return gWeaponUnusedPointsEvent;
 }
-HOOK(0x413B60, Weapon_GetEventB2);
+HOOK(0x413B60, Weapon_GetUnusedPointsEvent);
 
 void WeaponType_LoadAll(void)
 {
@@ -249,7 +249,7 @@ void WeaponType_Init(void)
     gWeaponSizeEvent2 = TaskEvent_Alloc(0);
     gWeaponInitEvent2 = TaskEvent_Alloc(0);
     gWeaponTypeEvent = TaskEvent_Alloc(0);
-    gWeaponEventB2 = TaskEvent_Alloc(0);
+    gWeaponUnusedPointsEvent = TaskEvent_Alloc(0);
     Script_RegisterFunction("DefineWeaponType", DefineWeaponType, NULL, -1);
     Script_RegisterConstant("WEAPONTYPE_GUN", 0);
     Script_RegisterConstant("WEAPONTYPE_PISTOL", 1);
@@ -374,7 +374,7 @@ DATA(5391AC) uint8_t gWeaponFireEvent INIT(255);
 DATA(5391AC) uint8_t gWeaponSizeEvent2 INIT(255);
 DATA(5391AC) uint8_t gWeaponInitEvent2 INIT(255);
 DATA(5391AC) uint8_t gWeaponTypeEvent INIT(255);
-DATA(5391AC) uint8_t gWeaponEventB2 INIT(255);
+DATA(5391AC) uint8_t gWeaponUnusedPointsEvent INIT(255);
 PAD(igd, 5391AC, 5391B3, 0x1);
 DATA(5391AC) int gWeaponMaxId INIT(-1);
 STORE(igb, 56E218, 1) char store_56E218[16];

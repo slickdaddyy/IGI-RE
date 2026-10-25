@@ -11,8 +11,8 @@ ORIG(0x4B80A0, void, Script_RemoveSymbol, (const char *name));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4F0FC0, void *, Param_VarString, (void));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
-ORIG(0x4F1210, uint8_t, Level_GetEventDA8, (void));
-ORIG(0x4F1220, uint8_t, Level_GetEventDAC, (void));
+ORIG(0x4F1210, uint8_t, Level_GetActivateEvent, (void));
+ORIG(0x4F1220, uint8_t, Level_GetDeactivateEvent, (void));
 ORIG(0x4F1270, void, Task_GetName, (char *out, void *task));
 ORIG(0x4F1320, void, VarString_Init, (VarString *v));
 ORIG(0x4F1340, void, VarString_Free, (VarString *v));
@@ -43,8 +43,8 @@ void SCameraControl_Open(void)
     TaskType_SetHandler2(gSCameraControlType, 2, SCameraControl_Delete);
     TaskType_SetHandler(gSCameraControlType, Param_GetTableEvent(), SCameraControl_GetParams);
     TaskType_SetHandler(gSCameraControlType, Param_GetChangedEvent(), SCameraControl_ParamsChanged);
-    TaskType_SetHandler2(gSCameraControlType, Level_GetEventDA8(), SCameraControl_AddSymbols);
-    TaskType_SetHandler2(gSCameraControlType, Level_GetEventDAC(), SCameraControl_RemoveSymbols);
+    TaskType_SetHandler2(gSCameraControlType, Level_GetActivateEvent(), SCameraControl_AddSymbols);
+    TaskType_SetHandler2(gSCameraControlType, Level_GetDeactivateEvent(), SCameraControl_RemoveSymbols);
     gSCameraControlParams = ParamTable_Extend(Terminal_GetParams(), 1);
     ParamTable_Add(gSCameraControlParams, NULL, (void *)offsetof(SCameraControl, script), Param_VarString(), 7,
                    NULL);
@@ -74,7 +74,7 @@ void SCameraControl_Delete(SCameraControl *c)
 {
     HANDLER(2, Terminal_GetType())(c);
     if (Task_GetId(c) >= 0) {
-        TaskFn fn = HANDLER(Level_GetEventDAC(), c->t.o.task.type);
+        TaskFn fn = HANDLER(Level_GetDeactivateEvent(), c->t.o.task.type);
 
         if (fn)
             fn(c);
@@ -107,7 +107,7 @@ void SCameraControl_AddSymbols(SCameraControl *c)
         return;
     c->registered = 1;
     type = Terminal_GetType();
-    HANDLER(Level_GetEventDA8(), type)(c);
+    HANDLER(Level_GetActivateEvent(), type)(c);
     Task_GetName(name, c);
     crt_sprintf(buf, "%s.isDetection", name);
     Script_RegisterBool8(buf, &c->detect);
@@ -122,7 +122,7 @@ void SCameraControl_RemoveSymbols(SCameraControl *c)
     if (!c->registered)
         return;
     type = Terminal_GetType();
-    HANDLER(Level_GetEventDAC(), type)(c);
+    HANDLER(Level_GetDeactivateEvent(), type)(c);
     Task_GetName(name, c);
     c->registered = 0;
     crt_sprintf(buf, "%s.isDetection", name);

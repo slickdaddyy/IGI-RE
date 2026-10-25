@@ -4473,7 +4473,6 @@ static uint8_t fill_7ADDD8[0x1408] __attribute__((section(".igb$7ADDD8"), used))
 static uint8_t fill_93601C[0x4] __attribute__((section(".igb$93601C"), used));
 static uint8_t fill_93604C[0x210] __attribute__((section(".igb$93604C"), used));
 static uint8_t fill_94397C[0x4] __attribute__((section(".igb$94397C"), used));
-static uint8_t fill_94398C[0x8C] __attribute__((section(".igb$94398C"), used));
 static uint8_t fill_943B40[0x10] __attribute__((section(".igb$943B40"), used));
 static uint8_t fill_943B94[0x8C] __attribute__((section(".igb$943B94"), used));
 static uint8_t fill_943E44[0x4] __attribute__((section(".igb$943E44"), used));
