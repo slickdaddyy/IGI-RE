@@ -10,7 +10,7 @@
 
 typedef void (*ViewportCallback)(Camera *camera);
 
-extern int gFogEnable;
+extern uint32_t gFogEnable;
 extern uint16_t gViewportType;
 extern ViewportCallback gViewportCallbacks[];
 extern Viewport *gViewportDrawn[];

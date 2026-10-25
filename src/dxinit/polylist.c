@@ -94,7 +94,7 @@ extern Pool gLightPool;
 extern float gLightColor[];
 extern float gFogColor[];
 extern float gFogDensity;
-extern int gFogEnable;
+extern uint32_t gFogEnable;
 extern float gNearPlane;
 extern DynVB gVBLit;
 
@@ -441,7 +441,5 @@ PAD(igb, 720570, 720580, 0x20);
 BSS(720570) int gPolyListNothingD;
 BSS(720570) int gPolyListNothingB;
 BSS(720570) int gPolyListLightState;
-STORE(igb, B818AC, 4) float store_B818AC[12];
-ALIAS(gLightColor, store_B818AC, 0);
 BSS(BCAD80) DynVB gVBLit;
 BSS(C311BC) int gPolyListPrim;

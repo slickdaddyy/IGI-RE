@@ -24,7 +24,7 @@ extern const float gPixelCenter;
 extern const float gZero;
 extern int gCollSightCalls;
 extern int gCellMaskEnabled;
-extern const uint8_t gWorldEvents[];
+extern uint8_t gWorldEvents[];
 
 void DynCube_UpdateSlotCounts(Terrain *t, int tree);
 void DynCube_UpdateStart(Terrain *t, int tree);

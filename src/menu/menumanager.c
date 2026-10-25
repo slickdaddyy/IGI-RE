@@ -89,8 +89,8 @@ extern MenuWindow *gMenuLastScreen;
 extern int gMenuIdleTimer;
 extern MenuWindow *gMenuLastFocus;
 extern int gDisplayClearColor[];
-extern unsigned char gKeys[];
-extern unsigned char gKeysPrev[];
+extern uint8_t gKeys[];
+extern uint8_t gKeysPrev[];
 extern Mouse gMouse;
 
 #define SOUNDS_RES "LOCAL:menusystem/sound/sounds.res"

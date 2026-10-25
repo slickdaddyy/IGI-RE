@@ -173,7 +173,7 @@ extern WaterType gWaterTypes[];
 extern uint16_t gWaterType;
 extern int gWaterCount;
 extern int gWaterDepth;
-extern float gAmbient[];
+extern Vec3f gAmbient[5];
 extern float gWaterTint[];
 extern double gWaterLevel;
 
@@ -217,9 +217,9 @@ static void pop_level(void)
 void Water_PreDraw(Water *w)
 {
     Level_IsRunning();
-    w->ambient[0] = gAmbient[0];
-    w->ambient[1] = gAmbient[1];
-    w->ambient[2] = gAmbient[2];
+    w->ambient[0] = gAmbient[0].x;
+    w->ambient[1] = gAmbient[0].y;
+    w->ambient[2] = gAmbient[0].z;
     w->tint[0] = gWaterTint[0];
     w->tint[1] = gWaterTint[1];
     w->tint[2] = gWaterTint[2];
@@ -498,9 +498,9 @@ void Water_ParamsChanged(Water *w)
     w->typeData[1] = t->unk8[1];
     w->typeData[2] = t->unk8[2];
     w->typeData[3] = t->unk8[3];
-    w->ambient[0] = gAmbient[0];
-    w->ambient[1] = gAmbient[1];
-    w->ambient[2] = gAmbient[2];
+    w->ambient[0] = gAmbient[0].x;
+    w->ambient[1] = gAmbient[0].y;
+    w->ambient[2] = gAmbient[0].z;
     w->neighbors[0] = Water_FindById(w->neighborIds[0]);
     w->neighbors[1] = Water_FindById(w->neighborIds[1]);
     w->neighbors[2] = Water_FindById(w->neighborIds[2]);
@@ -553,8 +553,8 @@ BSS(A80200) uint16_t gWaterType;
 PAD(igb, A80200, A81016, 0x6);
 BSS(A80200) int gWaterCount;
 BSS(A80200) int gWaterDepth;
-STORE(igb, B818A0, 4) float store_B818A0[3];
-ALIAS(gAmbient, store_B818A0, 0);
+BSS(B818A0) Vec3f gAmbient[5];
+ALIAS(gLightColor, gAmbient, 12);
 STORE(igb, BA2030, 4) float store_BA2030[4];
 ALIAS(gWaterTint, store_BA2030, 0);
 BSS(BA2030) double gWaterLevel;

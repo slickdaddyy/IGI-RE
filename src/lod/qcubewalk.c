@@ -99,7 +99,7 @@ extern Pool gQCubePool1;
 extern Pool gQCubePool2;
 extern int gQCubeMinSize;
 extern int gQCubeOrigin[];
-extern uint8_t gQCubeChildOrder[];
+extern uint8_t gQCubeChildOrder[][8];
 extern int gCollChildTable[];
 extern signed char gWalkTreeIndex[];
 extern WCube gWalkSavedRoots[];
@@ -113,7 +113,7 @@ extern int gTerrainMeshCount;
 extern int gVisibleLightMapCount;
 extern int gVisibleLightMaps[];
 extern int gCollBumpTop;
-extern int gCollHoleBits;
+extern unsigned int gCollHoleBits;
 
 F32(kSlope, 0x3fddb574);     /* 1.7321 */
 F32(kFixedOne, 0x4e800000);  /* 2^30 */
@@ -547,7 +547,7 @@ BSS(B12BB8) int gQCubeSkipCells;
 PAD(igb, B12BB8, B12BBC, 0x4);
 STORE(igb, B12BB8, 4) int store_B12BC0[3];
 ALIAS(gQCubeOrigin, store_B12BC0, 0);
-STORE(igb, B12BE0, 1) uint8_t store_B12BE0[64];
+STORE(igb, B12BE0, 1) uint8_t store_B12BE0[8][8];
 ALIAS(gQCubeChildOrder, store_B12BE0, 0);
 BSS(B12C58) WEntry *gQCubeOut;
 STORE(igb, B16CE0, 8) __typeof__(gTerrainCells[0]) store_B16CE0[4096];

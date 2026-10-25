@@ -105,7 +105,7 @@ extern char gScaleBNames[][32];
 extern char gLinkNames[][32];
 
 /* what the renderer uses, one per light set */
-extern Vec3f gAmbient[];
+extern Vec3f gAmbient[5];
 extern Vec3f gFogColors[];
 extern float gFogDensities[];
 extern Vec3f gColorMatrix0[];

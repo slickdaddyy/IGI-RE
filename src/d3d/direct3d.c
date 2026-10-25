@@ -515,7 +515,7 @@ extern float gWorldScale;
 extern float gLayer0MinZ;
 extern float gLayer0MaxZ;
 extern float gClipRhwScale;
-extern int gD3DZEnable;
+extern uint32_t gD3DZEnable;
 extern float gLayer2MaxZ;
 extern float gLayer2Far;
 extern float gLayer2Near;

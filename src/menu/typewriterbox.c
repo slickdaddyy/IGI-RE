@@ -51,7 +51,7 @@ extern uint16_t gTypeWriterBoxType;
 extern TypeLine gTypeLines[];
 extern const Color gMenuColors[];
 extern void *gTypeWriterBoxParams;
-extern unsigned char gKeys[];
+extern uint8_t gKeys[];
 
 void TypeWriterBox_Run(TypeWriterBox *tw);
 void TypeWriterBox_DrawHandler(TypeWriterBox *tw);

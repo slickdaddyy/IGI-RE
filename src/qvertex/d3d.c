@@ -58,7 +58,7 @@ typedef struct StripState {
 
 extern IDirect3DDevice7 *gD3DDevice;
 extern DynVB gVBTL;
-extern DWORD gD3DZEnable;
+extern uint32_t gD3DZEnable;
 extern int gD3DClippingOnIndex;
 extern PtrList *gD3DTextureStates;
 extern PtrList *gD3DBlendStates;
@@ -82,7 +82,7 @@ extern int gQVBlendStatesIndex;
 extern unsigned int gQVLastFlags;
 extern QTexture *gQVLastTexture;
 extern int gClipDepth;
-extern const uint8_t gKeys[];
+extern uint8_t gKeys[];
 
 QV_F32(kZero, 0x00000000);
 QV_F32(kOne, 0x3F800000);

@@ -16,7 +16,7 @@
 extern TransContext gTransContext;
 extern float gWorldScale;
 extern int gD3DTnL;
-extern int gD3DZEnable;
+extern uint32_t gD3DZEnable;
 extern PtrList *gD3DTextureStates;
 extern PtrList *gD3DBlendStates;
 extern PtrList *gD3DRenderStates;

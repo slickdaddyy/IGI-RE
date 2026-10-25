@@ -20,7 +20,7 @@ ORIG(0x4E5BA0, int, CellMask_TestRect, (const void *mask, float x, float y, floa
 
 extern TaskType gTaskTypes[];
 extern TaskHandler gTaskHandlers[][TASK_MAX_TYPES];
-extern const signed char gTaskSlotEvent[];
+extern signed char gTaskSlotEvent[];
 extern const int gDynCubeChildDir[][3];
 extern const float gPixelCenter;
 extern const float gSqrt3;

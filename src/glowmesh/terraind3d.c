@@ -107,7 +107,7 @@ extern int gTerrainD3DUnusedInt;
 extern int gTerrMeshTotal;
 extern float gWorldScale;
 extern float gClipRhwScale;
-extern DWORD gD3DZEnable;
+extern uint32_t gD3DZEnable;
 extern float gLayer1MaxZ;
 extern float gD3DMinZ;
 extern float gLayer1MinZ;

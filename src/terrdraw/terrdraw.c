@@ -19,8 +19,8 @@ ORIG(0x495200, void, Direct3D_AddRestoreCallback, (void (*fn)(void)));
 
 extern IDirect3D7 *gD3D;
 extern IDirect3DDevice7 *gD3DDevice;
-extern DWORD gFogEnable;
-extern DWORD gTerrainFogColorD3D;
+extern uint32_t gFogEnable;
+extern uint32_t gTerrainFogColorD3D;
 
 #define CHUNK_HASH_SIZE 0x1FD
 
@@ -160,7 +160,7 @@ DATA(53474C) char str_53474E[2] INIT("s");
 PAD(igd, 544F4C, 544F4C, 0x2);
 DATA(544F4C) char str_544F4E[1] INIT("");
 PAD(igd, 544F4C, 544F4F, 0x1);
-DATA(5470B4) DWORD gFogEnable INIT(1);
-BSS(A7E068) DWORD gTerrainFogColorD3D;
+DATA(5470B4) uint32_t gFogEnable INIT(1);
+BSS(A7E068) uint32_t gTerrainFogColorD3D;
 BSS(A7E080) TerrList gChunkHash[CHUNK_HASH_SIZE];
 BSS(A7F890) IDirect3DVertexBuffer7 *gTerrainVB;

@@ -47,7 +47,7 @@ ORIG(0x4E75A0, int, Screen_GetFrame, (void));
 extern uint16_t gHumanCameraType;
 extern uint8_t gHumanCameraEvent;
 extern HumanCameraEntry gHumanCameraList[];
-extern float gLayerFov;
+extern float gLayerFov[];
 extern float gMouseDX;
 extern float gMouseDY;
 
@@ -231,7 +231,7 @@ void HumanCamera_RunHandler(HumanCamera *c)
     unk9 = LevelFlow_GetHour();
     frame = Screen_GetFrame();
     Camera_Set(c->camera, &c->pos, &c->matrix, c->fov, 1.0f, 300.0f, frame, c, unk9, firstPerson);
-    gLayerFov = c->info.unk6C;
+    gLayerFov[0] = c->info.unk6C;
 }
 HOOK(0x482700, HumanCamera_RunHandler);
 

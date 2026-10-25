@@ -35,9 +35,9 @@ typedef struct MaterialImpact {
     int unk14;
 } MaterialImpact;
 
-extern unsigned char gMaterialSizeEvent;
-extern unsigned char gMaterialParseEvent;
-extern unsigned char gMaterialImpactEvent;
+extern uint8_t gMaterialSizeEvent;
+extern uint8_t gMaterialParseEvent;
+extern uint8_t gMaterialImpactEvent;
 extern int gMaterialActive;
 extern GameMaterial gMaterials[];
 extern TaskHandler gTaskHandlers[][0x180];
@@ -205,9 +205,9 @@ void GameMaterial_Impact(uint16_t type, int a, void *b, int c, const float *pos)
 HOOK(0x4083C0, GameMaterial_Impact);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-DATA(538518) unsigned char gMaterialSizeEvent INIT(255);
-DATA(538518) unsigned char gMaterialParseEvent INIT(255);
-DATA(538518) unsigned char gMaterialImpactEvent INIT(255);
+DATA(538518) uint8_t gMaterialSizeEvent INIT(255);
+DATA(538518) uint8_t gMaterialParseEvent INIT(255);
+DATA(538518) uint8_t gMaterialImpactEvent INIT(255);
 PAD(igd, 538518, 53851B, 0x1);
 DATA(538518) int gMaterialActive INIT(-1);
 PAD(igb, 569210, 569210, 0x4D08);

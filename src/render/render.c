@@ -201,7 +201,7 @@ extern ModelVB gMeshVBs[];
 extern int gUnlitIdx;
 extern void (* gTaskHandlers[][0x180])(void *, void *);
 extern Pool gLightPool;
-extern DWORD gFogDensity;
+extern float gFogDensity;
 extern float gLayerFov[];
 extern float gLightColor[];
 extern float gFogColor[];
@@ -210,14 +210,14 @@ extern Scene gScene;
 extern float gWorldScale;
 extern int gD3DClippingOnIndex;
 extern PtrList *gD3DBlendStates;
-extern DWORD gD3DZEnable;
+extern uint32_t gD3DZEnable;
 extern DynVB gVBNormal;
 extern PtrList *gD3DRenderStates;
 extern float gNearPlane;
 extern PtrList *gD3DClipStates;
 extern int gD3DClippingOffIndex;
 extern PtrList *gD3DTextureStates;
-extern DWORD gFogEnable;
+extern uint32_t gFogEnable;
 
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }
@@ -814,7 +814,7 @@ static void set_fog(void)
     uint32_t b = x87_fistp((long double)gFogColor[2] * k255.f);
 
     SRS(D3DRENDERSTATE_FOGCOLOR, b - (((r << 8) + g) << 8));
-    SRS(D3DRENDERSTATE_FOGDENSITY, gFogDensity);
+    SRS(D3DRENDERSTATE_FOGDENSITY, *(DWORD *)&gFogDensity);
     SRS(D3DRENDERSTATE_FOGTABLEMODE, D3DFOG_NONE);
     SRS(D3DRENDERSTATE_FOGVERTEXMODE, D3DFOG_LINEAR);
     SRS(D3DRENDERSTATE_FOGENABLE, gFogEnable);
@@ -1276,7 +1276,7 @@ STORE(igb, B818EC, 4) float store_B818EC[13];
 ALIAS(gFogColor, store_B818EC, 0);
 BSS(BCABEC) float gWorldScale;
 BSS(BCACEC) int gD3DClippingOnIndex;
-BSS(BCAD78) DWORD gD3DZEnable;
+BSS(BCAD78) uint32_t gD3DZEnable;
 BSS(BCAD78) PtrList *gD3DBlendStates;
 BSS(BCAD90) DynVB gVBNormal;
 BSS(BCADAC) PtrList *gD3DRenderStates;

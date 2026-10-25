@@ -28,7 +28,7 @@ extern char gHmpResident[];
 extern char gBitResident[];
 extern TerrainLightmap gLightmaps[];
 extern TerrainMaterial gTerrainMaterials[];
-extern uint8_t gTerrainTileMaps[][64];
+extern uint8_t gTerrainTileMaps[][8][8];
 
 _Static_assert(sizeof(TerrainLightmap) == 0x2C, "TerrainLightmap");
 
@@ -188,7 +188,7 @@ HOOK(0x4C6670, CreateTerrainMaterial);
 /* CreateTerrainTileMap(id, 64 tile bytes) */
 ScriptValue *CreateTerrainTileMap(ScriptValue *out, void *data, void *args)
 {
-    uint8_t *map = gTerrainTileMaps[Script_GetArgInt(args, 0)];
+    uint8_t *map = gTerrainTileMaps[Script_GetArgInt(args, 0)][0];
     int i;
 
     for (i = 0; i < 64; i++)

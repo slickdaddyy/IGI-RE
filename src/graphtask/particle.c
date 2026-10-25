@@ -62,7 +62,7 @@ extern int gParticle2DMemMax;
 extern int gParticle2DTrailIdx;
 extern int16_t gParticle2DTimer;
 extern Pool gLightPool;
-extern float gAmbient[];
+extern Vec3f gAmbient[5];
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);
@@ -223,11 +223,11 @@ void Particle2D_GetLight(Particle2DTask *t, float *out)
     }
     fz = sz;
     fy = sy;
-    x = sx + gAmbient[0];
+    x = sx + gAmbient[0].x;
     out[0] = x;
-    y = gAmbient[1] + fy;
+    y = gAmbient[0].y + fy;
     out[1] = y;
-    z = gAmbient[2] + fz;
+    z = gAmbient[0].z + fz;
     out[2] = z;
     out[0] = x * t->light * k255.f;
     out[1] = y * t->light * k255.f;
