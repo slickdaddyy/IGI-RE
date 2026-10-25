@@ -4,6 +4,7 @@
 #include "terrain/terrain.h"
 #include "sound/soundtypes.h"
 #include "task/taskvars.h"
+#include "dxinit/dxinitvars.h"
 
 ORIG(0x4C58B0, int, DynCubeTree_GetChildCount, (int tree));
 ORIG(0x4C7750, DynCubeNode *, DynCube_GetRoot_, (Terrain *t, int tree));
@@ -20,7 +21,6 @@ ORIG(0x50FAE0, void, TerrainMesh_SetupLighting, (Terrain *t, int unk));
 
 extern TaskType gTaskTypes[];
 extern int gTaskHandlerChanges;
-extern const float gPixelCenter;
 extern const float gZero;
 extern int gCollSightCalls;
 extern int gCellMaskEnabled;

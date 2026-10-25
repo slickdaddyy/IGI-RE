@@ -11,6 +11,7 @@
 #include "bonemesh/bonemeshvars.h"
 #include "binocular/binocularvars.h"
 #include "config/configvars.h"
+#include "file/filevars.h"
 
 FN_EXTERN(BinocularHolder_Changed);
 FN_EXTERN(BinocularHolder_GetParams);
@@ -96,7 +97,6 @@ extern void *gBinocularHolderParams;
 extern const int gGridTemplate[];
 extern const float gMarkerShape[];
 extern const float gTargetShape[];
-extern RenderMode gRenderModeCurrent;
 extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
 

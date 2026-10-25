@@ -14,6 +14,7 @@
 #include "core/coretypes.h"
 #include "qasm/qasmtypes.h"
 #include "task/taskvars.h"
+#include "file/filevars.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401AE0, void *, TaskRef_Add, (void *task));
@@ -107,8 +108,6 @@ extern QTaskList *gHumanPlayerList;
 extern int gQVertexStrip;
 
 extern WeaponCategory gWeaponCategories[];
-
-extern RenderMode gRenderModeCurrent;
 
 typedef struct HumanBlast {
     int unk00;

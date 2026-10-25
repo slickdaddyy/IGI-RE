@@ -9,6 +9,7 @@
 #include "igi.h"
 #include "terrdraw/terrdraw.h"
 #include "camfeed/camfeedvars.h"
+#include "glowmesh/glowmeshvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4AF910, void, List_AddHead, (TerrList *list, TerrNode *node));
@@ -25,7 +26,6 @@ extern uint32_t gTerrainFogColorD3D;
 #define CHUNK_HASH_SIZE 0x1FD
 
 extern TerrList gChunkHash[CHUNK_HASH_SIZE];
-extern Pool gTerrainChunkPool;
 extern IDirect3DVertexBuffer7 *gTerrainVB;
 extern int gD3DTnL;
 

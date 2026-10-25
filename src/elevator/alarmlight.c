@@ -3,15 +3,12 @@
 #include "hook.h"
 #include "elevator/elevator.h"
 #include "elevator/elevatortypes.h"
+#include "fxobj/fxobjvars.h"
 
 ORIG(0x4DCCB0, int, Sector_AddObject, (int world, void *obj, Vec3d *pos));
 ORIG(0x4DCDD0, void, Sector_RemoveObject, (void *obj));
 ORIG(0x4DCF00, void, Sector_MoveObject, (int world, void *obj, Vec3d *pos));
 ORIG(0x4E0930, Task *, MagicObjContainer_New, (void *parent, void *obj));
-
-extern void *gAlarmLightParams;
-extern uint16_t gAlarmLightReflectorType;
-extern uint16_t gAlarmLightType;
 
 static const float kZero = 0.0f;
 

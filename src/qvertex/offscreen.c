@@ -5,6 +5,7 @@
 #include "qvertex/qvertex.h"
 #include "sysmisc/sysmisctypes.h"
 #include "transctx/transctxtypes.h"
+#include "file/filevars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -20,9 +21,6 @@ ORIG(0x498370, int, Offscreen_GetMode, (void));
 /* the shared do-nothing function */
 #define NOTHING (FN(0x4D3710, Task_Nothing))
 
-extern int gAllocTextureId;
-extern int gDeAllocTextureId;
-extern int gDownloadTextureId;
 extern int gDeAllocPalette;
 extern int gDownloadPalette;
 extern int gAllocPalette;

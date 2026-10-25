@@ -6,6 +6,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "guncasing/guncasing.h"
+#include "guncasing/guncasingvars.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x4015F0, void, Task_Delete, (void *task));
@@ -30,7 +31,6 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 
 extern void *gMineParams;
 extern uint16_t gMineType;
-extern void *gMineList;
 
 void Mine_ParamChangedHandler(Mine *m, void *arg);
 

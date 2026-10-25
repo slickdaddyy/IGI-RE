@@ -13,8 +13,6 @@
 
 /* the active TransContext (0xBCAAE0) and scene (0xBCABA0), only the fields used here */
 extern Scene gScene;
-extern int gQCubeMinSize;
-extern RenderMode gRenderModeCurrent;
 
 /* fistp with the current rounding mode, low 32 bits */
 static inline int x87_fistp(long double x)

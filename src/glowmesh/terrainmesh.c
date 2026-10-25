@@ -13,6 +13,8 @@
 #include "glowmesh/glowmeshtypes.h"
 #include "bonemesh/bonemeshvars.h"
 #include "camfeed/camfeedvars.h"
+#include "glowmesh/glowmeshvars.h"
+#include "editcam/editcamvars.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -106,29 +108,18 @@ _Static_assert(sizeof(TerrainClipVertex) == 0x30, "TerrainClipVertex");
 ORIG(0x4A0340, void, Direct3DRender_ClipTriangleDepth, (ClipVertex a, ClipVertex b, ClipVertex c, float *minZ,
                                                         float nearZ));
 
-extern TerrainMesh *gTerrainMeshes[];
 extern int gTerrainMeshCount;
 extern int gTerrainCellCount;
 extern TerrainCell gTerrainCells[];
-extern Pool gQCubePool0;
-extern Pool gQCubePool1;
-extern Pool gQCubePool2;
-extern double gQCubeOriginD[];
 extern TerrainLightMapInfo gTerrainLightMaps[];
-extern CollBump gCollBumps[];
-extern CollHole gCollHoles[];
-extern uint8_t gTerrainTileMaps[][8][8];
 extern int gTerrainMeshRenderAll;
 extern Pool gLightPool;
-extern float gTerrainFogScale;
 extern float gTerrainAmbient[];
-extern float gTerrainFogColor[];
 extern int gTerrainMeshUnusedTextures;
 extern TerrainFog gTerrainFog[];
 extern int gTerrainTextures;
 extern float gTerrainBottom;
 extern float gTerrainRight;
-extern int gMorphStart;
 extern char gTerrainUnusedViewSlot;
 extern int gTerrainUnusedCellTotal;
 extern float gTerrainScaleY;
@@ -138,8 +129,6 @@ extern float gTerrainLeft;
 extern float gTerrainCenterX;
 extern float gTerrainCenterY;
 extern float gTerrainInvSize;
-extern int gTerrMeshTotal;
-extern float gMorphScale;
 extern TerrainMaterial gTerrainMaterials[];
 extern float gTerrainView[]; /* 3x3 matrix, unk24, then the view origin */
 extern float gWaterTint[];

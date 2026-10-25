@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "editcam/editcam.h"
 #include "coll/collvars.h"
+#include "editcam/editcamvars.h"
 
 FN_EXTERN(Task_ReturnZero);
 
@@ -82,11 +83,8 @@ extern HeightMap *gHeightMaps[];
 extern void *gHeightMapParams;
 extern uint16_t gHeightMapType;
 extern int gHeightMapCount;
-extern char gHmpResident[];
 extern int gCollBumpList[];
-extern int gCollBumpDepth;
 extern int gCollBumpTop;
-extern CollBump gCollBumps[];
 
 static const double kLiftZ = 268435456.0;
 static const double kHalf = 0.5;

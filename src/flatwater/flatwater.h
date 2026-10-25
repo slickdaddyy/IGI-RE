@@ -109,7 +109,6 @@ extern Scene gScene;
 
 extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern RenderMode gRenderModeCurrent;
 
 extern const float kZero;
 extern const float kOne;

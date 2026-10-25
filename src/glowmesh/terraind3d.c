@@ -14,6 +14,7 @@
 #include "glowmesh/glowmeshtypes.h"
 #include "bonemesh/bonemeshvars.h"
 #include "camfeed/camfeedvars.h"
+#include "glowmesh/glowmeshvars.h"
 
 typedef struct TdTLVertex {
     float sx, sy, sz, rhw;
@@ -67,30 +68,17 @@ extern TdTLVertex *gTerrVBData;
 extern int gTerrVertCount;
 extern uint32_t gTerrainFogColorD3D;
 extern int gTerrMirror;
-extern float gClipZBias;
-extern float gClipZScale;
 extern D3DVIEWPORT7 gTerrViewport;
-extern Pool gTerrainChunkPool;
-extern float gTerrainFogScale;
-extern float gTerrainFogColor[];
-extern TerrainMesh *gTerrainMeshes[];
 extern int gTerrainMeshCount;
 extern float gTerrainScaleY;
 extern float gTerrainScaleX;
 extern float gTerrainCenterX;
 extern float gTerrainCenterY;
-extern int gMorphStart;
-extern float gMorphScale;
 extern int gTerrainD3DUnusedInt;
-extern int gTerrMeshTotal;
 extern float gWorldScale;
-extern float gClipRhwScale;
 extern uint32_t gD3DZEnable;
-extern float gLayer1MaxZ;
 extern float gD3DMinZ;
-extern float gLayer1MinZ;
 extern float gD3DMaxZ;
-extern float gFarZ;
 extern PtrList *gD3DTextureStates;
 extern PtrList *gD3DBlendStates;
 extern PtrList *gD3DRenderStates;

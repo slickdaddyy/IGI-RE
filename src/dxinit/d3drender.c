@@ -7,6 +7,7 @@
 #include "d3d/d3dtypes.h"
 #include "boneobj/boneobjtypes.h"
 #include "bonemesh/bonemeshvars.h"
+#include "dxinit/dxinitvars.h"
 
 FN_EXTERN(Direct3DRender_AlphaBlendOff);
 FN_EXTERN(Direct3DRender_SetLightmapStages);
@@ -64,9 +65,7 @@ ORIG(0x4CFC60, int, Mesh3D_GetExcludeMethod, (void));
 ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 ORIG(0x4E5350, uint16_t, SplineObjSegment_GetType, (void));
 
-extern float gFogDensity;
 extern DynVB gVBNormal;
-extern MeshBatch gMeshBatches[];
 extern MeshVB gMeshVBs[];
 extern int gMeshVBCount;
 extern const unsigned gMeshFVF[];

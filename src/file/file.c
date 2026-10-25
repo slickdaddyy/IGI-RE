@@ -6,6 +6,7 @@
 #include "file/file.h"
 #include "types.h"
 #include "core/corevars.h"
+#include "file/filevars.h"
 
 _Static_assert(sizeof(Device) == 0x8C, "Device size");
 _Static_assert(sizeof(LoadedFile) == 0x1C, "LoadedFile size");
@@ -17,10 +18,8 @@ ORIG(0x4BADA0, void, Script_FreeRefBlock, (void *node));
 ORIG(0x4B1020, int, File_ResolvePath, (char *out, const char *path, int index));
 ORIG(0x4B11A0, int, Device_Find, (const char *path));
 
-extern Device gDevices[];
 extern char gOpenPath[];
 extern char gDeletePath[];
-extern File gNullFile[];
 extern const char *gModeNames[];
 extern const int gModeValues[];
 

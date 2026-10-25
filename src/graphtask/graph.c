@@ -4,6 +4,8 @@
 #include "graphtask/graphtask.h"
 #include "graphnode/graphnodetypes.h"
 #include "param/paramtypes.h"
+#include "graphtask/graphtaskvars.h"
+#include "graphnode/graphnodevars.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -51,18 +53,12 @@ ORIG(0x4F9DF0, void, GraphStream_AddHandler, (const char *name, int type, void (
 ORIG(0x4F9FF0, void, GraphOpen, (Graph *g, const char *path));
 ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 
-extern uint16_t gGraphType;
 extern uint8_t gGraphEvents[];
-extern void *gGraphParams;
-extern List gStreamHandlersFree;
 extern int gGraphLinkCost;
 extern GraphStreamHandler gGraphHandlerSlots[];
-extern GraphNodeSize gGraphNodeSizes[];
-extern List gGraphRefs;
 extern int gGraphLinkB;
 extern int gGraphLinkA;
 extern GraphNode gGraphNodeTemp;
-extern List gStreamHandlers;
 extern struct Terrain *gCurrentWorld;
 
 /* the next byte of the file, which stays unread. When nothing is read

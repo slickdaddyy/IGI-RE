@@ -8,16 +8,12 @@
 #include "animcam/animcam.h"
 #include "dirlight/dirlighttypes.h"
 #include "animcam/animcamvars.h"
+#include "dirlight/dirlightvars.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x5269C0, void, Dirlight_Update, (Dirlight *d));
-
-extern void *gDirlightParams;
-extern uint16_t gDirlightType;
-extern void *gDirlightKeyframeParams;
-extern uint16_t gDirlightKeyframeType;
 
 void DirlightKeyframe_GetParams(void *task, void **out)
 {

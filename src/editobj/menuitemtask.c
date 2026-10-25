@@ -3,6 +3,8 @@
 #include "hook.h"
 #include "editobj/editobj.h"
 #include "task/taskvars.h"
+#include "editcam/editcamvars.h"
+#include "editobj/editobjvars.h"
 
 FN_EXTERN(MenuItem_Commit);
 FN_EXTERN(MenuItem_ForwardPointer);
@@ -67,10 +69,6 @@ ORIG(0x508F70, uint8_t, Sync_GetEvent1, (void));
 extern uint16_t gMenuItemTaskType;
 extern uint8_t gMenuItemTaskPointerEvent;
 extern uint8_t gMenuItemTaskListEvent;
-extern uint8_t gMenuItemCommitEvent;
-extern uint8_t gMenuItemSelectEvent;
-extern uint8_t gMenuItemFindEvent;
-extern uint16_t gMenuItemType;
 
 /* list event handler of the items: adds node to the panel's list */
 void MenuItemTask_AddToList(ItemList **list, ItemNode *node)

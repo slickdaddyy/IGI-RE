@@ -7,6 +7,7 @@
 #include "sound/soundtypes.h"
 #include "core/coretypes.h"
 #include "task/taskvars.h"
+#include "file/filevars.h"
 
 FN_EXTERN(SplineObjSegment_Hit);
 
@@ -33,7 +34,6 @@ ORIG(0x4E4530, void, SplineObjSegment_Setup, (void *o, Vec3d *from, Vec3d *to, f
 #define SplineObjSegment_Hit (FN(0x4E16E0, SplineObjSegment_Hit))
 
 typedef void (*RenderFn)(void *arg);
-extern RenderMode gRenderModeCurrent;
 extern uint16_t gSplineObjSegmentType;
 
 /* the argument of the spline draw method */

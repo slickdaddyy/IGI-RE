@@ -3,6 +3,7 @@
 
 #include "hook.h"
 #include "editcam/editcam.h"
+#include "editcam/editcamvars.h"
 
 FN_EXTERN(Task_ReturnZero);
 
@@ -79,11 +80,6 @@ extern uint16_t gTexModType;
 extern TextureModifier *gTexMods[];
 extern char gTexModRandom[];
 extern int gTexModCount;
-extern char gBitResident[];
-extern int gCollHoleList[];
-extern int gCollHoleCount;
-extern unsigned int gCollHoleBits;
-extern CollHole gCollHoles[];
 
 static const double kLiftZ = 268435456.0;
 static const double kHalf = 0.5;

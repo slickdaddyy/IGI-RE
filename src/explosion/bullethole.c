@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "explosion/explosion.h"
 #include "ammotype/ammotypevars.h"
+#include "explosion/explosionvars.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x4015F0, void, Task_Delete, (void *task));

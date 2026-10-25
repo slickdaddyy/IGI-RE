@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "coll/coll.h"
 #include "coll/collvars.h"
+#include "editcam/editcamvars.h"
 
 static const double kOneOver24 = 1.0 / 24.0;
 static const float kTenth = 0.1f;
@@ -41,12 +42,8 @@ typedef void (*TaskHandler)(CollTask *task, int arg);
 
 extern TaskHandler gTaskEnterHandlers[];
 extern TaskHandler gTaskLeaveHandlers[];
-extern int gCollHoleList[];
-extern int gCollHoleCount;
 extern int gCollSavedHoleCount;
-extern CollBump gCollBumps[];
 extern int gCollBumpTop;
-extern CollHole gCollHoles[];
 extern int gCollLineCalls;
 extern int gCollLineCount;
 extern int gCollLeafTests;

@@ -4,10 +4,10 @@
 #include "igi.h"
 #include "core/error.h"
 #include "core/rendermode.h"
+#include "file/filevars.h"
 
 extern RenderMode gRenderModes[];
 extern RenderModeMethod gRenderMethods[];
-extern RenderMode gRenderModeCurrent;
 extern int gRenderModeIndex;
 extern int gRenderModeStack[];
 extern int gRenderModeStackTop;

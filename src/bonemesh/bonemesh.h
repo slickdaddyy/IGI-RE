@@ -52,7 +52,6 @@ _Static_assert(sizeof(MeshRender) == 0x38, "MeshRender");
 
 extern Scene gScene;
 extern float gWorldScale;
-extern RenderMode gRenderModeCurrent;
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern PtrList *gD3DTextureStates;

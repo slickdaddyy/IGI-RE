@@ -5,6 +5,7 @@
 #include "orig.h"
 #include "sysmisc/sysmisctypes.h"
 #include "core/coretypes.h"
+#include "file/filevars.h"
 
 /* Header of a .tex file, version 2. */
 typedef struct LoopHeader2 {
@@ -64,7 +65,6 @@ ORIG(0x4B74D0, void *, Chunk_Data, (void *chunk, void *file));
 ORIG(0x509910, void, D3DTex_Register, (void));
 ORIG(0x509920, void, D3DTex_Unregister, (void));
 
-extern RenderMode gRenderModeCurrent;
 extern char gTexFromFile;
 extern float gTexParams[];
 
@@ -74,12 +74,6 @@ extern int gReloadTextureId;
 extern int gRefreshTextureId;
 extern int gBeginTextureListId;
 extern int gEndTextureListId;
-extern int gAllocTextureId;
-extern int gDeAllocTextureId;
-extern int gDownloadTextureId;
-extern int gGetTMUsId;
-extern int gSetActiveTMUId;
-extern int gGetActiveTMUId;
 
 void Texture_Create(Texture *tex, int a2, int pitch, int width, int height, int format, int a7, int a8, void *data);
 

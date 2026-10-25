@@ -4,6 +4,8 @@
 
 #include "hook.h"
 #include "graphnode/graphnode.h"
+#include "graphtask/graphtaskvars.h"
+#include "graphnode/graphnodevars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
@@ -23,8 +25,6 @@ ORIG(0x4B3320, char, Vec3d_IsZero, (const Vec3d *v));
 
 #define NODESIZE_MAX 4
 
-extern void *gGraphParams;
-extern uint16_t gGraphType;
 extern uint8_t gGraphLoadEvent;
 extern uint8_t gGraphSaveEvent;
 extern uint8_t gGraphNodeLoadEvent;
@@ -32,8 +32,6 @@ extern uint8_t gGraphUnusedEvent0;
 extern uint8_t gGraphNodeAddEvent;
 extern uint8_t gGraphUnusedEvent1;
 extern uint8_t gGraphAllocEvent;
-extern List gGraphRefs;
-extern GraphNodeSize gGraphNodeSizes[];
 
 static const double kZero = 0.0;
 static const double kInside = 4096.0;

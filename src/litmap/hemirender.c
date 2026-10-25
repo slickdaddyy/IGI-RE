@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "hook.h"
 #include "litmap/litmaptypes.h"
+#include "dirlight/dirlightvars.h"
 
 ORIG(0x521110, void, Hemicube_DrawTriangle, (int *color, float *depth, int pitch, int *ids, int idW, int idH,
                                              int minX, int minY, int maxX, int maxY, float *a, float *b, float *c,
@@ -15,9 +16,6 @@ ORIG(0x521960, void, Hemicube_ClipTriangle, (int *color, float *depth, int pitch
                                              int minX, int minY, int maxX, int maxY, float offX, float offY,
                                              float scaleX, float scaleY, float *p0, float *p1, float *p2, float *t0,
                                              float *t1, float *t2, int affine));
-
-/* ids drawn for back faces: 0x10000 times -1 */
-extern int *gLightmapBuffer;
 
 #define MAX_VERTS 20000
 

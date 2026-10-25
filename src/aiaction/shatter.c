@@ -4,20 +4,13 @@
 #include "hook.h"
 #include "glass/glasstypes.h"
 #include "aiaction/aiactionvars.h"
+#include "glass/glassvars.h"
 
 ORIG(0x44A630, void, GlassShatter_PlaySound, (const Vec3d *pos));
 ORIG(0x44A670, void, GlassShatter_AddTri, (float *a, float *b, float *c));
 ORIG(0x49A450, void *, PolyList_New, (void *world, int a, const Vec3d *pos, const Matrix *m, void *polys, int count,
                                     int b, int c, int d, int e, int f));
 ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
-
-extern const float *gShatterColor;
-extern float gShatterSpeed;
-extern uint16_t gShatterType;
-extern int gShatterMode;
-extern GlassShatter *gShatterTask;
-extern ShardPoly *gShatterPolys;
-extern Shard *gShatterShards;
 
 extern const float gShardColor2[]; /* 0.7, 0.7, 0.7 */
 

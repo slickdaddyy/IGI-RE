@@ -8,6 +8,7 @@
 #include "hook.h"
 #include "dirlight/dirlight.h"
 #include "animcam/animcamvars.h"
+#include "dirlight/dirlightvars.h"
 
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
@@ -44,12 +45,8 @@ ORIG(0x527470, void, DirlightKeyframe_Delete, (void *kf));
 ORIG(0x5274D0, void, Dirlight_SetTime, (float time));
 
 extern struct Terrain *gCurrentWorld;
-extern void *gDirlightParams;
-extern uint16_t gDirlightType;
 extern char gDirlightRandom[];
 extern float gDirlightKeyframeTime;
-extern void *gDirlightKeyframeParams;
-extern uint16_t gDirlightKeyframeType;
 extern DirlightKeyframe *gDirlightKeyframeChanging;
 
 static const float kTwoPi = 0x1.921fb6p+2f;

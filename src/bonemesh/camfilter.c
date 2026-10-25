@@ -8,6 +8,7 @@
 #include "d3d/d3dtypes.h"
 #include "bonemesh/bonemeshvars.h"
 #include "camfeed/camfeedvars.h"
+#include "glowmesh/glowmeshvars.h"
 
 FN_EXTERN(BandFilter_Draw);
 FN_EXTERN(BandFilter_DrawPrim);
@@ -60,8 +61,6 @@ extern const char *gBatterySprite;
 extern const char *gTimecodeFont;
 
 extern float gD3DMinZ;
-extern float gLayer1MinZ;
-extern float gLayer1MaxZ;
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 #define TASK_DEBUG_LOG (FN(0x4C1780, Debug_Log))

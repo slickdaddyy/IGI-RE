@@ -5,6 +5,7 @@
 #include "igi.h"
 #include "coll/coll.h"
 #include "coll/collvars.h"
+#include "editcam/editcamvars.h"
 
 static const double kOneOver24 = 1.0 / 24.0;
 
@@ -39,7 +40,6 @@ typedef void (*TaskHandler)(CollTask *task, int arg);
 
 extern TaskHandler gTaskEnterHandlers[];
 extern TaskHandler gTaskLeaveHandlers[];
-extern CollBump gCollBumps[];
 
 void Coll_SendEvent(Terrain *t, uint8_t slot, void *arg, const Vec3d *p, unsigned int mask, int tree);
 int Coll_LeafLineHit(const short *leaf, const Vec3d *base, const Vec3d *s, const Vec3d *e, Vec3d *hit, int shift,

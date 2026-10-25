@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "props/props.h"
 #include "elevator/elevatortypes.h"
+#include "elevator/elevatorvars.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
@@ -32,9 +33,6 @@ ORIG(0x5020C0, long double, SplineObj_GetLength, (int id));
 ORIG(0x502130, int, SplineObj_GetWaypointCount, (int id));
 ORIG(0x502200, void, SplineObj_GetWaypointPos, (Vec3d *out, int id, int floor));
 
-extern void *gElevatorParams;
-extern uint16_t gElevatorType;
-extern RangeF gElevatorStartRange;
 extern Vec3d gElevatorMove;
 extern Matrix gElevatorTurn;
 

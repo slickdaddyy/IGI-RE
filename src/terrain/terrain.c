@@ -6,6 +6,8 @@
 #include "coll/colltypes.h"
 #include "litmap/litmaptypes.h"
 #include "config/configvars.h"
+#include "glowmesh/glowmeshvars.h"
+#include "editcam/editcamvars.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B2450, void, Texture_Download, (void *tex, void *palette, int pitch, int width, int height, int format,
@@ -25,11 +27,8 @@ ORIG(0x4B8A50, long double, Script_GetArgReal, (void *args, int i));
 ORIG(0x4CE3D0, void, Terrain_InvalidateLighting, (Terrain *t));
 ORIG(0x4D11C0, void, QCube_Reset, (void));
 
-extern char gHmpResident[];
-extern char gBitResident[];
 extern Lightmap gLightmaps[];
 extern TerrainMaterial gTerrainMaterials[];
-extern uint8_t gTerrainTileMaps[][8][8];
 
 ScriptValue *CreateTerrainMaterial(ScriptValue *out, void *data, void *args);
 ScriptValue *CreateTerrainTileMap(ScriptValue *out, void *data, void *args);

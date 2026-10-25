@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "terrdraw/terrdraw.h"
 #include "transctx/transctxtypes.h"
+#include "glowmesh/glowmeshvars.h"
 
 /* A lens flare element; the list is drawn from its last element back. */
 typedef struct Flare {
@@ -29,7 +30,6 @@ ORIG(0x512920, void, Glow_Shutdown, (void));
 extern int gViewSlotCurrent;
 extern char gViewSlotUsed[];
 extern Pool gFlarePool;
-extern Pool gGlowPool;
 extern Scene gScene;
 
 static const union {

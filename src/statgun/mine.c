@@ -1,5 +1,6 @@
 #include "hook.h"
 #include "statgun/statgun.h"
+#include "guncasing/guncasingvars.h"
 
 FN_EXTERN(Mine_DeleteHandler);
 FN_EXTERN(Mine_GetParamTableHandler);
@@ -10,7 +11,6 @@ FN_EXTERN(Mine_RunHandler);
 
 extern uint16_t gMineType;
 extern void *gMineParams;
-extern void *gMineList;
 
 #define HANDLER_475CC0 (FN(0x475CC0, Mine_RunHandler))
 #define HANDLER_475D30 (FN(0x475D30, Mine_DeleteHandler))

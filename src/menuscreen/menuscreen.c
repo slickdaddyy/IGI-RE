@@ -2,6 +2,7 @@
 #include "igi.h"
 #include "menuscreen/menuscreen.h"
 #include "menuscreen/menuscreentypes.h"
+#include "file/filevars.h"
 
 FN_EXTERN(MenuScreen_Activate);
 FN_EXTERN(MenuScreen_Apply);

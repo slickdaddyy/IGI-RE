@@ -7,6 +7,7 @@
 #include "win/win.h"
 #include "core/coretypes.h"
 #include "d3d/d3dtypes.h"
+#include "file/filevars.h"
 
 typedef void (*ErrorHandler)(const char *text);
 
@@ -62,7 +63,6 @@ extern DisplayCallback *gDisplayEndFrameCallbacks;
 extern DisplayCallback *gDisplayFrameCallbacks;
 extern int gD3DFoundHAL;
 extern int gD3DTnL;
-extern RenderMode gRenderModeCurrent;
 
 /* RenderMode method ids */
 extern int gMethodGetGFXCaps;

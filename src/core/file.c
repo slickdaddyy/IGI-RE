@@ -7,6 +7,7 @@
 #include "core/list.h"
 #include "file/filetypes.h"
 #include "core/corevars.h"
+#include "file/filevars.h"
 
 ORIG(0x4AAD10, int, crt_strncmp, (const char *a, const char *b, size_t n));
 ORIG(0x4AA0A0, char *, crt_strchr, (const char *s, int c));
@@ -16,9 +17,7 @@ ORIG(0x4BADA0, void, Script_FreeRefBlock, (Node *file));
 ORIG(0x4B1DE0, const char *, Device_GetName, (int device));
 
 extern FileAlias gAliases[];
-extern Device gDevices[];
 extern int gDeviceCount;
-extern File gNullFile[];
 
 /* Expands an alias at the start of path into its index'th path. Returns the
    next index to try, or 0 when this was the last one. */

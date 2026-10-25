@@ -8,6 +8,7 @@
 #include "mission/mission.h"
 #include "core/coretypes.h"
 #include "config/configvars.h"
+#include "file/filevars.h"
 
 ORIG(0x416D50, char, Game_IsPaused, (void));
 ORIG(0x418E40, void *, MenuManager_FindFont, (void *mm, const char *name));
@@ -34,7 +35,6 @@ extern RangeF gStatusDurationRange;
 extern uint16_t gStatusMessageScreenType;
 extern void *gMessagesRes;
 
-extern RenderMode gRenderModeCurrent;
 extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
 extern struct Palette *gQVertexPalette;

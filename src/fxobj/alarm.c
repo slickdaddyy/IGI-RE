@@ -7,6 +7,7 @@
 #include "transctx/transctxtypes.h"
 #include "task/taskvars.h"
 #include "bonemesh/bonemeshvars.h"
+#include "fxobj/fxobjvars.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -65,9 +66,6 @@ typedef struct Reflector {
 _Static_assert(offsetof(Reflector, light) == 0x130, "Reflector.light");
 _Static_assert(sizeof(Reflector) == 0x140, "Reflector");
 
-extern void *gAlarmLightParams;
-extern uint16_t gAlarmLightReflectorType;
-extern uint16_t gAlarmLightType;
 extern char *gAlarmSprite;
 
 static const float kTurn = 0x1.aceeap-4f;

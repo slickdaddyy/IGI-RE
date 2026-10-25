@@ -8,6 +8,7 @@
 #include "terrain/terrain.h"
 #include "sound/soundtypes.h"
 #include "task/taskvars.h"
+#include "dxinit/dxinitvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4B3360, char, Vec3d_Equal, (const Vec3d *a, const Vec3d *b));
@@ -22,7 +23,6 @@ ORIG(0x4E5BA0, int, CellMask_TestRect, (const void *mask, float x, float y, floa
 extern TaskType gTaskTypes[];
 extern signed char gTaskSlotEvent[];
 extern const int gDynCubeChildDir[][3];
-extern const float gPixelCenter;
 extern const float gSqrt3;
 
 /* One level of the explicit stack used by the event queries. */

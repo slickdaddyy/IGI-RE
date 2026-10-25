@@ -5,7 +5,6 @@
 #include "transctx/transctxtypes.h"
 #include "core/coretypes.h"
 
-extern RenderMode gRenderModeCurrent;
 extern Scene gScene;
 
 /* a float constant from the exe, bit exact */

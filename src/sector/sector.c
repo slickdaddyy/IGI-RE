@@ -13,6 +13,7 @@
 #include "core/coretypes.h"
 #include "task/taskvars.h"
 #include "bonemesh/bonemeshvars.h"
+#include "file/filevars.h"
 
 FN_EXTERN(SectorInteriorObject_WorldAdd);
 FN_EXTERN(SectorInteriorObject_WorldRemove);
@@ -123,7 +124,6 @@ _Static_assert(sizeof(LocateArg) == 0x30, "LocateArg");
 _Static_assert(sizeof(LineQuery) == 0x24, "LineQuery");
 _Static_assert(sizeof(LineHit) == 0x70, "LineHit");
 
-extern RenderMode gRenderModeCurrent;
 extern int gQCubeInside;
 extern struct DynCubeObj *gQCubeEnclosing;
 extern struct Sector *gViewSector;

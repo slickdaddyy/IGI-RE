@@ -5,6 +5,7 @@
 #include "profile/profile.h"
 #include "core/coretypes.h"
 #include "config/configvars.h"
+#include "file/filevars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -33,7 +34,6 @@ ORIG(0x4D2C20, void, QCube_SetDetail, (int v));
 
 extern int gDriverCount;
 extern char gLanguageAliasSet;
-extern RenderMode gRenderModeCurrent;
 
 void Config_AddMissingKeys(void);
 void Config_FixDisplayModes(void);

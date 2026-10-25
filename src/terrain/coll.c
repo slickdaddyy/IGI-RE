@@ -5,6 +5,7 @@
 #include "igi.h"
 #include "terrain/terrain.h"
 #include "coll/colltypes.h"
+#include "editcam/editcamvars.h"
 
 static const double kOneOver24 = 1.0 / 24.0;
 
@@ -14,7 +15,6 @@ ORIG(0x4B2D90, char, Vec3_TriangleCoords, (float *u, float *v, const Vec3f *p, c
 ORIG(0x4B3100, void, Vec3d_Normalize, (Vec3d *v));
 ORIG(0x4B3190, void, Vec3d_Cross, (Vec3d *out, const Vec3d *a, const Vec3d *b));
 
-extern CollBump gCollBumps[];
 extern int gCollBumpTop;
 
 static inline int fistp(long double x)

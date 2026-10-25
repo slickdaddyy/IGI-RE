@@ -5,6 +5,7 @@
 #include "igi.h"
 #include "model/model.h"
 #include "core/coretypes.h"
+#include "file/filevars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4AF8F0, void, List_AddTail_, (List *list, Node *node));
@@ -34,7 +35,6 @@ extern char gModelPath[];
 extern char gModelDir[];
 extern int gVirModelCount;
 extern int gVirModelSaved;
-extern RenderMode gRenderModeCurrent;
 
 _Static_assert(sizeof(ModelFile) == 0x4C, "ModelFile");
 

@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "menu/menu.h"
+#include "file/filevars.h"
 
 FN_EXTERN(MenuWindow_ForwardLoad);
 

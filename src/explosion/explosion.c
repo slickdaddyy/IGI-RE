@@ -5,6 +5,8 @@
 #include "transctx/transctxtypes.h"
 #include "core/coretypes.h"
 #include "bonemesh/bonemeshvars.h"
+#include "file/filevars.h"
+#include "explosion/explosionvars.h"
 
 FN_EXTERN(Explosion_CreateHandler);
 FN_EXTERN(Explosion_RunHandler);
@@ -61,14 +63,8 @@ ORIG(0x503BF0, uint16_t, SimpointObj_GetType, (void));
 ORIG(0x503CC0, Fragment *, SimpointObjContainer_Add, (void *group, uint16_t type, Vec3d *pos, Matrix *m, Vec3f *vel));
 ORIG(0x503D50, void, SimpointObjContainer_SetAutoDelete, (void *group, int a));
 
-extern uint16_t gExplosionType;
-extern uint16_t gFragmentType;
 extern char *gFireballSprite;
-extern uint16_t gExplosionSmokeType;
 extern char *gSmoke2Sprite;
-extern char *gBurnTexture;
-extern uint16_t gFireBallType;
-extern RenderMode gRenderModeCurrent;
 
 #define Explosion_Create (FN(0x480F30, Explosion_CreateHandler))
 #define Explosion_Run (FN(0x480F40, Explosion_RunHandler))

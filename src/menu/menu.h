@@ -15,7 +15,6 @@ typedef void (*TaskFn)(void *task, void *arg);
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern RenderMode gRenderModeCurrent;
 extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
 extern struct Palette *gQVertexPalette;

@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "transctx/transctx.h"
+#include "file/filevars.h"
 
 ORIG(0x491DB0, int, Display_GetClipWindowPrim, (void));
 ORIG(0x4AF8F0, void, List_AddTail, (void *list, void *node));

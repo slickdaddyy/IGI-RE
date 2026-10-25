@@ -6,6 +6,7 @@
 #include "editobj/editobjtypes.h"
 #include "sound/soundtypes.h"
 #include "task/taskvars.h"
+#include "editobj/editobjvars.h"
 
 FN_EXTERN(ConditionalContainer_ForwardEvent4);
 FN_EXTERN(SplineObjWaypoint_Changed);
@@ -54,7 +55,6 @@ extern void *gSplineObjWaypointParams;
 extern RangeI gSplineObjSegmentRange;
 extern uint16_t gSplineObjType;
 extern void *gSplineObjParams;
-extern uint16_t gSplineObjWaypointType;
 
 static const float kZero = 0.0f;
 static const float kFar = 4096.0f;

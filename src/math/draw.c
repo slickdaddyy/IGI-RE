@@ -3,13 +3,13 @@
 #include "res/restypes.h"
 #include "qvertex/qvertextypes.h"
 #include "core/coretypes.h"
+#include "file/filevars.h"
 
 typedef void (*DrawFunc)(QVertexStrip *cmd);
 
 extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
 extern struct Palette *gQVertexPalette;
-extern RenderMode gRenderModeCurrent;
 
 #define COLOR_SCALE (1.0f / 128)
 

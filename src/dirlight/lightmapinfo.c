@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "dirlight/dirlight.h"
+#include "dirlight/dirlightvars.h"
 
 ORIG(0x4B0D60, void, Mem_PushMode, (int mode));
 ORIG(0x4B0D90, void, Mem_PopMode, (void));
@@ -62,13 +63,9 @@ ORIG(0x523D40, Lightmaps *, BuildLod, (void *lod, int lodIndex, float scale, con
 
 extern uint16_t gLightmapInfoType;
 extern void *gLightmapInfoParams;
-extern int gLightmapFlaggedTexelCount;
-extern int gLightmapTexelCount;
-extern Pool gLightmapInfoPool;
 extern char gLightmapRandom[];
 extern Matrix gLightmapRotations[];
 extern char gLightmapScene[];
-extern int *gLightmapBuffer;
 extern uint8_t gLightSourceIsEvent;
 extern uint8_t gLightSourceTraceEvent;
 extern uint8_t gLightSourceVertexEvent;

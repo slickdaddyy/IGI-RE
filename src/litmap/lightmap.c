@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "litmap/litmap.h"
 #include "litmap/litmaptypes.h"
+#include "dirlight/dirlightvars.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (int size, int align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -51,10 +52,8 @@ extern void *gLightmapBufB;
 extern void *gLightmapBufC;
 extern void *gLightmapBufD;
 extern int gLightmapBufCount;
-extern int gLightmapBuilt;
 extern char gLightmapDir[];
 extern char gLightmapResPath[];
-extern Pool gLightmapInfoPool;
 extern const char *gLightmapScanName;
 extern int gLightmapFileFound;
 extern float gHemicubeTopMax;

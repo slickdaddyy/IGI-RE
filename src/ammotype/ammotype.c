@@ -5,6 +5,7 @@
 #include "sysmisc/sysmisctypes.h"
 #include "config/configvars.h"
 #include "ammotype/ammotypevars.h"
+#include "explosion/explosionvars.h"
 
 FN_EXTERN(BulletHole_AddRigid);
 FN_EXTERN(BulletHole_AddSpline);
@@ -52,8 +53,6 @@ extern AmmoType gAmmoTypes[];
 extern int gAmmoTypeCount;
 extern uint8_t gAmmoListEvent;
 extern char gAmmoIdEnum[];
-extern Pool gHolePool;
-extern Pool gHolePolyPool;
 
 ScriptValue *DefineAmmoType(ScriptValue *out, void *data, void *args);
 void AmmoType_LoadAll(void);

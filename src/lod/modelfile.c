@@ -5,6 +5,7 @@
 #include "igi.h"
 #include "model/model.h"
 #include "core/coretypes.h"
+#include "file/filevars.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4AF960, void, List_Remove_, (Node *node));
@@ -25,7 +26,6 @@ ORIG(0x4D67A0, void, BoneObj_Load, (const char *path));
 extern char gModelPath[];
 extern char gModelDir[];
 extern char gModelAnimDir[];
-extern RenderMode gRenderModeCurrent;
 
 /* Palettes named in the PALF chunk, 0xC bytes each at f->unk3C. */
 void ModelFile_LoadPalettes(ModelFile *f)

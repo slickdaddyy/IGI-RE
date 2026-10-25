@@ -4,10 +4,10 @@
 #include "qvertex/qvertextypes.h"
 #include "core/coretypes.h"
 #include "config/configvars.h"
+#include "file/filevars.h"
 
 ORIG(0x4B8030, void, Script_RegisterString, (const char *name, char *buf, int size));
 
-extern RenderMode gRenderModeCurrent;
 extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
 extern struct Palette *gQVertexPalette;

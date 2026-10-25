@@ -6,6 +6,7 @@
 #include "win/wintypes.h"
 #include "config/configtypes.h"
 #include "config/configvars.h"
+#include "game/gamevars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -81,11 +82,9 @@ typedef struct ResourceInfo {
     const char *name;
 } ResourceInfo;
 
-extern uint16_t gMenuManagerType;
 extern int gMenuKeepScreen;
 extern MenuInput gMenuLastInput;
 extern int gMenuDemoTimer;
-extern void *gMenuManagerParams;
 extern MenuWindow *gMenuLastScreen;
 extern int gMenuIdleTimer;
 extern MenuWindow *gMenuLastFocus;

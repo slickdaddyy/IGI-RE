@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "glass/glasstypes.h"
 #include "aiaction/aiactionvars.h"
+#include "glass/glassvars.h"
 
 ORIG(0x4012A0, void *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
@@ -26,17 +27,10 @@ typedef struct HitInfo {
 
 _Static_assert(offsetof(HitInfo, normal) == 0x38, "HitInfo");
 
-extern const float *gShatterColor;
 extern char gShatterRandom[];
-extern float gShatterSpeed;
-extern uint16_t gShatterType;
-extern int gShatterMode;
 extern float gShatterAlpha;
 extern Vec3f gShatterHitA;
-extern GlassShatter *gShatterTask;
 extern Vec3f gShatterNormal;
-extern ShardPoly *gShatterPolys;
-extern Shard *gShatterShards;
 extern Matrix gShardSpin[];
 
 extern float kTen;

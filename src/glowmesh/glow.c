@@ -9,6 +9,7 @@
 #include "glowmesh/glowmesh.h"
 #include "types.h"
 #include "bonemesh/bonemeshvars.h"
+#include "glowmesh/glowmeshvars.h"
 
 ORIG(0x497800, void *, Frame_Alloc, (int size));
 ORIG(0x4978B0, void, RenderQueue_Add, (int queue, void *node));
@@ -49,7 +50,6 @@ extern int gGlowInstancePrim;
 extern char gGlowMask[];
 extern int gGlowCount;
 extern Glow gGlows[];
-extern Pool gGlowPool;
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);

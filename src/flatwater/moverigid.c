@@ -7,6 +7,7 @@
 #include "hook.h"
 #include "flatwater/flatwater.h"
 #include "flatwater/flatwatertypes.h"
+#include "flatwater/flatwatervars.h"
 
 FN_EXTERN(MoveRigidObj_Changed);
 
@@ -25,8 +26,6 @@ ORIG(0x4D0950, long double, VirModel_GetRadius2, (void **model, int unk));
 ORIG(0x4E0930, Task *, MagicObjContainer_New, (void *parent, void *owner));
 
 extern char gMoveBetaNames[][16];
-extern uint16_t gMoveRigidObjType;
-extern void *gMoveRigidObjParams;
 extern char gMoveAlphaNames[][16];
 extern char gMoveGammaNames[][16];
 extern char gMovePosNames[][16];

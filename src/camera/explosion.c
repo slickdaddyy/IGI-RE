@@ -9,6 +9,7 @@
 #include "humanai/humanaitypes.h"
 #include "explosion/explosiontypes.h"
 #include "task/taskvars.h"
+#include "explosion/explosionvars.h"
 
 /* sent to the object an explosion burns a mark on */
 typedef struct BurnMsg {
@@ -33,12 +34,6 @@ ORIG(0x4D0D30, void, ModelObj_FreeLodData, (void *p));
 ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 ORIG(0x503C00, void *, SimpointObjContainer_New, (int frames, const char *a, const char *b, float c, float d, float e,
                                               float f, float *dir, int h));
-
-extern uint16_t gExplosionType;
-extern uint16_t gFragmentType;
-extern uint16_t gExplosionSmokeType;
-extern char *gBurnTexture;
-extern uint16_t gFireBallType;
 
 static const double kOne = 1.0;
 static const float kHalf = 0.5f;

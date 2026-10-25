@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "guncasing/guncasing.h"
+#include "guncasing/guncasingvars.h"
 
 FN_EXTERN(Gun_AddHandler);
 FN_EXTERN(Gun_CollFilter);
@@ -105,11 +106,6 @@ ORIG(0x4F2010, uint8_t, Weapon_GetEvent4, (void));
 ORIG(0x4F2020, uint8_t, Weapon_GetSelectEvent, (void));
 ORIG(0x4F2030, uint8_t, Weapon_GetDeselectEvent, (void));
 ORIG(0x4F2040, uint8_t, Weapon_GetEvent7b, (void));
-
-extern void *gGunParams;
-extern uint16_t gGunCasingType;
-extern uint16_t gGunType;
-extern uint8_t gGunEvents[];
 
 extern float kCasingGravity;
 extern const float kTwoPi;

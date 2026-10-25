@@ -13,6 +13,7 @@
 #include "task/taskvars.h"
 #include "camfeed/camfeedvars.h"
 #include "bonemesh/bonemeshvars.h"
+#include "file/filevars.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));

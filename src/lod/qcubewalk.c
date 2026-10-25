@@ -15,6 +15,8 @@
 #include "task/taskvars.h"
 #include "coll/collvars.h"
 #include "bonemesh/bonemeshvars.h"
+#include "glowmesh/glowmeshvars.h"
+#include "editcam/editcamvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4C5810, void, Coll_ResetMods, (void));
@@ -31,10 +33,6 @@ extern int gDisplayFrame;
 extern QEntry *gQCubeOut;
 extern int gQCubeCount;
 extern QCacheEntry gQCubeCache[];
-extern Pool gQCubePool0;
-extern Pool gQCubePool1;
-extern Pool gQCubePool2;
-extern int gQCubeMinSize;
 extern int gQCubeOrigin[];
 extern uint8_t gQCubeChildOrder[][8];
 extern signed char gWalkTreeIndex[];
@@ -44,12 +42,10 @@ extern int gQCubeSkipCells;
 extern int gWalkOverflow;
 extern TerrainCell gTerrainCells[];
 extern int gTerrainCellCount;
-extern TerrainMesh *gTerrainMeshes[];
 extern int gTerrainMeshCount;
 extern int gVisibleLightMapCount;
 extern int gVisibleLightMaps[];
 extern int gCollBumpTop;
-extern unsigned int gCollHoleBits;
 
 F32(kSlope, 0x3fddb574);     /* 1.7321 */
 F32(kFixedOne, 0x4e800000);  /* 2^30 */

@@ -17,6 +17,7 @@
 #include "task/taskvars.h"
 #include "bonemesh/bonemeshvars.h"
 #include "camfeed/camfeedvars.h"
+#include "dxinit/dxinitvars.h"
 
 /* Direct3D mesh renderer: rigid, spline and lightmapped meshes. */
 
@@ -173,7 +174,6 @@ ORIG(0x4D0E60, void, ModelLod_SaveTexAnimState, (ModelLod *l, int *out));
 ORIG(0x4D0EA0, void, ModelLod_LoadTexAnimState, (ModelLod *l, const int *in));
 
 extern struct IDirect3D7 *gD3D;
-extern MeshBatch gMeshBatches[];
 extern int gTexStageIdx;
 extern int gAlphaBlendIdx;
 extern int gLitAlphaIdx;
@@ -186,7 +186,6 @@ extern int gOpaqueBlendIdx;
 extern MeshVB gMeshVBs[];
 extern int gUnlitIdx;
 extern Pool gLightPool;
-extern float gFogDensity;
 extern float gLayerFov[];
 extern float gLightColor[];
 extern float gFogColor[];

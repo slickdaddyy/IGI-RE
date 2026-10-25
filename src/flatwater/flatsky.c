@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "flatwater/flatwater.h"
 #include "bonemesh/bonemeshvars.h"
+#include "file/filevars.h"
 
 /* "FlatSky": a sky dome with a gradient of five colors and a clear color,
    plus "FlatSkyLayer" cloud textures. */

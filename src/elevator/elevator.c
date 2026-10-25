@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "elevator/elevator.h"
 #include "elevator/elevatortypes.h"
+#include "elevator/elevatorvars.h"
 
 FN_EXTERN(Elevator_Activate);
 FN_EXTERN(Elevator_Deactivate);
@@ -25,12 +26,9 @@ ORIG(0x5020C0, long double, SplineObj_GetLength, (int id));
 ORIG(0x502130, int, SplineObj_GetWaypointCount, (int id));
 ORIG(0x502180, long double, SplineObj_GetLengthTo, (int id, int floor));
 
-extern uint16_t gElevatorType;
-extern void *gElevatorParams;
 extern char gElevatorFloorNames[][32];
 extern RangeF gElevatorMaxSpeedRange;
 extern RangeF gElevatorAccelRange;
-extern RangeF gElevatorStartRange;
 
 static const float kZero = 0.0f;
 static const float kNear = 16384.0f;

@@ -9,6 +9,8 @@
 #include "task/taskvars.h"
 #include "bonemesh/bonemeshvars.h"
 #include "camfeed/camfeedvars.h"
+#include "dxinit/dxinitvars.h"
+#include "file/filevars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -96,9 +98,7 @@ extern char gPolyListRandom[];
 extern Pool gLightPool;
 extern float gLightColor[];
 extern float gFogColor[];
-extern float gFogDensity;
 extern uint32_t gFogEnable;
-extern DynVB gVBLit;
 
 extern const float kZero;
 extern const float kOne;

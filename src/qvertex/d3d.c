@@ -12,6 +12,7 @@
 #include "d3d/d3dtypes.h"
 #include "bonemesh/bonemeshvars.h"
 #include "camfeed/camfeedvars.h"
+#include "glowmesh/glowmeshvars.h"
 
 /* The QVertex driver of the Direct3D render mode. */
 
@@ -64,9 +65,7 @@ extern PtrList *gD3DTextureStates;
 extern PtrList *gD3DBlendStates;
 extern PtrList *gD3DRenderStates;
 extern PtrList *gD3DClipStates;
-extern float gLayer1MaxZ;
 extern float gD3DMinZ;
-extern float gLayer1MinZ;
 extern float gD3DMaxZ;
 extern float gWorldScale;
 extern Scene gScene;

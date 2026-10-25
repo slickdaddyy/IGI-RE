@@ -23,7 +23,6 @@ extern PtrList *gD3DRenderStates;
 extern PtrList *gD3DClipStates;
 extern struct IDirect3D7 *gD3D;
 extern uint16_t gDynCubeObjType;
-extern RenderMode gRenderModeCurrent;
 
 #define SET_RS(state, value) gD3DDevice->lpVtbl->SetRenderState(gD3DDevice, (D3DRENDERSTATETYPE)(state), (value))
 #define SET_TSS(stage, state, value) \

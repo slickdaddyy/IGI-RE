@@ -10,6 +10,7 @@
 #include "igi.h"
 #include "transctx/transctxtypes.h"
 #include "camfeed/camfeedvars.h"
+#include "glowmesh/glowmeshvars.h"
 
 #define CLIP_LEFT 1
 #define CLIP_TOP 2
@@ -47,10 +48,7 @@ typedef struct ClipOut {
 _Static_assert(sizeof(ClipVtx) == 0x40, "ClipVtx");
 
 extern int gClipCount;
-extern float gClipZBias;
-extern float gClipZScale;
 extern Scene gScene;
-extern float gClipRhwScale;
 extern float gTerrainScaleY;
 extern float gTerrainScaleX;
 extern float gTerrainCenterX;

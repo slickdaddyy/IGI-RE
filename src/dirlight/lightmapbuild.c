@@ -9,6 +9,7 @@
 
 #include "hook.h"
 #include "dirlight/dirlight.h"
+#include "dirlight/dirlightvars.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
@@ -21,10 +22,6 @@ ORIG(0x4B2D90, char, Vec3_TriangleCoords, (float *s, float *t, const float *p, c
 ORIG(0x5210C0, const char *, Lightmap_GetDir, (void));
 ORIG(0x52D440, void, DateTime_Get, (int *time));
 ORIG(0x52D630, int, DateTime_Compare, (const int *a, const int *b));
-
-extern int gLightmapFlaggedTexelCount;
-extern int gLightmapTexelCount;
-extern int gLightmapBuilt;
 
 #define LIGHTMAP_MAGIC 0x3DF5C28F
 

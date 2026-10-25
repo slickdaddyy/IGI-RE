@@ -6,6 +6,7 @@
 #include "coll/colltypes.h"
 #include "material/materialtypes.h"
 #include "core/coretypes.h"
+#include "file/filevars.h"
 
 ORIG(0x401AE0, Task **, TaskRef_Add, (Task *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
@@ -65,7 +66,6 @@ extern char *gAlarmLightSprite;
 extern uint16_t gSCameraType;
 extern void *gLensList;
 
-extern RenderMode gRenderModeCurrent;
 extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
 extern struct Palette *gQVertexPalette;

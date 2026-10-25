@@ -10,6 +10,7 @@
 #include "bonemesh/bonemeshtypes.h"
 #include "core/coretypes.h"
 #include "bonemesh/bonemeshvars.h"
+#include "file/filevars.h"
 
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x401810, int, TaskEvent_Alloc2, (uint16_t type));
@@ -100,8 +101,6 @@ extern float gExclLeftCos;
 extern float gExclRightCos;
 extern float gExclTopCos;
 extern float gExclBottomCos;
-
-extern RenderMode gRenderModeCurrent;
 
 static const float kOne = 1.0f;
 static const float kBoneSphere = 0x1.68f5c2p+0f; /* 1.41 */
