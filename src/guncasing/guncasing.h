@@ -9,6 +9,7 @@
 #include "humanai/humanaitypes.h"
 #include "computer/computertypes.h"
 #include "guncasing/guncasingtypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskFn)();
 
@@ -140,7 +141,6 @@ uint8_t Gun_GetEvent4(void);
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern void *gTaskHandlers[][0x180];
 #define TASK_HANDLER(slot, type) (((TaskFn *)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 /* exe constants, read in place so the x87 code sees the same values */

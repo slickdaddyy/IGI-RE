@@ -8,10 +8,10 @@
 #include "soldier/soldiertypes.h"
 #include "humanplayer/humanplayertypes.h"
 #include "humanai/humanaitypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
-extern void *gTaskHandlers[][0x180];
 #define TASK_HANDLER(slot, type) (((TaskHandler *)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 /* the subtypes continue right after the 0xD04 byte base */

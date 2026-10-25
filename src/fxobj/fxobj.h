@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "param/paramtypes.h"
 #include "vehicle/vehicletypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -24,7 +25,6 @@ typedef struct ParseArg {
     int used;
 } ParseArg;
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 

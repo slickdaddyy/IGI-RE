@@ -7,6 +7,7 @@
 #include "qasm/qasmtypes.h"
 #include "sound/soundtypes.h"
 #include "define/definetypes.h"
+#include "task/taskvars.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4974A0, void, SoundParams_Init, (void *params));

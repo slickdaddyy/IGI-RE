@@ -8,6 +8,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "viewcam/viewcam.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(HumanAttach_Detect);
 FN_EXTERN(SubLevel_Run);

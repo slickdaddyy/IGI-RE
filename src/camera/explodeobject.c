@@ -9,6 +9,7 @@
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "glass/glasstypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Task_Nothing);
 

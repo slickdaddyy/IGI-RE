@@ -6,10 +6,10 @@
 
 #include "igi.h"
 #include "task/tasktypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
-extern void *gTaskHandlers[][0x180];
 #define TASK_HANDLER(slot, type) (((TaskHandler *)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));

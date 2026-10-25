@@ -8,6 +8,7 @@
 #include "vehicle/vehicletypes.h"
 #include "plane/planetypes.h"
 #include "heli/helitypes.h"
+#include "task/taskvars.h"
 
 typedef struct Joint {
     char unk0[0x18];
@@ -83,7 +84,6 @@ typedef void (*TaskFn2)(void *task, void *arg);
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern void *gTaskHandlers[][0x180];
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 /* exe constants, read in place so the x87 code sees the same values */

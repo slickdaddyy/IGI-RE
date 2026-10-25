@@ -8,6 +8,7 @@
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "levelflow/levelflowtypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskFn)();
 
@@ -31,7 +32,6 @@ typedef struct ExplodeObj {
 _Static_assert(sizeof(MagicPart) == 0x4C, "MagicPart");
 _Static_assert(sizeof(ExplodeObj) == 0x238, "ExplodeObj");
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

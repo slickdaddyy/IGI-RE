@@ -8,6 +8,7 @@
 #include "vehicle/vehicletypes.h"
 #include "plane/planetypes.h"
 #include "heli/helitypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -85,7 +86,6 @@ _Static_assert(offsetof(CarData, explodePoints) == 0x284, "CarData");
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 

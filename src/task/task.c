@@ -3,6 +3,7 @@
 #include "igi.h"
 #include "hook.h"
 #include "task/task.h"
+#include "task/taskvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
@@ -16,7 +17,6 @@ ORIG(0x4B0D90, void, Mem_PopMode, (void));
 ORIG(0x4B8810, void, Script_RegisterConstant, (const char *name, int value));
 
 extern TaskType gTaskTypes[];
-extern TaskHandler gTaskHandlers[][TASK_MAX_TYPES];
 extern char gTaskHandlerSet[][TASK_MAX_TYPES];
 extern TaskEvent gTaskEvents[];
 extern uint8_t gTaskEventSlot[];

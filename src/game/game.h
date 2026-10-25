@@ -12,7 +12,6 @@ typedef void (*TaskFn)(void *task, void *arg);
 typedef void (*TaskFn1)(void *task);
 
 extern Game *gGame;
-extern void (*gTaskHandlers[][0x180])();
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern const char gEmptyString[];

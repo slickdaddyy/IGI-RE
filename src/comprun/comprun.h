@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -19,7 +20,6 @@ typedef struct Toucher {
     Vec3d pos;
 } Toucher;
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 

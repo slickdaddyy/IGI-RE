@@ -10,6 +10,7 @@
 #include "haze/hazetypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "model/modeltypes.h"
+#include "task/taskvars.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x4C56F0, uint8_t, RigidDynCubeObj_GetEvent2, (void));
@@ -26,7 +27,6 @@ typedef void (*TaskHandler)(Task *task, void *arg);
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern TaskHandler gTaskHandlers[][0x180];
 
 #define HEADER(obj) (((ModelLod *)*(obj)->model)->mesh->header)
 

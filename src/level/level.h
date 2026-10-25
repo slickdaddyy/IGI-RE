@@ -11,7 +11,6 @@
 
 typedef void (*TaskFn)(Task *task);
 
-extern void * gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 

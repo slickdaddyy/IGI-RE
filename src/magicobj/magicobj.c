@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "magicobj/magicobj.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(RigidDynCubeObj_CollLine);
 FN_EXTERN(RigidDynCubeObj_EnterHandler);
@@ -46,7 +47,6 @@ ORIG(0x4E5610, void, CellMask_FillTriangle, (int target, float ax, float ay, flo
 #define RIGID_HANDLER_4C35F0 (FN(0x4C35F0, RigidDynCubeObj_CollLine))
 #define DIR_CALLBACK_4C2F90 (FN(0x4C2F90, MagicObj_LoadDirEntry))
 
-extern MagicHandler gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern char gRigidEvents[];

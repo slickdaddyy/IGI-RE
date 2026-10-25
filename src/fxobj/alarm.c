@@ -5,6 +5,7 @@
 #include "fxobj/fxobj.h"
 #include "elevator/elevatortypes.h"
 #include "transctx/transctxtypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(crt_CIfmod);
 

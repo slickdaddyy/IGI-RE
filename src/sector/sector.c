@@ -11,6 +11,7 @@
 #include "transctx/transctxtypes.h"
 #include "glowmesh/glowmeshtypes.h"
 #include "core/coretypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(SectorInteriorObject_WorldAdd);
 FN_EXTERN(SectorInteriorObject_WorldRemove);

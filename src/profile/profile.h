@@ -13,7 +13,6 @@
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
-extern TaskHandler gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 

@@ -10,6 +10,7 @@
 #include "door/doortypes.h"
 #include "props/propstypes.h"
 #include "levelflow/levelflowtypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskFn)();
 
@@ -84,7 +85,6 @@ _Static_assert(offsetof(Door, openExpr) == 0x1A0, "Door");
 _Static_assert(offsetof(Door, lastPos) == 0x2C8, "Door");
 _Static_assert(sizeof(Door) == 0x328, "Door");
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

@@ -6,6 +6,7 @@
 #include "magicobj/magicobjtypes.h"
 #include "sound/soundtypes.h"
 #include "core/coretypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(SplineObjSegment_Hit);
 

@@ -12,6 +12,7 @@
 #include "lod/lodtypes.h"
 #include "coll/colltypes.h"
 #include "glowmesh/glowmeshtypes.h"
+#include "task/taskvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4C5810, void, Coll_ResetMods, (void));
@@ -21,10 +22,8 @@ typedef struct WStack {
     int flags; /* 1 visited, 2 has cell, 4..6 sub order, 7..9 octant, 10.. trees */
 } WStack;
 
-
 typedef void (*WHandler)(DynCubeObj *task, void *arg);
 
-extern WHandler gTaskHandlers[][0x180];
 extern struct Terrain *gCurrentWorld;
 extern int gDisplayFrame;
 extern QEntry *gQCubeOut;

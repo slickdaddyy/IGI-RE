@@ -6,13 +6,13 @@
 #include "igi.h"
 #include "transctx/transctx.h"
 #include "haze/hazetypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(SubLevel_Run);
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)(Task *task);
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 

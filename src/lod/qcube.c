@@ -10,6 +10,7 @@
 #include "lod/lodtypes.h"
 #include "core/coretypes.h"
 #include "terrain/terraintypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(crt_CIpow);
 
@@ -60,7 +61,6 @@ _Static_assert(offsetof(QEnclosing, radius) == 0x28, "QEnclosing");
 
 typedef void (*QHandler)(DynCubeObj *task, void *arg);
 
-extern QHandler gTaskHandlers[];
 extern RenderMode gRenderModeCurrent;
 extern QEntry *gQCubeList;
 extern QEntry *gQCubeOut;
@@ -254,7 +254,7 @@ static void draw_entry(const QEntry *e)
 {
     DynCubeObj *t = e->task;
 
-    gTaskHandlers[e->slot * 0x180 + t->task.type](t, (void *)t->unk48);
+    gTaskHandlers[e->slot][t->task.type](t, (void *)t->unk48);
 }
 
 /*
@@ -398,7 +398,7 @@ void QCube_Render(Terrain *w, const char *flags, int full)
             gQCubeEnclosingRadius = q.radius;
             if (q.task) {
                 gQCubeDrawOutside = 0;
-                gTaskHandlers[4 * 0x180 + q.task->task.type](q.task, 0);
+                gTaskHandlers[4][q.task->task.type](q.task, 0);
                 gQCubeInside = 1;
             }
         }
@@ -425,11 +425,11 @@ HOOK(0x4D2650, QCube_Render);
 void QCube_RunTaskList(DynCubeObj *t)
 {
     for (; t; t = t->next) {
-        QHandler h = gTaskHandlers[4 * 0x180 + t->task.type];
+        QHandler h = gTaskHandlers[4][t->task.type];
 
         if (h)
             h(t, QObj_GetRenderData(t));
-        h = gTaskHandlers[5 * 0x180 + t->task.type];
+        h = gTaskHandlers[5][t->task.type];
         if (h)
             h(t, QObj_GetRenderData(t));
     }
@@ -439,7 +439,7 @@ HOOK(0x4D27F0, QCube_RunTaskList);
 static void near_clip_list(DynCubeObj *t, float *nearq)
 {
     for (; t; t = t->next) {
-        QHandler h = gTaskHandlers[QCube_GetNearClipEvent() * 0x180 + t->task.type];
+        QHandler h = gTaskHandlers[QCube_GetNearClipEvent()][t->task.type];
 
         if (h)
             h(t, nearq);
@@ -472,7 +472,7 @@ void QCube_UpdateNearPlane(Terrain *w, const char *flags)
     for (i = 0; i < gQCubeCount; i++, e++) {
         if (e->slot == 4) {
             DynCubeObj *t = e->task;
-            QHandler h = gTaskHandlers[QCube_GetNearClipEvent() * 0x180 + t->task.type];
+            QHandler h = gTaskHandlers[QCube_GetNearClipEvent()][t->task.type];
 
             if (h)
                 h(t, nearq);

@@ -8,10 +8,10 @@
 #include "magicobj/magicobjtypes.h"
 #include "qasm/qasmtypes.h"
 #include "computer/computertypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 uint8_t ComputerObject_GetEvent0(void);

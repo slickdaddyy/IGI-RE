@@ -10,6 +10,7 @@
 #include "humanplayer/humanplayer.h"
 #include "qasm/qasmtypes.h"
 #include "game/gametypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(HumanPlayer_BlastHandler);
 FN_EXTERN(HumanPlayer_FenceHandler);
@@ -169,7 +170,6 @@ ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 #define HumanPlayer_MapMarkerHandler (FN(0x413730, HumanPlayer_MapMarkerHandler))
 #define HumanPlayer_DeadRun ((StateFn)FN(0x45C740, Human_DeadRun))
 
-extern void ** gTaskHandlers[][0x180];
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 extern uint16_t gHumanPlayerType;

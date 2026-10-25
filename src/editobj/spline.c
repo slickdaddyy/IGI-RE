@@ -5,6 +5,7 @@
 #include "editobj/editobj.h"
 #include "editobj/editobjtypes.h"
 #include "sound/soundtypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(ConditionalContainer_ForwardEvent4);
 FN_EXTERN(SplineObjWaypoint_Changed);

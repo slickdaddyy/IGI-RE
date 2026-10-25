@@ -13,6 +13,7 @@
 #include "humanai/humanaitypes.h"
 #include "core/coretypes.h"
 #include "qasm/qasmtypes.h"
+#include "task/taskvars.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401AE0, void *, TaskRef_Add, (void *task));

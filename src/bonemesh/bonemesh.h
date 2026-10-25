@@ -55,7 +55,6 @@ extern TransContext gTransContext;
 extern Scene gScene;
 extern float gWorldScale;
 extern RenderMode gRenderModeCurrent;
-extern TaskHandler gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern PtrList *gD3DTextureStates;

@@ -9,6 +9,7 @@
 #include "param/paramtypes.h"
 #include "magicobj/magicobjtypes.h"
 #include "vehbase/vehbasetypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -91,7 +92,6 @@ _Static_assert(sizeof(AnimTask) == 0x20160, "AnimTask");
 _Static_assert(sizeof(AnimData) == 0x2008C, "AnimData");
 _Static_assert(sizeof(VehicleState) == 0x70, "VehicleState");
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

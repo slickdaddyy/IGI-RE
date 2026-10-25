@@ -5,6 +5,7 @@
 #include "profile/param.h"
 #include "profile/profile.h"
 #include "humanai/humanaitypes.h"
+#include "task/taskvars.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));

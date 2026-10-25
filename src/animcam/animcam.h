@@ -7,6 +7,7 @@
 
 #include "igi.h"
 #include "magicobj/magicobjtypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -31,7 +32,6 @@ typedef struct AnimInputMsg {
     const AnimInput *out;
 } AnimInputMsg;
 
-extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 extern struct Terrain *gCurrentWorld;
 extern uint8_t gKeys[];

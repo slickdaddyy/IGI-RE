@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "humanai/humanai.h"
 #include "soldier/soldiertypes.h"
+#include "task/taskvars.h"
 
 ORIG(0x4148F0, long double, Vec3d_PitchAngle, (Vec3d v));
 ORIG(0x414950, long double, Vec3d_YawAngle, (Vec3d v));

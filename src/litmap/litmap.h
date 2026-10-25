@@ -6,10 +6,10 @@
 
 #include "igi.h"
 #include "param/paramtypes.h"
+#include "task/taskvars.h"
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern void *gTaskHandlers[][0x180];
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 extern struct Terrain *gCurrentWorld;
 

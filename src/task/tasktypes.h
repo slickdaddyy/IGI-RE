@@ -5,6 +5,8 @@
 
 #include "types.h"
 
+#define TASK_MAX_TYPES 0x180
+
 typedef struct TaskType {
     const char *name;
     int size;

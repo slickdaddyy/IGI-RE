@@ -7,10 +7,10 @@
 #include "igi.h"
 #include "param/paramtypes.h"
 #include "script/scripttypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern const char gEmptyString[];

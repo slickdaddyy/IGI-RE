@@ -7,6 +7,7 @@
 #include "math/x87.h"
 #include "terrain/terrain.h"
 #include "sound/soundtypes.h"
+#include "task/taskvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4B3360, char, Vec3d_Equal, (const Vec3d *a, const Vec3d *b));
@@ -19,7 +20,6 @@ ORIG(0x4E5580, int, CellMask_Test, (const void *mask, int x, int y));
 ORIG(0x4E5BA0, int, CellMask_TestRect, (const void *mask, float x, float y, float w, float h));
 
 extern TaskType gTaskTypes[];
-extern TaskHandler gTaskHandlers[][TASK_MAX_TYPES];
 extern signed char gTaskSlotEvent[];
 extern const int gDynCubeChildDir[][3];
 extern const float gPixelCenter;

@@ -2,6 +2,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "haze/haze.h"
+#include "task/taskvars.h"
 
 ORIG(0x401860, void, TaskEvent_Set, (uint16_t type, uint8_t index));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));

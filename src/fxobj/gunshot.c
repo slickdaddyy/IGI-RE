@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "fxobj/fxobj.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(AIStationaryGun_GetDefSize);
 

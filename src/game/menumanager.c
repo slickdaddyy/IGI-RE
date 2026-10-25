@@ -8,6 +8,7 @@
 #include "menu/menutypes.h"
 #include "win/wintypes.h"
 #include "animtrig/animtrigtypes.h"
+#include "task/taskvars.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));

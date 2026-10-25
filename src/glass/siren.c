@@ -2,6 +2,7 @@
 
 #include "glass/glass.h"
 #include "hook.h"
+#include "task/taskvars.h"
 
 ORIG(0x4F0FE0, void *, Param_String32, (void));
 

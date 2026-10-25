@@ -7,12 +7,12 @@
 #include "igi.h"
 #include "task/tasktypes.h"
 #include "script/scripttypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 

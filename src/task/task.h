@@ -6,7 +6,6 @@
 #include "core/list.h"
 #include "task/tasktypes.h"
 
-#define TASK_MAX_TYPES 0x180
 #define TASK_MAX_SLOTS 254
 #define TASK_NO_TYPE 0x181
 

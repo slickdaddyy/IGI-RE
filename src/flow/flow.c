@@ -7,6 +7,7 @@
 #include "flow/flow.h"
 #include "win/wintypes.h"
 #include "animtrig/animtrigtypes.h"
+#include "task/taskvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A5350, FILE *, crt_fopen, (const char *path, const char *mode));
@@ -60,7 +61,6 @@ extern char gCDRoot[4];
 extern uint16_t gFlowType;
 extern int gFlowPauseStart;
 extern int gFlowPauseDepth;
-extern void (* gTaskHandlers[][TASK_MAX_TYPES])(Task *);
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern char gGameScreenSmallMode;

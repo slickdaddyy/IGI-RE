@@ -9,6 +9,7 @@
 #include "param/paramtypes.h"
 #include "win/wintypes.h"
 #include "editcam/editcamtypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Task_Nothing);
 

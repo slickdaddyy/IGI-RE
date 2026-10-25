@@ -8,6 +8,7 @@
 #include "camera/camera.h"
 #include "humanai/humanaitypes.h"
 #include "explosion/explosiontypes.h"
+#include "task/taskvars.h"
 
 /* sent to the object an explosion burns a mark on */
 typedef struct BurnMsg {

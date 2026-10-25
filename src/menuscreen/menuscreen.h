@@ -11,10 +11,10 @@
 #include "menu/menutypes.h"
 #include "widget/widgettypes.h"
 #include "core/coretypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern RenderMode gRenderModeCurrent;

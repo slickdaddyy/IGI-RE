@@ -7,6 +7,7 @@
 #include "material/materialtypes.h"
 #include "camera/cameratypes.h"
 #include "config/configtypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(HumanCamera_DeleteHandler);
 

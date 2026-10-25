@@ -9,13 +9,13 @@
 #include "transctx/transctxtypes.h"
 #include "core/coretypes.h"
 #include "res/restypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(SubLevel_Run);
 
 typedef void (*TaskFn1)(void *task);
 typedef void (*TaskFn2)(void *task, void *arg);
 
-extern void * gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern struct Terrain *gCurrentWorld;

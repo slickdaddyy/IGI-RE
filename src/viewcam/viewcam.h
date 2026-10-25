@@ -11,9 +11,6 @@
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
-/* gTaskHandlers[slot][type] */
-extern TaskHandler gTaskHandlers[][0x180];
-
 enum { WEAPON_KIND_GRENADE = 4 };
 
 /* fcomp: equal also when unordered */

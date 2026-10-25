@@ -7,6 +7,7 @@
 #include "param/paramtypes.h"
 #include "script/scripttypes.h"
 #include "level/leveltypes.h"
+#include "task/taskvars.h"
 
 #define PARAM_MAX_TYPES 64
 #define PARAM_MAX_OPS 16
@@ -55,7 +56,6 @@ typedef struct WeaponState {
 typedef void (*TaskFn)(Task *task);
 typedef void (*TaskArgFn)(Task *task, void *arg);
 
-extern void * gTaskHandlers[][0x180];
 #define HANDLER(slot, task) (gTaskHandlers[slot][(task)->type])
 
 extern Task **gLevelTaskIds[];

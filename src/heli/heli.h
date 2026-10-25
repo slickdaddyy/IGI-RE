@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "vehicle/vehicletypes.h"
 #include "heli/helitypes.h"
+#include "task/taskvars.h"
 
 typedef struct CarWheelConfig {
     char steered;
@@ -81,7 +82,6 @@ _Static_assert(sizeof(WheelConfig) == 0x2F0, "WheelConfig");
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern void *gTaskHandlers[][0x180];
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 extern uint8_t gKeys[];
 extern uint8_t gKeysPrev[];

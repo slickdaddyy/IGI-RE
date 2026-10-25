@@ -12,6 +12,7 @@
 #include "guncasing/guncasingtypes.h"
 #include "ammotype/ammotypetypes.h"
 #include "viewcam/viewcamtypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -32,7 +33,6 @@ typedef struct ConfigVar {
     } v;
 } ConfigVar;
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

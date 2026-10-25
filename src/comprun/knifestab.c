@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "comprun/comprun.h"
 #include "ammotype/ammotypetypes.h"
+#include "task/taskvars.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count));

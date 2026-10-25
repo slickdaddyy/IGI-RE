@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "viewport/viewport.h"
+#include "task/taskvars.h"
 
 /* "Screen": the task everything is drawn under. Its draw handler wraps a
    display frame and sends the draw event to its children. */

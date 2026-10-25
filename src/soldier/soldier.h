@@ -8,13 +8,13 @@
 #include "soldier/soldiertypes.h"
 #include "humanplayer/humanplayertypes.h"
 #include "humanai/humanaitypes.h"
+#include "task/taskvars.h"
 
 #pragma pack(push, 4)
 
 typedef void (*TaskHandler)(void *task, void *arg);
 typedef void (*TaskHandler1)(void *task);
 
-extern void *gTaskHandlers[][0x180];
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 typedef void (*HumanStateFn)(HumanSM *sm, Human *h);

@@ -5,6 +5,7 @@
 
 #include "hook.h"
 #include "editobj/editobj.h"
+#include "task/taskvars.h"
 
 /* "AreaActivate" (0xB8), an EditorRigidObj */
 typedef struct AreaActivate {

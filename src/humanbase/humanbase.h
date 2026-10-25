@@ -11,9 +11,6 @@
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
-/* gTaskHandlers[slot][type] */
-extern TaskHandler gTaskHandlers[][0x180];
-
 typedef struct HumanText {
     void *grid;
     float x, y, z;

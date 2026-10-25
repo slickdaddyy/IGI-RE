@@ -10,6 +10,7 @@
 #include "igi.h"
 #include "humanbase/humanbase.h"
 #include "transctx/transctxtypes.h"
+#include "task/taskvars.h"
 
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));

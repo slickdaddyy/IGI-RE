@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "comprun/comprun.h"
 #include "levelflow/levelflowtypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Car_CollFilter);
 

@@ -6,6 +6,7 @@
 #include "qasm/qasmtypes.h"
 #include "sound/soundtypes.h"
 #include "define/definetypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(DefineGraph);
 FN_EXTERN(DefineGroup);

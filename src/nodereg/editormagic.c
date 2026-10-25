@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "nodereg/nodereg.h"
+#include "task/taskvars.h"
 
 /* a script argument: a rate and the range the angle step is taken from */
 typedef struct MagicSpin {

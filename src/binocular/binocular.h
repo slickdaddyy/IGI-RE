@@ -8,6 +8,7 @@
 #include "param/paramtypes.h"
 #include "vehicle/vehicletypes.h"
 #include "transctx/transctxtypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -42,7 +43,6 @@ _Static_assert(sizeof(WeaponUseArg) == 0x30, "WeaponUseArg");
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern TransContext gTransContext;

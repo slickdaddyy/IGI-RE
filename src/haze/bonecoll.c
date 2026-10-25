@@ -6,6 +6,7 @@
 #include "igi.h"
 #include "hook.h"
 #include "haze/haze.h"
+#include "task/taskvars.h"
 
 #define BONE_COLL_MAX 4096
 

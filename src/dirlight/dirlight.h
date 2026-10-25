@@ -8,11 +8,11 @@
 #include "igi.h"
 #include "litmap/litmaptypes.h"
 #include "dirlight/dirlighttypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
-extern TaskHandler gTaskHandlers[];
-#define TASK_HANDLER(event, type) gTaskHandlers[(event) * 0x180 + (type)]
+#define TASK_HANDLER(event, type) gTaskHandlers[(event)][(type)]
 
 extern Pool gLightSourcePool;
 

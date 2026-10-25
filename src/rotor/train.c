@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "rotor/rotor.h"
 #include "missile/missiletypes.h"
+#include "task/taskvars.h"
 
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));

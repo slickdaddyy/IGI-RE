@@ -75,7 +75,6 @@ _Static_assert(offsetof(SoundDefTriggerOnce, name) == 0xE3, "SoundDefTriggerOnce
 _Static_assert(offsetof(SoundDefTriggerOnce, time) == 0x128, "SoundDefTriggerOnce");
 _Static_assert(sizeof(SoundDefTriggerOnce) == 0x138, "SoundDefTriggerOnce");
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern const char gEmptyString[];

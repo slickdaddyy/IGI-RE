@@ -11,6 +11,7 @@
 #include "humanai/humanaitypes.h"
 #include "weapon/weapontypes.h"
 #include "humanplayer/humanplayertypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -61,7 +62,6 @@ enum {
 #define CTRL_FORWARD 4
 #define CTRL_CHEAT 19
 
-extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 /* event slots allocated by HumanAI */

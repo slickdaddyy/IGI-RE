@@ -12,7 +12,6 @@
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
-extern TaskHandler gTaskHandlers[][0x180];
 extern WeaponType gWeaponTypes[];
 extern int gWeaponTypeCount;
 

@@ -14,6 +14,7 @@
 #include "litmap/litmaptypes.h"
 #include "render/rendertypes.h"
 #include "transctx/transctxtypes.h"
+#include "task/taskvars.h"
 
 /* Direct3D mesh renderer: rigid, spline and lightmapped meshes. */
 
@@ -183,7 +184,6 @@ extern ProjVert gProjVerts[];
 extern int gOpaqueBlendIdx;
 extern MeshVB gMeshVBs[];
 extern int gUnlitIdx;
-extern void (* gTaskHandlers[][0x180])(void *, void *);
 extern Pool gLightPool;
 extern float gFogDensity;
 extern float gLayerFov[];

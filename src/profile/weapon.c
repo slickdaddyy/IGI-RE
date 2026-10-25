@@ -5,6 +5,7 @@
 #include "profile/param.h"
 #include "profile/profile.h"
 #include "core/pool.h"
+#include "task/taskvars.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));

@@ -69,7 +69,6 @@ _Static_assert(sizeof(QObj) == 0x50, "QObj");
 _Static_assert(sizeof(MagicObj) == 0x138, "MagicObj");
 _Static_assert(sizeof(HazeLayer) == 0x90, "HazeLayer");
 
-extern HzHandler gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern struct Terrain *gCurrentWorld;

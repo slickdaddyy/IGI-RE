@@ -6,11 +6,11 @@
 #include "igi.h"
 #include "magicobj/magicobjtypes.h"
 #include "graphnode/graphnodetypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
-extern TaskHandler gTaskHandlers[];
-#define TASK_HANDLER(slot, type) gTaskHandlers[(slot) * 0x180 + (type)]
+#define TASK_HANDLER(slot, type) gTaskHandlers[(slot)][(type)]
 #define TASK_NO_TYPE 0x181
 
 #define GRAPHNODE_LINKS 64

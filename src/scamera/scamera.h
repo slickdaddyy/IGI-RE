@@ -8,6 +8,7 @@
 #include "param/paramtypes.h"
 #include "door/doortypes.h"
 #include "levelflow/levelflowtypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskFn)();
 
@@ -162,7 +163,6 @@ _Static_assert(sizeof(SCameraControl) == 0x2F8, "SCameraControl");
 _Static_assert(offsetof(DrawerArg, cabinet) == 0x88, "DrawerArg");
 _Static_assert(sizeof(Drawer) == 0x160, "Drawer");
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

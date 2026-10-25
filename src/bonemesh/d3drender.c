@@ -10,6 +10,7 @@
 #include "bonemesh/bonemeshtypes.h"
 #include "haze/hazetypes.h"
 #include "d3d/d3dtypes.h"
+#include "task/taskvars.h"
 
 ORIG(0x491D40, long double, Display_GetAspect, (void));
 ORIG(0x4950F0, void, Direct3D_MakeMatrix, (void *out, const Matrix *rot, const Vec3f *pos));

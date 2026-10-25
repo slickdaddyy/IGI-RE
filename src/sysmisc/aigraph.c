@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "sysmisc/sysmisctypes.h"
+#include "task/taskvars.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -59,8 +60,7 @@ extern void *gAIGraphParams;
 extern int gCriteriaDoor;
 extern int gCriteriaView;
 extern int gCriteriaStair;
-extern void (*gTaskHandlers[])(void *);
-#define TASK_HANDLER(slot, type) gTaskHandlers[(slot) * 0x180 + (type)]
+#define TASK_HANDLER(slot, type) gTaskHandlers[(slot)][(type)]
 
 #define ROUTE_TABLE_TYPE 10
 #define AIGRAPH_NODE_SIZE 0x240

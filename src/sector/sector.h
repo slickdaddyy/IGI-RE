@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "sector/sectortypes.h"
 #include "model/modeltypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskFn)();
 
@@ -43,7 +44,6 @@ static inline SectorMesh *lod_mesh(VirModel *m, int i)
 
 _Static_assert(offsetof(SectorMesh, portals) == 0x98, "SectorMesh");
 
-extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 extern const float kZero;

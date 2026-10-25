@@ -6,6 +6,7 @@
 
 #include "igi.h"
 #include "missile/missiletypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskFn1)(Task *task);
 typedef void (*TaskFn2)(Task *task, void *arg);
@@ -75,7 +76,6 @@ _Static_assert(sizeof(Missile) == 0x898, "Missile");
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern void *gTaskHandlers[][0x180];
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 extern uint8_t gKeys[];
 extern uint8_t gKeysPrev[];

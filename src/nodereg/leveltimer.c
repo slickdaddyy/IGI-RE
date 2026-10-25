@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "nodereg/nodereg.h"
+#include "task/taskvars.h"
 
 /* "LevelTimer" (0x110) */
 typedef struct LevelTimer {

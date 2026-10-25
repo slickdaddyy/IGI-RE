@@ -6,10 +6,10 @@
 
 #include "igi.h"
 #include "graphtask/graphtasktypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[(uint8_t)(slot)][(uint16_t)(type)]
 extern Task *gTaskStack[];
 extern int gTaskStackTop;

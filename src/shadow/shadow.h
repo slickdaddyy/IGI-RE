@@ -6,6 +6,7 @@
 
 #include "igi.h"
 #include "sector/sectortypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskFn)();
 
@@ -36,7 +37,6 @@ typedef struct Shadow {
     float color[3];     /* 0x118 */
 } Shadow;
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

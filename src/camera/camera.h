@@ -6,6 +6,7 @@
 
 #include "igi.h"
 #include "coll/colltypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
@@ -15,7 +16,6 @@ Explosion *Explosion_Spawn(Vec3d *pos, int count, int delay, float unk50, float 
                            float burnSize, int unk68, int unk6C, Task **burn, const char *sprite, const char *sound,
                            int noiseType, int noiseUnk8, float noiseRadius, int unk84);
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 

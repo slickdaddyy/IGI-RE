@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "humanai/humanai.h"
+#include "task/taskvars.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (int unk));

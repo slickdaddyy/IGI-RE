@@ -3,6 +3,7 @@
 
 #include "hook.h"
 #include "tagitem/tagitem.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -42,8 +43,6 @@ extern void *gTagItemInt32Params;
 extern uint16_t gTagItemType;
 extern uint16_t gTagItemString16Type;
 extern void *gTagItemString256Params;
-
-extern TaskFn gTaskHandlers[][0x180];
 
 void TagItem_OnChanged(TagItem *t);
 void TagItemInt32_Create(TagItem *t);

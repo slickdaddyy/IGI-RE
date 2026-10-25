@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "comprun/comprun.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Task_FalseHandler);
 FN_EXTERN(Terminal_MapHandler);

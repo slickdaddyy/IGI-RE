@@ -3,6 +3,7 @@
 #include "igi.h"
 #include "hook.h"
 #include "level/level.h"
+#include "task/taskvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4012A0, Task *, Task_New, (Task *parent, uint16_t type, void *arg));

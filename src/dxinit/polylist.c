@@ -6,6 +6,7 @@
 #include "dxinit/dxinit.h"
 #include "d3d/d3dtypes.h"
 #include "sector/sectortypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Task_Nothing);
 

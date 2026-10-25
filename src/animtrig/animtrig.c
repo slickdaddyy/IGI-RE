@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "animtrig/animtrig.h"
 #include "sound/soundtypes.h"
+#include "task/taskvars.h"
 
 ORIG(0x4A5980, int, crt_stricmp, (const char *a, const char *b));
 ORIG(0x4A5BB0, char *, crt_strstr, (const char *s, const char *find));

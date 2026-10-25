@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "haze/haze.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(BoneDynCubeObj_CollLine);
 FN_EXTERN(BoneDynCubeObj_EnterHandler);

@@ -12,6 +12,7 @@
 #include "humanai/humanaitypes.h"
 #include "statgun/statguntypes.h"
 #include "config/configtypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(crt_CIpow);
 

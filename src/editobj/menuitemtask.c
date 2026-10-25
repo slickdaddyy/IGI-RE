@@ -2,6 +2,7 @@
    sends them the pointer: the item under it gets the select event. */
 #include "hook.h"
 #include "editobj/editobj.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(MenuItem_Commit);
 FN_EXTERN(MenuItem_ForwardPointer);

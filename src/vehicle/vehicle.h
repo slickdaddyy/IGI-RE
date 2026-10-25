@@ -8,6 +8,7 @@
 #include "param/paramtypes.h"
 #include "win/wintypes.h"
 #include "vehicle/vehicletypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -20,7 +21,6 @@ typedef struct PartScriptArg {
     int index;
 } PartScriptArg;
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 

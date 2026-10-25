@@ -7,10 +7,10 @@
 #include "igi.h"
 #include "magicobj/magicobjtypes.h"
 #include "terrain/terraintypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern struct Terrain *gCurrentWorld;

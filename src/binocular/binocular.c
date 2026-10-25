@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "binocular/binocular.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(EditorMagicObj_GetArgSize);
 FN_EXTERN(ProxMine_Move);

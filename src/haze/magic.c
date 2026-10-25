@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "haze/haze.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(PhysicsMagicObj_Slot12);
 FN_EXTERN(Task_Nothing);

@@ -8,12 +8,12 @@
 #include "script/scripttypes.h"
 #include "physobj/physobjtypes.h"
 #include "param/paramtypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[(uint8_t)(slot)][(uint16_t)(type)]
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))

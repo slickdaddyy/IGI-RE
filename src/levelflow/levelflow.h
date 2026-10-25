@@ -8,13 +8,13 @@
 #include "param/paramtypes.h"
 #include "script/scripttypes.h"
 #include "qasm/qasmtypes.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(MagicObjContainer_Event);
 FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)();
 
-extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern const char gEmptyString[];

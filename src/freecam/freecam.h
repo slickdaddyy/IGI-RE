@@ -9,12 +9,12 @@
 #include "igi.h"
 #include "task/tasktypes.h"
 #include "transctx/transctxtypes.h"
+#include "task/taskvars.h"
 
 typedef void (*TaskHandler)();
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern void *gTaskHandlers[][0x180];
 #define TASK_HANDLER(slot, type) (((TaskHandler *)gTaskHandlers)[(slot) * 0x180 + (type)])
 extern struct Terrain *gCurrentWorld;
 extern uint16_t gDynCubeObjType;
