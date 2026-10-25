@@ -9,6 +9,7 @@
 #include "aiaction/aiactionvars.h"
 #include "math/mathvars.h"
 #include "humanai/humanaivars.h"
+#include "patrol/patrolvars.h"
 
 FN_EXTERN(AIActivate_Start);
 FN_EXTERN(AICombatAnya_Start);
@@ -150,13 +151,6 @@ extern MonitorTarget gMonitorTargets[AI_MONITOR_TARGETS];
 extern Claim gClaims[AI_CLAIMS];
 extern MoveItem gAIMoveItems[AI_MOVE_ITEMS];
 extern NodeGrid gNodeGrids[AI_GRIDS];
-extern List gMonitorGraphsFree;
-extern List gMonitorGraphsUsed;
-extern List gMonitorTargetsFree;
-extern List gClaimsFree;
-extern List gClaimsUsed;
-extern List gGridsFree;
-extern List gGridsUsed;
 extern int gHumanAIUnusedInts[8];
 
 extern const char *gAIScriptNames[];

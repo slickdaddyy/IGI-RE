@@ -6,6 +6,7 @@
 #include "hook.h"
 #include "nodereg/nodereg.h"
 #include "terrain/terraintypes.h"
+#include "nodereg/noderegvars.h"
 
 /* a kind of water, set up by script */
 typedef struct WaterType {
@@ -161,8 +162,6 @@ extern WaterType gWaterTypes[];
 extern uint16_t gWaterType;
 extern int gWaterCount;
 extern int gWaterDepth;
-extern Vec3f gAmbient[5];
-extern float gWaterTint[];
 extern double gWaterLevel;
 
 static const double kZero = 0.0;

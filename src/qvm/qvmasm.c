@@ -6,6 +6,8 @@
 #include "orig.h"
 #include "qvm/qvm.h"
 #include "qasm/qasmtypes.h"
+#include "qvm/qvmvars.h"
+#include "script/scriptvars.h"
 
 /* Assembles QVM assembler text into a "LOOP" file. */
 
@@ -59,13 +61,10 @@ ORIG(0x4C0750, void, QvmLex_Free, (void *lexer));
 ORIG(0x4C0900, void, QvmAsm_RegisterOps, (void));
 ORIG(0x4F1D80, void, ParamEnum_Free, (List *list));
 
-extern void *gAsmErrorContext;
 extern void *gQvmAsmLogData;
 extern int gQvmAsmUnused0;
 extern int gQvmAsmUnused1;
-extern int gAsmErrorCount;
 extern QvmAsmCallback gQvmAsmLogFn;
-extern void (*gAsmErrorHandler)(const char *msg, void *data);
 
 void QvmAsm_Log(const char *fmt, ...);
 

@@ -1,14 +1,8 @@
 #include "hook.h"
 #include "vehbase/vehbase.h"
+#include "param/paramvars.h"
 
 ORIG(0x4015F0, void, Task_Delete, (void *task));
-
-/* weapon events, allocated by 0x4F1EE0 */
-extern uint8_t gWeaponUseAmmoEvent;
-extern uint8_t gWeaponStateEvent;
-extern uint8_t gWeaponDropEvent;
-extern uint8_t gWeaponMoveEvent;
-extern uint8_t gWeaponAmmoEvent;
 
 /* deletes every child of owner that answers the weapon state event */
 void Weapon_DeleteAll(Task *owner)

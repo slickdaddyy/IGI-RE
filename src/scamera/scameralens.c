@@ -8,6 +8,7 @@
 #include "core/coretypes.h"
 #include "file/filevars.h"
 #include "math/mathvars.h"
+#include "scamera/scameravars.h"
 
 ORIG(0x401AE0, Task **, TaskRef_Add, (Task *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
@@ -62,10 +63,6 @@ ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (Task *sound));
 ORIG(0x4E6C30, void, Sound_SetPos, (Task *sound, Vec3d *pos));
 ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
-
-extern char *gAlarmLightSprite;
-extern uint16_t gSCameraType;
-extern void *gLensList;
 
 extern int gQVertexStrip;
 

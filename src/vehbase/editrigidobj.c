@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "vehbase/vehbase.h"
+#include "nodereg/noderegvars.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, int type, void *arg));
 ORIG(0x4015F0, void, Task_Delete, (void *task));
@@ -44,7 +45,6 @@ ORIG(0x4F1C90, void *, Param_Range02, (void));
 
 extern uint16_t gEditRigidObjType;
 extern void *gEditRigidObjParams;
-extern struct Terrain *gCurrentWorld;
 
 /* out = a * b. Each element sums a[i][k] * b[k][j] for k = 0..2; last[i] is
    the k whose product row i adds last. */

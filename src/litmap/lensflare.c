@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "litmap/litmap.h"
 #include "dirlight/dirlighttypes.h"
+#include "nodereg/noderegvars.h"
 
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
 ORIG(0x4D3710, void, Task_Nothing, (void *task));

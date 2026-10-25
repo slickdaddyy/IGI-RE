@@ -5,6 +5,7 @@
 
 #include "hook.h"
 #include "editobj/editobj.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(EditorMagicObj_Delete);
 

@@ -6,6 +6,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "rpg/soldier.h"
+#include "patrol/patrolvars.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x413A80, long double, HumanPlayer_GetMoveScale, (void));
@@ -36,9 +37,6 @@ ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4C3440, double *, DynCubeObj_GetPosition, (void *obj));
 ORIG(0x4D2FB0, void, BoneObj_GetRootMotion, (void *a, float *delta, void *anim));
 ORIG(0x4EC1E0, void, StateMachine_Update, (SoldierSM *sm, Soldier *h));
-
-extern void *gSoldierFemaleParams;
-extern uint16_t gSoldierFemaleType;
 
 static const float kShakeAmount = 0x1.99999ap+7f;
 static const float kShakeAngle = 0x1.aceea0p-6f;

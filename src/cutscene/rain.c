@@ -10,6 +10,7 @@
 #include "dxinit/dxinittypes.h"
 #include "transctx/transctxtypes.h"
 #include "bonemesh/bonemeshvars.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -148,7 +149,6 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 /* MSVC _CIfmod: fmod(st1, st0), both popped */
 #define CRT_CIFMOD FN(0x4A56DA, crt_CIfmod)
 
-extern struct Terrain *gCurrentWorld;
 extern uint16_t gDynCubeObjType;
 extern uint16_t gRainObjType;
 extern int gRainVisibleCubes;

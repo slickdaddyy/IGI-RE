@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "graphnode/graphnode.h"
 #include "graphtask/graphtaskvars.h"
+#include "nodereg/noderegvars.h"
 
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
 ORIG(0x4AF8F0, void, List_AddTail, (List *list, void *node));
@@ -19,8 +20,6 @@ ORIG(0x4B17C0, void, File_Flush, (void *f));
 ORIG(0x4C1780, void, Debug_Log, (void *task, int level));
 ORIG(0x4CE400, void *, Terrain_GetMaterial, (void *world, int index));
 ORIG(0x4FAA10, int, GraphStream_PeekByte, (GraphStream *s));
-
-extern struct Terrain *gCurrentWorld;
 
 #define GRAPH_MAGIC 0xFFEEDDCC
 

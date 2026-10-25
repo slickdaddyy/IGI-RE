@@ -4,6 +4,7 @@
 #include "elevator/elevator.h"
 #include "elevator/elevatortypes.h"
 #include "elevator/elevatorvars.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(Elevator_Activate);
 FN_EXTERN(Elevator_Deactivate);

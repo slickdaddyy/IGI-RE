@@ -8,6 +8,8 @@
 #include "core/mem.h"
 #include "script/symtab.h"
 #include "qasm/qasmtypes.h"
+#include "script/scriptvars.h"
+#include "qvm/qvmvars.h"
 
 /* Helpers of the QVM assembler (QvmAssemble at 0x4BB270). */
 
@@ -15,10 +17,6 @@ ORIG(0x4A5702, int, crt_vsprintf, (char *buf, const char *fmt, va_list ap));
 ORIG(0x4C0780, int, QvmLex_Scan, (void *lex, void *token));
 
 typedef void (*AsmErrorHandler)(const char *text, void *context);
-
-extern void *gAsmErrorContext;
-extern int gAsmErrorCount;
-extern void (*gAsmErrorHandler)(const char *msg, void *data);
 
 typedef struct AsmLabel {
     Node node;

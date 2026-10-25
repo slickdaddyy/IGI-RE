@@ -92,10 +92,8 @@ enum {
     OP_COLON,
 };
 
-extern int gScriptWarningLevel;
 extern int gScriptBreakEnabled;
 extern int gScriptBreak;
-extern int gScriptError;
 extern int gScriptMaxArgs;
 
 Script *Script_Load(const char *path);

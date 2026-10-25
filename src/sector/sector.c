@@ -16,6 +16,8 @@
 #include "file/filevars.h"
 #include "math/mathvars.h"
 #include "lod/lodvars.h"
+#include "shadow/shadowvars.h"
+#include "sector/sectorvars.h"
 
 FN_EXTERN(SectorInteriorObject_WorldAdd);
 FN_EXTERN(SectorInteriorObject_WorldRemove);
@@ -127,20 +129,12 @@ _Static_assert(sizeof(LineQuery) == 0x24, "LineQuery");
 _Static_assert(sizeof(LineHit) == 0x70, "LineHit");
 
 extern int gSectorFogCount;
-extern Pool gSectorLinks;
 extern int *gSectorFog;
 extern int gSectorLightCount;
-extern Pool gVisSectors;
 extern int gPortalClipDepth;
 extern SectorObject *gCurrentSectorObj;
 extern int gVisFrame;
 extern int *gSectorLights;
-extern uint16_t gSectorType;
-extern uint16_t gSectorObjectType;
-extern uint16_t gSectorInteriorObjectType;
-extern float gQCubeOutsideMin[];
-extern float gQCubeOutsideMax[];
-extern Scene gScene;
 
 extern const float kRaise;       /* 409.6 */
 extern const float kNearZ;       /* 0.04096 */

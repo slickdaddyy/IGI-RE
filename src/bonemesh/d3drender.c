@@ -16,6 +16,8 @@
 #include "file/filevars.h"
 #include "glowmesh/glowmeshvars.h"
 #include "lod/lodvars.h"
+#include "sector/sectorvars.h"
+#include "render/rendervars.h"
 
 ORIG(0x491D40, long double, Display_GetAspect, (void));
 ORIG(0x4950F0, void, Direct3D_MakeMatrix, (void *out, const Matrix *rot, const Vec3f *pos));
@@ -74,18 +76,7 @@ _Static_assert(sizeof(LightmapGroup) == 0x20, "LightmapGroup");
 extern int gBoneClipDepth;
 extern ClipVertex gRigidClipVerts[];
 extern ClipVertex gLightmapClipVerts[];
-extern DynVB gVBNormal;
-extern int gD3DClippingOnIndex;
-extern int gD3DClippingOffIndex;
 extern float gNearZ;
-extern int gTexStageIdx;
-extern int gLmStageIdx;
-extern int gOpaqueBlendIdx;
-extern int gAlphaBlendIdx;
-extern int gLitIdx;
-extern int gUnlitIdx;
-extern int gLitAlphaIdx;
-extern int gUnlitAlphaIdx;
 
 /* view frustum planes as x = k * z (0xB46CE4 ...), and their scales */
 

@@ -7,6 +7,9 @@
 #include "shadow/shadow.h"
 #include "math/mathvars.h"
 #include "magicobj/magicobjvars.h"
+#include "sector/sectorvars.h"
+#include "nodereg/noderegvars.h"
+#include "shadow/shadowvars.h"
 
 ORIG(0x4015F0, void, Task_Delete, (Task *task));
 ORIG(0x4012A0, Task *, Task_New, (Task *parent, uint16_t type, void *arg));

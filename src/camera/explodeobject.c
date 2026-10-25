@@ -10,6 +10,7 @@
 #include "magicobj/magicobjtypes.h"
 #include "glass/glasstypes.h"
 #include "task/taskvars.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -121,7 +122,6 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 
 extern uint16_t gExplodeObjectType;
 extern void *gExplodeObjectParams;
-extern struct Terrain *gCurrentWorld;
 extern float gRealRange[];
 extern int gIntRange[];
 

@@ -14,6 +14,10 @@
 #include "camfeed/camfeedvars.h"
 #include "glowmesh/glowmeshvars.h"
 #include "math/mathvars.h"
+#include "res/resvars.h"
+#include "sector/sectorvars.h"
+#include "render/rendervars.h"
+#include "qvertex/qvertexvars.h"
 
 /* The QVertex driver of the Direct3D render mode. */
 
@@ -60,18 +64,7 @@ typedef struct StripState {
     Texture *texture;
 } StripState;
 
-extern uint32_t gD3DZEnable;
-extern int gD3DClippingOnIndex;
-extern PtrList *gD3DTextureStates;
-extern PtrList *gD3DBlendStates;
-extern PtrList *gD3DRenderStates;
-extern PtrList *gD3DClipStates;
-extern float gD3DMinZ;
-extern float gD3DMaxZ;
-extern float gWorldScale;
-extern Scene gScene;
 extern int gTransContextValid;
-extern int gSortActive;
 
 extern StripNode gQVStripBuffer[];
 extern int gQVTextureStatesIndex;

@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "fxobj/fxobj.h"
 #include "plane/planetypes.h"
+#include "plane/planevars.h"
 
 ORIG(0x498960, void *, Rain_New, (void *world, void *texture, int unk, float a, float b));
 ORIG(0x498A70, void, Rain_Free, (void *rain, void *world));
@@ -25,7 +26,6 @@ typedef struct RainEffect {
 
 _Static_assert(sizeof(RainEffect) == 0x88, "RainEffect");
 
-extern uint16_t gRudderType;
 extern char *gRainTexture;
 extern uint16_t gRainEffectType;
 extern void *gRainEffectParams;

@@ -16,6 +16,7 @@
 #include "glowmesh/glowmeshvars.h"
 #include "file/filevars.h"
 #include "lod/lodvars.h"
+#include "sector/sectorvars.h"
 
 FN_EXTERN(crt_CIpow);
 
@@ -79,8 +80,6 @@ extern float gQCubeEnclosingRadius;
 extern int gQCubeNeighbourBits[];
 extern uint8_t gQCubeBitPerm[][256];
 extern uint8_t gQCubeOctantMask[];
-extern float gQCubeOutsideMin[];
-extern float gQCubeOutsideMax[];
 extern char gNearClipText[];
 extern int gTransContextAutoNear;
 extern uint16_t gQCubeNeverSetType;

@@ -6,6 +6,7 @@
 #include "param/paramtypes.h"
 #include "graphtask/graphtaskvars.h"
 #include "graphnode/graphnodevars.h"
+#include "nodereg/noderegvars.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -59,7 +60,6 @@ extern GraphStreamHandler gGraphHandlerSlots[];
 extern int gGraphLinkB;
 extern int gGraphLinkA;
 extern GraphNode gGraphNodeTemp;
-extern struct Terrain *gCurrentWorld;
 
 /* the next byte of the file, which stays unread. When nothing is read
    the result is the low byte of the stream pointer. */

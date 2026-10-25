@@ -6,6 +6,7 @@
 
 #include "hook.h"
 #include "editobj/editobj.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(Task_FalseHandler);
 FN_EXTERN(Task_Nothing);

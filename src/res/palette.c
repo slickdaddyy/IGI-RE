@@ -5,15 +5,12 @@
 #include "res/sprite.h"
 #include "core/coretypes.h"
 #include "file/filevars.h"
+#include "res/resvars.h"
 
 ORIG(0x4B0E70, int, RenderMode_CreateMethod, (const char *name));
 ORIG(0x4B0EB0, void, RenderMode_DeleteMethod, (int id));
 ORIG(0x4B0F80, int, RenderMode_GetCurrent, (void));
 ORIG(0x4B1000, void, RenderMode_Call, (int device, int id, void *arg));
-
-extern int gAllocPalette;
-extern int gDeAllocPalette;
-extern int gDownloadPalette;
 
 void Palette_Register(void)
 {

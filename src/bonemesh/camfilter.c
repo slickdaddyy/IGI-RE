@@ -9,6 +9,9 @@
 #include "bonemesh/bonemeshvars.h"
 #include "camfeed/camfeedvars.h"
 #include "glowmesh/glowmeshvars.h"
+#include "sector/sectorvars.h"
+#include "render/rendervars.h"
+#include "qvertex/qvertexvars.h"
 
 FN_EXTERN(BandFilter_Draw);
 FN_EXTERN(BandFilter_DrawPrim);
@@ -59,8 +62,6 @@ extern int gBandCamera;
 extern const char *gBandFont;
 extern const char *gBatterySprite;
 extern const char *gTimecodeFont;
-
-extern float gD3DMinZ;
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 #define TASK_DEBUG_LOG (FN(0x4C1780, Debug_Log))

@@ -3,6 +3,8 @@
 #include "hook.h"
 #include "scamera/scamera.h"
 #include "math/mathvars.h"
+#include "nodereg/noderegvars.h"
+#include "scamera/scameravars.h"
 
 FN_EXTERN(Cabinet_AddSymbols);
 FN_EXTERN(Cabinet_CheckUse);
@@ -50,11 +52,6 @@ ORIG(0x4F1950, void *, ParamTable_New, (int count));
 ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, void *range));
-
-extern struct Terrain *gCurrentWorld;
-extern uint16_t gDrawerType;
-extern void *gCabinetParams;
-extern uint16_t gCabinetType;
 
 /* handlers that live outside this folder */
 #define Cabinet_Run (FN(0x444590, Cabinet_Run))

@@ -7,6 +7,7 @@
 #include "terredit/terredit.h"
 #include "res/restypes.h"
 #include "camfeed/camfeedvars.h"
+#include "render/rendervars.h"
 
 /* The sky dome of FlatSky: a vertex buffer of 321 coloured vertices (the
    top, 15 rings of 20 from 90 degrees down by 6, and a ring below the
@@ -42,13 +43,8 @@ extern SkyDome *gSkyDome;
 extern void *gSkyModel;
 extern uint32_t gSkyUnusedTint[];
 extern Pool gLightPool;
-extern float gWorldScale;
 extern int gD3DTnL;
-extern PtrList *gD3DBlendStates;
-extern PtrList *gD3DRenderStates;
 extern float gSkyRadius;
-extern PtrList *gD3DClipStates;
-extern PtrList *gD3DTextureStates;
 
 static const float kHalfPi = 0x1.921fb6p+0f;
 static const float kRingStep = 0x1.aceeap-4f;

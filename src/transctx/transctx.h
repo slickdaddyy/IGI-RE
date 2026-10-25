@@ -5,8 +5,6 @@
 #include "transctx/transctxtypes.h"
 #include "core/coretypes.h"
 
-extern Scene gScene;
-
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }
 

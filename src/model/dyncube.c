@@ -6,6 +6,7 @@
 #include "task/taskvars.h"
 #include "dxinit/dxinitvars.h"
 #include "magicobj/magicobjvars.h"
+#include "model/modelvars.h"
 
 ORIG(0x4C58B0, int, DynCubeTree_GetChildCount, (int tree));
 ORIG(0x4C7750, DynCubeNode *, DynCube_GetRoot_, (Terrain *t, int tree));
@@ -23,7 +24,6 @@ ORIG(0x50FAE0, void, TerrainMesh_SetupLighting, (Terrain *t, int unk));
 extern TaskType gTaskTypes[];
 extern int gTaskHandlerChanges;
 extern const float gZero;
-extern int gCollSightCalls;
 extern int gCellMaskEnabled;
 
 void DynCube_UpdateSlotCounts(Terrain *t, int tree);

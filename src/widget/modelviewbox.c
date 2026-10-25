@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "widget/widget.h"
+#include "nodereg/noderegvars.h"
 
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
 ORIG(0x4028B0, int, Flow_GetFrames, (void));
@@ -36,7 +37,6 @@ _Static_assert(sizeof(ModelViewBox) == 0xC8, "ModelViewBox");
 extern uint16_t gModelViewBoxType;
 extern void *gModelViewBoxParams;
 extern IntRange gModelViewBoxRange;
-extern float gLightColor[];
 extern const double gQuarterPi;
 
 void ModelViewBox_Run(ModelViewBox *mv);

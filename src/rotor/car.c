@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "rotor/rotor.h"
 #include "task/taskvars.h"
+#include "rotor/rotorvars.h"
 
 FN_EXTERN(Car_Blast);
 FN_EXTERN(Car_CollFilter);
@@ -131,9 +132,7 @@ ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (Car *o));
 #define CAR_HANDLER_432BD0 (FN(0x432BD0, Heli_GetStateSize))
 #define TASK_HANDLER_4E4280 (FN(0x4E4280, Task_YesHandler))
 
-extern uint16_t gCarType;
 extern float gCarRange[];
-extern void *gCarParams;
 
 typedef struct CarControlArg {
     int unk0;

@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "litmap/litmap.h"
 #include "terrain/terraintypes.h"
+#include "nodereg/noderegvars.h"
 
 ORIG(0x4CEC10, void **, VirModel_Find, (const char *name));
 ORIG(0x4D0950, long double, VirModel_GetRadius, (void **model));

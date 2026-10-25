@@ -10,6 +10,9 @@
 #include "camfeed/camfeedvars.h"
 #include "glowmesh/glowmeshvars.h"
 #include "file/filevars.h"
+#include "sector/sectorvars.h"
+#include "render/rendervars.h"
+#include "qvertex/qvertexvars.h"
 
 ORIG(0x491CF0, int *, Display_GetMode, (void));
 ORIG(0x491D40, long double, Display_GetAspect, (void));
@@ -31,16 +34,13 @@ extern int gSetActiveTransContextMethod;
 extern int gSetNearClippingPlaneMethod;
 extern int gTransContextValid;
 extern int gTransContextSelects;
-extern float gWorldScale;
 extern float gLayer0MinZ;
 extern float gLayer0MaxZ;
 extern float gLayer2MaxZ;
-extern float gD3DMinZ;
 extern int gD3DZ24;
 extern float gLayer2Far;
 extern float gLayer2Near;
 extern float gLayer0Far;
-extern float gD3DMaxZ;
 extern float gLayer0Near;
 extern float gLayer2MinZ;
 

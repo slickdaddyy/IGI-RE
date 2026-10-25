@@ -4,6 +4,7 @@
 #include "explosion/explosion.h"
 #include "ammotype/ammotypevars.h"
 #include "explosion/explosionvars.h"
+#include "nodereg/noderegvars.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x4015F0, void, Task_Delete, (void *task));
@@ -21,7 +22,6 @@ ORIG(0x4CE410, char, Coll_LineOfSight, (void *world, const Vec3d *from, const Ve
                                         int flags, int trees, float *vis));
 ORIG(0x4E0810, void, SectorObject_SetMatrix, (void *mesh, Matrix *m));
 
-extern struct Terrain *gCurrentWorld;
 extern const Vec3f gWhite[];
 
 static const double kOne = 1.0;

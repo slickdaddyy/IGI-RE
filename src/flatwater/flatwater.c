@@ -13,6 +13,8 @@
 #include "file/filevars.h"
 #include "glowmesh/glowmeshvars.h"
 #include "math/mathvars.h"
+#include "nodereg/noderegvars.h"
+#include "sector/sectorvars.h"
 
 /* "FlatWater": a flat water plane at a fixed height, drawn with the
    "FlatWaterLayer" textures under it. */

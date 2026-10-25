@@ -5,6 +5,7 @@
 #include "igi.h"
 #include "math/x87.h"
 #include "graphtask/graphtask.h"
+#include "nodereg/noderegvars.h"
 
 /* passed to the hit callback */
 typedef struct Particle2DHit {
@@ -62,7 +63,6 @@ extern int gParticle2DMemMax;
 extern int gParticle2DTrailIdx;
 extern int16_t gParticle2DTimer;
 extern Pool gLightPool;
-extern Vec3f gAmbient[5];
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);

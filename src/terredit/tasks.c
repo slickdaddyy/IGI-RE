@@ -1,5 +1,6 @@
 #include "hook.h"
 #include "terredit/terredit.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(Lensflare_Delete);
 FN_EXTERN(Task_Nothing);

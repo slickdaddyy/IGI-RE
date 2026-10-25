@@ -2,6 +2,7 @@
 #include "hook.h"
 #include "terredit/terredit.h"
 #include "config/configvars.h"
+#include "nodereg/noderegvars.h"
 
 /* "CubeModifier": a named editor box snapped to a cell grid of the
    terrain. Every live one is kept in gCubeModifiers. */

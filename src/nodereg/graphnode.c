@@ -2,6 +2,7 @@
    places one node of its parent graph. */
 #include "hook.h"
 #include "nodereg/nodereg.h"
+#include "nodereg/noderegvars.h"
 
 /* "GraphNode" (0x118), a child of a Graph */
 typedef struct GraphNodeTask {

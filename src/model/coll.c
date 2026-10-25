@@ -6,6 +6,7 @@
 #include "coll/coll.h"
 #include "coll/collvars.h"
 #include "editcam/editcamvars.h"
+#include "model/modelvars.h"
 
 static const double kOneOver24 = 1.0 / 24.0;
 
@@ -33,13 +34,8 @@ ORIG(0x4C8130, void, DynCube_SendEventLines, (Terrain *t, int slot, void *query,
 ORIG(0x4C9A30, int, Coll_Descend_, (Terrain *t, CollCursor *c, CollCursor *unused, const Vec3d *p, int depth));
 
 extern int gCollBumpTop;
-extern int gCollLineCalls;
-extern int gCollLineCount;
 
 typedef void (*TaskHandler)(CollTask *task, int arg);
-
-extern TaskHandler gTaskEnterHandlers[];
-extern TaskHandler gTaskLeaveHandlers[];
 
 void Coll_SendEvent(Terrain *t, uint8_t slot, void *arg, const Vec3d *p, unsigned int mask, int tree);
 int Coll_LeafLineHit(const short *leaf, const Vec3d *base, const Vec3d *s, const Vec3d *e, Vec3d *hit, int shift,

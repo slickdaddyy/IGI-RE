@@ -2,6 +2,7 @@
 #include "igi.h"
 #include "define/define.h"
 #include "transctx/transctxtypes.h"
+#include "sector/sectorvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -30,7 +31,6 @@ extern uint16_t gFadeOutStartType;
 extern FadeOut *gFadeOut;
 extern uint16_t gFadeOutEndType;
 extern uint16_t gGlowTaskType;
-extern Scene gScene;
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 

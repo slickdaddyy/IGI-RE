@@ -6,6 +6,7 @@
 #include "task/taskvars.h"
 #include "config/configvars.h"
 #include "magicobj/magicobjvars.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(RigidDynCubeObj_CollLine);
 FN_EXTERN(RigidDynCubeObj_EnterHandler);
@@ -54,7 +55,6 @@ extern int gTaskStackTop;
 extern char gRigidEvents[];
 extern uint16_t gRigidType;
 extern uint16_t gDynCubeObjType;
-extern struct Terrain *gCurrentWorld;
 
 static float max_scale(const RigidDynCubeObj *o)
 {

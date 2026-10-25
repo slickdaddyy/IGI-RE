@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "qsc/qsc.h"
+#include "script/scriptvars.h"
 
 ORIG(0x4B9CD0, int, Expr_ParseTokens, (Lexer *lex, struct Expr **out, int unk3, int unk4));
 ORIG(0x4B9CA0, int, Expr_Parse, (Lexer *lex, struct Expr **out, int unk3));

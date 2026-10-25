@@ -1,6 +1,7 @@
 #pragma GCC optimize("excess-precision=standard")
 
 #include "freecam/freecam.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(HitZone_GetArgSize);
 

@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "flatwater/flatwater.h"
 #include "flatwater/flatwatertypes.h"
+#include "nodereg/noderegvars.h"
 
 /* "SoundManager": plays one named sound for as long as it exists and passes
    sound queries on to its parent. */
@@ -11,9 +12,6 @@ ORIG(0x4E6610, uint8_t, Sound_GetInfoEvent, (void));
 ORIG(0x4E6650, uint8_t, Sound_GetNameEvent, (void));
 ORIG(0x4E6B00, Task *, Sound_Play, (void *owner, const char *name));
 ORIG(0x4E6C00, void, Sound_Stop, (Task *sound));
-
-extern uint16_t gSoundManagerType;
-extern void *gSoundManagerParams;
 
 void SoundManager_Create(SoundManager *m)
 {

@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "haze/haze.h"
+#include "nodereg/noderegvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4012A0, HazeLayer *, Task_New, (void *parent, uint16_t type, void *arg));

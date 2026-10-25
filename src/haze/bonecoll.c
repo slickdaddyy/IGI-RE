@@ -7,6 +7,7 @@
 #include "hook.h"
 #include "haze/haze.h"
 #include "task/taskvars.h"
+#include "nodereg/noderegvars.h"
 
 #define BONE_COLL_MAX 4096
 

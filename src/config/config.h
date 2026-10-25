@@ -10,8 +10,6 @@
 #define CONFIG_MAX_DEVICES 5
 #define CONFIG_LANG_USA 5
 
-extern int gDriverCount;
-
 typedef ScriptValue *ScriptFn(ScriptValue *out, void *data, void *args);
 
 void Config_RegisterScriptSymbols(void);

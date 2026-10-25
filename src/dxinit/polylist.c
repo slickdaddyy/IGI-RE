@@ -12,6 +12,8 @@
 #include "dxinit/dxinitvars.h"
 #include "file/filevars.h"
 #include "math/mathvars.h"
+#include "nodereg/noderegvars.h"
+#include "render/rendervars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -97,8 +99,6 @@ extern int gPolyListLightState;
 extern int gPolyListNothingD;
 extern char gPolyListRandom[];
 extern Pool gLightPool;
-extern float gLightColor[];
-extern float gFogColor[];
 extern uint32_t gFogEnable;
 
 extern const float kMinus255;

@@ -2,6 +2,7 @@
 #include "d3d/d3dtypes.h"
 #include "transctx/transctxtypes.h"
 #include "camfeed/camfeedvars.h"
+#include "sector/sectorvars.h"
 
 /* TransparencyList collects transparent triangle batches during the frame
    and draws them back to front at the end of the scene. */
@@ -64,7 +65,6 @@ extern char *gTransBufferEnd;
 extern TransEntry *gTransEntryEnd;
 extern int *gTransUsed;
 extern int *gTransCount;
-extern Scene gScene;
 
 void TransparencyList_Delete(TransparencyList *l)
 {

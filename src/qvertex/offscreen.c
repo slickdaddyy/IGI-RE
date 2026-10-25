@@ -7,6 +7,7 @@
 #include "transctx/transctxtypes.h"
 #include "file/filevars.h"
 #include "math/mathvars.h"
+#include "res/resvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -21,10 +22,6 @@ ORIG(0x498370, int, Offscreen_GetMode, (void));
 
 /* the shared do-nothing function */
 #define NOTHING (FN(0x4D3710, Task_Nothing))
-
-extern int gDeAllocPalette;
-extern int gDownloadPalette;
-extern int gAllocPalette;
 
 extern OffscreenBuffer gOffscreenTarget;
 extern float gOffscreenClip[];

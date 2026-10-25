@@ -2,6 +2,7 @@
 #include "hook.h"
 #include "nodereg/nodereg.h"
 #include "flatwater/flatwatertypes.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(SoundManager_Create);
 FN_EXTERN(SoundManager_Delete);
@@ -27,9 +28,6 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, int 
 #define SOUNDMANAGER_INFO (FN(0x51C0C0, SoundManager_GetInfo))
 #define SOUNDMANAGER_CHANGED (FN(0x51C100, SoundManager_ParamsChanged))
 #define SOUNDMANAGER_TABLE (FN(0x51C280, SoundManager_GetParams))
-
-extern uint16_t gSoundManagerType;
-extern void *gSoundManagerParams;
 
 void SoundManager_Open(void)
 {

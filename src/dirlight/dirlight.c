@@ -9,6 +9,7 @@
 #include "dirlight/dirlight.h"
 #include "animcam/animcamvars.h"
 #include "dirlight/dirlightvars.h"
+#include "nodereg/noderegvars.h"
 
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
@@ -44,7 +45,6 @@ ORIG(0x527460, void, DirlightKeyframe_GetParams, (void *kf, void **out));
 ORIG(0x527470, void, DirlightKeyframe_Delete, (void *kf));
 ORIG(0x5274D0, void, Dirlight_SetTime, (float time));
 
-extern struct Terrain *gCurrentWorld;
 extern char gDirlightRandom[];
 extern float gDirlightKeyframeTime;
 extern DirlightKeyframe *gDirlightKeyframeChanging;

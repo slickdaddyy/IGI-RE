@@ -1,5 +1,6 @@
 #include "hook.h"
 #include "param/param.h"
+#include "param/paramvars.h"
 
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x401810, int, TaskEvent_Alloc2, (uint16_t type));
@@ -8,13 +9,8 @@ ORIG(0x4018E0, void, TaskEvent_Free2, (int index));
 
 extern int gWeaponSelectEvent;
 extern uint8_t gWeaponTriggerEvent;
-extern uint8_t gWeaponUseAmmoEvent;
 extern uint8_t gWeaponSlotsEvent;
-extern uint8_t gWeaponStateEvent;
 extern int gWeaponDeselectEvent;
-extern uint8_t gWeaponDropEvent;
-extern uint8_t gWeaponMoveEvent;
-extern uint8_t gWeaponAmmoEvent;
 
 void Weapon_InitEvents(void)
 {

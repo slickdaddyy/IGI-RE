@@ -41,13 +41,6 @@ extern Task *gTaskStack[];
 extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
-extern uint16_t gSectorType;
-extern uint16_t gSectorObjectType;
-extern uint16_t gSectorInteriorObjectType;
-extern Pool gSectorLinks;
-extern Pool gVisSectors;
-extern struct Terrain *gCurrentWorld;
-
 /* Calls the slot handler of each child of t, keeping the next child on
    gTaskStack so handlers may delete tasks. slot is evaluated after the
    push, like the original. */

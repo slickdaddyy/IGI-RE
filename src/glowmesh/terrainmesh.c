@@ -16,6 +16,8 @@
 #include "glowmesh/glowmeshvars.h"
 #include "editcam/editcamvars.h"
 #include "lod/lodvars.h"
+#include "nodereg/noderegvars.h"
+#include "sector/sectorvars.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -129,7 +131,6 @@ extern float gTerrainCenterY;
 extern float gTerrainInvSize;
 extern TerrainMaterial gTerrainMaterials[];
 extern float gTerrainView[]; /* 3x3 matrix, unk24, then the view origin */
-extern float gWaterTint[];
 extern double gTerrainClipUV[][2];
 extern double gTerrainClipPos[][3];
 extern TerrainClipVertex gTerrainClipVerts[];

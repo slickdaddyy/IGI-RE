@@ -12,6 +12,9 @@
 #include "camfeed/camfeedvars.h"
 #include "file/filevars.h"
 #include "glowmesh/glowmeshvars.h"
+#include "render/rendervars.h"
+#include "qvertex/qvertexvars.h"
+#include "sector/sectorvars.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x490370, int, Timer_GetMs, (void));
@@ -58,14 +61,6 @@ typedef struct ClipPrim {
     float x, y, w, h;
     int unk1C, unk20;
 } ClipPrim;
-
-extern Scene gScene;
-extern float gWorldScale;
-extern PtrList *gD3DBlendStates;
-extern float gD3DMinZ;
-extern PtrList *gD3DRenderStates;
-extern PtrList *gD3DClipStates;
-extern PtrList *gD3DTextureStates;
 
 /* method idx of a COM object */
 #define COM(obj, idx, type) ((type)(*(void ***)(obj))[idx])

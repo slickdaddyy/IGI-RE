@@ -4348,7 +4348,6 @@ static uint8_t fill_54F888[0x58] __attribute__((section(".igd$54F888"), used)) =
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 static uint8_t fill_550000[0x17C38] __attribute__((section(".igb$550000"), used));
-static uint8_t fill_567C94[0x4] __attribute__((section(".igb$567C94"), used));
 static uint8_t fill_5690D4[0x4] __attribute__((section(".igb$5690D4"), used));
 static uint8_t fill_56920C[0x4] __attribute__((section(".igb$56920C"), used));
 static uint8_t fill_56E20C[0x4] __attribute__((section(".igb$56E20C"), used));

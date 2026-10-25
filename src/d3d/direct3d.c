@@ -6,6 +6,8 @@
 #include "camfeed/camfeedvars.h"
 #include "glowmesh/glowmeshvars.h"
 #include "dxinit/dxinitvars.h"
+#include "render/rendervars.h"
+#include "qvertex/qvertexvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -120,19 +122,10 @@ extern D3DDEVICEDESC7 gD3DDeviceDesc;
 extern int gD3DFoundHAL;
 extern int gD3DTnL;
 extern int gD3DZ24;
-extern DynVB gVBNormal;
 extern D3DCallback gD3DCallbackPool[];
 extern int gDisplayClearColor[];
 extern DisplayMode gDisplayModes[];
 extern int gDisplayModeCount;
-extern PtrList *gD3DTextureStates;
-extern PtrList *gD3DBlendStates;
-extern PtrList *gD3DRenderStates;
-extern PtrList *gD3DClipStates;
-extern int gD3DClippingOnIndex;
-extern int gD3DClippingOffIndex;
-extern float gD3DMinZ;
-extern float gD3DMaxZ;
 
 #define DX_ERROR "%s\n\nDirectX error message: %s"
 
@@ -510,10 +503,8 @@ const char *DDraw_GetErrorString(HRESULT hr)
 }
 HOOK(0x492BE0, DDraw_GetErrorString);
 
-extern float gWorldScale;
 extern float gLayer0MinZ;
 extern float gLayer0MaxZ;
-extern uint32_t gD3DZEnable;
 extern float gLayer2MaxZ;
 extern float gLayer2Far;
 extern float gLayer2Near;

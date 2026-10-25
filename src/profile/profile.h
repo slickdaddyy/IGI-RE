@@ -16,12 +16,6 @@ typedef void (*TaskHandler)(void *task, void *arg);
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 
-extern InputRemap gDefaultKeys[];
-extern ConfigConstant gInputActions[CONFIG_ACTION_COUNT];
-extern ConfigConstant gInputKeys[CONFIG_KEY_COUNT];
-extern char gLanguageNames[][16];
-extern char gDifficultyNames[][16];
-
 PlayerProfile *Profile_GetActive(void);
 float Profile_GetSfxVolume(void);
 float Profile_GetMusicVolume(void);

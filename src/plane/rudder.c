@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "plane/plane.h"
 #include "math/mathvars.h"
+#include "plane/planevars.h"
 
 FN_EXTERN(EditorMagicObj_Delete);
 FN_EXTERN(HitZone_GetArgSize);
@@ -27,8 +28,6 @@ ORIG(0x4D9FB0, uint8_t, MagicObj_GetMoveEvent, (void));
 #define TASK_RUN_CHILDREN (FN(0x488700, SubLevel_Run))
 #define RUDDER_PARSE_DEF (FN(0x436740, Rudder_ParseDef))
 #define RUDDER_DEF_SIZE (FN(0x427F80, HitZone_GetArgSize))
-
-extern uint16_t gRudderType;
 
 enum {
     RUDDER_AILERON,

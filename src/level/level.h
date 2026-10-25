@@ -14,56 +14,16 @@ typedef void (*TaskFn)(Task *task);
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 
-extern List gTaskNotes[LEVEL_NOTE_LISTS];
 extern Task *gLevelFirstTask;
 extern Task *gLevelDynamic;
 extern Task *gLevelStatic;
 extern Task *gLevelIdle;
 extern Task *gLevelCameraBase;
 extern char gLevelInsertHead;
-extern char gLevelPaused;
 extern void *gLevelModels;
 extern const char *gLevelScriptFile;
 extern int gLevelScriptLine;
 extern char gLevelTaskNewEnabled;
-
-extern uint16_t gLevelType;
-extern uint16_t gStaticType;
-extern uint16_t gDynamicType;
-extern uint16_t gIdleType;
-extern uint8_t gLevelDebugInfoEvent;
-extern uint8_t gLevelNameEvent;
-extern int gLevelActivateEvent;
-extern int gLevelDeactivateEvent;
-extern int gLevelUnusedNewTaskEvent;
-
-/* parameter type ids */
-extern int gParamReal32x3;
-extern int gParamReal32x9;
-extern int gParamDropDownCombo;
-extern int gParamInt16;
-extern int gParamInt32;
-extern int gParamGraphEnvelope;
-extern int gParamAngle;
-extern int gParamObjectPos;
-extern int gParamScriptFile;
-extern int gParamBool8;
-extern int gParamVarString;
-extern int gParamGraph;
-extern int gParamDegrees;
-extern int gParamString256;
-extern int gParamReal32;
-extern int gParamReal64;
-extern int gParamQuat32;
-extern int gParamPitchGraph;
-extern int gParamRGB;
-extern int gParamString16;
-extern int gParamString32;
-extern int gParamLevelExpression;
-extern int gParamReal64x3;
-extern int gParamQTaskNote;
-extern int gParamPushButton;
-extern int gParamBitfield;
 
 Task *Task_FindById(int id);
 int Task_GetId(Task *task);

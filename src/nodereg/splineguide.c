@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "nodereg/splinepath.h"
 #include "task/taskvars.h"
+#include "nodereg/noderegvars.h"
 
 /* "SplinePathGuideQTask" (0x44) */
 typedef struct SplinePathGuide {

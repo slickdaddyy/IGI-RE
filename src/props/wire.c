@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "props/props.h"
 #include "math/mathvars.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(Human_ClearResult);
 
@@ -69,7 +70,6 @@ _Static_assert(sizeof(Wire) == 0x138, "Wire");
 
 extern uint16_t gWireType;
 extern void *gWireParams;
-extern struct Terrain *gCurrentWorld;
 
 extern double kWireScale; /* 1/4096 */
 extern float kWireSlope;  /* 2 degrees */

@@ -6,6 +6,7 @@
 #include "model/model.h"
 #include "core/coretypes.h"
 #include "file/filevars.h"
+#include "model/modelvars.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4AF960, void, List_Remove_, (Node *node));
@@ -23,8 +24,6 @@ ORIG(0x4D67A0, void, BoneObj_Load, (const char *path));
 #define MTP_PALF 0x50414C46
 #define MTP_BANM 0x42414E4D
 
-extern char gModelPath[];
-extern char gModelDir[];
 extern char gModelAnimDir[];
 
 /* Palettes named in the PALF chunk, 0xC bytes each at f->unk3C. */

@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "config/config.h"
 #include "config/configvars.h"
+#include "profile/profilevars.h"
 
 ORIG(0x4A5980, int, crt_stricmp, (const char *a, const char *b));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -32,13 +33,7 @@ ORIG(0x41C690, void, ScrollListBox_AddItem, (const char *text, int id));
 ORIG(0x41B870, void, PictureBox_AddItem, (const char *text, int id));
 ORIG(0x41B290, void, TextBox_AddItem, (const char *text, int id));
 
-extern char gLanguageAliasSet;
 extern int gPerfLevelFlags[];
-extern InputRemap gDefaultKeys[];
-extern ConfigConstant gInputActions[CONFIG_ACTION_COUNT];
-extern ConfigConstant gInputKeys[CONFIG_KEY_COUNT];
-extern char gLanguageNames[][16];
-extern char gDifficultyNames[][16];
 
 #define NUM_PERF_LEVELS 7
 #define NUM_LANGUAGES 6
@@ -950,7 +945,9 @@ STORE(igd, 537B74, 4) int store_537B74[7] INIT({414, 430, 13, 96, 77, 65});
 ALIAS(gPerfLevelFlags, store_537B74, 0);
 STORE(igb, 567C74, 1) const char store_567C74[4];
 ALIAS(gEmptyString, store_567C74, 0);
-PAD(igb, 567C98, 567C98, 0x1418);
+BSS(567C90) int gDriverCount;
+PAD(igb, 567C90, 567C94, 0x4);
+PAD(igb, 567C90, 567C98, 0x1418);
 ALIAS(gDrivers, pad_567C98, 0);
 BSS(BC2380) int gProfileCount;
 BSS(BC2380) int gActiveProfile;

@@ -3,15 +3,12 @@
 #include "hook.h"
 #include "igi.h"
 #include "orig.h"
+#include "script/scriptvars.h"
+#include "res/resvars.h"
 
 ORIG(0x4A5702, int, crt_vsprintf, (char *buf, const char *fmt, va_list ap));
 
-extern int gScriptError;
-extern int gScriptWarningLevel;
 typedef void (*ScriptErrorFn)(const char *msg, void *data);
-
-extern void (*gScriptErrorHandler)(const char *msg, void *data);
-extern void *gScriptErrorContext;
 
 void Script_Error(const char *fmt, ...)
 {

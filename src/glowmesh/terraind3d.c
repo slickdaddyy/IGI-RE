@@ -16,6 +16,9 @@
 #include "camfeed/camfeedvars.h"
 #include "glowmesh/glowmeshvars.h"
 #include "lod/lodvars.h"
+#include "sector/sectorvars.h"
+#include "render/rendervars.h"
+#include "qvertex/qvertexvars.h"
 
 typedef struct TdTLVertex {
     float sx, sy, sz, rhw;
@@ -75,14 +78,6 @@ extern float gTerrainScaleX;
 extern float gTerrainCenterX;
 extern float gTerrainCenterY;
 extern int gTerrainD3DUnusedInt;
-extern float gWorldScale;
-extern uint32_t gD3DZEnable;
-extern float gD3DMinZ;
-extern float gD3DMaxZ;
-extern PtrList *gD3DTextureStates;
-extern PtrList *gD3DBlendStates;
-extern PtrList *gD3DRenderStates;
-extern PtrList *gD3DClipStates;
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);

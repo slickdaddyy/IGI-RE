@@ -5,6 +5,7 @@
 #include "editcam/editcam.h"
 #include "coll/collvars.h"
 #include "editcam/editcamvars.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(Task_ReturnZero);
 

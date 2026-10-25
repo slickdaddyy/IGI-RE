@@ -7,6 +7,7 @@
 #include "orig.h"
 #include "qvm/qvm.h"
 #include "qsc/qsctypes.h"
+#include "script/scriptvars.h"
 
 /* Turns parsed QSC statements into QVM assembler text. */
 
@@ -63,7 +64,6 @@ extern QscGenCallback gQscGenLogFn;
 extern QscGenCallback gQscGenErrorFn;
 extern int gQscGenErrors;
 extern void *gQscGenLogData;
-extern int gScriptError;
 
 /* "           NAME    ", one per opcode, and 20 spaces for continued lines */
 extern char gQscGenOpText[][20];

@@ -10,6 +10,7 @@
 #include "sysmisc/sysmisctypes.h"
 #include "camfeed/camfeedvars.h"
 #include "file/filevars.h"
+#include "res/resvars.h"
 
 /* Texture functions of the Direct3D render mode: textures are DirectDraw
    surfaces, created and filled when the engine downloads them. */
@@ -60,10 +61,6 @@ ORIG(0x517C90, void, Pixel_1555To32, (uint32_t *dst, int w, int h, const void *s
 ORIG(0x517F00, void, Pixel_Copy32, (uint32_t *dst, int w, int h, const void *src, int pitch, int rows, int unk));
 ORIG(0x517DD0, void, Pixel_565To32, (uint32_t *dst, int w, int h, const void *src, int pitch, int rows, int unk));
 ORIG(0x517B00, void, Pixel_Halve32, (uint32_t *dst, const uint32_t *src, int w, int h));
-
-extern int gDeAllocPalette;
-extern int gDownloadPalette;
-extern int gAllocPalette;
 
 extern IDirectDraw7 *gDDraw;
 extern int gTexturesCreated;

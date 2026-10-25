@@ -7,6 +7,9 @@
 #include "script/script.h"
 #include "script/symbol.h"
 #include "config/configvars.h"
+#include "res/resvars.h"
+#include "script/scriptvars.h"
+#include "qsc/qscvars.h"
 
 FN_EXTERN(BreakScript);
 FN_EXTERN(Script_SetWarningLevelCmd);
@@ -45,12 +48,9 @@ ORIG(0x4C1780, void, Debug_Log, (void));
 
 extern int gScriptWarningSp;
 extern int gScriptWarningStack[];
-extern int gScriptLineSize;
 extern int gScriptUnused0;
 extern int gScriptUnused1;
-extern void *gScriptErrorContext;
 extern int gScriptUnused2;
-extern void (*gScriptErrorHandler)(const char *msg, void *data);
 extern int gScriptUnused3;
 
 static void Path_SetExtension(char *path, const char *ext)

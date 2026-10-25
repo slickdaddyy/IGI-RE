@@ -12,6 +12,7 @@
 #include "bonemesh/bonemeshvars.h"
 #include "file/filevars.h"
 #include "lod/lodvars.h"
+#include "sector/sectorvars.h"
 
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x401810, int, TaskEvent_Alloc2, (uint16_t type));

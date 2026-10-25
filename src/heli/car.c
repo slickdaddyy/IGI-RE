@@ -6,6 +6,7 @@
 #include "igi.h"
 #include "heli/heli.h"
 #include "math/mathvars.h"
+#include "rotor/rotorvars.h"
 
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
@@ -42,8 +43,6 @@ ORIG(0x4F4800, void, Vehicle_NewParts, (void *v));
 ORIG(0x4F4820, void, Vehicle_DeleteParts, (void *v));
 ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (void *v, PhysType *phys));
 
-extern uint16_t gCarType;
-extern void *gCarParams;
 extern ControlInfo gCarControls[];
 
 static float radius(void *obj)

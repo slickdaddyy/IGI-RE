@@ -6,6 +6,7 @@
 #include "core/mem.h"
 #include "script/script.h"
 #include "script/symbol.h"
+#include "script/scriptvars.h"
 
 ORIG(0x4A5500, char *, crt_strncpy, (char *dst, const char *src, size_t n));
 ORIG(0x5169B0, char *, crt_strncat, (char *dst, const char *src, size_t n));

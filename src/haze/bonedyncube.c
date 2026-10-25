@@ -5,6 +5,7 @@
 #include "igi.h"
 #include "haze/haze.h"
 #include "task/taskvars.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(BoneDynCubeObj_CollLine);
 FN_EXTERN(BoneDynCubeObj_EnterHandler);

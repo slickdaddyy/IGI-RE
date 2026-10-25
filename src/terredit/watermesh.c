@@ -10,6 +10,7 @@
 #include "transctx/transctxtypes.h"
 #include "bonemesh/bonemeshvars.h"
 #include "math/mathvars.h"
+#include "nodereg/noderegvars.h"
 
 /* the WaterMesh primitive in the render queue */
 typedef struct WaterDrawNode {

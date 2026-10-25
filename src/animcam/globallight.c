@@ -7,6 +7,7 @@
 
 #include "hook.h"
 #include "animcam/animcam.h"
+#include "nodereg/noderegvars.h"
 
 typedef struct LightColor {
     Vec3f ambient;
@@ -105,7 +106,6 @@ extern char gScaleBNames[][32];
 extern char gLinkNames[][32];
 
 /* what the renderer uses, one per light set */
-extern Vec3f gAmbient[5];
 extern Vec3f gFogColors[];
 extern float gFogDensities[];
 extern Vec3f gColorMatrix0[];

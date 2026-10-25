@@ -6,6 +6,7 @@
 #include "model/model.h"
 #include "core/coretypes.h"
 #include "file/filevars.h"
+#include "model/modelvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4AF8F0, void, List_AddTail_, (List *list, Node *node));
@@ -31,8 +32,6 @@ extern int gModelLoadMethod;
 extern int gModelUnloadMethod;
 extern VirModel gVirModels[];
 extern List gModelFiles;
-extern char gModelPath[];
-extern char gModelDir[];
 extern int gVirModelCount;
 extern int gVirModelSaved;
 

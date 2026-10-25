@@ -3,6 +3,7 @@
 #include "terredit/terredit.h"
 #include "coll/colltypes.h"
 #include "lod/lodvars.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(VehiclePart_Delete);
 

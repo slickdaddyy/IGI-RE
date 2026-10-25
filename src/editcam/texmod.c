@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "editcam/editcam.h"
 #include "editcam/editcamvars.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(Task_ReturnZero);
 

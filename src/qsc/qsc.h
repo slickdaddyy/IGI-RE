@@ -12,8 +12,6 @@ ORIG(0x4AF8F0, void, List_AddTail, (List *list, Node *node));
 ORIG(0x4AF960, void, List_Remove, (Node *node));
 ORIG(0x4B7E10, void, Script_Error, (const char *fmt, ...));
 
-extern int gScriptError;
-
 /* Script source split into lines. Only line based refill exists. */
 typedef struct Reader {
     char *cur;

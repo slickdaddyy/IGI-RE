@@ -3,6 +3,7 @@
 #include "igi.h"
 #include "hook.h"
 #include "level/level.h"
+#include "physobj/physobjvars.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));

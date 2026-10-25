@@ -5,6 +5,7 @@
 
 #include "hook.h"
 #include "dirlight/dirlight.h"
+#include "nodereg/noderegvars.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -14,8 +15,6 @@ ORIG(0x4CE410, char, Coll_LineOfSight, (void *world, const Vec3d *from, const Ve
 ORIG(0x521E40, void, Hemicube_DrawLightmapSet, (LightmapInfo *info, const Vec3d *origin, const Matrix *m, int *ids, float *depth,
                                   int w, int h, float centerX, float centerY, int pass, int unk1, int unk2, int unk3,
                                   float radius, int unk4));
-
-extern struct Terrain *gCurrentWorld;
 
 static const float kOne = 1.0f;
 static const float kHalf = 0.5f;

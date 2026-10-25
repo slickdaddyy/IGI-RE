@@ -19,6 +19,9 @@
 #include "camfeed/camfeedvars.h"
 #include "dxinit/dxinitvars.h"
 #include "lod/lodvars.h"
+#include "nodereg/noderegvars.h"
+#include "sector/sectorvars.h"
+#include "render/rendervars.h"
 
 /* Direct3D mesh renderer: rigid, spline and lightmapped meshes. */
 
@@ -175,30 +178,8 @@ ORIG(0x4D0E60, void, ModelLod_SaveTexAnimState, (ModelLod *l, int *out));
 ORIG(0x4D0EA0, void, ModelLod_LoadTexAnimState, (ModelLod *l, const int *in));
 
 extern struct IDirect3D7 *gD3D;
-extern int gTexStageIdx;
-extern int gAlphaBlendIdx;
-extern int gLitAlphaIdx;
-extern int gLitIdx;
-extern int gLmStageIdx;
-extern int gUnlitAlphaIdx;
-extern int gMeshVBCount;
 extern ProjVert gProjVerts[];
-extern int gOpaqueBlendIdx;
-extern MeshVB gMeshVBs[];
-extern int gUnlitIdx;
 extern Pool gLightPool;
-extern float gLightColor[];
-extern float gFogColor[];
-extern Scene gScene;
-extern float gWorldScale;
-extern int gD3DClippingOnIndex;
-extern PtrList *gD3DBlendStates;
-extern uint32_t gD3DZEnable;
-extern DynVB gVBNormal;
-extern PtrList *gD3DRenderStates;
-extern PtrList *gD3DClipStates;
-extern int gD3DClippingOffIndex;
-extern PtrList *gD3DTextureStates;
 extern uint32_t gFogEnable;
 
 /* a float constant from the exe, bit exact */
@@ -1259,9 +1240,9 @@ ALIAS(gFogColor, store_B818EC, 0);
 BSS(BCABEC) float gWorldScale;
 BSS(BCACEC) int gD3DClippingOnIndex;
 BSS(BCAD78) uint32_t gD3DZEnable;
-BSS(BCAD78) PtrList *gD3DBlendStates;
+BSS(BCAD78) struct PtrList *gD3DBlendStates;
 BSS(BCAD90) DynVB gVBNormal;
-BSS(BCADAC) PtrList *gD3DRenderStates;
-BSS(BCADC4) PtrList *gD3DClipStates;
+BSS(BCADAC) struct PtrList *gD3DRenderStates;
+BSS(BCADC4) struct PtrList *gD3DClipStates;
 BSS(BCADE0) int gD3DClippingOffIndex;
-BSS(BCADE8) PtrList *gD3DTextureStates;
+BSS(BCADE8) struct PtrList *gD3DTextureStates;

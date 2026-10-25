@@ -2,10 +2,9 @@
 
 #include "hook.h"
 #include "qsc/qsc.h"
+#include "qsc/qscvars.h"
 
 FN_EXTERN(Reader_ReadLine);
-
-extern int gScriptLineSize;
 
 Reader *Reader_Init(Reader *r, const char *src, int size, int (*refill)(Reader *r))
 {

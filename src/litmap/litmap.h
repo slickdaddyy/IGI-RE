@@ -11,7 +11,6 @@
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
-extern struct Terrain *gCurrentWorld;
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));

@@ -19,6 +19,7 @@
 #include "editcam/editcamvars.h"
 #include "magicobj/magicobjvars.h"
 #include "lod/lodvars.h"
+#include "nodereg/noderegvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4C5810, void, Coll_ResetMods, (void));
@@ -30,7 +31,6 @@ typedef struct WStack {
 
 typedef void (*WHandler)(DynCubeObj *task, void *arg);
 
-extern struct Terrain *gCurrentWorld;
 extern signed char gWalkTreeIndex[];
 extern DynCubeNode gWalkSavedRoots[];
 extern DynCubeNode gWalkFakeRoots[];

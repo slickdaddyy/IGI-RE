@@ -9,6 +9,7 @@
 #include "humanplayer/humanplayertypes.h"
 #include "material/materialtypes.h"
 #include "humanai/humanaitypes.h"
+#include "patrol/patrolvars.h"
 
 FN_EXTERN(Human_DeadRun);
 FN_EXTERN(Human_UseRun);
@@ -132,8 +133,6 @@ extern SoldierStateFn gSoldierFemaleStates[];
 extern char gSoldierFemaleCombos[];
 extern char gSoldierFemaleAnimSlots[];
 extern char gSoldierFemaleSpeeds[];
-extern void *gSoldierFemaleParams;
-extern uint16_t gSoldierFemaleType;
 extern int gSoldierFemaleUnusedInt;
 
 #define ANIM_WALK_CYCLE 0x3F2

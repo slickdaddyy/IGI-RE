@@ -19,7 +19,6 @@ typedef void (*TaskFn)(void *task, void *arg);
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern struct Terrain *gCurrentWorld;
 
 /* calls handler slot of each child of t (not deeper); slot is evaluated
    for each child like in the original */

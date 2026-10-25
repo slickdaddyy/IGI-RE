@@ -5,6 +5,7 @@
 #include "patrol/patrol.h"
 #include "humanai/humanaitypes.h"
 #include "humanai/humanaivars.h"
+#include "patrol/patrolvars.h"
 
 typedef struct ViewObj {
     char unk0[0x50];
@@ -26,13 +27,6 @@ ORIG(0x4F98A0, void, Graph_GetNodeMatrix, (Matrix *out, GraphNode *node, int unk
 ORIG(0x5096F0, void, AIGraph_FindNearest, (GraphNode **out, Graph *graph, const Vec3d *pos));
 
 extern const GridStamp gGridStamp[];
-extern List gGridsUsed;
-extern List gGridsFree;
-extern List gMonitorGraphsUsed;
-extern List gMonitorGraphsFree;
-extern List gMonitorTargetsFree;
-extern List gClaimsUsed;
-extern List gClaimsFree;
 
 static const float kFrames = 30.0f;
 static const double kAhead = 0x1.199999999999ap+0;

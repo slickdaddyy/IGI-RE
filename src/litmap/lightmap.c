@@ -5,6 +5,7 @@
 #include "litmap/litmaptypes.h"
 #include "dirlight/dirlightvars.h"
 #include "math/mathvars.h"
+#include "nodereg/noderegvars.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (int size, int align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));

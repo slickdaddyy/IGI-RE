@@ -4,6 +4,8 @@
 #include "param/param.h"
 #include "config/configvars.h"
 #include "level/levelvars.h"
+#include "physobj/physobjvars.h"
+#include "param/paramvars.h"
 
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
 ORIG(0x401B90, const char *, TaskType_GetName, (uint16_t type));

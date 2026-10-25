@@ -1,6 +1,7 @@
 #pragma GCC optimize("excess-precision=standard")
 #include "hook.h"
 #include "terredit/terredit.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(Task_Nothing);
 

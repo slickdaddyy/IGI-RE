@@ -10,6 +10,7 @@
 #include "config/configvars.h"
 #include "editobj/editobjvars.h"
 #include "math/mathvars.h"
+#include "nodereg/noderegvars.h"
 
 /* Points along a "SplineObj" and the "SplineObjWaypoint" handlers (types made by 0x502250). */
 
@@ -39,8 +40,6 @@ ORIG(0x4E4530, void, SplineObjSegment_Setup, (SplineObjSegment *o, Vec3d *from, 
 ORIG(0x4F1030, Task *, Task_FindById, (int id));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x501D70, void, SplineObjWaypoint_UpdateAttach, (SplineObjWaypoint *w));
-
-extern struct Terrain *gCurrentWorld;
 
 extern const float kDefaultSegLength;
 extern const float kSmallAngle;

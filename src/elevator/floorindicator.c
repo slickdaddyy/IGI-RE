@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "elevator/elevator.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(Task_Nothing);
 

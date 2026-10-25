@@ -1,5 +1,6 @@
 #include "hook.h"
 #include "igi.h"
+#include "res/resvars.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x497800, void *, Frame_Alloc, (int size));
@@ -31,7 +32,6 @@ extern int gSortTask;
 extern char gSortData[];
 extern SortList *gSortList;
 extern int gSortDataUsed;
-extern int gSortActive;
 
 void SortRender_Sort(SortItem *items, int count);
 

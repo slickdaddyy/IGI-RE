@@ -4,6 +4,7 @@
 #include "elevator/elevator.h"
 #include "elevator/elevatortypes.h"
 #include "fxobj/fxobjvars.h"
+#include "nodereg/noderegvars.h"
 
 ORIG(0x4DCCB0, int, Sector_AddObject, (int world, void *obj, Vec3d *pos));
 ORIG(0x4DCDD0, void, Sector_RemoveObject, (void *obj));

@@ -10,6 +10,7 @@
 #include "dxinit/dxinitvars.h"
 #include "lod/lodvars.h"
 #include "math/mathvars.h"
+#include "render/rendervars.h"
 
 FN_EXTERN(Direct3DRender_AlphaBlendOff);
 FN_EXTERN(Direct3DRender_SetLightmapStages);
@@ -67,20 +68,9 @@ ORIG(0x4CFC60, int, Mesh3D_GetExcludeMethod, (void));
 ORIG(0x4D14D0, uint8_t, QCube_GetNearClipEvent, (void));
 ORIG(0x4E5350, uint16_t, SplineObjSegment_GetType, (void));
 
-extern DynVB gVBNormal;
-extern MeshVB gMeshVBs[];
-extern int gMeshVBCount;
 extern const unsigned gMeshFVF[];
 extern const unsigned gMeshCaps[];
 extern const unsigned gMeshCapsTnL[];
-extern int gTexStageIdx;
-extern int gAlphaBlendIdx;
-extern int gLitAlphaIdx;
-extern int gLitIdx;
-extern int gLmStageIdx;
-extern int gUnlitAlphaIdx;
-extern int gOpaqueBlendIdx;
-extern int gUnlitIdx;
 
 /* render functions and callbacks that live past this range */
 #define Direct3D_DrawRigidMesh (FN(0x49DF60, Direct3DRender_DrawRigidMesh))

@@ -9,6 +9,8 @@
 #include "physobj/physobj.h"
 #include "level/leveltypes.h"
 #include "level/levelvars.h"
+#include "param/paramvars.h"
+#include "physobj/physobjvars.h"
 
 FN_EXTERN(CameraBase_Create);
 FN_EXTERN(CameraBase_Delete);
@@ -78,51 +80,9 @@ ORIG(0x4F1BB0, uint8_t, ParamOp_Paste, (void));
 ORIG(0x4F1BC0, void, ParamType_SetOp, (int type, uint8_t op, void *fn));
 ORIG(0x4F1C20, void, ParamCursor_Need, (ParamCursor *c, int count));
 
-/* task types and events of the level */
-extern uint16_t gLevelType;
-extern uint16_t gStaticType;
-extern uint16_t gDynamicType;
-extern uint16_t gIdleType;
-extern uint8_t gLevelDebugInfoEvent;
-extern uint8_t gLevelNameEvent;
-extern int gLevelActivateEvent;
-extern int gLevelDeactivateEvent;
-extern int gLevelUnusedNewTaskEvent;
-
 /* 251 buckets of task references, Amiga style lists */
-extern List gTaskNotes[LEVEL_NOTE_LISTS];
-extern char gLevelPaused;
-extern char gLevelForceRunning;
 extern int gLevelUnused0;
 extern int gLevelUnused1;
-
-/* parameter type ids */
-extern int gParamQuat32;
-extern int gParamReal32;
-extern int gParamReal32x3;
-extern int gParamReal32x9;
-extern int gParamReal64;
-extern int gParamReal64x3;
-extern int gParamInt32;
-extern int gParamInt16;
-extern int gParamVarString;
-extern int gParamString16;
-extern int gParamString32;
-extern int gParamString256;
-extern int gParamLevelExpression;
-extern int gParamQTaskNote;
-extern int gParamBool8;
-extern int gParamGraph;
-extern int gParamGraphEnvelope;
-extern int gParamScriptFile;
-extern int gParamBitfield;
-extern int gParamPitchGraph;
-extern int gParamRGB;
-extern int gParamAngle;
-extern int gParamDegrees;
-extern int gParamObjectPos;
-extern int gParamPushButton;
-extern int gParamDropDownCombo;
 
 static const double kTwoPi = 0x1.921fb54442d1bp+2;
 static const double kGimbal = 0x1.a36e2eb1c432dp-14;   /* 0.0001 */
@@ -683,9 +643,6 @@ DATA(54DD0C) uint16_t gLevelType INIT(385);
 DATA(54DD0C) uint16_t gStaticType INIT(385);
 DATA(54DD0C) uint16_t gDynamicType INIT(385);
 DATA(54DD0C) uint16_t gIdleType INIT(385);
-DATA(54DDA8) int gLevelActivateEvent INIT(255);
-DATA(54DDA8) int gLevelDeactivateEvent INIT(255);
-DATA(54DDA8) int gLevelUnusedNewTaskEvent INIT(255);
 BSS(A70C68) int gParamReal32x3;
 BSS(A70C68) int gParamReal32x9;
 BSS(A70C68) int gParamDropDownCombo;

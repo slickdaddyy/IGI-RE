@@ -9,6 +9,7 @@
 #include "flatwater/flatwatertypes.h"
 #include "flatwater/flatwatervars.h"
 #include "math/mathvars.h"
+#include "nodereg/noderegvars.h"
 
 FN_EXTERN(MoveRigidObj_Changed);
 
