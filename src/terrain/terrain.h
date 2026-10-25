@@ -62,7 +62,5 @@ void DynCube_Prune(Terrain *t, DynCubeNode *node);
 DynCubeNode *DynCube_GetRoot(Terrain *t, int tree);
 void DynCube_SendEventBox(Terrain *t, uint8_t slot, void *arg, const Vec3d *min, const Vec3d *max,
                           unsigned int flags, int tree);
-void DynCube_SendEventLines(Terrain *t, uint8_t slot, void *arg, const Vec3d *starts, const Vec3d *ends, int count,
-                            unsigned int flags, int tree);
 
 #endif

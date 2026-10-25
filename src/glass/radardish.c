@@ -50,7 +50,6 @@ extern uint16_t gRadarDishType;
 
 extern float k360;
 
-#define sub_4EFCD0 (FN(0x4EFCD0, ParamReal32x9_Size))
 
 void RadarDish_Create(RadarDish *r, MagicCreateArg *arg);
 void RadarDish_Run(RadarDish *r);
@@ -113,7 +112,7 @@ void RadarDish_Open(void)
     TaskType_SetHandler2(gRadarDishType, 2, RadarDish_Delete);
     TaskType_SetHandler(gRadarDishType, Param_GetChangedEvent(), RadarDish_ParamsChanged);
     TaskType_SetHandler(gRadarDishType, RigidDynCubeObj_GetEvent0(), RadarDish_ParseDef);
-    TaskType_SetHandler(gRadarDishType, RigidDynCubeObj_GetEvent1(), sub_4EFCD0);
+    TaskType_SetHandler(gRadarDishType, RigidDynCubeObj_GetEvent1(), FN(0x4EFCD0, ParamReal32x9_Size));
     TaskType_SetHandler(gRadarDishType, Game_GetEvent9(), RadarDish_Stop);
     TaskType_SetHandler(gRadarDishType, Sound_GetInfoEvent(), RadarDish_GetSoundSource);
     Script_RegisterConstant("TASKTYPE_RADARDISH", gRadarDishType);

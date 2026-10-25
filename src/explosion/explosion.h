@@ -187,7 +187,6 @@ extern int gTaskStackTop;
 #define TASK_FALSE ((TaskFn)FN(0x45F920, Task_FalseHandler))
 
 /* exe constants, read in place */
-#define K(type, addr) VAR(const type, addr)
 
 extern uint8_t gBulletHoleEvent;
 extern uint16_t gBulletHoleType;

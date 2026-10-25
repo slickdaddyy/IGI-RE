@@ -41,7 +41,6 @@ ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 ORIG(0x4F1210, int, Level_GetEventDA8, (void));
 ORIG(0x4F1220, int, Level_GetEventDAC, (void));
 ORIG(0x4D3710, void, Task_Nothing, (void *task));
-ORIG(0x4C1780, void, sub_4C1780, (void));
 ORIG(0x491CF0, int *, Display_GetMode, (void));
 
 /* round to float, even when the compiler keeps extended precision */

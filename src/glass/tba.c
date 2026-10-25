@@ -55,7 +55,6 @@ extern void *gTBAParams;
 /* handlers shared with the Terminal and others */
 #define Terminal_CheckUse (FN(0x443C80, Terminal_CheckUse))
 #define Terminal_MapHandler (FN(0x443DC0, Terminal_MapHandler))
-#define sub_51BAA0 (FN(0x51BAA0, EditorMagicObj_GetArgSize))
 
 void GenericTBA_Create(GenericTBA *t, void *arg);
 void GenericTBA_Run(GenericTBA *t);
@@ -82,7 +81,7 @@ void GenericTBA_Open(void)
     TaskType_SetHandler2(gTBAType, Level_GetEventDA8(), GenericTBA_AddSymbols);
     TaskType_SetHandler2(gTBAType, Level_GetEventDAC(), GenericTBA_RemoveSymbols);
     TaskType_SetHandler(gTBAType, Game_GetEvent2(), Terminal_CheckUse);
-    TaskType_SetHandler(gTBAType, Game_GetEvent3(), sub_51BAA0);
+    TaskType_SetHandler(gTBAType, Game_GetEvent3(), FN(0x51BAA0, EditorMagicObj_GetArgSize));
     TaskType_SetHandler(gTBAType, Game_GetEvent4(), GenericTBA_Use);
     TaskType_SetHandler(gTBAType, Game_GetEvent6(), GenericTBA_DrawIcon);
     TaskType_SetHandler(gTBAType, ComputerObject_GetEvent0(), Terminal_MapHandler);

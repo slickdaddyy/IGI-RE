@@ -70,7 +70,6 @@ extern uint16_t gWireType;
 extern void *gWireParams;
 extern void *gCurrentWorld;
 
-#define sub_45E3D0 (FN(0x45E3D0, Human_ClearResult))
 
 extern double kWireScale; /* 1/4096 */
 extern double kHalfD;
@@ -102,7 +101,7 @@ void Wire_Open(void)
     TaskType_SetHandler(gWireType, Game_GetEvent3(), Wire_GetUseKind);
     TaskType_SetHandler(gWireType, Game_GetEvent4(), Wire_SetInUse);
     TaskType_SetHandler(gWireType, Game_GetEvent6(), Wire_DrawIcon);
-    TaskType_SetHandler(gWireType, Game_GetEvent8(), sub_45E3D0);
+    TaskType_SetHandler(gWireType, Game_GetEvent8(), FN(0x45E3D0, Human_ClearResult));
     TaskType_SetHandler2(gWireType, Level_GetEventDA8(), Wire_Activate);
     TaskType_SetHandler2(gWireType, Level_GetEventDAC(), Wire_Deactivate);
     TaskType_SetHandler(gWireType, 8, NULL);

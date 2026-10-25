@@ -7,7 +7,7 @@
    uses. Debug_Log is an empty function here. */
 
 ORIG(0x4C1780, void, Debug_Log, (void));
-ORIG(0x4B0B90, void, sub_4B0B90, (void));
+ORIG(0x4B0B90, void, Debug_Log2, (void));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t slot));
 ORIG(0x4010D0, void, Task_InitSystem, (void));
@@ -354,7 +354,7 @@ void TerrainModules_Shutdown(void)
     TransparencyList_Shutdown();
     HazeLayer_Close();
     WaterMesh_Close();
-    sub_4B0B90();
+    Debug_Log2();
     Debug_Log();
     Debug_Log();
     QCube_Shutdown();
@@ -479,12 +479,12 @@ void Core_Shutdown(void)
     Display_Close();
     Debug_Log();
     File_Shutdown();
-    sub_4B0B90();
+    Debug_Log2();
     Mem_Shutdown();
     Debug_Log();
     Debug_Log();
     AppContext_Close();
-    sub_4B0B90();
+    Debug_Log2();
     Debug_Log();
 }
 HOOK(0x532490, Core_Shutdown);

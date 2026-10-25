@@ -166,14 +166,6 @@ ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 
 /* handlers registered by HumanPlayer_Open that live outside this file */
 #define Human_RunBase (FN(0x454EE0, Human_RunBase))
-#define sub_4123F0 (FN(0x4123F0, HumanPlayer_InputChannelHandler))
-#define sub_412420 (FN(0x412420, HumanPlayer_ReadInputHandler))
-#define sub_412440 (FN(0x412440, HumanPlayer_HitHandler))
-#define sub_412990 (FN(0x412990, HumanPlayer_BlastHandler))
-#define sub_412CE0 (FN(0x412CE0, HumanPlayer_PunchHandler))
-#define sub_412F80 (FN(0x412F80, HumanPlayer_FenceHandler))
-#define sub_413090 (FN(0x413090, HumanPlayer_FlashbangHandler))
-#define sub_413120 (FN(0x413120, HumanPlayer_RenderHandler))
 #define HumanPlayer_MapMarkerHandler (FN(0x413730, HumanPlayer_MapMarkerHandler))
 #define HumanPlayer_DeadRun ((StateFn)FN(0x45C740, Human_DeadRun))
 
@@ -1113,14 +1105,14 @@ void HumanPlayer_Open(void)
     TaskType_SetHandler(gHumanPlayerType, Param_GetChangedEvent(), HumanPlayer_ParamChangedHandler);
     TaskType_SetHandler(gHumanPlayerType, World_GetEvent1(), HumanPlayer_DeactivateHandler);
     TaskType_SetHandler(gHumanPlayerType, Vehicle_GetControlEvent(), HumanPlayer_InputHandler);
-    TaskType_SetHandler(gHumanPlayerType, Vehicle_GetInputInfoEvent(), sub_4123F0);
-    TaskType_SetHandler(gHumanPlayerType, Vehicle_GetKeysEvent(), sub_412420);
-    TaskType_SetHandler(gHumanPlayerType, Game_GetEvent9(), sub_412440);
-    TaskType_SetHandler(gHumanPlayerType, Game_GetEvent11(), sub_412990);
-    TaskType_SetHandler(gHumanPlayerType, Human_GetPunchEvent(), sub_412CE0);
-    TaskType_SetHandler(gHumanPlayerType, Game_GetEvent12(), sub_412F80);
-    TaskType_SetHandler(gHumanPlayerType, FlashBang_GetEvent(), sub_413090);
-    TaskType_SetHandler(gHumanPlayerType, StatusScreen_GetEvent(), sub_413120);
+    TaskType_SetHandler(gHumanPlayerType, Vehicle_GetInputInfoEvent(), FN(0x4123F0, HumanPlayer_InputChannelHandler));
+    TaskType_SetHandler(gHumanPlayerType, Vehicle_GetKeysEvent(), FN(0x412420, HumanPlayer_ReadInputHandler));
+    TaskType_SetHandler(gHumanPlayerType, Game_GetEvent9(), FN(0x412440, HumanPlayer_HitHandler));
+    TaskType_SetHandler(gHumanPlayerType, Game_GetEvent11(), FN(0x412990, HumanPlayer_BlastHandler));
+    TaskType_SetHandler(gHumanPlayerType, Human_GetPunchEvent(), FN(0x412CE0, HumanPlayer_PunchHandler));
+    TaskType_SetHandler(gHumanPlayerType, Game_GetEvent12(), FN(0x412F80, HumanPlayer_FenceHandler));
+    TaskType_SetHandler(gHumanPlayerType, FlashBang_GetEvent(), FN(0x413090, HumanPlayer_FlashbangHandler));
+    TaskType_SetHandler(gHumanPlayerType, StatusScreen_GetEvent(), FN(0x413120, HumanPlayer_RenderHandler));
     TaskType_SetHandler(gHumanPlayerType, ComputerObject_GetEvent0(), HumanPlayer_MapMarkerHandler);
     gUnk56E09C = ParamTable_Extend(Human_GetParamTable(), 1);
     Script_RegisterFunction("DefineHumanPlayerGeneral", DefineHumanPlayerGeneral, NULL, -1);

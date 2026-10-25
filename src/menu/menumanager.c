@@ -74,6 +74,7 @@ ORIG(0x4E7540, void, Screen_RequestMode, (void *mode, int unk));
 ORIG(0x4F0E50, void, ScriptInit, (const char *name, int unk1, int unk2, int unk3));
 ORIG(0x4F1030, MenuWindow *, Task_FindById, (int id));
 ORIG(0x4F1050, int, Task_GetId, (void *task));
+ORIG(0x4C1780, void, Debug_Log, (void));
 
 typedef struct ResourceInfo {
     const char *name;
@@ -679,7 +680,7 @@ void MenuManager_Draw(MenuManager *mm)
                 mm->drawFade = mm->fade;
             draw(mm->screenTask);
         }
-        sub_4C1780();
+        Debug_Log();
     }
     mm->fadeShownPrev = mm->fadeShown;
     mm->fadeShown = mm->fade;

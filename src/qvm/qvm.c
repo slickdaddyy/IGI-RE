@@ -364,12 +364,6 @@ int Qvm_GetArgLine(QvmArgs *args, int index)
 }
 HOOK(0x4BD070, Qvm_GetArgLine);
 
-/* Shared "return 0" stub, too short to hook */
-int sub_4BD070(void)
-{
-    return 0;
-}
-
 int Qvm_Run(Qvm *vm)
 {
     const char *msg;

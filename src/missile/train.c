@@ -79,10 +79,6 @@ extern float gTrainOffsetRange[];
 extern char gTrainChannels[];
 
 /* handlers of the Train type that live outside this file */
-#define sub_4EFF20 (FN(0x4EFF20, ParamQuat32_Size))
-#define sub_42B930 (FN(0x42B930, Train_GetFrame))
-#define sub_42BB60 (FN(0x42BB60, Train_OnWorldEvent0))
-#define sub_42BBA0 (FN(0x42BBA0, Train_OnWorldEvent1))
 
 extern float kKmhToFrame;
 extern float kSoundMin; /* 0.8 */
@@ -372,14 +368,14 @@ void Train_Open(void)
     TaskType_SetHandler(gTrainType, Sound_GetInfoEvent(), Train_GetSoundSource);
     TaskType_SetHandler(gTrainType, Vehicle_GetControlEvent(), Train_InputHandler);
     TaskType_SetHandler(gTrainType, Vehicle_GetInputInfoEvent(), Train_InputChannelHandler);
-    TaskType_SetHandler(gTrainType, Vehicle_GetStateSizeEvent(), sub_4EFF20);
+    TaskType_SetHandler(gTrainType, Vehicle_GetStateSizeEvent(), FN(0x4EFF20, ParamQuat32_Size));
     TaskType_SetHandler(gTrainType, Vehicle_GetSaveEvent(), Train_SaveState);
     TaskType_SetHandler(gTrainType, Vehicle_GetLoadEvent(), Train_LoadState);
     TaskType_SetHandler(gTrainType, Vehicle_GetKeysEvent(), Train_ReadInputHandler);
-    TaskType_SetHandler(gTrainType, Game_GetEvent14(), sub_42B930);
+    TaskType_SetHandler(gTrainType, Game_GetEvent14(), FN(0x42B930, Train_GetFrame));
     TaskType_SetHandler(gTrainType, RigidDynCubeObj_GetEvent4(), Train_MoveHandler);
-    TaskType_SetHandler(gTrainType, World_GetEvent1(), sub_42BBA0);
-    TaskType_SetHandler(gTrainType, World_GetEvent0(), sub_42BB60);
+    TaskType_SetHandler(gTrainType, World_GetEvent1(), FN(0x42BBA0, Train_OnWorldEvent1));
+    TaskType_SetHandler(gTrainType, World_GetEvent0(), FN(0x42BB60, Train_OnWorldEvent0));
     gTrainParams = ParamTable_New(10);
     gTrainOffsetRange[0] = -5.0f;
     gTrainOffsetRange[1] = 5.0f;

@@ -76,7 +76,6 @@ extern uint16_t gLensType;
 extern int gSCameraDetectMask;
 
 /* handlers that live outside this folder */
-#define sub_42FC50 (FN(0x42FC50, Car_CollFilter))
 
 void SCamera_Create(SCamera *c);
 void SCamera_Run(SCamera *c);
@@ -113,7 +112,7 @@ void SCamera_Open(void)
     TaskType_SetHandler2(gSCameraType, Level_GetEventDA8(), SCamera_AddSymbols);
     TaskType_SetHandler2(gSCameraType, Level_GetEventDAC(), SCamera_RemoveSymbols);
     TaskType_SetHandler(gSCameraType, AIDetection_GetEvent1(), SCamera_GetDetectInfo);
-    TaskType_SetHandler(gSCameraType, AIDetection_GetEvent0(), sub_42FC50);
+    TaskType_SetHandler(gSCameraType, AIDetection_GetEvent0(), FN(0x42FC50, Car_CollFilter));
     TaskType_SetHandler(gSCameraType, World_GetEvent1(), SCamera_WorldRemove);
     TaskType_SetHandler(gSCameraType, World_GetEvent0(), SCamera_WorldAdd);
     gSCameraParams = ParamTable_New(15);

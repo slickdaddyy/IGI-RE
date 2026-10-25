@@ -15,7 +15,6 @@
 #define ORIG_STD(addr, ret, name, args) \
     static ret (__stdcall *const name) args __attribute__((unused)) = (ret (__stdcall *) args)(uintptr_t)(addr)
 #endif
-#define VAR(type, addr) (*(type *)(uintptr_t)(addr))
 
 /* A rewritten function used by address (handler tables). The DLL keeps the original number,
    which its tests compare; the standalone exe takes the function. FN_EXTERN(name) at file

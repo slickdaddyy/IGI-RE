@@ -80,7 +80,6 @@ typedef struct TouchMsg {
 extern uint16_t gFenceType;
 extern void *gFenceParams;
 
-#define sub_4EF8B0 (FN(0x4EF8B0, ParamGraphEnvelope_ArgCount))
 
 extern float kHalf;
 extern double kSparkUp;    /* 8192 */
@@ -111,7 +110,7 @@ void Fence_Open(void)
     TaskType_SetHandler(gFenceType, Param_GetChangedEvent(), Fence_ParamsChanged);
     TaskType_SetHandler(gFenceType, Game_GetEvent0(), Fence_Touch);
     TaskType_SetHandler(gFenceType, Game_GetEvent2(), Fence_Use);
-    TaskType_SetHandler(gFenceType, Game_GetEvent3(), sub_4EF8B0);
+    TaskType_SetHandler(gFenceType, Game_GetEvent3(), FN(0x4EF8B0, ParamGraphEnvelope_ArgCount));
     TaskType_SetHandler(gFenceType, Game_GetEvent4(), TASK_NOTHING);
     TaskType_SetHandler(gFenceType, Game_GetEvent6(), Fence_DrawIcon);
     gFenceParams = ParamTable_New(4);

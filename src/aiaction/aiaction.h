@@ -16,7 +16,6 @@ extern int gTaskStackTop;
 extern const char gEmptyString[];
 
 /* exe constants, read in place */
-#define K(type, addr) VAR(const type, addr)
 
 /* calls the slot handler of each child of t (not deeper), keeping the next
    child on gTaskStack so handlers may delete tasks */

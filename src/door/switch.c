@@ -69,7 +69,6 @@ extern void *gSwitchParams;
 extern uint16_t gSwitchType;
 
 #define Terminal_MapHandler (FN(0x443DC0, Terminal_MapHandler))
-#define sub_4F01B0 (FN(0x4F01B0, ParamInt16_Size))
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 #define FIELD(name) ((void *)offsetof(Switch, name))
@@ -108,7 +107,7 @@ void Switch_Open(void)
     TaskType_SetHandler(gSwitchType, Param_GetTableEvent(), Switch_GetParams);
     TaskType_SetHandler(gSwitchType, Param_GetChangedEvent(), Switch_ParamsChanged);
     TaskType_SetHandler(gSwitchType, Game_GetEvent2(), Switch_CheckUse);
-    TaskType_SetHandler(gSwitchType, Game_GetEvent3(), sub_4F01B0);
+    TaskType_SetHandler(gSwitchType, Game_GetEvent3(), FN(0x4F01B0, ParamInt16_Size));
     TaskType_SetHandler(gSwitchType, Game_GetEvent4(), TASK_NOTHING);
     TaskType_SetHandler(gSwitchType, Game_GetEvent6(), Switch_DrawIcon);
     TaskType_SetHandler(gSwitchType, Game_GetEvent9(), Switch_Destroy);

@@ -98,6 +98,7 @@ ALIAS(ICSendMessage_@16, ICSendMessage@16);
 /* local names for rewritten functions */
 ALIAS(BuildLod, Lightmap_BuildLod);
 ALIAS(Coll_Descend_, Coll_Descend);
+ALIAS(Debug_Log2, Debug_Log);
 ALIAS(DynCube_GetRoot_, DynCube_GetRoot);
 ALIAS(List_AddTail_, List_AddTail);
 ALIAS(List_Insert, List_InsertBefore);
@@ -108,10 +109,6 @@ ALIAS(Pool_Free_, Pool_Free);
 ALIAS(Pool_Init_, Pool_Init);
 ALIAS(Quat_SlerpPrepare_, Quat_SlerpPrepare);
 ALIAS(RigidDynCubeObj_GetType_, RigidDynCubeObj_GetType);
-ALIAS(sub_4B0B90, Debug_Log);
-ALIAS(sub_4C1780, Debug_Log);
-ALIAS(sub_4C8130, DynCube_SendEventLines);
-ALIAS(sub_51A4A0, SplinePath_GetMatrix);
 ALIAS(Task_Nothing2, Task_Nothing);
 ALIAS(VirModel_Find_, VirModel_Find);
 ALIAS(VirModel_GetRadius_, VirModel_GetRadius);

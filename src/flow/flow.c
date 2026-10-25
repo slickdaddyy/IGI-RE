@@ -56,6 +56,7 @@ ORIG(0x4EE3B0, void, PhysicsObjType_FreeAll, (void));
 ORIG(0x4EE940, char, ScreenGrab_IsActive, (void));
 
 extern Flow *gFlow;
+extern char gCDRoot[4];
 extern uint16_t gFlowType;
 extern int gFlowPauseStart;
 extern int gFlowPauseDepth;
@@ -372,7 +373,7 @@ void Flow_CheckCD(void)
     int ok;
     char drive;
 
-    *(uint32_t *)root = VAR(uint32_t, 0x536408);
+    *(uint32_t *)root = *(uint32_t *)gCDRoot;
     for (drive = 'A'; drive <= 'Z'; drive++) {
         GetDriveTypeA(root);
         f = crt_fopen(".\\ymbe.afp", "rb");
@@ -391,6 +392,7 @@ void Flow_CheckCD(void)
 HOOK(0x402F50, Flow_CheckCD);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(536408) char gCDRoot[4] INIT(".\\");
 BSS(567C78) int gFlowPauseStart;
 BSS(567C78) uint16_t gFlowType;
 PAD(igb, 567C78, 567C7E, 0x2);

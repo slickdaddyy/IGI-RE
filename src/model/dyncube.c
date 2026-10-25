@@ -6,7 +6,7 @@
 
 ORIG(0x4C58B0, int, DynCubeTree_GetChildCount, (int tree));
 ORIG(0x4C7750, DynCubeNode *, DynCube_GetRoot_, (Terrain *t, int tree));
-ORIG(0x4C8130, void, sub_4C8130, (Terrain *t, int slot, void *query, const Vec3d *starts, const Vec3d *ends,
+ORIG(0x4C8130, void, DynCube_SendEventLines, (Terrain *t, int slot, void *query, const Vec3d *starts, const Vec3d *ends,
                                   int count, unsigned int flags, int tree));
 ORIG(0x4CC2A0, void, Coll_Lines, (Terrain *t, void *results, const Vec3d *starts, const Vec3d *ends, int count,
                                   char unk, int unk2, unsigned int flags));
@@ -183,7 +183,7 @@ int Coll_LineOfSight(Terrain *t, const Vec3d *from, const Vec3d *to, char unk, i
         if (i != 1 && i != 0 && i != 4 && i != 5)
             continue;
         if (trees & DynCubeTree_GetChildCount(i))
-            sub_4C8130(t, 8, &q, from, to, 1, flags, i);
+            DynCube_SendEventLines(t, 8, &q, from, to, 1, flags, i);
     }
     if ((q.visibility < gZero || q.visibility > gZero) && (flags & 0x80000000)) {
         Coll_Lines(t, hit, from, to, 1, (char)0xFF, 0, 0x80000000);

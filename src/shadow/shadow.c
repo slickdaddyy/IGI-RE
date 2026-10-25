@@ -27,7 +27,6 @@ extern float kShadowMinFade;
 extern float kShadowDepth;
 
 #define SubLevel_Run (FN(0x488700, SubLevel_Run))
-#define sub_4D3710 (FN(0x4D3710, Task_Nothing))
 
 void MagicObjContainer_Event(Task *t, void *arg);
 
@@ -67,7 +66,7 @@ void Shadow_Open(void)
 {
     gShadowType = TaskType_New("Shadow", sizeof(Shadow), Task_GetRootType(), 0);
     TaskType_SetHandler(gShadowType, RigidDynCubeObj_GetEvent2(), Shadow_MagicObjEnterHandler);
-    TaskType_SetHandler2(gShadowType, 1, sub_4D3710);
+    TaskType_SetHandler2(gShadowType, 1, FN(0x4D3710, Task_Nothing));
     TaskType_SetHandler2(gShadowType, 2, Shadow_Delete);
 }
 HOOK(0x4E0950, Shadow_Open);

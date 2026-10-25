@@ -45,7 +45,6 @@ ORIG(0x4C1800, void *, QTaskList_New, (int max));
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x4C6940, void, DynCube_Move, (void *world, void *obj, Vec3d *pos, uint32_t radius));
 ORIG(0x4F0F50, int, Param_Real32, (void));
-ORIG(0x51A4A0, void, sub_51A4A0, (SplinePath *p, float *out, int i, float u));
 ORIG(0x4F0FA0, int, Param_Int32, (void));
 ORIG(0x4F1030, Task *, Task_FindById, (int id));
 ORIG(0x4F1950, void *, ParamTable_New, (int count));
@@ -129,7 +128,7 @@ void SplinePathGuide_Run(SplinePathGuide *g)
     }
     u = !(g->u >= kOneF) ? g->u : kOneF;
     g->u = u;
-    sub_51A4A0(p, t->matrix.m, g->segment, u);
+    SplinePath_GetMatrix(p, t->matrix.m, g->segment, u);
     pos = *SplinePath_GetPos(&tmp, p, g->segment, g->u);
     delta.x = pos.x - t->pos.x;
     delta.y = pos.y - t->pos.y;

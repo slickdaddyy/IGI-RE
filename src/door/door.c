@@ -95,7 +95,6 @@ extern double kUseMaxX;
 extern double kUseMaxY;
 
 #define Terminal_MapHandler (FN(0x443DC0, Terminal_MapHandler))
-#define sub_4EFB00 (FN(0x4EFB00, Param_Three))
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 #define FIELD(name) ((void *)offsetof(Door, name))
@@ -237,7 +236,7 @@ void Door_Open(void)
     TaskType_SetHandler(gDoorType, Param_GetTableEvent(), Door_GetParams);
     TaskType_SetHandler(gDoorType, Param_GetChangedEvent(), Door_ParamsChanged);
     TaskType_SetHandler(gDoorType, Game_GetEvent2(), Door_CheckUse);
-    TaskType_SetHandler(gDoorType, Game_GetEvent3(), sub_4EFB00);
+    TaskType_SetHandler(gDoorType, Game_GetEvent3(), FN(0x4EFB00, Param_Three));
     TaskType_SetHandler(gDoorType, Game_GetEvent4(), TASK_NOTHING);
     TaskType_SetHandler(gDoorType, Game_GetEvent6(), Door_DrawIcon);
     TaskType_SetHandler2(gDoorType, Level_GetEventDA8(), Door_AddSymbols);

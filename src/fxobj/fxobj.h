@@ -33,7 +33,6 @@ extern int gTaskStackTop;
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* exe constants, read in place */
-#define K(type, addr) VAR(const type, addr)
 
 /* calls the slot handler of each child of t (not deeper), keeping the next
    child on gTaskStack so handlers may delete tasks */

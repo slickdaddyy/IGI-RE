@@ -73,7 +73,6 @@ ORIG(0x4E55B0, uint8_t, CellMask_GetDrawEvent, (void));
 #define SectorObject_WorldRemove (FN(0x4DEA80, SectorObject_WorldRemove))
 #define SectorInteriorObject_WorldAdd (FN(0x4DEB90, SectorInteriorObject_WorldAdd))
 #define SectorInteriorObject_WorldRemove (FN(0x4DED30, SectorInteriorObject_WorldRemove))
-#define sub_4D3710 (FN(0x4D3710, Task_Nothing))
 
 /* argument of the locate event: which sector holds pos */
 typedef struct LocateArg {
@@ -910,7 +909,7 @@ void Sector_Open(void)
     TaskType_SetHandler(gSectorType, World_GetEvent1(), Sector_WorldRemove);
     gSectorObjectType = TaskType_New("SectorObject", sizeof(SectorObject), gSectorType, 0);
     TaskType_SetHandler(gSectorObjectType, 4, SectorObject_Render);
-    TaskType_SetHandler(gSectorObjectType, CellMask_GetDrawEvent(), sub_4D3710);
+    TaskType_SetHandler(gSectorObjectType, CellMask_GetDrawEvent(), FN(0x4D3710, Task_Nothing));
     TaskType_SetHandler(gSectorObjectType, 0, SectorObject_Create);
     TaskType_SetHandler2(gSectorObjectType, 2, SectorObject_Delete);
     TaskType_SetHandler(gSectorObjectType, 10, SectorObject_Handler10);

@@ -53,8 +53,6 @@ extern float kThreeQuarters;
 extern float kHitForce;  /* 0.007 */
 
 #define Task_Nothing (FN(0x4D3710, Task_Nothing))
-#define sub_427D70 (FN(0x427D70, RocketPod_GetArgSize))
-#define sub_45F920 (FN(0x45F920, Task_FalseHandler))
 
 void GlassShatter_Spawn(void **model, Vec3f *dir, Vec3d *pos, Matrix *m, void *hit);
 
@@ -106,11 +104,11 @@ void Glass_Open(void)
     TaskType_SetHandler2(gGlassType, 1, Glass_Run);
     TaskType_SetHandler2(gGlassType, 2, Glass_Delete);
     TaskType_SetHandler(gGlassType, RigidDynCubeObj_GetEvent0(), Task_Nothing);
-    TaskType_SetHandler(gGlassType, RigidDynCubeObj_GetEvent1(), sub_427D70);
+    TaskType_SetHandler(gGlassType, RigidDynCubeObj_GetEvent1(), FN(0x427D70, RocketPod_GetArgSize));
     TaskType_SetHandler(gGlassType, Game_GetEvent9(), Glass_Hit);
     TaskType_SetHandler(gGlassType, Game_GetEvent11(), Glass_Blast);
     TaskType_SetHandler(gGlassType, PhysicsObj_GetHitEvent(), Glass_Touch);
-    TaskType_SetHandler(gGlassType, AIDetection_GetEvent0(), sub_45F920);
+    TaskType_SetHandler(gGlassType, AIDetection_GetEvent0(), FN(0x45F920, Task_FalseHandler));
     Script_RegisterConstant("TASKTYPE_GLASS", gGlassType);
 }
 HOOK(0x449970, Glass_Open);
