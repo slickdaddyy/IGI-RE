@@ -172,7 +172,7 @@ static int BoneColl_SphereMiss(const float *a, const float *d, float r, const Bo
 /* moves every vertex by its bone */
 static void BoneColl_Skin(BoneDynCubeObj *obj, const BoneCollMesh *cm, float (*sk)[3], int *bone_of)
 {
-    float bm[9], bp[3];
+    float bm[9] = {0}, bp[3] = {0};
     int i, bone = -1;
 
     for (i = 0; i < cm->vert_count; i++) {
