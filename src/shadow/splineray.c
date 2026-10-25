@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "shadow/shadow.h"
+#include "math/mathvars.h"
 
 ORIG(0x49A050, float *, SplineMesh_GetVerts, (void *obj, int model, int part, int unk3, int unk4, int *count));
 ORIG(0x4B32B0, long double, Vec3d_Distance, (const Vec3d *a, const Vec3d *b));
@@ -127,7 +128,7 @@ typedef struct Ray {
 
 static const float kBox = 0x1.99999ap-4f;      /* 0.1 */
 static const double kEps = 0.1;
-static const double kZeroD = 0.0;
+static const double kZeroDLocal = 0.0;
 
 /* x87 "equal" also holds for unordered values */
 #define FEQ(a, b) (!((a) < (b) || (a) > (b)))
@@ -248,12 +249,12 @@ static int tri_inside(const float *v0, const float *P, const float *e2, float e1
     float s1, s2, s3, e0, e1;
 
     if (ax > ay && ax > az) {
-        if (FEQ(nx, kZeroD))
+        if (FEQ(nx, kZeroDLocal))
             return 0;
         s1 = P[2] - v0[2];
         s2 = P[1] - v0[1];
         *u = ((long double)e2[1] * s1 - (long double)e2[2] * s2) / nx;
-        if (!(*u >= kZeroD) || *u > kOneD)
+        if (!(*u >= kZeroDLocal) || *u > kOneD)
             return 0;
         e0 = !(e2[1] >= kZero) ? -e2[1] : e2[1];
         e1 = !(e2[2] >= kZero) ? -e2[2] : e2[2];
@@ -262,12 +263,12 @@ static int tri_inside(const float *v0, const float *P, const float *e2, float e1
             return 1;
         }
     } else if (ay > az) {
-        if (FEQ(ny, kZeroD))
+        if (FEQ(ny, kZeroDLocal))
             return 0;
         s1 = P[2] - v0[2];
         s3 = P[0] - v0[0];
         *u = ((long double)s1 * e2[0] - (long double)e2[2] * s3) / ny;
-        if (!(*u >= kZeroD) || *u > kOneD)
+        if (!(*u >= kZeroDLocal) || *u > kOneD)
             return 0;
         e0 = !(e2[0] >= kZero) ? -e2[0] : e2[0];
         e1 = !(e2[2] >= kZero) ? -e2[2] : e2[2];
@@ -276,12 +277,12 @@ static int tri_inside(const float *v0, const float *P, const float *e2, float e1
             return 1;
         }
     } else {
-        if (FEQ(nz, kZeroD))
+        if (FEQ(nz, kZeroDLocal))
             return 0;
         s2 = P[1] - v0[1];
         s3 = P[0] - v0[0];
         *u = ((long double)s2 * e2[0] - (long double)e2[1] * s3) / nz;
-        if (!(*u >= kZeroD) || *u > kOneD)
+        if (!(*u >= kZeroDLocal) || *u > kOneD)
             return 0;
         e0 = !(e2[0] >= kZero) ? -e2[0] : e2[0];
         e1 = !(e2[1] >= kZero) ? -e2[1] : e2[1];
@@ -305,7 +306,7 @@ static int tri_inside(const float *v0, const float *P, const float *e2, float e1
 static void tri_accept(Ray *r, uint16_t *tri, float t, double denom, const float *P)
 {
     double dist = (long double)t * r->dist;
-    char back = !(denom >= kZeroD);
+    char back = !(denom >= kZeroDLocal);
 
     if (r->hasHit && dist + kEps >= r->best) {
         if (!(dist >= r->best)) {
@@ -367,7 +368,7 @@ static void tri_test(Ray *r, uint16_t *tri, int rigid)
     }
     den = ((long double)N[2] * r->d[2] + (long double)N[1] * r->d[1]) + (long double)N[0] * r->d[0];
     denom = den;
-    if (FEQ(den, kZeroD))
+    if (FEQ(den, kZeroDLocal))
         return;
     if (rigid)
         tt = ((((long double)v0[0] - r->a[0]) * N[0] + ((long double)v0[2] - r->a[2]) * N[2]) +
@@ -383,7 +384,7 @@ static void tri_test(Ray *r, uint16_t *tri, int rigid)
     P[2] = (long double)t * r->d[2] + r->a[2];
     if (!tri_inside(v0, P, e2, e1x, e1y, e1z, nx, nyp, nz, N[0], N[1], N[2], &u, &v))
         return;
-    if (!(v >= kZeroD) || v + u > kOneD)
+    if (!(v >= kZeroDLocal) || v + u > kOneD)
         return;
     if (Qvm_GetArgLine(r->lodModel, tri, v, u))
         return;

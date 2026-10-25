@@ -2,6 +2,7 @@
 #include "igi.h"
 #include "menu/menu.h"
 #include "file/filevars.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(MenuWindow_ForwardLoad);
 

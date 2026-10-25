@@ -2,6 +2,7 @@
 
 #include "freecam/freecam.h"
 #include "terredit/terredittypes.h"
+#include "math/mathvars.h"
 
 /* Quad tree of the water surface around the camera, split finer near the
    viewer. The top level is an 8x8 grid; the 2x2 children of every split

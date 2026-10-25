@@ -4484,6 +4484,7 @@ static uint8_t fill_A4431C[0x20] __attribute__((section(".igb$A4431C"), used));
 static uint8_t fill_A44340[0x4] __attribute__((section(".igb$A44340"), used));
 static uint8_t fill_A4EDF4[0x4] __attribute__((section(".igb$A4EDF4"), used));
 static uint8_t fill_A4EEA4[0x4] __attribute__((section(".igb$A4EEA4"), used));
+static uint8_t fill_A5465C[0x4] __attribute__((section(".igb$A5465C"), used));
 static uint8_t fill_A5468C[0x4] __attribute__((section(".igb$A5468C"), used));
 static uint8_t fill_A5E308[0x8] __attribute__((section(".igb$A5E308"), used));
 static uint8_t fill_A5E314[0x4] __attribute__((section(".igb$A5E314"), used));

@@ -10,6 +10,7 @@
 #include "humanai/humanaitypes.h"
 #include "weapon/weapontypes.h"
 #include "humanbase/humanbasetypes.h"
+#include "math/mathvars.h"
 
 typedef void (*AIActionFn)(HumanAI *ai, AIAction *a);
 
@@ -102,8 +103,6 @@ enum { POSE_STAND, POSE_KNEEL, POSE_LIE, POSE_ANIM, POSE_GUN };
 extern const int *const gAIChannelMap[];
 extern const int *const gAIPoseMap[];
 extern uint16_t gQObjType;
-extern float kFps;
-extern float kMinusFps;
 extern double kUnit;
 
 static const float kFaceTol = 0x1.1df46ap-5f;

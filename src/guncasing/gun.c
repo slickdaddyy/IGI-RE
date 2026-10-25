@@ -5,6 +5,7 @@
 #include "igi.h"
 #include "guncasing/guncasing.h"
 #include "guncasing/guncasingvars.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(Gun_AddHandler);
 FN_EXTERN(Gun_CollFilter);
@@ -108,7 +109,6 @@ ORIG(0x4F2030, uint8_t, Weapon_GetDeselectEvent, (void));
 ORIG(0x4F2040, uint8_t, Weapon_GetEvent7b, (void));
 
 extern float kCasingGravity;
-extern const float kTwoPi;
 extern float kSpinStep;    /* 1/45 */
 
 #define Task_NullHandler (FN(0x4D3710, Task_Nothing))

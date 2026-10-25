@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "heli/heli.h"
+#include "math/mathvars.h"
 
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
@@ -518,6 +519,9 @@ REF_EXTERN(str_53BD14);
 REF_EXTERN(str_53BE00);
 REF_EXTERN(str_53BE08);
 REF_EXTERN(str_53BE10);
+DATA(53346C) float kThrustScale INIT(44.600887f);
+ALIAS(kCasingGravity, kThrustScale, 0);
+ALIAS(kThrust, kThrustScale, 0);
 DATA(533734) float kMinusHundredth INIT(-0.01f);
 DATA(533734) float kGrip INIT(0.24f);
 STORE(igd, 53BDB0, 4) __typeof__(gCarControls[0]) store_53BDB0[5] INIT({{.name = (__typeof__(store_53BDB0[0].name))ref_str_53BE10, .min = -360.0f, .max = 360.0f}, {.name = (__typeof__(store_53BDB0[1].name))ref_str_53BD14, .min = 0.0f, .max = 1.0f}, {.name = (__typeof__(store_53BDB0[2].name))ref_str_53BD08, .min = 0.0f, .max = 1.0f}, {.name = (__typeof__(store_53BDB0[3].name))ref_str_53BE08, .min = 0.0f, .max = 1.0f}, {.name = (__typeof__(store_53BDB0[4].name))ref_str_53BE00, .min = 0.0f, .max = 1.0f}});

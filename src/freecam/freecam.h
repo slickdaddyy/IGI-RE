@@ -19,10 +19,6 @@ extern int gTaskStackTop;
 extern struct Terrain *gCurrentWorld;
 extern uint16_t gDynCubeObjType;
 
-/* exe constants, read in place so the x87 code sees the same values */
-extern const float kZero;
-extern const double kOneD;
-
 static inline Task *fc_next_sibling(Task *t)
 {
     return t->node.next && t->node.next->next ? (Task *)t->node.next : NULL;

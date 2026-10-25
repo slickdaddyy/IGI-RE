@@ -2,6 +2,7 @@
 #pragma GCC optimize("excess-precision=standard")
 #include "hook.h"
 #include "boneobj/boneobj.h"
+#include "lod/lodvars.h"
 
 ORIG(0x4D3710, void, Task_Nothing, (void *p));
 
@@ -182,3 +183,6 @@ void Anim_SetTime(BoneObj *o, int track, float time)
     Anim_GetInst(o, track)->time = time;
 }
 HOOK(0x4D65B0, Anim_SetTime);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(A54658) float gTicksPerFrame;

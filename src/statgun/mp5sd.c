@@ -2,16 +2,12 @@
 
 #include "hook.h"
 #include "statgun/statgun.h"
+#include "math/mathvars.h"
 
 extern uint16_t gMp5sdType;
 
-extern const float kZero;
-extern double kAngle45;
-extern double kAngle30;
 extern float kZoomOut;
 extern float kZoomIn;
-extern const float kHalf;
-extern const float kDegToRad;
 
 ORIG(0x4F2030, int, Weapon_GetDeselectEvent, (void));
 

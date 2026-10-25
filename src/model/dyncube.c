@@ -5,6 +5,7 @@
 #include "sound/soundtypes.h"
 #include "task/taskvars.h"
 #include "dxinit/dxinitvars.h"
+#include "magicobj/magicobjvars.h"
 
 ORIG(0x4C58B0, int, DynCubeTree_GetChildCount, (int tree));
 ORIG(0x4C7750, DynCubeNode *, DynCube_GetRoot_, (Terrain *t, int tree));
@@ -24,7 +25,6 @@ extern int gTaskHandlerChanges;
 extern const float gZero;
 extern int gCollSightCalls;
 extern int gCellMaskEnabled;
-extern uint8_t gWorldEvents[];
 
 void DynCube_UpdateSlotCounts(Terrain *t, int tree);
 void DynCube_UpdateStart(Terrain *t, int tree);

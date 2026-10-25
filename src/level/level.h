@@ -14,9 +14,7 @@ typedef void (*TaskFn)(Task *task);
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 
-extern Task **gLevelTaskIds[];
 extern List gTaskNotes[LEVEL_NOTE_LISTS];
-extern Level *gLevel;
 extern Task *gLevelFirstTask;
 extern Task *gLevelDynamic;
 extern Task *gLevelStatic;
@@ -33,7 +31,6 @@ extern uint16_t gLevelType;
 extern uint16_t gStaticType;
 extern uint16_t gDynamicType;
 extern uint16_t gIdleType;
-extern uint16_t gCameraBaseType;
 extern uint8_t gLevelDebugInfoEvent;
 extern uint8_t gLevelNameEvent;
 extern int gLevelActivateEvent;

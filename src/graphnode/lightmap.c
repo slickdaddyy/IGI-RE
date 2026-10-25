@@ -5,6 +5,8 @@
 #include "coll/colltypes.h"
 #include "litmap/litmaptypes.h"
 #include "terrain/terraintypes.h"
+#include "lod/lodvars.h"
+#include "magicobj/magicobjvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -98,12 +100,8 @@ extern uint16_t gTerrainLightMapType;
 extern void *gTerrainLightMapParams;
 extern uint16_t gDynCubeObjType;
 extern struct Terrain *gCurrentWorld;
-extern int gVisibleLightMaps[];
-extern int gVisibleLightMapCount;
 extern TerrainLightMap *gLightMapTasks[];
-extern Lightmap gLightmaps[];
 extern LightMapDraw gLightMapDraw[];
-extern char gWorldName[];
 
 static const double kLiftZ = 268435456.0;
 static const double kHalf = 0.5;

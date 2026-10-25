@@ -1,5 +1,6 @@
 #include "hook.h"
 #include "mission/mission.h"
+#include "mission/missionvars.h"
 
 FN_EXTERN(MenuWindow_Draw);
 FN_EXTERN(SubLevel_Run);
@@ -28,7 +29,6 @@ ORIG(0x4E9500, void, GlowTask_New, (Task *view));
 
 extern uint16_t gGameScreenType;
 extern Task *gGameStatusScreen;
-extern char gGameScreenSmallMode;
 
 void GameScreen_Create(GameScreen *s);
 

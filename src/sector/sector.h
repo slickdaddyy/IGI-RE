@@ -46,9 +46,6 @@ _Static_assert(offsetof(SectorMesh, portals) == 0x98, "SectorMesh");
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
-extern const float kZero;
-extern const float kOne;
-
 ORIG(0x4B0B00, void, Pool_Init, (Pool *pool, int size, int count, unsigned int align));
 ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));
 

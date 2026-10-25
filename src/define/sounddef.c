@@ -5,6 +5,7 @@
 #include "define/define.h"
 #include "task/taskvars.h"
 #include "config/configvars.h"
+#include "math/mathvars.h"
 
 extern uint16_t gSoundDefSoundType;
 extern uint16_t gSoundDefSoundType2;

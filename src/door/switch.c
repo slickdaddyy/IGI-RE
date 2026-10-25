@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "door/door.h"
+#include "levelflow/levelflowvars.h"
 
 FN_EXTERN(ParamInt16_Size);
 FN_EXTERN(Task_Nothing);

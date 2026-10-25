@@ -3,9 +3,8 @@
 #include "ui/ui.h"
 #include "ui/uitypes.h"
 #include "config/configvars.h"
+#include "menu/menuvars.h"
 
-extern uint16_t gTextBoxType;
-extern void *gTextBoxParams;
 extern TextBox *gTextBoxFilling;
 
 void TextBox_Create(TextBox *tb, void *arg)

@@ -12,6 +12,7 @@
 #include "binocular/binocularvars.h"
 #include "config/configvars.h"
 #include "file/filevars.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(BinocularHolder_Changed);
 FN_EXTERN(BinocularHolder_GetParams);
@@ -97,17 +98,16 @@ extern void *gBinocularHolderParams;
 extern const int gGridTemplate[];
 extern const float gMarkerShape[];
 extern const float gTargetShape[];
-extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
 
-F32(kZero, 0x00000000);
-F32(kOne, 0x3F800000);
-F32(kHalf, 0x3F000000);
-F32(kTwoPi, 0x40C90FDB);
+F32(kZeroLocal, 0x00000000);
+F32(kOneLocal, 0x3F800000);
+F32(kHalfLocal, 0x3F000000);
+F32(kTwoPiLocal, 0x40C90FDB);
 F32(kHalfPi, 0x3FC90FDB);
 F32(kTen, 0x41200000);
-F32(kTwo, 0x40000000);
-F32(kFour, 0x40800000);
+F32(kTwoLocal, 0x40000000);
+F32(kFourLocal, 0x40800000);
 F32(kSixtyFour, 0x42800000);
 F32(kGrowRate, 0x3B83126F);     /* 0.004 per ms */
 F32(kTextX, 0x3EC1999A);        /* 0.378125 */
@@ -355,7 +355,7 @@ void BinocularOverlay_Draw(BinocularOverlay *ov)
 
     q = w / (long double)Sprite_Width(gBinocularSprite + 0x18);
     hq = h + q;
-    half = w * kHalf.f;
+    half = w * kHalfLocal.f;
     nq = -q;
     QVertex_DrawQuad(gBinocularSprite + 0x18, nq, nq, half, nq, nq, hq, half, hq, 128.0f, 128.0f, 128.0f, 0,
                      0x1000000, 0);
@@ -378,13 +378,13 @@ HOOK(0x471480, BinocularOverlay_Draw);
 
 void VUMeter_Update(VUMeter *m, void *rng)
 {
-    if (m->level > kZero.f) {
+    if (m->level > kZeroLocal.f) {
         long double t = (long double)m->level - m->decay;
 
-        if (!(t >= kZero.f))
-            m->level = kZero.f;
-        else if (t > kOne.f)
-            m->level = kOne.f;
+        if (!(t >= kZeroLocal.f))
+            m->level = kZeroLocal.f;
+        else if (t > kOneLocal.f)
+            m->level = kOneLocal.f;
         else
             m->level = t;
     }
@@ -394,7 +394,7 @@ void VUMeter_Update(VUMeter *m, void *rng)
     }
     if (Random_Float(rng) > m->level)
         m->level = Random_Float(rng);
-    m->timer = (int)x87_round((Random_Float(rng) + kOne.f) * m->period * kHalf.f) - 1;
+    m->timer = (int)x87_round((Random_Float(rng) + kOneLocal.f) * m->period * kHalfLocal.f) - 1;
 }
 HOOK(0x4719D0, VUMeter_Update);
 
@@ -406,12 +406,12 @@ void VUMeter_Draw(VUMeter *m, float x, float y, float w, float h, int vertical, 
         bw = w * m->level;
         bh = h;
         if (flip)
-            x = (kOne.f - m->level) * w + y; /* y, not x, like the original */
+            x = (kOneLocal.f - m->level) * w + y; /* y, not x, like the original */
     } else {
         bw = w;
         bh = h * m->level;
         if (!flip)
-            y = (kOne.f - m->level) * h + y;
+            y = (kOneLocal.f - m->level) * h + y;
     }
     Draw_RectA(x, y, bw, bh, m->level * kSixtyFour.f, 64.0f, 0, 0.5f, 0x80000, 0);
 }
@@ -467,9 +467,9 @@ void BinocularOverlay_TrackMovement(BinocularOverlay *ov)
         world = Game_GetWorld();
         Coll_LineOfSight(world, &gTransContext.pos, &eye, event, &filter, -1, -1, &visibility);
         View_Project(&gTransContext, scr, &depth, &pos);
-        if (!(depth > kZero.f))
+        if (!(depth > kZeroLocal.f))
             continue;
-        BinocularOverlay_AddTarget(ov, hm, depth, radius, scr, visibility == kZero.f, *(int *)(hm + 0xFC) != 1,
+        BinocularOverlay_AddTarget(ov, hm, depth, radius, scr, visibility == kZeroLocal.f, *(int *)(hm + 0xFC) != 1,
                                    hm[0xCF5]);
     }
     for (i = 0; i < 10; i++) {
@@ -507,7 +507,7 @@ void BinocularOverlay_TrackMovement(BinocularOverlay *ov)
             age = 250;
         grow = age * kGrowRate.f;
         angle = grow * kHalfPi.f;
-        scale = (kOne.f - grow) * kTen.f + kOne.f;
+        scale = (kOneLocal.f - grow) * kTen.f + kOneLocal.f;
         size[0] = t->radius;
         size[1] = t->radius;
         View_ScaleSize(&gTransContext, out, size, t->depth);
@@ -577,11 +577,11 @@ void BinocularOverlay_DrawCompass(BinocularOverlay *ov)
     width = sw * kCompassW.f;
     i = Text_GetHeight(ov->letters[0]);
     bh = (long double)i + i + kCompassPad.f;
-    hw = width * kHalf.f;
-    hh = bh * kHalf.f;
+    hw = width * kHalfLocal.f;
+    hh = bh * kHalfLocal.f;
     step = width * kMarkerW.f;
-    if (yaw < kZero.f)
-        yaw = yaw + kTwoPi.f;
+    if (yaw < kZeroLocal.f)
+        yaw = yaw + kTwoPiLocal.f;
     off = width * yaw * kInvTwoPi.f;
     cy = hh + y0;
     for (i = 0; i < 64; i++) {
@@ -595,9 +595,9 @@ void BinocularOverlay_DrawCompass(BinocularOverlay *ov)
         } else if (!(i & 7)) {
             len = kTickMid.f;
         } else {
-            len = kFour.f;
+            len = kFourLocal.f;
         }
-        half = len * kHalf.f;
+        half = len * kHalfLocal.f;
         low = half + hh + y0;
         x = off + x0;
         top = cy - half;
@@ -605,13 +605,13 @@ void BinocularOverlay_DrawCompass(BinocularOverlay *ov)
         if (text) {
             float tw = Text_GetWidth(text);
             int th = Text_GetHeight(text);
-            float tx = x - tw * kHalf.f;
+            float tx = x - tw * kHalfLocal.f;
 
             text->x = tx;
-            text->y = top - (long double)th - kTwo.f;
+            text->y = top - (long double)th - kTwoLocal.f;
             Text_DrawAlt(text);
             text->x = tx;
-            text->y = low + kTwo.f;
+            text->y = low + kTwoLocal.f;
             Text_DrawAlt(text);
         }
         sum = (long double)off + step;
@@ -630,9 +630,9 @@ void BinocularOverlay_DrawCompass(BinocularOverlay *ov)
         v[i].g = 64.0f;
         v[i].b = 0;
     }
-    v[0].y = y0 + kFour.f;
-    left = cx - kFour.f;
-    right = cx + kFour.f;
+    v[0].y = y0 + kFourLocal.f;
+    left = cx - kFourLocal.f;
+    right = cx + kFourLocal.f;
     v[1].x = left;
     v[2].x = right;
     v[0].x = cx;
@@ -647,7 +647,7 @@ void BinocularOverlay_DrawCompass(BinocularOverlay *ov)
     gRenderModeCurrent.methods[gQVertexStrip](&strip);
     bottom = (long double)bh + y0;
     v[0].x = cx;
-    v[0].y = bottom - kFour.f;
+    v[0].y = bottom - kFourLocal.f;
     v[1].x = left;
     v[1].y = bottom;
     v[2].x = right;

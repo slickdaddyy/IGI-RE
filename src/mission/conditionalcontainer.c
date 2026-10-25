@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "mission/mission.h"
 #include "mission/missiontypes.h"
+#include "mission/missionvars.h"
 
 FN_EXTERN(ConditionalContainer_Activate);
 FN_EXTERN(ConditionalContainer_Deactivate);
@@ -29,9 +30,6 @@ ORIG(0x505D40, uint16_t, Container_GetType, (void));
 #define ConditionalContainer_Move (FN(0x4879E0, ConditionalContainer_ForwardEvent4))
 #define ConditionalContainer_Removed (FN(0x487B20, ConditionalContainer_WorldRemove))
 #define ConditionalContainer_Added (FN(0x487A70, ConditionalContainer_WorldAdd))
-
-extern uint16_t gConditionalContainerType;
-extern void *gConditionalContainerParams;
 
 void ConditionalContainer_Create(ConditionalContainer *c);
 void ConditionalContainer_Run(ConditionalContainer *c);

@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "shadow/shadow.h"
 #include "sound/soundtypes.h"
+#include "math/mathvars.h"
 
 typedef struct VertList {
     float *verts;       /* 6 floats each, position first */

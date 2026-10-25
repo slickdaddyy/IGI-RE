@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "props/props.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(ParamGraphEnvelope_ArgCount);
 
@@ -80,8 +81,6 @@ typedef struct TouchMsg {
 extern uint16_t gFenceType;
 extern void *gFenceParams;
 
-
-extern const float kHalf;
 extern double kSparkUp;    /* 8192 */
 extern float kSparkScale;  /* 1/8192 */
 extern double kSparkBase;  /* 1.5 */

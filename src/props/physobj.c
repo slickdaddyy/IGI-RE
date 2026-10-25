@@ -6,6 +6,7 @@
 
 #include "hook.h"
 #include "props/props.h"
+#include "math/mathvars.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4012A0, Task *, Task_New, (void *parent, int type, void *arg));
@@ -54,7 +55,6 @@ extern void *gGenericPhysicsObjParams;
 
 extern float kHundred;
 extern float kTwoHundred;
-extern const float kFifth;
 
 /* GenericPhysicsObj is PhysicsObj with two more script flags */
 typedef struct GenericPhysicsObj {

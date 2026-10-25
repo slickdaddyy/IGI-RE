@@ -15,6 +15,7 @@
 #include "coll/collvars.h"
 #include "glowmesh/glowmeshvars.h"
 #include "file/filevars.h"
+#include "lod/lodvars.h"
 
 FN_EXTERN(crt_CIpow);
 
@@ -66,25 +67,16 @@ _Static_assert(offsetof(QEnclosing, radius) == 0x28, "QEnclosing");
 typedef void (*QHandler)(DynCubeObj *task, void *arg);
 
 extern QEntry *gQCubeList;
-extern QEntry *gQCubeOut;
-extern int gQCubeCount;
-extern QCacheEntry gQCubeCache[];
 extern QCallback *gQCubeCallbacks;
 extern QCallback gQCubeCallbackSlots[];
 extern uint8_t gQCubeEnclosingEvent;
 extern uint8_t gQCubeNearClipEvent;
 extern int gQCubeDetail;
 extern Terrain *gQCubeWorld;
-extern int gQCubeOrigin[];
 extern float gQCubeOriginF[];
-extern int gQCubeDrawOutside;
-extern int gQCubeInside;
-extern struct DynCubeObj *gQCubeEnclosing;
-extern struct Sector *gViewSector;
 extern double gQCubeEnclosingBox[];
 extern float gQCubeEnclosingRadius;
 extern int gQCubeNeighbourBits[];
-extern uint8_t gQCubeChildOrder[][8];
 extern uint8_t gQCubeBitPerm[][256];
 extern uint8_t gQCubeOctantMask[];
 extern float gQCubeOutsideMin[];

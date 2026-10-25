@@ -87,32 +87,15 @@ extern uint8_t gKeys[];
 extern uint8_t gKeysPrev[];
 
 /* exe constants, read in place so the x87 code sees the same values */
-extern float kFixed;      /* 4096 */
-extern const float kTenth;
-extern const float kOne;
-extern const float kZero;
-extern double kZeroD;
-extern const double kOneD;
-extern float kThrustScale; /* 44.6 */
-extern const float kHalf;
-extern const float kQuarter;
 extern float kHeliDamp;       /* 0.95 */
-extern const float kTwo;
 extern float kTwentieth;
-extern const float kFour;
-extern const float kDegToRad;
 extern float kSixTenths;
-extern const float kThreeTenths;
-extern float kMilli;
-extern float kSevenTenths;
 extern float kDamp98;
 extern float kTwoHundredth;
-extern const float kHundredth;
 extern float kMinusHundredth;
 extern float kGripLimit;  /* 40.96 */
 extern float kGrip;       /* 0.24 */
 extern double kSpeedStep; /* 0.01 */
-extern double kTwoPiD;
 
 static inline Task *next_sibling(Task *t)
 {

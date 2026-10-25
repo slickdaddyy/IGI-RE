@@ -7,6 +7,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "plane/plane.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(Heli_GetStateSize);
 
@@ -89,10 +90,8 @@ extern char gPlaneRandom[];
 extern uint8_t gKeys[];
 extern uint8_t gKeysPrev[];
 
-extern float kKmhToFrame;
 extern float kSlow;          /* 0.8 */
 extern float kGroundThrust;  /* 0.6 */
-extern float kMilli;
 extern float kDamp;          /* 0.995 */
 extern float kDampSpeed;
 extern float kFlySpeed;      /* 10 */
@@ -107,9 +106,7 @@ extern float kPartsSpeed;
 extern double kThrustStep;   /* 0.01 */
 extern double kThrustMin;    /* 0.8 */
 extern double kThrustMax;    /* 1.25 */
-extern const float kHalf;
 extern double kWheelUp;      /* 8192 */
-extern double kZeroD;
 extern double kWheelNear;    /* 7577.6 */
 extern float kWheelNearF;
 extern float kWheelSpring;

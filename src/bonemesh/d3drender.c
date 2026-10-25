@@ -15,6 +15,7 @@
 #include "bonemesh/bonemeshvars.h"
 #include "file/filevars.h"
 #include "glowmesh/glowmeshvars.h"
+#include "lod/lodvars.h"
 
 ORIG(0x491D40, long double, Display_GetAspect, (void));
 ORIG(0x4950F0, void, Direct3D_MakeMatrix, (void *out, const Matrix *rot, const Vec3f *pos));
@@ -70,7 +71,6 @@ typedef struct LightmapGroup {
 
 _Static_assert(sizeof(LightmapGroup) == 0x20, "LightmapGroup");
 
-extern float gLayerFov[];
 extern int gBoneClipDepth;
 extern ClipVertex gRigidClipVerts[];
 extern ClipVertex gLightmapClipVerts[];
@@ -88,14 +88,6 @@ extern int gLitAlphaIdx;
 extern int gUnlitAlphaIdx;
 
 /* view frustum planes as x = k * z (0xB46CE4 ...), and their scales */
-extern float gExclLeft;
-extern float gExclLeftCos;
-extern float gExclRight;
-extern float gExclRightCos;
-extern float gExclTop;
-extern float gExclTopCos;
-extern float gExclBottom;
-extern float gExclBottomCos;
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);

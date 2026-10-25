@@ -7,12 +7,11 @@
 #include "core/coretypes.h"
 #include "bonemesh/bonemeshvars.h"
 #include "file/filevars.h"
+#include "math/mathvars.h"
 
 ORIG(0x497F20, void, TransContext_Project, (float *screen, float *depth, Vec3d *pos));
 
-extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern struct Palette *gQVertexPalette;
 extern float kNearPlane;
 
 static inline int is_zero(float f)

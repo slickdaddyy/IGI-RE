@@ -73,8 +73,6 @@ extern uint8_t gAIEvent3Slot;
 extern List *gAIActionList;
 extern int gAIEventIndex;
 
-extern List gAITargets;
-extern AITarget gAITargetPool[AI_TARGETS];
 #define AI_TARGETS 8
 
 /* fistp with the current rounding mode, like the original */

@@ -7,9 +7,7 @@
 #include "qvertex/qvertextypes.h"
 #include "res/restypes.h"
 
-extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern struct Palette *gQVertexPalette;
 extern int gQVertexDrawStrip;
 
 /* a float constant from the exe, bit exact */

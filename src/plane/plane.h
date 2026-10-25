@@ -9,6 +9,7 @@
 #include "plane/planetypes.h"
 #include "heli/helitypes.h"
 #include "task/taskvars.h"
+#include "math/mathvars.h"
 
 typedef struct Joint {
     char unk0[0x18];
@@ -87,12 +88,7 @@ extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 /* exe constants, read in place so the x87 code sees the same values */
-extern const float kZero;
-extern const float kOne;
-extern const float kTenth;
-extern const float kHundredth;
 extern double kTenthD;
-extern const float kDegToRad;
 extern float kKeep;      /* 0.98 */
 extern float kBlend;     /* 0.02 */
 extern float kStartSpeed;

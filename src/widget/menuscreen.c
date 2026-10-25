@@ -2,9 +2,7 @@
 #include "igi.h"
 #include "widget/widget.h"
 #include "menuscreen/menuscreentypes.h"
-
-extern uint16_t gMenuScreenType;
-extern void *gMenuScreenParams;
+#include "menuscreen/menuscreenvars.h"
 
 void MenuScreen_Run(MenuScreen *ms)
 {

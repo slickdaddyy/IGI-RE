@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "vehbase/vehbase.h"
+#include "math/mathvars.h"
 
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -67,9 +68,6 @@ extern void *gAnimTaskParams;
 extern List gAnimTasks;
 extern int gAnimTaskUnused1;
 extern int gAnimTaskUnused2;
-
-extern const float kZero;
-extern const float kOne;
 
 /* size of the state block an AnimTask saves before its vehicle's */
 #define ANIM_STATE_SIZE 0xE8

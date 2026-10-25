@@ -16,7 +16,6 @@ typedef void (*HzHandler)(void *task, void *arg);
 
 #define ANIM_LOOPS 0x80000000u
 
-extern Skeleton gSkeletons[];
 extern AnimSet gAnimSets[];
 extern int gBoneSmoothAnims;
 

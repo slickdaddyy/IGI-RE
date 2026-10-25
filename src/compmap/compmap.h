@@ -10,6 +10,7 @@
 #include "comprun/compruntypes.h"
 #include "win/wintypes.h"
 #include "levelflow/levelflowtypes.h"
+#include "levelflow/levelflowvars.h"
 
 /* the storage of a loaded sprite */
 typedef struct SpriteSlot {
@@ -140,7 +141,6 @@ extern uint16_t gTextItemType;
 extern uint8_t gMapSelectEvent;
 extern const float gMapZoomAngle[];
 extern const float gItemColor[][3];
-extern LevelFlow *gLevelFlow;
 extern Mouse gMouse;
 
 #define MENU_MANAGER() (gLevelFlow->menu)

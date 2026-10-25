@@ -11,6 +11,7 @@
 #include "core/coretypes.h"
 #include "file/filevars.h"
 #include "guncasing/guncasingvars.h"
+#include "math/mathvars.h"
 
 /* The "Gun" task (0x1B0 bytes, 0x5BE3C6), base of the hand weapons. These
    are its handlers from 0x479780 on; the type is registered by 0x477E30. */
@@ -90,17 +91,10 @@ ORIG(0x4F1FF0, uint8_t, Weapon_GetTriggerEvent, (void));
 ORIG(0x4F2060, Task *, WeaponSlots_Get, (void *slots, int i));
 ORIG(0x4F2350, void, Weapon_UseAmmo, (Gun *g, char unlimited));
 
-extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern struct Palette *gQVertexPalette;
 
-extern const float kHalf;
-extern const float kOne;
-extern const float kTwo;
 extern const float kThree;
-extern const float kFour;
 extern const float kEight;
-extern const float kDegToRad;
 extern const float kHudRight;  /* 0.984375 */
 extern const float kHudBottom; /* 0.8958333 */
 

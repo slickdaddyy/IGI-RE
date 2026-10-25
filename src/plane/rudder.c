@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "plane/plane.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(EditorMagicObj_Delete);
 FN_EXTERN(HitZone_GetArgSize);

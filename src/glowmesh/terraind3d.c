@@ -15,6 +15,7 @@
 #include "bonemesh/bonemeshvars.h"
 #include "camfeed/camfeedvars.h"
 #include "glowmesh/glowmeshvars.h"
+#include "lod/lodvars.h"
 
 typedef struct TdTLVertex {
     float sx, sy, sz, rhw;
@@ -69,7 +70,6 @@ extern int gTerrVertCount;
 extern uint32_t gTerrainFogColorD3D;
 extern int gTerrMirror;
 extern D3DVIEWPORT7 gTerrViewport;
-extern int gTerrainMeshCount;
 extern float gTerrainScaleY;
 extern float gTerrainScaleX;
 extern float gTerrainCenterX;

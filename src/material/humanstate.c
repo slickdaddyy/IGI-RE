@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "humanai/humanaitypes.h"
 #include "humanplayer/humanplayertypes.h"
+#include "material/materialvars.h"
 
 typedef void (*HumanStateFn)(HumanPlayerSM *sm, HumanPlayer *p);
 
@@ -23,8 +24,6 @@ ORIG(0x4E6B00, void, Sound_Play, (void *obj, const char *sound));
 ORIG(0x4C3440, int, DynCubeObj_GetPosition, (HumanPlayer *p));
 ORIG(0x450CE0, void, HumanAI_Broadcast, (AIMessage *e));
 ORIG(0x40AEF0, void, HumanPlayer_RunForwardLeftUpdate, (HumanPlayerSM *sm, HumanPlayer *p));
-
-extern float gHumanAirSpeed;
 
 void HumanPlayer_CheckDeath(HumanPlayer *p)
 {

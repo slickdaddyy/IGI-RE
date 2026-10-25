@@ -5,6 +5,7 @@
 #include "glass/glasstypes.h"
 #include "aiaction/aiactionvars.h"
 #include "glass/glassvars.h"
+#include "math/mathvars.h"
 
 ORIG(0x44A630, void, GlassShatter_PlaySound, (const Vec3d *pos));
 ORIG(0x44A670, void, GlassShatter_AddTri, (float *a, float *b, float *c));
@@ -13,9 +14,6 @@ ORIG(0x49A450, void *, PolyList_New, (void *world, int a, const Vec3d *pos, cons
 ORIG(0x4F0EE0, void *, Level_GetDynamic, (void));
 
 extern const float gShardColor2[]; /* 0.7, 0.7, 0.7 */
-
-extern const float kZero;
-extern const float kOne;
 
 /* like GlassShatter_Spawn, but the pieces fly away from the point from;
    force is not used */

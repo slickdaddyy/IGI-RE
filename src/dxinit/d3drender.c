@@ -8,6 +8,8 @@
 #include "boneobj/boneobjtypes.h"
 #include "bonemesh/bonemeshvars.h"
 #include "dxinit/dxinitvars.h"
+#include "lod/lodvars.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(Direct3DRender_AlphaBlendOff);
 FN_EXTERN(Direct3DRender_SetLightmapStages);
@@ -71,8 +73,6 @@ extern int gMeshVBCount;
 extern const unsigned gMeshFVF[];
 extern const unsigned gMeshCaps[];
 extern const unsigned gMeshCapsTnL[];
-extern int gGenericUVFromRenderModeUVMethod;
-extern int gRenderModeUVFromGenericUVMethod;
 extern int gTexStageIdx;
 extern int gAlphaBlendIdx;
 extern int gLitAlphaIdx;
@@ -81,8 +81,6 @@ extern int gLmStageIdx;
 extern int gUnlitAlphaIdx;
 extern int gOpaqueBlendIdx;
 extern int gUnlitIdx;
-
-extern const float kOne;
 
 /* render functions and callbacks that live past this range */
 #define Direct3D_DrawRigidMesh (FN(0x49DF60, Direct3DRender_DrawRigidMesh))

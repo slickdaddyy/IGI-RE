@@ -7,6 +7,7 @@
 #include "material/materialtypes.h"
 #include "core/coretypes.h"
 #include "file/filevars.h"
+#include "math/mathvars.h"
 
 ORIG(0x401AE0, Task **, TaskRef_Add, (Task *task));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
@@ -66,15 +67,8 @@ extern char *gAlarmLightSprite;
 extern uint16_t gSCameraType;
 extern void *gLensList;
 
-extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern struct Palette *gQVertexPalette;
 
-extern const float kZero;
-extern const float kHalf;
-extern float kThirty;
-extern float kFixed;       /* 4096, one meter */
-extern const float kDegToRad;
 extern float kThirtieth;
 extern float kPitchStep;   /* 2.5 degrees */
 extern float kPitchRest;   /* -75 degrees */

@@ -6,6 +6,7 @@
 
 #include "hook.h"
 #include "flatwater/flatwater.h"
+#include "math/mathvars.h"
 
 /* "SmoothQTask": a script value that follows its ideal value (an expression
    or a fixed number) at a limited speed, snapped to a step and clamped.
@@ -36,7 +37,6 @@ _Static_assert(sizeof(SmoothQTask) == 0x100, "SmoothQTask");
 
 extern uint16_t gSmoothType;
 extern void *gSmoothParams;
-extern double kZero64;
 
 void SmoothQTask_Create(SmoothQTask *t);
 void SmoothQTask_Run(SmoothQTask *t);

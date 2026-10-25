@@ -6,6 +6,7 @@
 #include "door/door.h"
 #include "coll/colltypes.h"
 #include "humanai/humanaitypes.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(Param_Three);
 FN_EXTERN(Task_Nothing);
@@ -89,7 +90,6 @@ extern RangeF gDoorUnitRange;
 extern void *gDoorParams;
 
 extern float kSlideScale;
-extern const float kDegToRad;
 extern double kUseMin;
 extern double kUseMaxX;
 extern double kUseMaxY;

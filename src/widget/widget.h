@@ -17,9 +17,7 @@ typedef void (*TaskFn)(void *task, void *arg);
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern struct Palette *gQVertexPalette;
 
 /* the handler a task type has for a slot */
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

@@ -5,6 +5,7 @@
 #include "glass/glass.h"
 #include "hook.h"
 #include "glass/glasstypes.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(RocketPod_GetArgSize);
 FN_EXTERN(Task_FalseHandler);
@@ -49,7 +50,6 @@ typedef struct TouchArg {
 
 extern uint16_t gGlassType;
 
-extern const float kThreeQuarters;
 extern float kHitForce;  /* 0.007 */
 
 #define Task_Nothing (FN(0x4D3710, Task_Nothing))

@@ -2,6 +2,8 @@
 
 #include "hook.h"
 #include "scamera/scamera.h"
+#include "levelflow/levelflowvars.h"
+#include "math/mathvars.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -49,7 +51,6 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 extern uint16_t gTerminalType;
 extern void *gTerminalParams;
 
-extern double kZeroD;
 extern double kUseRange; /* 3072 */
 
 void Terminal_Create(Terminal *t, void *arg);

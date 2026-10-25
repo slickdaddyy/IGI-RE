@@ -6,6 +6,7 @@
 #include "igi.h"
 #include "core/pool.h"
 #include "boneobj/boneobjtypes.h"
+#include "lod/lodvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4B0B00, void, Pool_Init_, (Pool *pool, int size, int count, unsigned int align));
@@ -32,18 +33,11 @@ typedef struct BoneBlend {
 
 _Static_assert(sizeof(BoneBlend) == 0x1C, "BoneBlend");
 
-extern Skeleton gSkeletons[];
 extern AnimSet gAnimSets[];
 extern Skeleton *gBoneBuild;
 extern Bone *gBoneBuildBones;
-extern Pool gSourcePool;
-extern Pool gOrientPool;
-extern Pool gInstPool;
-extern Pool gFadePool;
-extern Pool gNodePool;
 extern int gBoneUnused0;
 extern int gBoneUnused1;
-extern float gTicksPerFrame;
 extern int gBoneSmoothAnims;
 
 static const float kTicksPerSecond = 4800.0f;
@@ -263,9 +257,7 @@ BSS(A542F0) Pool gInstPool;
 BSS(A542F0) Skeleton *gBoneBuild;
 PAD(igb, A542F0, A5463C, 0x4);
 BSS(A542F0) Pool gFadePool;
-BSS(A542F0) float gTicksPerFrame;
-PAD(igb, A542F0, A5465C, 0x4);
-BSS(A542F0) Pool gNodePool;
+BSS(A54660) Pool gNodePool;
 BSS(A5467C) Bone *gBoneBuildBones;
 PAD(igb, A5467C, A54680, 0x4);
 BSS(A5467C) int gBoneUnused0;

@@ -9,6 +9,7 @@
 #include "task/taskvars.h"
 #include "config/configvars.h"
 #include "editobj/editobjvars.h"
+#include "math/mathvars.h"
 
 /* Points along a "SplineObj" and the "SplineObjWaypoint" handlers (types made by 0x502250). */
 
@@ -42,10 +43,8 @@ ORIG(0x501D70, void, SplineObjWaypoint_UpdateAttach, (SplineObjWaypoint *w));
 extern struct Terrain *gCurrentWorld;
 
 extern const float kDefaultSegLength;
-extern const float kHalf;
 extern const float kSmallAngle;
 extern const float kMinusTwo;
-extern const float kPi;
 extern const double kTiny;
 
 /* segment tables by raw offset: the original also reads index -1 (the word before segLength) */

@@ -15,6 +15,7 @@
 #include "camfeed/camfeedvars.h"
 #include "glowmesh/glowmeshvars.h"
 #include "editcam/editcamvars.h"
+#include "lod/lodvars.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -108,9 +109,6 @@ _Static_assert(sizeof(TerrainClipVertex) == 0x30, "TerrainClipVertex");
 ORIG(0x4A0340, void, Direct3DRender_ClipTriangleDepth, (ClipVertex a, ClipVertex b, ClipVertex c, float *minZ,
                                                         float nearZ));
 
-extern int gTerrainMeshCount;
-extern int gTerrainCellCount;
-extern TerrainCell gTerrainCells[];
 extern TerrainLightMapInfo gTerrainLightMaps[];
 extern int gTerrainMeshRenderAll;
 extern Pool gLightPool;

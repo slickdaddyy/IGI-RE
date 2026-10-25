@@ -58,9 +58,7 @@ typedef void (*TaskArgFn)(Task *task, void *arg);
 
 #define HANDLER(slot, task) (gTaskHandlers[slot][(task)->type])
 
-extern Task **gLevelTaskIds[];
 extern List gTaskNotes[LEVEL_NOTE_LISTS];
-extern Level *gLevel;
 extern char gLevelPaused;
 extern char gLevelForceRunning;
 

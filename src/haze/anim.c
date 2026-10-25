@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "math/x87.h"
 #include "haze/haze.h"
+#include "lod/lodvars.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B44D0, void, Quat_SlerpPrepare_, (int *flip, float *angle, float *inv_sin, const Quat *a, const Quat *b));

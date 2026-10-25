@@ -6,6 +6,7 @@
 #include "sysmisc/sysmisctypes.h"
 #include "transctx/transctxtypes.h"
 #include "file/filevars.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -33,9 +34,9 @@ extern char gPaletteSlots[];
 extern uint8_t gPaletteColors[];
 extern uint16_t gPalette565[];
 
-QV_F32(kZero, 0x00000000);
-QV_F32(kOne, 0x3F800000);
-QV_F32(k255, 0x437F0000);
+QV_F32(kZeroLocal, 0x00000000);
+QV_F32(kOneLocal, 0x3F800000);
+QV_F32(k255Local, 0x437F0000);
 QV_F32(kInv255, 0x3B808081);
 
 /* A sprite primitive of the offscreen driver: one textured or plain
@@ -180,7 +181,7 @@ void OffscreenBuffer_QVertexStrip(QVertexStrip *s)
     if (n->flags & 0x80000)
         n->alpha = v[0].a;
     else
-        n->alpha = kOne.f;
+        n->alpha = kOneLocal.f;
     if (s->queue < 0)
         Primitive_Draw(n);
     else
@@ -223,16 +224,16 @@ void OffscreenBufferSprite_RenderRect(OffscreenSprite *s)
     if (h + y < cy0)
         return;
     a = s->alpha;
-    inv = kOne.f - a;
-    R = QV_Fist(a * s->r * k255.f);
-    G = QV_Fist(a * s->g * k255.f);
-    B = QV_Fist(a * s->b * k255.f);
+    inv = kOneLocal.f - a;
+    R = QV_Fist(a * s->r * k255Local.f);
+    G = QV_Fist(a * s->g * k255Local.f);
+    B = QV_Fist(a * s->b * k255Local.f);
     if (h <= 0)
         return;
     j = 0;
     yy = y;
     do {
-        if (yy >= cy0 && yy < cy1 && kZero.f < s->w) {
+        if (yy >= cy0 && yy < cy1 && kZeroLocal.f < s->w) {
             i = 0;
             xx = x;
             p = row;
@@ -264,11 +265,11 @@ HOOK(0x50EDC0, OffscreenBufferSprite_RenderRect);
 
 static int Clamp255(long double v)
 {
-    if (kZero.f > v)
-        v = kZero.f;
-    else if (!(kOne.f >= v))
-        v = kOne.f;
-    return QV_Fist(v * k255.f);
+    if (kZeroLocal.f > v)
+        v = kZeroLocal.f;
+    else if (!(kOneLocal.f >= v))
+        v = kOneLocal.f;
+    return QV_Fist(v * k255Local.f);
 }
 
 void OffscreenBufferSprite_RenderSprite(OffscreenSprite *s)
@@ -396,8 +397,8 @@ void OffscreenBufferSprite_RenderSprite(OffscreenSprite *s)
                     if (xx >= cx0 && xx < cx1) {
                         c = *sp;
                         a = (int)(c >> 24) * (long double)kInv255.f;
-                        if (a != kZero.f) {
-                            inv = kOne.f - a;
+                        if (a != kZeroLocal.f) {
+                            inv = kOneLocal.f - a;
                             d = *p;
                             tr = (int)(c >> 16 & 0xFF) * (long double)s->r * a * kInv255.f;
                             tg = (int)(c >> 8 & 0xFF) * (long double)s->g * a * kInv255.f;

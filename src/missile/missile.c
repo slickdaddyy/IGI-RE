@@ -9,6 +9,8 @@
 #include "orig.h"
 #include "missile/missile.h"
 #include "levelflow/levelflowtypes.h"
+#include "math/mathvars.h"
+#include "levelflow/levelflowvars.h"
 
 FN_EXTERN(Task_FalseHandler);
 
@@ -99,7 +101,6 @@ ORIG(0x4FE730, char *, TagItem_Find, (void *task, const char *name));
 extern uint16_t gMissileType;
 extern void *gMissileParams;
 extern char gMissileRandom[];
-extern LevelFlow *gLevelFlow;
 
 #define Missile_UnkHandlerC (FN(0x45F920, Task_FalseHandler))
 
@@ -114,7 +115,6 @@ extern double kAntitankUp;   /* 102400 */
 extern double kForward;      /* 4096000 */
 extern float kSpeedScale;
 extern float kBurnScale;     /* 1/30 */
-extern float kThrustScale;
 
 /* collision filter: msg is {collide, missile, owner, target}; the missile hits
    anything but those three and other missiles */
@@ -815,9 +815,8 @@ void Missile_CopyParts(Missile *m)
 HOOK(0x429EF0, Missile_CopyParts);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-DATA(53346C) float kThrustScale INIT(44.600887f);
-ALIAS(kCasingGravity, kThrustScale, 0);
-ALIAS(kThrust, kThrustScale, 0);
+DATA(5333C8) const float kTenth INIT(0.1f);
+ALIAS(kDepthFade2, kTenth, 0);
 DATA(533540) double kAntitankUp INIT(102400.0);
 DATA(533540) double kForward INIT(4096000.0);
 DATA(533598) float kSmokeMin INIT(0.15f);

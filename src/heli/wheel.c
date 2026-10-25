@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "heli/heli.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(Rotor_FreeDef);
 FN_EXTERN(Task_Nothing);
@@ -281,5 +282,9 @@ uint16_t Wheel_GetType(void)
 HOOK(0x430950, Wheel_GetType);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+DATA(5336A4) const float kThreeTenths INIT(0.3f);
+ALIAS(kShadowMinFade, kThreeTenths, 0);
+ALIAS(kSmokeSize, kThreeTenths, 0);
+DATA(533728) double kTwoPiD INIT(6.283185307179589);
 BSS(57BD30) uint16_t gWheelType;
 PAD(igb, 57BD30, 57BD32, 0x2);

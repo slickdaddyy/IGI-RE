@@ -8,6 +8,7 @@
 #include "soldier/soldier.h"
 #include "script/scripttypes.h"
 #include "config/configvars.h"
+#include "humanbase/humanbasevars.h"
 
 FN_EXTERN(Car_CollFilter);
 FN_EXTERN(Human_ActivateHandler);
@@ -137,12 +138,9 @@ ORIG(0x504A30, int, AreaActivate_AddCriteria, (const char *name, void *fn));
 ORIG(0x5096A0, uint8_t, AIGraph_GetEvent, (void));
 
 extern uint16_t gHumanType;
-extern uint8_t gHumanGunshotEvent;
-extern uint8_t gHumanPunchEvent;
 extern void *gHumanList;
 extern void *gHumanParams;
 extern int gHumanCriteria;
-extern int gHumanTeamCriteria[];
 extern char gHumanCriteriaNames[][0x20];
 extern const char *gHumanTeamNames[];
 extern int gHumanUnusedInts[];

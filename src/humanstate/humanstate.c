@@ -5,6 +5,7 @@
 #include "humanstate/humanstate.h"
 #include "humanai/humanaitypes.h"
 #include "material/materialtypes.h"
+#include "humanstate/humanstatevars.h"
 
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
 ORIG(0x408460, void, HumanPlayer_UpdateFall, (HumanPlayer *h));
@@ -82,8 +83,6 @@ ORIG(0x4F0EE0, void *, Level_GetDynamic, (const char *name));
 ORIG(0x4F1030, void *, Task_FindById, (int id));
 ORIG(0x4F3380, uint16_t, EditRigidObj_GetType, (void));
 
-extern float gJumpSpeed;
-extern float gJumpUp;
 extern const int gLadderSounds[];
 extern const int gWireDragSounds[];
 

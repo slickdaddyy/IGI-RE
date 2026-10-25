@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "guncasing/guncasing.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(Game_CollFilterSkip3);
 
@@ -52,10 +53,7 @@ extern float kM203Drag;    /* 0.995 */
 extern float kM203Gravity;
 extern double kPuffRise;
 extern double kPuffRiseMin;
-extern float kKmh;
-extern float kPerFrameHour;
 extern double kPuffSize;
-extern const float kHalf;
 extern float kPuffSpin;
 extern float kPuffSpinBase;
 

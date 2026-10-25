@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "transctx/transctxtypes.h"
 #include "bonemesh/bonemeshvars.h"
+#include "math/mathvars.h"
 
 ORIG(0x4DA180, void, Haze_GetVisible, (int **layers, int *count));
 ORIG(0x4DA300, void, Haze_GetFog, (float *color, float *amount, const Vec3d *from, const Vec3d *to, int *layers,
@@ -44,8 +45,6 @@ extern int gPointCount;
 extern const float kFovScale;    /* 0.83 */
 extern const float kFovBase;     /* 0.17 */
 extern const float kFogScale;    /* 1/65536 */
-extern const float kFogBias;     /* 130 */
-extern const float kHalf;
 
 static inline long double x87_cos(long double x)
 {

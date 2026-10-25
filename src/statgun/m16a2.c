@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "statgun/statgun.h"
+#include "math/mathvars.h"
 
 /* the private data of the M16A2 weapon type: its M203 grenade launcher */
 typedef struct M203Data {
@@ -20,7 +21,6 @@ _Static_assert(sizeof(M203Data) == 0x1C, "M203Data");
 
 extern uint16_t gM16A2Type;
 
-extern float kKmh;
 extern float kVelScale;
 extern float kIconGap;
 

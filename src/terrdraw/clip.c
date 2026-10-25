@@ -11,6 +11,7 @@
 #include "transctx/transctxtypes.h"
 #include "camfeed/camfeedvars.h"
 #include "glowmesh/glowmeshvars.h"
+#include "math/mathvars.h"
 
 #define CLIP_LEFT 1
 #define CLIP_TOP 2
@@ -57,7 +58,7 @@ extern float gTerrainCenterY;
 static const union {
     uint32_t u;
     float f;
-} kOne = { 0x3F800000 };
+} kOneLocal = { 0x3F800000 };
 
 static inline int64_t fistp64(long double x)
 {
@@ -116,7 +117,7 @@ static void view_pos(ClipVtx *v, float *p)
 {
     v->pos = p;
     if (!(v->code & CLIP_NEAR)) {
-        p[2] = kOne.f / v->q;
+        p[2] = kOneLocal.f / v->q;
         p[0] = (v->sx - gTerrainCenterX) / (gTerrainScaleX * v->q);
         p[1] = (v->sy - gTerrainCenterY) / (gTerrainScaleY * v->q);
     } else {
@@ -151,7 +152,7 @@ static void emit(ClipVtx **v, ClipOut *out)
     for (k = 0; k < 3; k++) {
         ClipVtx *p = v[k];
         long double q = p->q;
-        float inv = kOne.f / q;
+        float inv = kOneLocal.f / q;
         TLVertexSpec *d;
 
         p->rhw = q * gClipRhwScale;
@@ -212,7 +213,7 @@ void TerrDraw_ClipTriangle(ClipVtx a, ClipVtx b, ClipVtx c, ClipOut *out)
             s = near_t(in->pos, o->pos);
             lerp_pos(o->pos, in->pos, s);
             lerp_attrs(o, in, s);
-            s = kOne.f / o->pos[2];
+            s = kOneLocal.f / o->pos[2];
             o->q = s;
             o->sx = s * gTerrainScaleX * o->pos[0] + gTerrainCenterX;
             o->sy = gTerrainScaleY * o->pos[1] * o->q + gTerrainCenterY;
@@ -221,7 +222,7 @@ void TerrDraw_ClipTriangle(ClipVtx a, ClipVtx b, ClipVtx c, ClipOut *out)
             s = near_t(in->pos, o2->pos);
             lerp_pos(o2->pos, in->pos, s);
             lerp_attrs(o2, in, s);
-            s = kOne.f / o2->pos[2];
+            s = kOneLocal.f / o2->pos[2];
             o2->q = s;
             o2->sx = s * o2->pos[0] * gTerrainScaleX + gTerrainCenterX;
             o2->sy = o2->pos[1] * o2->q * gTerrainScaleY + gTerrainCenterY;
@@ -238,7 +239,7 @@ void TerrDraw_ClipTriangle(ClipVtx a, ClipVtx b, ClipVtx c, ClipOut *out)
             s = near_t(i1->pos, o->pos);
             lerp_pos(o->pos, i1->pos, s);
             lerp_attrs(o, i1, s);
-            s = kOne.f / o->pos[2];
+            s = kOneLocal.f / o->pos[2];
             o->q = s;
             o->sx = s * o->pos[0] * gTerrainScaleX + gTerrainCenterX;
             o->sy = o->pos[1] * o->q * gTerrainScaleY + gTerrainCenterY;
@@ -249,7 +250,7 @@ void TerrDraw_ClipTriangle(ClipVtx a, ClipVtx b, ClipVtx c, ClipOut *out)
             for (k = 0; k < 5; k++)
                 t.c[k] = (t.c[k] - i2->c[k]) * s + i2->c[k];
             fog = (t.c[5] - i2->c[5]) * s + i2->c[5];
-            s = kOne.f / tpos[2];
+            s = kOneLocal.f / tpos[2];
             t.q = s;
             sx = s * tpos[0] * gTerrainScaleX + gTerrainCenterX;
             t.sx = sx;

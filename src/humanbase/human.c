@@ -12,6 +12,7 @@
 #include "transctx/transctxtypes.h"
 #include "task/taskvars.h"
 #include "bonemesh/bonemeshvars.h"
+#include "humanbase/humanbasevars.h"
 
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
@@ -139,10 +140,7 @@ extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern uint8_t gHumanEvent0;
 extern uint8_t gHumanEvent1;
-extern uint8_t gHumanGunshotEvent;
-extern uint8_t gHumanPunchEvent;
 extern const char *gHumanTeamNames[];
-extern int gHumanTeamCriteria[];
 extern uint16_t gHumanType;
 extern int gHumanDebugTime;
 extern int gHumanCriteria;

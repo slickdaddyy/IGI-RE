@@ -11,6 +11,7 @@
 #include "props/propstypes.h"
 #include "levelflow/levelflowtypes.h"
 #include "task/taskvars.h"
+#include "math/mathvars.h"
 
 typedef void (*TaskFn)();
 
@@ -88,14 +89,6 @@ _Static_assert(sizeof(Door) == 0x328, "Door");
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
-
-/* the frame counter lives at +0x68 */
-extern LevelFlow *gLevelFlow;
-
-extern const float kZero;
-extern double kZeroD;
-extern const double kOneD;
-extern float kFps;
 
 /* copies 4 bytes without going through the FPU, like the original */
 #define MOV32(dst, src) memcpy(&(dst), &(src), 4)

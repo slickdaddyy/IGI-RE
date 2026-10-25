@@ -10,6 +10,7 @@
 #include "task/taskvars.h"
 #include "animtrig/animtrigvars.h"
 #include "config/configvars.h"
+#include "mission/missionvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A5350, FILE *, crt_fopen, (const char *path, const char *mode));
@@ -65,7 +66,6 @@ extern int gFlowPauseStart;
 extern int gFlowPauseDepth;
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern char gGameScreenSmallMode;
 extern int gCollLineCalls;
 extern int gCollLineCount;
 extern int gCollSightCalls;

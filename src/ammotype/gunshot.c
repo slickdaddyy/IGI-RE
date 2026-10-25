@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "ammotype/ammotype.h"
 #include "qasm/qasmtypes.h"
+#include "math/mathvars.h"
 
 /* "GunShot" (0xC38 bytes): the bullets in flight of one gun and the
    tracer trails they leave. */
@@ -50,13 +51,8 @@ extern int gRicochetDelay;
 extern const char *gRicochetSounds[];
 extern void (*gRenderHandlers[])(void *task, void *arg);
 
-extern const float kZero;
-extern const float kOne;
-extern const float kHalf;
-extern const float k4096;    /* 4096 */
 extern const double kNearPad;      /* 2^28 */
 extern const double kNearDist;     /* 16384 */
-extern const double kOneD;
 extern const float kTrailWidth;    /* 286.72 */
 extern const float kColorScale;    /* 1/255 */
 extern const float kMaxDepth;      /* 2048000 */

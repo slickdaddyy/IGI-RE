@@ -2,6 +2,7 @@
 #include "igi.h"
 #include "menu/menu.h"
 #include "ui/uitypes.h"
+#include "menu/menuvars.h"
 
 FN_EXTERN(TextBox_Changed);
 FN_EXTERN(TextBox_Create);
@@ -14,9 +15,6 @@ FN_EXTERN(TextBox_Run);
 ORIG(0x4F0FA0, void *, Param_Int32, (void));
 ORIG(0x4F0FC0, void *, Param_VarString, (void));
 ORIG(0x4F0FE0, void *, Param_String32, (void));
-
-extern uint16_t gTextBoxType;
-extern void *gTextBoxParams;
 
 /* the handlers are not rewritten yet */
 #define TextBox_Create (FN(0x41ACA0, TextBox_Create))

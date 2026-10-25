@@ -7,6 +7,8 @@
 #include "humanai/humanaitypes.h"
 #include "config/configvars.h"
 #include "aiaction/aiactionvars.h"
+#include "math/mathvars.h"
+#include "humanai/humanaivars.h"
 
 FN_EXTERN(AIActivate_Start);
 FN_EXTERN(AICombatAnya_Start);
@@ -146,7 +148,6 @@ _Static_assert(offsetof(EventData, ref) == 0x28, "EventData");
 extern MonitorGraph gMonitorGraphs[AI_MONITOR_GRAPHS];
 extern MonitorTarget gMonitorTargets[AI_MONITOR_TARGETS];
 extern Claim gClaims[AI_CLAIMS];
-extern AITarget gAITargetPool[AI_TARGETS];
 extern MoveItem gAIMoveItems[AI_MOVE_ITEMS];
 extern NodeGrid gNodeGrids[AI_GRIDS];
 extern List gMonitorGraphsFree;
@@ -156,19 +157,14 @@ extern List gClaimsFree;
 extern List gClaimsUsed;
 extern List gGridsFree;
 extern List gGridsUsed;
-extern List gAITargets;
 extern int gHumanAIUnusedInts[8];
 
-extern uint16_t gHumanAIType;
 extern const char *gAIScriptNames[];
 extern const int gAIScriptOfType[];
-extern const char *gAITypeNames[];
-extern void *gAIScripts[];
 
-static const double kFps = 30.0;
+static const double kFpsLocal = 30.0;
 static const double kViewScale = 4096.0;
 static const double kMinWeight = 0.01;
-extern const float kDegToRad;
 
 static ScriptValue *ret_int(ScriptValue *out, int v)
 {
@@ -503,8 +499,8 @@ static void fire_at(void *fn, void *args)
     NodeData *d = HumanAI_AllocParam(gAICurrent);
 
     d->id = Script_GetArgInt(args, 0);
-    d->unkC = round_int(Script_GetArgReal(args, 1) * kFps);
-    d->unk10 = round_int(Script_GetArgReal(args, 2) * kFps);
+    d->unkC = round_int(Script_GetArgReal(args, 1) * kFpsLocal);
+    d->unk10 = round_int(Script_GetArgReal(args, 2) * kFpsLocal);
     d->unk18 = Script_GetArgInt(args, 3);
     HumanAI_PushAction(fn, d, Script_GetArgInt(args, 4));
 }
@@ -973,8 +969,8 @@ HOOK(0x44E9B0, AIFunction_GetAlarmTriggerDistance);
 /* seconds; animTimer gets min + random(range) frames */
 ScriptValue *AIFunction_SetAnimationInterval(ScriptValue *out, void *data, void *args)
 {
-    gAICurrent->animBase = round_int(Script_GetArgReal(args, 0) * kFps);
-    gAICurrent->animRandom = round_int(Script_GetArgReal(args, 1) * kFps);
+    gAICurrent->animBase = round_int(Script_GetArgReal(args, 0) * kFpsLocal);
+    gAICurrent->animRandom = round_int(Script_GetArgReal(args, 1) * kFpsLocal);
     gAICurrent->animTimer = Random_Int(Game_GetRandom(), gAICurrent->animRandom) + gAICurrent->animBase;
     return ret_int(out, 2);
 }

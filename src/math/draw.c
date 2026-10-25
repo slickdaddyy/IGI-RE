@@ -4,12 +4,11 @@
 #include "qvertex/qvertextypes.h"
 #include "core/coretypes.h"
 #include "file/filevars.h"
+#include "math/mathvars.h"
 
 typedef void (*DrawFunc)(QVertexStrip *cmd);
 
-extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern struct Palette *gQVertexPalette;
 
 #define COLOR_SCALE (1.0f / 128)
 

@@ -7,6 +7,7 @@
 #include "bonemesh/bonemeshvars.h"
 #include "file/filevars.h"
 #include "explosion/explosionvars.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(Explosion_CreateHandler);
 FN_EXTERN(Explosion_RunHandler);
@@ -70,9 +71,9 @@ extern char *gSmoke2Sprite;
 #define Explosion_Run (FN(0x480F40, Explosion_RunHandler))
 #define FireBall_Delete (FN(0x480F00, FireBall_DeleteHandler))
 
-static const double kOne = 1.0;
-static const double kZeroD = 0.0;
-static const float kZero = 0.0f;
+static const double kOneLocal = 1.0;
+static const double kZeroDLocal = 0.0;
+static const float kZeroLocal = 0.0f;
 static const float kOneF = 1.0f;
 static const float kLife = 819200.0f;
 static const float kFragmentSize = 0x1.99999ap+7f; /* 204.8 */
@@ -80,19 +81,9 @@ static const float kThousandth = 0x1.0624dep-10f;
 static const float kSmokeColor = 0x1.966666p+3f; /* 12.7 */
 static const float kRiseFast = 0x1.1d7218p+1f;   /* 2.23 */
 static const float kRiseSlow = 0x1.1d7218p+0f;   /* 1.115 */
-extern const float kTenth;
-extern const float kFifth;
-extern const float kHalf;
-extern const float kQuarter;
-extern const float kThreeQuarters;
 extern const float kFourFifths;
 extern const float kNineTenths;
-extern const float kThreeTenths;
-extern const float kHundredth;
 extern const float kThreeHalves;
-extern const float k4096;
-extern const float kPi;
-extern const float kTwoPi;
 extern const float kBlastSmokeSpin;
 extern const float kFragmentSpin;
 extern const float kSmokeRate;
@@ -101,7 +92,6 @@ extern const float kTumble;
 extern const float kFragmentScale;
 extern const double kFireballScale;
 extern const double kSmokeScale;
-extern const double kHalfD;
 extern const float kSmokeFrames;
 extern const float kDelaySpread;
 
@@ -208,7 +198,7 @@ void Fragment_Smoke(Fragment *f)
         d[0] = f->vel.x * step;
         d[1] = f->vel.y * step;
         d[2] = f->vel.z * step;
-        if (!(kZeroD < len))
+        if (!(kZeroDLocal < len))
             return;
         do {
             a = (float)((((long double)f->life - half) * kFifth) / half);
@@ -282,7 +272,7 @@ void Explosion_Burst(Explosion *e)
     Vec3d pos;
     int i, frames;
 
-    if (!(e->size < kZeroD || e->size > kZeroD))
+    if (!(e->size < kZeroDLocal || e->size > kZeroDLocal))
         return;
     pos = e->pos;
     if (e->fireballs)
@@ -352,7 +342,7 @@ void Explosion_Burst(Explosion *e)
         if (sound)
             Sound_SetPos(sound, &pos);
     }
-    if (e->blast < kZero || e->blast > kZero) {
+    if (e->blast < kZeroLocal || e->blast > kZeroLocal) {
         BlastMsg msg;
 
         msg.fireball = &fb->obj.task;
@@ -537,7 +527,7 @@ HOOK(0x4806E0, FireBall_Run);
 
 static void scale_vec(float *v, long double len2)
 {
-    long double s = kOne / x87_sqrt(len2);
+    long double s = kOneLocal / x87_sqrt(len2);
 
     v[0] = (float)(v[0] * s);
     v[1] = (float)(v[1] * s);
@@ -546,7 +536,7 @@ static void scale_vec(float *v, long double len2)
 
 static int nonzero(const float *v)
 {
-    return v[0] != kZero || v[1] != kZero || v[2] != kZero;
+    return v[0] != kZeroLocal || v[1] != kZeroLocal || v[2] != kZeroLocal;
 }
 
 /* turns to face the camera, spins and draws the current frame */
@@ -570,11 +560,11 @@ void FireBall_Draw(FireBall *fb)
     m[7] = gTransContext.pos.y - fb->obj.pos.y;
     z = gTransContext.pos.z - fb->obj.pos.z;
     m[8] = z;
-    if (m[6] == kZero && m[7] == kZero && z == kZero)
+    if (m[6] == kZeroLocal && m[7] == kZeroLocal && z == kZeroLocal)
         m[6] = 1.0f;
     else
         scale_vec(m + 6, (z * z + m[6] * m[6]) + m[7] * m[7]);
-    if (kZero == m[6] && kZero == m[7] && *(uint32_t *)&m[8] == 0x3F800000) {
+    if (kZeroLocal == m[6] && kZeroLocal == m[7] && *(uint32_t *)&m[8] == 0x3F800000) {
         m[0] = 1.0f;
         m[1] = 0.0f;
         m[2] = 0.0f;
@@ -582,8 +572,8 @@ void FireBall_Draw(FireBall *fb)
         m[4] = 1.0f;
         m[5] = 0.0f;
     } else {
-        m[0] = kZero - m[7];
-        m[1] = -(kZero - m[6]);
+        m[0] = kZeroLocal - m[7];
+        m[1] = -(kZeroLocal - m[6]);
         m[2] = 0.0f;
         m[3] = m[7] * m[2] - m[8] * m[1];
         m[4] = -(m[6] * m[2] - m[8] * m[0]);
@@ -661,15 +651,9 @@ void FireBall_Draw(FireBall *fb)
 HOOK(0x480790, FireBall_Draw);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-DATA(5333C8) const float kTenth INIT(0.1f);
-ALIAS(kDepthFade2, kTenth, 0);
-DATA(533518) const float kQuarter INIT(0.25f);
 DATA(53353C) const float kThreeHalves INIT(1.5f);
 ALIAS(kOneHalf, kThreeHalves, 0);
 ALIAS(kSplitDist, kThreeHalves, 0);
-DATA(5336A4) const float kThreeTenths INIT(0.3f);
-ALIAS(kShadowMinFade, kThreeTenths, 0);
-ALIAS(kSmokeSize, kThreeTenths, 0);
 DATA(534180) const float kSpreadBase INIT(0.020362176f);
 DATA(534180) const float kBlastSmokeSpin INIT(0.018849557f);
 DATA(534180) const float kSmokeRate INIT(15.0f);

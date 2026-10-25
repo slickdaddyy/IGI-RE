@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "litmap/litmap.h"
+#include "math/mathvars.h"
 
 ORIG(0x5034D0, uint16_t, EditorRigidObj_GetType, (void));
 ORIG(0x4F1210, int, Level_GetActivateEvent, (void));

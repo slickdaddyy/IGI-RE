@@ -6,6 +6,7 @@
 #include "animtrig/animtrig.h"
 #include "param/paramtypes.h"
 #include "config/configvars.h"
+#include "lod/lodvars.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4CEC10, void *, VirModel_Find, (const char *name));
@@ -51,14 +52,6 @@ extern ParamRange gLodDetailRange;
 extern void *gLODSettingsParams;
 extern void *gModelLODSettingsParams;
 extern Task *gModelLODSettingsContainer;
-extern float gLodBlend;
-extern float gLodRigidDetail;
-extern float gLodBoneDetail;
-extern float gLodSplineDetail;
-extern float gLodRigidCull;
-extern float gLodBoneCull;
-extern float gLodSplineCull;
-extern float gLodRange;
 
 static const float kPercent = 0x1.47ae14p-6f; /* 0.02 */
 static const float k4096 = 4096.0f;

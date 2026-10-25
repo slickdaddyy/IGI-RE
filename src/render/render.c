@@ -18,6 +18,7 @@
 #include "bonemesh/bonemeshvars.h"
 #include "camfeed/camfeedvars.h"
 #include "dxinit/dxinitvars.h"
+#include "lod/lodvars.h"
 
 /* Direct3D mesh renderer: rigid, spline and lightmapped meshes. */
 
@@ -186,7 +187,6 @@ extern int gOpaqueBlendIdx;
 extern MeshVB gMeshVBs[];
 extern int gUnlitIdx;
 extern Pool gLightPool;
-extern float gLayerFov[];
 extern float gLightColor[];
 extern float gFogColor[];
 extern Scene gScene;

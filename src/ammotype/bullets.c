@@ -9,6 +9,7 @@
 #include "ammotype/ammotype.h"
 #include "material/materialtypes.h"
 #include "coll/colltypes.h"
+#include "math/mathvars.h"
 
 /* the filter Coll_Lines passes to the objects it meets */
 typedef struct BulletFilter {
@@ -64,7 +65,6 @@ extern int gImpactSoundDelay;
 extern const float kBZero;
 extern const float kBOne;
 extern const double kBOneD;
-extern const float kDegToRad;
 extern const float kHalfPi;
 extern const float kPierceChance; /* 0.6 */
 extern const float kSurfaceGap;   /* 20.48 */

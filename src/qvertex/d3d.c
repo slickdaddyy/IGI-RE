@@ -13,6 +13,7 @@
 #include "bonemesh/bonemeshvars.h"
 #include "camfeed/camfeedvars.h"
 #include "glowmesh/glowmeshvars.h"
+#include "math/mathvars.h"
 
 /* The QVertex driver of the Direct3D render mode. */
 
@@ -81,11 +82,11 @@ extern Texture *gQVLastTexture;
 extern int gClipDepth;
 extern uint8_t gKeys[];
 
-QV_F32(kZero, 0x00000000);
-QV_F32(kOne, 0x3F800000);
-QV_F32(kHalf, 0x3F000000);
-QV_F32(kQuarter, 0x3E800000);
-QV_F32(k255, 0x437F0000);
+QV_F32(kZeroLocal, 0x00000000);
+QV_F32(kOneLocal, 0x3F800000);
+QV_F32(kHalfLocal, 0x3F000000);
+QV_F32(kQuarterLocal, 0x3E800000);
+QV_F32(k255Local, 0x437F0000);
 QV_F32(kMinus255, 0xC37F0000);
 QV_F32(kNearMul, 0x3F8147AE);
 QV_F32(kTexelOffset, 0x3A800000);
@@ -131,12 +132,12 @@ static void ClipVert_LerpRest(ClipVert *p, const ClipVert *a, long double t)
 
 static long double MaxX(void)
 {
-    return (long double)gScene.maxX + kOne.f;
+    return (long double)gScene.maxX + kOneLocal.f;
 }
 
 static long double MaxY(void)
 {
-    return (long double)gScene.maxY + kOne.f;
+    return (long double)gScene.maxY + kOneLocal.f;
 }
 
 static float CutLeft(const ClipVert *p, const ClipVert *a)
@@ -331,17 +332,17 @@ void QVertex_ClipTriangle(ClipVert a, ClipVert b, ClipVert c, float nearZ, ClipF
         ClipVert *cv[3] = { &a, &b, &c };
         int i;
 
-        a.w = kOne.f / a.w;
-        b.w = kOne.f / b.w;
-        c.w = kOne.f / c.w;
+        a.w = kOneLocal.f / a.w;
+        b.w = kOneLocal.f / b.w;
+        c.w = kOneLocal.f / c.w;
         for (i = 0; i < 3; i++) {
             buf[i].x = cv[i]->x;
             buf[i].y = cv[i]->y;
             buf[i].z = cv[i]->w * kDebugZScale.f - kDebugZBias.f;
-            buf[i].r = kHalf.f;
-            buf[i].g = kHalf.f;
-            buf[i].b = kOne.f;
-            buf[i].a = kOne.f;
+            buf[i].r = kHalfLocal.f;
+            buf[i].g = kHalfLocal.f;
+            buf[i].b = kOneLocal.f;
+            buf[i].a = kOneLocal.f;
             buf[i].u = 0;
             buf[i].v = 0;
         }
@@ -356,7 +357,7 @@ void QVertex_ClipTriangle(ClipVert a, ClipVert b, ClipVert c, float nearZ, ClipF
             buf[i].z = buf[i].z * kDebugZScale.f;
             buf[i].r = 0;
             buf[i].g = 0;
-            buf[i].b = kOne.f;
+            buf[i].b = kOneLocal.f;
         }
         buf[3] = buf[0];
         l.lines = 1;
@@ -394,15 +395,15 @@ void D3DQVertex_Emit(QVertexStrip *s)
         n->count = s->count;
         n->lines = s->lines;
         n->verts = n->v;
-        n->alpha = QV_Fist(s->verts[0].a * (long double)k255.f);
+        n->alpha = QV_Fist(s->verts[0].a * (long double)k255Local.f);
         for (i = 0; i < n->count; i++) {
             const QVertex *v = &s->verts[i];
             TLVertex *d = &n->verts[i];
             float a;
 
-            d->x = v->x - kHalf.f;
-            d->y = v->y - kHalf.f;
-            if (v->z > kZero.f && gTransContextValid) {
+            d->x = v->x - kHalfLocal.f;
+            d->y = v->y - kHalfLocal.f;
+            if (v->z > kZeroLocal.f && gTransContextValid) {
                 long double lo = (long double)gD3DMinZ * kNearMul.f, z, rhw;
                 float t = gWorldScale * v->z;
 
@@ -412,23 +413,23 @@ void D3DQVertex_Emit(QVertexStrip *s)
                     z = gD3DMaxZ;
                 else
                     z = t;
-                rhw = kOne.f / z;
+                rhw = kOneLocal.f / z;
                 d->rhw = rhw;
-                d->z = ((long double)gLayer1MaxZ - gLayer1MinZ) * ((kOne.f - rhw * gD3DMinZ) * gTransContext.proj[10]) + gLayer1MinZ;
+                d->z = ((long double)gLayer1MaxZ - gLayer1MinZ) * ((kOneLocal.f - rhw * gD3DMinZ) * gTransContext.proj[10]) + gLayer1MinZ;
             } else {
-                d->z = kHalf.f;
-                d->rhw = kOne.f / (((long double)gD3DMaxZ - gD3DMinZ) * kHalf.f);
+                d->z = kHalfLocal.f;
+                d->rhw = kOneLocal.f / (((long double)gD3DMaxZ - gD3DMinZ) * kHalfLocal.f);
             }
             a = v->a;
             if (n->flags & 4)
-                a = kHalf.f;
+                a = kHalfLocal.f;
             else if (n->flags & 0x20)
-                a = kQuarter.f;
+                a = kQuarterLocal.f;
             if (n->flags & 0x10880024) {
                 c = (uint32_t)QV_Fist(a * (long double)kMinus255.f) << 8;
                 c = (c + QV_Fist(v->r * (long double)kMinus255.f)) << 8;
                 c = (c + QV_Fist(v->g * (long double)kMinus255.f)) << 8;
-                c = QV_Fist(v->b * (long double)k255.f) - c;
+                c = QV_Fist(v->b * (long double)k255Local.f) - c;
             } else {
                 c = (uint32_t)(0xFF00 - QV_Fist(v->r * (long double)kMinus255.f)) << 8;
                 c = (c - QV_Fist(v->g * (long double)kMinus255.f)) << 8;
@@ -660,7 +661,7 @@ void D3DQVertex_Strip(QVertexStrip *s)
     int n = s->count;
 
     if (n > 0) {
-        long double maxX = (long double)gScene.maxX + kOne.f, maxY = (long double)gScene.maxY + kOne.f;
+        long double maxX = (long double)gScene.maxX + kOneLocal.f, maxY = (long double)gScene.maxY + kOneLocal.f;
         const QVertex *v = s->verts;
 
         do {
@@ -681,8 +682,8 @@ void D3DQVertex_Strip(QVertexStrip *s)
         }
     } else if (code) {
         if (!(s->flags & 0x60000)) {
-            s->verts[0].z = kOne.f;
-            s->verts[1].z = kOne.f;
+            s->verts[0].z = kOneLocal.f;
+            s->verts[1].z = kOneLocal.f;
         }
         D3DQVertex_ClipRect(s);
         return;
@@ -696,8 +697,8 @@ static unsigned int Outcode(const QVertex *v)
 {
     unsigned int left = !(v->x >= gScene.minX);
     unsigned int top = !(v->y >= gScene.minY);
-    unsigned int right = !((long double)gScene.maxX + kOne.f >= v->x);
-    unsigned int bottom = !((long double)gScene.maxY + kOne.f >= v->y);
+    unsigned int right = !((long double)gScene.maxX + kOneLocal.f >= v->x);
+    unsigned int bottom = !((long double)gScene.maxY + kOneLocal.f >= v->y);
 
     return ((bottom * 2 | right) * 2 | top) * 2 | left;
 }
@@ -705,7 +706,7 @@ static unsigned int Outcode(const QVertex *v)
 /* uv and colours over z; the first product uses the unrounded 1 / z */
 static void ClipVert_Set(ClipVert *c, const QVertex *v)
 {
-    long double w = kOne.f / v->z;
+    long double w = kOneLocal.f / v->z;
 
     c->x = v->x;
     c->y = v->y;
@@ -757,7 +758,7 @@ static void ClipVert_Restore(QVertex *d, const ClipVert *c)
 {
     d->x = c->x;
     d->y = c->y;
-    d->z = kOne.f / c->w;
+    d->z = kOneLocal.f / c->w;
     d->u = c->u * d->z;
     d->v = c->v * d->z;
     d->a = c->a * d->z;
@@ -821,8 +822,8 @@ void D3DQVertex_ClipRect(QVertexStrip *s)
     QVertex buf[3];
     ClipVert c[4];
     const QVertex *v = s->verts;
-    float maxX = gScene.maxX + kOne.f;
-    long double maxY = (long double)gScene.maxY + kOne.f, w;
+    float maxX = gScene.maxX + kOneLocal.f;
+    long double maxY = (long double)gScene.maxY + kOneLocal.f, w;
     int i;
 
     l.count = 3;
@@ -834,7 +835,7 @@ void D3DQVertex_ClipRect(QVertexStrip *s)
         c[i].x = x;
         c[i].y = y;
     }
-    w = kOne.f / v[0].z;
+    w = kOneLocal.f / v[0].z;
     c[0].w = w;
     c[0].u = w * v[0].u;
     c[0].v = w * v[0].v;

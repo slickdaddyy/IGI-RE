@@ -10,6 +10,7 @@
 #include "dxinit/dxinittypes.h"
 #include "bonemesh/bonemeshvars.h"
 #include "camfeed/camfeedvars.h"
+#include "math/mathvars.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401400, void, TaskType_SetHandler, (int type, uint8_t slot, void *fn));
@@ -96,10 +97,6 @@ extern char gDxRainRandom[];
 extern Rain *gRain;
 extern int gRainEnabled;
 
-extern const double kHalfD;
-extern const float kZero;
-extern const float kOne;
-extern const float kHalfF;
 extern const float kFadeStep;
 extern const double kTile;
 extern const float kTileF;

@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "scamera/scamera.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(Cabinet_AddSymbols);
 FN_EXTERN(Cabinet_CheckUse);
@@ -72,7 +73,6 @@ extern uint16_t gCabinetType;
 extern float kDrawerOpenStep; /* 153.6 */
 extern float kDrawerOpen; /* 1843.2 */
 extern float kDrawerCloseStep; /* 102.4 */
-extern const float kZero;
 
 void Cabinet_Create(Cabinet *c);
 void Drawer_Create(Drawer *d, DrawerArg *arg);

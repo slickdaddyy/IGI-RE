@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "props/props.h"
+#include "math/mathvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));

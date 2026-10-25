@@ -8,6 +8,7 @@
 #include "hook.h"
 #include "physobj/physobj.h"
 #include "level/leveltypes.h"
+#include "level/levelvars.h"
 
 FN_EXTERN(CameraBase_Create);
 FN_EXTERN(CameraBase_Delete);
@@ -82,15 +83,12 @@ extern uint16_t gLevelType;
 extern uint16_t gStaticType;
 extern uint16_t gDynamicType;
 extern uint16_t gIdleType;
-extern uint16_t gCameraBaseType;
 extern uint8_t gLevelDebugInfoEvent;
 extern uint8_t gLevelNameEvent;
 extern int gLevelActivateEvent;
 extern int gLevelDeactivateEvent;
 extern int gLevelUnusedNewTaskEvent;
 
-/* LevelQTaskID -> task reference */
-extern Task **gLevelTaskIds[];
 /* 251 buckets of task references, Amiga style lists */
 extern List gTaskNotes[LEVEL_NOTE_LISTS];
 extern char gLevelPaused;
@@ -171,7 +169,6 @@ void ParamGraphEnvelope_Format(float *v, ParamText *t);
 void ParamGraphEnvelope_Copy(uint32_t *v, uint32_t **dst);
 void ParamGraphEnvelope_Paste(uint32_t *v, uint32_t **src);
 void ParamGraphEnvelope_Size(void *v, int *size);
-
 
 /* parse, format, copy, paste, size, argument count; NULL is not set */
 static const struct {

@@ -6,6 +6,7 @@
 #include "math/x87.h"
 #include "boneobj/boneobj.h"
 #include "terrdraw/terrdrawtypes.h"
+#include "lod/lodvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));

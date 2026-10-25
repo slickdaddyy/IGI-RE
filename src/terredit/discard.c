@@ -2,6 +2,7 @@
 #include "hook.h"
 #include "terredit/terredit.h"
 #include "coll/colltypes.h"
+#include "lod/lodvars.h"
 
 FN_EXTERN(VehiclePart_Delete);
 
@@ -64,7 +65,6 @@ _Static_assert(offsetof(DiscardTerrain, scale) == 0x98, "DiscardTerrain.scale");
 
 extern uint16_t gDiscardTerrainType;
 extern void *gDiscardTerrainParams;
-extern int gQCubeSkipCells;
 
 static const float kRadius = 4096.0f;
 static const double kHalf = 0.5;

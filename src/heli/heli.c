@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "heli/heli.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(Heli_GetConfigSize);
 FN_EXTERN(Heli_GetSoundInfo);
@@ -736,6 +737,7 @@ REF_EXTERN(str_53BD14);
 REF_EXTERN(str_53BE10);
 REF_EXTERN(str_53BEB0);
 REF_EXTERN(str_53BEB8);
+DATA(533518) const float kQuarter INIT(0.25f);
 DATA(533574) float kHeliDamp INIT(0.95f);
 DATA(5335AC) float kTwentieth INIT(0.05f);
 ALIAS(kRecoilScale, kTwentieth, 0);

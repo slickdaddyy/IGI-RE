@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "statgun/statgun.h"
 #include "props/propstypes.h"
+#include "math/mathvars.h"
 
 /* Game event 4: a human takes the gun */
 typedef struct AttachMsg {
@@ -23,13 +24,8 @@ extern uint16_t gStatGunType;
 extern void *gStatGunParams;
 extern int gStatGunAmmoRange[];
 
-extern const float kZero;
-extern double kZeroD;
-extern const float kPi;
-extern const float kDegToRad;
 extern float kTurnStep;
 extern float kRecoilFade;
-extern double kTwoPiD;
 extern float kEyeUp;
 extern float kEyeBack;
 
@@ -522,7 +518,6 @@ HOOK(0x475370, StationaryGun_IsUsed);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(5335A8) float kRecoilFade INIT(0.9f);
 ALIAS(kNineTenths, kRecoilFade, 0);
-DATA(533728) double kTwoPiD INIT(6.283185307179589);
 DATA(53387C) float kTurnStep INIT(0.08726647f);
 ALIAS(kTrackDead, kTurnStep, 0);
 DATA(534134) float kEyeUp INIT(819.2f);

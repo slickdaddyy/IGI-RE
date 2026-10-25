@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "statgun/statgun.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(Missile_GetModelSize);
 
@@ -30,8 +31,6 @@ typedef struct ProxQuery {
 
 extern uint16_t gProxMineType;
 
-extern const float kZero;
-extern const double kOneD;
 extern float kRangeScale;
 extern float kTicksPerSecond;
 

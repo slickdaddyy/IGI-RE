@@ -9,6 +9,8 @@
 #include "magicobj/magicobj.h"
 #include "math/x87.h"
 #include "task/taskvars.h"
+#include "math/mathvars.h"
+#include "magicobj/magicobjvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
@@ -16,13 +18,6 @@ ORIG(0x4BD070, int, Qvm_GetArgLine, (void *lod, void *tri, float v, float u));
 ORIG(0x4D0950, float, VirModel_GetRadius, (void **model));
 ORIG(0x4D0CF0, void *, ModelLod_GetAttach, (void *lod, int i));
 ORIG(0x4D0D10, int, ModelLod_GetAttachCount, (void *lod));
-
-extern MagicObjDef gMagicObjDefs[];
-extern int gMagicObjDefCount;
-extern const float kZero;
-extern const float kOne;
-extern double kZeroD;
-extern const double kOneD;
 
 /* event 8 query, see Coll_LineOfSight */
 typedef struct RigidLineQuery {

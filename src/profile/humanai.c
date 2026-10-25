@@ -6,6 +6,7 @@
 #include "profile/profile.h"
 #include "humanai/humanaitypes.h"
 #include "task/taskvars.h"
+#include "math/mathvars.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
@@ -91,7 +92,6 @@ extern ParamRange gHumanAIRealRange;
 extern ParamTable *gHumanAIConfigItemParams;
 extern HumanAIConfig *gHumanAIConfig;
 extern float gFramesPerSecond;
-extern const float k4096;
 
 void HumanAIConfig_GetParams(void *task, ParamTable **out);
 void HumanAIConfigItem_Create(HumanAIConfigItem *item, HumanAIConfigNames *names);

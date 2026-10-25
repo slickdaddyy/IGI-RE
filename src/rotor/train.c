@@ -5,6 +5,7 @@
 #include "rotor/rotor.h"
 #include "missile/missiletypes.h"
 #include "task/taskvars.h"
+#include "missile/missilevars.h"
 
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
@@ -14,8 +15,6 @@ ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
 
 extern Vec3d gTrainRelPos;
-extern uint16_t gTrainType;
-extern void *gTrainParams;
 extern Matrix gTrainMatrix;
 
 void Train_GetFrame(Train *t, void **out)

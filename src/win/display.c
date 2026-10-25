@@ -8,6 +8,7 @@
 #include "core/coretypes.h"
 #include "d3d/d3dtypes.h"
 #include "file/filevars.h"
+#include "lod/lodvars.h"
 
 typedef void (*ErrorHandler)(const char *text);
 
@@ -54,7 +55,6 @@ extern char gDisplayModeSet;
 extern char gDisplayDevice[];
 extern DisplayMode gDisplayModes[];
 extern int gDisplayModeCount;
-extern int gDisplayFrame;
 extern DisplayMode gDisplayMode;
 extern DisplayCallback gDisplayCallbacks[];
 extern DisplayCallback *gDisplaySetModeCallbacks;

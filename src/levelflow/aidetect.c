@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "levelflow/levelflow.h"
 #include "levelflow/levelflowtypes.h"
+#include "math/mathvars.h"
 
 ORIG(0x4017C0, int, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
@@ -78,7 +79,6 @@ extern int gAIDetectUnused2;
 extern uint8_t gAIDetectEvent0;
 extern uint8_t gAIDetectEvent1;
 extern uint8_t gAIDetectEvent2;
-extern const float kZero;
 
 void AIDetector_RemoveSlot(AIDetectSlot *s)
 {

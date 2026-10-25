@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "statgun/statgun.h"
+#include "math/mathvars.h"
 
 extern uint16_t gDragunovType;
 extern char *gSniperSightY;
@@ -9,14 +10,9 @@ extern char *gSniperSight;
 extern char *gSniperSightX;
 
 /* exe constants, read in place */
-extern const float kZero;
-extern double kAngle45;
-extern double kAngle30;
 extern float kRecoilScale;
 extern float kDragunovZoomOut;
 extern float kDragunovZoomIn;
-extern const float kHalf;
-extern const float kDegToRad;
 
 ORIG(0x4169D0, char *, Game_AddSprite, (const char *name));
 ORIG(0x4659D0, void, HumanView_SetZoomed, (HumanView *v));

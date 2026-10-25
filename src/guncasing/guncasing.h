@@ -144,13 +144,7 @@ extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((TaskFn *)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 /* exe constants, read in place so the x87 code sees the same values */
-extern const float kZero;
-extern const float kOne;
 extern float kMeter;       /* 4096 */
-extern float kFps;         /* 30 */
-extern double kZeroD;
-extern const double kOneD;
-extern const float kDegToRad;
 extern float kDrag;        /* 0.985 */
 extern double kMinute;     /* 60 */
 extern double kFpsD;       /* 30 */

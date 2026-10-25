@@ -3,9 +3,7 @@
 #include "hook.h"
 #include "levelflow/levelflow.h"
 #include "mission/missiontypes.h"
-
-extern uint16_t gConditionalContainerType;
-extern void *gConditionalContainerParams;
+#include "mission/missionvars.h"
 
 void ConditionalContainer_Activate(ConditionalContainer *c)
 {

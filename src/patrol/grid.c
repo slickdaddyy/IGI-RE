@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "patrol/patrol.h"
 #include "humanai/humanaitypes.h"
+#include "humanai/humanaivars.h"
 
 typedef struct ViewObj {
     char unk0[0x50];
@@ -24,7 +25,6 @@ ORIG(0x4F9770, void, Graph_GetNodePos, (Vec3d *out, GraphNode *node));
 ORIG(0x4F98A0, void, Graph_GetNodeMatrix, (Matrix *out, GraphNode *node, int unk));
 ORIG(0x5096F0, void, AIGraph_FindNearest, (GraphNode **out, Graph *graph, const Vec3d *pos));
 
-extern const char *gAITypeNames[];
 extern const GridStamp gGridStamp[];
 extern List gGridsUsed;
 extern List gGridsFree;

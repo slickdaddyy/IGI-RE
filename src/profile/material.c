@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "material/material.h"
+#include "material/materialvars.h"
 
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
@@ -9,11 +10,6 @@ ORIG(0x407E30, void, GameMaterial_DefineQ, (void));
 ORIG(0x407F50, void, GameMaterial_Define, (void));
 
 #define MATERIAL_MAX 32
-
-extern GameMaterial gMaterials[];
-extern uint8_t gMaterialSizeEvent;
-extern uint8_t gMaterialParseEvent;
-extern uint8_t gMaterialImpactEvent;
 
 void Material_Init(void)
 {

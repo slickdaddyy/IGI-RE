@@ -36,14 +36,8 @@ extern Task *gTaskStack[];
 extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
-/* the frame counter lives at +0x68 */
-extern LevelFlow *gLevelFlow;
-
 /* exe constants, read in place so the x87 code sees the same values */
-extern const float kZero;
-extern const float kOne;
 extern float kFrame;     /* 1/30 */
-extern const float kDegToRad;
 
 /* Calls the slot handler of each child of t (not deeper), keeping the next
    child on gTaskStack so handlers may delete tasks. slot is evaluated after

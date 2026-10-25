@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "computer/computer.h"
 #include "levelflow/levelflowtypes.h"
+#include "levelflow/levelflowvars.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -91,7 +92,6 @@ extern uint8_t gObjectEvent1;
 extern uint8_t gObjectEvent2;
 extern const MarkerShape gMarkerShapes[];
 extern const float gMarkerColors[][3];
-extern LevelFlow *gLevelFlow;
 
 static const float kHalf = 0.5f;
 static const float kTen = 10.0f;

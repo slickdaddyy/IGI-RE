@@ -1,6 +1,7 @@
 #pragma GCC optimize("excess-precision=standard")
 
 #include "freecam/freecam.h"
+#include "math/mathvars.h"
 
 /* Sprite3D: a camera facing sprite at a world position. */
 

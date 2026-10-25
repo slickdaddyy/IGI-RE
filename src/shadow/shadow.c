@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "shadow/shadow.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(SubLevel_Run);
 FN_EXTERN(Task_Nothing);

@@ -4,6 +4,7 @@
 
 #include "glass/glass.h"
 #include "hook.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(ParamReal32x9_Size);
 

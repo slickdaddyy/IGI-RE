@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "guncasing/guncasing.h"
 #include "guncasing/guncasingvars.h"
+#include "math/mathvars.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x4015F0, void, Task_Delete, (void *task));

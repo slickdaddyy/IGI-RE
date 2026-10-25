@@ -11,6 +11,7 @@
 #include "core/coretypes.h"
 #include "bonemesh/bonemeshvars.h"
 #include "file/filevars.h"
+#include "lod/lodvars.h"
 
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x401810, int, TaskEvent_Alloc2, (uint16_t type));
@@ -68,8 +69,6 @@ extern int gDrawBoneMeshMethod;
 extern int gDrawSplineMeshMethod;
 extern int gDrawLightmapMeshMethod;
 extern int gExcludeObjectMethod;
-extern int gGenericUVFromRenderModeUVMethod;
-extern int gRenderModeUVFromGenericUVMethod;
 extern uint8_t gMesh3DEvent0;
 extern uint8_t gMesh3DEvent1;
 extern uint8_t gMesh3DEvent2;
@@ -77,30 +76,13 @@ extern uint8_t gMesh3DEvent3;
 extern uint8_t gMesh3DEvent4;
 extern int gMesh3DEvent5;
 extern float gMesh3DFade[][3];
-extern float gLayerFov[];
 
 /* LOD settings, see notes/lod.md */
 extern float gLodScale;
-extern float gLodBlend;
-extern float gLodRange;
-extern float gLodRigidDetail;
-extern float gLodBoneDetail;
-extern float gLodSplineDetail;
-extern float gLodRigidCull;
-extern float gLodBoneCull;
-extern float gLodSplineCull;
 
 /* Screen edges for the exclusion test, redone when the camera or scene changes */
 extern int gExclSelectCount;
 extern int gExclSceneVersion;
-extern float gExclLeft;
-extern float gExclRight;
-extern float gExclTop;
-extern float gExclBottom;
-extern float gExclLeftCos;
-extern float gExclRightCos;
-extern float gExclTopCos;
-extern float gExclBottomCos;
 
 static const float kOne = 1.0f;
 static const float kBoneSphere = 0x1.68f5c2p+0f; /* 1.41 */

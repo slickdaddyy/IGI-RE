@@ -17,6 +17,8 @@
 #include "bonemesh/bonemeshvars.h"
 #include "glowmesh/glowmeshvars.h"
 #include "editcam/editcamvars.h"
+#include "magicobj/magicobjvars.h"
+#include "lod/lodvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4C5810, void, Coll_ResetMods, (void));
@@ -29,22 +31,10 @@ typedef struct WStack {
 typedef void (*WHandler)(DynCubeObj *task, void *arg);
 
 extern struct Terrain *gCurrentWorld;
-extern int gDisplayFrame;
-extern QEntry *gQCubeOut;
-extern int gQCubeCount;
-extern QCacheEntry gQCubeCache[];
-extern int gQCubeOrigin[];
-extern uint8_t gQCubeChildOrder[][8];
 extern signed char gWalkTreeIndex[];
 extern DynCubeNode gWalkSavedRoots[];
 extern DynCubeNode gWalkFakeRoots[];
-extern int gQCubeSkipCells;
 extern int gWalkOverflow;
-extern TerrainCell gTerrainCells[];
-extern int gTerrainCellCount;
-extern int gTerrainMeshCount;
-extern int gVisibleLightMapCount;
-extern int gVisibleLightMaps[];
 extern int gCollBumpTop;
 
 F32(kSlope, 0x3fddb574);     /* 1.7321 */

@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "ui/ui.h"
+#include "menu/menuvars.h"
 
 ORIG(0x4B4A00, void, Draw_RectA, (float x, float y, float w, float h, float r, float g, float b, float a, int flags,
                                   int unk));
@@ -43,7 +44,6 @@ _Static_assert(sizeof(ScrollListBox) == 0x13FC, "ScrollListBox");
 extern uint16_t gScrollListBoxType;
 extern void *gScrollListBoxParams;
 extern ScrollListBox *gScrollListBoxFilling;
-extern const Color gMenuColors[];
 
 void ScrollListBox_Create(ScrollListBox *lb, void *arg);
 void ScrollListBox_Clear(ScrollListBox *lb);

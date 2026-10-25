@@ -6,6 +6,7 @@
 #include "props/props.h"
 #include "elevator/elevatortypes.h"
 #include "elevator/elevatorvars.h"
+#include "math/mathvars.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
@@ -35,8 +36,6 @@ ORIG(0x502200, void, SplineObj_GetWaypointPos, (Vec3d *out, int id, int floor));
 
 extern Vec3d gElevatorMove;
 extern Matrix gElevatorTurn;
-
-extern const float kTenth;
 
 /* puts the elevator at its distance along the graph */
 void Elevator_UpdatePlace(Elevator *e)

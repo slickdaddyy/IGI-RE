@@ -9,6 +9,8 @@
 #include "config/configtypes.h"
 #include "task/taskvars.h"
 #include "camera/cameravars.h"
+#include "lod/lodvars.h"
+#include "mission/missionvars.h"
 
 FN_EXTERN(HumanCamera_DeleteHandler);
 
@@ -45,9 +47,6 @@ ORIG(0x4D3710, void, Task_Nothing, (void *task));
 ORIG(0x4D9870, void, Camera_Set, (void *cam, const Vec3d *pos, const Matrix *axes, float fov, float aspect,
                                   float range, int frame, void *owner, float unk9, int unk10));
 ORIG(0x4E75A0, int, Screen_GetFrame, (void));
-
-extern HumanCameraEntry gHumanCameraList[];
-extern float gLayerFov[];
 
 #define HUMAN_LIST_SIZE 128
 #define HumanCamera_DeleteHandler (FN(0x484CE0, HumanCamera_DeleteHandler))

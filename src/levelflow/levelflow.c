@@ -4,6 +4,8 @@
 #include "levelflow/levelflow.h"
 #include "levelflow/levelflowtypes.h"
 #include "config/configvars.h"
+#include "levelflow/levelflowvars.h"
+#include "math/mathvars.h"
 
 ORIG(0x402870, int, Flow_GetFps, (void));
 ORIG(0x406220, int *, Profile_GetActive, (void));
@@ -19,14 +21,12 @@ ORIG(0x4CEBA0, void *, VirModel_Add, (const char *name));
 ORIG(0x4F1160, char, Level_IsRunning, (void));
 ORIG(0x4F1CB0, void *, Param_Range0100, (void));
 
-extern LevelFlow *gLevelFlow;
 extern uint16_t gLevelFlowType;
 extern ParamTable *gLevelFlowParams;
 extern void *gLevelFlowModel;
 extern char gKeyPressed[];
 extern uint8_t gKeys[];
 extern float kSecondsPerHour;
-extern float kMinusFps;
 
 void LevelFlow_Create(LevelFlow *lf);
 void LevelFlow_Run(LevelFlow *lf);

@@ -5,6 +5,7 @@
 #include "glass/glass.h"
 #include "hook.h"
 #include "task/taskvars.h"
+#include "levelflow/levelflowvars.h"
 
 FN_EXTERN(EditorMagicObj_GetArgSize);
 FN_EXTERN(Terminal_CheckUse);

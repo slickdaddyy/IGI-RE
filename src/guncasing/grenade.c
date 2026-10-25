@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "guncasing/guncasing.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(HitZone_GetArgSize);
 FN_EXTERN(Task_FalseHandler);

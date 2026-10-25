@@ -14,6 +14,8 @@
 #include "task/taskvars.h"
 #include "bonemesh/bonemeshvars.h"
 #include "file/filevars.h"
+#include "math/mathvars.h"
+#include "lod/lodvars.h"
 
 FN_EXTERN(SectorInteriorObject_WorldAdd);
 FN_EXTERN(SectorInteriorObject_WorldRemove);
@@ -124,9 +126,6 @@ _Static_assert(sizeof(LocateArg) == 0x30, "LocateArg");
 _Static_assert(sizeof(LineQuery) == 0x24, "LineQuery");
 _Static_assert(sizeof(LineHit) == 0x70, "LineHit");
 
-extern int gQCubeInside;
-extern struct DynCubeObj *gQCubeEnclosing;
-extern struct Sector *gViewSector;
 extern int gSectorFogCount;
 extern Pool gSectorLinks;
 extern int *gSectorFog;
@@ -136,7 +135,6 @@ extern int gPortalClipDepth;
 extern SectorObject *gCurrentSectorObj;
 extern int gVisFrame;
 extern int *gSectorLights;
-extern int gQCubeDrawOutside;
 extern uint16_t gSectorType;
 extern uint16_t gSectorObjectType;
 extern uint16_t gSectorInteriorObjectType;
@@ -144,8 +142,6 @@ extern float gQCubeOutsideMin[];
 extern float gQCubeOutsideMax[];
 extern Scene gScene;
 
-extern const double kOneD;
-extern const float kHalf;
 extern const float kRaise;       /* 409.6 */
 extern const float kNearZ;       /* 0.04096 */
 extern const float kPortalDist2;

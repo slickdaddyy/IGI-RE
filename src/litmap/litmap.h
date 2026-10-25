@@ -13,14 +13,6 @@ extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 extern struct Terrain *gCurrentWorld;
 
-/* exe constants, read in place so the x87 code sees the same values */
-extern const float kZero;
-extern const float kOne;
-extern const float kHalf;
-extern const float kTwo;
-extern const float kPi;
-extern double kZeroD;
-
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));

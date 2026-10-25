@@ -8,6 +8,7 @@
 #include "flatwater/flatwater.h"
 #include "flatwater/flatwatertypes.h"
 #include "flatwater/flatwatervars.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(MoveRigidObj_Changed);
 
@@ -30,9 +31,6 @@ extern char gMoveAlphaNames[][16];
 extern char gMoveGammaNames[][16];
 extern char gMovePosNames[][16];
 
-extern const float kOne;
-extern double kZero64;
-extern double kOne64;
 extern double kTwo64;
 
 #define MOVERIGID_PARAMS_CHANGED (FN(0x51FD60, MoveRigidObj_Changed))

@@ -9,6 +9,7 @@
 #include "terredit/terredittypes.h"
 #include "transctx/transctxtypes.h"
 #include "bonemesh/bonemeshvars.h"
+#include "math/mathvars.h"
 
 /* the WaterMesh primitive in the render queue */
 typedef struct WaterDrawNode {
@@ -38,21 +39,14 @@ extern uint32_t gWaterSplits[];
 extern int gWaterUnusedNodeCount;
 extern int gWaterUnusedInt;
 
-extern const float kZero;
-extern const float kOne;
-extern const double kOneD;
-extern const float kHalf;
 extern float kOneHalf;
-extern const float kTenth;
 extern float kTwoPiF;
 extern double kWaterTwoPi;
 extern float kPeriodScale;
 extern double kGridMin;
 extern double kGridScale;
-extern double kZeroD;
 extern double kMinusTwoD;
 extern double kFinestSize;
-extern const double kHalfD;
 
 /* x87 "not equal" (C3 clear): false for NaN */
 static inline int fne(long double a)

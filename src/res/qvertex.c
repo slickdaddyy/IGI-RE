@@ -5,15 +5,14 @@
 #include "core/coretypes.h"
 #include "dxinit/dxinitvars.h"
 #include "file/filevars.h"
+#include "math/mathvars.h"
 
 ORIG(0x4B0E70, int, RenderMode_CreateMethod, (const char *name));
 ORIG(0x4B0EB0, void, RenderMode_DeleteMethod, (int id));
 ORIG(0x509930, void, QVertex_InitDriver, (void));
 ORIG(0x509960, void, QVertex_ShutdownDriver, (void));
 
-extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern struct Palette *gQVertexPalette;
 extern const float gColorScale;
 
 static void QVertex_Set(QVertex *v, float x, float y, float z, float u, float w, float a, float r, float g, float b)

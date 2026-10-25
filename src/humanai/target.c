@@ -1,5 +1,6 @@
 #include "hook.h"
 #include "humanai/humanai.h"
+#include "humanai/humanaivars.h"
 
 /* adds the AI to the entry for this target, or takes a free entry */
 AITarget *AITarget_Add(HumanAI *ai, Task *target)

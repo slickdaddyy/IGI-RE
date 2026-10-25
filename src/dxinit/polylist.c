@@ -11,6 +11,7 @@
 #include "camfeed/camfeedvars.h"
 #include "dxinit/dxinitvars.h"
 #include "file/filevars.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -100,10 +101,6 @@ extern float gLightColor[];
 extern float gFogColor[];
 extern uint32_t gFogEnable;
 
-extern const float kZero;
-extern const float kOne;
-extern const float kHalfF;
-extern const float k255;
 extern const float kMinus255;
 extern const float kNearScale;
 

@@ -4,14 +4,11 @@
 #include "dxinit/dxinit.h"
 #include "sound/soundtypes.h"
 #include "magicobj/magicobjtypes.h"
+#include "math/mathvars.h"
 
 extern float gSplineVerts[];
 extern void *gSplineCache[];
 extern int gSplineCacheData[];
-
-extern const float kZero;
-extern const float kOne;
-extern const float kHalfF;
 
 /* exponent and top three mantissa bits of a float >= 1 (8 * log2 x, roughly), else 0 */
 unsigned Float_Log2(int bits)

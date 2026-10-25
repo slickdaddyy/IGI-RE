@@ -5,6 +5,7 @@
 #include "material/material.h"
 #include "task/taskvars.h"
 #include "config/configvars.h"
+#include "material/materialvars.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -37,11 +38,7 @@ typedef struct MaterialImpact {
     int unk14;
 } MaterialImpact;
 
-extern uint8_t gMaterialSizeEvent;
-extern uint8_t gMaterialParseEvent;
-extern uint8_t gMaterialImpactEvent;
 extern int gMaterialActive;
-extern GameMaterial gMaterials[];
 
 static ScriptValue *Material_Return(ScriptValue *out)
 {

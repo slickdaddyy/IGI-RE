@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "props/props.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(Human_ClearResult);
 
@@ -70,9 +71,7 @@ extern uint16_t gWireType;
 extern void *gWireParams;
 extern struct Terrain *gCurrentWorld;
 
-
 extern double kWireScale; /* 1/4096 */
-extern const double kHalfD;
 extern float kWireSlope;  /* 2 degrees */
 
 void Wire_Create(Wire *w);

@@ -5,6 +5,8 @@
 #include "hook.h"
 #include "math/x87.h"
 #include "shadow/shadow.h"
+#include "math/mathvars.h"
+#include "magicobj/magicobjvars.h"
 
 ORIG(0x4015F0, void, Task_Delete, (Task *task));
 ORIG(0x4012A0, Task *, Task_New, (Task *parent, uint16_t type, void *arg));
@@ -514,9 +516,6 @@ typedef struct ModelAttach {
     float pos[3];       /* 0x10 */
     float m[9];         /* 0x1C */
 } ModelAttach;
-
-extern int gMagicObjDefCount;
-extern MagicObjDef gMagicObjDefs[];
 
 static inline int is_zero3(float a, float b, float c)
 {

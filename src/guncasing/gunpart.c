@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "guncasing/guncasing.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(GunCABarrel_Follow);
 FN_EXTERN(Human_ClearResult);

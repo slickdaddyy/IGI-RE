@@ -5,6 +5,7 @@
 #include "glass/glasstypes.h"
 #include "aiaction/aiactionvars.h"
 #include "glass/glassvars.h"
+#include "math/mathvars.h"
 
 ORIG(0x4012A0, void *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
@@ -253,16 +254,12 @@ void GlassShatter_PlaySound(Vec3d *pos)
 HOOK(0x44A630, GlassShatter_PlaySound);
 
 extern float kThird;
-extern const float kHalf;
-extern float kThirty;
-extern const float kTenth;
 extern float kSpeed;     /* 4096 */
 extern float kHalfSpeed; /* 2048 */
 extern float kPerFrame;  /* 1/30 */
 extern float kShatterNear;      /* 1/5120 */
 extern float kSizeScale; /* 4505.6 */
 extern float kSizeMin;   /* 409.6 */
-extern const double kOneD;
 
 static long double sq3(long double x, long double y, long double z)
 {

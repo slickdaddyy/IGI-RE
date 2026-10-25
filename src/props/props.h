@@ -28,10 +28,6 @@ extern int gTaskStackTop;
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
-/* exe constants, read in place */
-extern const float kZero;
-extern double kZeroD;
-
 /* copies 4 bytes without going through the FPU, like the original */
 #define MOV32(dst, src) memcpy(&(dst), &(src), 4)
 

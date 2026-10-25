@@ -9,6 +9,8 @@
 #include "core/coretypes.h"
 #include "config/configvars.h"
 #include "file/filevars.h"
+#include "levelflow/levelflowvars.h"
+#include "math/mathvars.h"
 
 ORIG(0x416D50, char, Game_IsPaused, (void));
 ORIG(0x418E40, void *, MenuManager_FindFont, (void *mm, const char *name));
@@ -35,14 +37,12 @@ extern RangeF gStatusDurationRange;
 extern uint16_t gStatusMessageScreenType;
 extern void *gMessagesRes;
 
-extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern struct Palette *gQVertexPalette;
 
-static const double kZeroD = 0.0;
+static const double kZeroDLocal = 0.0;
 static const double kLineStep = 42.0;
-static const float kZero = 0.0f;
-static const float kHalf = 0.5f;
+static const float kZeroLocal = 0.0f;
+static const float kHalfLocal = 0.5f;
 static const float kTicksPerSecond = 30.0f;
 static const float kWidthStep = 0x1.24924ap-3f; /* 1/7 */
 static const float kWrapWidth = 229.0f;
@@ -128,7 +128,7 @@ void StatusMessage_Run(StatusMessage *m)
     }
     if (!VarString_HasExpr(&m->cond) && !m->shown)
         return;
-    if (!m->shown && x87_eq(VarString_EvalReal(&m->cond, m), kZeroD))
+    if (!m->shown && x87_eq(VarString_EvalReal(&m->cond, m), kZeroDLocal))
         return;
     StatusMessageScreen_AddMessage(StatusScreen_Get()->messages, m);
     m->isSent = 1;
@@ -312,7 +312,7 @@ void StatusMessageScreen_UpdateLine(StatusMessageScreen *s, int i)
     if (!m->plain) {
         if (l->ticks < 9) {
             if (l->ticks < 2)
-                l->height += kHalf;
+                l->height += kHalfLocal;
             else
                 l->width += kWidthStep;
         } else if (*l->cursor) {
@@ -507,15 +507,15 @@ void StatusMessageScreen_DrawBox(StatusMessageScreen *s, int i, float x, float y
     Display_GetMode();
     l = &s->lines[i];
     fade = (9 - l->ticks) / 9;
-    if (!(fade > kZero))
-        fade = kZero;
+    if (!(fade > kZeroLocal))
+        fade = kZeroLocal;
     alpha = fade * kFadeScale + kFadeBase;
     if (l->portrait)
         size = Sprite_Height(l->portrait);
     else
         size = kBoxHeight;
     xa = x + kBoxX;
-    half = size * kHalf;
+    half = size * kHalfLocal;
     gQVertexTexture = NULL;
     gQVertexPalette = NULL;
     yc = half + y;

@@ -12,6 +12,7 @@
 #include "config/configvars.h"
 #include "file/filevars.h"
 #include "glowmesh/glowmeshvars.h"
+#include "math/mathvars.h"
 
 /* "FlatWater": a flat water plane at a fixed height, drawn with the
    "FlatWaterLayer" textures under it. */
@@ -54,13 +55,9 @@ extern void *gFlatWaterLayerParams;
 extern const float kRange01[];
 extern const float kRange11[];
 
-extern const float k4096;
-extern float kNear; /* 409.6 */
-extern const float kHalf;
 extern float kFlatTenth;
 extern float kFltMax;
 extern float kFltMaxNeg;
-extern const float kFogBias; /* 130 */
 extern float k2000;
 extern double k256th;
 extern double k2Pow30;

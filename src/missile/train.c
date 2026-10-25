@@ -7,6 +7,8 @@
 #include "hook.h"
 #include "igi.h"
 #include "missile/missile.h"
+#include "math/mathvars.h"
+#include "missile/missilevars.h"
 
 FN_EXTERN(ParamQuat32_Size);
 FN_EXTERN(Train_GetFrame);
@@ -73,14 +75,11 @@ ORIG(0x4FB700, void, PhysicsObj_SetPhysType, (void *obj, PhysType *phys));
 ORIG(0x4FEC10, void, SplineObj_GetPoints, (int path, int unk, Vec3d *out, char *found, float dist, int count,
                                        float *offsets, int unk2));
 
-extern uint16_t gTrainType;
-extern void *gTrainParams;
 extern float gTrainOffsetRange[];
 extern char gTrainChannels[];
 
 /* handlers of the Train type that live outside this file */
 
-extern float kKmhToFrame;
 extern float kSoundMin; /* 0.8 */
 extern float kSoundScale; /* 5 */
 

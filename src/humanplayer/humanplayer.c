@@ -12,6 +12,10 @@
 #include "game/gametypes.h"
 #include "task/taskvars.h"
 #include "config/configvars.h"
+#include "material/materialvars.h"
+#include "humanplayer/humanplayervars.h"
+#include "humanstate/humanstatevars.h"
+#include "math/mathvars.h"
 
 FN_EXTERN(HumanPlayer_BlastHandler);
 FN_EXTERN(HumanPlayer_FenceHandler);
@@ -173,7 +177,6 @@ ORIG(0x487190, uint8_t, StatusScreen_GetEvent, (void));
 
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 
-extern uint16_t gHumanPlayerType;
 extern StateFn gBodyStates[];
 extern StateFn gWeaponStates[];
 extern char gBodyCombos[];
@@ -185,28 +188,18 @@ extern int gWeaponCycle[];
 extern char gShowPosition;
 extern int gAmmoLimitCount;
 extern AmmoLimit gAmmoLimits[];
-extern void *gHumanPlayerParams;
-extern WeaponCategory gWeaponCategories[];
-extern float gMoveScale;
-extern float gJumpSpeed;
-extern float gJumpUp;
-extern float gHumanAirSpeed;
 extern float gLeanSide;
 extern float gLeanUp;
 extern int gLeanFrames;
 extern float gMaxDamage;
 extern float gFenceDamage;
-extern QTaskList *gHumanPlayerList;
 extern char gUnlimitedAmmo;
 
 extern float kKmhToUnits;
-extern float kPerFrameHour;
 extern double kFlySpeedD;
-extern const float kTwoPi;
 extern float kRadToDeg;
 extern double kUnitsToMeters;
 extern float kUnitsToMetersF;
-extern float kFps;
 
 #define BLEND 0x1.99999ap-3f
 #define WEAPON_DOWN_X -0x1.38c354p-1f
@@ -1588,6 +1581,6 @@ BSS(56E1F8) float gLeanSide;
 BSS(56E1F8) float gLeanUp;
 BSS(56E1F8) int gLeanFrames;
 BSS(56E1F8) float gMaxDamage;
-BSS(56E210) QTaskList *gHumanPlayerList;
+BSS(56E210) struct QTaskList *gHumanPlayerList;
 BSS(56E210) char gUnlimitedAmmo;
 PAD(igb, 56E210, 56E215, 0x3);

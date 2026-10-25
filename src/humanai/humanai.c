@@ -4,6 +4,7 @@
 #include "humanai/humanai.h"
 #include "task/taskvars.h"
 #include "aiaction/aiactionvars.h"
+#include "humanai/humanaivars.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (int unk));
@@ -52,10 +53,7 @@ ORIG(0x48A340, float *, Human_GetBonePos, (float *out, Human *h, int unk));
 ORIG(0x4B47C0, int, Random_Int, (void *r, int n));
 ORIG(0x4B32B0, long double, Vec3d_Distance, (const Vec3d *a, const Vec3d *b));
 
-extern uint16_t gHumanAIType;
-extern const char *gAITypeNames[];
 extern const char *gAIEventNames[];
-extern void *gAIScripts[];
 
 /* what the AI hands its human each frame */
 typedef struct AIControlMsg {

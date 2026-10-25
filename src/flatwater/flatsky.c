@@ -6,6 +6,7 @@
 #include "flatwater/flatwater.h"
 #include "bonemesh/bonemeshvars.h"
 #include "file/filevars.h"
+#include "math/mathvars.h"
 
 /* "FlatSky": a sky dome with a gradient of five colors and a clear color,
    plus "FlatSkyLayer" cloud textures. */
@@ -47,13 +48,8 @@ extern void *gFlatSkyParams;
 extern const float kSkyRange01[];
 extern const float kSkyRange11[];
 extern const float kRange90[];
-extern const float k255;
-extern const float kPi;
 extern float k180th;
 
-extern const float kHalf;
-extern const float k4096;
-extern float kNear; /* 409.6 */
 extern float kAlmostOne;
 extern float kStripStep; /* 1/12 and a bit */
 extern float kStripGrow; /* 1.001 */

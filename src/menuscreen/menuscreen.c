@@ -3,6 +3,8 @@
 #include "menuscreen/menuscreen.h"
 #include "menuscreen/menuscreentypes.h"
 #include "file/filevars.h"
+#include "math/mathvars.h"
+#include "menuscreen/menuscreenvars.h"
 
 FN_EXTERN(MenuScreen_Activate);
 FN_EXTERN(MenuScreen_Apply);
@@ -29,8 +31,6 @@ ORIG(0x4B6E80, int, Text_Height, (Text *t));
 #define MenuScreen_Layout (FN(0x422260, MenuScreen_Open))
 #define MenuScreen_Forward918 (FN(0x422300, MenuScreen_Apply))
 
-extern uint16_t gMenuScreenType;
-extern void *gMenuScreenParams;
 extern int gLogoOffset;
 
 void MenuScreen_DrawHandler(MenuScreen *ms);

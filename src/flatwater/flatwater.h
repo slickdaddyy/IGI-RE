@@ -107,12 +107,7 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 /* the current view: rotation rows, screen rectangle and projection scale */
 extern Scene gScene;
 
-extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-
-extern const float kZero;
-extern const float kOne;
-extern double kOne64;
 
 ORIG(0x498000, void, TransContext_ProjectView, (float *out, const float *in));
 
