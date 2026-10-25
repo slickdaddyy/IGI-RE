@@ -5,6 +5,7 @@
 #include "orig.h"
 #include "file/file.h"
 #include "types.h"
+#include "core/corevars.h"
 
 _Static_assert(sizeof(Device) == 0x8C, "Device size");
 _Static_assert(sizeof(LoadedFile) == 0x1C, "LoadedFile size");
@@ -20,8 +21,6 @@ extern Device gDevices[];
 extern char gOpenPath[];
 extern char gDeletePath[];
 extern File gNullFile[];
-extern char gExpandedPath[];
-extern List gLoadedFiles;
 extern const char *gModeNames[];
 extern const int gModeValues[];
 

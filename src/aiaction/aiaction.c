@@ -5,6 +5,8 @@
 #include "aiaction/aiaction.h"
 #include "hook.h"
 #include "humanai/humanaitypes.h"
+#include "config/configvars.h"
+#include "aiaction/aiactionvars.h"
 
 FN_EXTERN(AIActivate_Start);
 FN_EXTERN(AICombatAnya_Start);
@@ -154,7 +156,6 @@ extern List gClaimsFree;
 extern List gClaimsUsed;
 extern List gGridsFree;
 extern List gGridsUsed;
-extern List gAIMoveFree;
 extern List gAITargets;
 extern int gHumanAIUnusedInts[8];
 
@@ -162,10 +163,7 @@ extern uint16_t gHumanAIType;
 extern const char *gAIScriptNames[];
 extern const int gAIScriptOfType[];
 extern const char *gAITypeNames[];
-extern void *gHumanAIParams;
 extern void *gAIScripts[];
-extern HumanAI *gAICurrent;
-extern List *gAIEventList;
 
 static const double kFps = 30.0;
 static const double kViewScale = 4096.0;
@@ -1114,9 +1112,8 @@ BSS(57C758) MonitorGraph gMonitorGraphs[AI_MONITOR_GRAPHS];
 BSS(57C758) MonitorTarget gMonitorTargets[AI_MONITOR_TARGETS];
 BSS(57D778) Claim gClaims[AI_CLAIMS];
 BSS(57E1C8) MoveItem gAIMoveItems[AI_MOVE_ITEMS];
-BSS(57E1C8) List gAIMoveFree;
-BSS(57E1C8) void *gHumanAIParams;
+BSS(58A9D4) void *gHumanAIParams;
 BSS(58AA28) NodeGrid gNodeGrids[AI_GRIDS];
 BSS(5BDA38) int gHumanAIUnusedInts[8];
-BSS(5BDA38) HumanAI *gAICurrent;
+BSS(5BDA38) struct HumanAI *gAICurrent;
 BSS(5BDA60) List *gAIEventList;

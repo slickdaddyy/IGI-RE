@@ -6,6 +6,7 @@
 #include "core/mem.h"
 #include "script/script.h"
 #include "script/symbol.h"
+#include "config/configvars.h"
 
 FN_EXTERN(BreakScript);
 FN_EXTERN(Script_SetWarningLevelCmd);

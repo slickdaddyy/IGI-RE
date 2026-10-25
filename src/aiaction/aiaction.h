@@ -13,7 +13,6 @@ typedef void (*TaskFn)(void *task, void *arg);
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern const char gEmptyString[];
 
 /* exe constants, read in place */
 

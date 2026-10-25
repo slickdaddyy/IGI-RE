@@ -11,6 +11,8 @@
 #include "terrain/terraintypes.h"
 #include "coll/colltypes.h"
 #include "glowmesh/glowmeshtypes.h"
+#include "bonemesh/bonemeshvars.h"
+#include "camfeed/camfeedvars.h"
 
 FN_EXTERN(crt_CIfmod);
 

@@ -13,6 +13,8 @@
 #include "coll/colltypes.h"
 #include "glowmesh/glowmeshtypes.h"
 #include "task/taskvars.h"
+#include "coll/collvars.h"
+#include "bonemesh/bonemeshvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4C5810, void, Coll_ResetMods, (void));
@@ -35,7 +37,6 @@ extern Pool gQCubePool2;
 extern int gQCubeMinSize;
 extern int gQCubeOrigin[];
 extern uint8_t gQCubeChildOrder[][8];
-extern const int gCollChildTable[];
 extern signed char gWalkTreeIndex[];
 extern DynCubeNode gWalkSavedRoots[];
 extern DynCubeNode gWalkFakeRoots[];

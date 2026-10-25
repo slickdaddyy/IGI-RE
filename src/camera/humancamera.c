@@ -8,6 +8,7 @@
 #include "camera/cameratypes.h"
 #include "config/configtypes.h"
 #include "task/taskvars.h"
+#include "camera/cameravars.h"
 
 FN_EXTERN(HumanCamera_DeleteHandler);
 
@@ -45,12 +46,8 @@ ORIG(0x4D9870, void, Camera_Set, (void *cam, const Vec3d *pos, const Matrix *axe
                                   float range, int frame, void *owner, float unk9, int unk10));
 ORIG(0x4E75A0, int, Screen_GetFrame, (void));
 
-extern uint16_t gHumanCameraType;
-extern uint8_t gHumanCameraEvent;
 extern HumanCameraEntry gHumanCameraList[];
 extern float gLayerFov[];
-extern float gMouseDX;
-extern float gMouseDY;
 
 #define HUMAN_LIST_SIZE 128
 #define HumanCamera_DeleteHandler (FN(0x484CE0, HumanCamera_DeleteHandler))

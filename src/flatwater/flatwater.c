@@ -8,6 +8,8 @@
 #include "flatwater/flatwater.h"
 #include "transctx/transctxtypes.h"
 #include "terrain/terraintypes.h"
+#include "bonemesh/bonemeshvars.h"
+#include "config/configvars.h"
 
 /* "FlatWater": a flat water plane at a fixed height, drawn with the
    "FlatWaterLayer" textures under it. */
@@ -50,7 +52,6 @@ extern void *gFlatWaterLayerParams;
 extern const float kRange01[];
 extern const float kRange11[];
 
-extern TransContext gTransContext;
 extern float gTerrainFogScale;
 extern const float k4096;
 extern float kNear; /* 409.6 */

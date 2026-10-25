@@ -6,6 +6,8 @@
 
 #include "hook.h"
 #include "transctx/transctx.h"
+#include "bonemesh/bonemeshvars.h"
+#include "camfeed/camfeedvars.h"
 
 ORIG(0x491CF0, int *, Display_GetMode, (void));
 ORIG(0x491D40, long double, Display_GetAspect, (void));
@@ -27,20 +29,17 @@ extern int gSetActiveTransContextMethod;
 extern int gSetNearClippingPlaneMethod;
 extern int gTransContextValid;
 extern int gTransContextSelects;
-extern TransContext gTransContext;
 extern float gWorldScale;
 extern float gLayer0MinZ;
 extern float gLayer0MaxZ;
 extern float gLayer1MaxZ;
 extern float gLayer2MaxZ;
-extern struct IDirect3DDevice7 *gD3DDevice;
 extern float gD3DMinZ;
 extern int gD3DZ24;
 extern float gLayer2Far;
 extern float gLayer2Near;
 extern float gLayer1MinZ;
 extern float gLayer0Far;
-extern float gNearPlane;
 extern float gD3DMaxZ;
 extern float gLayer0Near;
 extern float gLayer2MinZ;

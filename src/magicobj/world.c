@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "magicobj/magicobj.h"
 #include "task/taskvars.h"
+#include "coll/collvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -47,7 +48,6 @@ extern Lightmap gLightmaps[];
 #define gLightmapCount 0x800
 extern char gHmpResident[];
 extern char gBitResident[];
-extern int gCollWalkTasks;
 extern int gCollBumpDepth;
 extern int gVisibleLightMapCount;
 extern int gCollHoleCount;

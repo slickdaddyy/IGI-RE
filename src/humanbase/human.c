@@ -11,6 +11,7 @@
 #include "humanbase/humanbase.h"
 #include "transctx/transctxtypes.h"
 #include "task/taskvars.h"
+#include "bonemesh/bonemeshvars.h"
 
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
@@ -136,7 +137,6 @@ ORIG(0x462BA0, void, Human_AvoidHumans, (Human *h, double *pos, double *to, floa
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern TransContext gTransContext;
 extern uint8_t gHumanEvent0;
 extern uint8_t gHumanEvent1;
 extern uint8_t gHumanGunshotEvent;

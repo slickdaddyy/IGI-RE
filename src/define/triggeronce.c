@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "define/define.h"
 #include "task/taskvars.h"
+#include "config/configvars.h"
 
 extern uint16_t gSoundDefTriggerOnceType;
 extern uint16_t gSoundDefTriggerOnceType2;

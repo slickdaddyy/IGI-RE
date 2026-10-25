@@ -18,7 +18,6 @@ extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((TaskHandler *)gTaskHandlers)[(slot) * 0x180 + (type)])
 extern struct Terrain *gCurrentWorld;
 extern uint16_t gDynCubeObjType;
-extern TransContext gTransContext;
 
 /* exe constants, read in place so the x87 code sees the same values */
 extern const float kZero;

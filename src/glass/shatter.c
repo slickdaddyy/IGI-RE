@@ -3,6 +3,7 @@
 #include "glass/glass.h"
 #include "hook.h"
 #include "glass/glasstypes.h"
+#include "aiaction/aiactionvars.h"
 
 ORIG(0x4012A0, void *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
@@ -35,7 +36,6 @@ extern Vec3f gShatterHitA;
 extern GlassShatter *gShatterTask;
 extern Vec3f gShatterNormal;
 extern ShardPoly *gShatterPolys;
-extern Vec3f gShatterHit;
 extern Shard *gShatterShards;
 extern Matrix gShardSpin[];
 

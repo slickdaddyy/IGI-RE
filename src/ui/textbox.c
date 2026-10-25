@@ -2,6 +2,7 @@
 #include "igi.h"
 #include "ui/ui.h"
 #include "ui/uitypes.h"
+#include "config/configvars.h"
 
 extern uint16_t gTextBoxType;
 extern void *gTextBoxParams;

@@ -3,6 +3,7 @@
 #include "ui/ui.h"
 #include "qvertex/qvertextypes.h"
 #include "core/coretypes.h"
+#include "config/configvars.h"
 
 ORIG(0x4B8030, void, Script_RegisterString, (const char *name, char *buf, int size));
 

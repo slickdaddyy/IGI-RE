@@ -4,6 +4,7 @@
 
 #include "hook.h"
 #include "mission/mission.h"
+#include "config/configvars.h"
 
 ORIG(0x46B4D0, char *, ComputerRes_Get, (void));
 ORIG(0x46C060, Task *, Computer_Get, (void));

@@ -6,6 +6,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "coll/coll.h"
+#include "coll/collvars.h"
 
 static const double kOneOver24 = 1.0 / 24.0;
 static const float kTenth = 0.1f;
@@ -38,10 +39,8 @@ ORIG(0x4B32F0, long double, Vec3d_DistanceSq, (const Vec3d *a, const Vec3d *b));
 
 typedef void (*TaskHandler)(CollTask *task, int arg);
 
-extern const int gCollChildTable[];
 extern TaskHandler gTaskEnterHandlers[];
 extern TaskHandler gTaskLeaveHandlers[];
-extern int gCollWalkTasks;
 extern int gCollHoleList[];
 extern int gCollHoleCount;
 extern int gCollSavedHoleCount;

@@ -9,6 +9,7 @@
 #include "orig.h"
 #include "physobj/physobj.h"
 #include "sysmisc/sysmisctypes.h"
+#include "config/configvars.h"
 
 ORIG(0x401D80, void, Task_Broadcast, (void *task, uint8_t slot, void *arg));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));

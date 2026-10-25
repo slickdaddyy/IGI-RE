@@ -19,7 +19,6 @@ typedef void (*TaskFn2)(void *task, void *arg);
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern struct Terrain *gCurrentWorld;
-extern const char gEmptyString[];
 
 #define TASK_HANDLER(slot, type) (gTaskHandlers[slot][type])
 #define SUBLEVEL_RUN (FN(0x488700, SubLevel_Run))
@@ -106,7 +105,6 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void *type, int flags, const void *range));
 
 /* the current view: rotation rows, screen rectangle and projection scale */
-extern TransContext gTransContext;
 extern Scene gScene;
 
 extern struct Texture *gQVertexTexture;

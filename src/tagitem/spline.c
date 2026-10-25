@@ -7,6 +7,7 @@
 #include "math/x87.h"
 #include "tagitem/tagitem.h"
 #include "task/taskvars.h"
+#include "config/configvars.h"
 
 /* Points along a "SplineObj" and the "SplineObjWaypoint" handlers (types made by 0x502250). */
 
@@ -39,7 +40,6 @@ ORIG(0x501D70, void, SplineObjWaypoint_UpdateAttach, (SplineObjWaypoint *w));
 
 extern uint16_t gSplineObjWaypointType;
 extern struct Terrain *gCurrentWorld;
-extern const char gEmptyString[];
 
 extern const float kDefaultSegLength;
 extern const float kHalf;

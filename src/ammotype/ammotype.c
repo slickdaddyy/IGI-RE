@@ -3,6 +3,8 @@
 #include "ammotype/ammotype.h"
 #include "script/scripttypes.h"
 #include "sysmisc/sysmisctypes.h"
+#include "config/configvars.h"
+#include "ammotype/ammotypevars.h"
 
 FN_EXTERN(BulletHole_AddRigid);
 FN_EXTERN(BulletHole_AddSpline);
@@ -50,11 +52,8 @@ extern AmmoType gAmmoTypes[];
 extern int gAmmoTypeCount;
 extern uint8_t gAmmoListEvent;
 extern char gAmmoIdEnum[];
-extern uint8_t gBulletHoleEvent;
-extern uint16_t gBulletHoleType;
 extern Pool gHolePool;
 extern Pool gHolePolyPool;
-extern const char gEmptyString[];
 
 ScriptValue *DefineAmmoType(ScriptValue *out, void *data, void *args);
 void AmmoType_LoadAll(void);
@@ -309,8 +308,6 @@ void BulletHole_Forward(void *t, void *arg)
 HOOK(0x47D060, BulletHole_Forward);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-DATA(540904) uint8_t gBulletHoleEvent INIT(255);
-PAD(igd, 540904, 540905, 0x3);
 PAD(igb, 5BE3E0, 5BE3E0, 0x2D04);
 ALIAS(gAmmoTypes, pad_5BE3E0, 0);
 BSS(5BE3E0) int gAmmoTypeCount;

@@ -6,6 +6,7 @@
 #include "weapon/weapon.h"
 #include "sysmisc/sysmisctypes.h"
 #include "task/taskvars.h"
+#include "config/configvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -35,7 +36,6 @@ extern char gWeaponCategoryEnum[];
 extern char gWeaponSightEnum[];
 extern char gWeaponAmmoEnum[];
 extern char gWeaponIdEnum[];
-extern const char gEmptyString[];
 
 ScriptValue *DefineWeaponType(ScriptValue *out, void *data, void *args);
 

@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "hook.h"
 #include "config/config.h"
+#include "config/configvars.h"
 
 ORIG(0x4A5980, int, crt_stricmp, (const char *a, const char *b));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -31,12 +32,10 @@ ORIG(0x41C690, void, ScrollListBox_AddItem, (const char *text, int id));
 ORIG(0x41B870, void, PictureBox_AddItem, (const char *text, int id));
 ORIG(0x41B290, void, TextBox_AddItem, (const char *text, int id));
 
-extern const char gEmptyString[];
 extern char gLanguageAliasSet;
 extern int gPerfLevelFlags[];
 extern InputRemap gDefaultKeys[];
 extern ConfigConstant gInputActions[CONFIG_ACTION_COUNT];
-extern ConfigConstant gInputDevices[CONFIG_DEVICE_COUNT];
 extern ConfigConstant gInputKeys[CONFIG_KEY_COUNT];
 extern char gLanguageNames[][16];
 extern char gDifficultyNames[][16];
@@ -947,7 +946,6 @@ void Config_RemoveLanguageAlias(void)
 HOOK(0x405830, Config_RemoveLanguageAlias);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-DATA(536928) ConfigConstant gInputDevices[CONFIG_DEVICE_COUNT] INIT({{.name = "INPUTPORT_DEVICE_KEYBOARD", .value = 1}, {.name = "INPUTPORT_DEVICE_JOYPAD", .value = 2}, {.name = "INPUTPORT_DEVICE_MOUSE", .value = 3}});
 STORE(igd, 537B74, 4) int store_537B74[7] INIT({414, 430, 13, 96, 77, 65});
 ALIAS(gPerfLevelFlags, store_537B74, 0);
 STORE(igb, 567C74, 1) const char store_567C74[4];

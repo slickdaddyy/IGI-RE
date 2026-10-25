@@ -15,6 +15,8 @@
 #include "render/rendertypes.h"
 #include "transctx/transctxtypes.h"
 #include "task/taskvars.h"
+#include "bonemesh/bonemeshvars.h"
+#include "camfeed/camfeedvars.h"
 
 /* Direct3D mesh renderer: rigid, spline and lightmapped meshes. */
 
@@ -171,7 +173,6 @@ ORIG(0x4D0E60, void, ModelLod_SaveTexAnimState, (ModelLod *l, int *out));
 ORIG(0x4D0EA0, void, ModelLod_LoadTexAnimState, (ModelLod *l, const int *in));
 
 extern struct IDirect3D7 *gD3D;
-extern struct IDirect3DDevice7 *gD3DDevice;
 extern MeshBatch gMeshBatches[];
 extern int gTexStageIdx;
 extern int gAlphaBlendIdx;
@@ -189,7 +190,6 @@ extern float gFogDensity;
 extern float gLayerFov[];
 extern float gLightColor[];
 extern float gFogColor[];
-extern TransContext gTransContext;
 extern Scene gScene;
 extern float gWorldScale;
 extern int gD3DClippingOnIndex;
@@ -197,7 +197,6 @@ extern PtrList *gD3DBlendStates;
 extern uint32_t gD3DZEnable;
 extern DynVB gVBNormal;
 extern PtrList *gD3DRenderStates;
-extern float gNearPlane;
 extern PtrList *gD3DClipStates;
 extern int gD3DClippingOffIndex;
 extern PtrList *gD3DTextureStates;

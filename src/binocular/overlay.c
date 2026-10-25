@@ -8,6 +8,9 @@
 #include "win/wintypes.h"
 #include "binocular/binoculartypes.h"
 #include "core/coretypes.h"
+#include "bonemesh/bonemeshvars.h"
+#include "binocular/binocularvars.h"
+#include "config/configvars.h"
 
 FN_EXTERN(BinocularHolder_Changed);
 FN_EXTERN(BinocularHolder_GetParams);
@@ -88,8 +91,6 @@ void View_ScaleSize(TransContext *v, float *out, const float *size, float depth)
 #define BINOCULARHOLDER_GETPARAMS (FN(0x4723D0, BinocularHolder_GetParams))
 #define BINOCULARHOLDER_CHANGED (FN(0x4723E0, BinocularHolder_Changed))
 
-extern uint16_t gBinocularOverlayType;
-extern uint16_t gBinocularHolderType;
 extern char *gBinocularSprite;
 extern void *gBinocularHolderParams;
 extern const int gGridTemplate[];
@@ -98,7 +99,6 @@ extern const float gTargetShape[];
 extern RenderMode gRenderModeCurrent;
 extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern const char gEmptyString[];
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);

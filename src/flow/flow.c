@@ -8,6 +8,8 @@
 #include "win/wintypes.h"
 #include "animtrig/animtrigtypes.h"
 #include "task/taskvars.h"
+#include "animtrig/animtrigvars.h"
+#include "config/configvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A5350, FILE *, crt_fopen, (const char *path, const char *mode));
@@ -67,11 +69,9 @@ extern char gGameScreenSmallMode;
 extern int gCollLineCalls;
 extern int gCollLineCount;
 extern int gCollSightCalls;
-extern InputPort gInputPorts[];
 extern int gFlowFrames;
 extern char gKeyboardPresent;
 extern Mouse gMouse;
-extern const char gEmptyString[];
 
 void Flow_Open(void)
 {

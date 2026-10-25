@@ -10,6 +10,8 @@
 #include "res/restypes.h"
 #include "transctx/transctxtypes.h"
 #include "d3d/d3dtypes.h"
+#include "bonemesh/bonemeshvars.h"
+#include "camfeed/camfeedvars.h"
 
 /* The QVertex driver of the Direct3D render mode. */
 
@@ -56,8 +58,6 @@ typedef struct StripState {
     Texture *texture;
 } StripState;
 
-extern struct IDirect3DDevice7 *gD3DDevice;
-extern DynVB gVBTL;
 extern uint32_t gD3DZEnable;
 extern int gD3DClippingOnIndex;
 extern PtrList *gD3DTextureStates;
@@ -68,9 +68,7 @@ extern float gLayer1MaxZ;
 extern float gD3DMinZ;
 extern float gLayer1MinZ;
 extern float gD3DMaxZ;
-extern float gNearPlane;
 extern float gWorldScale;
-extern TransContext gTransContext;
 extern Scene gScene;
 extern int gTransContextValid;
 extern int gSortActive;

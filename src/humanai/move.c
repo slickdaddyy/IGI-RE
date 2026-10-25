@@ -4,6 +4,7 @@
 #include "humanai/humanai.h"
 #include "soldier/soldiertypes.h"
 #include "task/taskvars.h"
+#include "aiaction/aiactionvars.h"
 
 ORIG(0x4148F0, long double, Vec3d_PitchAngle, (Vec3d v));
 ORIG(0x414950, long double, Vec3d_YawAngle, (Vec3d v));
@@ -685,3 +686,6 @@ int HumanAI_CheckSides(HumanAI *ai)
     return r;
 }
 HOOK(0x4526E0, HumanAI_CheckSides);
+
+/* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
+BSS(58A9C8) List gAIMoveFree;

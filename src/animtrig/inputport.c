@@ -4,6 +4,7 @@
 #include "animtrig/animtrig.h"
 #include "win/wintypes.h"
 #include "animtrig/animtrigtypes.h"
+#include "animtrig/animtrigvars.h"
 
 ORIG(0x490230, void, Keyboard_Update, (void));
 ORIG(0x48FC20, void, Mouse_Update, (void));
@@ -29,7 +30,6 @@ typedef struct Joypad {
 
 _Static_assert(sizeof(Joypad) == 0x28, "Joypad");
 
-extern InputPort gInputPorts[];
 extern int gInputPortIndex;
 extern uint16_t gInputPortType;
 extern int gInputPortUnused;

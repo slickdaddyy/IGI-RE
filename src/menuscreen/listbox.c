@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "menuscreen/menuscreen.h"
+#include "config/configvars.h"
 
 ORIG(0x4B7FA0, void, Script_RegisterInt2, (const char *name, int *value));
 ORIG(0x4B7050, int, Sprite_StringWidth, (Sprite *s, const char *str));

@@ -4,11 +4,10 @@
 #include "statgun/statgun.h"
 #include "binocular/binoculartypes.h"
 #include "transctx/transctxtypes.h"
+#include "binocular/binocularvars.h"
+#include "bonemesh/bonemeshvars.h"
 
-extern uint16_t gBinocularOverlayType;
-extern uint16_t gBinocularHolderType;
 extern void *gBinocularHolderParams;
-extern TransContext gTransContext;
 
 ORIG(0x4F1400, void, VarString_Bind, (VarString *v, void *task));
 ORIG(0x471480, void, BinocularOverlay_Draw, (BinocularOverlay *o));

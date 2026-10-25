@@ -21,7 +21,6 @@ extern RenderMode gRenderModeCurrent;
 extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
 extern struct Palette *gQVertexPalette;
-extern const char gEmptyString[];
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 

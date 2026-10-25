@@ -7,6 +7,7 @@
 #include "transctx/transctxtypes.h"
 #include "core/coretypes.h"
 #include "res/restypes.h"
+#include "camfeed/camfeedvars.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -77,7 +78,6 @@ extern int gStartupMethod;
 extern struct IDirect3D7 *gD3D;
 extern RenderMode gRenderModeCurrent;
 extern Scene gScene;
-extern struct IDirect3DDevice7 *gD3DDevice;
 extern float gWorldScale;
 extern float gD3DMinZ;
 extern float gLayer1MinZ;

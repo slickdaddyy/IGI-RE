@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "comprun/comprun.h"
 #include "task/taskvars.h"
+#include "config/configvars.h"
 
 FN_EXTERN(Task_FalseHandler);
 FN_EXTERN(Terminal_MapHandler);

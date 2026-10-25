@@ -8,6 +8,8 @@
 #include "transctx/transctxtypes.h"
 #include "core/coretypes.h"
 #include "res/restypes.h"
+#include "bonemesh/bonemeshvars.h"
+#include "camfeed/camfeedvars.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x490370, int, Timer_GetMs, (void));
@@ -55,39 +57,14 @@ typedef struct ClipPrim {
     int unk1C, unk20;
 } ClipPrim;
 
-extern uint16_t gBandFilterType;
-extern uint16_t gHandiCamFilterType;
-extern uint16_t gLineFilterType;
-extern uint16_t gWideScreenFilterType;
-extern struct IDirect3DDevice7 *gD3DDevice;
-extern char gFilterRandom[];
-extern int gHandiCamDrawMethod;
-extern int gBandDrawMethod;
-extern int gHandiCamFilterPrim;
-extern int gBandFilterPrim;
-extern int gBandPixels[];
-extern int gLineDrawMethod;
-extern int gLineFilterPrim;
-extern int gWideScreenPrim;
-extern int gBatteryX;
-extern int gBatteryY;
-extern int gTimecodeX;
-extern int gTimecodeY;
-extern float gTimecode;
-extern float gBandTextX;
-extern float gBandTextY;
-extern float gBandTextDX;
-extern float gBandTextDY;
 extern RenderMode gRenderModeCurrent;
 extern Scene gScene;
 extern float gWorldScale;
-extern DynVB gVBTL;
 extern PtrList *gD3DBlendStates;
 extern float gLayer1MaxZ;
 extern float gD3DMinZ;
 extern PtrList *gD3DRenderStates;
 extern float gLayer1MinZ;
-extern float gNearPlane;
 extern PtrList *gD3DClipStates;
 extern PtrList *gD3DTextureStates;
 

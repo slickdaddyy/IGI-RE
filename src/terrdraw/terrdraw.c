@@ -8,6 +8,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "terrdraw/terrdraw.h"
+#include "camfeed/camfeedvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4AF910, void, List_AddHead, (TerrList *list, TerrNode *node));
@@ -18,7 +19,6 @@ ORIG(0x4951E0, void, Direct3D_AddUnsetModeCallback, (void (*fn)(void)));
 ORIG(0x495200, void, Direct3D_AddRestoreCallback, (void (*fn)(void)));
 
 extern struct IDirect3D7 *gD3D;
-extern struct IDirect3DDevice7 *gD3DDevice;
 extern uint32_t gFogEnable;
 extern uint32_t gTerrainFogColorD3D;
 

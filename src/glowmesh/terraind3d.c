@@ -12,6 +12,8 @@
 #include "glowmesh/glowmesh.h"
 #include "res/restypes.h"
 #include "glowmesh/glowmeshtypes.h"
+#include "bonemesh/bonemeshvars.h"
+#include "camfeed/camfeedvars.h"
 
 typedef struct TdTLVertex {
     float sx, sy, sz, rhw;
@@ -60,7 +62,6 @@ ORIG(0x5144E0, void, Terrain_SetBlendMode, (int mode));
 ORIG(0x514760, void, TerrDraw_ClipTriangle, (TdClipVtx a, TdClipVtx b, TdClipVtx c, TdClipOut *out));
 ORIG(0x4AF960, void, List_Remove, (TdNode *node));
 
-extern struct IDirect3DDevice7 *gD3DDevice;
 extern IDirect3DVertexBuffer7 *gTerrainVB;
 extern TdTLVertex *gTerrVBData;
 extern int gTerrVertCount;

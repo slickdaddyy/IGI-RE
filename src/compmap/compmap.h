@@ -123,7 +123,6 @@ _Static_assert(sizeof(ComputerMenu) == 0x3C, "ComputerMenu");
 _Static_assert(sizeof(ComputerObjectives) == 0x38, "ComputerObjectives");
 _Static_assert(sizeof(ComputerMap) == 0xAC, "ComputerMap");
 
-extern uint16_t gComputerLogType;
 extern const char *gLogLines[];
 extern ComputerLog *gLog;
 extern int gLogCount;

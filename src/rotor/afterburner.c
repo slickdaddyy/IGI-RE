@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "rotor/rotor.h"
 #include "transctx/transctxtypes.h"
+#include "bonemesh/bonemeshvars.h"
 
 FN_EXTERN(EditorMagicObj_Delete);
 
@@ -41,7 +42,6 @@ ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 extern uint16_t gAfterburnerType;
 extern char gAfterburnerRandom[];
 extern int gAfterburnerPrim;
-extern TransContext gTransContext;
 
 F32(kColor, 0x437F0000);        /* 255 */
 F32(kGlowStart, 0x3F4F5C29);    /* 0.81 */

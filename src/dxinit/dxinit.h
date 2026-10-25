@@ -12,8 +12,8 @@
 #include "res/restypes.h"
 #include "transctx/transctxtypes.h"
 #include "core/coretypes.h"
+#include "camfeed/camfeedvars.h"
 
-extern TransContext gTransContext;
 extern float gWorldScale;
 extern int gD3DTnL;
 extern uint32_t gD3DZEnable;
@@ -22,7 +22,6 @@ extern PtrList *gD3DBlendStates;
 extern PtrList *gD3DRenderStates;
 extern PtrList *gD3DClipStates;
 extern struct IDirect3D7 *gD3D;
-extern struct IDirect3DDevice7 *gD3DDevice;
 extern uint16_t gDynCubeObjType;
 extern RenderMode gRenderModeCurrent;
 

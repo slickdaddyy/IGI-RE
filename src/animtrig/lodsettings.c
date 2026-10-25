@@ -5,6 +5,7 @@
 #include "igi.h"
 #include "animtrig/animtrig.h"
 #include "param/paramtypes.h"
+#include "config/configvars.h"
 
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
 ORIG(0x4CEC10, void *, VirModel_Find, (const char *name));

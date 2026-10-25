@@ -8,6 +8,7 @@
 #include "igi.h"
 #include "soldier/soldier.h"
 #include "config/configtypes.h"
+#include "camera/cameravars.h"
 
 #define INPUT_FRAMES 9000
 
@@ -67,8 +68,6 @@ ORIG(0x4F40D0, uint8_t, Vehicle_GetControlEvent, (void));
 
 extern uint16_t gHumanPlayerInputType;
 extern void *gHumanPlayerInputParams;
-extern float gMouseDX;
-extern float gMouseDY;
 extern uint32_t gControls;
 
 static const float kMouseSpeedMin = 0x1.99999ap-5f;

@@ -12,6 +12,7 @@
 #include "core/coretypes.h"
 #include "animtrig/animtrigtypes.h"
 #include "task/taskvars.h"
+#include "animtrig/animtrigvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A5234, int, crt_fclose, (void *f));
@@ -211,7 +212,6 @@ extern int gGameSpriteCount;
 extern char gMusicEnabled;
 extern struct Terrain *gCurrentWorld;
 extern RenderMode gRenderModeCurrent;
-extern InputPort gInputPorts[];
 extern char gKeyboardPresent;
 extern Mouse gMouse;
 

@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "mission/mission.h"
 #include "sysmisc/sysmisctypes.h"
+#include "config/configvars.h"
 
 /* a mission defined by DefineMission in LOCAL:missions/<folder>/mission.qsc */
 typedef struct Mission {

@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "define/define.h"
+#include "config/configvars.h"
 
 extern uint16_t gSoundDefGraphType;
 extern uint16_t gSoundDefGraphType2;

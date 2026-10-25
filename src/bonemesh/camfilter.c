@@ -6,6 +6,8 @@
 #include "bonemesh/bonemesh.h"
 #include "camfeed/camfeedtypes.h"
 #include "d3d/d3dtypes.h"
+#include "bonemesh/bonemeshvars.h"
+#include "camfeed/camfeedvars.h"
 
 FN_EXTERN(BandFilter_Draw);
 FN_EXTERN(BandFilter_DrawPrim);
@@ -52,38 +54,14 @@ typedef struct FilterVertex {
     float u, v;
 } FilterVertex;
 
-extern uint16_t gLineFilterType;
-extern uint16_t gWideScreenFilterType;
-extern uint16_t gBandFilterType;
 extern int gBandCamera;
-extern uint16_t gHandiCamFilterType;
-extern int gHandiCamDrawMethod;
-extern int gBandDrawMethod;
 extern const char *gBandFont;
-extern int gHandiCamFilterPrim;
-extern int gBandFilterPrim;
-extern int gBandPixels[];
-extern char gFilterRandom[];
-extern int gLineDrawMethod;
-extern int gLineFilterPrim;
-extern int gWideScreenPrim;
 extern const char *gBatterySprite;
 extern const char *gTimecodeFont;
-extern int gBatteryX;
-extern int gBatteryY;
-extern int gTimecodeX;
-extern int gTimecodeY;
-extern float gTimecode;
-extern float gBandTextX;
-extern float gBandTextY;
-extern float gBandTextDX;
-extern float gBandTextDY;
 
-extern DynVB gVBTL;
 extern float gD3DMinZ;
 extern float gLayer1MinZ;
 extern float gLayer1MaxZ;
-extern float gNearPlane;
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 #define TASK_DEBUG_LOG (FN(0x4C1780, Debug_Log))

@@ -9,6 +9,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "transctx/transctxtypes.h"
+#include "camfeed/camfeedvars.h"
 
 #define CLIP_LEFT 1
 #define CLIP_TOP 2
@@ -50,7 +51,6 @@ extern float gClipZBias;
 extern float gClipZScale;
 extern Scene gScene;
 extern float gClipRhwScale;
-extern float gNearPlane;
 extern float gTerrainScaleY;
 extern float gTerrainScaleX;
 extern float gTerrainCenterX;

@@ -12,6 +12,7 @@
 #include "glowmesh/glowmeshtypes.h"
 #include "core/coretypes.h"
 #include "task/taskvars.h"
+#include "bonemesh/bonemeshvars.h"
 
 FN_EXTERN(SectorInteriorObject_WorldAdd);
 FN_EXTERN(SectorInteriorObject_WorldRemove);
@@ -141,7 +142,6 @@ extern uint16_t gSectorObjectType;
 extern uint16_t gSectorInteriorObjectType;
 extern float gQCubeOutsideMin[];
 extern float gQCubeOutsideMax[];
-extern TransContext gTransContext;
 extern Scene gScene;
 
 extern const double kOneD;

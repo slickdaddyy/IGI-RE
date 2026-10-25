@@ -7,6 +7,7 @@
 #include "hook.h"
 #include "mission/mission.h"
 #include "core/coretypes.h"
+#include "config/configvars.h"
 
 ORIG(0x416D50, char, Game_IsPaused, (void));
 ORIG(0x418E40, void *, MenuManager_FindFont, (void *mm, const char *name));

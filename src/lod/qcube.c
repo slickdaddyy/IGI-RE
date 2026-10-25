@@ -11,6 +11,8 @@
 #include "core/coretypes.h"
 #include "terrain/terraintypes.h"
 #include "task/taskvars.h"
+#include "bonemesh/bonemeshvars.h"
+#include "coll/collvars.h"
 
 FN_EXTERN(crt_CIpow);
 
@@ -89,11 +91,9 @@ extern int gQCubeNeighbourBits[];
 extern uint8_t gQCubeChildOrder[][8];
 extern uint8_t gQCubeBitPerm[][256];
 extern uint8_t gQCubeOctantMask[];
-extern const int gCollChildTable[];
 extern float gQCubeOutsideMin[];
 extern float gQCubeOutsideMax[];
 extern char gNearClipText[];
-extern TransContext gTransContext;
 extern int gTransContextAutoNear;
 extern uint16_t gQCubeNeverSetType;
 extern int gQCubeUnused4;

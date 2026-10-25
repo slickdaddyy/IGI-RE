@@ -89,7 +89,6 @@ _Static_assert(sizeof(StatusScreen) == 0x4F0, "StatusScreen");
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern const char gEmptyString[];
 extern LevelFlow *gLevelFlow;
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

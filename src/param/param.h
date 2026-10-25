@@ -70,6 +70,4 @@ extern int gLevelActivateEvent;
 extern int gLevelDeactivateEvent;
 extern int gLevelUnusedNewTaskEvent;
 
-extern const char gEmptyString[];
-
 #endif

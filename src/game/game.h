@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "script/scripttypes.h"
 #include "game/gametypes.h"
+#include "config/configvars.h"
 
 typedef void (*TaskFn)(void *task, void *arg);
 typedef void (*TaskFn1)(void *task);
@@ -14,7 +15,6 @@ typedef void (*TaskFn1)(void *task);
 extern Game *gGame;
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern const char gEmptyString[];
 extern uint8_t gKeys[];
 extern uint8_t gKeysPrev[];
 

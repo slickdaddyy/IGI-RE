@@ -6,6 +6,7 @@
 #include "mission/mission.h"
 #include "coll/colltypes.h"
 #include "camera/cameratypes.h"
+#include "camera/cameravars.h"
 
 ORIG(0x416850, uint8_t, Game_GetEvent8, (void));
 ORIG(0x483100, void, HumanCamera_LookAt, (Matrix *out, const Vec3d *from, const Vec3d *to));
@@ -14,8 +15,6 @@ ORIG(0x4B3B60, void, Matrix_SetRotX, (Matrix *m, float a));
 ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, Vec3d *starts, Vec3d *ends, int count, uint8_t event,
                                   CollIgnore *filter, int flags));
 
-extern uint16_t gHumanCameraType;
-extern uint8_t gHumanCameraEvent;
 extern HumanCameraEntry gHumanCameraList[];
 
 #define HUMAN_LIST_SIZE 128

@@ -8,6 +8,7 @@
 #include "hook.h"
 #include "glowmesh/glowmesh.h"
 #include "types.h"
+#include "bonemesh/bonemeshvars.h"
 
 ORIG(0x497800, void *, Frame_Alloc, (int size));
 ORIG(0x4978B0, void, RenderQueue_Add, (int queue, void *node));

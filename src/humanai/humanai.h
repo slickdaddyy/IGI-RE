@@ -70,12 +70,9 @@ extern uint8_t gAIDoorSlot;
 extern uint8_t gAIEvent3Slot;
 
 /* the AI a script is running for, and where its actions go */
-extern HumanAI *gAICurrent;
 extern List *gAIActionList;
-extern List *gAIEventList;
 extern int gAIEventIndex;
 
-extern List gAIMoveFree;
 extern List gAITargets;
 extern AITarget gAITargetPool[AI_TARGETS];
 #define AI_TARGETS 8

@@ -3,6 +3,7 @@
 #include "aiaction/aiaction.h"
 #include "hook.h"
 #include "glass/glasstypes.h"
+#include "aiaction/aiactionvars.h"
 
 ORIG(0x44A630, void, GlassShatter_PlaySound, (const Vec3d *pos));
 ORIG(0x44A670, void, GlassShatter_AddTri, (float *a, float *b, float *c));
@@ -16,7 +17,6 @@ extern uint16_t gShatterType;
 extern int gShatterMode;
 extern GlassShatter *gShatterTask;
 extern ShardPoly *gShatterPolys;
-extern Vec3f gShatterHit;
 extern Shard *gShatterShards;
 
 extern const float gShardColor2[]; /* 0.7, 0.7, 0.7 */

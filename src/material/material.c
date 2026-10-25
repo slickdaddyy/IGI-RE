@@ -4,6 +4,7 @@
 #include "script/symbol.h"
 #include "material/material.h"
 #include "task/taskvars.h"
+#include "config/configvars.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -41,7 +42,6 @@ extern uint8_t gMaterialParseEvent;
 extern uint8_t gMaterialImpactEvent;
 extern int gMaterialActive;
 extern GameMaterial gMaterials[];
-extern const char gEmptyString[];
 
 static ScriptValue *Material_Return(ScriptValue *out)
 {

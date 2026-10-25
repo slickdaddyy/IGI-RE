@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "compmap/compmap.h"
 #include "computer/computertypes.h"
+#include "config/configvars.h"
 
 ORIG(0x488700, void, SubLevel_Run, (void *task));
 ORIG(0x4D3710, void, Task_Nothing, (void *task));

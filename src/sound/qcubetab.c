@@ -6,8 +6,8 @@
 #include "igi.h"
 #include "sound/sound.h"
 #include "transctx/transctxtypes.h"
+#include "bonemesh/bonemeshvars.h"
 
-extern TransContext gTransContext;
 extern double gQCubeUnusedMaxX;
 extern double gQCubeUnusedMaxY;
 extern uint8_t gQCubeUnusedFaceMask[];

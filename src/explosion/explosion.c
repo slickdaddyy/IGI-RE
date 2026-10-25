@@ -4,6 +4,7 @@
 #include "explosion/explosion.h"
 #include "transctx/transctxtypes.h"
 #include "core/coretypes.h"
+#include "bonemesh/bonemeshvars.h"
 
 FN_EXTERN(Explosion_CreateHandler);
 FN_EXTERN(Explosion_RunHandler);
@@ -67,7 +68,6 @@ extern uint16_t gExplosionSmokeType;
 extern char *gSmoke2Sprite;
 extern char *gBurnTexture;
 extern uint16_t gFireBallType;
-extern TransContext gTransContext;
 extern RenderMode gRenderModeCurrent;
 
 #define Explosion_Create (FN(0x480F30, Explosion_CreateHandler))

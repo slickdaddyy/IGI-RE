@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "flatwater/flatwater.h"
 #include "d3d/d3dtypes.h"
+#include "camfeed/camfeedvars.h"
 
 /* "MipMapControl": texture filtering settings of a level. Only the LOD bias
    is passed on to Direct3D. */
@@ -25,7 +26,6 @@ extern uint16_t gMipMapType;
 extern int gMipMapModeRange[];
 extern void *gMipMapParams;
 extern float gMipMapBiasRange[];
-extern struct IDirect3DDevice7 *gD3DDevice;
 extern uint32_t gMipMapUnusedBias;
 extern signed char gRenderMipMapMode;
 extern char gMipMapUnusedFlag;

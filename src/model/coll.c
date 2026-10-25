@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "coll/coll.h"
+#include "coll/collvars.h"
 
 static const double kOneOver24 = 1.0 / 24.0;
 
@@ -30,8 +31,6 @@ ORIG(0x4C8130, void, DynCube_SendEventLines, (Terrain *t, int slot, void *query,
                                   int count, unsigned int flags, int tree));
 ORIG(0x4C9A30, int, Coll_Descend_, (Terrain *t, CollCursor *c, CollCursor *unused, const Vec3d *p, int depth));
 
-extern const int gCollChildTable[];
-extern int gCollWalkTasks;
 extern int gCollBumpTop;
 extern int gCollLineCalls;
 extern int gCollLineCount;

@@ -9,6 +9,7 @@
 #include "param/paramtypes.h"
 #include "dxinit/dxinittypes.h"
 #include "transctx/transctxtypes.h"
+#include "bonemesh/bonemeshvars.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -157,7 +158,6 @@ extern int gRainMemory;
 extern struct RainObj *gRainObjs[];
 extern void (*gRainCallback)(char *state);
 extern void *gRainParams;
-extern TransContext gTransContext;
 
 #define RAIN_CELLS (7 * 7 * 7)
 #define RAIN_DROPS 20

@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "d3d/d3d.h"
 #include "res/restypes.h"
+#include "camfeed/camfeedvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -107,7 +108,6 @@ extern IDirectDrawSurface7 *gD3DZBuffer;
 extern int gD3DFogTable;
 extern IDirectDraw7 *gDDraw;
 extern struct IDirect3D7 *gD3D;
-extern struct IDirect3DDevice7 *gD3DDevice;
 extern D3DCallback *gD3DSetModeCallbacks;
 extern D3DCallback *gD3DUnsetModeCallbacks;
 extern D3DCallback *gD3DRestoreCallbacks;
@@ -118,7 +118,6 @@ extern D3DDEVICEDESC7 gD3DDeviceDesc;
 extern int gD3DFoundHAL;
 extern int gD3DTnL;
 extern int gD3DZ24;
-extern DynVB gVBTL;
 extern DynVB gVBLit;
 extern DynVB gVBNormal;
 extern D3DCallback gD3DCallbackPool[];
@@ -522,7 +521,6 @@ extern float gLayer2Far;
 extern float gLayer2Near;
 extern float gLayer0Far;
 extern float gSkyRadius;
-extern float gNearPlane;
 extern float gFarZ;
 extern float gD3DUnusedLayer0FarZ;
 extern float gD3DUnusedFarZ;

@@ -3,6 +3,7 @@
 
 #include "hook.h"
 #include "editcam/editcam.h"
+#include "coll/collvars.h"
 
 FN_EXTERN(Task_ReturnZero);
 
@@ -82,7 +83,6 @@ extern void *gHeightMapParams;
 extern uint16_t gHeightMapType;
 extern int gHeightMapCount;
 extern char gHmpResident[];
-extern int gCollWalkTasks;
 extern int gCollBumpList[];
 extern int gCollBumpDepth;
 extern int gCollBumpTop;

@@ -6,6 +6,7 @@
 #include "hook.h"
 #include "terredit/terredit.h"
 #include "res/restypes.h"
+#include "camfeed/camfeedvars.h"
 
 /* The sky dome of FlatSky: a vertex buffer of 321 coloured vertices (the
    top, 15 rings of 20 from 90 degrees down by 6, and a ring below the
@@ -37,7 +38,6 @@ typedef struct SkyDome {
 _Static_assert(sizeof(SkyDome) == 0xEDC, "SkyDome");
 
 extern struct IDirect3D7 *gD3D;
-extern struct IDirect3DDevice7 *gD3DDevice;
 extern SkyDome *gSkyDome;
 extern void *gSkyModel;
 extern uint32_t gSkyUnusedTint[];

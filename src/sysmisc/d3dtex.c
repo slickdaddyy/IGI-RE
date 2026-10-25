@@ -8,6 +8,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "sysmisc/sysmisctypes.h"
+#include "camfeed/camfeedvars.h"
 
 /* Texture functions of the Direct3D render mode: textures are DirectDraw
    surfaces, created and filled when the engine downloads them. */
@@ -70,7 +71,6 @@ extern int gDownloadPalette;
 extern int gAllocPalette;
 
 extern IDirectDraw7 *gDDraw;
-extern struct IDirect3DDevice7 *gD3DDevice;
 extern int gTexturesCreated;
 extern int gTextureBytes;
 extern D3DDEVICEDESC7 gD3DDeviceDesc;

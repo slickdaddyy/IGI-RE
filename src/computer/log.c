@@ -1,5 +1,6 @@
 #include "hook.h"
 #include "computer/computer.h"
+#include "computer/computervars.h"
 
 FN_EXTERN(ComputerLog_Create);
 FN_EXTERN(ComputerLog_Delete);
@@ -17,8 +18,6 @@ ORIG(0x4E7530, int, Screen_GetDrawEvent, (void));
 #define LOG_RUN (FN(0x488700, SubLevel_Run))
 #define LOG_DELETE (FN(0x468BB0, ComputerLog_Delete))
 #define LOG_DRAW (FN(0x468BC0, ComputerLog_Draw))
-
-extern uint16_t gComputerLogType;
 
 void ComputerLog_Open(void)
 {

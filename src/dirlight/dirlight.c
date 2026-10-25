@@ -7,6 +7,7 @@
 
 #include "hook.h"
 #include "dirlight/dirlight.h"
+#include "animcam/animcamvars.h"
 
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
 ORIG(0x401900, uint16_t, TaskType_New, (const char *name, int size, uint16_t parent, int pool_count, int unk));
@@ -50,7 +51,6 @@ extern float gDirlightKeyframeTime;
 extern void *gDirlightKeyframeParams;
 extern uint16_t gDirlightKeyframeType;
 extern DirlightKeyframe *gDirlightKeyframeChanging;
-extern Pool gDirlightPool;
 
 static const float kTwoPi = 0x1.921fb6p+2f;
 

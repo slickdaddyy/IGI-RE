@@ -2,6 +2,7 @@
 
 #include "freecam/freecam.h"
 #include "transctx/transctxtypes.h"
+#include "bonemesh/bonemeshvars.h"
 
 /* Particle systems that fill a cube of cells around the camera (rain, snow,
    dust); spawn() is called for every visible cell corner each frame. */
@@ -38,7 +39,6 @@ extern uint16_t gParticleSystemType;
 extern uint16_t gSpriteParticleSystemType;
 extern int gSpriteParticleSystemReady;
 extern char gParticleRandom[];
-extern TransContext gTransContext;
 
 void ParticleSystem_Draw(ParticleSystem *ps);
 void ParticleSystem_Delete(ParticleSystem *ps);

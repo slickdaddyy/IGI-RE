@@ -5,6 +5,7 @@
 #include "comprun/comprun.h"
 #include "levelflow/levelflowtypes.h"
 #include "task/taskvars.h"
+#include "comprun/comprunvars.h"
 
 FN_EXTERN(Car_CollFilter);
 
@@ -96,7 +97,6 @@ _Static_assert(sizeof(GunHolder) == 0x26A0, "GunHolder");
 extern uint16_t gGunHolderType;
 extern float gGunHolderRange[];
 extern void *gGunHolderParams;
-extern void *gGunHolderList;
 
 static const float kDegToRad = 0x1.1df46ap-6f;
 static const float kRangeScale = 4096.0f;

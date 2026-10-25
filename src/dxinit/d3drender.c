@@ -6,6 +6,7 @@
 #include "dxinit/dxinit.h"
 #include "d3d/d3dtypes.h"
 #include "boneobj/boneobjtypes.h"
+#include "bonemesh/bonemeshvars.h"
 
 FN_EXTERN(Direct3DRender_AlphaBlendOff);
 FN_EXTERN(Direct3DRender_SetLightmapStages);

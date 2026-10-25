@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "levelflow/levelflow.h"
 #include "levelflow/levelflowtypes.h"
+#include "config/configvars.h"
 
 ORIG(0x402870, int, Flow_GetFps, (void));
 ORIG(0x406220, int *, Profile_GetActive, (void));

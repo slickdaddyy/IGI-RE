@@ -12,9 +12,7 @@
 #define F64(name, bits) static const union { uint64_t u; double d; } name = { bits }
 
 /* the active TransContext (0xBCAAE0) and scene (0xBCABA0), only the fields used here */
-extern TransContext gTransContext;
 extern Scene gScene;
-extern float gNearPlane;
 extern int gQCubeMinSize;
 extern RenderMode gRenderModeCurrent;
 

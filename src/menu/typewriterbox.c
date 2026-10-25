@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "menu/menu.h"
+#include "config/configvars.h"
 
 ORIG(0x4A5500, char *, crt_strncpy, (char *dst, const char *src, size_t n));
 ORIG(0x4B4A00, void, Draw_RectA, (float x, float y, float w, float h, float r, float g, float b, float a, int flags,

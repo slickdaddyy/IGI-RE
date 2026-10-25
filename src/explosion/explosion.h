@@ -188,8 +188,6 @@ extern int gTaskStackTop;
 
 /* exe constants, read in place */
 
-extern uint8_t gBulletHoleEvent;
-extern uint16_t gBulletHoleType;
 extern Pool gHolePool;
 extern Pool gHolePolyPool;
 extern uint8_t gFlashEvent;

@@ -8,6 +8,7 @@
 #include "terredit/terredit.h"
 #include "terredit/terredittypes.h"
 #include "transctx/transctxtypes.h"
+#include "bonemesh/bonemeshvars.h"
 
 /* the WaterMesh primitive in the render queue */
 typedef struct WaterDrawNode {
@@ -36,7 +37,6 @@ extern const char gWaterName[];
 extern uint32_t gWaterSplits[];
 extern int gWaterUnusedNodeCount;
 extern int gWaterUnusedInt;
-extern TransContext gTransContext;
 
 extern const float kZero;
 extern const float kOne;

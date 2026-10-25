@@ -6,6 +6,7 @@
 #include "elevator/elevatortypes.h"
 #include "transctx/transctxtypes.h"
 #include "task/taskvars.h"
+#include "bonemesh/bonemeshvars.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -68,7 +69,6 @@ extern void *gAlarmLightParams;
 extern uint16_t gAlarmLightReflectorType;
 extern uint16_t gAlarmLightType;
 extern char *gAlarmSprite;
-extern TransContext gTransContext;
 
 static const float kTurn = 0x1.aceeap-4f;
 static const double kZero = 0.0;

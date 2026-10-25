@@ -6,7 +6,6 @@
 #include "core/coretypes.h"
 
 extern RenderMode gRenderModeCurrent;
-extern TransContext gTransContext;
 extern Scene gScene;
 
 /* a float constant from the exe, bit exact */

@@ -7,6 +7,8 @@
 #include "d3d/d3dtypes.h"
 #include "sector/sectortypes.h"
 #include "task/taskvars.h"
+#include "bonemesh/bonemeshvars.h"
+#include "camfeed/camfeedvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -96,7 +98,6 @@ extern float gLightColor[];
 extern float gFogColor[];
 extern float gFogDensity;
 extern uint32_t gFogEnable;
-extern float gNearPlane;
 extern DynVB gVBLit;
 
 extern const float kZero;

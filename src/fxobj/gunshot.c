@@ -6,6 +6,7 @@
 #include "igi.h"
 #include "fxobj/fxobj.h"
 #include "task/taskvars.h"
+#include "config/configvars.h"
 
 FN_EXTERN(AIStationaryGun_GetDefSize);
 
@@ -107,7 +108,6 @@ extern char *gGunShotDust2;
 extern uint16_t gPlaceExplosiveType;
 extern void *gPlaceExplosiveParams;
 
-extern const char gEmptyString[];
 #define GameMaterial_GetSize (FN(0x46FB50, AIStationaryGun_GetDefSize))
 
 static const double kDecalUnit = 4096.0;

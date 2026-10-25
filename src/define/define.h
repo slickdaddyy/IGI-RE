@@ -77,7 +77,6 @@ _Static_assert(sizeof(SoundDefTriggerOnce) == 0x138, "SoundDefTriggerOnce");
 
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern const char gEmptyString[];
 
 #define TASK_NO_TYPE 0x181
 

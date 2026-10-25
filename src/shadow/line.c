@@ -5,6 +5,7 @@
 #include "qvertex/qvertextypes.h"
 #include "transctx/transctxtypes.h"
 #include "core/coretypes.h"
+#include "bonemesh/bonemeshvars.h"
 
 ORIG(0x497F20, void, TransContext_Project, (float *screen, float *depth, Vec3d *pos));
 
@@ -12,7 +13,6 @@ extern RenderMode gRenderModeCurrent;
 extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
 extern struct Palette *gQVertexPalette;
-extern TransContext gTransContext;
 extern float kNearPlane;
 
 static inline int is_zero(float f)

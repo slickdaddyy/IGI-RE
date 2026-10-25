@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "binocular/binocular.h"
 #include "binocular/binoculartypes.h"
+#include "comprun/comprunvars.h"
 
 FN_EXTERN(VehiclePart_Delete);
 
@@ -50,7 +51,6 @@ ORIG(0x4F2310, void, Weapon_Move, (Task *w, Vec3d *pos, Matrix *m));
 
 #define VEHICLEPART_DELETE (FN(0x426860, VehiclePart_Delete))
 
-extern void *gGunHolderList;
 extern uint16_t gAIStationaryGunType;
 
 /* parsed "AIStationaryGun" MagicObj arguments (0x60 bytes) */

@@ -5,6 +5,7 @@
 #include "vehicle/vehicle.h"
 #include "widget/widgettypes.h"
 #include "win/wintypes.h"
+#include "camera/cameravars.h"
 
 ORIG(0x48F130, int, AppContext_IsFullscreen, (void));
 ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
@@ -12,8 +13,6 @@ ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 extern uint16_t gCursorType;
 extern int gCursorWindowX;
 extern int gCursorWindowY;
-extern float gMouseDX;
-extern float gMouseDY;
 extern Mouse gMouse;
 
 static const float kSpeedX = 320.0f;

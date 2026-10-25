@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "ui/ui.h"
+#include "config/configvars.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (int size, int align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));

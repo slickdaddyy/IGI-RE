@@ -9,6 +9,7 @@
 #include "transctx/transctx.h"
 #include "bonemesh/bonemeshtypes.h"
 #include "core/coretypes.h"
+#include "bonemesh/bonemeshvars.h"
 
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
 ORIG(0x401810, int, TaskEvent_Alloc2, (uint16_t type));

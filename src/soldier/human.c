@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "soldier/soldier.h"
 #include "script/scripttypes.h"
+#include "config/configvars.h"
 
 FN_EXTERN(Car_CollFilter);
 FN_EXTERN(Human_ActivateHandler);
@@ -155,7 +156,6 @@ extern char *gBloodSprite2;
 extern int gHumanMaskType;
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern const char gEmptyString[];
 
 /* handlers of the Human type that live after this file */
 #define Human_Handler45F280 (FN(0x45F280, Human_DrawHandler))

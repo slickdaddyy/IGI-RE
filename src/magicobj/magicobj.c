@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "magicobj/magicobj.h"
 #include "task/taskvars.h"
+#include "config/configvars.h"
 
 FN_EXTERN(RigidDynCubeObj_CollLine);
 FN_EXTERN(RigidDynCubeObj_EnterHandler);
@@ -55,7 +56,6 @@ extern uint16_t gDynCubeObjType;
 extern MagicObjDef gMagicObjDefs[];
 extern int gMagicObjDefCount;
 extern struct Terrain *gCurrentWorld;
-extern const char gEmptyString[];
 
 static float max_scale(const RigidDynCubeObj *o)
 {

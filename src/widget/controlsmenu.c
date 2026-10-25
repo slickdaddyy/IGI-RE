@@ -4,6 +4,7 @@
 #include "script/scripttypes.h"
 #include "config/configtypes.h"
 #include "win/wintypes.h"
+#include "config/configvars.h"
 
 ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
 ORIG(0x4B8920, void, Script_UnregisterSymbol, (const char *name));

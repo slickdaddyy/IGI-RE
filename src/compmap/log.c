@@ -1,6 +1,8 @@
 #pragma GCC optimize("excess-precision=standard")
 #include "hook.h"
 #include "compmap/compmap.h"
+#include "config/configvars.h"
+#include "computer/computervars.h"
 
 ORIG(0x4B5730, void, QVertex_DrawLine, (float x0, float y0, float z0, float x1, float y1, float z1, float r, float g,
                                         float b, float unk10, float unk11, float unk12, int unk13,

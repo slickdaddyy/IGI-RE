@@ -5,6 +5,7 @@
 #include "menu/menu.h"
 #include "win/wintypes.h"
 #include "config/configtypes.h"
+#include "config/configvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));

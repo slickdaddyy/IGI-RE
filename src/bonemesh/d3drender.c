@@ -11,6 +11,8 @@
 #include "haze/hazetypes.h"
 #include "d3d/d3dtypes.h"
 #include "task/taskvars.h"
+#include "camfeed/camfeedvars.h"
+#include "bonemesh/bonemeshvars.h"
 
 ORIG(0x491D40, long double, Display_GetAspect, (void));
 ORIG(0x4950F0, void, Direct3D_MakeMatrix, (void *out, const Matrix *rot, const Vec3f *pos));
@@ -70,7 +72,6 @@ extern float gLayerFov[];
 extern int gBoneClipDepth;
 extern ClipVertex gRigidClipVerts[];
 extern ClipVertex gLightmapClipVerts[];
-extern float gNearPlane;
 extern DynVB gVBNormal;
 extern int gD3DClippingOnIndex;
 extern int gD3DClippingOffIndex;

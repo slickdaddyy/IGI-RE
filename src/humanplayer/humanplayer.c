@@ -11,6 +11,7 @@
 #include "qasm/qasmtypes.h"
 #include "game/gametypes.h"
 #include "task/taskvars.h"
+#include "config/configvars.h"
 
 FN_EXTERN(HumanPlayer_BlastHandler);
 FN_EXTERN(HumanPlayer_FenceHandler);
@@ -197,7 +198,6 @@ extern float gMaxDamage;
 extern float gFenceDamage;
 extern QTaskList *gHumanPlayerList;
 extern char gUnlimitedAmmo;
-extern const char gEmptyString[];
 
 extern float kKmhToUnits;
 extern float kPerFrameHour;

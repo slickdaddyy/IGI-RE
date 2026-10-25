@@ -7,6 +7,7 @@
 #include "hook.h"
 #include "animcam/animcam.h"
 #include "dirlight/dirlighttypes.h"
+#include "animcam/animcamvars.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));
@@ -17,7 +18,6 @@ extern void *gDirlightParams;
 extern uint16_t gDirlightType;
 extern void *gDirlightKeyframeParams;
 extern uint16_t gDirlightKeyframeType;
-extern Pool gDirlightPool;
 
 void DirlightKeyframe_GetParams(void *task, void **out)
 {

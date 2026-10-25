@@ -1,6 +1,7 @@
 #pragma GCC optimize("excess-precision=standard")
 #include "hook.h"
 #include "terredit/terredit.h"
+#include "config/configvars.h"
 
 /* "CubeModifier": a named editor box snapped to a cell grid of the
    terrain. Every live one is kept in gCubeModifiers. */
@@ -39,7 +40,6 @@ _Static_assert(sizeof(CubeModifier) == 0x178, "CubeModifier");
 extern void *gCubeModifierParams;
 extern uint16_t gCubeModifierType;
 extern CubeModifier *gCubeModifiers[];
-extern const char gEmptyString[];
 
 static const float kRadiusScale = 4.0f;
 

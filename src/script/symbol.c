@@ -7,6 +7,7 @@
 #include "core/mem.h"
 #include "script/symbol.h"
 #include "script/symtab.h"
+#include "config/configvars.h"
 
 FN_EXTERN(Script_Bool8Value);
 FN_EXTERN(Script_ConstantValue);

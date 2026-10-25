@@ -16,13 +16,8 @@ typedef void (*TaskHandler)(void *task, void *arg);
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 
-extern int gProfileCount;
-extern int gActiveProfile;
-extern PlayerProfile gProfiles[];
-extern char gContentControlPassword[];
 extern InputRemap gDefaultKeys[];
 extern ConfigConstant gInputActions[CONFIG_ACTION_COUNT];
-extern ConfigConstant gInputDevices[CONFIG_DEVICE_COUNT];
 extern ConfigConstant gInputKeys[CONFIG_KEY_COUNT];
 extern char gLanguageNames[][16];
 extern char gDifficultyNames[][16];
