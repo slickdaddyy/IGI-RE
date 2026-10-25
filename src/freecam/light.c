@@ -1,5 +1,6 @@
 #include "freecam/freecam.h"
 #include "freecam/light.h"
+#include "sound/soundvars.h"
 
 /* Point and spot lights placed in the world as DynCube objects. */
 

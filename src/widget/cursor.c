@@ -1,13 +1,12 @@
 #include "hook.h"
 #include "igi.h"
 #include "widget/widget.h"
+#include "widget/widgetvars.h"
 
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
 ORIG(0x48F490, void, AppMain_AddWinProcCallback, (void *fn));
 ORIG(0x424CA0, void, Cursor_WinProc, (void));
 ORIG(0x424CE0, void, Cursor_RunHandler, (void *task));
-
-extern uint16_t gCursorType;
 
 void Cursor_CreateHandler(Cursor *c, void *owner);
 void Cursor_Draw(Cursor *c);

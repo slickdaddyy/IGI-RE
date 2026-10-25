@@ -13,10 +13,6 @@ typedef void (*TaskFn)(void *task, void *arg);
 typedef void (*TaskFn1)(void *task);
 
 extern Game *gGame;
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-extern uint8_t gKeys[];
-extern uint8_t gKeysPrev[];
 
 /* what every script function in the game returns: the number 1 */
 static inline ScriptValue *Game_ReturnOne(ScriptValue *out, int i, double d)

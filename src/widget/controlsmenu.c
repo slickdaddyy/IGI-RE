@@ -7,6 +7,8 @@
 #include "config/configvars.h"
 #include "file/filevars.h"
 #include "math/mathvars.h"
+#include "win/winvars.h"
+#include "weapon/weaponvars.h"
 
 ORIG(0x4B8890, void, Script_RegisterFunction, (const char *name, void *fn, void *data, int argc));
 ORIG(0x4B8920, void, Script_UnregisterSymbol, (const char *name));
@@ -57,8 +59,6 @@ _Static_assert(sizeof(ControlsMenu) == 0x364, "ControlsMenu");
 extern uint16_t gControlsMenuType;
 extern void *gControlsMenuParams;
 extern Random gControlsRandom;
-extern uint8_t gKeys[];
-extern Mouse gMouse;
 extern const float gHalf;
 
 #define KEY_ESCAPE 1

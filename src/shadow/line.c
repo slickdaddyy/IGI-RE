@@ -8,10 +8,10 @@
 #include "bonemesh/bonemeshvars.h"
 #include "file/filevars.h"
 #include "math/mathvars.h"
+#include "weapon/weaponvars.h"
 
 ORIG(0x497F20, void, TransContext_Project, (float *screen, float *depth, Vec3d *pos));
 
-extern int gQVertexStrip;
 extern float kNearPlane;
 
 static inline int is_zero(float f)

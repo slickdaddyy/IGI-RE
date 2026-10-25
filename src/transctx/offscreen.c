@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "transctx/transctx.h"
+#include "transctx/transctxvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -19,8 +20,6 @@ ORIG(0x4B0EC0, void, RenderMode_SetMethod, (int mode, int method, void *fn));
 #define NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* What the OffscreenBuffer render mode draws into: 32 bit pixels in memory. */
-extern OffscreenBuffer gOffscreenTarget;
-extern float gOffscreenClip[];
 extern int gOffscreenMode;
 extern char gOffscreenReady;
 

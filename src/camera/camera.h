@@ -16,9 +16,6 @@ Explosion *Explosion_Spawn(Vec3d *pos, int count, int delay, float unk50, float 
                            float burnSize, int unk68, int unk6C, Task **burn, const char *sprite, const char *sound,
                            int noiseType, int noiseUnk8, float noiseRadius, int unk84);
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-
 /* the next child of a broadcast, NULL after the last one */
 #define NEXT_CHILD(c) ((c)->next && (c)->next->next ? (c)->next : NULL)
 

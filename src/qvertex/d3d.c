@@ -18,6 +18,10 @@
 #include "sector/sectorvars.h"
 #include "render/rendervars.h"
 #include "qvertex/qvertexvars.h"
+#include "weapon/weaponvars.h"
+#include "sysmisc/sysmiscvars.h"
+#include "transctx/transctxvars.h"
+#include "win/winvars.h"
 
 /* The QVertex driver of the Direct3D render mode. */
 
@@ -64,8 +68,6 @@ typedef struct StripState {
     Texture *texture;
 } StripState;
 
-extern int gTransContextValid;
-
 extern StripNode gQVStripBuffer[];
 extern int gQVTextureStatesIndex;
 extern int gQVRenderStatesIndex;
@@ -73,7 +75,6 @@ extern int gQVBlendStatesIndex;
 extern unsigned int gQVLastFlags;
 extern Texture *gQVLastTexture;
 extern int gClipDepth;
-extern uint8_t gKeys[];
 
 QV_F32(kZeroLocal, 0x00000000);
 QV_F32(kOneLocal, 0x3F800000);

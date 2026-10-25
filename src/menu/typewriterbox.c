@@ -5,6 +5,7 @@
 #include "menu/menu.h"
 #include "config/configvars.h"
 #include "menu/menuvars.h"
+#include "win/winvars.h"
 
 ORIG(0x4A5500, char *, crt_strncpy, (char *dst, const char *src, size_t n));
 ORIG(0x4B4A00, void, Draw_RectA, (float x, float y, float w, float h, float r, float g, float b, float a, int flags,
@@ -52,7 +53,6 @@ _Static_assert(sizeof(TypeWriterBox) == 0x88, "TypeWriterBox");
 extern uint16_t gTypeWriterBoxType;
 extern TypeLine gTypeLines[];
 extern void *gTypeWriterBoxParams;
-extern uint8_t gKeys[];
 
 void TypeWriterBox_Run(TypeWriterBox *tw);
 void TypeWriterBox_DrawHandler(TypeWriterBox *tw);

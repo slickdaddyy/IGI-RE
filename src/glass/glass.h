@@ -32,8 +32,6 @@ typedef struct ExplodeObj {
 _Static_assert(sizeof(MagicPart) == 0x4C, "MagicPart");
 _Static_assert(sizeof(ExplodeObj) == 0x238, "ExplodeObj");
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 /* exe constants, read in place so the x87 code sees the same values */

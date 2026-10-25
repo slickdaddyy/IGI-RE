@@ -8,8 +8,6 @@
 #include "param/paramtypes.h"
 #include "task/taskvars.h"
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));

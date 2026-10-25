@@ -17,6 +17,7 @@
 #include "file/filevars.h"
 #include "lod/lodvars.h"
 #include "sector/sectorvars.h"
+#include "transctx/transctxvars.h"
 
 FN_EXTERN(crt_CIpow);
 
@@ -81,7 +82,6 @@ extern int gQCubeNeighbourBits[];
 extern uint8_t gQCubeBitPerm[][256];
 extern uint8_t gQCubeOctantMask[];
 extern char gNearClipText[];
-extern int gTransContextAutoNear;
 extern uint16_t gQCubeNeverSetType;
 extern int gQCubeUnused4;
 extern int gQCubeUnused1;

@@ -11,9 +11,6 @@
 
 typedef void (*TaskFn)(Task *task);
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-
 extern Task *gLevelFirstTask;
 extern Task *gLevelDynamic;
 extern Task *gLevelStatic;

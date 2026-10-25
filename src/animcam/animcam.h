@@ -8,6 +8,7 @@
 #include "igi.h"
 #include "magicobj/magicobjtypes.h"
 #include "task/taskvars.h"
+#include "win/winvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -33,8 +34,6 @@ typedef struct AnimInputMsg {
 } AnimInputMsg;
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
-extern uint8_t gKeys[];
-extern uint8_t gKeysPrev[];
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 

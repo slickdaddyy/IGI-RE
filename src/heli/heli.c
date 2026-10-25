@@ -6,6 +6,8 @@
 #include "igi.h"
 #include "heli/heli.h"
 #include "math/mathvars.h"
+#include "win/winvars.h"
+#include "heli/helivars.h"
 
 FN_EXTERN(Heli_GetConfigSize);
 FN_EXTERN(Heli_GetSoundInfo);
@@ -111,8 +113,6 @@ ORIG(0x4FC7B0, int, PhysicsObj_IsResting, (void *obj));
 
 void Car_CollFilter(Task *t, char *msg);
 
-extern uint16_t gHeliType;
-extern void *gHeliParams;
 extern float gHeliRange[];
 extern ControlInfo gHeliControls[];
 

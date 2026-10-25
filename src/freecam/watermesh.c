@@ -3,6 +3,8 @@
 #include "freecam/freecam.h"
 #include "terredit/terredittypes.h"
 #include "math/mathvars.h"
+#include "terredit/terreditvars.h"
+#include "freecam/freecamvars.h"
 
 /* Quad tree of the water surface around the camera, split finer near the
    viewer. The top level is an 8x8 grid; the 2x2 children of every split
@@ -19,9 +21,6 @@ ORIG(0x52DAE0, void, WaterMesh_GetVertex, (WaterMesh *w, WaterVertex *out, const
 ORIG(0x52E180, void, WaterMesh_Light, (WaterMesh *w, float *color, const float *normal));
 ORIG(0x5116D0, void, TerrainMesh_DrawTriangle, (WaterTri *t));
 ORIG(0x4978E0, void, Primitive_Unregister, (int id));
-
-extern uint32_t gWaterSplits[];
-extern int gWaterPrimitive;
 
 extern double kEnvLift;
 extern float kEnvAngleScale;

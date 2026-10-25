@@ -7,6 +7,7 @@
 #include "heli/heli.h"
 #include "math/mathvars.h"
 #include "rotor/rotorvars.h"
+#include "win/winvars.h"
 
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));

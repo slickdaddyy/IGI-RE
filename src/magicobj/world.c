@@ -7,6 +7,8 @@
 #include "coll/collvars.h"
 #include "editcam/editcamvars.h"
 #include "magicobj/magicobjvars.h"
+#include "sound/soundvars.h"
+#include "terrain/terrainvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -39,13 +41,8 @@ ORIG(0x4E54E0, void, CellMask_Free, (void *p));
 ORIG(0x5175A0, void *, TexSet_Load, (const char *path));
 ORIG(0x5177F0, void, TexSet_Free, (void *p));
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-extern int gTaskHandlerChanges;
-extern uint16_t gDynCubeObjType;
 extern int gWorldUnusedInts[];
 #define gLightmapCount 0x800
-extern int gCollBumpTop;
 extern int gSavedCounters[];
 
 void Coll_ResetMods(void)

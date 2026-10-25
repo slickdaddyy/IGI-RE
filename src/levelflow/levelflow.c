@@ -6,6 +6,7 @@
 #include "config/configvars.h"
 #include "levelflow/levelflowvars.h"
 #include "math/mathvars.h"
+#include "win/winvars.h"
 
 ORIG(0x402870, int, Flow_GetFps, (void));
 ORIG(0x406220, int *, Profile_GetActive, (void));
@@ -25,7 +26,6 @@ extern uint16_t gLevelFlowType;
 extern ParamTable *gLevelFlowParams;
 extern void *gLevelFlowModel;
 extern char gKeyPressed[];
-extern uint8_t gKeys[];
 extern float kSecondsPerHour;
 
 void LevelFlow_Create(LevelFlow *lf);

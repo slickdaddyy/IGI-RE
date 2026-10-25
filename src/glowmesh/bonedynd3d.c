@@ -28,9 +28,6 @@ ORIG(0x4DAA20, int, Light_GetActive, (int *count));
 
 typedef void (*TaskHandler)(Task *task, void *arg);
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-
 #define HEADER(obj) (((ModelLod *)*(obj)->model)->mesh->header)
 
 void BoneDynCubeObj_NearZHandler(BoneDynCubeObj *obj, NearZArg *arg);

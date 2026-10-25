@@ -8,6 +8,7 @@
 #include "core/coretypes.h"
 #include "task/taskvars.h"
 #include "file/filevars.h"
+#include "sound/soundvars.h"
 
 FN_EXTERN(SplineObjSegment_Hit);
 
@@ -62,12 +63,6 @@ typedef struct SphereMesh {
     char unk0[0x10];
     uint16_t (*tris)[4];
 } SphereMesh;
-
-extern float *gSphereVerts;
-extern SegBuffer *gSphereNodes;
-extern struct SphereMesh *gSphereMesh;
-extern struct SphereNode *gSphereStack[];
-extern int gSphereDepth;
 
 void SplineObjSegment_Delete(SplineObjSegment *o)
 {

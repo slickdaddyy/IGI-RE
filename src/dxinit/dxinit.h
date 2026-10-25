@@ -14,10 +14,6 @@
 #include "core/coretypes.h"
 #include "camfeed/camfeedvars.h"
 
-extern int gD3DTnL;
-extern struct IDirect3D7 *gD3D;
-extern uint16_t gDynCubeObjType;
-
 #define SET_RS(state, value) gD3DDevice->lpVtbl->SetRenderState(gD3DDevice, (D3DRENDERSTATETYPE)(state), (value))
 #define SET_TSS(stage, state, value) \
     gD3DDevice->lpVtbl->SetTextureStageState(gD3DDevice, (stage), (D3DTEXTURESTAGESTATETYPE)(state), (value))

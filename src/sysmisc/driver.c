@@ -1,5 +1,6 @@
 #include "hook.h"
 #include "igi.h"
+#include "sysmisc/sysmiscvars.h"
 
 /* Install and remove the Direct3D versions of the texture and QVertex
    render functions. */
@@ -13,8 +14,6 @@ ORIG(0x50DC30, void, D3DQVertex_Init, (void));
 
 void D3DTex_Init(void);
 void D3DTex_Shutdown(void);
-
-extern int gQVertexDrawStrip;
 
 void D3DTex_Register(void)
 {

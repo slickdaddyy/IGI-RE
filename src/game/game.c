@@ -15,6 +15,7 @@
 #include "animtrig/animtrigvars.h"
 #include "file/filevars.h"
 #include "nodereg/noderegvars.h"
+#include "win/winvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A5234, int, crt_fclose, (void *f));
@@ -212,8 +213,6 @@ extern QTaskList *gCutsceneList;
 extern int gGameTextureCount;
 extern int gGameSpriteCount;
 extern char gMusicEnabled;
-extern char gKeyboardPresent;
-extern Mouse gMouse;
 
 #define KEY_R 0x13
 #define KEY_I 0x17

@@ -6,6 +6,8 @@
 #include "hook.h"
 #include "igi.h"
 #include "transctx/transctxtypes.h"
+#include "transctx/transctxvars.h"
+#include "d3d/d3dvars.h"
 
 typedef void (*ErrorHandler)(const char *text);
 
@@ -28,13 +30,10 @@ extern void(WINAPI *CoUninitialize_)(void);
 
 extern const GUID IID_IDirectDrawSurface4_[];
 extern const GUID IID_IDirectDrawSurface3_[];
-extern const GUID IID_IDirectDraw7_[];
 extern const GUID IID_IDirectDraw2_[];
 extern const GUID IID_IDirectMusic_[];
 extern const GUID CLSID_DirectMusic_[];
 
-extern OffscreenBuffer gOffscreenTarget;
-extern float gOffscreenClip[];
 extern unsigned short gFPUControlWord;
 
 void OffscreenBuffer_New(OffscreenBuffer *b, int width, int height)

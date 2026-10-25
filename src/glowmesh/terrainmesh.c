@@ -18,6 +18,9 @@
 #include "lod/lodvars.h"
 #include "nodereg/noderegvars.h"
 #include "sector/sectorvars.h"
+#include "terrain/terrainvars.h"
+#include "terrdraw/terrdrawvars.h"
+#include "terredit/terreditvars.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -113,7 +116,6 @@ ORIG(0x4A0340, void, Direct3DRender_ClipTriangleDepth, (ClipVertex a, ClipVertex
 
 extern TerrainLightMapInfo gTerrainLightMaps[];
 extern int gTerrainMeshRenderAll;
-extern Pool gLightPool;
 extern float gTerrainAmbient[];
 extern int gTerrainMeshUnusedTextures;
 extern TerrainFog gTerrainFog[];
@@ -122,14 +124,9 @@ extern float gTerrainBottom;
 extern float gTerrainRight;
 extern char gTerrainUnusedViewSlot;
 extern int gTerrainUnusedCellTotal;
-extern float gTerrainScaleY;
-extern float gTerrainScaleX;
 extern float gTerrainTop;
 extern float gTerrainLeft;
-extern float gTerrainCenterX;
-extern float gTerrainCenterY;
 extern float gTerrainInvSize;
-extern TerrainMaterial gTerrainMaterials[];
 extern float gTerrainView[]; /* 3x3 matrix, unk24, then the view origin */
 extern double gTerrainClipUV[][2];
 extern double gTerrainClipPos[][3];

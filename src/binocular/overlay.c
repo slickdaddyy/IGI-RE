@@ -13,6 +13,8 @@
 #include "config/configvars.h"
 #include "file/filevars.h"
 #include "math/mathvars.h"
+#include "weapon/weaponvars.h"
+#include "statgun/statgunvars.h"
 
 FN_EXTERN(BinocularHolder_Changed);
 FN_EXTERN(BinocularHolder_GetParams);
@@ -94,11 +96,9 @@ void View_ScaleSize(TransContext *v, float *out, const float *size, float depth)
 #define BINOCULARHOLDER_CHANGED (FN(0x4723E0, BinocularHolder_Changed))
 
 extern char *gBinocularSprite;
-extern void *gBinocularHolderParams;
 extern const int gGridTemplate[];
 extern const float gMarkerShape[];
 extern const float gTargetShape[];
-extern int gQVertexStrip;
 
 F32(kZeroLocal, 0x00000000);
 F32(kOneLocal, 0x3F800000);

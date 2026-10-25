@@ -4,6 +4,7 @@
 #include "hook.h"
 #include "compmap/compmap.h"
 #include "config/configvars.h"
+#include "win/winvars.h"
 
 FN_EXTERN(crt_CIpow);
 

@@ -7,6 +7,7 @@
 #include "coll/collvars.h"
 #include "editcam/editcamvars.h"
 #include "model/modelvars.h"
+#include "terrain/terrainvars.h"
 
 static const double kOneOver24 = 1.0 / 24.0;
 
@@ -32,8 +33,6 @@ ORIG(0x4C7770, void, DynCube_SendEventBox, (Terrain *t, int slot, void *query, V
 ORIG(0x4C8130, void, DynCube_SendEventLines, (Terrain *t, int slot, void *query, const Vec3d *starts, const Vec3d *ends,
                                   int count, unsigned int flags, int tree));
 ORIG(0x4C9A30, int, Coll_Descend_, (Terrain *t, CollCursor *c, CollCursor *unused, const Vec3d *p, int depth));
-
-extern int gCollBumpTop;
 
 typedef void (*TaskHandler)(CollTask *task, int arg);
 

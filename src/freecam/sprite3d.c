@@ -2,6 +2,7 @@
 
 #include "freecam/freecam.h"
 #include "math/mathvars.h"
+#include "sound/soundvars.h"
 
 /* Sprite3D: a camera facing sprite at a world position. */
 

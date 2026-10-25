@@ -6,6 +6,7 @@
 #include "transctx/transctxtypes.h"
 #include "bonemesh/bonemeshvars.h"
 #include "math/mathvars.h"
+#include "terredit/terreditvars.h"
 
 ORIG(0x4DA180, void, Haze_GetVisible, (int **layers, int *count));
 ORIG(0x4DA300, void, Haze_GetFog, (float *color, float *amount, const Vec3d *from, const Vec3d *to, int *layers,
@@ -37,7 +38,6 @@ extern PointLight gPointLights[];
 extern int gLightNest;
 extern SpotLight gSpotLights[];
 extern int gLightFrameUsed;
-extern Pool gLightPool;
 extern int gLightStack[];
 extern int gSpotCount;
 extern int gPointCount;

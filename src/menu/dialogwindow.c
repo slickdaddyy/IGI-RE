@@ -3,6 +3,7 @@
 #include "menu/menu.h"
 #include "file/filevars.h"
 #include "math/mathvars.h"
+#include "weapon/weaponvars.h"
 
 FN_EXTERN(MenuWindow_ForwardLoad);
 

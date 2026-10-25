@@ -8,6 +8,7 @@
 #include "igi.h"
 #include "plane/plane.h"
 #include "math/mathvars.h"
+#include "win/winvars.h"
 
 FN_EXTERN(Heli_GetStateSize);
 
@@ -87,8 +88,6 @@ extern uint16_t gPlaneType;
 extern char gPlaneInputs[]; /* {name, 0, min, max} for each PlaneInput field */
 extern void *gPlaneParams;
 extern char gPlaneRandom[];
-extern uint8_t gKeys[];
-extern uint8_t gKeysPrev[];
 
 extern float kSlow;          /* 0.8 */
 extern float kGroundThrust;  /* 0.6 */

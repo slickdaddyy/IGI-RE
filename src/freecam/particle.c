@@ -4,6 +4,7 @@
 #include "transctx/transctxtypes.h"
 #include "bonemesh/bonemeshvars.h"
 #include "math/mathvars.h"
+#include "sound/soundvars.h"
 
 /* Particle systems that fill a cube of cells around the camera (rain, snow,
    dust); spawn() is called for every visible cell corner each frame. */

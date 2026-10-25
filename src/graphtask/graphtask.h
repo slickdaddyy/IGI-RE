@@ -11,8 +11,6 @@
 typedef void (*TaskFn)(void *task, void *arg);
 
 #define HANDLER(slot, type) gTaskHandlers[(uint8_t)(slot)][(uint16_t)(type)]
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 
 #define PHYS_CONTACTS 22
 

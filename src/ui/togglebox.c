@@ -2,14 +2,12 @@
 #include "igi.h"
 #include "ui/ui.h"
 #include "ui/uitypes.h"
+#include "ui/uivars.h"
 
 ORIG(0x4B4AF0, void, Draw_RectAZ, (float x, float y, float w, float h, float r, float g, float b, float a, float z,
                                    int flags, int unk));
 ORIG(0x41E5A0, void, ToggleBox_Activate, (void *tb));
 ORIG(0x41E600, void, ToggleBox_Deactivate, (void *tb));
-
-extern uint16_t gToggleBoxType;
-extern void *gToggleBoxParams;
 
 void ToggleBox_Create(ToggleBox *tb, void *arg);
 void ToggleBox_Delete(ToggleBox *tb);

@@ -6,10 +6,9 @@
 #include "config/configvars.h"
 #include "file/filevars.h"
 #include "math/mathvars.h"
+#include "weapon/weaponvars.h"
 
 ORIG(0x4B8030, void, Script_RegisterString, (const char *name, char *buf, int size));
-
-extern int gQVertexStrip;
 
 /* a one line text field; the script sees the text as "<name>.zData" */
 typedef struct InputBox {

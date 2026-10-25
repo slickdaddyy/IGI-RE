@@ -80,11 +80,7 @@ _Static_assert(offsetof(Wheel, owner) == 0x130, "Wheel");
 _Static_assert(sizeof(Wheel) == 0x158, "Wheel");
 _Static_assert(sizeof(WheelConfig) == 0x2F0, "WheelConfig");
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
-extern uint8_t gKeys[];
-extern uint8_t gKeysPrev[];
 
 /* exe constants, read in place so the x87 code sees the same values */
 extern float kHeliDamp;       /* 0.95 */

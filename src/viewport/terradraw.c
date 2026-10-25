@@ -1,5 +1,6 @@
 #include "hook.h"
 #include "viewport/viewport.h"
+#include "viewport/viewportvars.h"
 
 /* "TerraDrawTask": draws its world with QCube_Render in the viewport being drawn. */
 
@@ -8,7 +9,6 @@ typedef struct TerraDraw {
     void *world;
 } TerraDraw;
 
-extern uint16_t gTerraDrawType;
 extern uint16_t gTerraDrawOn;
 
 ORIG(0x4D2650, void, QCube_Render, (void *world, uint8_t *lists, int full));

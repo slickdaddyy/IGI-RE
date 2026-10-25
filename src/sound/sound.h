@@ -12,9 +12,6 @@ FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* calls the slot handler of each child of t (not deeper) with arg, keeping

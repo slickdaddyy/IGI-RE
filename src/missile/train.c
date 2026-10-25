@@ -9,6 +9,7 @@
 #include "missile/missile.h"
 #include "math/mathvars.h"
 #include "missile/missilevars.h"
+#include "win/winvars.h"
 
 FN_EXTERN(ParamQuat32_Size);
 FN_EXTERN(Train_GetFrame);
@@ -590,3 +591,9 @@ PAD(igb, 57BCB8, 57BCBA, 0x2);
 BSS(57BCB8) void *gTrainParams;
 STORE(igb, 57BCE8, 4) float store_57BCE8[4];
 ALIAS(gTrainOffsetRange, store_57BCE8, 0);
+BSS(C28C60) char gKeyboardBlocked;
+BSS(C28C60) char gKeyboardPresent;
+STORE(igb, C28C60, 1) uint8_t store_C28C62[256];
+ALIAS(gKeys, store_C28C62, 0);
+STORE(igb, C28C60, 1) uint8_t store_C28D62[286];
+ALIAS(gKeysPrev, store_C28D62, 0);

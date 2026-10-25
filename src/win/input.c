@@ -1,4 +1,5 @@
 #include <string.h>
+#include "win/winvars.h"
 
 #define DIRECTINPUT_VERSION 0x0700
 #include <dinput.h>
@@ -12,7 +13,6 @@ ORIG_STD(0x4AE730, HRESULT, DirectInputCreateEx_, (HINSTANCE inst, DWORD version
 ORIG_STD(0x4AF740, HRESULT, DirectInputCreateA_, (HINSTANCE inst, DWORD version, IDirectInputA **out,
                                                   IUnknown *outer));
 
-extern Mouse gMouse;
 extern int gMouseWheel;
 extern int gMouseRight;
 extern int gMouseLeft;
@@ -24,9 +24,6 @@ extern IDirectInputDeviceA *gKeyboardDev;
 extern IDirectInputA *gKeyboardDI;
 extern int gKeyboardAcquired;
 extern char gKeyboardBlocked;
-extern char gKeyboardPresent;
-extern uint8_t gKeys[];
-extern uint8_t gKeysPrev[];
 extern unsigned char gWinKeys[];
 
 extern const IID IID_IDirectInput7A_[];
@@ -372,12 +369,6 @@ BSS(5C8E08) IDirectInputDeviceA *gKeyboardDev;
 BSS(5C8E08) IDirectInputA *gKeyboardDI;
 PAD(igb, 5C8E08, 5C8E2C, 0x4);
 BSS(5C8E08) int gKeyboardAcquired;
-BSS(C28C60) char gKeyboardBlocked;
-BSS(C28C60) char gKeyboardPresent;
-STORE(igb, C28C60, 1) uint8_t store_C28C62[256];
-ALIAS(gKeys, store_C28C62, 0);
-STORE(igb, C28C60, 1) uint8_t store_C28D62[286];
-ALIAS(gKeysPrev, store_C28D62, 0);
-STORE(igb, C28C60, 1) unsigned char store_C28E80[256];
+STORE(igb, C28E80, 1) unsigned char store_C28E80[256];
 ALIAS(gWinKeys, store_C28E80, 0);
-BSS(C28C60) Mouse gMouse;
+BSS(C28E80) Mouse gMouse;

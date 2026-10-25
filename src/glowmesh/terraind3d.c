@@ -19,6 +19,7 @@
 #include "sector/sectorvars.h"
 #include "render/rendervars.h"
 #include "qvertex/qvertexvars.h"
+#include "terrdraw/terrdrawvars.h"
 
 typedef struct TdTLVertex {
     float sx, sy, sz, rhw;
@@ -67,16 +68,10 @@ ORIG(0x5144E0, void, Terrain_SetBlendMode, (int mode));
 ORIG(0x514760, void, TerrDraw_ClipTriangle, (TdClipVtx a, TdClipVtx b, TdClipVtx c, TdClipOut *out));
 ORIG(0x4AF960, void, List_Remove, (TdNode *node));
 
-extern IDirect3DVertexBuffer7 *gTerrainVB;
 extern TdTLVertex *gTerrVBData;
 extern int gTerrVertCount;
-extern uint32_t gTerrainFogColorD3D;
 extern int gTerrMirror;
 extern D3DVIEWPORT7 gTerrViewport;
-extern float gTerrainScaleY;
-extern float gTerrainScaleX;
-extern float gTerrainCenterX;
-extern float gTerrainCenterY;
 extern int gTerrainD3DUnusedInt;
 
 F32(kZero, 0x00000000);

@@ -3,6 +3,8 @@
 #include "widget/widget.h"
 #include "file/filevars.h"
 #include "math/mathvars.h"
+#include "weapon/weaponvars.h"
+#include "task/taskvars.h"
 
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));

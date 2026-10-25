@@ -86,8 +86,6 @@ _Static_assert(offsetof(Door, openExpr) == 0x1A0, "Door");
 _Static_assert(offsetof(Door, lastPos) == 0x2C8, "Door");
 _Static_assert(sizeof(Door) == 0x328, "Door");
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 /* copies 4 bytes without going through the FPU, like the original */

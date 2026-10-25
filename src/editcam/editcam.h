@@ -11,10 +11,6 @@
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-extern uint16_t gDynCubeObjType;
-
 /* the handler a task type has for a slot */
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 

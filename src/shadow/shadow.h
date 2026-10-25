@@ -37,8 +37,6 @@ typedef struct Shadow {
     float color[3];     /* 0x118 */
 } Shadow;
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 /* Calls the slot handler of each child of t, keeping the next child on

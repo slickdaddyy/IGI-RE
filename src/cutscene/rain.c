@@ -11,6 +11,8 @@
 #include "transctx/transctxtypes.h"
 #include "bonemesh/bonemeshvars.h"
 #include "nodereg/noderegvars.h"
+#include "sound/soundvars.h"
+#include "cutscene/cutscenevars.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -149,15 +151,10 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 /* MSVC _CIfmod: fmod(st1, st0), both popped */
 #define CRT_CIFMOD FN(0x4A56DA, crt_CIfmod)
 
-extern uint16_t gDynCubeObjType;
-extern uint16_t gRainObjType;
 extern int gRainVisibleCubes;
 extern int gRainLineId;
 extern char gRainRandom[];
 extern int gRainMemory;
-extern struct RainObj *gRainObjs[];
-extern void (*gRainCallback)(char *state);
-extern void *gRainParams;
 
 #define RAIN_CELLS (7 * 7 * 7)
 #define RAIN_DROPS 20

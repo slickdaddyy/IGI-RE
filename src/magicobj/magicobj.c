@@ -7,6 +7,7 @@
 #include "config/configvars.h"
 #include "magicobj/magicobjvars.h"
 #include "nodereg/noderegvars.h"
+#include "sound/soundvars.h"
 
 FN_EXTERN(RigidDynCubeObj_CollLine);
 FN_EXTERN(RigidDynCubeObj_EnterHandler);
@@ -50,11 +51,8 @@ ORIG(0x4E5610, void, CellMask_FillTriangle, (int target, float ax, float ay, flo
 #define RIGID_HANDLER_4C35F0 (FN(0x4C35F0, RigidDynCubeObj_CollLine))
 #define DIR_CALLBACK_4C2F90 (FN(0x4C2F90, MagicObj_LoadDirEntry))
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 extern char gRigidEvents[];
 extern uint16_t gRigidType;
-extern uint16_t gDynCubeObjType;
 
 static float max_scale(const RigidDynCubeObj *o)
 {

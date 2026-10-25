@@ -6,6 +6,7 @@
 #include "haze/haze.h"
 #include "task/taskvars.h"
 #include "nodereg/noderegvars.h"
+#include "sound/soundvars.h"
 
 FN_EXTERN(BoneDynCubeObj_CollLine);
 FN_EXTERN(BoneDynCubeObj_EnterHandler);
@@ -34,7 +35,6 @@ ORIG(0x4D2E40, void, BoneObj_Free, (BoneObj *obj));
 
 extern uint16_t gBoneType;
 extern uint8_t gBoneEvent;
-extern uint16_t gDynCubeObjType;
 
 void BoneDynCubeObj_GetInfo(BoneDynCubeObj *o, ObjInfo *info);
 void BoneDynCubeObj_ActivateHandler(BoneDynCubeObj *o, int *arg);

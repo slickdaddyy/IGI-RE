@@ -13,9 +13,6 @@
 
 typedef void (*TaskHandler)(void *task, void *arg);
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-
 PlayerProfile *Profile_GetActive(void);
 float Profile_GetSfxVolume(void);
 float Profile_GetMusicVolume(void);

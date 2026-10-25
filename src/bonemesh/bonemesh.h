@@ -50,9 +50,6 @@ typedef struct MeshLoadArg {
 
 _Static_assert(sizeof(MeshRender) == 0x38, "MeshRender");
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-
 /* method idx of a COM object */
 #define COM(obj, idx, type) ((type)(*(void ***)(obj))[idx])
 

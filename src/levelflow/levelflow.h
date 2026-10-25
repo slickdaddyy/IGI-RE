@@ -15,9 +15,6 @@ FN_EXTERN(Task_Nothing);
 
 typedef void (*TaskFn)();
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 #define FIELD(T, f) ((void *)offsetof(T, f))
 #define FIRST_CHILD(t) ((t)->head->next ? (t)->head : NULL)

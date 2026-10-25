@@ -7,6 +7,7 @@
 #include "igi.h"
 #include "sound/sound.h"
 #include "sound/soundtypes.h"
+#include "sound/soundvars.h"
 
 ORIG(0x49A010, void, SplineCache_Remove, (void *obj));
 ORIG(0x49A050, float *, SplineMesh_GetVerts, (void *obj, int model, int part, int unk3, int unk4, int *count));
@@ -55,12 +56,6 @@ _Static_assert(offsetof(SegObj, segRot) == 0x200, "segRot");
 _Static_assert(offsetof(SegObj, segLength) == 0x544, "segLength");
 _Static_assert(offsetof(SegObj, segments) == 0x59C, "segments");
 _Static_assert(offsetof(SegObj, rigid) == 0x5B4, "rigid");
-
-extern float *gSphereVerts;
-extern SegBuffer *gSphereNodes;
-extern struct SphereMesh *gSphereMesh;
-extern struct SphereNode *gSphereStack[];
-extern int gSphereDepth;
 
 static const double kHalfD = 0.5;
 static const float kZero = 0.0f;

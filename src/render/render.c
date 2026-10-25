@@ -22,6 +22,9 @@
 #include "nodereg/noderegvars.h"
 #include "sector/sectorvars.h"
 #include "render/rendervars.h"
+#include "terrdraw/terrdrawvars.h"
+#include "terredit/terreditvars.h"
+#include "d3d/d3dvars.h"
 
 /* Direct3D mesh renderer: rigid, spline and lightmapped meshes. */
 
@@ -177,10 +180,7 @@ ORIG(0x4D0E50, int, ModelLod_GetTexAnimStateSize, (ModelLod *l));
 ORIG(0x4D0E60, void, ModelLod_SaveTexAnimState, (ModelLod *l, int *out));
 ORIG(0x4D0EA0, void, ModelLod_LoadTexAnimState, (ModelLod *l, const int *in));
 
-extern struct IDirect3D7 *gD3D;
 extern ProjVert gProjVerts[];
-extern Pool gLightPool;
-extern uint32_t gFogEnable;
 
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }

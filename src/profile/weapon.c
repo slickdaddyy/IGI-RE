@@ -104,7 +104,6 @@ extern char gWeaponConfigPath[];
 extern char gTaskTypeEnum;
 extern ParamTable *gWeaponConfigContainerParams;
 extern ParamTable *gWeaponConfigParams;
-extern TaskType gTaskTypes[];
 
 void WeaponConfigContainer_Create(WeaponConfigContainer *c);
 void WeaponConfigContainer_GetParams(void *task, ParamTable **out);

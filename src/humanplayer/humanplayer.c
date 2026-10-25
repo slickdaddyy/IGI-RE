@@ -16,6 +16,7 @@
 #include "humanplayer/humanplayervars.h"
 #include "humanstate/humanstatevars.h"
 #include "math/mathvars.h"
+#include "weapon/weaponvars.h"
 
 FN_EXTERN(HumanPlayer_BlastHandler);
 FN_EXTERN(HumanPlayer_FenceHandler);
@@ -192,7 +193,6 @@ extern float gLeanSide;
 extern float gLeanUp;
 extern int gLeanFrames;
 extern float gMaxDamage;
-extern float gFenceDamage;
 extern char gUnlimitedAmmo;
 
 extern float kKmhToUnits;

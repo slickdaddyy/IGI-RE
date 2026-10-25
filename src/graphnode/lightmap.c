@@ -8,6 +8,7 @@
 #include "lod/lodvars.h"
 #include "magicobj/magicobjvars.h"
 #include "nodereg/noderegvars.h"
+#include "sound/soundvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -99,7 +100,6 @@ typedef struct LightMapDraw {
 extern char gLightMapRandom[];
 extern uint16_t gTerrainLightMapType;
 extern void *gTerrainLightMapParams;
-extern uint16_t gDynCubeObjType;
 extern TerrainLightMap *gLightMapTasks[];
 extern LightMapDraw gLightMapDraw[];
 

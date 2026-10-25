@@ -7,9 +7,6 @@
 #include "qvertex/qvertextypes.h"
 #include "res/restypes.h"
 
-extern int gQVertexStrip;
-extern int gQVertexDrawStrip;
-
 /* a float constant from the exe, bit exact */
 #define QV_F32(name, bits) static const union { uint32_t u; float f; } name = { bits }
 

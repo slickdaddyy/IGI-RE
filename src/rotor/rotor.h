@@ -86,9 +86,6 @@ _Static_assert(offsetof(CarData, explodePoints) == 0x284, "CarData");
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 /* Calls fn(child, arg) for each child of t (not deeper), keeping the next

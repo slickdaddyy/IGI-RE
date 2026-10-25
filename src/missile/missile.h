@@ -74,11 +74,7 @@ _Static_assert(offsetof(Missile, target) == 0x828, "target");
 _Static_assert(offsetof(Missile, fuel) == 0x864, "fuel");
 _Static_assert(sizeof(Missile) == 0x898, "Missile");
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
-extern uint8_t gKeys[];
-extern uint8_t gKeysPrev[];
 
 /* exe constants, read in place so the x87 code sees the same values */
 extern double kMinusOneD;

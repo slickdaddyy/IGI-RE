@@ -9,6 +9,7 @@
 #include "coll/collvars.h"
 #include "editcam/editcamvars.h"
 #include "model/modelvars.h"
+#include "terrain/terrainvars.h"
 
 static const double kOneOver24 = 1.0 / 24.0;
 static const float kTenth = 0.1f;
@@ -42,11 +43,8 @@ ORIG(0x4B32F0, long double, Vec3d_DistanceSq, (const Vec3d *a, const Vec3d *b));
 typedef void (*TaskHandler)(CollTask *task, int arg);
 
 extern int gCollSavedHoleCount;
-extern int gCollBumpTop;
 extern int gCollLeafTests;
 extern int gCollTriangleTests;
-/* 900 byte TerrainMaterial records; only the low byte of the first field is read */
-extern TerrainMaterial gTerrainMaterials[];
 
 #define SAR(v, n) ((int)(v) >> ((n) & 31))
 

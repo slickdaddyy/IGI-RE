@@ -21,9 +21,6 @@ typedef struct PartScriptArg {
     int index;
 } PartScriptArg;
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-
 /* the handler a task type has for a slot */
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 

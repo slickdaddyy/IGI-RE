@@ -5,6 +5,7 @@
 #include "editcam/editcam.h"
 #include "editcam/editcamvars.h"
 #include "nodereg/noderegvars.h"
+#include "sound/soundvars.h"
 
 FN_EXTERN(Task_ReturnZero);
 

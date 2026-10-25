@@ -1,6 +1,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "plane/plane.h"
+#include "heli/helivars.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401B20, void, TaskRef_Remove, (Task **ref));
@@ -12,9 +13,6 @@ ORIG(0x4F45F0, uint16_t, Vehicle_GetType, (void));
 ORIG(0x4F46E0, void, Vehicle_SaveState, (void *obj, void **msg));
 ORIG(0x4F4780, void, Vehicle_LoadState, (void *obj, void **msg));
 ORIG(0x5031F0, void, Vehicle_ParseConfig, (VehicleConfig *cfg, int *next, void *args));
-
-extern uint16_t gHeliType;
-extern void *gHeliParams;
 
 void Heli_LoadState(Heli *h, void **msg)
 {

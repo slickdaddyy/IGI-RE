@@ -6,16 +6,15 @@
 #include "igi.h"
 #include "sound/sound.h"
 #include "sound/soundtypes.h"
+#include "haze/hazevars.h"
+#include "sound/soundvars.h"
 
 ORIG(0x4B0B00, void, Pool_Init, (void *pool, int stride, int capacity, int index_offset));
 ORIG(0x4B0B70, void, Pool_Free, (void *pool));
 ORIG(0x4C7770, void, DynCube_SendEventBox, (void *tree, uint8_t slot, void *arg, Vec3d *min, Vec3d *max,
                                             uint32_t flags, int unk));
 
-extern uint16_t gDynCubeObjType;
 extern uint8_t gDynCubeObjMaskVisibleEvent;
-extern uint16_t gQObjType;
-extern int gCellMaskEnabled;
 extern float gCellMaskTriX;
 extern uint8_t gCellMaskDrawEvent;
 extern Pool gCellMaskPool;

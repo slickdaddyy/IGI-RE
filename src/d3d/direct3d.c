@@ -8,6 +8,11 @@
 #include "dxinit/dxinitvars.h"
 #include "render/rendervars.h"
 #include "qvertex/qvertexvars.h"
+#include "transctx/transctxvars.h"
+#include "win/winvars.h"
+#include "d3d/d3dvars.h"
+#include "terredit/terreditvars.h"
+#include "sysmisc/sysmiscvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -54,8 +59,6 @@ extern const GUID IID_IDirect3DTnLHalDevice_[];
 extern const GUID IID_IDirect3DRefDevice_[];
 extern const GUID IID_IDirect3DHALDevice_[];
 extern const GUID IID_IDirect3DRGBDevice_[];
-extern const GUID IID_IDirect3D7_[];
-extern const GUID IID_IDirectDraw7_[];
 
 typedef struct ClipRect {
     int unk0;
@@ -107,25 +110,13 @@ extern int gScreenWidth;
 extern int gD3DRenderMode;
 extern char gD3DReady;
 extern IDirectDrawSurface7 *gD3DPrimary;
-extern IDirectDrawSurface7 *gD3DBack;
 extern IDirectDrawSurface7 *gD3DZBuffer;
 extern int gD3DFogTable;
-extern IDirectDraw7 *gDDraw;
-extern struct IDirect3D7 *gD3D;
 extern D3DCallback *gD3DSetModeCallbacks;
 extern D3DCallback *gD3DUnsetModeCallbacks;
 extern D3DCallback *gD3DRestoreCallbacks;
-extern int gTexturesCreated;
-extern int gTextureBytes;
 extern float gBytesToMb;
-extern D3DDEVICEDESC7 gD3DDeviceDesc;
-extern int gD3DFoundHAL;
-extern int gD3DTnL;
-extern int gD3DZ24;
 extern D3DCallback gD3DCallbackPool[];
-extern int gDisplayClearColor[];
-extern DisplayMode gDisplayModes[];
-extern int gDisplayModeCount;
 
 #define DX_ERROR "%s\n\nDirectX error message: %s"
 
@@ -503,18 +494,8 @@ const char *DDraw_GetErrorString(HRESULT hr)
 }
 HOOK(0x492BE0, DDraw_GetErrorString);
 
-extern float gLayer0MinZ;
-extern float gLayer0MaxZ;
-extern float gLayer2MaxZ;
-extern float gLayer2Far;
-extern float gLayer2Near;
-extern float gLayer0Far;
-extern float gSkyRadius;
 extern float gD3DUnusedLayer0FarZ;
 extern float gD3DUnusedFarZ;
-extern float gLayer0Near;
-extern float gNearZ;
-extern float gLayer2MinZ;
 
 int Direct3D_DisplayOpen(void);
 void Direct3D_SetMode(DisplayMode *mode);

@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "physobj/physobj.h"
+#include "win/winvars.h"
 
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -62,8 +63,6 @@ extern void *gScreenGrabParams;
 extern int gScreenGrabFrame;
 
 /* DirectInput key tables, now and last frame */
-extern uint8_t gKeys[];
-extern uint8_t gKeysPrev[];
 #define DIK_LCONTROL 0x1D
 #define DIK_LSHIFT 0x2A
 #define DIK_LMENU 0x38

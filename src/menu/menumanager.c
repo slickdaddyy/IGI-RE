@@ -7,6 +7,7 @@
 #include "config/configtypes.h"
 #include "config/configvars.h"
 #include "game/gamevars.h"
+#include "win/winvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -88,10 +89,6 @@ extern int gMenuDemoTimer;
 extern MenuWindow *gMenuLastScreen;
 extern int gMenuIdleTimer;
 extern MenuWindow *gMenuLastFocus;
-extern int gDisplayClearColor[];
-extern uint8_t gKeys[];
-extern uint8_t gKeysPrev[];
-extern Mouse gMouse;
 
 #define SOUNDS_RES "LOCAL:menusystem/sound/sounds.res"
 #define KEY_HIT(k) ((gKeys[k] & 0x80) && !(gKeysPrev[k] & 0x80))

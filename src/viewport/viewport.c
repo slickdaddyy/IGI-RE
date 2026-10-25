@@ -3,6 +3,7 @@
 #include "hook.h"
 #include "viewport/viewport.h"
 #include "win/wintypes.h"
+#include "terrdraw/terrdrawvars.h"
 
 /* "ViewportQTask": a rectangle of the screen drawn through a camera. Its
    draw handler sets up a scene and a TransContext, then sends the draw
@@ -10,7 +11,6 @@
 
 typedef void (*ViewportCallback)(Camera *camera);
 
-extern uint32_t gFogEnable;
 extern uint16_t gViewportType;
 extern ViewportCallback gViewportCallbacks[];
 extern Viewport *gViewportDrawn[];

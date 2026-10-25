@@ -7,6 +7,8 @@
 #include "sound/soundtypes.h"
 #include "define/definetypes.h"
 #include "task/taskvars.h"
+#include "sound/soundvars.h"
+#include "viewport/viewportvars.h"
 
 FN_EXTERN(DefineGraph);
 FN_EXTERN(DefineGroup);
@@ -65,16 +67,10 @@ typedef struct ResourceEntry {
 
 _Static_assert(sizeof(SoundSysDef) == 0xA0, "SoundSysDef");
 
-extern SoundInst *gSoundFree;
 extern int gSoundInstCount;
-extern SoundInst *gSoundActive;
-extern int gSoundNextId;
 extern int gSoundUpdateRate;
 extern SoundInst *gSoundInsts;
 extern char gSoundUnusedByte;
-extern char gSoundDisabled;
-extern QTaskList *gSoundTasks;
-extern QTaskList *gSoundDefs;
 
 extern uint16_t gSoundSysControllerType;
 extern uint16_t gSoundSysDefType;
@@ -646,5 +642,5 @@ DATA(548808) int gSoundStopEvent INIT(255);
 BSS(A5E5F0) int gSoundInstCount;
 BSS(A5E5FC) int gSoundUpdateRate;
 BSS(A5E5FC) SoundInst *gSoundInsts;
-BSS(A5E60C) QTaskList *gSoundTasks;
-BSS(A5E60C) QTaskList *gSoundDefs;
+BSS(A5E60C) struct QTaskList *gSoundTasks;
+BSS(A5E60C) struct QTaskList *gSoundDefs;

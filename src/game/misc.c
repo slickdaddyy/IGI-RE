@@ -8,6 +8,7 @@
 #include "igi.h"
 #include "game/game.h"
 #include "coll/colltypes.h"
+#include "win/winvars.h"
 
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
 ORIG(0x406220, char *, Profile_GetActive, (void));

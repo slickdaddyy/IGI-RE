@@ -3,6 +3,7 @@
 #include "igi.h"
 #include "haze/haze.h"
 #include "task/taskvars.h"
+#include "haze/hazevars.h"
 
 ORIG(0x401860, void, TaskEvent_Set, (uint16_t type, uint8_t index));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
@@ -13,7 +14,6 @@ ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4C1800, QTaskList *, QTaskList_New, (int max));
 ORIG(0x4C1830, void, QTaskList_Free, (QTaskList *list));
 
-extern uint16_t gQObjType;
 extern uint8_t gQObjEvent;
 extern uint8_t gCameraEvent;
 extern QTaskList *gCameraListeners;

@@ -7,6 +7,8 @@
 #include "hook.h"
 #include "igi.h"
 #include "transctx/transctxtypes.h"
+#include "transctx/transctxvars.h"
+#include "d3d/d3dvars.h"
 
 ORIG(0x48F0A0, HWND, AppContext_GethWnd, (void));
 ORIG(0x4AF810, void, Warning_Show, (const char *fmt, ...));
@@ -56,7 +58,6 @@ _Static_assert(sizeof(Mixer) == 0x364, "Mixer");
 _Static_assert(sizeof(DSBUFFERDESC) == 0x24 && sizeof(DSCAPS) == 0x60, "DirectSound 7 structs");
 
 extern MCIDEVICEID gCDDeviceID;
-extern int gSoundVoiceCount;
 extern int gMixerCount;
 extern IDirectSoundBuffer *gDSPrimary;
 extern char gCDUnused0;
@@ -68,25 +69,15 @@ extern DWORD gStreamPos;
 extern DWORD gStreamHalfSize;
 extern int gStreamLoop;
 extern char gStreamReady;
-extern SoundList gSoundLists[];
 extern char gSoundStereo;
-extern float gMusicVolume;
-extern float gMasterVolume;
-extern float gSfxVolume;
 extern int gCDTrack;
-extern int gVoiceUpdateRate;
 extern char gCDUnused1;
 extern int gSoundUnusedReady;
 extern Mixer gMixers[];
-extern IDirectSound *gDSound;
 extern IUnknown *gDSListener;
-extern int gVolumeTable[];
 extern char gCDAudioOpen;
-extern char gSoundReady;
 extern char gSound3D;
 extern char *gSoundVoices;
-extern struct Voice *gActiveVoices;
-extern struct Voice *gFreeVoices;
 
 void CD_Open(void);
 void Mixer_Init(void);
@@ -664,7 +655,7 @@ BSS(676E50) int gSoundUnusedReady;
 PAD(igb, 676E50, 676E54, 0x4);
 STORE(igb, 676E50, 4) __typeof__(gMixers[0]) store_676E58[16];
 ALIAS(gMixers, store_676E58, 0);
-BSS(676E50) IDirectSound *gDSound;
+BSS(676E50) struct IDirectSound *gDSound;
 BSS(676E50) IUnknown *gDSListener;
 BSS(6840E8) char gCDAudioOpen;
 BSS(6840E8) char gSoundReady;

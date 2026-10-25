@@ -9,6 +9,7 @@
 #include "igi.h"
 #include "viewcam/viewcam.h"
 #include "task/taskvars.h"
+#include "viewcam/viewcamvars.h"
 
 FN_EXTERN(HumanAttach_Detect);
 FN_EXTERN(SubLevel_Run);
@@ -71,7 +72,6 @@ ORIG(0x4F2060, Task *, WeaponSlots_Get, (Task **slots, int i));
 ORIG(0x4F2310, void, Weapon_Move, (Task *w, double *pos, Matrix *m));
 
 extern uint16_t gHumanViewType;
-extern int gHumanMaskType;
 
 #define TASK_RUN_CHILDREN (FN(0x488700, SubLevel_Run))
 #define HANDLER_45F920 (FN(0x45F920, Task_FalseHandler))

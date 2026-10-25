@@ -10,6 +10,7 @@
 #include "win/wintypes.h"
 #include "editcam/editcamtypes.h"
 #include "task/taskvars.h"
+#include "vehbase/vehbasevars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -124,8 +125,6 @@ ORIG(0x508940, void, EditCamera_AttachPosition, (Vec3d *pos, Matrix *rot, void *
 ORIG(0x518130, void, Hermite_Init, (double *h, double p1, double p2, double m1, double m2));
 ORIG(0x518190, long double, Hermite_Eval, (double *h, double u));
 
-extern uint8_t gVehicleClearHitEvent;
-extern struct VehicleList *gVehicles;
 extern void *gCutSceneModel;
 extern int gCutSceneTicksPerSec;
 extern void *gCutSceneParams;

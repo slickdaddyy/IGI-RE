@@ -101,10 +101,8 @@ typedef struct OrientData {
     Quat q;
 } OrientData;
 
-extern AnimSet gAnimSets[];
 extern Quat *gRootQuat;
 extern Matrix *gRootMatrix;
-extern int gBoneSmoothAnims;
 
 static inline void *pool_get(Pool *p)
 {

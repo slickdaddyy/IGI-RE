@@ -5,6 +5,7 @@
 #include "win/wintypes.h"
 #include "animtrig/animtrigtypes.h"
 #include "animtrig/animtrigvars.h"
+#include "win/winvars.h"
 
 ORIG(0x490230, void, Keyboard_Update, (void));
 ORIG(0x48FC20, void, Mouse_Update, (void));
@@ -34,8 +35,6 @@ extern int gInputPortIndex;
 extern uint16_t gInputPortType;
 extern int gInputPortUnused;
 extern Joypad gJoypads[];
-extern uint8_t gKeys[];
-extern Mouse gMouse;
 
 static const float kZero = 0.0f;
 static const float kOne = 1.0f;

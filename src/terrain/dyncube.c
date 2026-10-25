@@ -20,8 +20,6 @@ ORIG(0x4E54E0, void, CellMask_Free, (void *p));
 ORIG(0x4E5580, int, CellMask_Test, (const void *mask, int x, int y));
 ORIG(0x4E5BA0, int, CellMask_TestRect, (const void *mask, float x, float y, float w, float h));
 
-extern TaskType gTaskTypes[];
-extern signed char gTaskSlotEvent[];
 extern const int gDynCubeChildDir[][3];
 extern const float gSqrt3;
 

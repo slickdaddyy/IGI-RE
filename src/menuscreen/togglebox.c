@@ -2,11 +2,9 @@
 #include "igi.h"
 #include "menuscreen/menuscreen.h"
 #include "ui/uitypes.h"
+#include "ui/uivars.h"
 
 ORIG(0x4B7E80, void, Script_RegisterInt, (const char *name, int *value));
-
-extern uint16_t gToggleBoxType;
-extern void *gToggleBoxParams;
 
 /* the script sees the state as "<name>.isOn" while the box is active */
 void ToggleBox_Activate(ToggleBox *tb)

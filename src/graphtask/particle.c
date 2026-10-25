@@ -6,6 +6,9 @@
 #include "math/x87.h"
 #include "graphtask/graphtask.h"
 #include "nodereg/noderegvars.h"
+#include "terredit/terreditvars.h"
+#include "task/taskvars.h"
+#include "sound/soundvars.h"
 
 /* passed to the hit callback */
 typedef struct Particle2DHit {
@@ -53,7 +56,6 @@ ORIG(0x4CC2A0, void, Coll_Lines, (void *world, CollHit *hits, Vec3d *starts, Vec
                                   void *msg, int flags));
 ORIG(0x4CEA10, uint8_t, World_GetEvent0, (void));
 
-extern uint16_t gDynCubeObjType;
 extern uint16_t gParticle2DType;
 extern uint8_t gParticle2DEvent;
 extern Particle2DTrail gParticle2DTrails[];
@@ -62,7 +64,6 @@ extern int gParticle2DMem;
 extern int gParticle2DMemMax;
 extern int gParticle2DTrailIdx;
 extern int16_t gParticle2DTimer;
-extern Pool gLightPool;
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);

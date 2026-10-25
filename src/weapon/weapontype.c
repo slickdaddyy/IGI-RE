@@ -8,6 +8,7 @@
 #include "task/taskvars.h"
 #include "config/configvars.h"
 #include "game/gamevars.h"
+#include "weapon/weaponvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -25,18 +26,7 @@ ORIG(0x4B8A80, char *, Script_GetArgString, (void *args, int i, char *buf, int s
 ORIG(0x4F1CD0, void, ParamEnum_Init, (void *e));
 ORIG(0x4F1DB0, void, ParamEnum_AddConstants, (void *e, const char *pattern));
 
-extern uint8_t gWeaponSizeEvent;
-extern uint8_t gWeaponInitEvent;
-extern uint8_t gWeaponFireEvent;
-extern uint8_t gWeaponSizeEvent2;
-extern uint8_t gWeaponInitEvent2;
-extern uint8_t gWeaponTypeEvent;
-extern uint8_t gWeaponUnusedPointsEvent;
 extern int gWeaponMaxId;
-extern char gWeaponCategoryEnum[];
-extern char gWeaponSightEnum[];
-extern char gWeaponAmmoEnum[];
-extern char gWeaponIdEnum[];
 
 ScriptValue *DefineWeaponType(ScriptValue *out, void *data, void *args);
 

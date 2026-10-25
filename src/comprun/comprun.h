@@ -20,9 +20,6 @@ typedef struct Toucher {
     Vec3d pos;
 } Toucher;
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))
 
 /* calls fn(child, arg) on each child of t (not deeper), with fn read from the

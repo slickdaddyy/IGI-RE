@@ -13,10 +13,7 @@
 
 typedef void (*TaskHandler)();
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((TaskHandler *)gTaskHandlers)[(slot) * 0x180 + (type)])
-extern uint16_t gDynCubeObjType;
 
 static inline Task *fc_next_sibling(Task *t)
 {

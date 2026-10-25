@@ -14,6 +14,9 @@
 #include "math/mathvars.h"
 #include "nodereg/noderegvars.h"
 #include "render/rendervars.h"
+#include "terredit/terreditvars.h"
+#include "sound/soundvars.h"
+#include "terrdraw/terrdrawvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -98,8 +101,6 @@ extern int gPolyListNothingB;
 extern int gPolyListLightState;
 extern int gPolyListNothingD;
 extern char gPolyListRandom[];
-extern Pool gLightPool;
-extern uint32_t gFogEnable;
 
 extern const float kMinus255;
 extern const float kNearScale;

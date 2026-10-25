@@ -11,6 +11,8 @@
 #include "bonemesh/bonemeshvars.h"
 #include "math/mathvars.h"
 #include "nodereg/noderegvars.h"
+#include "terredit/terreditvars.h"
+#include "freecam/freecamvars.h"
 
 /* the WaterMesh primitive in the render queue */
 typedef struct WaterDrawNode {
@@ -33,10 +35,7 @@ ORIG(0x52F630, void, WaterMesh_DrawSplitTri, (WaterMesh *w, WaterNode *node, Wat
 ORIG(0x52F3D0, void, WaterMesh_CalcEnvUV, (WaterMesh *w, float *uv, const Vec3d *pos, const float *normal));
 ORIG(0x5116D0, void, TerrainMesh_DrawTriangle, (WaterTri *t));
 
-extern int gWaterPrimitive;
-extern Pool gLightPool;
 extern const char gWaterName[];
-extern uint32_t gWaterSplits[];
 extern int gWaterUnusedNodeCount;
 extern int gWaterUnusedInt;
 

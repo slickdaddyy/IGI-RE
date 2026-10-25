@@ -6,14 +6,14 @@
 #include "widget/widgettypes.h"
 #include "win/wintypes.h"
 #include "camera/cameravars.h"
+#include "widget/widgetvars.h"
+#include "win/winvars.h"
 
 ORIG(0x48F130, int, AppContext_IsFullscreen, (void));
 ORIG(0x491CF0, DisplayMode *, Display_GetMode, (void));
 
-extern uint16_t gCursorType;
 extern int gCursorWindowX;
 extern int gCursorWindowY;
-extern Mouse gMouse;
 
 static const float kSpeedX = 320.0f;
 static const float kSpeedY = 240.0f;

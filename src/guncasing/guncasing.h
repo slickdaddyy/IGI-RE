@@ -139,8 +139,6 @@ uint8_t Gun_GetEvent2(void);
 uint8_t Gun_GetEvent3(void);
 uint8_t Gun_GetEvent4(void);
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((TaskFn *)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 /* exe constants, read in place so the x87 code sees the same values */

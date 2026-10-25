@@ -22,8 +22,6 @@ typedef struct CollMsg {
     void *obj;
 } CollMsg;
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))

@@ -7,6 +7,7 @@
 #include "hook.h"
 #include "win/win.h"
 #include "res/restypes.h"
+#include "d3d/d3dvars.h"
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
@@ -63,9 +64,6 @@ ORIG_STD(0x4AF7A6, HRESULT, AVIStreamRead_, (PAVISTREAM s, LONG start, LONG coun
                                              LONG *bytes, LONG *samples));
 ORIG(0x4AF7A0, DWORD, ICDecompress_, (HIC hic, DWORD flags, BITMAPINFOHEADER *infmt, void *in,
                                       BITMAPINFOHEADER *outfmt, void *out));
-
-extern IDirectDrawSurface7 *gD3DBack;
-extern IDirectDraw7 *gDDraw;
 
 #define MOVIE_SUBTITLE_MAX 32
 #define MOVIE_LINE_MAX 8

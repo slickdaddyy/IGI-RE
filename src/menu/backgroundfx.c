@@ -4,6 +4,7 @@
 #include "menu/menu.h"
 #include "file/filevars.h"
 #include "math/mathvars.h"
+#include "weapon/weaponvars.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x4018F0, uint16_t, Task_GetRootType, (void));

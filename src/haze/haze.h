@@ -16,9 +16,6 @@ typedef void (*HzHandler)(void *task, void *arg);
 
 #define ANIM_LOOPS 0x80000000u
 
-extern AnimSet gAnimSets[];
-extern int gBoneSmoothAnims;
-
 /* --- task types --- */
 
 /* "QObj", 0x50 bytes: anything the qcube renderer can draw */
@@ -67,9 +64,6 @@ typedef struct HazeLayer {
 _Static_assert(sizeof(QObj) == 0x50, "QObj");
 _Static_assert(sizeof(MagicObj) == 0x138, "MagicObj");
 _Static_assert(sizeof(HazeLayer) == 0x90, "HazeLayer");
-
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 
 uint8_t Camera_GetChangedEvent(void);
 QTaskList *Camera_GetListeners(void);

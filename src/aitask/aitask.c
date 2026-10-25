@@ -11,6 +11,7 @@
 #include "weapon/weapontypes.h"
 #include "humanbase/humanbasetypes.h"
 #include "math/mathvars.h"
+#include "haze/hazevars.h"
 
 typedef void (*AIActionFn)(HumanAI *ai, AIAction *a);
 
@@ -102,7 +103,6 @@ enum { POSE_STAND, POSE_KNEEL, POSE_LIE, POSE_ANIM, POSE_GUN };
 /* per AI type: channel -> HumanAI.ctrl index, pose -> human state (-1 none) */
 extern const int *const gAIChannelMap[];
 extern const int *const gAIPoseMap[];
-extern uint16_t gQObjType;
 extern double kUnit;
 
 static const float kFaceTol = 0x1.1df46ap-5f;

@@ -15,6 +15,7 @@
 #include "math/mathvars.h"
 #include "nodereg/noderegvars.h"
 #include "sector/sectorvars.h"
+#include "weapon/weaponvars.h"
 
 /* "FlatWater": a flat water plane at a fixed height, drawn with the
    "FlatWaterLayer" textures under it. */

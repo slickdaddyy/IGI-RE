@@ -2,6 +2,7 @@
 #include "hook.h"
 #include "orig.h"
 #include "compmap/compmap.h"
+#include "win/winvars.h"
 
 ORIG(0x401780, void, Task_DeleteChildren, (void *task));
 ORIG(0x4B12F0, void, Alias_Set, (const char *name, const char *path));

@@ -87,9 +87,6 @@ _Static_assert(offsetof(StatusScreen, portraits) == 0x38C, "StatusScreen.portrai
 _Static_assert(offsetof(StatusScreen, timeText) == 0x4DC, "StatusScreen.timeText");
 _Static_assert(sizeof(StatusScreen) == 0x4F0, "StatusScreen");
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 /* the next child of a broadcast, NULL after the last one */

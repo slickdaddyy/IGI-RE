@@ -5,10 +5,9 @@
 #include "core/coretypes.h"
 #include "file/filevars.h"
 #include "math/mathvars.h"
+#include "weapon/weaponvars.h"
 
 typedef void (*DrawFunc)(QVertexStrip *cmd);
-
-extern int gQVertexStrip;
 
 #define COLOR_SCALE (1.0f / 128)
 

@@ -43,9 +43,6 @@ _Static_assert(sizeof(WeaponUseArg) == 0x30, "WeaponUseArg");
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 #define TASK_NOTHING (FN(0x4D3710, Task_Nothing))

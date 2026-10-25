@@ -20,6 +20,7 @@
 #include "magicobj/magicobjvars.h"
 #include "lod/lodvars.h"
 #include "nodereg/noderegvars.h"
+#include "terrain/terrainvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4C5810, void, Coll_ResetMods, (void));
@@ -35,7 +36,6 @@ extern signed char gWalkTreeIndex[];
 extern DynCubeNode gWalkSavedRoots[];
 extern DynCubeNode gWalkFakeRoots[];
 extern int gWalkOverflow;
-extern int gCollBumpTop;
 
 F32(kSlope, 0x3fddb574);     /* 1.7321 */
 F32(kFixedOne, 0x4e800000);  /* 2^30 */

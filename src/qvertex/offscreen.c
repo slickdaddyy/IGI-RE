@@ -8,6 +8,9 @@
 #include "file/filevars.h"
 #include "math/mathvars.h"
 #include "res/resvars.h"
+#include "sysmisc/sysmiscvars.h"
+#include "weapon/weaponvars.h"
+#include "transctx/transctxvars.h"
 
 FN_EXTERN(Task_Nothing);
 
@@ -22,9 +25,6 @@ ORIG(0x498370, int, Offscreen_GetMode, (void));
 
 /* the shared do-nothing function */
 #define NOTHING (FN(0x4D3710, Task_Nothing))
-
-extern OffscreenBuffer gOffscreenTarget;
-extern float gOffscreenClip[];
 
 /* One palette slot only: slot n is byte n - 1. */
 extern char gPaletteSlots[];

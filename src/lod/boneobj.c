@@ -7,6 +7,7 @@
 #include "core/pool.h"
 #include "boneobj/boneobjtypes.h"
 #include "lod/lodvars.h"
+#include "haze/hazevars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4B0B00, void, Pool_Init_, (Pool *pool, int size, int count, unsigned int align));
@@ -33,12 +34,10 @@ typedef struct BoneBlend {
 
 _Static_assert(sizeof(BoneBlend) == 0x1C, "BoneBlend");
 
-extern AnimSet gAnimSets[];
 extern Skeleton *gBoneBuild;
 extern Bone *gBoneBuildBones;
 extern int gBoneUnused0;
 extern int gBoneUnused1;
-extern int gBoneSmoothAnims;
 
 static const float kTicksPerSecond = 4800.0f;
 

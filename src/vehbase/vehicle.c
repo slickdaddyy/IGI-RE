@@ -5,6 +5,7 @@
 #include "hook.h"
 #include "orig.h"
 #include "vehbase/vehbase.h"
+#include "vehbase/vehbasevars.h"
 
 ORIG(0x4015F0, void, Task_Delete, (void *task));
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
@@ -31,7 +32,6 @@ ORIG(0x504A90, void, AreaActivate_RemoveCriteria, (void *criteria));
 
 extern uint16_t gVehicleType;
 extern uint8_t gVehicleExplodeEvent;
-extern uint8_t gVehicleClearHitEvent;
 extern void *gVehicleCriteria;
 
 /* every vehicle, kept by 0x4F4870 */
@@ -40,7 +40,6 @@ typedef struct VehicleList {
     int unk4;
     Vehicle *items[];
 } VehicleList;
-extern struct VehicleList *gVehicles;
 
 /* PhysType arguments event */
 typedef struct ParseMsg {

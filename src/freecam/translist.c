@@ -3,6 +3,7 @@
 #include "transctx/transctxtypes.h"
 #include "camfeed/camfeedvars.h"
 #include "sector/sectorvars.h"
+#include "sound/soundvars.h"
 
 /* TransparencyList collects transparent triangle batches during the frame
    and draws them back to front at the end of the scene. */

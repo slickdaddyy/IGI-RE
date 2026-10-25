@@ -13,6 +13,7 @@
 #include "sector/sectorvars.h"
 #include "render/rendervars.h"
 #include "qvertex/qvertexvars.h"
+#include "transctx/transctxvars.h"
 
 ORIG(0x491CF0, int *, Display_GetMode, (void));
 ORIG(0x491D40, long double, Display_GetAspect, (void));
@@ -29,20 +30,9 @@ ORIG(0x4B0EE0, void, RenderMode_ForEach, (void *fn, void *user));
 int Primitive_Register(const char *name);
 
 extern int gTransContextPrim;
-extern int gTransContextAutoNear;
 extern int gSetActiveTransContextMethod;
 extern int gSetNearClippingPlaneMethod;
-extern int gTransContextValid;
 extern int gTransContextSelects;
-extern float gLayer0MinZ;
-extern float gLayer0MaxZ;
-extern float gLayer2MaxZ;
-extern int gD3DZ24;
-extern float gLayer2Far;
-extern float gLayer2Near;
-extern float gLayer0Far;
-extern float gLayer0Near;
-extern float gLayer2MinZ;
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);

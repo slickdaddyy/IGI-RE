@@ -15,10 +15,6 @@
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-extern int gQVertexStrip;
-
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));

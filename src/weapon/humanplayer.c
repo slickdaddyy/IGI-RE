@@ -16,6 +16,8 @@
 #include "task/taskvars.h"
 #include "file/filevars.h"
 #include "humanplayer/humanplayervars.h"
+#include "weapon/weaponvars.h"
+#include "haze/hazevars.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401AE0, void *, TaskRef_Add, (void *task));
@@ -100,9 +102,6 @@ ORIG(0x4E7C30, char, DebugText_IsEnabled, (void));
 ORIG(0x4F2060, void *, WeaponSlots_Get, (Task **slots, int i));
 
 extern char gInputChannels[][16];
-extern uint16_t gQObjType;
-extern float gFenceDamage;
-extern int gQVertexStrip;
 
 typedef struct HumanBlast {
     int unk00;

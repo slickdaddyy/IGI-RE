@@ -5,6 +5,7 @@
 #include "file/filevars.h"
 #include "math/mathvars.h"
 #include "menuscreen/menuscreenvars.h"
+#include "weapon/weaponvars.h"
 
 FN_EXTERN(MenuScreen_Activate);
 FN_EXTERN(MenuScreen_Apply);

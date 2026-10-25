@@ -9,6 +9,7 @@
 #include "math/mathvars.h"
 #include "nodereg/noderegvars.h"
 #include "sector/sectorvars.h"
+#include "weapon/weaponvars.h"
 
 /* "FlatSky": a sky dome with a gradient of five colors and a clear color,
    plus "FlatSkyLayer" cloud textures. */

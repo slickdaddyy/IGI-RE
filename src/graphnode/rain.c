@@ -1,16 +1,12 @@
 #include "hook.h"
 #include "graphnode/graphnode.h"
+#include "cutscene/cutscenevars.h"
 
 ORIG(0x4C1830, void, QTaskList_Free, (void *list));
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x4F65E0, char *, RainObj_FindCell, (void *rain, const Vec3d *pos));
 
 #define RAIN_MAX 8
-
-extern void *gRainParams;
-extern uint16_t gRainObjType;
-extern struct RainObj *gRainObjs[];
-extern void (*gRainCallback)(char *state);
 
 static const float kOne = 1.0f;
 static const float kZero = 0.0f;

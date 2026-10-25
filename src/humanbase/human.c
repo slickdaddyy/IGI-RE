@@ -13,6 +13,7 @@
 #include "task/taskvars.h"
 #include "bonemesh/bonemeshvars.h"
 #include "humanbase/humanbasevars.h"
+#include "soldier/soldiervars.h"
 
 ORIG(0x401CF0, char, TaskType_IsA, (uint16_t type, uint16_t base));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));
@@ -136,17 +137,10 @@ ORIG(0x504A90, void, AreaActivate_RemoveCriteria, (int criteria));
 ORIG(0x504AC0, unsigned int, AreaActivate_GetMask, (void *criteria));
 ORIG(0x462BA0, void, Human_AvoidHumans, (Human *h, double *pos, double *to, float *vel));
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 extern uint8_t gHumanEvent0;
 extern uint8_t gHumanEvent1;
-extern const char *gHumanTeamNames[];
-extern uint16_t gHumanType;
 extern int gHumanDebugTime;
-extern int gHumanCriteria;
-extern void *gHumanParams;
 extern int gHumanDebug;
-extern void *gHumanList;
 
 static const float kZero = 0.0f;
 static const float kOne = 1.0f;

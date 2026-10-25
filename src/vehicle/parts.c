@@ -5,6 +5,7 @@
 #include "vehicle/vehicle.h"
 #include "heli/helitypes.h"
 #include "loadscreen/loadscreentypes.h"
+#include "vehicle/vehiclevars.h"
 
 FN_EXTERN(EditorMagicObj_GetArgSize);
 FN_EXTERN(Rotor_ForwardEvent9);
@@ -49,7 +50,6 @@ extern uint16_t gCarDoorType;
 extern uint16_t gHeliWheelType;
 extern uint16_t gHeliDoorType;
 extern uint16_t gRocketPodType;
-extern uint16_t gHitZoneType;
 
 #define HANDLER_42D9B0 (FN(0x42D9B0, Rotor_ForwardEvent9))
 #define HANDLER_45F920 (FN(0x45F920, Task_FalseHandler))

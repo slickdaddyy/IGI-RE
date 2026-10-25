@@ -11,6 +11,7 @@
 #include "lod/lodvars.h"
 #include "math/mathvars.h"
 #include "render/rendervars.h"
+#include "d3d/d3dvars.h"
 
 FN_EXTERN(Direct3DRender_AlphaBlendOff);
 FN_EXTERN(Direct3DRender_SetLightmapStages);

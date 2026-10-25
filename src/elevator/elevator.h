@@ -11,9 +11,6 @@
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));

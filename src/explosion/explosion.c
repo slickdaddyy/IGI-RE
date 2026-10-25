@@ -8,6 +8,7 @@
 #include "file/filevars.h"
 #include "explosion/explosionvars.h"
 #include "math/mathvars.h"
+#include "task/taskvars.h"
 
 FN_EXTERN(Explosion_CreateHandler);
 FN_EXTERN(Explosion_RunHandler);

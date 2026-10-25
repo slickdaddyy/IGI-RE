@@ -13,6 +13,7 @@
 #include "sector/sectorvars.h"
 #include "render/rendervars.h"
 #include "qvertex/qvertexvars.h"
+#include "d3d/d3dvars.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -80,7 +81,6 @@ typedef struct SortDraw {
 extern uint16_t gStartupType;
 extern int gStartupDraw;
 extern int gStartupMethod;
-extern struct IDirect3D7 *gD3D;
 
 /* method idx of a COM object */
 #define COM(obj, idx, type) ((type)(*(void ***)(obj))[idx])

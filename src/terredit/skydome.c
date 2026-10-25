@@ -8,6 +8,8 @@
 #include "res/restypes.h"
 #include "camfeed/camfeedvars.h"
 #include "render/rendervars.h"
+#include "terredit/terreditvars.h"
+#include "d3d/d3dvars.h"
 
 /* The sky dome of FlatSky: a vertex buffer of 321 coloured vertices (the
    top, 15 rings of 20 from 90 degrees down by 6, and a ring below the
@@ -38,13 +40,9 @@ typedef struct SkyDome {
 
 _Static_assert(sizeof(SkyDome) == 0xEDC, "SkyDome");
 
-extern struct IDirect3D7 *gD3D;
 extern SkyDome *gSkyDome;
 extern void *gSkyModel;
 extern uint32_t gSkyUnusedTint[];
-extern Pool gLightPool;
-extern int gD3DTnL;
-extern float gSkyRadius;
 
 static const float kHalfPi = 0x1.921fb6p+0f;
 static const float kRingStep = 0x1.aceeap-4f;

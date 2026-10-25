@@ -6,6 +6,7 @@
 #include "win/wintypes.h"
 #include "res/restypes.h"
 #include "transctx/transctxtypes.h"
+#include "win/winvars.h"
 
 typedef struct Bitmap {
     int w;
@@ -20,8 +21,6 @@ typedef struct LoadingScreen {
     int x, y;
     Bitmap bar;
 } LoadingScreen;
-
-extern int gDisplayClearColor[];
 
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));

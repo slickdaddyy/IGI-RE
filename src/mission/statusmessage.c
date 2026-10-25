@@ -11,6 +11,7 @@
 #include "file/filevars.h"
 #include "levelflow/levelflowvars.h"
 #include "math/mathvars.h"
+#include "weapon/weaponvars.h"
 
 ORIG(0x416D50, char, Game_IsPaused, (void));
 ORIG(0x418E40, void *, MenuManager_FindFont, (void *mm, const char *name));
@@ -36,8 +37,6 @@ extern void *gStatusMessageParams;
 extern RangeF gStatusDurationRange;
 extern uint16_t gStatusMessageScreenType;
 extern void *gMessagesRes;
-
-extern int gQVertexStrip;
 
 static const double kZeroDLocal = 0.0;
 static const double kLineStep = 42.0;

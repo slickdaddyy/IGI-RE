@@ -6,19 +6,15 @@
 #include "sound/soundtypes.h"
 #include "viewport/viewporttypes.h"
 #include "task/taskvars.h"
+#include "sound/soundvars.h"
+#include "viewport/viewportvars.h"
 
 /* Playing sounds by name or through a handle, on top of the sound system of src/sound. */
 
 typedef void (*TaskFn2)(Task *task, void *arg);
 
 extern int gSoundUnusedOff;
-extern SoundInst *gSoundFree;
-extern SoundInst *gSoundActive;
-extern int gSoundNextId;
-extern char gSoundDisabled;
 extern char gSoundSilent;
-extern QTaskList *gSoundTasks;
-extern QTaskList *gSoundDefs;
 
 ORIG(0x4C17C0, void, QTaskList_Remove, (void *list, void *item));
 ORIG(0x496650, void, Voice_Free, (void *voice));
@@ -286,8 +282,8 @@ HOOK(0x4E7350, Sound_SetUnusedOff);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(A5E5E8) int gSoundUnusedOff;
-BSS(A5E5E8) SoundInst *gSoundFree;
-BSS(A5E5F4) SoundInst *gSoundActive;
+BSS(A5E5E8) struct SoundInst *gSoundFree;
+BSS(A5E5F4) struct SoundInst *gSoundActive;
 BSS(A5E5F4) int gSoundNextId;
 BSS(A5E608) char gSoundUnusedByte;
 PAD(igb, A5E608, A5E609, 0x1);

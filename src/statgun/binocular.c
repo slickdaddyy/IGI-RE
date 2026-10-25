@@ -6,8 +6,7 @@
 #include "transctx/transctxtypes.h"
 #include "binocular/binocularvars.h"
 #include "bonemesh/bonemeshvars.h"
-
-extern void *gBinocularHolderParams;
+#include "statgun/statgunvars.h"
 
 ORIG(0x4F1400, void, VarString_Bind, (VarString *v, void *task));
 ORIG(0x471480, void, BinocularOverlay_Draw, (BinocularOverlay *o));

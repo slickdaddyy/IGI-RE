@@ -9,6 +9,8 @@
 #include "d3d/d3dtypes.h"
 #include "file/filevars.h"
 #include "lod/lodvars.h"
+#include "win/winvars.h"
+#include "d3d/d3dvars.h"
 
 typedef void (*ErrorHandler)(const char *text);
 
@@ -40,9 +42,6 @@ ORIG(0x4C1780, void, Debug_Log, (void));
 ORIG_STD(0x4AF74C, HRESULT, DirectDrawEnumerateExA_, (LPDDENUMCALLBACKEXA fn, void *ctx, DWORD flags));
 ORIG_STD(0x4AF752, HRESULT, DirectDrawCreateEx_, (GUID *guid, void **out, REFIID iid, IUnknown *outer));
 
-extern const GUID IID_IDirect3D7_[];
-extern const GUID IID_IDirectDraw7_[];
-
 typedef struct DisplayCallback {
     struct DisplayCallback *next;
     void (*fn)(void);
@@ -53,16 +52,11 @@ typedef struct DisplayCallback {
 extern char gDisplayOpen;
 extern char gDisplayModeSet;
 extern char gDisplayDevice[];
-extern DisplayMode gDisplayModes[];
-extern int gDisplayModeCount;
 extern DisplayMode gDisplayMode;
 extern DisplayCallback gDisplayCallbacks[];
 extern DisplayCallback *gDisplaySetModeCallbacks;
-extern int gDisplayClearColor[];
 extern DisplayCallback *gDisplayEndFrameCallbacks;
 extern DisplayCallback *gDisplayFrameCallbacks;
-extern int gD3DFoundHAL;
-extern int gD3DTnL;
 
 /* RenderMode method ids */
 extern int gMethodGetGFXCaps;

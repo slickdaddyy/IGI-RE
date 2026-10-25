@@ -7,6 +7,8 @@
 #include "hook.h"
 #include "igi.h"
 #include "transctx/transctxtypes.h"
+#include "transctx/transctxvars.h"
+#include "d3d/d3dvars.h"
 
 ORIG(0x495620, void, Sound_ListPush, (void *node, void *head));
 ORIG(0x4A5500, char *, crt_strncpy, (char *dst, const char *src, size_t n));
@@ -55,25 +57,13 @@ typedef struct Voice {
 _Static_assert(sizeof(AdpcmState) == 0xC, "AdpcmState");
 _Static_assert(sizeof(Voice) == 0x4C, "Voice");
 
-extern int gSoundVoiceCount;
 extern double gListenerPos[];
 extern float gListenerMatrix[];
-extern SoundList gSoundLists[];
 extern unsigned char gAdpcmBuffer[];
-extern float gMusicVolume;
-extern float gMasterVolume;
-extern float gSfxVolume;
 extern int gSoundSwapPan;
-extern int gVoiceUpdateRate;
 extern const signed char gAdpcmIndexTable[];
 extern const short gAdpcmStepTable[];
 extern double gListenerVel[];
-extern IDirectSound *gDSound;
-extern int gVolumeTable[];
-extern char gSoundReady;
-extern struct Voice *gActiveVoices;
-extern struct Voice *gFreeVoices;
-extern int gFlowFrames;
 
 /* a float constant from the exe, bit exact */
 #define F32(name, bits) static const union { uint32_t u; float f; } name = { bits }

@@ -141,7 +141,6 @@ extern uint16_t gTextItemType;
 extern uint8_t gMapSelectEvent;
 extern const float gMapZoomAngle[];
 extern const float gItemColor[][3];
-extern Mouse gMouse;
 
 #define MENU_MANAGER() (gLevelFlow->menu)
 #define RUN_SLOT() 1

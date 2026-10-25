@@ -11,9 +11,6 @@
 
 typedef void (*TaskFn)(void *task, void *arg);
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-
 /* exe constants, read in place */
 
 /* calls the slot handler of each child of t (not deeper), keeping the next

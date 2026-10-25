@@ -3,23 +3,11 @@
 #include "game/game.h"
 #include "weapon/weapontypes.h"
 #include "game/gamevars.h"
+#include "weapon/weaponvars.h"
 
 ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4F1D80, void, ParamEnum_Free, (void *e));
-
-extern int gWeaponTypeCount;
-extern uint8_t gWeaponSizeEvent;
-extern uint8_t gWeaponInitEvent;
-extern uint8_t gWeaponFireEvent;
-extern uint8_t gWeaponSizeEvent2;
-extern uint8_t gWeaponInitEvent2;
-extern uint8_t gWeaponTypeEvent;
-extern uint8_t gWeaponUnusedPointsEvent;
-extern char gWeaponCategoryEnum[];
-extern char gWeaponSightEnum[];
-extern char gWeaponAmmoEnum[];
-extern char gWeaponIdEnum[];
 
 void WeaponType_Close(void)
 {

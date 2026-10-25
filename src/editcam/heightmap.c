@@ -6,6 +6,8 @@
 #include "coll/collvars.h"
 #include "editcam/editcamvars.h"
 #include "nodereg/noderegvars.h"
+#include "sound/soundvars.h"
+#include "terrain/terrainvars.h"
 
 FN_EXTERN(Task_ReturnZero);
 
@@ -85,7 +87,6 @@ extern void *gHeightMapParams;
 extern uint16_t gHeightMapType;
 extern int gHeightMapCount;
 extern int gCollBumpList[];
-extern int gCollBumpTop;
 
 static const double kLiftZ = 268435456.0;
 static const double kHalf = 0.5;

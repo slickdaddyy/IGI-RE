@@ -83,8 +83,6 @@ _Static_assert(sizeof(PlanePart) == 0x140, "PlanePart");
 typedef void (*TaskFn1)(void *task);
 typedef void (*TaskFn2)(void *task, void *arg);
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 /* exe constants, read in place so the x87 code sees the same values */

@@ -9,6 +9,9 @@
 #include "script/scripttypes.h"
 #include "config/configvars.h"
 #include "humanbase/humanbasevars.h"
+#include "soldier/soldiervars.h"
+#include "task/taskvars.h"
+#include "viewcam/viewcamvars.h"
 
 FN_EXTERN(Car_CollFilter);
 FN_EXTERN(Human_ActivateHandler);
@@ -137,23 +140,9 @@ ORIG(0x4FDEF0, uint8_t, Particle2D_GetCollideEvent, (void));
 ORIG(0x504A30, int, AreaActivate_AddCriteria, (const char *name, void *fn));
 ORIG(0x5096A0, uint8_t, AIGraph_GetEvent, (void));
 
-extern uint16_t gHumanType;
-extern void *gHumanList;
-extern void *gHumanParams;
-extern int gHumanCriteria;
 extern char gHumanCriteriaNames[][0x20];
-extern const char *gHumanTeamNames[];
 extern int gHumanUnusedInts[];
 extern char *gShadowTex;
-extern char *gBloodHole1;
-extern char *gBloodHole2;
-extern char *gBloodHole3;
-extern char *gBloodHole4;
-extern char *gBloodSprite1;
-extern char *gBloodSprite2;
-extern int gHumanMaskType;
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 
 /* handlers of the Human type that live after this file */
 #define Human_Handler45F280 (FN(0x45F280, Human_DrawHandler))

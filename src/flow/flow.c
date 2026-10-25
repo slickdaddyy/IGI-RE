@@ -12,6 +12,8 @@
 #include "config/configvars.h"
 #include "mission/missionvars.h"
 #include "model/modelvars.h"
+#include "win/winvars.h"
+#include "transctx/transctxvars.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A5350, FILE *, crt_fopen, (const char *path, const char *mode));
@@ -65,11 +67,6 @@ extern char gCDRoot[4];
 extern uint16_t gFlowType;
 extern int gFlowPauseStart;
 extern int gFlowPauseDepth;
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
-extern int gFlowFrames;
-extern char gKeyboardPresent;
-extern Mouse gMouse;
 
 void Flow_Open(void)
 {

@@ -163,8 +163,6 @@ _Static_assert(sizeof(SCameraControl) == 0x2F8, "SCameraControl");
 _Static_assert(offsetof(DrawerArg, cabinet) == 0x88, "DrawerArg");
 _Static_assert(sizeof(Drawer) == 0x160, "Drawer");
 
-extern Task *gTaskStack[];
-extern int gTaskStackTop;
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 
 /* Calls the slot handler of each child of t (not deeper), keeping the next

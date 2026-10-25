@@ -11,6 +11,7 @@
 #include "levelflow/levelflowtypes.h"
 #include "math/mathvars.h"
 #include "levelflow/levelflowvars.h"
+#include "win/winvars.h"
 
 FN_EXTERN(Task_FalseHandler);
 

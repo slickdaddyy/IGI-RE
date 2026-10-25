@@ -13,6 +13,7 @@
 #include "statgun/statguntypes.h"
 #include "config/configtypes.h"
 #include "task/taskvars.h"
+#include "viewcam/viewcamvars.h"
 
 FN_EXTERN(crt_CIpow);
 
@@ -90,12 +91,6 @@ ORIG(0x4FE210, void, Particle2D_Emit, (Task *ps, double *pos, float *dir, float 
                                   float d, int e, float f, int g, int h));
 
 extern const int gFootstepSounds[];
-extern char *gBloodSprite1;
-extern char *gBloodSprite2;
-extern char *gBloodHole1;
-extern char *gBloodHole2;
-extern char *gBloodHole3;
-extern char *gBloodHole4;
 
 #define ANIM_WALK 0x3F2
 

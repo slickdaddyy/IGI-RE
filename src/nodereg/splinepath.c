@@ -8,6 +8,7 @@
 
 #include "hook.h"
 #include "nodereg/splinepath.h"
+#include "sound/soundvars.h"
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -27,7 +28,6 @@ ORIG(0x4F1A60, uint8_t, Param_GetTableEvent, (void));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, int type, int flags, void *extra));
 
-extern uint16_t gDynCubeObjType;
 extern uint16_t gSplinePathNodeType;
 extern uint16_t gSplinePathType;
 extern void *gSplinePathNodeParams;
