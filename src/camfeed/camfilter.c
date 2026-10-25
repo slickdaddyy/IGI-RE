@@ -65,7 +65,7 @@ extern int gHandiCamDrawMethod;
 extern int gBandDrawMethod;
 extern int gHandiCamFilterPrim;
 extern int gBandFilterPrim;
-extern char gBandPixels[];
+extern int gBandPixels[];
 extern int gLineDrawMethod;
 extern int gLineFilterPrim;
 extern int gWideScreenPrim;

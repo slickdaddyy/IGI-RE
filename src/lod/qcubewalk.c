@@ -8,6 +8,7 @@
 #include "igi.h"
 #include "core/pool.h"
 #include "transctx/transctx.h"
+#include "terrain/terraintypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4C5810, void, Coll_ResetMods, (void));
@@ -89,7 +90,7 @@ _Static_assert(sizeof(WTerrainCell) == 0x30, "WTerrainCell");
 typedef void (*WHandler)(WTask *task, void *arg);
 
 extern WHandler gTaskHandlers[][0x180];
-extern char *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 extern int gDisplayFrame;
 extern WEntry *gQCubeOut;
 extern int gQCubeCount;
@@ -178,7 +179,7 @@ static void walk_release(Pool *p, char *elem)
  */
 void QCube_Walk(WWorld *w)
 {
-    double *nearp = *(double **)(gCurrentWorld + 0xDFC);
+    double *nearp = gCurrentWorld->waterLevel;
     int nearZ = nearp ? (int)walk_round(*nearp) : (int)0xE0000000;
     WTerrainCell *out = gTerrainCells;
     char **meshes = gTerrainMeshes;

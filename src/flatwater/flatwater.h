@@ -17,7 +17,7 @@ typedef void (*TaskFn2)(void *task, void *arg);
 extern void * gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern char *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 extern const char gEmptyString[];
 
 #define TASK_HANDLER(slot, type) (gTaskHandlers[slot][type])

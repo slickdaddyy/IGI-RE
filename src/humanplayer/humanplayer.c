@@ -197,7 +197,7 @@ extern float gMaxDamage;
 extern float gFenceDamage;
 extern QTaskList *gHumanPlayerList;
 extern char gUnlimitedAmmo;
-extern char gEmptyString[];
+extern const char gEmptyString[];
 
 extern float kKmhToUnits;
 extern float kPerFrameHour;

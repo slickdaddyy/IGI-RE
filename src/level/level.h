@@ -16,7 +16,7 @@ extern Task *gTaskStack[];
 extern int gTaskStackTop;
 
 extern Task **gLevelTaskIds[];
-extern List gTaskNotes[];
+extern List gTaskNotes[LEVEL_NOTE_LISTS];
 extern Level *gLevel;
 extern Task *gLevelFirstTask;
 extern Task *gLevelDynamic;

@@ -97,7 +97,7 @@ extern char gLightMapRandom[];
 extern uint16_t gTerrainLightMapType;
 extern void *gTerrainLightMapParams;
 extern uint16_t gDynCubeObjType;
-extern Terrain *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 extern int gVisibleLightMaps[];
 extern int gVisibleLightMapCount;
 extern TerrainLightMap *gLightMapTasks[];

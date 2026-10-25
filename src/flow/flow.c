@@ -71,7 +71,7 @@ extern InputPort gInputPorts[];
 extern int gFlowFrames;
 extern char gKeyboardPresent;
 extern Mouse gMouse;
-extern char gEmptyString[];
+extern const char gEmptyString[];
 
 void Flow_Open(void)
 {

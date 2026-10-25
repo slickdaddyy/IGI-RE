@@ -17,7 +17,7 @@ typedef void (*TaskFn)();
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern char gEmptyString[];
+extern const char gEmptyString[];
 
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
 #define FIELD(T, f) ((void *)offsetof(T, f))

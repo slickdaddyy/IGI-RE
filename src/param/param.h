@@ -59,7 +59,7 @@ extern void * gTaskHandlers[][0x180];
 #define HANDLER(slot, task) (gTaskHandlers[slot][(task)->type])
 
 extern Task **gLevelTaskIds[];
-extern List gTaskNotes[];
+extern List gTaskNotes[LEVEL_NOTE_LISTS];
 extern Level *gLevel;
 extern char gLevelPaused;
 extern char gLevelForceRunning;
@@ -70,6 +70,6 @@ extern int gLevelActivateEvent;
 extern int gLevelDeactivateEvent;
 extern int gLevelUnusedNewTaskEvent;
 
-extern char gEmptyString[];
+extern const char gEmptyString[];
 
 #endif

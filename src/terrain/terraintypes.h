@@ -49,6 +49,28 @@ typedef struct TerrainMaterial {
 } TerrainMaterial;
 _Static_assert(sizeof(TerrainMaterial) == 900, "TerrainMaterial");
 
+/* Octree node. Children are indexed by x | y << 1 | z << 2, where each bit
+   is the coordinate bit equal to the node's size. */
+typedef struct DynCubeNode {
+    unsigned int size;
+    int child;                 /* index in the parent's children */
+    struct DynCubeNode *parent;
+    struct DynCubeNode *children[8];
+    DynCubeObj *objs;
+    uint8_t child_mask;        /* bit n set while children[n] exists */
+    char unk31[3];
+    int tree;
+    uint16_t mask;             /* event mask of objs, plus bit 15 */
+    uint16_t sub_mask;         /* event masks of all children */
+    void *unk3C;
+} DynCubeNode;
+
+typedef struct TerrainLightmap {
+    int size;
+    void *data;
+    char texture[0x24];
+} TerrainLightmap;
+
 typedef struct Terrain {
     int unk0;
     void *unk4;
@@ -76,7 +98,7 @@ typedef struct Terrain {
     int unkDF0;
     void *palette;
     int *lmp;
-    int unkDFC;
+    double *waterLevel; /* the water surface height, NULL without water */
     char name[0x100];
 } Terrain;
 _Static_assert(sizeof(Terrain) == 0xF00, "Terrain");

@@ -19,11 +19,11 @@ void AlarmLight_Create(AlarmLight *al)
 {
     int i;
 
-    RigidDynCubeObj_Init(gCurrentWorld, al, NULL);
+    RigidDynCubeObj_Init((int)gCurrentWorld, al, NULL);
     al->place.x = 0;
     al->place.y = 0;
     al->place.z = 0;
-    DynCube_Add(gCurrentWorld, al, &al->place, obj_radius(&al->obj), 1);
+    DynCube_Add((int)gCurrentWorld, al, &al->place, obj_radius(&al->obj), 1);
     Sector_AddObject((int)al->obj.world, al, DynCubeObj_GetPosition(al));
     for (i = 0; i < 9; i++)
         al->placeMatrix.m[i] = i % 4 == 0 ? 1.0f : 0.0f;

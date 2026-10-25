@@ -5,18 +5,7 @@
 
 #include "hook.h"
 #include "nodereg/nodereg.h"
-
-/* the parts of the world used here */
-typedef struct WaterWorld {
-    char unk0[0xD3C];
-    int unkD3C;
-    char unkD40[0xD64 - 0xD40];
-    int unkD64;
-    char unkD68[0xDE0 - 0xD68];
-    int offset[3];
-    char unkDEC[0xDFC - 0xDEC];
-    double *waterLevel;
-} WaterWorld;
+#include "terrain/terraintypes.h"
 
 /* a kind of water, set up by script */
 typedef struct WaterType {
@@ -38,7 +27,7 @@ typedef struct Water {
     char unk38[0x60];
     float scale[3];
     char unkA4[0xF0 - 0xA4];
-    WaterWorld *world;
+    Terrain *world;
     int unkF4;
     void *neighbors[4];     /* &neighbor->neighbors of the waters with neighborIds */
     char unk108[0x4938 - 0x108];
@@ -81,7 +70,6 @@ _Static_assert(sizeof(Water) == 0x4C48, "Water");
 _Static_assert(offsetof(Water, ambient) == 0x4B4C, "Water.ambient");
 _Static_assert(offsetof(Water, height) == 0x4B78, "Water.height");
 _Static_assert(offsetof(Water, center) == 0x4BD0, "Water.center");
-_Static_assert(offsetof(WaterWorld, waterLevel) == 0xDFC, "WaterWorld");
 
 typedef struct WaterInfo {
     Vec3d pos;
@@ -200,7 +188,7 @@ HOOK(0x518930, Water_DrawCellMask);
 static void push_level(Water *w)
 {
     gWaterLevel = w->drawLevel;
-    ((WaterWorld *)gCurrentWorld)->waterLevel = &gWaterLevel;
+    gCurrentWorld->waterLevel = &gWaterLevel;
     gWaterStack[++gWaterDepth] = w;
 }
 
@@ -208,10 +196,10 @@ static void pop_level(void)
 {
     if (--gWaterDepth) {
         gWaterLevel = gWaterStack[gWaterDepth]->drawLevel;
-        ((WaterWorld *)gCurrentWorld)->waterLevel = &gWaterLevel;
+        gCurrentWorld->waterLevel = &gWaterLevel;
         return;
     }
-    ((WaterWorld *)gCurrentWorld)->waterLevel = NULL;
+    gCurrentWorld->waterLevel = NULL;
 }
 
 void Water_PreDraw(Water *w)
@@ -297,8 +285,8 @@ void Water_TestLines(Water *w, WaterLineQuery *q)
         rec.normal.x = 0;
         rec.normal.y = 0;
         rec.normal.z = 1;
-        rec.unk50 = ((WaterWorld *)gCurrentWorld)->unkD3C;
-        rec.unk4C = ((WaterWorld *)gCurrentWorld)->unkD64;
+        rec.unk50 = (int)gCurrentWorld->materials[0];
+        rec.unk4C = (int)gCurrentWorld->materials[10];
         rec.pos.x = p->x;
         rec.pos.y = p->y;
         rec.pos.z = lvl;
@@ -332,7 +320,7 @@ void Water_TestPoints(Water *w, WaterPointQuery *q)
         if (!(p->x >= w->min.x) || p->x > w->max.x || !(p->y >= w->min.y) || p->y > w->max.y)
             continue;
         if (w->height * kHalfF + w->top > p->z)
-            *out = ((WaterWorld *)gCurrentWorld)->unkD64;
+            *out = (int)gCurrentWorld->materials[10];
     }
 }
 HOOK(0x518E50, Water_TestPoints);
@@ -436,7 +424,7 @@ void Water_ParamsChanged(Water *w)
 {
     int size = (0x40000000 >> w->shift) * 2;
     int mask = -size;
-    WaterWorld *world = w->world;
+    Terrain *world = w->world;
     WaterType *t;
     long double d, h, z;
     Vec3d c = w->center;
@@ -540,7 +528,7 @@ void Water_SetTint(const float *c)
 HOOK(0x5196D0, Water_SetTint);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-BSS(A44344) void *gCurrentWorld;
+BSS(A44344) struct Terrain *gCurrentWorld;
 STORE(igb, A80200, 4) __typeof__(gWaters[0]) store_A80200[64];
 ALIAS(gWaters, store_A80200, 0);
 BSS(A80200) int gWaterLevelType;

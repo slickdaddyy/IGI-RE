@@ -23,7 +23,7 @@ ORIG(0x4B2980, long double, Vec2_Dot, (const float *a, const float *b));
 typedef struct FlatSky {
     Task task;
     char unk20[0x48];
-    char *world;        /* 0x68 */
+    struct Terrain *world; /* 0x68 */
     float unk6C;        /* 5 */
     float unk70;        /* 100 */
     float unk74;        /* 0..1 */

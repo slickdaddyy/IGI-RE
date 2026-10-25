@@ -54,8 +54,8 @@ extern uint16_t gRigidType;
 extern uint16_t gDynCubeObjType;
 extern MagicObjDef gMagicObjDefs[];
 extern int gMagicObjDefCount;
-extern void *gCurrentWorld;
-extern char gEmptyString[];
+extern struct Terrain *gCurrentWorld;
+extern const char gEmptyString[];
 
 static float max_scale(const RigidDynCubeObj *o)
 {

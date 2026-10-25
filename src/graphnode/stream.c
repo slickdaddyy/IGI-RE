@@ -21,7 +21,7 @@ ORIG(0x4FAA10, int, GraphStream_PeekByte, (GraphStream *s));
 
 extern List gStreamHandlers;
 extern List gStreamHandlersFree;
-extern void *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 
 #define GRAPH_MAGIC 0xFFEEDDCC
 

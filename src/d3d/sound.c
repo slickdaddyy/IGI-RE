@@ -85,8 +85,8 @@ extern char gCDAudioOpen;
 extern char gSoundReady;
 extern char gSound3D;
 extern char *gSoundVoices;
-extern int gActiveVoices;
-extern SoundNode *gFreeVoices;
+extern struct Voice *gActiveVoices;
+extern struct Voice *gFreeVoices;
 
 void CD_Open(void);
 void Mixer_Init(void);
@@ -195,7 +195,7 @@ void Sound_InitDirectSound(void)
     gSoundVoices = Mem_Alloc(gSoundVoiceCount * 0x4C, 4);
     memset(gSoundVoices, 0, gSoundVoiceCount * 0x4C);
     for (i = 0; i < gSoundVoiceCount; i++)
-        Sound_ListPush((SoundNode *)(gSoundVoices + i * 0x4C), &gFreeVoices);
+        Sound_ListPush((SoundNode *)(gSoundVoices + i * 0x4C), (SoundNode **)&gFreeVoices);
     gActiveVoices = 0;
     gSoundReady = 1;
     return;

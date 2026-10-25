@@ -71,8 +71,8 @@ extern double gListenerVel[];
 extern IDirectSound *gDSound;
 extern int gVolumeTable[];
 extern char gSoundReady;
-extern Voice *gActiveVoices;
-extern Voice *gFreeVoices;
+extern struct Voice *gActiveVoices;
+extern struct Voice *gFreeVoices;
 extern int gFlowFrames;
 
 /* a float constant from the exe, bit exact */
@@ -762,6 +762,6 @@ STORE(igb, 676AB8, 8) double store_676AB8[115];
 ALIAS(gListenerVel, store_676AB8, 0);
 STORE(igb, 67A4A0, 4) int store_67A4A0[10002];
 ALIAS(gVolumeTable, store_67A4A0, 0);
-BSS(6840F4) Voice *gActiveVoices;
-BSS(6840F4) Voice *gFreeVoices;
+BSS(6840F4) struct Voice *gActiveVoices;
+BSS(6840F4) struct Voice *gFreeVoices;
 BSS(C28C5C) int gFlowFrames;

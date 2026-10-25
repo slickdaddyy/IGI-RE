@@ -13,7 +13,7 @@ typedef void (*TaskFn)(void *task, void *arg);
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern void *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 
 /* calls handler slot of each child of t (not deeper) with the given
    arguments; slot is evaluated for each child like in the original */

@@ -69,7 +69,7 @@ extern int gGraphLinkB;
 extern int gGraphLinkA;
 extern GraphNode gGraphNodeTemp;
 extern List gStreamHandlers;
-extern void *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 
 /* the next byte of the file, which stays unread. When nothing is read
    the result is the low byte of the stream pointer. */

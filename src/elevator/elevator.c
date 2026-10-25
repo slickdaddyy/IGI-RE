@@ -88,8 +88,8 @@ void Elevator_CreateHandler(Elevator *e)
     Vec3d zero = {0, 0, 0};
     int i;
 
-    RigidDynCubeObj_Init(gCurrentWorld, e, NULL);
-    DynCube_Add(gCurrentWorld, e, &zero, obj_radius(&e->obj), 2);
+    RigidDynCubeObj_Init((int)gCurrentWorld, e, NULL);
+    DynCube_Add((int)gCurrentWorld, e, &zero, obj_radius(&e->obj), 2);
     e->place = zero;
     for (i = 0; i < 9; i++)
         e->placeMatrix.m[i] = i % 4 == 0 ? 1.0f : 0.0f;

@@ -7,6 +7,7 @@
 #include "hook.h"
 #include "flatwater/flatwater.h"
 #include "transctx/transctxtypes.h"
+#include "terrain/terraintypes.h"
 
 /* "FlatWater": a flat water plane at a fixed height, drawn with the
    "FlatWaterLayer" textures under it. */
@@ -23,7 +24,7 @@ ORIG(0x4B2C70, int, Vec3_RayPlane, (float *out, const float *p, const float *dir
 typedef struct FlatWater {
     Task task;
     char unk20[0x48];
-    char *world;    /* 0x68 */
+    struct Terrain *world; /* 0x68 */
     int unk6C;
     double height;  /* 0x70 */
     float unk78;    /* 30000 */
@@ -478,15 +479,15 @@ void FlatWater_Create(FlatWater *w)
     w->color[1] = 0;
     w->color[2] = 0;
     DynCube_ListAdd(w->world, w, -1);
-    *(WaterState **)(gCurrentWorld + 0xDFC) = &gWaterState;
-    s = *(WaterState **)(gCurrentWorld + 0xDFC);
+    gCurrentWorld->waterLevel = &gWaterState.height;
+    s = (WaterState *)gCurrentWorld->waterLevel;
     memcpy(&s->height, &w->height, sizeof(double));
 }
 HOOK(0x51D840, FlatWater_Create);
 
 void FlatWater_Delete(FlatWater *w)
 {
-    *(WaterState **)(gCurrentWorld + 0xDFC) = NULL;
+    gCurrentWorld->waterLevel = NULL;
     DynCube_ListRemove(w->world, w, -1);
 }
 HOOK(0x51D8B0, FlatWater_Delete);

@@ -68,7 +68,7 @@ _Static_assert(sizeof(Wire) == 0x138, "Wire");
 
 extern uint16_t gWireType;
 extern void *gWireParams;
-extern void *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 
 
 extern double kWireScale; /* 1/4096 */

@@ -103,8 +103,8 @@ void ElevatorFloorIndicator_Create(ElevatorFloorIndicator *f)
     Vec3d zero = {0, 0, 0};
     int i;
 
-    RigidDynCubeObj_Init(gCurrentWorld, f, NULL);
-    DynCube_Add(gCurrentWorld, f, &zero, obj_radius(&f->obj), 1);
+    RigidDynCubeObj_Init((int)gCurrentWorld, f, NULL);
+    DynCube_Add((int)gCurrentWorld, f, &zero, obj_radius(&f->obj), 1);
     for (i = 0; i < 9; i++)
         f->obj.matrix.m[i] = i % 4 == 0 ? 1.0f : 0.0f;
     f->obj.matrix.count = 0;

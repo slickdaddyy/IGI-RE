@@ -51,7 +51,7 @@ static inline int x87_fistp(long double x)
     return (int)r;
 }
 
-extern Terrain *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 
 /* MenuItem: one selectable item of a menu panel */
 typedef struct MenuItem {

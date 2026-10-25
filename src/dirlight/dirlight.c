@@ -42,7 +42,7 @@ ORIG(0x527460, void, DirlightKeyframe_GetParams, (void *kf, void **out));
 ORIG(0x527470, void, DirlightKeyframe_Delete, (void *kf));
 ORIG(0x5274D0, void, Dirlight_SetTime, (float time));
 
-extern void *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 extern void *gDirlightParams;
 extern uint16_t gDirlightType;
 extern char gDirlightRandom[];

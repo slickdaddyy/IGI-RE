@@ -208,7 +208,7 @@ extern QTaskList *gCutsceneList;
 extern int gGameTextureCount;
 extern int gGameSpriteCount;
 extern char gMusicEnabled;
-extern void *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 extern RenderMode gRenderModeCurrent;
 extern InputPort gInputPorts[];
 extern char gKeyboardPresent;

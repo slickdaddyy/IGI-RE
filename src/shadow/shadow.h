@@ -46,7 +46,7 @@ extern uint16_t gSectorObjectType;
 extern uint16_t gSectorInteriorObjectType;
 extern Pool gSectorLinks;
 extern Pool gVisSectors;
-extern void *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 
 /* exe constants, read in place */
 extern float kZero;

@@ -6,6 +6,7 @@
 #include "igi.h"
 #include "magicobj/magicobjtypes.h"
 #include "litmap/litmaptypes.h"
+#include "terrain/terraintypes.h"
 
 typedef void (*MagicHandler)(void *task, void *arg);
 
@@ -28,62 +29,9 @@ typedef struct MagicScriptValue {
     int i;
     int unk4;
     double d;
-    void *type;
+    const void *type;
     int unk14;
 } MagicScriptValue;
-
-typedef struct MagicPool {
-    char *data;
-    int *slots;
-    int used;
-    int capacity;
-    int stride;
-    int index_offset;
-} MagicPool;
-
-typedef struct WorldRoom {
-    int unk00;
-    int unk04;
-    int unk08[10];
-    char unk30;
-    char unk31[3];
-    int index;
-    uint16_t unk38;
-    uint16_t unk3A;
-    void *unk3C;
-} WorldRoom;
-
-typedef struct World {
-    int unk00;
-    void *unk04;
-    void *unk08;
-    void *unk0C;
-    WorldRoom *rooms[6];
-    char unk28[0xE8 - 0x28];
-    int unkE8[6];
-    int unk100[6];
-    int unk118[6][0x7F];
-    MagicPool pool;
-    int unkD18;
-    int unkD1C[8];
-    char unkD3C[0xDBC - 0xD3C];
-    void *texbank;
-    void *unkDC0;
-    void *unkDC4;
-    int unkDC8;
-    void **unkDCC;      /* 256 entries of 3 words */
-    void **unkDD0;
-    char unkDD4[0xDE0 - 0xDD4];
-    int unkDE0;
-    int unkDE4;
-    int unkDE8;
-    int unkDEC;
-    int unkDF0;
-    void *palette;
-    int *lightmaps;
-    int unkDFC;
-    char lightmapPath[0x100];
-} World;
 
 void RigidDynCubeObj_CreateHandler(RigidDynCubeObj *o, RigidCreateArg *arg);
 void RigidDynCubeObj_GetInfo(RigidDynCubeObj *o, ObjInfo *info);
@@ -113,9 +61,9 @@ int DynCubeTree_GetChildCount(int kind);
 void World_Init(void);
 void DynCubeObj_DeactivateHandler(Task *t, void **arg);
 void World_Shutdown(void);
-World *World_New(int rooms);
-void DynCubeNode_Init(World *w, WorldRoom *r, int unk04, int unk00, int index);
-void World_Free(World *w);
-void World_LoadTextures(World *w, const char *name);
+Terrain *World_New(int rooms);
+void DynCubeNode_Init(Terrain *w, DynCubeNode *r, int unk04, int unk00, int index);
+void World_Free(Terrain *w);
+void World_LoadTextures(Terrain *w, const char *name);
 
 #endif

@@ -33,7 +33,7 @@ typedef struct AnimInputMsg {
 
 extern TaskFn gTaskHandlers[][0x180];
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]
-extern void *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 extern uint8_t gKeys[];
 extern uint8_t gKeysPrev[];
 

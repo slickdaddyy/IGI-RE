@@ -19,7 +19,7 @@ ORIG(0x4CE410, char, Coll_LineOfSight, (void *world, const Vec3d *from, const Ve
                                         int flags, int trees, float *vis));
 ORIG(0x4E0810, void, SectorObject_SetMatrix, (void *mesh, Matrix *m));
 
-extern void *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 extern const Vec3f gWhite[];
 
 static const double kOne = 1.0;

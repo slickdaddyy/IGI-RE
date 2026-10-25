@@ -44,7 +44,7 @@ ORIG(0x4F1C90, void *, Param_Range02, (void));
 
 extern uint16_t gEditRigidObjType;
 extern void *gEditRigidObjParams;
-extern void *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 
 /* out = a * b. Each element sums a[i][k] * b[k][j] for k = 0..2; last[i] is
    the k whose product row i adds last. */

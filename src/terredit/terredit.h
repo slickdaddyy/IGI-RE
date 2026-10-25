@@ -13,7 +13,7 @@ typedef void (*TaskFn)(void *task, void *arg);
 extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
-extern Terrain *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 
 /* the handler a task type has for a slot */
 #define HANDLER(slot, type) gTaskHandlers[slot][(uint16_t)(type)]

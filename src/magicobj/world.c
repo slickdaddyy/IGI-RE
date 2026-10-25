@@ -12,8 +12,8 @@ ORIG(0x4018C0, void, TaskEvent_Free, (uint8_t index));
 ORIG(0x401D30, void, TaskEvent_MapSlot, (uint8_t slot, int bit));
 ORIG(0x401D50, void, TaskEvent_UnmapSlot, (uint8_t slot));
 ORIG(0x48F250, int, AppContext_GetTerrainLightmapsUsed, (void));
-ORIG(0x4B0B00, void, Pool_Init, (MagicPool *pool, int stride, int count, int index_offset));
-ORIG(0x4B0B70, void, Pool_Free, (MagicPool *pool));
+ORIG(0x4B0B00, void, Pool_Init, (Pool *pool, int size, int count, unsigned int align));
+ORIG(0x4B0B70, void, Pool_Free, (Pool *pool));
 ORIG(0x4B0C60, void *, Mem_Alloc, (size_t size, size_t align));
 ORIG(0x4B0D10, void, Mem_Free, (void *p));
 ORIG(0x4B22F0, void, Texture_Free, (void *tex));
@@ -28,7 +28,7 @@ ORIG(0x4B63D0, void, Resource_Flush, (void *res));
 ORIG(0x4B7CF0, void, Palette_Create, (void *palette, int *colors, int unk));
 ORIG(0x4B7D30, void, Palette_Free, (void *palette));
 ORIG(0x4C7560, void, DynCube_Remove, (void *world, Task *t));
-ORIG(0x4CE620, void, DynCube_UpdateStart, (World *w, int room));
+ORIG(0x4CE620, void, DynCube_UpdateStart, (Terrain *w, int room));
 ORIG(0x4CEA20, uint8_t, World_GetEvent1, (void));
 ORIG(0x4D1220, void, QCube_Clear, (void));
 ORIG(0x4E54E0, void, CellMask_Free, (void *p));
@@ -163,45 +163,45 @@ void World_Shutdown(void)
 }
 HOOK(0x4C5AA0, World_Shutdown);
 
-World *World_New(int rooms)
+Terrain *World_New(int rooms)
 {
-    World *w = Mem_Alloc(sizeof(World), 4);
-    WorldRoom *r;
+    Terrain *w = Mem_Alloc(sizeof(Terrain), 4);
+    DynCubeNode *r;
     int i;
 
-    w->unkDFC = 0;
-    w->unk0C = NULL;
-    w->lightmapPath[0] = 0;
-    memset(w->unkD1C, 0, sizeof(w->unkD1C));
-    w->unkD18 = 0;
-    w->unkDEC = 0;
-    w->lightmaps = NULL;
+    w->waterLevel = NULL;
+    w->ctr = NULL;
+    w->name[0] = 0;
+    memset(&w->lists[1], 0, 8 * sizeof(w->lists[1]));
+    w->lists[0] = NULL;
+    w->lightMapCount = 0;
+    w->lmp = NULL;
     for (i = 0; i < gLightmapCount; i++) {
         gLightmaps[i].size = 0;
         gLightmaps[i].data = NULL;
     }
     w->unkDC4 = NULL;
     w->unkDC0 = NULL;
-    w->unkDE0 = 0;
-    w->unkDE4 = 0;
-    w->unkDE8 = 0;
-    w->texbank = NULL;
+    w->offset[0] = 0;
+    w->offset[1] = 0;
+    w->offset[2] = 0;
+    w->textures = NULL;
     w->palette = NULL;
-    w->unk08 = NULL;
-    w->unk04 = NULL;
-    w->unkDCC = NULL;
-    w->unkDD0 = NULL;
-    Pool_Init(&w->pool, 0x40, rooms, 4);
+    w->cmd = NULL;
+    w->unk4 = NULL;
+    w->bit = NULL;
+    w->hmp = NULL;
+    Pool_Init(&w->nodes, 0x40, rooms, 4);
     for (i = 0; i < 6; i++) {
-        r = (WorldRoom *)(w->pool.data + w->pool.slots[w->pool.used] * w->pool.stride);
-        *(int *)((char *)r + w->pool.index_offset) = w->pool.used;
-        w->pool.used++;
-        w->rooms[i] = r;
+        r = (DynCubeNode *)(w->nodes.data + w->nodes.free[w->nodes.used] * w->nodes.stride);
+        *(int *)((char *)r + w->nodes.size) = w->nodes.used;
+        w->nodes.used++;
+        w->roots[i] = r;
         DynCubeNode_Init(w, r, 0, 0x40000000, i);
-        w->unkE8[i] = 0;
+        w->start_valid[i] = 0;
         DynCube_UpdateStart(w, i);
-        memset(w->unk118[i], 0, sizeof(w->unk118[i]));
-        w->unk100[i] = gTaskHandlerChanges;
+        memset(w->slot_count[i], 0, sizeof(w->slot_count[i]));
+        w->handler_changes[i] = gTaskHandlerChanges;
     }
     w->unkDC8 = 0;
     w->unkDF0 = 0;
@@ -211,33 +211,33 @@ World *World_New(int rooms)
 }
 HOOK(0x4C5B20, World_New);
 
-void DynCubeNode_Init(World *w, WorldRoom *r, int unk04, int unk00, int index)
+void DynCubeNode_Init(Terrain *w, DynCubeNode *r, int unk04, int unk00, int index)
 {
     (void)w;
-    r->unk38 = 0x8000;
-    r->unk3A = 0x8000;
-    r->unk30 = 0;
-    r->unk04 = unk04;
-    r->unk00 = unk00;
-    memset(r->unk08, 0, sizeof(r->unk08));
-    r->index = index;
+    r->mask = 0x8000;
+    r->sub_mask = 0x8000;
+    r->child_mask = 0;
+    r->child = unk04;
+    r->size = unk00;
+    memset(&r->parent, 0, offsetof(DynCubeNode, child_mask) - offsetof(DynCubeNode, parent));
+    r->tree = index;
     r->unk3C = NULL;
 }
 HOOK(0x4C5C90, DynCubeNode_Init);
 
-static void free_unshared(void **list, const char *shared)
+static void free_unshared(TerrainMap *list, const char *shared)
 {
     int i;
 
     for (i = 0; i < 0x100; i++) {
-        if (list[i * 3] && !shared[i]) {
-            Mem_Free(list[i * 3]);
-            list[i * 3] = NULL;
+        if (list[i].data && !shared[i]) {
+            Mem_Free(list[i].data);
+            list[i].data = NULL;
         }
     }
 }
 
-void World_Free(World *w)
+void World_Free(Terrain *w)
 {
     int i, slot, last, other, tmp;
     char *lastItem;
@@ -251,58 +251,58 @@ void World_Free(World *w)
         Mem_Free(w->unkDC4);
         w->unkDC4 = NULL;
     }
-    if (w->texbank) {
-        TexSet_Free(w->texbank);
-        w->texbank = NULL;
+    if (w->textures) {
+        TexSet_Free(w->textures);
+        w->textures = NULL;
     }
     if (w->palette) {
         Palette_Free(w->palette);
         Mem_Free(w->palette);
         w->palette = NULL;
     }
-    if (w->unkDCC)
-        free_unshared(w->unkDCC, gBitResident);
-    if (w->unkDD0)
-        free_unshared(w->unkDD0, gHmpResident);
-    if (w->unk08)
-        Resource_Flush(w->unk08);
-    if (w->unk0C) {
-        Resource_Flush(w->unk0C);
+    if (w->bit)
+        free_unshared(w->bit, gBitResident);
+    if (w->hmp)
+        free_unshared(w->hmp, gHmpResident);
+    if (w->cmd)
+        Resource_Flush(w->cmd);
+    if (w->ctr) {
+        Resource_Flush(w->ctr);
         QCube_Clear();
     }
-    if (w->unk04)
-        Resource_Flush(w->unk04);
-    if (w->unkDCC)
-        Resource_Flush(w->unkDCC);
-    if (w->unkDD0)
-        Resource_Flush(w->unkDD0);
+    if (w->unk4)
+        Resource_Flush(w->unk4);
+    if (w->bit)
+        Resource_Flush(w->bit);
+    if (w->hmp)
+        Resource_Flush(w->hmp);
     for (i = 0; i < gLightmapCount; i++) {
         if (gLightmaps[i].data)
             Texture_Free(&gLightmaps[i].texture);
     }
     for (i = 0; i < 6; i++) {
-        if (w->rooms[i]->unk3C)
-            CellMask_Free(w->rooms[i]->unk3C);
+        if (w->roots[i]->unk3C)
+            CellMask_Free(w->roots[i]->unk3C);
         /* inlined pool release: swap the room's slot with the last used one */
-        slot = *(int *)((char *)w->rooms[i] + w->pool.index_offset);
-        last = --w->pool.used;
+        slot = *(int *)((char *)w->roots[i] + w->nodes.size);
+        last = --w->nodes.used;
         if (slot != last) {
-            slots = w->pool.slots;
-            lastItem = w->pool.data + slots[last] * w->pool.stride;
-            other = *(int *)(lastItem + w->pool.index_offset);
+            slots = w->nodes.free;
+            lastItem = w->nodes.data + slots[last] * w->nodes.stride;
+            other = *(int *)(lastItem + w->nodes.size);
             tmp = slots[slot];
             slots[slot] = slots[other];
-            w->pool.slots[other] = tmp;
-            *(int *)(lastItem + w->pool.index_offset) = slot;
+            w->nodes.free[other] = tmp;
+            *(int *)(lastItem + w->nodes.size) = slot;
         }
     }
-    Pool_Free(&w->pool);
+    Pool_Free(&w->nodes);
     Mem_Free(w);
 }
 HOOK(0x4C5CE0, World_Free);
 
 /* loads <name>.tex and, when enabled, the <name>.lmp lightmaps */
-void World_LoadTextures(World *w, const char *name)
+void World_LoadTextures(Terrain *w, const char *name)
 {
     char path[128];
     int colors[256];
@@ -315,7 +315,7 @@ void World_LoadTextures(World *w, const char *name)
     strcat(path, ".tex");
     if (Texture_GetTMUs() > 1)
         Texture_SetActiveTMU(0);
-    w->texbank = TexSet_Load(path);
+    w->textures = TexSet_Load(path);
     if (Texture_GetTMUs() > 1)
         Texture_SetActiveTMU(-1);
     for (i = 0; i < 256; i++)
@@ -326,11 +326,11 @@ void World_LoadTextures(World *w, const char *name)
         return;
     strcpy(path, name);
     strcat(path, ".lmp");
-    strcpy(w->lightmapPath, path);
+    strcpy(w->name, path);
     if (!Resource_Exists(path))
         return;
     p = Resource_Load(path, &size);
-    w->lightmaps = p;
+    w->lmp = p;
     if (p) {
         lm = gLightmaps;
         for (off = 0; off < size; lm++) {

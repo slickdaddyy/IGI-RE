@@ -37,8 +37,8 @@ ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 ORIG(0x501D70, void, SplineObjWaypoint_UpdateAttach, (SplineObjWaypoint *w));
 
 extern uint16_t gSplineObjWaypointType;
-extern void *gCurrentWorld;
-extern char gEmptyString;
+extern struct Terrain *gCurrentWorld;
+extern const char gEmptyString[];
 extern TaskFn gTaskHandlers[][0x180];
 
 extern const float kDefaultSegLength;
@@ -539,9 +539,9 @@ void SplineObjWaypoint_Create(Waypoint *w)
     } else {
         static const Matrix identity = {{1.0f, 0, 0, 0, 1.0f, 0, 0, 0, 1.0f}, 0};
 
-        w->modelName[0] = gEmptyString;
+        w->modelName[0] = gEmptyString[0];
         memset(&w->point, 0, sizeof(Vec3d));
-        w->segModel[0] = gEmptyString;
+        w->segModel[0] = gEmptyString[0];
         memcpy(&w->rot, &identity, sizeof(Matrix));
         w->straight = 0;
         w->autoOrient = 0;

@@ -11,7 +11,7 @@ extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern void *gTaskHandlers[][0x180];
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
-extern void *gCurrentWorld;
+extern struct Terrain *gCurrentWorld;
 
 /* exe constants, read in place so the x87 code sees the same values */
 extern float kZero;

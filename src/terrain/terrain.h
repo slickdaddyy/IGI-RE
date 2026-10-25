@@ -12,28 +12,6 @@
 #define DYNCUBE_MIN_SIZE 0x2000
 #define DYNCUBE_MAX_SIZE 0x40000000
 
-/* Octree node. Children are indexed by x | y << 1 | z << 2, where each bit
-   is the coordinate bit equal to the node's size. */
-typedef struct DynCubeNode {
-    unsigned int size;
-    int child;                 /* index in the parent's children */
-    struct DynCubeNode *parent;
-    struct DynCubeNode *children[8];
-    DynCubeObj *objs;
-    uint8_t child_mask;        /* bit n set while children[n] exists */
-    char unk31[3];
-    int tree;
-    uint16_t mask;             /* event mask of objs, plus bit 15 */
-    uint16_t sub_mask;         /* event masks of all children */
-    void *unk3C;
-} DynCubeNode;
-
-typedef struct TerrainLightmap {
-    int size;
-    void *data;
-    char texture[0x24];
-} TerrainLightmap;
-
 /* fistp in the current rounding mode, low 32 bits */
 static inline int Terrain_Round(long double x)
 {
