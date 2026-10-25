@@ -138,7 +138,6 @@ _Static_assert(offsetof(EventData, ref) == 0x28, "EventData");
 #define AI_MONITOR_GRAPHS 64
 #define AI_MONITOR_TARGETS 128
 #define AI_CLAIMS 16
-#define AI_TARGETS 8
 #define AI_MOVE_ITEMS 1280
 #define AI_GRIDS 128
 

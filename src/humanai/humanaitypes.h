@@ -91,6 +91,8 @@ typedef struct AITarget {
 } AITarget;
 _Static_assert(sizeof(AITarget) == 0x130, "AITarget");
 
+#define AI_TARGETS 8
+
 struct HumanAI;
 
 /* a queued action of a HumanAI */

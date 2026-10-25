@@ -77,7 +77,7 @@ extern int gAIEventIndex;
 
 extern List gAIMoveFree;
 extern List gAITargets;
-extern AITarget gAITargetPool[];
+extern AITarget gAITargetPool[AI_TARGETS];
 #define AI_TARGETS 8
 
 /* fistp with the current rounding mode, like the original */
