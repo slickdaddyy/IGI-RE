@@ -66,9 +66,9 @@ extern uint16_t gSCameraType;
 extern void *gLensList;
 
 extern RenderMode gRenderModeCurrent;
-extern void *gQVertexTexture;
+extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern void *gQVertexPalette;
+extern struct Palette *gQVertexPalette;
 
 extern float kZero;
 extern float kHalf;

@@ -8,6 +8,7 @@
 #include "qvertex/qvertextypes.h"
 #include "transctx/transctxtypes.h"
 #include "core/coretypes.h"
+#include "res/restypes.h"
 
 FN_EXTERN(SubLevel_Run);
 
@@ -108,7 +109,7 @@ ORIG(0x4F1A80, void, ParamTable_Add, (void *table, void *base, void *field, void
 extern TransContext gTransContext;
 extern Scene gScene;
 
-extern void *gQVertexTexture;
+extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
 extern RenderMode gRenderModeCurrent;
 
@@ -121,7 +122,7 @@ ORIG(0x498000, void, TransContext_ProjectView, (float *out, const float *in));
 /* "FlatWaterLayer" and "FlatSkyLayer", 0x26C bytes: a scrolling texture */
 typedef struct FlatLayer {
     Task task;
-    char texture[0x24]; /* 0x20 */
+    Texture texture;    /* 0x20 */
     int loaded;         /* 0x44 */
     char lastName[256]; /* 0x48 */
     char name[256];     /* 0x148 */

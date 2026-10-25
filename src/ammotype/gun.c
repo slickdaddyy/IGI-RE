@@ -92,9 +92,9 @@ extern void *gGunParams;
 extern uint16_t gGunCasingType;
 extern uint16_t gGunType;
 extern uint8_t gGunEvents[];
-extern void *gQVertexTexture;
+extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern void *gQVertexPalette;
+extern struct Palette *gQVertexPalette;
 extern RenderMode gRenderModeCurrent;
 
 extern const float kHalf;

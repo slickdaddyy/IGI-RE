@@ -38,8 +38,8 @@ typedef struct StripNode {
     void *next;
     int method;
     int unk08;
-    QTexture *texture;
-    QPalette *palette;
+    Texture *texture;
+    Palette *palette;
     unsigned int flags;
     uint8_t alpha;
     int count;
@@ -53,7 +53,7 @@ _Static_assert(sizeof(StripNode) == 0x28, "StripNode");
 /* what the render state functions get */
 typedef struct StripState {
     unsigned int flags;
-    QTexture *texture;
+    Texture *texture;
 } StripState;
 
 extern struct IDirect3DDevice7 *gD3DDevice;
@@ -80,7 +80,7 @@ extern int gQVTextureStatesIndex;
 extern int gQVRenderStatesIndex;
 extern int gQVBlendStatesIndex;
 extern unsigned int gQVLastFlags;
-extern QTexture *gQVLastTexture;
+extern Texture *gQVLastTexture;
 extern int gClipDepth;
 extern uint8_t gKeys[];
 
@@ -873,7 +873,7 @@ BSS(A7CED8) int gQVRenderStatesIndex;
 BSS(A7CED8) int gQVBlendStatesIndex;
 PAD(igb, A7CED8, A7D9FC, 0x4);
 BSS(A7CED8) unsigned int gQVLastFlags;
-BSS(A7CED8) QTexture *gQVLastTexture;
+BSS(A7CED8) Texture *gQVLastTexture;
 BSS(A7CED8) int gClipDepth;
 BSS(BCADA0) float gD3DMinZ;
 BSS(BCADC8) float gD3DMaxZ;

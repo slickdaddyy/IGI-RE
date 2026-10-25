@@ -6,17 +6,17 @@
 /* Filled in by the render driver */
 typedef struct Palette {
     int device;
-    int unk4;
-    uint32_t *colors;       /* 256 */
+    int slot;               /* offscreen driver */
+    void *colors;           /* the driver's colour table */
 } Palette;
 
 typedef struct Texture {
     int device;
-    uint16_t width;
-    uint16_t height;
-    uint16_t pitch;
-    uint16_t format;
-    int unk0C;
+    short width;
+    short height;
+    short pitch;
+    short format;
+    void *pixels;           /* offscreen driver */
     float uScale;           /* used part of the surface */
     float vScale;
     float alpha;            /* share of the pixels that are see through */

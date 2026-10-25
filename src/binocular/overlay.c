@@ -96,7 +96,7 @@ extern const int gGridTemplate[];
 extern const float gMarkerShape[];
 extern const float gTargetShape[];
 extern RenderMode gRenderModeCurrent;
-extern void *gQVertexTexture;
+extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
 extern const char gEmptyString[];
 

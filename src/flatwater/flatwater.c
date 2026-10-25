@@ -430,7 +430,7 @@ void FlatWater_Render(FlatWater *w)
             strip.queue = -1;
             strip.count = n;
             strip.verts = verts;
-            gQVertexTexture = l->loaded ? l->texture : NULL;
+            gQVertexTexture = l->loaded ? &l->texture : NULL;
             for (c = 0; c < n; c++) {
                 QVertex *v = &verts[c];
 
@@ -612,10 +612,10 @@ void FlatLayer_ParamsChanged(FlatLayer *l)
         }
         if (!crt_strstr(l->name, "File not found") && Resource_Exists(path)) {
             if (l->loaded) {
-                Texture_Free(l->texture);
+                Texture_Free(&l->texture);
                 l->loaded = 0;
             }
-            Texture_LoadFile(l->texture, NULL, path);
+            Texture_LoadFile(&l->texture, NULL, path);
             l->loaded = 1;
         } else {
             crt_sprintf(l->name, "File not found");

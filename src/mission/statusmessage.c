@@ -34,9 +34,9 @@ extern uint16_t gStatusMessageScreenType;
 extern void *gMessagesRes;
 
 extern RenderMode gRenderModeCurrent;
-extern void *gQVertexTexture;
+extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern void *gQVertexPalette;
+extern struct Palette *gQVertexPalette;
 
 static const double kZeroD = 0.0;
 static const double kLineStep = 42.0;

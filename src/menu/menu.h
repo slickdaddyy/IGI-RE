@@ -16,9 +16,9 @@ extern TaskFn gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 extern RenderMode gRenderModeCurrent;
-extern void *gQVertexTexture;
+extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern void *gQVertexPalette;
+extern struct Palette *gQVertexPalette;
 extern const char gEmptyString[];
 
 /* the handler a task type has for a slot */

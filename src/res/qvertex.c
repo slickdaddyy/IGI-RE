@@ -10,9 +10,9 @@ ORIG(0x509930, void, QVertex_InitDriver, (void));
 ORIG(0x509960, void, QVertex_ShutdownDriver, (void));
 
 extern RenderMode gRenderModeCurrent;
-extern Texture *gQVertexTexture;
+extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern Palette *gQVertexPalette;
+extern struct Palette *gQVertexPalette;
 extern const float gColorScale;
 extern const float gPixelCenter;
 

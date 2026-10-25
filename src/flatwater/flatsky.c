@@ -262,7 +262,7 @@ void FlatSky_Render(FlatSky *s)
         strip.queue = -1;
         strip.count = SKY_ROWS * 2;
         strip.verts = verts;
-        gQVertexTexture = l->loaded ? l->texture : NULL;
+        gQVertexTexture = l->loaded ? &l->texture : NULL;
         gRenderModeCurrent.methods[gQVertexStrip](&strip);
     }
 }
@@ -327,7 +327,7 @@ HOOK(0x51EB40, FlatSky_ParamsChanged);
 void FlatLayer_Delete(FlatLayer *l)
 {
     if (l->loaded) {
-        Texture_Free(l->texture);
+        Texture_Free(&l->texture);
         l->loaded = 0;
     }
 }

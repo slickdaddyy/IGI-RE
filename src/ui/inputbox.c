@@ -7,9 +7,9 @@
 ORIG(0x4B8030, void, Script_RegisterString, (const char *name, char *buf, int size));
 
 extern RenderMode gRenderModeCurrent;
-extern void *gQVertexTexture;
+extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern void *gQVertexPalette;
+extern struct Palette *gQVertexPalette;
 
 /* a one line text field; the script sees the text as "<name>.zData" */
 typedef struct InputBox {

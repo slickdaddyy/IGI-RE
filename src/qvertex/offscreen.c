@@ -46,8 +46,8 @@ typedef struct OffscreenSprite {
     void *next;
     int method;
     int unk08;
-    QTexture tex;
-    QPalette pal;
+    Texture tex;
+    Palette pal;
     unsigned int flags;
     short hasPalette;
     short hasTexture;
@@ -63,9 +63,9 @@ typedef struct OffscreenSprite {
 _Static_assert(sizeof(OffscreenSprite) == 0x84, "OffscreenSprite");
 
 void OffscreenBuffer_AllocTexture(TextureDesc *d);
-void OffscreenBuffer_DeAllocTexture(QTexture *t);
+void OffscreenBuffer_DeAllocTexture(Texture *t);
 void OffscreenBuffer_AllocPalette(PaletteDesc *d);
-void OffscreenBuffer_DeAllocPalette(QPalette *p);
+void OffscreenBuffer_DeAllocPalette(Palette *p);
 void OffscreenBuffer_QVertexStrip(QVertexStrip *s);
 void OffscreenBufferSprite_Draw(OffscreenSprite *s);
 void OffscreenBufferSprite_RenderRect(OffscreenSprite *s);
@@ -87,7 +87,7 @@ HOOK(0x50BD80, OffscreenBuffer_InitTextures);
 
 void OffscreenBuffer_AllocTexture(TextureDesc *d)
 {
-    QTexture *t = (QTexture *)d->tex;
+    Texture *t = (Texture *)d->tex;
 
     t->pixels = Mem_Alloc(d->pitch * d->height, 4);
     memcpy(t->pixels, d->data, (unsigned)(d->pitch * d->height));
@@ -98,7 +98,7 @@ void OffscreenBuffer_AllocTexture(TextureDesc *d)
 }
 HOOK(0x50BE10, OffscreenBuffer_AllocTexture);
 
-void OffscreenBuffer_DeAllocTexture(QTexture *t)
+void OffscreenBuffer_DeAllocTexture(Texture *t)
 {
     Mem_Free(t->pixels);
     t->pixels = NULL;
@@ -108,7 +108,7 @@ HOOK(0x50BE70, OffscreenBuffer_DeAllocTexture);
 /* Converts the 256 colours to RGB565. Hangs if the slot is taken. */
 void OffscreenBuffer_AllocPalette(PaletteDesc *d)
 {
-    QPalette *p = (QPalette *)d->palette;
+    Palette *p = (Palette *)d->palette;
     const uint8_t *c;
     int i;
 
@@ -125,7 +125,7 @@ void OffscreenBuffer_AllocPalette(PaletteDesc *d)
 }
 HOOK(0x50BE90, OffscreenBuffer_AllocPalette);
 
-void OffscreenBuffer_DeAllocPalette(QPalette *p)
+void OffscreenBuffer_DeAllocPalette(Palette *p)
 {
     gPaletteSlots[p->slot - 1] = 0;
 }

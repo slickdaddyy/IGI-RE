@@ -5,27 +5,11 @@
 
 #include "igi.h"
 #include "qvertex/qvertextypes.h"
+#include "res/restypes.h"
 
-/* A texture handle as the drivers fill it in. */
-typedef struct QTexture {
-    int device;
-    short width, height;   /* offscreen driver */
-    short pitch, format;
-    void *pixels;
-    float uScale, vScale;  /* Direct3D driver */
-    int unk18, unk1C;
-    void *surface;
-} QTexture;
-
-typedef struct QPalette {
-    int device;
-    int slot;
-    uint16_t *colors;
-} QPalette;
-
-extern QTexture *gQVertexTexture;
+extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern QPalette *gQVertexPalette;
+extern struct Palette *gQVertexPalette;
 extern int gQVertexDrawStrip;
 
 /* a float constant from the exe, bit exact */

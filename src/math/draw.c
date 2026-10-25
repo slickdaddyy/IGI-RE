@@ -6,9 +6,9 @@
 
 typedef void (*DrawFunc)(QVertexStrip *cmd);
 
-extern int gQVertexTexture;
+extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
-extern int gQVertexPalette;
+extern struct Palette *gQVertexPalette;
 extern RenderMode gRenderModeCurrent;
 
 #define COLOR_SCALE (1.0f / 128)
@@ -49,8 +49,8 @@ static void DrawRect(float x, float y, float w, float h, float r, float g, float
     cmd.queue = unk8;
     cmd.count = 2;
     cmd.verts = v;
-    gQVertexTexture = 0;
-    gQVertexPalette = 0;
+    gQVertexTexture = NULL;
+    gQVertexPalette = NULL;
     gRenderModeCurrent.methods[gQVertexStrip](&cmd);
 }
 
@@ -110,8 +110,8 @@ void Draw_RectGradient(float x, float y, float w, float h,
     cmd.queue = unk8;
     cmd.count = 4;
     cmd.verts = v;
-    gQVertexTexture = 0;
-    gQVertexPalette = 0;
+    gQVertexTexture = NULL;
+    gQVertexPalette = NULL;
     gRenderModeCurrent.methods[gQVertexStrip](&cmd);
 }
 HOOK(0x4B4BE0, Draw_RectGradient);
@@ -145,8 +145,8 @@ static void DrawSprite(const Sprite *sheet, float x, float y, float r, float g, 
     cmd.queue = unk8;
     cmd.count = 2;
     cmd.verts = v;
-    gQVertexTexture = (int)f->texture;
-    gQVertexPalette = (int)sheet->palette;
+    gQVertexTexture = f->texture;
+    gQVertexPalette = sheet->palette;
     gRenderModeCurrent.methods[gQVertexStrip](&cmd);
 }
 
@@ -165,5 +165,5 @@ void Draw_SpriteZ(const Sprite *sheet, float x, float y, float r, float g, float
 HOOK(0x4B4F40, Draw_SpriteZ);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-BSS(A84A50) int gQVertexTexture;
-BSS(A84A58) int gQVertexPalette;
+BSS(A84A50) struct Texture *gQVertexTexture;
+BSS(A84A58) struct Palette *gQVertexPalette;
