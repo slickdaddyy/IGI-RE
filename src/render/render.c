@@ -26,20 +26,6 @@ typedef struct VBUpload {
     const void *src;
 } VBUpload;
 
-/* a static model vertex buffer (0x7AC0A0) */
-typedef struct ModelVB {
-    IDirect3DVertexBuffer7 *vb;
-    D3DVERTEXBUFFERDESC desc;
-    int stride;
-    VBUpload *uploads;
-    char unk1C[8];
-} ModelVB;
-
-typedef struct ModelSlot {
-    char unk0[0xFA4];
-    int used;
-} ModelSlot;
-
 typedef struct LmGroup {
     float center[3];
     uint16_t indexCount;
@@ -151,8 +137,6 @@ typedef struct SortedPrim {
     int unk64;
 } SortedPrim;
 
-_Static_assert(sizeof(ModelVB) == 0x24, "ModelVB");
-_Static_assert(sizeof(ModelSlot) == 0xFA8, "ModelSlot");
 _Static_assert(offsetof(LmGroup, indices) == 0x20, "LmGroup");
 _Static_assert(offsetof(RigidMesh, vb) == 0x28, "RigidMesh");
 _Static_assert(offsetof(LmMesh, vb) == 0x30, "LmMesh");
@@ -187,7 +171,7 @@ ORIG(0x4D0EA0, void, ModelLod_LoadTexAnimState, (ModelLod *l, const int *in));
 
 extern struct IDirect3D7 *gD3D;
 extern struct IDirect3DDevice7 *gD3DDevice;
-extern ModelSlot gMeshBatches[];
+extern MeshBatch gMeshBatches[];
 extern int gTexStageIdx;
 extern int gAlphaBlendIdx;
 extern int gLitAlphaIdx;
@@ -197,7 +181,7 @@ extern int gUnlitAlphaIdx;
 extern int gMeshVBCount;
 extern ProjVert gProjVerts[];
 extern int gOpaqueBlendIdx;
-extern ModelVB gMeshVBs[];
+extern MeshVB gMeshVBs[];
 extern int gUnlitIdx;
 extern void (* gTaskHandlers[][0x180])(void *, void *);
 extern Pool gLightPool;
@@ -372,14 +356,14 @@ void Direct3DRender_RestoreVertexBuffers(void)
     int i;
 
     for (i = 0; i < gMeshVBCount; i++) {
-        ModelVB *m = &gMeshVBs[i];
+        MeshVB *m = &gMeshVBs[i];
         VBUpload *n, *next;
         void *p;
 
         IDirect3DVertexBuffer7_Release(m->vb);
         m->vb = NULL;
         IDirect3D7_CreateVertexBuffer(gD3D, &m->desc, &m->vb, 0);
-        for (n = m->uploads; (next = n->next) != NULL; n = next) {
+        for (n = (VBUpload *)m->meshes.head; (next = n->next) != NULL; n = next) {
             if (IDirect3DVertexBuffer7_Lock(*n->vb, DDLOCK_WRITEONLY, &p, NULL) == 0) {
                 memcpy((char *)p + n->start * m->stride, n->src, n->count * m->stride);
                 IDirect3DVertexBuffer7_Unlock(*n->vb);
@@ -535,7 +519,7 @@ void Direct3DRender_InitModels(void)
     int i;
 
     for (i = 0; i < 3; i++)
-        if (gMeshBatches[i].used)
+        if (gMeshBatches[i].count)
             MeshBatch_Flush(i);
 }
 HOOK(0x49C7D0, Direct3DRender_InitModels);

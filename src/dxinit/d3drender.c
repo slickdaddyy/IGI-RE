@@ -27,21 +27,6 @@ FN_EXTERN(Direct3DRender_RestoreVertexBuffers);
 FN_EXTERN(Direct3DRender_SplineNearZ);
 FN_EXTERN(Direct3DRender_UnloadModel);
 
-/* meshes waiting to be copied into a static vertex buffer: 0 rigid, 1 bone, 2 rigid */
-typedef struct MeshBatch {
-    char *items[1000];
-    int total;
-    int count;
-} MeshBatch;
-
-/* a static vertex buffer and the meshes stored in it */
-typedef struct MeshVB {
-    IDirect3DVertexBuffer7 *vb;
-    D3DVERTEXBUFFERDESC desc;
-    int stride;
-    List meshes;
-} MeshVB;
-
 /* bone mesh vertex: position, normal, uv, weight, output vertex, bone */
 typedef struct SkinVertex {
     float p[3];
@@ -58,8 +43,6 @@ typedef struct NormalVertex {
     float u, v;
 } NormalVertex;
 
-_Static_assert(sizeof(MeshBatch) == 0xFA8, "MeshBatch");
-_Static_assert(sizeof(MeshVB) == 0x24, "MeshVB");
 _Static_assert(sizeof(SkinVertex) == 0x28, "SkinVertex");
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));

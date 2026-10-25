@@ -7,6 +7,8 @@
 #include <d3d.h>
 #include <stdint.h>
 
+#include "types.h"
+
 typedef struct DynVB {
     struct IDirect3DVertexBuffer7 *vb;
     int size;
@@ -36,5 +38,23 @@ typedef struct DDEnumCtx {
     int unk20;
     DDDriver cur;
 } DDEnumCtx;
+
+/* meshes waiting to be copied into a static vertex buffer: 0 rigid, 1 bone, 2 rigid */
+typedef struct MeshBatch {
+    char *items[1000];
+    int total;
+    int count;
+} MeshBatch;
+
+/* a static vertex buffer and the meshes stored in it */
+typedef struct MeshVB {
+    IDirect3DVertexBuffer7 *vb;
+    D3DVERTEXBUFFERDESC desc;
+    int stride;
+    List meshes;
+} MeshVB;
+
+_Static_assert(sizeof(MeshBatch) == 0xFA8, "MeshBatch");
+_Static_assert(sizeof(MeshVB) == 0x24, "MeshVB");
 
 #endif
