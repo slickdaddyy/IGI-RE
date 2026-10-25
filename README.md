@@ -112,7 +112,7 @@ a copy of the DLL for long runs, so that a rebuild doesn't swap the file under t
 
 | Path | What |
 |---|---|
-| `src/<area>/` | The rewrite, one folder per engine system (`sound`, `humanai`, `qvm`, ...), one C file per module, functions in the exe's order. `<area>types.h` holds the area's struct types. |
+| `src/<area>/` | The rewrite, one folder per engine system (`sound`, `humanai`, `qvm`, ...), one C file per module, functions in the exe's order. `<area>types.h` holds the area's struct types, `<area>vars.h` the globals other areas use. |
 | `src/types.h` | Vectors, matrices, lists and pools, used everywhere. |
 | `src/addr.c` | The original address of every global. |
 | `src/hook.c`, `src/dllmain.c` | The DLL: hook installation, settings, crash log, the DirectInput forwarding. |

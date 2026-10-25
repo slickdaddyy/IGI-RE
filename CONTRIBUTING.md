@@ -27,7 +27,8 @@ those changes the result under truncation. [docs/VERIFY.md](docs/VERIFY.md) has 
   matrices, lists and pools). Types-only headers hold no prototypes, so any file can include them. Keep the
   `_Static_assert` size and offset checks next to the definition.
 - Unknown fields are `unk<offset>` (`unk1C`) until the code shows what they are.
-- Every global is declared once (`extern`) and has its address in `src/addr.c`. After changing a declaration,
+- Every global is declared once (`extern`): in the one .c file that uses it, or in its owning area's `<area>vars.h`
+  when other areas use it. Its address is in `src/addr.c`. After changing a declaration,
   regenerate the exe's data ([docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#data)).
 
 ## Tests
