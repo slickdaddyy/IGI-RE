@@ -15,9 +15,6 @@ extern void * gTaskHandlers[][0x180];
 extern Task *gTaskStack[];
 extern int gTaskStackTop;
 
-#define LEVEL_MAX_IDS 0x1000
-#define LEVEL_NOTE_LISTS 251
-
 extern Task **gLevelTaskIds[];
 extern List gTaskNotes[];
 extern Level *gLevel;

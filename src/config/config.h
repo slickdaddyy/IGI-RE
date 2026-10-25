@@ -6,12 +6,6 @@
 #include "config/configtypes.h"
 #include "win/wintypes.h"
 
-/* name/value pairs registered as script constants */
-typedef struct ConfigConstant {
-    char name[0x20];
-    int value;
-} ConfigConstant;
-
 #define CONFIG_MAX_PROFILES 16
 #define CONFIG_MAX_DEVICES 5
 #define CONFIG_LANG_USA 5

@@ -35,12 +35,9 @@ extern const char gEmptyString[];
 extern char gLanguageAliasSet;
 extern int gPerfLevelFlags[];
 extern InputRemap gDefaultKeys[];
-extern ConfigConstant gInputActions[];
-extern ConfigConstant gInputActionsEnd[];
-extern ConfigConstant gInputDevices[];
-extern ConfigConstant gInputDevicesEnd[];
-extern ConfigConstant gInputKeys[];
-extern ConfigConstant gInputKeysEnd[];
+extern ConfigConstant gInputActions[CONFIG_ACTION_COUNT];
+extern ConfigConstant gInputDevices[CONFIG_DEVICE_COUNT];
+extern ConfigConstant gInputKeys[CONFIG_KEY_COUNT];
 extern char gLanguageNames[][16];
 extern char gDifficultyNames[][16];
 
@@ -164,11 +161,11 @@ void Config_RegisterScriptSymbols(void)
     Script_RegisterFunction("Config_ResetGraphicOptions", Config_ResetGraphicOptions, NULL, 0);
     Script_RegisterFunction("DefineGameOptions", NULL, NULL, 1);
 
-    for (c = gInputActions; c < gInputActionsEnd; c++)
+    for (c = gInputActions; c < gInputActions + CONFIG_ACTION_COUNT; c++)
         Script_RegisterConstant(c->name, c->value);
-    for (c = gInputDevices; c < gInputDevicesEnd; c++)
+    for (c = gInputDevices; c < gInputDevices + CONFIG_DEVICE_COUNT; c++)
         Script_RegisterConstant(c->name, c->value);
-    for (c = gInputKeys; c < gInputKeysEnd; c++)
+    for (c = gInputKeys; c < gInputKeys + CONFIG_KEY_COUNT; c++)
         Script_RegisterConstant(c->name, c->value);
     for (i = 0; i < NUM_LANGUAGES; i++)
         Script_RegisterConstant(gLanguageNames[i], i);
@@ -950,13 +947,9 @@ void Config_RemoveLanguageAlias(void)
 HOOK(0x405830, Config_RemoveLanguageAlias);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-PAD(igd, 536924, 536924, 0x4);
-ALIAS(gInputActionsEnd, pad_536924, 0);
-PAD(igd, 536994, 536994, 0x4);
-ALIAS(gInputDevicesEnd, pad_536994, 0);
-PAD(igd, 537B74, 537B74, 0x1C) INIT({0x9E, 0x01, 0x00, 0x00, 0xAE, 0x01, 0x00, 0x00, 0x0D, 0x00, 0x00, 0x00, 0x60, 0x00, 0x00, 0x00, 0x4D, 0x00, 0x00, 0x00, 0x41});
-ALIAS(gInputKeysEnd, pad_537B74, 0);
-ALIAS(gPerfLevelFlags, pad_537B74, 0);
+DATA(536928) ConfigConstant gInputDevices[CONFIG_DEVICE_COUNT] INIT({{.name = "INPUTPORT_DEVICE_KEYBOARD", .value = 1}, {.name = "INPUTPORT_DEVICE_JOYPAD", .value = 2}, {.name = "INPUTPORT_DEVICE_MOUSE", .value = 3}});
+STORE(igd, 537B74, 4) int store_537B74[7] INIT({414, 430, 13, 96, 77, 65});
+ALIAS(gPerfLevelFlags, store_537B74, 0);
 STORE(igb, 567C74, 1) const char store_567C74[4];
 ALIAS(gEmptyString, store_567C74, 0);
 PAD(igb, 567C98, 567C98, 0x1418);

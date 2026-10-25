@@ -7,6 +7,7 @@
 
 #include "hook.h"
 #include "physobj/physobj.h"
+#include "level/leveltypes.h"
 
 FN_EXTERN(CameraBase_Create);
 FN_EXTERN(CameraBase_Delete);
@@ -91,8 +92,7 @@ extern int gLevelEventDB0;
 /* LevelQTaskID -> task reference */
 extern void *gLevelTaskIds[];
 /* 251 buckets of task references, Amiga style lists */
-extern void *gTaskNotes[];
-extern void *gTaskRefBucketsEnd[];
+extern List gTaskNotes[LEVEL_NOTE_LISTS];
 extern char gLevelPaused;
 extern char gLevelA758BE;
 extern int gLevelA758C0;
@@ -251,7 +251,7 @@ static void new_type(const char *name, int size, uint16_t *out)
 void Level_Open(void)
 {
     unsigned i, k;
-    void **b;
+    List *l;
 
     memset(gLevelTaskIds, 0, 0x1000 * sizeof(void *));
     new_type("Level", 0x38, &gLevelType);
@@ -293,10 +293,10 @@ void Level_Open(void)
     Script_RegisterFunction("Task_DeclareParameters", FN(0x4F0740, Task_DeclareParameters), NULL, -1);
     gLevelPaused = 0;
     gLevelA758BE = 0;
-    for (b = gTaskNotes; b < gTaskRefBucketsEnd; b += 3) {
-        b[0] = &b[1];
-        b[2] = b;
-        b[1] = NULL;
+    for (l = gTaskNotes; l < gTaskNotes + LEVEL_NOTE_LISTS; l++) {
+        l->head = (Node *)&l->tail;
+        l->tailpred = (Node *)l;
+        l->tail = NULL;
     }
     gLevelA758C0 = 0;
     gLevelA758C4 = 0;
@@ -702,8 +702,7 @@ BSS(A70C78) int gParamBool8;
 BSS(A70C9C) int gParamVarString;
 BSS(A70C9C) int gParamGraph;
 BSS(A70C9C) int gParamDegrees;
-STORE(igb, A70C9C, 4) void *store_A70CA8[753];
-ALIAS(gTaskNotes, store_A70CA8, 0);
+BSS(A70C9C) List gTaskNotes[LEVEL_NOTE_LISTS];
 BSS(A70C9C) int gParamString256;
 BSS(A70C9C) int gParamReal32;
 BSS(A70C9C) int gParamReal64;
@@ -713,7 +712,6 @@ BSS(A70C9C) int gParamRGB;
 BSS(A70C9C) int gParamString16;
 BSS(A70C9C) int gParamString32;
 BSS(A70C9C) int gParamLevelExpression;
-ALIAS(gTaskRefBucketsEnd, gParamString256, 0);
 BSS(A75890) int gParamReal64x3;
 BSS(A75890) int gParamQTaskNote;
 BSS(A75890) int gParamPushButton;

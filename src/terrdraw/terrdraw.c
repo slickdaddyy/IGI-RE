@@ -21,13 +21,13 @@ extern IDirect3D7 *gD3D;
 extern IDirect3DDevice7 *gD3DDevice;
 extern DWORD gFogEnable;
 extern DWORD gTerrainFogColorD3D;
-extern TerrList gChunkHash[];
-extern TerrList gChunkHashEnd[];
+
+#define CHUNK_HASH_SIZE 0x1FD
+
+extern TerrList gChunkHash[CHUNK_HASH_SIZE];
 extern TerrPool gTerrainChunkPool;
 extern IDirect3DVertexBuffer7 *gTerrainVB;
 extern int gD3DTnL;
-
-#define CHUNK_HASH_SIZE 0x1FD
 
 void Terrain_SetBlendMode(int mode)
 {
@@ -110,7 +110,7 @@ void TerrDraw_Init(void)
     Direct3D_AddSetModeCallback(TerrDraw_SetMode);
     Direct3D_AddUnsetModeCallback(TerrDraw_UnsetMode);
     Direct3D_AddRestoreCallback(TerrDraw_Restore);
-    for (l = gChunkHash; l < gChunkHashEnd; l++) {
+    for (l = gChunkHash; l < gChunkHash + CHUNK_HASH_SIZE; l++) {
         l->head = (TerrNode *)&l->tail;
         l->tailpred = (TerrNode *)l;
         l->tail = NULL;
@@ -162,8 +162,5 @@ DATA(544F4C) char str_544F4E[1] INIT("");
 PAD(igd, 544F4C, 544F4F, 0x1);
 DATA(5470B4) DWORD gFogEnable INIT(1);
 BSS(A7E068) DWORD gTerrainFogColorD3D;
-STORE(igb, A7E080, 4) __typeof__(gChunkHash[0]) store_A7E080[509];
-ALIAS(gChunkHash, store_A7E080, 0);
-PAD(igb, A7E080, A7F85C, 0x4);
-ALIAS(gChunkHashEnd, pad_A7F85C, 0);
+BSS(A7E080) TerrList gChunkHash[CHUNK_HASH_SIZE];
 BSS(A7F890) IDirect3DVertexBuffer7 *gTerrainVB;

@@ -58,7 +58,6 @@ typedef void (*TaskArgFn)(Task *task, void *arg);
 extern void * gTaskHandlers[][0x180];
 #define HANDLER(slot, task) (gTaskHandlers[slot][(task)->type])
 
-#define LEVEL_MAX_IDS 0x1000
 extern Task **gLevelTaskIds[];
 extern List gTaskNotes[];
 extern Level *gLevel;

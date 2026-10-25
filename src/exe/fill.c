@@ -1020,6 +1020,8 @@ static uint8_t fill_53614C[0x2C4] __attribute__((section(".igd$53614C"), used)) 
     0x6E, 0x20, 0x64, 0x72, 0x69, 0x76, 0x65, 0x2E, 0x00, 0x00, 0x00, 0x00, 0x2E, 0x5C, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00,
 };
+static uint8_t fill_536924[0x4] __attribute__((section(".igd$536924"), used));
+static uint8_t fill_536994[0x4] __attribute__((section(".igd$536994"), used));
 static uint8_t fill_537B94[0x7C0] __attribute__((section(".igd$537B94"), used)) = {
     0x44, 0x65, 0x66, 0x69, 0x6E, 0x65, 0x47, 0x61, 0x6D, 0x65, 0x4F, 0x70, 0x74, 0x69, 0x6F, 0x6E,
     0x73, 0x00, 0x00, 0x00, 0x43, 0x6F, 0x6E, 0x66, 0x69, 0x67, 0x5F, 0x52, 0x65, 0x73, 0x65, 0x74,
@@ -4515,6 +4517,7 @@ static uint8_t fill_A7B294[0x4] __attribute__((section(".igb$A7B294"), used));
 static uint8_t fill_A7B2A4[0x4] __attribute__((section(".igb$A7B2A4"), used));
 static uint8_t fill_A7DA0C[0x4] __attribute__((section(".igb$A7DA0C"), used));
 static uint8_t fill_A7E07C[0x4] __attribute__((section(".igb$A7E07C"), used));
+static uint8_t fill_A7F85C[0x4] __attribute__((section(".igb$A7F85C"), used));
 static uint8_t fill_A7F8A0[0x81C] __attribute__((section(".igb$A7F8A0"), used));
 static uint8_t fill_A800E8[0x4] __attribute__((section(".igb$A800E8"), used));
 static uint8_t fill_A81024[0x4] __attribute__((section(".igb$A81024"), used));

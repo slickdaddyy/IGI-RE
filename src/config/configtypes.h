@@ -1,6 +1,16 @@
 #ifndef CONFIG_CONFIGTYPES_H
 #define CONFIG_CONFIGTYPES_H
 
+#define CONFIG_ACTION_COUNT 27
+#define CONFIG_DEVICE_COUNT 3
+#define CONFIG_KEY_COUNT 127
+
+/* name/value pairs registered as script constants: actions, input devices, keys */
+typedef struct ConfigConstant {
+    char name[0x20];
+    int value;
+} ConfigConstant;
+
 typedef struct ConfigDisplayMode {
     int width;
     int height;
