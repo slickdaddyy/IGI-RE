@@ -38,7 +38,7 @@ extern RangeF gElevatorStartRange;
 extern Vec3d gElevatorMove;
 extern Matrix gElevatorTurn;
 
-extern float kTenth;
+extern const float kTenth;
 
 /* puts the elevator at its distance along the graph */
 void Elevator_UpdatePlace(Elevator *e)

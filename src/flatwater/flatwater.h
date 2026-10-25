@@ -113,8 +113,8 @@ extern struct Texture *gQVertexTexture;
 extern int gQVertexStrip;
 extern RenderMode gRenderModeCurrent;
 
-extern float kZero;
-extern float kOne;
+extern const float kZero;
+extern const float kOne;
 extern double kOne64;
 
 ORIG(0x498000, void, TransContext_ProjectView, (float *out, const float *in));

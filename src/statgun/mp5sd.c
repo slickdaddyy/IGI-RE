@@ -5,13 +5,13 @@
 
 extern uint16_t gMp5sdType;
 
-extern float kZero;
+extern const float kZero;
 extern double kAngle45;
 extern double kAngle30;
 extern float kZoomOut;
 extern float kZoomIn;
-extern float kHalf;
-extern float kDegToRad;
+extern const float kHalf;
+extern const float kDegToRad;
 
 ORIG(0x4F2030, int, Weapon_GetDeselectEvent, (void));
 

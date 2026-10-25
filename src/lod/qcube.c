@@ -89,7 +89,7 @@ extern int gQCubeNeighbourBits[];
 extern uint8_t gQCubeChildOrder[][8];
 extern uint8_t gQCubeBitPerm[][256];
 extern uint8_t gQCubeOctantMask[];
-extern int gCollChildTable[];
+extern const int gCollChildTable[];
 extern float gQCubeOutsideMin[];
 extern float gQCubeOutsideMax[];
 extern char gNearClipText[];

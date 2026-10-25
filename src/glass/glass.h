@@ -40,10 +40,10 @@ extern int gTaskStackTop;
 extern LevelFlow *gLevelFlow;
 
 /* exe constants, read in place so the x87 code sees the same values */
-extern float kZero;
-extern float kOne;
+extern const float kZero;
+extern const float kOne;
 extern float kFrame;     /* 1/30 */
-extern float kDegToRad;
+extern const float kDegToRad;
 
 /* Calls the slot handler of each child of t (not deeper), keeping the next
    child on gTaskStack so handlers may delete tasks. slot is evaluated after

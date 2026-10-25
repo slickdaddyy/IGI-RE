@@ -202,7 +202,7 @@ extern const char gEmptyString[];
 extern float kKmhToUnits;
 extern float kPerFrameHour;
 extern double kFlySpeedD;
-extern float kTwoPi;
+extern const float kTwoPi;
 extern float kRadToDeg;
 extern double kUnitsToMeters;
 extern float kUnitsToMetersF;

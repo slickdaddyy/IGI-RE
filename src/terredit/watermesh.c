@@ -38,12 +38,12 @@ extern int gWaterUnusedNodeCount;
 extern int gWaterUnusedInt;
 extern TransContext gTransContext;
 
-extern float kZero;
-extern float kOne;
-extern double kOneD;
-extern float kHalf;
+extern const float kZero;
+extern const float kOne;
+extern const double kOneD;
+extern const float kHalf;
 extern float kOneHalf;
-extern float kTenth;
+extern const float kTenth;
 extern float kTwoPiF;
 extern double kWaterTwoPi;
 extern float kPeriodScale;
@@ -52,7 +52,7 @@ extern double kGridScale;
 extern double kZeroD;
 extern double kMinusTwoD;
 extern double kFinestSize;
-extern double kHalfD;
+extern const double kHalfD;
 
 /* x87 "not equal" (C3 clear): false for NaN */
 static inline int fne(long double a)

@@ -78,7 +78,7 @@ extern int gAIDetectUnused2;
 extern uint8_t gAIDetectEvent0;
 extern uint8_t gAIDetectEvent1;
 extern uint8_t gAIDetectEvent2;
-extern float kZero;
+extern const float kZero;
 
 void AIDetector_RemoveSlot(AIDetectSlot *s)
 {

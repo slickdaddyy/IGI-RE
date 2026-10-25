@@ -72,7 +72,7 @@ extern struct Terrain *gCurrentWorld;
 
 
 extern double kWireScale; /* 1/4096 */
-extern double kHalfD;
+extern const double kHalfD;
 extern float kWireSlope;  /* 2 degrees */
 
 void Wire_Create(Wire *w);
@@ -320,7 +320,7 @@ HOOK(0x43F8A0, Wire_IsSloped);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(5334B0) double kWireScale INIT(0.000244140625);
 ALIAS(kUnitsToMeters, kWireScale, 0);
-DATA(5335C0) double kHalfD INIT(0.5);
+DATA(5335C0) const double kHalfD INIT(0.5);
 DATA(533834) float kWireSlope INIT(0.034906585f);
 BSS(57C144) uint16_t gWireType;
 PAD(igb, 57C144, 57C146, 0x2);

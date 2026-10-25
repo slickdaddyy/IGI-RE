@@ -103,7 +103,7 @@ extern int gVisibleLightMapCount;
 extern TerrainLightMap *gLightMapTasks[];
 extern Lightmap gLightmaps[];
 extern LightMapDraw gLightMapDraw[];
-extern const char gWorldName[];
+extern char gWorldName[];
 
 static const double kLiftZ = 268435456.0;
 static const double kHalf = 0.5;

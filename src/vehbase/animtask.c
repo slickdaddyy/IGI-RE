@@ -68,8 +68,8 @@ extern List gAnimTasks;
 extern int gAnimTaskUnused1;
 extern int gAnimTaskUnused2;
 
-extern float kZero;
-extern float kOne;
+extern const float kZero;
+extern const float kOne;
 
 /* size of the state block an AnimTask saves before its vehicle's */
 #define ANIM_STATE_SIZE 0xE8

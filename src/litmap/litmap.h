@@ -14,11 +14,11 @@ extern void *gTaskHandlers[][0x180];
 extern struct Terrain *gCurrentWorld;
 
 /* exe constants, read in place so the x87 code sees the same values */
-extern float kZero;
-extern float kOne;
-extern float kHalf;
-extern float kTwo;
-extern float kPi;
+extern const float kZero;
+extern const float kOne;
+extern const float kHalf;
+extern const float kTwo;
+extern const float kPi;
 extern double kZeroD;
 
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));

@@ -92,9 +92,9 @@ extern int gTaskStackTop;
 /* the frame counter lives at +0x68 */
 extern LevelFlow *gLevelFlow;
 
-extern float kZero;
+extern const float kZero;
 extern double kZeroD;
-extern double kOneD;
+extern const double kOneD;
 extern float kFps;
 
 /* copies 4 bytes without going through the FPU, like the original */

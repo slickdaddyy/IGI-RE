@@ -90,7 +90,7 @@ extern ParamRange gHumanAIRealRange;
 extern ParamTable *gHumanAIConfigItemParams;
 extern HumanAIConfig *gHumanAIConfig;
 extern float gFramesPerSecond;
-extern float k4096;
+extern const float k4096;
 
 void HumanAIConfig_GetParams(void *task, ParamTable **out);
 void HumanAIConfigItem_Create(HumanAIConfigItem *item, HumanAIConfigNames *names);

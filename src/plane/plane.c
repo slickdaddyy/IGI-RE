@@ -107,7 +107,7 @@ extern float kPartsSpeed;
 extern double kThrustStep;   /* 0.01 */
 extern double kThrustMin;    /* 0.8 */
 extern double kThrustMax;    /* 1.25 */
-extern float kHalf;
+extern const float kHalf;
 extern double kWheelUp;      /* 8192 */
 extern double kZeroD;
 extern double kWheelNear;    /* 7577.6 */

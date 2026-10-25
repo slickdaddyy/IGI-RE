@@ -14,7 +14,7 @@ ORIG(0x4B2D90, char, Vec3_TriangleCoords, (float *u, float *v, const Vec3f *p, c
 ORIG(0x4B3100, void, Vec3d_Normalize, (Vec3d *v));
 ORIG(0x4B3190, void, Vec3d_Cross, (Vec3d *out, const Vec3d *a, const Vec3d *b));
 
-extern const CollBump gCollBumps[];
+extern CollBump gCollBumps[];
 extern int gCollBumpTop;
 
 static inline int fistp(long double x)

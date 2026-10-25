@@ -54,7 +54,7 @@ extern void *gGenericPhysicsObjParams;
 
 extern float kHundred;
 extern float kTwoHundred;
-extern float kFifth;
+extern const float kFifth;
 
 /* GenericPhysicsObj is PhysicsObj with two more script flags */
 typedef struct GenericPhysicsObj {

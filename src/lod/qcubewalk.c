@@ -36,7 +36,7 @@ extern Pool gQCubePool2;
 extern int gQCubeMinSize;
 extern int gQCubeOrigin[];
 extern uint8_t gQCubeChildOrder[][8];
-extern int gCollChildTable[];
+extern const int gCollChildTable[];
 extern signed char gWalkTreeIndex[];
 extern DynCubeNode gWalkSavedRoots[];
 extern DynCubeNode gWalkFakeRoots[];

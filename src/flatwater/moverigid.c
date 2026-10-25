@@ -31,7 +31,7 @@ extern char gMoveAlphaNames[][16];
 extern char gMoveGammaNames[][16];
 extern char gMovePosNames[][16];
 
-extern float kOne;
+extern const float kOne;
 extern double kZero64;
 extern double kOne64;
 extern double kTwo64;

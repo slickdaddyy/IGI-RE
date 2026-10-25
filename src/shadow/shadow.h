@@ -49,10 +49,10 @@ extern Pool gVisSectors;
 extern struct Terrain *gCurrentWorld;
 
 /* exe constants, read in place */
-extern float kZero;
-extern float kOne;
-extern double kOneD;
-extern float kHalf;
+extern const float kZero;
+extern const float kOne;
+extern const double kOneD;
+extern const float kHalf;
 
 /* Calls the slot handler of each child of t, keeping the next child on
    gTaskStack so handlers may delete tasks. slot is evaluated after the

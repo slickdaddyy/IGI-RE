@@ -81,7 +81,7 @@ extern uint16_t gFenceType;
 extern void *gFenceParams;
 
 
-extern float kHalf;
+extern const float kHalf;
 extern double kSparkUp;    /* 8192 */
 extern float kSparkScale;  /* 1/8192 */
 extern double kSparkBase;  /* 1.5 */

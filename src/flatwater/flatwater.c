@@ -52,13 +52,13 @@ extern const float kRange11[];
 
 extern TransContext gTransContext;
 extern float gTerrainFogScale;
-extern float k4096;
+extern const float k4096;
 extern float kNear; /* 409.6 */
-extern float kHalf;
+extern const float kHalf;
 extern float kFlatTenth;
 extern float kFltMax;
 extern float kFltMaxNeg;
-extern float kFogBias; /* 130 */
+extern const float kFogBias; /* 130 */
 extern float k2000;
 extern double k256th;
 extern double k2Pow30;
@@ -641,9 +641,9 @@ void FlatWater_Close(void)
 HOOK(0x51DDB0, FlatWater_Close);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-DATA(5333E0) float kOne INIT(1.0f);
+DATA(5333E0) const float kOne INIT(1.0f);
 ALIAS(kBOne, kOne, 0);
-DATA(5333EC) float kZero INIT(0.0f);
+DATA(5333EC) const float kZero INIT(0.0f);
 ALIAS(gZero, kZero, 0);
 ALIAS(kBZero, kZero, 0);
 DATA(534B38) float kFltMaxNeg INIT(-3.4028235e+38f);

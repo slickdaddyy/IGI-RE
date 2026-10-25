@@ -19,10 +19,10 @@ ORIG(0x4D0D10, int, ModelLod_GetAttachCount, (void *lod));
 extern MagicHandler gTaskHandlers[][0x180];
 extern MagicObjDef gMagicObjDefs[];
 extern int gMagicObjDefCount;
-extern float kZero;
-extern float kOne;
+extern const float kZero;
+extern const float kOne;
 extern double kZeroD;
-extern double kOneD;
+extern const double kOneD;
 
 /* event 8 query, see Coll_LineOfSight */
 typedef struct RigidLineQuery {
@@ -503,6 +503,6 @@ HOOK(0x4C4950, RigidDynCubeObj_CreateMagicObjs);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 DATA(5333B0) double kZeroD INIT(0.0);
 ALIAS(kZero64, kZeroD, 0);
-DATA(5333F8) double kOneD INIT(1.0);
+DATA(5333F8) const double kOneD INIT(1.0);
 ALIAS(kBOneD, kOneD, 0);
 ALIAS(kOne64, kOneD, 0);

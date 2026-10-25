@@ -45,12 +45,12 @@ extern void *gFlatSkyParams;
 extern const float kSkyRange01[];
 extern const float kSkyRange11[];
 extern const float kRange90[];
-extern float k255;
-extern float kPi;
+extern const float k255;
+extern const float kPi;
 extern float k180th;
 
-extern float kHalf;
-extern float k4096;
+extern const float kHalf;
+extern const float k4096;
 extern float kNear; /* 409.6 */
 extern float kAlmostOne;
 extern float kStripStep; /* 1/12 and a bit */

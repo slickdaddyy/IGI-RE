@@ -55,7 +55,7 @@ extern double kPuffRiseMin;
 extern float kKmh;
 extern float kPerFrameHour;
 extern double kPuffSize;
-extern float kHalf;
+extern const float kHalf;
 extern float kPuffSpin;
 extern float kPuffSpinBase;
 

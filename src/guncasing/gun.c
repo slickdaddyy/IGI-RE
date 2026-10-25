@@ -112,7 +112,7 @@ extern uint16_t gGunType;
 extern uint8_t gGunEvents[];
 
 extern float kCasingGravity;
-extern float kTwoPi;
+extern const float kTwoPi;
 extern float kSpinStep;    /* 1/45 */
 
 #define Task_NullHandler (FN(0x4D3710, Task_Nothing))

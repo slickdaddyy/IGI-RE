@@ -30,8 +30,8 @@ typedef struct ProxQuery {
 
 extern uint16_t gProxMineType;
 
-extern float kZero;
-extern double kOneD;
+extern const float kZero;
+extern const double kOneD;
 extern float kRangeScale;
 extern float kTicksPerSecond;
 

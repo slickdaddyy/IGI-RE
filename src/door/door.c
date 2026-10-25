@@ -89,7 +89,7 @@ extern RangeF gDoorUnitRange;
 extern void *gDoorParams;
 
 extern float kSlideScale;
-extern float kDegToRad;
+extern const float kDegToRad;
 extern double kUseMin;
 extern double kUseMaxX;
 extern double kUseMaxY;

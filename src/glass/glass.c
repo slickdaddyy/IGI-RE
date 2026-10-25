@@ -49,7 +49,7 @@ typedef struct TouchArg {
 
 extern uint16_t gGlassType;
 
-extern float kThreeQuarters;
+extern const float kThreeQuarters;
 extern float kHitForce;  /* 0.007 */
 
 #define Task_Nothing (FN(0x4D3710, Task_Nothing))
@@ -187,7 +187,7 @@ uint16_t Glass_GetType(void)
 HOOK(0x449D20, Glass_GetType);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-DATA(53351C) float kThreeQuarters INIT(0.75f);
+DATA(53351C) const float kThreeQuarters INIT(0.75f);
 ALIAS(kBrakeWing, kThreeQuarters, 0);
 DATA(5338B8) float kHitForce INIT(0.007f);
 BSS(57C220) uint16_t gGlassType;

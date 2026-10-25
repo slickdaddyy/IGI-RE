@@ -21,8 +21,8 @@ extern uint16_t gDynCubeObjType;
 extern TransContext gTransContext;
 
 /* exe constants, read in place so the x87 code sees the same values */
-extern float kZero;
-extern double kOneD;
+extern const float kZero;
+extern const double kOneD;
 
 static inline Task *fc_next_sibling(Task *t)
 {

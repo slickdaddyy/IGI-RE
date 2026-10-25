@@ -23,10 +23,10 @@ extern uint16_t gStatGunType;
 extern void *gStatGunParams;
 extern int gStatGunAmmoRange[];
 
-extern float kZero;
+extern const float kZero;
 extern double kZeroD;
-extern float kPi;
-extern float kDegToRad;
+extern const float kPi;
+extern const float kDegToRad;
 extern float kTurnStep;
 extern float kRecoilFade;
 extern double kTwoPiD;

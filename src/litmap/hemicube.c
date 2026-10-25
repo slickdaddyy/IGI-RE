@@ -6,7 +6,7 @@
 extern float kHemiNear;
 extern float kHemiAlmostOne;
 extern double kAlmostOneD;
-extern double kOneD;
+extern const double kOneD;
 
 /* where a triangle is drawn: a buffer of ids with a depth buffer next to
    it, and the texture of ids to draw from */

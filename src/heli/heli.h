@@ -88,26 +88,26 @@ extern uint8_t gKeysPrev[];
 
 /* exe constants, read in place so the x87 code sees the same values */
 extern float kFixed;      /* 4096 */
-extern float kTenth;
-extern float kOne;
-extern float kZero;
+extern const float kTenth;
+extern const float kOne;
+extern const float kZero;
 extern double kZeroD;
-extern double kOneD;
+extern const double kOneD;
 extern float kThrustScale; /* 44.6 */
-extern float kHalf;
-extern float kQuarter;
+extern const float kHalf;
+extern const float kQuarter;
 extern float kHeliDamp;       /* 0.95 */
-extern float kTwo;
+extern const float kTwo;
 extern float kTwentieth;
-extern float kFour;
-extern float kDegToRad;
+extern const float kFour;
+extern const float kDegToRad;
 extern float kSixTenths;
-extern float kThreeTenths;
+extern const float kThreeTenths;
 extern float kMilli;
 extern float kSevenTenths;
 extern float kDamp98;
 extern float kTwoHundredth;
-extern float kHundredth;
+extern const float kHundredth;
 extern float kMinusHundredth;
 extern float kGripLimit;  /* 40.96 */
 extern float kGrip;       /* 0.24 */

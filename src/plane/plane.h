@@ -87,12 +87,12 @@ extern void *gTaskHandlers[][0x180];
 #define TASK_HANDLER(slot, type) (((void **)gTaskHandlers)[(slot) * 0x180 + (type)])
 
 /* exe constants, read in place so the x87 code sees the same values */
-extern float kZero;
-extern float kOne;
-extern float kTenth;
-extern float kHundredth;
+extern const float kZero;
+extern const float kOne;
+extern const float kTenth;
+extern const float kHundredth;
 extern double kTenthD;
-extern float kDegToRad;
+extern const float kDegToRad;
 extern float kKeep;      /* 0.98 */
 extern float kBlend;     /* 0.02 */
 extern float kStartSpeed;
