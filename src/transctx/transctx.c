@@ -33,7 +33,7 @@ extern float gLayer0MinZ;
 extern float gLayer0MaxZ;
 extern float gLayer1MaxZ;
 extern float gLayer2MaxZ;
-extern IDirect3DDevice7 *gD3DDevice;
+extern struct IDirect3DDevice7 *gD3DDevice;
 extern float gD3DMinZ;
 extern int gD3DZ24;
 extern float gLayer2Far;

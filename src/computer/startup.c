@@ -6,6 +6,7 @@
 #include "computer/computer.h"
 #include "transctx/transctxtypes.h"
 #include "core/coretypes.h"
+#include "res/restypes.h"
 
 ORIG(0x4012A0, Task *, Task_New, (void *parent, uint16_t type, void *arg));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
@@ -73,18 +74,18 @@ typedef struct SortDraw {
 extern uint16_t gStartupType;
 extern int gStartupDraw;
 extern int gStartupMethod;
-extern void *gD3D;
+extern struct IDirect3D7 *gD3D;
 extern RenderMode gRenderModeCurrent;
 extern Scene gScene;
-extern void *gD3DDevice;
+extern struct IDirect3DDevice7 *gD3DDevice;
 extern float gWorldScale;
 extern float gD3DMinZ;
 extern float gLayer1MinZ;
 extern float gLayer1MaxZ;
-extern int *gD3DTextureStates;
-extern int *gD3DBlendStates;
-extern int *gD3DRenderStates;
-extern int *gD3DClipStates;
+extern PtrList *gD3DTextureStates;
+extern PtrList *gD3DBlendStates;
+extern PtrList *gD3DRenderStates;
+extern PtrList *gD3DClipStates;
 
 /* method idx of a COM object */
 #define COM(obj, idx, type) ((type)(*(void ***)(obj))[idx])
@@ -226,10 +227,10 @@ long ComputerStartup_Render(ComputerStartup *t)
     DEV_GetTransform(gD3DDevice, 3, m);
     rhw = kOne / (gWorldScale * t->depth);
     z = (kOne - gD3DMinZ * rhw) * m[10] * (gLayer1MaxZ - gLayer1MinZ) + gLayer1MinZ;
-    gD3DTextureStates[1] = -1;
-    gD3DBlendStates[1] = -1;
-    gD3DRenderStates[1] = -1;
-    gD3DClipStates[1] = -1;
+    gD3DTextureStates->current = -1;
+    gD3DBlendStates->current = -1;
+    gD3DRenderStates->current = -1;
+    gD3DClipStates->current = -1;
     DEV_SetRenderState(gD3DDevice, 0x2F, 0);
     DEV_SetRenderState(gD3DDevice, 0x1C, 0);
     DEV_SetRenderState(gD3DDevice, 0x1D, 0);

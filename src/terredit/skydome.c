@@ -36,8 +36,8 @@ typedef struct SkyDome {
 
 _Static_assert(sizeof(SkyDome) == 0xEDC, "SkyDome");
 
-extern IDirect3D7 *gD3D;
-extern IDirect3DDevice7 *gD3DDevice;
+extern struct IDirect3D7 *gD3D;
+extern struct IDirect3DDevice7 *gD3DDevice;
 extern SkyDome *gSkyDome;
 extern void *gSkyModel;
 extern uint32_t gSkyUnusedTint[];

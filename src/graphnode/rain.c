@@ -9,8 +9,8 @@ ORIG(0x4F65E0, char *, RainObj_FindCell, (void *rain, const Vec3d *pos));
 
 extern void *gRainParams;
 extern uint16_t gRainObjType;
-extern char *gRainObjs[];
-extern void *gRainCallback;
+extern struct RainObj *gRainObjs[];
+extern void (*gRainCallback)(char *state);
 
 static const float kOne = 1.0f;
 static const float kZero = 0.0f;
@@ -37,7 +37,7 @@ long double RainDynCubeObj_IsRainingAt(const Vec3d *pos)
     for (i = 0; i < RAIN_MAX; i++) {
         char *cell;
 
-        if (gRainObjs[i] && (cell = RainObj_FindCell(gRainObjs[i], pos)) && *(int *)(cell + 0x1C))
+        if (gRainObjs[i] && (cell = RainObj_FindCell((char *)gRainObjs[i], pos)) && *(int *)(cell + 0x1C))
             return kOne;
     }
     return kZero;
@@ -51,7 +51,7 @@ void RainDynCubeObj_GetHits(void **hits, int *counts, int *n)
 
     *n = 0;
     for (i = 0; i < RAIN_MAX; i++) {
-        char *r = gRainObjs[i];
+        char *r = (char *)gRainObjs[i];
 
         if (r) {
             hits[*n] = r + 0x2D18;

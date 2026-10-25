@@ -52,8 +52,8 @@ extern uint8_t gAmmoListEvent;
 extern char gAmmoIdEnum[];
 extern uint8_t gBulletHoleEvent;
 extern uint16_t gBulletHoleType;
-extern char gHolePool[];
-extern char gHolePolyPool[];
+extern Pool gHolePool;
+extern Pool gHolePolyPool;
 extern const char gEmptyString[];
 
 ScriptValue *DefineAmmoType(ScriptValue *out, void *data, void *args);
@@ -289,8 +289,8 @@ void BulletHole_Init(void)
     TaskType_SetHandler2(gBulletHoleType, 2, BulletHole_Delete);
     TaskType_SetHandler2(gBulletHoleType, Mesh3D_GetEvent5(), BulletHole_Handler5188C0);
     TaskType_SetHandler(gBulletHoleType, QObj_GetEvent(), BulletHole_Forward);
-    Pool_Init(gHolePool, 4, 100, 4);
-    Pool_Init(gHolePolyPool, 0x40, 100, 4);
+    Pool_Init(&gHolePool, 4, 100, 4);
+    Pool_Init(&gHolePolyPool, 0x40, 100, 4);
 }
 HOOK(0x47CF70, BulletHole_Init);
 

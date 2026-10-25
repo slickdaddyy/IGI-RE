@@ -124,7 +124,7 @@ ORIG(0x518130, void, Hermite_Init, (double *h, double p1, double p2, double m1, 
 ORIG(0x518190, long double, Hermite_Eval, (double *h, double u));
 
 extern uint8_t gVehicleClearHitEvent;
-extern void *gVehicles;
+extern struct VehicleList *gVehicles;
 extern void *gCutSceneModel;
 extern int gCutSceneTicksPerSec;
 extern void *gCutSceneParams;

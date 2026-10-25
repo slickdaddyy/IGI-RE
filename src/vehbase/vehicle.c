@@ -40,7 +40,7 @@ typedef struct VehicleList {
     int unk4;
     Vehicle *items[];
 } VehicleList;
-extern VehicleList *gVehicles;
+extern struct VehicleList *gVehicles;
 
 /* PhysType arguments event */
 typedef struct ParseMsg {
@@ -275,6 +275,6 @@ HOOK(0x4F4850, Vehicle_GetExplodeEvent);
 DATA(54E200) uint16_t gVehicleType INIT(385);
 DATA(54E200) uint8_t gVehicleExplodeEvent INIT(255);
 DATA(54E200) uint8_t gVehicleClearHitEvent INIT(255);
-BSS(A76C40) VehicleList *gVehicles;
+BSS(A76C40) struct VehicleList *gVehicles;
 PAD(igb, A76C40, A76C44, 0x4);
 BSS(A76C40) void *gVehicleCriteria;

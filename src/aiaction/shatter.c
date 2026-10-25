@@ -15,9 +15,9 @@ extern float gShatterSpeed;
 extern uint16_t gShatterType;
 extern int gShatterMode;
 extern GlassShatter *gShatterTask;
-extern void *gShatterPolys;
+extern ShardPoly *gShatterPolys;
 extern Vec3f gShatterHit;
-extern void *gShatterShards;
+extern Shard *gShatterShards;
 
 extern const float gShardColor2[]; /* 0.7, 0.7, 0.7 */
 

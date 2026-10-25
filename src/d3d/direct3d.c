@@ -2,6 +2,7 @@
 
 #include "hook.h"
 #include "d3d/d3d.h"
+#include "res/restypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4A53B3, int, crt_sprintf, (char *buf, const char *fmt, ...));
@@ -105,8 +106,8 @@ extern IDirectDrawSurface7 *gD3DBack;
 extern IDirectDrawSurface7 *gD3DZBuffer;
 extern int gD3DFogTable;
 extern IDirectDraw7 *gDDraw;
-extern IDirect3D7 *gD3D;
-extern IDirect3DDevice7 *gD3DDevice;
+extern struct IDirect3D7 *gD3D;
+extern struct IDirect3DDevice7 *gD3DDevice;
 extern D3DCallback *gD3DSetModeCallbacks;
 extern D3DCallback *gD3DUnsetModeCallbacks;
 extern D3DCallback *gD3DRestoreCallbacks;
@@ -124,10 +125,10 @@ extern D3DCallback gD3DCallbackPool[];
 extern int gDisplayClearColor[];
 extern DisplayMode gDisplayModes[];
 extern int gDisplayModeCount;
-extern int *gD3DTextureStates;
-extern int *gD3DBlendStates;
-extern int *gD3DRenderStates;
-extern int *gD3DClipStates;
+extern PtrList *gD3DTextureStates;
+extern PtrList *gD3DBlendStates;
+extern PtrList *gD3DRenderStates;
+extern PtrList *gD3DClipStates;
 extern int gD3DClippingOnIndex;
 extern int gD3DClippingOffIndex;
 extern float gD3DMinZ;
@@ -983,10 +984,10 @@ HOOK(0x494690, Direct3D_FindZBufferCB);
 
 void Direct3D_ResetLists(void)
 {
-    gD3DTextureStates[1] = -1;
-    gD3DBlendStates[1] = -1;
-    gD3DRenderStates[1] = -1;
-    gD3DClipStates[1] = -1;
+    gD3DTextureStates->current = -1;
+    gD3DBlendStates->current = -1;
+    gD3DRenderStates->current = -1;
+    gD3DClipStates->current = -1;
 }
 HOOK(0x4946D0, Direct3D_ResetLists);
 
@@ -1352,7 +1353,7 @@ BSS(5CA0D8) IDirectDrawSurface7 *gD3DBack;
 BSS(5CA0D8) IDirectDrawSurface7 *gD3DZBuffer;
 BSS(5CA0D8) int gD3DFogTable;
 BSS(5CA0D8) IDirectDraw7 *gDDraw;
-BSS(5CA0D8) IDirect3D7 *gD3D;
+BSS(5CA0D8) struct IDirect3D7 *gD3D;
 BSS(5CA118) D3DCallback *gD3DSetModeCallbacks;
 BSS(5CA118) D3DCallback *gD3DUnsetModeCallbacks;
 BSS(5CA118) D3DCallback *gD3DRestoreCallbacks;

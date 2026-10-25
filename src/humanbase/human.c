@@ -129,7 +129,7 @@ ORIG(0x4F2310, void, Weapon_Move, (Task *w, double *pos, float *m));
 ORIG(0x4F9720, void *, Graph_GetNode, (void *graph, int id));
 ORIG(0x4F9770, void, Graph_GetNodePos, (double *out, void *node));
 ORIG(0x5042B0, char, AreaActivate_Contains, (void *criteria, double *pos));
-ORIG(0x504A90, void, AreaActivate_RemoveCriteria, (void *criteria));
+ORIG(0x504A90, void, AreaActivate_RemoveCriteria, (int criteria));
 ORIG(0x504AC0, unsigned int, AreaActivate_GetMask, (void *criteria));
 ORIG(0x462BA0, void, Human_AvoidHumans, (Human *h, double *pos, double *to, float *vel));
 
@@ -141,10 +141,10 @@ extern uint8_t gHumanEvent1;
 extern uint8_t gHumanGunshotEvent;
 extern uint8_t gHumanPunchEvent;
 extern const char *gHumanTeamNames[];
-extern void *gHumanTeamCriteria[];
+extern int gHumanTeamCriteria[];
 extern uint16_t gHumanType;
 extern int gHumanDebugTime;
-extern void *gHumanCriteria;
+extern int gHumanCriteria;
 extern void *gHumanParams;
 extern int gHumanDebug;
 extern void *gHumanList;
@@ -1058,7 +1058,7 @@ void Human_CountTeamCriteria(void **msg)
 
     for (i = 0; i < n; i++) {
         t = Human_ListItem(i);
-        if (((unsigned int *)gHumanTeamCriteria)[t->team] & mask && AreaActivate_Contains(msg[0], t->pos))
+        if ((unsigned int)gHumanTeamCriteria[t->team] & mask && AreaActivate_Contains(msg[0], t->pos))
             ((int *)msg)[1]++;
     }
 }
@@ -1868,7 +1868,7 @@ DATA(53F314) uint8_t gHumanEvent0 INIT(255);
 DATA(53F314) uint8_t gHumanEvent1 INIT(255);
 DATA(53F314) uint8_t gHumanGunshotEvent INIT(255);
 DATA(53F314) uint8_t gHumanPunchEvent INIT(255);
-STORE(igb, 5BDAD8, 4) void *store_5BDAD8[8];
+STORE(igb, 5BDAD8, 4) int store_5BDAD8[8];
 ALIAS(gHumanTeamCriteria, store_5BDAD8, 0);
 BSS(5BDAFC) int gHumanDebugTime;
 BSS(5BDC1C) int gHumanDebug;

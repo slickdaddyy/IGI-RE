@@ -12,6 +12,7 @@
 #include "qvertex/qvertextypes.h"
 #include "humanai/humanaitypes.h"
 #include "core/coretypes.h"
+#include "qasm/qasmtypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x401AE0, void *, TaskRef_Add, (void *task));
@@ -101,7 +102,7 @@ extern uint16_t gQObjType;
 extern void *gHumanPlayerParams;
 extern float gMoveScale;
 extern float gFenceDamage;
-extern void *gHumanPlayerList;
+extern QTaskList *gHumanPlayerList;
 extern int gQVertexStrip;
 
 extern WeaponCategory gWeaponCategories[];

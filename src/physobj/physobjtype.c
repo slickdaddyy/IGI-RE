@@ -30,7 +30,7 @@ ORIG(0x4D0970, void, Mesh3D_GetVertex, (float *out, void *obj, int point));
 ORIG(0x4F1A70, uint8_t, Param_GetChangedEvent, (void));
 
 /* the task that ran LOCAL:lod.qsc */
-extern void *gModelLODSettingsContainer;
+extern Task *gModelLODSettingsContainer;
 
 extern uint8_t gPhysicsObjTypeEvents[];
 extern int gPhysicsObjTypeCount;
@@ -279,7 +279,7 @@ HOOK(0x4EE3B0, PhysicsObjType_FreeAll);
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 STORE(igd, 54DC30, 1) uint8_t store_54DC30[136] INIT({255, 255, 255, 0, 68, 101, 102, 105, 110, 101, 80, 104, 121, 115, 105, 99, 115, 79, 98, 106, 84, 121, 112, 101, 0, 0, 0, 0, 80, 104, 121, 115, 105, 99, 115, 32, 111, 98, 106, 32, 109, 111, 100, 101, 108, 32, 37, 115, 32, 105, 115, 32, 100, 101, 102, 105, 110, 101, 100, 32, 109, 117, 108, 116, 105, 112, 108, 101, 32, 116, 105, 109, 101, 115, 46, 0, 80, 104, 121, 115, 105, 99, 115, 79, 98, 106, 84, 121, 112, 101, 95, 80, 97, 114, 115, 101, 67, 111, 110, 102, 105, 103, 70, 105, 108, 101, 40, 41, 58, 32, 67, 111, 117, 108, 100, 110, 39, 116, 32, 108, 111, 97, 100, 32, 115, 99, 114, 105, 112, 116, 58, 32, 37, 115});
 ALIAS(gPhysicsObjTypeEvents, store_54DC30, 0);
-BSS(A5EFD4) void *gModelLODSettingsContainer;
+BSS(A5EFD4) Task *gModelLODSettingsContainer;
 BSS(A5EFD4) int gPhysicsObjTypeCount;
 PAD(igb, A5EFD4, A5EFDC, 0x4);
 PAD(igb, A5EFD4, A5EFE0, 0x11C68);

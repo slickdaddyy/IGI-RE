@@ -64,7 +64,7 @@ extern TransEntry *gTransEntryEnd;
 extern int *gTransUsed;
 extern int *gTransCount;
 extern Scene gScene;
-extern D3DDevice *gD3DDevice;
+extern struct IDirect3DDevice7 *gD3DDevice;
 
 void TransparencyList_Delete(TransparencyList *l)
 {
@@ -116,7 +116,7 @@ void TransparencyList_Draw(TransListNode *n)
         char *v = b->verts;
 
         for (k = b->count; k > 0; k--) {
-            gD3DDevice->vtbl->DrawPrimitive(gD3DDevice, 4, fvf, v, 3, 0);
+            gD3DDevice->lpVtbl->DrawPrimitive(gD3DDevice, 4, fvf, v, 3, 0);
             v += stride * 3;
         }
     }

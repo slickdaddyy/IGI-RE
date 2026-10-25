@@ -10,7 +10,7 @@ extern int gScriptError;
 extern int gScriptWarningLevel;
 typedef void (*ScriptErrorFn)(const char *msg, void *data);
 
-extern ScriptErrorFn gScriptErrorHandler;
+extern void (*gScriptErrorHandler)(const char *msg, void *data);
 extern void *gScriptErrorContext;
 
 void Script_Error(const char *fmt, ...)
@@ -34,4 +34,4 @@ void Script_Error(const char *fmt, ...)
 HOOK(0x4B7E10, Script_Error);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-BSS(A43E70) ScriptErrorFn gScriptErrorHandler;
+BSS(A43E70) void (*gScriptErrorHandler)(const char *msg, void *data);

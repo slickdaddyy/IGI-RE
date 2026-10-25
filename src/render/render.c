@@ -185,8 +185,8 @@ ORIG(0x4D0E50, int, ModelLod_GetTexAnimStateSize, (ModelLod *l));
 ORIG(0x4D0E60, void, ModelLod_SaveTexAnimState, (ModelLod *l, int *out));
 ORIG(0x4D0EA0, void, ModelLod_LoadTexAnimState, (ModelLod *l, const int *in));
 
-extern IDirect3D7 *gD3D;
-extern IDirect3DDevice7 *gD3DDevice;
+extern struct IDirect3D7 *gD3D;
+extern struct IDirect3DDevice7 *gD3DDevice;
 extern ModelSlot gMeshBatches[];
 extern int gTexStageIdx;
 extern int gAlphaBlendIdx;

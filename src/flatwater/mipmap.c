@@ -25,7 +25,7 @@ extern uint16_t gMipMapType;
 extern int gMipMapModeRange[];
 extern void *gMipMapParams;
 extern float gMipMapBiasRange[];
-extern D3DDevice *gD3DDevice;
+extern struct IDirect3DDevice7 *gD3DDevice;
 extern uint32_t gMipMapUnusedBias;
 extern signed char gRenderMipMapMode;
 extern char gMipMapUnusedFlag;
@@ -67,7 +67,7 @@ void MipMapControl_ParamsChanged(MipMapControl *m)
 
     if (RenderMode_GetCurrent() != mode)
         return;
-    hr = gD3DDevice->vtbl->SetTextureStageState(gD3DDevice, 0, D3DTSS_MIPMAPLODBIAS, *(uint32_t *)&m->lodBias);
+    hr = gD3DDevice->lpVtbl->SetTextureStageState(gD3DDevice, 0, D3DTSS_MIPMAPLODBIAS, *(uint32_t *)&m->lodBias);
     if (hr) {
         char text[1024];
 

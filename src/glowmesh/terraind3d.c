@@ -10,6 +10,7 @@
 
 #include "hook.h"
 #include "glowmesh/glowmesh.h"
+#include "res/restypes.h"
 
 typedef struct TdTLVertex {
     float sx, sy, sz, rhw;
@@ -83,7 +84,7 @@ ORIG(0x5144E0, void, Terrain_SetBlendMode, (int mode));
 ORIG(0x514760, void, TerrDraw_ClipTriangle, (TdClipVtx a, TdClipVtx b, TdClipVtx c, TdClipOut *out));
 ORIG(0x4AF960, void, List_Remove, (TdNode *node));
 
-extern IDirect3DDevice7 *gD3DDevice;
+extern struct IDirect3DDevice7 *gD3DDevice;
 extern IDirect3DVertexBuffer7 *gTerrainVB;
 extern TdTLVertex *gTerrVBData;
 extern int gTerrVertCount;
@@ -113,10 +114,10 @@ extern float gD3DMinZ;
 extern float gLayer1MinZ;
 extern float gD3DMaxZ;
 extern float gFarZ;
-extern char *gD3DTextureStates;
-extern char *gD3DBlendStates;
-extern char *gD3DRenderStates;
-extern char *gD3DClipStates;
+extern PtrList *gD3DTextureStates;
+extern PtrList *gD3DBlendStates;
+extern PtrList *gD3DRenderStates;
+extern PtrList *gD3DClipStates;
 
 F32(kZero, 0x00000000);
 F32(kOne, 0x3F800000);
@@ -323,10 +324,10 @@ void TerrainMesh_DrawD3D(void)
     range = gLayer1MaxZ - gLayer1MinZ;
     gClipZScale = x87_neg(range * gClipRhwScale * gD3DMinZ * zr);
     gClipZBias = range * zr + gLayer1MinZ;
-    *(int *)(gD3DTextureStates + 4) = -1;
-    *(int *)(gD3DBlendStates + 4) = -1;
-    *(int *)(gD3DRenderStates + 4) = -1;
-    *(int *)(gD3DClipStates + 4) = -1;
+    gD3DTextureStates->current = -1;
+    gD3DBlendStates->current = -1;
+    gD3DRenderStates->current = -1;
+    gD3DClipStates->current = -1;
     gTerrViewport.dwX = 0;
     gTerrViewport.dwY = 0;
     gTerrViewport.dwWidth = Display_GetMode()[1];

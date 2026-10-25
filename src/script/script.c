@@ -49,7 +49,7 @@ extern int gScriptUnused0;
 extern int gScriptUnused1;
 extern void *gScriptErrorContext;
 extern int gScriptUnused2;
-extern void *gScriptErrorHandler;
+extern void (*gScriptErrorHandler)(const char *msg, void *data);
 extern int gScriptUnused3;
 
 static void Path_SetExtension(char *path, const char *ext)

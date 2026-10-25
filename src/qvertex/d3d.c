@@ -56,7 +56,7 @@ typedef struct StripState {
     QTexture *texture;
 } StripState;
 
-extern IDirect3DDevice7 *gD3DDevice;
+extern struct IDirect3DDevice7 *gD3DDevice;
 extern DynVB gVBTL;
 extern uint32_t gD3DZEnable;
 extern int gD3DClippingOnIndex;

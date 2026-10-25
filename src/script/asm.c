@@ -18,7 +18,7 @@ typedef void (*AsmErrorHandler)(const char *text, void *context);
 
 extern void *gAsmErrorContext;
 extern int gAsmErrorCount;
-extern AsmErrorHandler gAsmErrorHandler;
+extern void (*gAsmErrorHandler)(const char *msg, void *data);
 
 typedef struct AsmLabel {
     Node node;
@@ -214,4 +214,4 @@ HOOK(0x4BB240, Asm_NextToken);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
 BSS(A43EC0) void *gAsmErrorContext;
-BSS(A43ED8) AsmErrorHandler gAsmErrorHandler;
+BSS(A43ED8) void (*gAsmErrorHandler)(const char *msg, void *data);

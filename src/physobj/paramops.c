@@ -90,7 +90,7 @@ extern int gLevelDeactivateEvent;
 extern int gLevelUnusedNewTaskEvent;
 
 /* LevelQTaskID -> task reference */
-extern void *gLevelTaskIds[];
+extern Task **gLevelTaskIds[];
 /* 251 buckets of task references, Amiga style lists */
 extern List gTaskNotes[LEVEL_NOTE_LISTS];
 extern char gLevelPaused;

@@ -154,8 +154,8 @@ extern int gRainVisibleCubes;
 extern int gRainLineId;
 extern char gRainRandom[];
 extern int gRainMemory;
-extern RainObj *gRainObjs[];
-extern RainCallback gRainCallback;
+extern struct RainObj *gRainObjs[];
+extern void (*gRainCallback)(char *state);
 extern void *gRainParams;
 extern TransContext gTransContext;
 
@@ -891,6 +891,6 @@ BSS(A76C88) int gRainMemory;
 PAD(igb, A76C88, A76CA0, 0x4);
 STORE(igb, A76C88, 4) __typeof__(gRainObjs[0]) store_A76CA4[8];
 ALIAS(gRainObjs, store_A76CA4, 0);
-BSS(A76C88) RainCallback gRainCallback;
+BSS(A76C88) void (*gRainCallback)(char *state);
 PAD(igb, A76C88, A76CC8, 0x4);
 BSS(A76C88) void *gRainParams;

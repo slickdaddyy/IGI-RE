@@ -17,8 +17,8 @@ ORIG(0x495170, void, Direct3D_AddSetModeCallback, (void (*fn)(void)));
 ORIG(0x4951E0, void, Direct3D_AddUnsetModeCallback, (void (*fn)(void)));
 ORIG(0x495200, void, Direct3D_AddRestoreCallback, (void (*fn)(void)));
 
-extern IDirect3D7 *gD3D;
-extern IDirect3DDevice7 *gD3DDevice;
+extern struct IDirect3D7 *gD3D;
+extern struct IDirect3DDevice7 *gD3DDevice;
 extern uint32_t gFogEnable;
 extern uint32_t gTerrainFogColorD3D;
 

@@ -65,7 +65,7 @@ extern int gQvmAsmUnused0;
 extern int gQvmAsmUnused1;
 extern int gAsmErrorCount;
 extern QvmAsmCallback gQvmAsmLogFn;
-extern QvmAsmCallback gAsmErrorHandler;
+extern void (*gAsmErrorHandler)(const char *msg, void *data);
 
 void QvmAsm_Log(const char *fmt, ...);
 

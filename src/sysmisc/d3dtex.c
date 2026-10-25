@@ -70,7 +70,7 @@ extern int gDownloadPalette;
 extern int gAllocPalette;
 
 extern IDirectDraw7 *gDDraw;
-extern IDirect3DDevice7 *gD3DDevice;
+extern struct IDirect3DDevice7 *gD3DDevice;
 extern int gTexturesCreated;
 extern int gTextureBytes;
 extern D3DDEVICEDESC7 gD3DDeviceDesc;

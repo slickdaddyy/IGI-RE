@@ -7,6 +7,7 @@
 #include "qvertex/qvertextypes.h"
 #include "transctx/transctxtypes.h"
 #include "core/coretypes.h"
+#include "res/restypes.h"
 
 ORIG(0x401A20, void, TaskType_Free, (uint16_t type));
 ORIG(0x490370, int, Timer_GetMs, (void));
@@ -58,7 +59,7 @@ extern uint16_t gBandFilterType;
 extern uint16_t gHandiCamFilterType;
 extern uint16_t gLineFilterType;
 extern uint16_t gWideScreenFilterType;
-extern void *gD3DDevice;
+extern struct IDirect3DDevice7 *gD3DDevice;
 extern char gFilterRandom[];
 extern int gHandiCamDrawMethod;
 extern int gBandDrawMethod;
@@ -81,14 +82,14 @@ extern RenderMode gRenderModeCurrent;
 extern Scene gScene;
 extern float gWorldScale;
 extern DynVB gVBTL;
-extern int *gD3DBlendStates;
+extern PtrList *gD3DBlendStates;
 extern float gLayer1MaxZ;
 extern float gD3DMinZ;
-extern int *gD3DRenderStates;
+extern PtrList *gD3DRenderStates;
 extern float gLayer1MinZ;
 extern float gNearPlane;
-extern int *gD3DClipStates;
-extern int *gD3DTextureStates;
+extern PtrList *gD3DClipStates;
+extern PtrList *gD3DTextureStates;
 
 /* method idx of a COM object */
 #define COM(obj, idx, type) ((type)(*(void ***)(obj))[idx])
@@ -305,10 +306,10 @@ static void overlay_depth(float z, float *vz, float *rhw)
     DEV_GetTransform(gD3DDevice, 3, m);
     *rhw = kOne / (gWorldScale * z);
     *vz = (kOne - gD3DMinZ * *rhw) * m[10] * (gLayer1MaxZ - gLayer1MinZ) + gLayer1MinZ;
-    gD3DTextureStates[1] = -1;
-    gD3DBlendStates[1] = -1;
-    gD3DRenderStates[1] = -1;
-    gD3DClipStates[1] = -1;
+    gD3DTextureStates->current = -1;
+    gD3DBlendStates->current = -1;
+    gD3DRenderStates->current = -1;
+    gD3DClipStates->current = -1;
 }
 
 static void overlay_states(void)
@@ -610,7 +611,7 @@ void LineFilter_SetLevel(LineFilter *t, float level)
 HOOK(0x4A4FF0, LineFilter_SetLevel);
 
 /* data in igidecomp.exe, at its IGI.exe address (tools/gendefs.py) */
-BSS(5CA114) void *gD3DDevice;
+BSS(5CA114) struct IDirect3DDevice7 *gD3DDevice;
 BSS(935BFC) int gHandiCamDrawMethod;
 BSS(935BFC) int gBandDrawMethod;
 BSS(935C08) int gHandiCamFilterPrim;
