@@ -119,6 +119,8 @@ a copy of the DLL for long runs, so that a rebuild doesn't swap the file under t
 | `src/exe/` | What only `igidecomp.exe` needs: startup, links to the C runtime, `fill.c` (generated). |
 | `tests/` | Differential tests, one or more files per area, and `emu.py`, the emulator harness. |
 | `tools/` | Data generation and checks: `gendefs.py`, `genfill.py`, `layoutcheck.py`, `origcheck.py`. |
+| `tools/ghidra/` | Ghidra scripts that find, name and export the exe's functions. |
+| `symbols/names.tsv` | Every function and global with its address in `IGI.exe`. |
 | `docs/` | Architecture, verification, the target exe, the roadmap. |
 
 ## Contributing
