@@ -21,12 +21,6 @@ ORIG(0x4B8770, int, Script_EvalExpr, (const char *text));
 ORIG(0x4B3BE0, void, Matrix_SetRotZ, (Matrix *m, float a));
 ORIG(0x4B3320, char, Vec3d_IsZero, (const Vec3d *v));
 
-/* bytes per node of each graph task type */
-typedef struct NodeSize {
-    uint16_t type;
-    int size;
-} NodeSize;
-
 #define NODESIZE_MAX 4
 
 extern void *gGraphParams;
@@ -39,7 +33,7 @@ extern uint8_t gGraphNodeAddEvent;
 extern uint8_t gGraphUnusedEvent1;
 extern uint8_t gGraphAllocEvent;
 extern List gGraphRefs;
-extern NodeSize gGraphNodeSizes[];
+extern GraphNodeSize gGraphNodeSizes[];
 
 static const double kZero = 0.0;
 static const double kInside = 4096.0;

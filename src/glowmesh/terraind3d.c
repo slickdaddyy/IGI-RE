@@ -11,6 +11,7 @@
 #include "hook.h"
 #include "glowmesh/glowmesh.h"
 #include "res/restypes.h"
+#include "glowmesh/glowmeshtypes.h"
 
 typedef struct TdTLVertex {
     float sx, sy, sz, rhw;
@@ -50,24 +51,8 @@ typedef struct TdChunk {
     int pass;
 } TdChunk;
 
-typedef struct TdVert {
-    float x, y, z;
-    union {
-        float height;
-        int parent;
-    };
-} TdVert;
-
-typedef struct TdMesh {
-    double center[3];
-    uint32_t vertCount; /* first-kind count << 16 | count */
-    int level;
-    TdVert verts[];
-} TdMesh;
-
 _Static_assert(sizeof(TdClipVtx) == 0x40, "TdClipVtx");
 _Static_assert(sizeof(TdChunk) == 0x2EF4, "TdChunk");
-_Static_assert(sizeof(TdMesh) == 0x20, "TdMesh");
 
 ORIG(0x491CF0, int *, Display_GetMode, (void));
 ORIG(0x514680, TdChunk *, TerrChunk_Get, (char *texture, int pass));
@@ -87,7 +72,7 @@ extern D3DVIEWPORT7 gTerrViewport;
 extern Pool gTerrainChunkPool;
 extern float gTerrainFogScale;
 extern float gTerrainFogColor[];
-extern TdMesh *gTerrainMeshes[];
+extern TerrainMesh *gTerrainMeshes[];
 extern int gTerrainMeshCount;
 extern float gTerrainScaleY;
 extern float gTerrainScaleX;
@@ -377,7 +362,7 @@ void TerrainMesh_DrawD3D(void)
     vpz = vp[2];
 
     for (mi = 0; mi < count; mi++) {
-        TdMesh *mesh = gTerrainMeshes[mi];
+        TerrainMesh *mesh = gTerrainMeshes[mi];
         const uint32_t *w, *faces;
         float nvx = -vpx, nvy = -vpy, nvz = -vpz, mscale, sign0, sign;
         int n0, n, level, size, j, bits, behind, cnt, faceCount, first, mat, pass, all, k, pos, vcount;
@@ -404,7 +389,7 @@ void TerrainMesh_DrawD3D(void)
         behind = 0;
         j = 0;
         do {
-            const TdVert *v = &mesh->verts[j];
+            const TerrainMeshVertex *v = &mesh->verts[j];
             uint32_t *col = (uint32_t *)(F + F_COLORS) + 8 * j;
             long double x = v->x + nvx, y, z, ax, ay, az, mx, f, gg, Z;
             float yf, zz, vx, vy, vz;
@@ -453,7 +438,7 @@ void TerrainMesh_DrawD3D(void)
         /* later vertices move towards their parent by the parent's factor */
         if (j != n) {
             do {
-                const TdVert *v = &mesh->verts[j], *P = &mesh->verts[v->parent];
+                const TerrainMeshVertex *v = &mesh->verts[j], *P = &mesh->verts[v->parent];
                 float f = MORPH(F)[v->parent], y2, z2, vx, vy, vz;
                 long double X = (P->x - v->x) * f + v->x, Y, Z;
 

@@ -9,6 +9,7 @@
 #include "transctx/transctx.h"
 #include "lod/lodtypes.h"
 #include "core/coretypes.h"
+#include "terrain/terraintypes.h"
 
 FN_EXTERN(crt_CIpow);
 
@@ -40,36 +41,6 @@ ORIG(0x50FE60, void, TerrainMesh_Update, (void));
 ORIG(0x511500, void, TerrainMesh_Render, (void));
 ORIG(0x5116B0, void, TerrainMesh_SetUnusedTextures, (void *world));
 
-/* The parts of a task the walk uses */
-typedef struct QTask {
-    char unk0[0x1C];
-    uint16_t type;
-    char unk1E[2];
-    double pos[3];
-    char unk38[0x10];
-    void *arg;
-    char unk4C[0xC];
-    struct QTask *next;
-} QTask;
-
-typedef struct QWorld {
-    char unk0[0xC];
-    void *terrain;
-    char unk10[0xD08];
-    QTask *tasks;
-    QTask *lists[8];
-    char unk3C[0x8C];
-    int ready;
-    char unkDCC[0x14];
-    int origin[3];
-} QWorld;
-
-/* One collected object: the handler slot to call and the task */
-typedef struct QEntry {
-    uint8_t slot;
-    QTask *task;
-} QEntry;
-
 typedef struct QCallback {
     struct QCallback *next;
     void (*fn)(void *arg);
@@ -80,16 +51,14 @@ typedef struct QEnclosing {
     const double *pos;
     int unk4;
     int unk8;
-    QTask *task;
+    DynCubeObj *task;
     double box[3];
     float radius;
 } QEnclosing;
 
-_Static_assert(offsetof(QTask, next) == 0x58, "QTask");
-_Static_assert(sizeof(QWorld) == 0xDEC, "QWorld");
 _Static_assert(offsetof(QEnclosing, radius) == 0x28, "QEnclosing");
 
-typedef void (*QHandler)(QTask *task, void *arg);
+typedef void (*QHandler)(DynCubeObj *task, void *arg);
 
 extern QHandler gTaskHandlers[];
 extern RenderMode gRenderModeCurrent;
@@ -106,13 +75,13 @@ extern uint8_t gQCubeEnclosingEvent;
 extern uint8_t gQCubeNearClipEvent;
 extern int gQCubeDetail;
 extern int gQCubeMinSize;
-extern QWorld *gQCubeWorld;
+extern Terrain *gQCubeWorld;
 extern int gQCubeOrigin[];
 extern float gQCubeOriginF[];
 extern double gQCubeOriginD[];
 extern int gQCubeDrawOutside;
 extern int gQCubeInside;
-extern QTask *gQCubeEnclosing;
+extern DynCubeObj *gQCubeEnclosing;
 extern int gViewSector;
 extern double gQCubeEnclosingBox[];
 extern float gQCubeEnclosingRadius;
@@ -283,9 +252,9 @@ void QCube_RunCallbacks(QCallback *c, void *arg);
 
 static void draw_entry(const QEntry *e)
 {
-    QTask *t = e->task;
+    DynCubeObj *t = e->task;
 
-    gTaskHandlers[e->slot * 0x180 + t->type](t, t->arg);
+    gTaskHandlers[e->slot * 0x180 + t->task.type](t, (void *)t->unk48);
 }
 
 /*
@@ -293,7 +262,7 @@ static void draw_entry(const QEntry *e)
  * a task (a room), objects outside its sphere are drawn with the outside
  * scene bounds, or not at all when gQCubeDrawOutside is clear.
  */
-void QCube_DrawObjects(QWorld *w)
+void QCube_DrawObjects(Terrain *w)
 {
     QEntry *e = gQCubeList;
     int inside = 1, i;
@@ -311,8 +280,8 @@ void QCube_DrawObjects(QWorld *w)
         for (i = 0; i < gQCubeCount; i++, e++) {
             float r = gQCubeEnclosingRadius;
 
-            if (e->task->type == gQCubeNeverSetType ||
-                !((long double)r * r >= Vec3d_DistanceSq(gQCubeEnclosingBox, e->task->pos))) {
+            if (e->task->task.type == gQCubeNeverSetType ||
+                !((long double)r * r >= Vec3d_DistanceSq(gQCubeEnclosingBox, &e->task->pos.x))) {
                 if (gQCubeDrawOutside) {
                     if (inside)
                         Scene_SetBounds(&gScene, gQCubeOutsideMin, gQCubeOutsideMax);
@@ -361,7 +330,7 @@ uint8_t QCube_GetNearClipEvent(void)
 HOOK(0x4D14D0, QCube_GetNearClipEvent);
 
 /* Starts a frame: empties the list and picks the smallest cell size to visit. */
-void QCube_Begin(QWorld *w)
+void QCube_Begin(Terrain *w)
 {
     int i, d;
 
@@ -373,11 +342,11 @@ void QCube_Begin(QWorld *w)
     gQCubeUnused3 = 0;
     gQCubeWorld = w;
     for (i = 0; i < 3; i++)
-        gQCubeOrigin[i] = w->origin[i];
+        gQCubeOrigin[i] = w->offset[i];
     for (i = 0; i < 3; i++)
-        gQCubeOriginF[i] = w->origin[i];
+        gQCubeOriginF[i] = w->offset[i];
     for (i = 0; i < 3; i++)
-        gQCubeOriginD[i] = w->origin[i];
+        gQCubeOriginD[i] = w->offset[i];
     gQCubeUnused0 = 0;
     if (gTransContext.fov > kOne)
         d = gQCubeDetail;
@@ -388,10 +357,10 @@ void QCube_Begin(QWorld *w)
 }
 HOOK(0x4D2540, QCube_Begin);
 
-void QCube_UpdateNearPlane(QWorld *w, const char *flags);
-void QCube_RunTaskList(QTask *t);
+void QCube_UpdateNearPlane(Terrain *w, const char *flags);
+void QCube_RunTaskList(DynCubeObj *t);
 
-void QCube_Render(QWorld *w, const char *flags, int full)
+void QCube_Render(Terrain *w, const char *flags, int full)
 {
     int i;
 
@@ -407,13 +376,13 @@ void QCube_Render(QWorld *w, const char *flags, int full)
     if (gTransContext.qcubeActive) {
         if (full)
             QCube_Begin(w);
-        if (w->terrain && full) {
+        if (w->ctr && full) {
             TerrainMesh_SetTextures(w);
             TerrainMesh_Update();
         }
         QCube_UpdateNearPlane(w, flags);
         if (flags[0])
-            QCube_RunTaskList(w->tasks);
+            QCube_RunTaskList(w->lists[0]);
         if (full) {
             QEnclosing q;
 
@@ -429,12 +398,12 @@ void QCube_Render(QWorld *w, const char *flags, int full)
             gQCubeEnclosingRadius = q.radius;
             if (q.task) {
                 gQCubeDrawOutside = 0;
-                gTaskHandlers[4 * 0x180 + q.task->type](q.task, 0);
+                gTaskHandlers[4 * 0x180 + q.task->task.type](q.task, 0);
                 gQCubeInside = 1;
             }
         }
-        if (!w->terrain || full) {
-            if (w->terrain) {
+        if (!w->ctr || full) {
+            if (w->ctr) {
                 TerrainMesh_SetTextures(w);
                 TerrainMesh_Render();
             }
@@ -443,7 +412,7 @@ void QCube_Render(QWorld *w, const char *flags, int full)
         }
         for (i = 0; i < 8; i++)
             if (flags[i + 1])
-                QCube_RunTaskList(w->lists[i]);
+                QCube_RunTaskList(w->lists[i + 1]);
     }
     gViewSector = 0;
     gQCubeEnclosing = NULL;
@@ -453,24 +422,24 @@ void QCube_Render(QWorld *w, const char *flags, int full)
 HOOK(0x4D2650, QCube_Render);
 
 /* Runs handler slots 4 and 5 of every task on a list */
-void QCube_RunTaskList(QTask *t)
+void QCube_RunTaskList(DynCubeObj *t)
 {
     for (; t; t = t->next) {
-        QHandler h = gTaskHandlers[4 * 0x180 + t->type];
+        QHandler h = gTaskHandlers[4 * 0x180 + t->task.type];
 
         if (h)
             h(t, QObj_GetRenderData(t));
-        h = gTaskHandlers[5 * 0x180 + t->type];
+        h = gTaskHandlers[5 * 0x180 + t->task.type];
         if (h)
             h(t, QObj_GetRenderData(t));
     }
 }
 HOOK(0x4D27F0, QCube_RunTaskList);
 
-static void near_clip_list(QTask *t, float *nearq)
+static void near_clip_list(DynCubeObj *t, float *nearq)
 {
     for (; t; t = t->next) {
-        QHandler h = gTaskHandlers[QCube_GetNearClipEvent() * 0x180 + t->type];
+        QHandler h = gTaskHandlers[QCube_GetNearClipEvent() * 0x180 + t->task.type];
 
         if (h)
             h(t, nearq);
@@ -481,7 +450,7 @@ static void near_clip_list(QTask *t, float *nearq)
  * Asks every visible object how close it gets to the camera and moves the
  * near clipping plane out to 99% of that.
  */
-void QCube_UpdateNearPlane(QWorld *w, const char *flags)
+void QCube_UpdateNearPlane(Terrain *w, const char *flags)
 {
     QEntry *e = gQCubeList;
     struct {
@@ -502,18 +471,18 @@ void QCube_UpdateNearPlane(QWorld *w, const char *flags)
     nearq[2] = kNearFar;
     for (i = 0; i < gQCubeCount; i++, e++) {
         if (e->slot == 4) {
-            QTask *t = e->task;
-            QHandler h = gTaskHandlers[QCube_GetNearClipEvent() * 0x180 + t->type];
+            DynCubeObj *t = e->task;
+            QHandler h = gTaskHandlers[QCube_GetNearClipEvent() * 0x180 + t->task.type];
 
             if (h)
                 h(t, nearq);
         }
     }
     if (flags[0])
-        near_clip_list(w->tasks, nearq);
+        near_clip_list(w->lists[0], nearq);
     for (i = 0; i < 8; i++)
         if (flags[i + 1])
-            near_clip_list(w->lists[i], nearq);
+            near_clip_list(w->lists[i + 1], nearq);
     TerrainMesh_UpdateNearZ(nearq);
     nearq[2] = nearq[2] * kNearScale;
     arg.dist = nearq[2];
@@ -627,7 +596,7 @@ ALIAS(gQCubeOctantMask, store_A4EF14, 0);
 STORE(igb, A50FFC, 4) int store_A50FFC[2513];
 ALIAS(gQCubeNeighbourBits, store_A50FFC, 0);
 BSS(A538CC) int gQCubeInside;
-BSS(A538CC) QTask *gQCubeEnclosing;
+BSS(A538CC) DynCubeObj *gQCubeEnclosing;
 BSS(A538CC) int gViewSector;
 BSS(A538CC) uint8_t gQCubeUnused0;
 PAD(igb, A538CC, A538D9, 0x3);
@@ -649,7 +618,7 @@ STORE(igb, B16C70, 8) double store_B16C80[3];
 ALIAS(gQCubeEnclosingBox, store_B16C80, 0);
 BSS(B16C70) QEntry *gQCubeList;
 BSS(B16C70) int gTerrainMeshCount;
-BSS(B16C70) QWorld *gQCubeWorld;
+BSS(B16C70) Terrain *gQCubeWorld;
 BSS(B16C70) int gTerrainCellCount;
 BSS(B97DF0) int gQCubeUnused4;
 STORE(igb, C103A0, 1) char store_C103A0[100000];

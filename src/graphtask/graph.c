@@ -5,12 +5,6 @@
 #include "graphnode/graphnodetypes.h"
 #include "param/paramtypes.h"
 
-/* node record size per task type */
-typedef struct GraphNodeSize {
-    uint16_t type;
-    int size;
-} GraphNodeSize;
-
 ORIG(0x401400, void, TaskType_SetHandler, (uint16_t type, uint8_t slot, void *fn));
 ORIG(0x401530, void, TaskType_SetHandler2, (uint16_t type, int slot, void *fn));
 ORIG(0x4017C0, uint8_t, TaskEvent_Alloc, (uint16_t type));

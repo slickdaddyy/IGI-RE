@@ -145,7 +145,7 @@ HOOK(0x4CE390, Coll_SendEventAll);
 
 void Terrain_InvalidateLighting(Terrain *t)
 {
-    t->unkDC8 = 0;
+    t->ready = 0;
 }
 HOOK(0x4CE3D0, Terrain_InvalidateLighting);
 
@@ -341,9 +341,9 @@ HOOK(0x4CEA20, World_GetEvent1);
 
 void Terrain_UpdateLighting(Terrain *t)
 {
-    if (!t->unkDC8) {
+    if (!t->ready) {
         TerrainMesh_SetupLighting(t, 0);
-        t->unkDC8 = 1;
+        t->ready = 1;
     }
 }
 HOOK(0x4CEA30, Terrain_UpdateLighting);

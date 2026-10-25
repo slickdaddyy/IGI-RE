@@ -89,7 +89,7 @@ typedef struct Terrain {
     void *textures;
     int *unkDC0;
     uint8_t *unkDC4;
-    int unkDC8;
+    int ready;           /* the terrain mesh lighting is set up */
     TerrainMap *bit;
     TerrainMap *hmp;
     char unkDD4[0xC];

@@ -203,7 +203,7 @@ Terrain *World_New(int rooms)
         memset(w->slot_count[i], 0, sizeof(w->slot_count[i]));
         w->handler_changes[i] = gTaskHandlerChanges;
     }
-    w->unkDC8 = 0;
+    w->ready = 0;
     w->unkDF0 = 0;
     gCollWalkTasks = 0;
     Coll_ResetMods();

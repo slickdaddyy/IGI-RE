@@ -9,92 +9,27 @@
 #include "core/pool.h"
 #include "transctx/transctx.h"
 #include "terrain/terraintypes.h"
+#include "lod/lodtypes.h"
+#include "coll/colltypes.h"
+#include "glowmesh/glowmeshtypes.h"
 
 ORIG(0x4AF7B0, void, Error_Show, (const char *fmt, ...));
 ORIG(0x4C5810, void, Coll_ResetMods, (void));
 
-typedef struct WTask {
-    char unk0[0x1C];
-    uint16_t type;
-    char unk1E[0x2A];
-    void *arg;
-    char unk4C[0xC];
-    struct WTask *next;
-    uint16_t flags;
-    char unk5E[2];
-    int unk60;
-} WTask;
-
-/* A node of an object octree, 0x40 bytes */
-typedef struct WCube {
-    char unk0[8];
-    struct WCube *parent;
-    struct WCube *child[8];
-    WTask *tasks;
-    uint8_t mask; /* children present */
-    char unk31[7];
-    uint16_t flags;
-    uint16_t flags2;
-    char unk3C[4];
-} WCube;
-
-/* A terrain cell, 0x20 bytes; children are indices into the same array */
-typedef struct WCell {
-    uint16_t child[8];
-    uint8_t sub[8];
-    uint8_t mask;
-    char unk19[3];
-    int unk1C;
-} WCell;
-
-typedef struct WWorld {
-    char unk0[0xC];
-    WCell *cells;
-    WCube *trees[6];
-} WWorld;
-
-typedef struct WCache {
-    int cell[4]; /* x, y, z, size */
-    int frame;   /* -1 = free */
-    int kind;
-    char *data;
-} WCache;
-
-/* One terrain cell to draw */
-typedef struct WTerrainCell {
-    double pos[3];
-    int depth;
-    int sub;
-    int unk20;
-    int lights; /* bump count << 16 | last visible light map */
-    int holes;
-    WCache *cache;
-} WTerrainCell;
-
-typedef struct WEntry {
-    uint8_t slot;
-    WTask *task;
-} WEntry;
-
 typedef struct WStack {
-    WCell *cell;
+    CollNode *cell;
     int flags; /* 1 visited, 2 has cell, 4..6 sub order, 7..9 octant, 10.. trees */
 } WStack;
 
-_Static_assert(offsetof(WTask, unk60) == 0x60, "WTask");
-_Static_assert(sizeof(WCube) == 0x40, "WCube");
-_Static_assert(sizeof(WCell) == 0x20, "WCell");
-_Static_assert(sizeof(WCache) == 0x1C, "WCache");
-_Static_assert(sizeof(WTerrainCell) == 0x30, "WTerrainCell");
 
-typedef void (*WHandler)(WTask *task, void *arg);
+typedef void (*WHandler)(DynCubeObj *task, void *arg);
 
 extern WHandler gTaskHandlers[][0x180];
 extern struct Terrain *gCurrentWorld;
 extern int gDisplayFrame;
-extern WEntry *gQCubeOut;
+extern QEntry *gQCubeOut;
 extern int gQCubeCount;
-extern WCache gQCubeCache[];
+extern QCacheEntry gQCubeCache[];
 extern Pool gQCubePool0;
 extern Pool gQCubePool1;
 extern Pool gQCubePool2;
@@ -103,13 +38,13 @@ extern int gQCubeOrigin[];
 extern uint8_t gQCubeChildOrder[][8];
 extern int gCollChildTable[];
 extern signed char gWalkTreeIndex[];
-extern WCube gWalkSavedRoots[];
-extern WCube gWalkFakeRoots[];
+extern DynCubeNode gWalkSavedRoots[];
+extern DynCubeNode gWalkFakeRoots[];
 extern int gQCubeSkipCells;
 extern int gWalkOverflow;
-extern WTerrainCell gTerrainCells[];
+extern TerrainCell gTerrainCells[];
 extern int gTerrainCellCount;
-extern char *gTerrainMeshes[];
+extern TerrainMesh *gTerrainMeshes[];
 extern int gTerrainMeshCount;
 extern int gVisibleLightMapCount;
 extern int gVisibleLightMaps[];
@@ -145,7 +80,7 @@ static inline int walk_abs(int x)
     return x < 0 ? (int)(0u - (unsigned)x) : x;
 }
 
-static void walk_add(WTask *t, uint8_t slot)
+static void walk_add(DynCubeObj *t, uint8_t slot)
 {
     gQCubeOut->task = t;
     gQCubeOut->slot = slot;
@@ -177,23 +112,23 @@ static void walk_release(Pool *p, char *elem)
  * (or small enough) on the terrain cell list, with per cell data cached
  * across frames by position.
  */
-void QCube_Walk(WWorld *w)
+void QCube_Walk(Terrain *w)
 {
     double *nearp = gCurrentWorld->waterLevel;
     int nearZ = nearp ? (int)walk_round(*nearp) : (int)0xE0000000;
-    WTerrainCell *out = gTerrainCells;
-    char **meshes = gTerrainMeshes;
+    TerrainCell *out = gTerrainCells;
+    TerrainMesh **meshes = gTerrainMeshes;
     int cells = 0, nmeshes = 0;
     int cur = gDisplayFrame & 0xFFFF, prev = (gDisplayFrame - 1) & 0xFFFF;
-    WCell *terrain = w->cells;
+    CollNode *terrain = w->ctr;
     int minSize = gQCubeMinSize;
     float fovx, fovy, sx, sy, cy, cz, m[10];
     uint8_t order[64], perm[64];
     int camx, camy, camz, ox, oy, oz, vx, vy, vz;
     int corner[8][3], rcorner[8][3];
-    WCube *ext[5];
+    DynCubeNode *ext[5];
     WStack stack[128], *top;
-    WCell *cell = NULL, *cc = NULL;
+    CollNode *cell = NULL, *cc = NULL;
     int depth, i, j, k;
 
     gWalkOverflow = 0;
@@ -251,21 +186,21 @@ void QCube_Walk(WWorld *w)
     }
     /* the object trees are walked mirrored: children and their bits reversed */
     for (k = 10; k < 15; k++) {
-        WCube *root = w->trees[gWalkTreeIndex[k - 10]];
-        WCube *saved = &gWalkSavedRoots[k - 10];
+        DynCubeNode *root = w->roots[gWalkTreeIndex[k - 10]];
+        DynCubeNode *saved = &gWalkSavedRoots[k - 10];
         uint8_t b, r;
 
         if (!root)
             continue;
         *saved = *root;
         for (j = 0; j < 8; j++)
-            root->child[j] = saved->child[7 - j];
-        b = root->mask;
+            root->children[j] = saved->children[7 - j];
+        b = root->child_mask;
         r = 0;
         for (j = 0; j < 8; j++)
             r = r * 2 + (b >> j & 1);
-        root->mask = r;
-        gWalkFakeRoots[k - 10].child[0] = root;
+        root->child_mask = r;
+        gWalkFakeRoots[k - 10].children[0] = root;
         stack[0].flags |= 1 << k;
         ext[k - 10] = &gWalkFakeRoots[k - 10];
     }
@@ -290,25 +225,25 @@ void QCube_Walk(WWorld *w)
 
             if (trees) {
                 for (j = 0; j < 5; j++, bit <<= 1) {
-                    WCube *n;
-                    WTask *t;
+                    DynCubeNode *n;
+                    DynCubeObj *t;
 
                     if (!(trees & bit))
                         continue;
                     n = ext[j];
                     ext[j] = n->parent;
-                    if (n->flags & 0x100) {
-                        t = n->tasks;
+                    if (n->mask & 0x100) {
+                        t = n->objs;
                         do {
-                            if (t->flags & 0x100)
-                                gTaskHandlers[16][t->type](t, t->arg);
+                            if (t->mask & 0x100)
+                                gTaskHandlers[16][t->task.type](t, (void *)t->unk48);
                             t = t->next;
                         } while (t);
                     }
-                    if (n->flags & 2) {
-                        t = n->tasks;
+                    if (n->mask & 2) {
+                        t = n->objs;
                         do {
-                            if ((t->flags & 2) && !t->unk60)
+                            if ((t->mask & 2) && !t->unk60)
                                 walk_add(t, 5);
                             t = t->next;
                         } while (t);
@@ -339,26 +274,26 @@ void QCube_Walk(WWorld *w)
             int bit = 1;
 
             for (j = 0; j < 5; j++, bit <<= 1) {
-                WCube *c;
-                WTask *t;
+                DynCubeNode *c;
+                DynCubeObj *t;
 
                 if (!(trees & bit))
                     continue;
-                c = ext[j]->child[oct];
+                c = ext[j]->children[oct];
                 ext[j] = c;
-                extmask |= c->mask;
-                if (c->flags & 0x80) {
-                    t = c->tasks;
+                extmask |= c->child_mask;
+                if (c->mask & 0x80) {
+                    t = c->objs;
                     do {
-                        if (t->flags & 0x80)
-                            gTaskHandlers[15][t->type](t, t->arg);
+                        if (t->mask & 0x80)
+                            gTaskHandlers[15][t->task.type](t, (void *)t->unk48);
                         t = t->next;
                     } while (t);
                 }
-                if (c->flags & 1) {
-                    t = c->tasks;
+                if (c->mask & 1) {
+                    t = c->objs;
                     do {
-                        if ((t->flags & 1) && !t->unk60)
+                        if ((t->mask & 1) && !t->unk60)
                             walk_add(t, 4);
                         t = t->next;
                     } while (t);
@@ -420,12 +355,12 @@ void QCube_Walk(WWorld *w)
                 int bit = 1;
 
                 for (j = 0; j < 5; j++, bit <<= 1) {
-                    WCube *n;
+                    DynCubeNode *n;
 
-                    if (!(trees & bit) || !(ext[j]->mask & (uint8_t)(1 << i)))
+                    if (!(trees & bit) || !(ext[j]->child_mask & (uint8_t)(1 << i)))
                         continue;
-                    n = ext[j]->child[i];
-                    if ((n->flags2 | n->flags) & 0x183) {
+                    n = ext[j]->children[i];
+                    if ((n->sub_mask | n->mask) & 0x183) {
                         newflags |= bit << 10;
                         push = 1;
                     }
@@ -433,7 +368,7 @@ void QCube_Walk(WWorld *w)
             }
             if (cellmask & cbit) {
                 cc = &terrain[cell->child[c]];
-                sub = (signed char)ord[cell->sub[c]];
+                sub = (signed char)ord[cell->code[c]];
                 if (size < minSize && depth + 1 < 16) {
                     newflags |= sub << 4 | 2;
                     push = 1;
@@ -441,7 +376,7 @@ void QCube_Walk(WWorld *w)
                     int X = cx + camx, Z = czi + camz, Y = cyi + camy;
                     unsigned h = ((((((Z >> 2) & 0x1FFC000) ^ (X & 0x1FFC000)) >> 3 ^ (Y & 0x3FF800)) >> 5) ^
                                   ((Z ^ Y ^ X) & 0x1FFC0)) >> 6;
-                    WCache *ce;
+                    QCacheEntry *ce;
                     int fresh = 1;
 
                     for (;;) {
@@ -460,7 +395,7 @@ void QCube_Walk(WWorld *w)
                             for (;;)
                                 ;
                         }
-                        *meshes++ = ce->data;
+                        *meshes++ = (TerrainMesh *)ce->data;
                         nmeshes++;
                     } else {
                         if (ce->data) {
@@ -479,14 +414,14 @@ void QCube_Walk(WWorld *w)
                         gWalkOverflow++;
                     } else if (fresh) {
                         out->cache = ce;
-                        out->holes = gCollHoleBits;
+                        out->materials = gCollHoleBits;
                         if (gVisibleLightMapCount)
-                            out->lights = gVisibleLightMaps[gVisibleLightMapCount - 1] | gCollBumpTop << 16;
+                            out->maps = gVisibleLightMaps[gVisibleLightMapCount - 1] | gCollBumpTop << 16;
                         else
-                            out->lights = gCollBumpTop << 16 | 0xFFFF;
-                        out->unk20 = cc->unk1C;
-                        out->sub = sub;
-                        out->depth = depth + 1;
+                            out->maps = gCollBumpTop << 16 | 0xFFFF;
+                        out->shape = cc->leaf;
+                        out->flags = sub;
+                        out->level = depth + 1;
                         out->pos[2] = Z;
                         out->pos[1] = Y;
                         out->pos[0] = X;
@@ -504,7 +439,7 @@ void QCube_Walk(WWorld *w)
     } while (top >= stack);
 
     for (j = 0; j < 5; j++) {
-        WCube *root = w->trees[gWalkTreeIndex[j]];
+        DynCubeNode *root = w->roots[gWalkTreeIndex[j]];
 
         if (root)
             *root = gWalkSavedRoots[j];
@@ -512,7 +447,7 @@ void QCube_Walk(WWorld *w)
     gTerrainCellCount = cells;
     gTerrainMeshCount = nmeshes;
     for (i = 0; i < 0x800; i++) {
-        WCache *c = &gQCubeCache[i];
+        QCacheEntry *c = &gQCubeCache[i];
         int f = c->frame;
 
         if (((f & 0xFFFF0000) == 0 && (f & 0xFFFF) != cur) || (f & 0xFFFF) + 1 < cur) {
@@ -550,7 +485,7 @@ STORE(igb, B12BB8, 4) int store_B12BC0[3];
 ALIAS(gQCubeOrigin, store_B12BC0, 0);
 STORE(igb, B12BE0, 1) uint8_t store_B12BE0[8][8];
 ALIAS(gQCubeChildOrder, store_B12BE0, 0);
-BSS(B12C58) WEntry *gQCubeOut;
+BSS(B12C58) QEntry *gQCubeOut;
 STORE(igb, B16CE0, 8) __typeof__(gTerrainCells[0]) store_B16CE0[4096];
 ALIAS(gTerrainCells, store_B16CE0, 0);
 STORE(igb, B97B20, 4) int store_B97B20[64];

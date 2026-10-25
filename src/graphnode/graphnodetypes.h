@@ -73,4 +73,10 @@ typedef struct GraphNode {
 } GraphNode;
 _Static_assert(sizeof(GraphNode) == 0x240, "GraphNode");
 
+/* bytes per node of each graph task type */
+typedef struct GraphNodeSize {
+    uint16_t type;
+    int size;
+} GraphNodeSize;
+
 #endif

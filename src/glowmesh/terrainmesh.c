@@ -10,6 +10,7 @@
 #include "lod/lodtypes.h"
 #include "terrain/terraintypes.h"
 #include "coll/colltypes.h"
+#include "glowmesh/glowmeshtypes.h"
 
 FN_EXTERN(crt_CIfmod);
 
@@ -29,11 +30,6 @@ ORIG(0x512C30, void, TerrainMesh_DrawD3D, (void));
 ORIG(0x4C1780, void, Debug_Log, (int unk));
 ORIG(0x4DA790, void, Fog_Compute, (float *out, const double *pos, float depth, float scale, void *layers, int count));
 
-typedef struct TerrainMeshVertex {
-    float x, y, z;
-    float unkC; /* height map height, or for the later vertices the parent vertex index */
-} TerrainMeshVertex;
-
 /* follows the vertices; each face packs three vertex indices in its low bytes */
 typedef struct TerrainMeshFaces {
     int unk0;
@@ -41,13 +37,6 @@ typedef struct TerrainMeshFaces {
     int unk8;
     int count;
 } TerrainMeshFaces;
-
-typedef struct TerrainMesh {
-    double center[3];
-    uint32_t vertCount; /* low 16 bits */
-    int type;           /* only 0x10 meshes count */
-    TerrainMeshVertex verts[];
-} TerrainMesh;
 
 typedef struct TerrainFog {
     float value;
@@ -62,17 +51,6 @@ typedef struct TerrainClipVertex {
     float u, v;
     int unk28, unk2C;
 } TerrainClipVertex;
-
-/* a terrain cell QCube wants built this frame */
-typedef struct TerrainCell {
-    double pos[3];
-    int level;
-    unsigned int flags;      /* 1 swaps x and y, 2 and 4 mirror */
-    const int16_t *shape;    /* face count, code offset, vertex counts, faces, codes */
-    unsigned int maps;       /* low 16 bits lightmap (0xFFFF none), bits 16-23 height map */
-    unsigned int materials;  /* four material maps, one per byte */
-    QCacheEntry *cache;
-} TerrainCell;
 
 typedef struct TerrainLightMapInfo {
     float scale;
@@ -116,13 +94,11 @@ typedef struct TerrainPoly {
     int fogCount;
 } TerrainPoly;
 
-_Static_assert(sizeof(TerrainCell) == 0x30, "TerrainCell");
 _Static_assert(sizeof(TerrainLightMapInfo) == 0x30, "TerrainLightMapInfo");
 _Static_assert(sizeof(TerrainVertRec) == 0x24, "TerrainVertRec");
 _Static_assert(sizeof(TerrainMatRec) == 0x28, "TerrainMatRec");
 _Static_assert(offsetof(TerrainPoly, fogLayers) == 0x84, "TerrainPoly");
 
-_Static_assert(sizeof(TerrainMesh) == 0x20, "TerrainMesh");
 _Static_assert(sizeof(TerrainClipVertex) == 0x30, "TerrainClipVertex");
 
 ORIG(0x4A0340, void, Direct3DRender_ClipTriangleDepth, (ClipVertex a, ClipVertex b, ClipVertex c, float *minZ,
@@ -214,7 +190,7 @@ void TerrainMesh_UpdateNearZ(float *arg)
         long double dist;
 
         n = m->vertCount & 0xFFFF;
-        if (m->type != 0x10)
+        if (m->level != 0x10)
             continue;
         c[0] = m->center[0] - gTransContext.pos.x;
         c[1] = m->center[1] - gTransContext.pos.y;
@@ -586,7 +562,7 @@ void TerrainMesh_Build(void)
         size = n * 20 - n0 * 8;
         memcpy(mesh->center, pos, sizeof(pos));
         mesh->vertCount = n0 << 16 | n;
-        mesh->type = level;
+        mesh->level = level;
         scale = (int)(1u << ((0x1B - level) & 31));
 
         /* vertices */
@@ -609,14 +585,14 @@ void TerrainMesh_Build(void)
             v->x = x;
             v->y = y;
             v->z = z;
-            v->unkC = h;
+            v->height = h;
             v++;
         } while (++i < n0);
         if (n != n0) {
             do {
                 long double x, y, z;
 
-                *(int *)&v->unkC = *c & 0x3F;
+                v->parent = *c & 0x3F;
                 vertex_pos(*c++, flags, f1, scale, pos, &x, &y, &z);
                 /* not rounded to float here, unlike the first loop */
                 if (height)
@@ -643,7 +619,7 @@ void TerrainMesh_Build(void)
             r->lv = (y - lmY0) * lmScale + lmBias;
             if (mats[0].shift == 0) {
                 if (j >= n0)
-                    r->idx = *(int *)&v->unkC;
+                    r->idx = v->parent;
             } else {
                 TerrainMatEntry *e = mats;
 
@@ -662,7 +638,7 @@ void TerrainMesh_Build(void)
                         break;
                 }
                 if (j >= n0) {
-                    r->idx = *(int *)&v->unkC;
+                    r->idx = v->parent;
                     other = rec[r->idx].word >> 16;
                     if (other == mat)
                         other = 0xFF;
