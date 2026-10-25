@@ -156,6 +156,8 @@ code layout.
 - BlanknameES for IGIPatch, whose hook names and disc check notes were a reference.
 - The project-igi-internals-data project, for early function names.
 - The Ghidra, Unicorn, MinGW-w64 and Wine projects, which this work stands on.
+- neoxaero (N.M).
+- The [Neonix Modding Team](https://discord.gg/Qrx299qKEB), for their support.
 
 ## License
 
