@@ -84,7 +84,7 @@ ORIG(0x495F30, void, Music_SetSfxVolume, (float volume));
 ORIG(0x497410, int, Sound_HashName, (const char *name));
 ORIG(0x497450, int, Sound_HashBucket, (const char *name));
 ORIG(0x4974A0, void, SoundParams_Init, (void *p));
-ORIG(0x4A28B0, void, BandFilter_SetFont, (const char *font, float a, float b, float c, int d));
+ORIG(0x4A28B0, void, BandFilter_SetFont, (const char *font, float a, float b, float c, float d));
 ORIG(0x4A29C0, void, HandiCamFilter_SetSprite, (const char *sprite, int a, int b));
 ORIG(0x4A29E0, void, HandiCamFilter_SetFont, (const char *font, int a, int b));
 ORIG(0x4B0D40, void, Mem_SetDefaultMode, (void));
@@ -273,7 +273,7 @@ void Game_Init(void)
     Script_RegisterFunction("Game_CutsceneDelete", Game_CutsceneDelete, NULL, 1);
     HandiCamFilter_SetFont("LOCAL:computer/font1.fnt", 0x75, 0x14);
     HandiCamFilter_SetSprite("LOCAL:common/sprites/battery.spr", 4, 2);
-    BandFilter_SetFont("LOCAL:computer/font1.fnt", 0.9f, 0.2f, -50.0f, 0);
+    BandFilter_SetFont("LOCAL:computer/font1.fnt", 0.9f, 0.2f, -50.0f, 0.0f);
 }
 HOOK(0x415530, Game_Init);
 

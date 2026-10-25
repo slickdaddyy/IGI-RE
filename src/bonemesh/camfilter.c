@@ -77,7 +77,7 @@ extern float gTimecode;
 extern float gBandTextX;
 extern float gBandTextY;
 extern float gBandTextDX;
-extern int gBandTextDY;
+extern float gBandTextDY;
 
 extern DynVB gVBTL;
 extern float gD3DMinZ;
@@ -247,7 +247,7 @@ void BandFilter_SetColor(BandFilter *t, float r, float g, float b)
 }
 HOOK(0x4A2800, BandFilter_SetColor);
 
-void BandFilter_SetFont(const char *font, float a, float b, float c, int d)
+void BandFilter_SetFont(const char *font, float a, float b, float c, float d)
 {
     gBandFont = font;
     gBandTextX = a;
