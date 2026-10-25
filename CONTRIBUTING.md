@@ -2,7 +2,7 @@
 
 ## Your own copy
 
-Never commit game files: no assets, no `IGI.exe`, no pieces of either, and no screenshots or captures of the game.
+Never commit game files: no assets, no `IGI.exe` and no pieces of either.
 `.gitignore` keeps the usual game file types out. Requests for game files or links to them are removed.
 
 ## A rewritten function

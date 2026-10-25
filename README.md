@@ -5,6 +5,8 @@
 **A decompilation of Project I.G.I.: I'm Going In (Innerloop Studios, 2000): the whole game rewritten as readable C,
 one verified function at a time.**
 
+![Project I.G.I.](docs/media/igi.jpg)
+
 </div>
 
 > [!IMPORTANT]
