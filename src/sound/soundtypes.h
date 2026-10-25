@@ -81,4 +81,10 @@ typedef struct SoundInst {
 } SoundInst;
 _Static_assert(sizeof(SoundInst) == 0x78, "SoundInst");
 
+/* the bounding spheres of one part of a spline segment */
+typedef struct SegBuffer {
+    struct SphereNode *data;
+    int count;
+} SegBuffer;
+
 #endif

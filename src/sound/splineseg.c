@@ -63,9 +63,9 @@ typedef struct SphereMesh {
 } SphereMesh;
 
 extern float *gSphereVerts;
-extern SphereNode **gSphereNodes;
-extern SphereMesh *gSphereMesh;
-extern SphereNode *gSphereStack[];
+extern SegBuffer *gSphereNodes;
+extern struct SphereMesh *gSphereMesh;
+extern struct SphereNode *gSphereStack[];
 extern int gSphereDepth;
 
 void SplineObjSegment_Delete(SplineObjSegment *o)
@@ -238,12 +238,12 @@ void SplineObjSegment_GrowRadius(void)
     node->radius = 0;
     gSphereDepth++;
     if (node->child) {
-        SphereNode *c = &(*gSphereNodes)[node->child];
+        SphereNode *c = &gSphereNodes->data[node->child];
 
         gSphereStack[gSphereDepth] = c;
         SplineObjSegment_GrowRadius();
         while (c->next) {
-            c = &(*gSphereNodes)[c->next];
+            c = &gSphereNodes->data[c->next];
             gSphereStack[gSphereDepth] = c;
             SplineObjSegment_GrowRadius();
         }
@@ -282,9 +282,9 @@ HOOK(0x4E5350, SplineObjSegment_GetType);
 STORE(igb, A5E374, 4) __typeof__(gSphereStack[0]) store_A5E374[30];
 ALIAS(gSphereStack, store_A5E374, 0);
 BSS(A5E374) float *gSphereVerts;
-BSS(A5E374) SphereNode **gSphereNodes;
+BSS(A5E374) SegBuffer *gSphereNodes;
 BSS(A5E374) uint16_t gSplineObjSegmentType;
 PAD(igb, A5E374, A5E3F6, 0x2);
-BSS(A5E374) SphereMesh *gSphereMesh;
+BSS(A5E374) struct SphereMesh *gSphereMesh;
 PAD(igb, A5E374, A5E3FC, 0x4);
 BSS(A5E374) int gSphereDepth;

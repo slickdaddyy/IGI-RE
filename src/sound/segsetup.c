@@ -6,6 +6,7 @@
 #include "hook.h"
 #include "igi.h"
 #include "sound/sound.h"
+#include "sound/soundtypes.h"
 
 ORIG(0x49A010, void, SplineCache_Remove, (void *obj));
 ORIG(0x49A050, float *, SplineMesh_GetVerts, (void *obj, int model, int part, int unk3, int unk4, int *count));
@@ -23,11 +24,6 @@ ORIG(0x4E51C0, void, SplineObjSegment_GrowRadius, (void));
 ORIG(0x518130, void, Hermite_Init, (double *h, double p0, double p1, double m0, double m1));
 ORIG(0x518190, long double, Hermite_Eval, (const double *h, double u));
 ORIG(0x5181C0, long double, Hermite_Slope, (const double *h, double u));
-
-typedef struct SegBuffer {
-    void *data;
-    int count;
-} SegBuffer;
 
 /* "SplineObjSegment" (0x5B8 bytes), the fields set up here */
 typedef struct SegObj {
@@ -62,8 +58,8 @@ _Static_assert(offsetof(SegObj, rigid) == 0x5B4, "rigid");
 
 extern float *gSphereVerts;
 extern SegBuffer *gSphereNodes;
-extern char *gSphereMesh;
-extern void *gSphereStack[];
+extern struct SphereMesh *gSphereMesh;
+extern struct SphereNode *gSphereStack[];
 extern int gSphereDepth;
 
 static const double kHalfD = 0.5;
@@ -354,7 +350,7 @@ void SplineObjSegment_Setup(SegObj *o, Vec3d *from, Vec3d *to, float *rotFrom, f
             SegBuffer *buf = &o->buffers[part];
             char *mesh = *(char **)(LOD_INFO(o->models[lod]) + 0x2C) + part * 0x20;
 
-            gSphereMesh = mesh;
+            gSphereMesh = (struct SphereMesh *)mesh;
             if (*(int *)(mesh + 0xC)) {
                 gSphereVerts = SplineMesh_GetVerts(o, lod, part, 1, 0, NULL);
                 if (!buf->data) {
