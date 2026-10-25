@@ -1,6 +1,8 @@
 #ifndef FILE_H
 #define FILE_H
 
+#include "file/filetypes.h"
+
 #define FILE_ALIAS_MAX 32
 #define FILE_DEVICE_MAX 5
 
@@ -10,20 +12,6 @@ typedef struct FileAlias {
     char path[0x80];
     int device;
 } FileAlias;
-
-/* a file system driver such as "LOCAL:", slot 0 is never used */
-typedef struct FileDevice {
-    int (*init)(const char *name);
-    void (*shutdown)(int device);
-    void *(*open)(int device, const char *path, int mode);
-    void *ops[12];
-    void (*scanDir)(int device, const char *path, void *fn, void *user);
-    void *ops2[5];
-    int id;
-    int present;
-    int unk5C[8];
-    char name[16];
-} FileDevice;
 
 int File_ResolvePath(char *out, const char *path, int index);
 int Device_New(void);

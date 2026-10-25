@@ -4,6 +4,7 @@
 #include "igi.h"
 #include "orig.h"
 #include "file/file.h"
+#include "types.h"
 
 _Static_assert(sizeof(Device) == 0x8C, "Device size");
 _Static_assert(sizeof(LoadedFile) == 0x1C, "LoadedFile size");
@@ -20,7 +21,7 @@ extern char gOpenPath[];
 extern char gDeletePath[];
 extern File gNullFile[];
 extern char gExpandedPath[];
-extern LoadedFile *gLoadedFiles;
+extern List gLoadedFiles;
 extern const char *gModeNames[];
 extern const int gModeValues[];
 
@@ -234,7 +235,7 @@ LoadedFile *File_FindLoaded(void *data)
 {
     LoadedFile *lf;
 
-    for (lf = gLoadedFiles; lf->next; lf = lf->next)
+    for (lf = (LoadedFile *)gLoadedFiles.head; lf->next; lf = lf->next)
         if (lf->data == data)
             return lf;
     Error_Show("No files loaded at address: %p", data);

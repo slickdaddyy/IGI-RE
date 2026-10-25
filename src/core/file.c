@@ -15,7 +15,7 @@ ORIG(0x4BADA0, void, Script_FreeRefBlock, (Node *file));
 ORIG(0x4B1DE0, const char *, Device_GetName, (int device));
 
 extern FileAlias gAliases[];
-extern FileDevice gDevices[];
+extern Device gDevices[];
 extern int gDeviceCount;
 extern List gLoadedFiles;
 extern File gNullFile[];
@@ -66,7 +66,7 @@ int Device_New(void)
 {
     int i = gDeviceCount;
 
-    gDevices[i].id = i;
+    gDevices[i].index = i;
     gDeviceCount = i + 1;
     return i;
 }
@@ -77,7 +77,7 @@ int Device_Find(const char *path)
     int i;
 
     for (i = 1; i < FILE_DEVICE_MAX; i++) {
-        FileDevice *d = &gDevices[i];
+        Device *d = &gDevices[i];
 
         if (d->present && crt_strncmp(d->name, path, strlen(d->name)) == 0)
             return i;
@@ -90,7 +90,7 @@ void File_Init(void)
 {
     Alias_Clear();
     gDeviceCount = 1;
-    memset(gDevices, 0, sizeof(FileDevice) * FILE_DEVICE_MAX);
+    memset(gDevices, 0, sizeof(Device) * FILE_DEVICE_MAX);
     gExpandedPath[0] = 0;
     LocalDevice_Register();
     gNullFile->unk04[1] = 0;
@@ -181,7 +181,7 @@ void File_ScanDir(const char *path, void *fn, void *user)
         }
         for (i = 0; buf[i] && buf[i] != ':'; i++)
             ;
-        gDevices[device].scanDir(device, buf + i + 1, fn, user);
+        gDevices[device].enumdir(device, buf + i + 1, fn, user);
         if (!next)
             return;
         next = File_ResolvePath(buf, path, next);
