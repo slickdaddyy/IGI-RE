@@ -123,8 +123,8 @@ _Static_assert(sizeof(LineHit) == 0x70, "LineHit");
 
 extern RenderMode gRenderModeCurrent;
 extern int gQCubeInside;
-extern SectorObject *gQCubeEnclosing;
-extern Sector *gViewSector;
+extern struct DynCubeObj *gQCubeEnclosing;
+extern struct Sector *gViewSector;
 extern int gSectorFogCount;
 extern Pool gSectorLinks;
 extern int *gSectorFog;
@@ -996,7 +996,7 @@ void SectorObject_Render(SectorObject *so)
     gCurrentSectorObj = so;
     if (!so->s.o.model)
         return;
-    if (so == gQCubeEnclosing) {
+    if ((struct DynCubeObj *)so == gQCubeEnclosing) {
         if (gQCubeInside)
             return;
         s = gViewSector;
@@ -1053,7 +1053,7 @@ HOOK(0x4DD4B0, Sector_AddVisible);
 
 void Sector_DrawVisible(Sector *s, float *min, float *max, int lod)
 {
-    if (s == &gCurrentSectorObj->s && gCurrentSectorObj == gQCubeEnclosing) {
+    if (s == &gCurrentSectorObj->s && (struct DynCubeObj *)gCurrentSectorObj == gQCubeEnclosing) {
         gQCubeOutsideMin[0] = min[0];
         gQCubeOutsideMin[1] = min[1];
         gQCubeOutsideMax[0] = max[0];

@@ -50,7 +50,7 @@ typedef struct QCallback {
 typedef struct QEnclosing {
     const double *pos;
     int unk4;
-    int unk8;
+    struct Sector *sector;
     DynCubeObj *task;
     double box[3];
     float radius;
@@ -81,8 +81,8 @@ extern float gQCubeOriginF[];
 extern double gQCubeOriginD[];
 extern int gQCubeDrawOutside;
 extern int gQCubeInside;
-extern DynCubeObj *gQCubeEnclosing;
-extern int gViewSector;
+extern struct DynCubeObj *gQCubeEnclosing;
+extern struct Sector *gViewSector;
 extern double gQCubeEnclosingBox[];
 extern float gQCubeEnclosingRadius;
 extern int gQCubeNeighbourBits[];
@@ -386,12 +386,12 @@ void QCube_Render(Terrain *w, const char *flags, int full)
         if (full) {
             QEnclosing q;
 
-            q.unk8 = 0;
+            q.sector = NULL;
             q.task = NULL;
             q.pos = &gTransContext.pos.x;
             q.unk4 = 0;
             Coll_SendEvent(w, QCube_GetEnclosingEvent(), &q, &gTransContext.pos.x, -1, 5);
-            gViewSector = q.unk8;
+            gViewSector = q.sector;
             for (i = 0; i < 3; i++)
                 gQCubeEnclosingBox[i] = q.box[i];
             gQCubeEnclosing = q.task;
@@ -414,7 +414,7 @@ void QCube_Render(Terrain *w, const char *flags, int full)
             if (flags[i + 1])
                 QCube_RunTaskList(w->lists[i + 1]);
     }
-    gViewSector = 0;
+    gViewSector = NULL;
     gQCubeEnclosing = NULL;
     gQCubeInside = 0;
     gQCubeDrawOutside = 1;
@@ -596,8 +596,8 @@ ALIAS(gQCubeOctantMask, store_A4EF14, 0);
 STORE(igb, A50FFC, 4) int store_A50FFC[2513];
 ALIAS(gQCubeNeighbourBits, store_A50FFC, 0);
 BSS(A538CC) int gQCubeInside;
-BSS(A538CC) DynCubeObj *gQCubeEnclosing;
-BSS(A538CC) int gViewSector;
+BSS(A538CC) struct DynCubeObj *gQCubeEnclosing;
+BSS(A538CC) struct Sector *gViewSector;
 BSS(A538CC) uint8_t gQCubeUnused0;
 PAD(igb, A538CC, A538D9, 0x3);
 BSS(A538CC) int gQCubeUnused1;
