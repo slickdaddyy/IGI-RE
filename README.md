@@ -59,6 +59,8 @@ The build makes two programs from the same source:
   It is how every function was checked against the original, and the test suite still runs on it. Copy it next to
   `IGI.exe` and start the game as usual.
 
+To just play, `igidecomp.exe` is all you need. `dinput.dll` is for testing and doesn't need to be in the game folder.
+
 On Linux, run either one under Wine; the DLL needs `WINEDLLOVERRIDES=dinput=n,b`. The game's own `Window` switch runs it
 in a window.
 
