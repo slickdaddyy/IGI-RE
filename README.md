@@ -42,6 +42,8 @@ others can build on. What is still open is in [docs/ROADMAP.md](docs/ROADMAP.md)
 
 - The EU `IGI.exe` (SHA-256 `ae93669a027d30b5f3f6c311594d9676acd72788dd7283b359f328265f6c3289`) and its game folder.
   Other releases are not supported yet; the DLL refuses to install on them.
+- The one-byte files `ANYS.AFP`, `MPZM.AFP` and `YMBE.AFP` in the game folder. The game's disc checks read them, and
+  without them it stops with "EXCEPTION FAULT" or "IGI CD not found".
 - Windows, or Linux with Wine. The development and the live tests are done under Wine 11.
 - To build: CMake, Ninja and the i686 MinGW-w64 toolchain (`i686-w64-mingw32-gcc`).
 - To run the tests: Python 3 with `unicorn`, `pefile` and `pytest`.
